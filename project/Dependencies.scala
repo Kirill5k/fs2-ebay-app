@@ -15,8 +15,14 @@ object Dependencies {
   }
 
   object Libraries {
-    lazy val fs2            = "co.fs2"                %% "fs2-core"   % Versions.fs2
-    lazy val pureconfigCore = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfig
+    lazy val fs2 = "co.fs2" %% "fs2-core" % Versions.fs2
+
+    object pureconfig {
+      lazy val core       = "com.github.pureconfig" %% "pureconfig"             % Versions.pureConfig
+      lazy val catsEffect = "com.github.pureconfig" %% "pureconfig-cats-effect" % Versions.pureConfig
+
+      lazy val all = Seq(core, catsEffect)
+    }
 
     object logging {
       lazy val logback  = "ch.qos.logback"    % "logback-classic" % Versions.logback
@@ -59,17 +65,17 @@ object Dependencies {
   }
 
   lazy val core = Seq(
-    Libraries.fs2,
-    Libraries.pureconfigCore
+    Libraries.fs2
   ) ++
     Dependencies.Libraries.circe.all ++
     Dependencies.Libraries.http4s.all ++
     Dependencies.Libraries.logging.all ++
-    Dependencies.Libraries.sttp.all
+    Dependencies.Libraries.sttp.all ++
+    Dependencies.Libraries.pureconfig.all
 
   lazy val test = Seq(
-    Dependencies.Libraries.scalaTest % Test,
-    Dependencies.Libraries.mockitoCore % Test,
+    Dependencies.Libraries.scalaTest        % Test,
+    Dependencies.Libraries.mockitoCore      % Test,
     Dependencies.Libraries.mockitoScalatest % Test
   )
 }
