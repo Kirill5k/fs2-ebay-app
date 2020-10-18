@@ -3,12 +3,12 @@ package io.github.kirill5k.ebayapp.common
 import pureconfig._
 import pureconfig.generic.auto._
 import pureconfig.module.catseffect.syntax._
-import cats.effect.{Blocker, ContextShift, IO, Sync}
+import cats.effect.{Blocker, ContextShift, Sync}
 
 object config {
 
   final case class MongoConfig(
-      connectingUri: String
+      connectionUri: String
   )
 
   final case class ServerConfig(
@@ -38,6 +38,8 @@ object config {
   )
 
   final case class AppConfig(
+      server: ServerConfig,
+      mongo: MongoConfig,
       cex: CexConfig,
       ebay: EbayConfig,
       telegram: TelegramConfig
