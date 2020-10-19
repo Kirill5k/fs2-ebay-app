@@ -7,7 +7,6 @@ import cats.effect.concurrent.Ref
 import cats.effect.implicits._
 import cats.implicits._
 
-import scala.annotation.tailrec
 import scala.concurrent.duration.FiniteDuration
 
 trait Cache[F[_], K, V] {
