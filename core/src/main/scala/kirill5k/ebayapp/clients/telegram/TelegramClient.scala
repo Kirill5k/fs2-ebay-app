@@ -7,10 +7,12 @@ import kirill5k.ebayapp.common.config.TelegramConfig
 import kirill5k.ebayapp.common.errors.ApplicationError
 import sttp.client._
 
-final class TelegramClient[F[_]](config: TelegramConfig)(
+final class TelegramClient[F[_]](
+    val config: TelegramConfig
+)(
     implicit val B: SttpBackend[F, Nothing, NothingT],
-    S: Sync[F],
-    L: Logger[F]
+    val S: Sync[F],
+    val L: Logger[F]
 ) {
 
   def sendMessageToMainChannel(message: String): F[Unit] =
