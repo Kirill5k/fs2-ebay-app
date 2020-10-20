@@ -5,13 +5,13 @@ import java.time.Instant
 import kirill5k.ebayapp.clients.cex.CexClient.SearchResult
 import kirill5k.ebayapp.resellables.{ItemDetails, ListingDetails, Price, ResellPrice, ResellableItem}
 
-trait CexItemMapper[D <: ItemDetails] {
-  def toDomain(sr: SearchResult): ResellableItem[D]
-}
+object mappers {
 
-object CexItemMapper {
+  trait CexItemMapper[D <: ItemDetails] {
+    def toDomain(sr: SearchResult): ResellableItem[D]
+  }
 
-  implicit val genericItemMapper = new CexItemMapper[ItemDetails.Generic] {
+  implicit val genericItemMapper: CexItemMapper[ItemDetails.Generic] = new CexItemMapper[ItemDetails.Generic] {
     override def toDomain(sr: SearchResult): ResellableItem[ItemDetails.Generic] =
       ResellableItem[ItemDetails.Generic](
         ItemDetails.Generic(sr.boxName),
