@@ -67,7 +67,8 @@ object Dependencies {
   }
 
   lazy val core = Seq(
-    Libraries.fs2
+    Libraries.fs2,
+    Libraries.mongo4cats
   ) ++
     Dependencies.Libraries.circe.all ++
     Dependencies.Libraries.http4s.all ++
