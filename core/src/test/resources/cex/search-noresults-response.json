@@ -1,0 +1,11 @@
+{
+  "response": {
+    "ack": "Success",
+    "data": null,
+    "error": {
+      "code": "",
+      "internal_message": "",
+      "moreInfo": []
+    }
+  }
+}

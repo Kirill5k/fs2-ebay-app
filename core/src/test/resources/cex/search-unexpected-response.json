@@ -1,0 +1,48 @@
+{
+  "response": {
+    "ack": "Success",
+    "data": {
+      "boxes": "foo-bar",
+      "totalRecords": 6,
+      "minPrice": 230,
+      "maxPrice": 390,
+      "facets": {
+        "superCatName": [
+          {
+            "name": "Phones",
+            "id": 4,
+            "count": 6
+          }
+        ],
+        "categoryFriendlyName": [
+          {
+            "name": "Phones - iPhones",
+            "id": 844,
+            "count": 6
+          }
+        ],
+        "manufacturerName": [
+          {
+            "name": "Apple",
+            "id": null,
+            "count": 6
+          }
+        ],
+        "networkName": [
+          {
+            "name": "Unlocked",
+            "id": null,
+            "count": 6
+          }
+        ],
+        "attributeStructureInfo": null,
+        "attributeInfo": null
+      }
+    },
+    "error": {
+      "code": "",
+      "internal_message": "",
+      "moreInfo": []
+    }
+  }
+}

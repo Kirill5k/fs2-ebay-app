@@ -1,0 +1,11 @@
+{
+  "response": {
+    "ack": "Error",
+    "data": null,
+    "error": {
+      "code": "bad request",
+      "internal_message": "",
+      "moreInfo": []
+    }
+  }
+}

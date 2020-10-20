@@ -1,6 +1,6 @@
 package kirill5k.ebayapp.clients.cex
 
-import cats.effect.{Sync, Timer}
+import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import io.circe.generic.auto._
@@ -12,7 +12,7 @@ import kirill5k.ebayapp.common.errors.ApplicationError
 import kirill5k.ebayapp.common.errors.ApplicationError.JsonParsingError
 import kirill5k.ebayapp.resellables.{ItemDetails, ResellPrice, ResellableItem, SearchQuery}
 import sttp.client.circe.asJson
-import sttp.client._
+import sttp.client.{NothingT, SttpBackend, _}
 import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
 
 import scala.concurrent.duration._
@@ -43,7 +43,7 @@ final class CexClient[F[_]](
     for {
       data     <- searchResponse.response.data
       cheapest <- data.boxes.minByOption(_.exchangePrice)
-    } yield ResellPrice(BigDecimal.valueOf(cheapest.cashPrice), BigDecimal.valueOf(cheapest.exchangePrice))
+    } yield ResellPrice(BigDecimal(cheapest.cashPrice), BigDecimal(cheapest.exchangePrice))
 
   def getCurrentStock[D <: ItemDetails](query: SearchQuery)(
       implicit mapper: CexItemMapper[D]
@@ -98,4 +98,12 @@ object CexClient {
   final case class SearchResponse(data: Option[SearchResults])
 
   final case class CexSearchResponse(response: SearchResponse)
+
+  def make[F[_]: Concurrent: Timer: Logger](
+      config: CexConfig,
+      backend: SttpBackend[F, Nothing, NothingT]
+  ): F[CexClient[F]] =
+    Cache.make[F, SearchQuery, Option[ResellPrice]](24.hours, 1.hour).map { cache =>
+      new CexClient[F](config, cache)(B = backend, S = Sync[F], T = Timer[F], L = Logger[F])
+    }
 }

@@ -1,0 +1,223 @@
+{
+  "response": {
+    "ack": "Success",
+    "data": {
+      "boxes": [
+        {
+          "boxId": "SAPPI7128GJBUNLA",
+          "masterBoxId": "SAPPI7128GJB",
+          "boxName": "Apple iPhone 7 128GB Jet Black, Unlocked A",
+          "isMasterBox": 1,
+          "categoryId": 844,
+          "categoryName": "Phones iPhone",
+          "categoryFriendlyName": "Phones - iPhones",
+          "superCatId": 4,
+          "superCatName": "Phones",
+          "superCatFriendlyName": "Phones",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLA_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLA_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLA_s.jpg",
+            "masterBoxLarge": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_l.jpg",
+            "masterBoxMedium": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_m.jpg",
+            "masterBoxSmall": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_s.jpg"
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 340,
+          "cashPrice": 159,
+          "exchangePrice": 226,
+          "boxRating": null,
+          "outOfStock": 1,
+          "outOfEcomStock": 1,
+          "ecomQuantityOnHand": 0
+        },
+        {
+          "boxId": "SAPPI7128GJBUNLB",
+          "masterBoxId": "SAPPI7128GJB",
+          "boxName": "Apple iPhone 7 128GB Jet Black, Unlocked B",
+          "isMasterBox": 1,
+          "categoryId": 844,
+          "categoryName": "Phones iPhone",
+          "categoryFriendlyName": "Phones - iPhones",
+          "superCatId": 4,
+          "superCatName": "Phones",
+          "superCatFriendlyName": "Phones",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLB_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLB_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLB_s.jpg",
+            "masterBoxLarge": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_l.jpg",
+            "masterBoxMedium": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_m.jpg",
+            "masterBoxSmall": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_s.jpg"
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 270,
+          "cashPrice": 126,
+          "exchangePrice": 180,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50
+        },
+        {
+          "boxId": "SAPPI7128GJBUNLC",
+          "masterBoxId": "SAPPI7128GJB",
+          "boxName": "Apple iPhone 7 128GB Jet Black, Unlocked C",
+          "isMasterBox": 1,
+          "categoryId": 844,
+          "categoryName": "Phones iPhone",
+          "categoryFriendlyName": "Phones - iPhones",
+          "superCatId": 4,
+          "superCatName": "Phones",
+          "superCatFriendlyName": "Phones",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLC_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLC_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7128GJBUNLC_s.jpg",
+            "masterBoxLarge": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_l.jpg",
+            "masterBoxMedium": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_m.jpg",
+            "masterBoxSmall": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7128GJB_s.jpg"
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 230,
+          "cashPrice": 108,
+          "exchangePrice": 153,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50
+        },
+        {
+          "boxId": "SAPPI7P128GJBUNLC",
+          "masterBoxId": "SAPPI7P128GJB",
+          "boxName": "Apple iPhone 7 Plus 128GB Jet Black, Unlocked C",
+          "isMasterBox": 1,
+          "categoryId": 844,
+          "categoryName": "Phones iPhone",
+          "categoryFriendlyName": "Phones - iPhones",
+          "superCatId": 4,
+          "superCatName": "Phones",
+          "superCatFriendlyName": "Phones",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLC_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLC_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLC_s.jpg",
+            "masterBoxLarge": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_l.jpg",
+            "masterBoxMedium": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_m.jpg",
+            "masterBoxSmall": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_s.jpg"
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 285,
+          "cashPrice": 133,
+          "exchangePrice": 190,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 29
+        },
+        {
+          "boxId": "SAPPI7P128GJBUNLB",
+          "masterBoxId": "SAPPI7P128GJB",
+          "boxName": "Apple iPhone 7 Plus 128GB Jet Black, Unlocked B",
+          "isMasterBox": 1,
+          "categoryId": 844,
+          "categoryName": "Phones iPhone",
+          "categoryFriendlyName": "Phones - iPhones",
+          "superCatId": 4,
+          "superCatName": "Phones",
+          "superCatFriendlyName": "Phones",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLB_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLB_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLB_s.jpg",
+            "masterBoxLarge": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_l.jpg",
+            "masterBoxMedium": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_m.jpg",
+            "masterBoxSmall": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_s.jpg"
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 350,
+          "cashPrice": 164,
+          "exchangePrice": 233,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50
+        },
+        {
+          "boxId": "SAPPI7P128GJBUNLA",
+          "masterBoxId": "SAPPI7P128GJB",
+          "boxName": "Apple iPhone 7 Plus 128GB Jet Black, Unlocked A",
+          "isMasterBox": 1,
+          "categoryId": 844,
+          "categoryName": "Phones iPhone",
+          "categoryFriendlyName": "Phones - iPhones",
+          "superCatId": 4,
+          "superCatName": "Phones",
+          "superCatFriendlyName": "Phones",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLA_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLA_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Phones/Phones iPhone/SAPPI7P128GJBUNLA_s.jpg",
+            "masterBoxLarge": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_l.jpg",
+            "masterBoxMedium": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_m.jpg",
+            "masterBoxSmall": "https://uk.static.webuy.com/regional_images/masterbox_images/SAPPI7P128GJB_s.jpg"
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 390,
+          "cashPrice": 183,
+          "exchangePrice": 260,
+          "boxRating": null,
+          "outOfStock": 1,
+          "outOfEcomStock": 1,
+          "ecomQuantityOnHand": 0
+        }
+      ],
+      "totalRecords": 6,
+      "minPrice": 230,
+      "maxPrice": 390,
+      "facets": {
+        "superCatName": [
+          {
+            "name": "Phones",
+            "id": 4,
+            "count": 6
+          }
+        ],
+        "categoryFriendlyName": [
+          {
+            "name": "Phones - iPhones",
+            "id": 844,
+            "count": 6
+          }
+        ],
+        "manufacturerName": [
+          {
+            "name": "Apple",
+            "id": null,
+            "count": 6
+          }
+        ],
+        "networkName": [
+          {
+            "name": "Unlocked",
+            "id": null,
+            "count": 6
+          }
+        ],
+        "attributeStructureInfo": null,
+        "attributeInfo": null
+      }
+    },
+    "error": {
+      "code": "",
+      "internal_message": "",
+      "moreInfo": []
+    }
+  }
+}

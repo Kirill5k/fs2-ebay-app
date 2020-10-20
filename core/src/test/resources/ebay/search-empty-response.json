@@ -1,0 +1,6 @@
+{
+  "href": "https://api.ebay.com/buy/browse/v1/item_summary/search?q=switchasdasdasd&limit=200&category_ids=139973&filter=buyingOptions%3A%7BFIXED_PRICE%7D%2CitemLocationCountry%3AGB%2CdeliveryCountry%3AGB%2Cprice%3A%5B1..800%5D%2CpriceCurrency%3AGBP%2CconditionIds%3A%7B1000%7C1500%7C2000%7C2500%7C3000%7C4000%7C5000%7D%2CitemStartDate%3A%5B2020-01-12T11%3A37%3A13.909Z%5D&offset=0",
+  "total": 0,
+  "limit": 200,
+  "offset": 0
+}

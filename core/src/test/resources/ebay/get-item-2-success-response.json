@@ -1,0 +1,124 @@
+{
+  "itemId": "v1|333474293066|0",
+  "title": "call of duty modern warfare xbox one 2019",
+  "shortDescription": "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.",
+  "price": {
+    "value": "30.00",
+    "currency": "GBP"
+  },
+  "categoryPath": "Video Games & Consoles|Video Games",
+  "condition": "New",
+  "conditionId": "1000",
+  "itemLocation": {
+    "city": "Coventry",
+    "postalCode": "cv7 ***",
+    "country": "GB"
+  },
+  "image": {
+    "imageUrl": "https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg"
+  },
+  "seller": {
+    "username": "168.robinhood",
+    "feedbackPercentage": "100.0",
+    "feedbackScore": 150,
+    "sellerAccountType": "INDIVIDUAL"
+  },
+  "estimatedAvailabilities": [
+    {
+      "deliveryOptions": [
+        "SHIP_TO_HOME"
+      ],
+      "estimatedAvailabilityStatus": "IN_STOCK",
+      "estimatedAvailableQuantity": 1,
+      "estimatedSoldQuantity": 0
+    }
+  ],
+  "shippingOptions": [
+    {
+      "shippingServiceCode": "Royal Mail 1st Class",
+      "shippingCarrierCode": "Royal Mail",
+      "type": "Standard Delivery",
+      "shippingCost": {
+        "value": "0.00",
+        "currency": "GBP"
+      },
+      "quantityUsedForEstimate": 1,
+      "minEstimatedDeliveryDate": "2020-01-15T10:00:00.000Z",
+      "maxEstimatedDeliveryDate": "2020-01-16T10:00:00.000Z",
+      "additionalShippingCostPerUnit": {
+        "value": "0.00",
+        "currency": "GBP"
+      },
+      "shippingCostType": "FIXED"
+    }
+  ],
+  "shipToLocations": {
+    "regionIncluded": [
+      {
+        "regionName": "United Kingdom",
+        "regionType": "COUNTRY"
+      }
+    ]
+  },
+  "returnTerms": {
+    "returnsAccepted": false
+  },
+  "localizedAspects": [
+    {
+      "type": "STRING",
+      "name": "Publisher",
+      "value": "Microsoft"
+    },
+    {
+      "type": "STRING",
+      "name": "Release Year",
+      "value": "2019"
+    },
+    {
+      "type": "STRING",
+      "name": "Game Name",
+      "value": "Call of Duty: Modern Warfare"
+    },
+    {
+      "type": "STRING",
+      "name": "Platform",
+      "value": "Microsoft Xbox One"
+    }
+  ],
+  "primaryProductReviewRating": {
+    "reviewCount": 0,
+    "averageRating": "5.0",
+    "ratingHistograms": [
+      {
+        "rating": "5",
+        "count": 1
+      },
+      {
+        "rating": "4",
+        "count": 0
+      },
+      {
+        "rating": "3",
+        "count": 0
+      },
+      {
+        "rating": "2",
+        "count": 0
+      },
+      {
+        "rating": "1",
+        "count": 0
+      }
+    ]
+  },
+  "topRatedBuyingExperience": false,
+  "buyingOptions": [
+    "FIXED_PRICE"
+  ],
+  "itemWebUrl": "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
+  "description": "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.",
+  "enabledForGuestCheckout": true,
+  "eligibleForInlineCheckout": true,
+  "adultOnly": false,
+  "categoryId": "139973"
+}

@@ -37,6 +37,9 @@ final class TelegramClient[F[_]](
 
 object TelegramClient {
 
-  def make[F[_]: Sync: Logger](config: TelegramConfig, backend: SttpBackend[F, Nothing, NothingT]): F[TelegramClient[F]] =
+  def make[F[_]: Sync: Logger](
+      config: TelegramConfig,
+      backend: SttpBackend[F, Nothing, NothingT]
+  ): F[TelegramClient[F]] =
     Sync[F].delay(new TelegramClient[F](config)(B = backend, S = Sync[F], L = Logger[F]))
 }

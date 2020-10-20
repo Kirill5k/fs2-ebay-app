@@ -1,0 +1,11 @@
+{
+  "errors": [
+    {
+      "errorId": 1001,
+      "domain": "OAuth",
+      "category": "REQUEST",
+      "message": "Invalid access token",
+      "longMessage": "Invalid access token. Check the value of the Authorization HTTP request header."
+    }
+  ]
+}

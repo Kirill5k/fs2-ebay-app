@@ -1,0 +1,456 @@
+{
+  "href": "https://api.ebay.com/buy/browse/v1/item_summary/search?limit=50&category_ids=9355&filter=price%3A%5B45..800%5D%2CitemStartDate%3A%5B2019-12-30T18%3A29%3A20.617Z%5D%2CbuyingOptions%3A%7BFIXED_PRICE%7D%2CdeliveryCountry%3AGB%2CconditionIds%3A%7B1000%7C1500%7C2000%7C2500%7C3000%7C4000%7C5000%7D%2CpriceCurrency%3AGBP%2CitemLocationCountry%3AGB&offset=0",
+  "total": 5,
+  "next": "https://api.ebay.com/buy/browse/v1/item_summary/search?limit=50&category_ids=9355&filter=price%3A%5B45..800%5D%2CitemStartDate%3A%5B2019-12-30T18%3A29%3A20.617Z%5D%2CbuyingOptions%3A%7BFIXED_PRICE%7D%2CdeliveryCountry%3AGB%2CconditionIds%3A%7B1000%7C1500%7C2000%7C2500%7C3000%7C4000%7C5000%7D%2CpriceCurrency%3AGBP%2CitemLocationCountry%3AGB&offset=50",
+  "limit": 50,
+  "offset": 0,
+  "itemSummaries": [
+    {
+      "itemId": "item-1",
+      "title": "Apple iPhone 6s Plus - 64GB - Silver (Unlocked)",
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/thumbs/images/g/5HAAAOSwPw5eCkIs/s-l225.jpg"
+      },
+      "price": {
+        "value": "120.00",
+        "currency": "GBP"
+      },
+      "itemHref": "https://api.ebay.com/buy/browse/v1/item/v1|184105770612|0",
+      "seller": {
+        "username": "benr26",
+        "feedbackPercentage": "95.1",
+        "feedbackScore": 230,
+        "sellerAccountType": "INDIVIDUAL"
+      },
+      "condition": "Used",
+      "conditionId": "3000",
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/00/s/MTYwMFgxMjAw/z/5HAAAOSwPw5eCkIs/$_0.JPG?set_id=880000500F"
+        }
+      ],
+      "shippingOptions": [
+        {
+          "shippingCostType": "FIXED",
+          "shippingCost": {
+            "value": "3.90",
+            "currency": "GBP"
+          }
+        }
+      ],
+      "buyingOptions": [
+        "FIXED_PRICE",
+        "BEST_OFFER"
+      ],
+      "currentBidPrice": {
+        "value": "120.00",
+        "currency": "GBP"
+      },
+      "epid": "216241426",
+      "itemWebUrl": "https://www.ebay.co.uk/itm/Apple-iPhone-6s-Plus-64GB-Silver-Unlocked/184105770612?hash=item2add8f1e74:g:5HAAAOSwPw5eCkIs",
+      "itemLocation": {
+        "postalCode": "S20***",
+        "country": "GB"
+      },
+      "categories": [
+        {
+          "categoryId": "9355"
+        },
+        {
+          "categoryId": "15032"
+        }
+      ],
+      "additionalImages": [
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/184105770612_2_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/184105770612_3_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/184105770612_4_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/184105770612_5_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/184105770612_6_0_1/225x225.jpg"
+        }
+      ],
+      "adultOnly": false
+    },
+    {
+      "itemId": "item-2",
+      "title": "Apple iPhone 7 - 32GB - Rose Gold (Unlocked) A1778 (GSM)",
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/thumbs/images/g/1ZMAAOSw8hReCkJE/s-l225.jpg"
+      },
+      "price": {
+        "value": "165.00",
+        "currency": "GBP"
+      },
+      "itemHref": "https://api.ebay.com/buy/browse/v1/item/v1|392615143015|0",
+      "seller": {
+        "username": "vickyredder",
+        "feedbackPercentage": "100.0",
+        "feedbackScore": 1709,
+        "sellerAccountType": "INDIVIDUAL"
+      },
+      "condition": "Used",
+      "conditionId": "3000",
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/00/s/MTYwMFgxMjAw/z/1ZMAAOSw8hReCkJE/$_0.JPG?set_id=880000500F"
+        }
+      ],
+      "shippingOptions": [
+        {
+          "shippingCostType": "FIXED",
+          "shippingCost": {
+            "value": "5.00",
+            "currency": "GBP"
+          }
+        }
+      ],
+      "buyingOptions": [
+        "FIXED_PRICE",
+        "AUCTION"
+      ],
+      "bidCount": 0,
+      "currentBidPrice": {
+        "value": "110.00",
+        "currency": "GBP"
+      },
+      "epid": "225209929",
+      "itemWebUrl": "https://www.ebay.co.uk/itm/Apple-iPhone-7-32GB-Rose-Gold-Unlocked-A1778-GSM/392615143015?hash=item5b69afa667:g:1ZMAAOSw8hReCkJE",
+      "itemLocation": {
+        "postalCode": "L8***",
+        "country": "GB"
+      },
+      "categories": [
+        {
+          "categoryId": "9355"
+        },
+        {
+          "categoryId": "15032"
+        }
+      ],
+      "additionalImages": [
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_2_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_3_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_4_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_5_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_6_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_7_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_8_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_9_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/392615143015_10_0_1/225x225.jpg"
+        }
+      ],
+      "adultOnly": false
+    },
+    {
+      "itemId": "item-3",
+      "title": "Unlocked Factory Apple iPhone 6S 12.0MP 16GB 64GB 128GB Dual Core Smartphone IOS",
+      "itemGroupHref": "https://api.ebay.com/buy/browse/v1/item/get_items_by_item_group?item_group_id=312791089450",
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/thumbs/images/m/m2mU22gAGf3iTSw9CPOqW3Q/s-l225.jpg"
+      },
+      "price": {
+        "value": "170.99",
+        "currency": "GBP"
+      },
+      "itemGroupType": "SELLER_DEFINED_VARIATIONS",
+      "itemHref": "https://api.ebay.com/buy/browse/v1/item/v1|312791089450|611519884881",
+      "seller": {
+        "username": "govinren-0",
+        "feedbackPercentage": "97.0",
+        "feedbackScore": 6328,
+        "sellerAccountType": "BUSINESS"
+      },
+      "marketingPrice": {
+        "originalPrice": {
+          "value": "260.39",
+          "currency": "GBP"
+        },
+        "discountPercentage": "37",
+        "discountAmount": {
+          "value": "107.80",
+          "currency": "GBP"
+        },
+        "priceTreatment": "LIST_PRICE"
+      },
+      "condition": "New",
+      "conditionId": "1000",
+      "shippingOptions": [
+        {
+          "shippingCostType": "FIXED",
+          "shippingCost": {
+            "value": "0.00",
+            "currency": "GBP"
+          }
+        }
+      ],
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "currentBidPrice": {
+        "value": "170.99",
+        "currency": "GBP"
+      },
+      "epid": "216195464",
+      "itemWebUrl": "https://www.ebay.co.uk/itm/Unlocked-Factory-Apple-iPhone-6S-12-0MP-16GB-64GB-128GB-Dual-Core-Smartphone-IOS/312791089450?hash=item48d3cd412a:m:m2mU22gAGf3iTSw9CPOqW3Q",
+      "itemLocation": {
+        "country": "GB"
+      },
+      "categories": [
+        {
+          "categoryId": "9355"
+        },
+        {
+          "categoryId": "15032"
+        }
+      ],
+      "additionalImages": [
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_2_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_3_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_4_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_5_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_6_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_7_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_8_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_9_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_10_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_11_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312791089450_12_0_1/225x225.jpg"
+        }
+      ],
+      "adultOnly": false,
+      "priceDisplayCondition": "ONLY_SHOW_ON_REQUEST"
+    },
+    {
+      "itemId": "item-4",
+      "title": "Apple iPhone 7 - 32GB - Jet Black (Unlocked) ",
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/thumbs/images/g/O1cAAOSwYk5eCkL2/s-l225.jpg"
+      },
+      "price": {
+        "value": "189.99",
+        "currency": "GBP"
+      },
+      "itemHref": "https://api.ebay.com/buy/browse/v1/item/v1|133289116092|0",
+      "seller": {
+        "username": "raynkhan",
+        "feedbackPercentage": "100.0",
+        "feedbackScore": 729,
+        "sellerAccountType": "INDIVIDUAL"
+      },
+      "condition": "Used",
+      "conditionId": "3000",
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/00/s/MTYwMFgxMjAw/z/O1cAAOSwYk5eCkL2/$_0.JPG?set_id=880000500F"
+        }
+      ],
+      "shippingOptions": [
+        {
+          "shippingCostType": "FIXED",
+          "shippingCost": {
+            "value": "4.99",
+            "currency": "GBP"
+          }
+        }
+      ],
+      "buyingOptions": [
+        "FIXED_PRICE",
+        "BEST_OFFER"
+      ],
+      "currentBidPrice": {
+        "value": "189.99",
+        "currency": "GBP"
+      },
+      "epid": "239165248",
+      "itemWebUrl": "https://www.ebay.co.uk/itm/Apple-iPhone-7-32GB-Jet-Black-Unlocked/133289116092?hash=item1f08a681bc:g:O1cAAOSwYk5eCkL2",
+      "itemLocation": {
+        "postalCode": "IG5***",
+        "country": "GB"
+      },
+      "categories": [
+        {
+          "categoryId": "9355"
+        },
+        {
+          "categoryId": "15032"
+        }
+      ],
+      "additionalImages": [
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_2_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_3_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_4_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_5_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_6_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_7_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_8_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_9_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/133289116092_10_0_1/225x225.jpg"
+        }
+      ],
+      "adultOnly": false
+    },
+    {
+      "itemId": "item-5",
+      "title": "Factory Unlocked Apple iPhone 6 16GB 64GB 128GB Grey Silver Gold US version NEW",
+      "itemGroupHref": "https://api.ebay.com/buy/browse/v1/item/get_items_by_item_group?item_group_id=312867862042",
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/thumbs/images/m/mHVx2WKbU4KrmkLmwKXK8nQ/s-l225.jpg"
+      },
+      "price": {
+        "value": "139.99",
+        "currency": "GBP"
+      },
+      "itemGroupType": "SELLER_DEFINED_VARIATIONS",
+      "itemHref": "https://api.ebay.com/buy/browse/v1/item/v1|312867862042|611590804897",
+      "seller": {
+        "username": "govinren-0",
+        "feedbackPercentage": "97.0",
+        "feedbackScore": 6433,
+        "sellerAccountType": "BUSINESS"
+      },
+      "marketingPrice": {
+        "originalPrice": {
+          "value": "209.99",
+          "currency": "GBP"
+        },
+        "discountPercentage": "36",
+        "discountAmount": {
+          "value": "73.50",
+          "currency": "GBP"
+        },
+        "priceTreatment": "LIST_PRICE"
+      },
+      "condition": "New",
+      "conditionId": "1000",
+      "shippingOptions": [
+        {
+          "shippingCostType": "FIXED",
+          "shippingCost": {
+            "value": "0.00",
+            "currency": "GBP"
+          }
+        }
+      ],
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "currentBidPrice": {
+        "value": "139.99",
+        "currency": "GBP"
+      },
+      "epid": "17032606575",
+      "itemWebUrl": "https://www.ebay.co.uk/itm/Factory-Unlocked-Apple-iPhone-6-16GB-64GB-128GB-Grey-Silver-Gold-US-version-NEW/312867862042?hash=item48d860b61a:m:mHVx2WKbU4KrmkLmwKXK8nQ",
+      "itemLocation": {
+        "country": "GB"
+      },
+      "categories": [
+        {
+          "categoryId": "9355"
+        },
+        {
+          "categoryId": "15032"
+        }
+      ],
+      "additionalImages": [
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_2_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_3_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_4_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_5_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_6_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_7_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_8_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_9_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_10_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_11_0_1/225x225.jpg"
+        },
+        {
+          "imageUrl": "https://galleryplus.ebayimg.com/ws/web/312867862042_12_0_1/225x225.jpg"
+        }
+      ],
+      "adultOnly": false,
+      "priceDisplayCondition": "ONLY_SHOW_ON_REQUEST"
+    }
+  ]
+}

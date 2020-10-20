@@ -1,0 +1,148 @@
+{
+  "response": {
+    "ack": "Success",
+    "data": {
+      "boxes": [
+        {
+          "boxId": "SLAPAPPMP16101SA",
+          "masterBoxId": null,
+          "boxName": "Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A",
+          "isMasterBox": 0,
+          "categoryId": 863,
+          "categoryName": "Laptops - Apple Mac",
+          "categoryFriendlyName": "Laptops - Apple Mac",
+          "superCatId": 3,
+          "superCatName": "Computing",
+          "superCatFriendlyName": "Computing",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16101SA_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16101SA_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16101SA_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 1950,
+          "cashPrice": 1131,
+          "exchangePrice": 1365,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 2,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "SLAPAPPMP16101SB",
+          "masterBoxId": null,
+          "boxName": "Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B",
+          "isMasterBox": 0,
+          "categoryId": 863,
+          "categoryName": "Laptops - Apple Mac",
+          "categoryFriendlyName": "Laptops - Apple Mac",
+          "superCatId": 3,
+          "superCatName": "Computing",
+          "superCatFriendlyName": "Computing",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16101SB_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16101SB_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16101SB_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 1800,
+          "cashPrice": 1044,
+          "exchangePrice": 1260,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 1,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "SLAPAPPMP16146SGA",
+          "masterBoxId": null,
+          "boxName": "Apple MacBook Pro 16,1/i9-9880H/16GB/1TB SSD/5500M 4GB/16\"/Space Grey/A",
+          "isMasterBox": 0,
+          "categoryId": 863,
+          "categoryName": "Laptops - Apple Mac",
+          "categoryFriendlyName": "Laptops - Apple Mac",
+          "superCatId": 3,
+          "superCatName": "Computing",
+          "superCatFriendlyName": "Computing",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16146SGA_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16146SGA_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Computing/Laptops - Apple Mac/SLAPAPPMP16146SGA_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 2200,
+          "cashPrice": 1276,
+          "exchangePrice": 1540,
+          "boxRating": 5,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 1,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        }
+      ],
+      "totalRecords": 3,
+      "minPrice": 1800,
+      "maxPrice": 2200,
+      "facets": {
+        "superCatName": [
+          {
+            "name": "Computing",
+            "id": 3,
+            "count": 3
+          }
+        ],
+        "categoryFriendlyName": [
+          {
+            "name": "Laptops - Apple Mac",
+            "id": 863,
+            "count": 3
+          }
+        ],
+        "manufacturerName": null,
+        "networkName": null,
+        "attributeStructureInfo": null,
+        "attributeInfo": null
+      }
+    },
+    "error": {
+      "code": "",
+      "internal_message": "",
+      "moreInfo": []
+    }
+  }
+}
