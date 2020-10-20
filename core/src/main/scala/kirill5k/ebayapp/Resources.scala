@@ -1,8 +1,8 @@
-package io.github.kirill5k.ebayapp
+package kirill5k.ebayapp
 
-import cats.effect.{Blocker, Concurrent, ContextShift, Resource}
+import cats.effect.{Concurrent, ContextShift, Resource}
 import cats.implicits._
-import io.github.kirill5k.ebayapp.common.config.{AppConfig, MongoConfig}
+import kirill5k.ebayapp.common.config.{AppConfig, MongoConfig}
 import mongo4cats.client.MongoClientF
 import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client.{NothingT, SttpBackend}

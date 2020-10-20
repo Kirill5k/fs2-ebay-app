@@ -1,7 +1,8 @@
-package io.github.kirill5k.ebayapp.common
+package kirill5k.ebayapp.common
 
 import cats.effect.{Blocker, IO}
-import io.github.kirill5k.ebayapp.common.config.AppConfig
+import config.AppConfig
+import kirill5k.ebayapp.CatsSpec
 
 class AppConfigSpec extends CatsSpec {
   "An AppConfig" should {

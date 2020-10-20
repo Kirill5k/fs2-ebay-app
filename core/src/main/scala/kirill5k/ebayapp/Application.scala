@@ -1,9 +1,9 @@
-package io.github.kirill5k.ebayapp
+package kirill5k.ebayapp
 
 import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
-import io.github.kirill5k.ebayapp.common.config.AppConfig
+import kirill5k.ebayapp.common.config.AppConfig
 
 object Application extends IOApp {
 

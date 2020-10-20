@@ -1,4 +1,4 @@
-package io.github.kirill5k.ebayapp.common
+package kirill5k.ebayapp.common
 
 import pureconfig._
 import pureconfig.generic.auto._

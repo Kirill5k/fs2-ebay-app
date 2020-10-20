@@ -1,6 +1,8 @@
-package io.github.kirill5k.ebayapp.common
+package kirill5k.ebayapp.common
 
 import cats.effect.IO
+import kirill5k.ebayapp.CatsSpec
+
 import scala.concurrent.duration._
 
 class CacheSpec extends CatsSpec {

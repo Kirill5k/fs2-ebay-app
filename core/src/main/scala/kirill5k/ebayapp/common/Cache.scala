@@ -1,4 +1,4 @@
-package io.github.kirill5k.ebayapp.common
+package kirill5k.ebayapp.common
 
 import java.time.Instant
 
