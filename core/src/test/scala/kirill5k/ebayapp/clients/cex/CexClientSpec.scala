@@ -1,7 +1,6 @@
 package kirill5k.ebayapp.clients.cex
 
 import cats.effect.IO
-import cats.effect.implicits._
 import kirill5k.ebayapp.SttpClientSpec
 import kirill5k.ebayapp.common.config.CexConfig
 import kirill5k.ebayapp.common.errors.ApplicationError.{HttpError, JsonParsingError}

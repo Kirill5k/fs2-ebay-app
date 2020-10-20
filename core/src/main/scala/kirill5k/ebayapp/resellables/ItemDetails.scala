@@ -29,7 +29,8 @@ object ItemDetails {
       network: Option[String],
       condition: Option[String]
   ) extends ItemDetails {
-    val fullName: Option[String] = List(make, model, storageCapacity, colour, network).sequence.map(_.mkString(" "))
+    val fullName: Option[String] =
+      List(make, model, storageCapacity, colour, network).sequence.map(_.mkString(" "))
   }
 
   final case class Game(
@@ -39,10 +40,11 @@ object ItemDetails {
       genre: Option[String],
       packaging: Packaging = Packaging.Single
   ) extends ItemDetails {
-    val fullName: Option[String] = for {
-      n <- name
-      p <- platform
-    } yield s"$n $p"
+    val fullName: Option[String] = {
+      (name, platform).mapN {
+        case (n, p) => s"$n $p"
+      }
+    }
   }
 
 }
