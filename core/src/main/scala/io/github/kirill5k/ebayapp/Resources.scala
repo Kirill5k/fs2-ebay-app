@@ -8,7 +8,6 @@ import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client.{NothingT, SttpBackend}
 
 final case class Resources[F[_]](
-    blocker: Blocker,
     httpClientBackend: SttpBackend[F, Nothing, NothingT],
     mongoClient: MongoClientF[F]
 )
@@ -22,5 +21,5 @@ object Resources {
     Resource.make(AsyncHttpClientCatsBackend[F]())(_.close())
 
   def make[F[_]: Concurrent: ContextShift](config: AppConfig): Resource[F, Resources[F]] =
-    (Blocker[F], httpClientBackend[F], mongoClient[F](config.mongo)).mapN(Resources.apply[F])
+    (httpClientBackend[F], mongoClient[F](config.mongo)).mapN(Resources.apply[F])
 }
