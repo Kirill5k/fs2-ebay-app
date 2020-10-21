@@ -2,15 +2,12 @@ package kirill5k.ebayapp.clients.cex
 
 import cats.effect.IO
 import kirill5k.ebayapp.SttpClientSpec
-import kirill5k.ebayapp.common.config.{CexPriceFindConfig, CexConfig}
+import kirill5k.ebayapp.common.config.{CexConfig, CexPriceFindConfig}
 import kirill5k.ebayapp.common.errors.ApplicationError.{HttpError, JsonParsingError}
-import kirill5k.ebayapp.domain.{ItemDetails, ResellableItem}
 import kirill5k.ebayapp.domain.search._
+import kirill5k.ebayapp.domain.{ItemDetails, ResellableItem}
 import sttp.client
-import sttp.client.Response
-import sttp.client.asynchttpclient.WebSocketHandler
-import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
-import sttp.client.testing.SttpBackendStub
+import sttp.client.{NothingT, Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
 
 import scala.concurrent.duration._
@@ -23,8 +20,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "get current stock" in {
       val query = SearchQuery("macbook pro 16,1")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> query.value, "inStock" -> "1", "inStockOnline" -> "1")) =>
             Response.ok(json("cex/search-macbook-success-response.json"))
@@ -61,8 +57,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "find minimal resell price" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> query.value)) =>
             Response.ok(json("cex/search-iphone-success-response.json"))
@@ -80,8 +75,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "return resell price from cache" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenAnyRequest
         .thenRespondCyclicResponses(
           Response.ok(json("cex/search-iphone-success-response.json")),
@@ -102,8 +96,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "perform another request after cache expired" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenAnyRequest
         .thenRespondCyclicResponses(
           Response.ok(json("cex/search-iphone-success-response.json")),
@@ -124,8 +117,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "return none when no results" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> query.value)) =>
             Response.ok(json("cex/search-noresults-response.json"))
@@ -143,8 +135,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "return internal error when failed to parse json" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> query.value)) =>
             Response.ok(json("cex/search-unexpected-response.json"))
@@ -164,8 +155,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "return http error when not success" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> query.value)) =>
             Response(json("cex/search-error-response.json"), StatusCode.BadRequest)
@@ -183,8 +173,7 @@ class CexClientSpec extends SttpClientSpec {
 
     "retry when 429 returned" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenAnyRequest
         .thenRespondCyclicResponses(
           Response(json("cex/search-error-response.json"), StatusCode.TooManyRequests),

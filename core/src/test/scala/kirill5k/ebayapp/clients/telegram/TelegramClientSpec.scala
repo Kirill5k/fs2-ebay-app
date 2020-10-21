@@ -4,10 +4,7 @@ import cats.effect.IO
 import kirill5k.ebayapp.SttpClientSpec
 import kirill5k.ebayapp.common.config.TelegramConfig
 import kirill5k.ebayapp.common.errors.ApplicationError.HttpError
-import sttp.client.Response
-import sttp.client.asynchttpclient.WebSocketHandler
-import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
-import sttp.client.testing.SttpBackendStub
+import sttp.client.{NothingT, Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
 
 class TelegramClientSpec extends SttpClientSpec {
@@ -18,8 +15,7 @@ class TelegramClientSpec extends SttpClientSpec {
   "TelegramClient" should {
 
     "send message to the main channel" in {
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>
@@ -35,8 +31,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "send message to the secondary channel" in {
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m2", "text" -> message)) =>
@@ -52,8 +47,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "send message to the channel" in {
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>
@@ -69,8 +63,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "return error when not success" in {
-      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
-        .stub[IO]
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>

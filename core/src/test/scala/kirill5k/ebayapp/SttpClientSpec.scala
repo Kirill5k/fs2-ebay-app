@@ -1,11 +1,18 @@
 package kirill5k.ebayapp
 
+import cats.effect.IO
 import sttp.client
+import sttp.client.asynchttpclient.WebSocketHandler
+import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
+import sttp.client.testing.SttpBackendStub
 import sttp.model.{Header, HeaderNames, MediaType, Method}
 
 import scala.io.Source
 
 trait SttpClientSpec extends CatsSpec {
+
+  def backendStub: SttpBackendStub[IO, Nothing, WebSocketHandler] =
+    AsyncHttpClientCatsBackend.stub[IO]
 
   def isGoingTo(
       req: client.Request[_, _],
@@ -32,9 +39,4 @@ trait SttpClientSpec extends CatsSpec {
       req.headers.contains(Header(HeaderNames.ContentType, contentType.toString()))
 
   def json(path: String): String = Source.fromResource(path).getLines().toList.mkString
-
-//  def sttpCatsBackend(testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler]): SttpBackendResource[IO] = new SttpBackendResource[IO] {
-//    override val get: Resource[IO, SttpBackend[IO, Nothing, NothingT]] =
-//      Resource.liftF(IO.pure(testingBackend))
-//  }
 }
