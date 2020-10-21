@@ -33,9 +33,7 @@ object ItemDetails {
       genre: Option[String]
   ) extends ItemDetails {
     val fullName: Option[String] = {
-      (name, platform).mapN {
-        case (n, p) => s"$n $p"
-      }
+      (name, platform).mapN((n, p) => s"$n $p")
     }
   }
 

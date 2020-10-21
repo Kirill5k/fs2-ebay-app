@@ -10,7 +10,6 @@ trait EbayItemMapper[D <: ItemDetails] {
   def toDomain(ebayItem: EbayItem): ResellableItem[D]
 }
 
-
 object EbayItemMapper {
   implicit val phoneDetailsMapper = new EbayItemMapper[ItemDetails.Phone] {
     override def toDomain(ebayItem: EbayItem): ResellableItem[ItemDetails.Phone] = {
