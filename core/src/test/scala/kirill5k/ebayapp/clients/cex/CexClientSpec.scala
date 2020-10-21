@@ -37,61 +37,26 @@ class CexClientSpec extends SttpClientSpec {
 
       result
         .unsafeToFuture()
-        .map(
-          res =>
-            res must be(
-              List(
-                ResellableItem(
-                  ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A"),
-                  ListingDetails(
-                    "https://uk.webuy.com/product-detail/?id=SLAPAPPMP16101SA",
-                    "Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A",
-                    Some("Laptops - Apple Mac"),
-                    None,
-                    None,
-                    "USED / A",
-                    res(0).listingDetails.datePosted,
-                    "CEX",
-                    Map()
-                  ),
-                  Price(2, 1950.0),
-                  Some(ResellPrice(BigDecimal(1131.0), BigDecimal(1365.0)))
-                ),
-                ResellableItem(
-                  ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B"),
-                  ListingDetails(
-                    "https://uk.webuy.com/product-detail/?id=SLAPAPPMP16101SB",
-                    "Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B",
-                    Some("Laptops - Apple Mac"),
-                    None,
-                    None,
-                    "USED / B",
-                    res(1).listingDetails.datePosted,
-                    "CEX",
-                    Map()
-                  ),
-                  Price(1, 1800.0),
-                  Some(ResellPrice(BigDecimal(1044.0), BigDecimal(1260.0)))
-                ),
-                ResellableItem(
-                  ItemDetails.Generic("Apple MacBook Pro 16,1/i9-9880H/16GB/1TB SSD/5500M 4GB/16\"/Space Grey/A"),
-                  ListingDetails(
-                    "https://uk.webuy.com/product-detail/?id=SLAPAPPMP16146SGA",
-                    "Apple MacBook Pro 16,1/i9-9880H/16GB/1TB SSD/5500M 4GB/16\"/Space Grey/A",
-                    Some("Laptops - Apple Mac"),
-                    None,
-                    None,
-                    "USED / A",
-                    res(2).listingDetails.datePosted,
-                    "CEX",
-                    Map()
-                  ),
-                  Price(1, 2200.0),
-                  Some(ResellPrice(BigDecimal(1276.0), BigDecimal(1540.0)))
-                )
-              )
-            )
-        )
+        .map(res => res must be(List(
+          ResellableItem(
+            ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A"),
+            ListingDetails("https://uk.webuy.com/product-detail/?id=SLAPAPPMP16101SA", "Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", Some("Laptops - Apple Mac"), None, None, "USED / A", res(0).listingDetails.datePosted, "CEX", Map()),
+            Price(2, 1950.0),
+            Some(ResellPrice(BigDecimal(1131.0), BigDecimal(1365.0)))
+          ),
+          ResellableItem(
+            ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B"),
+            ListingDetails("https://uk.webuy.com/product-detail/?id=SLAPAPPMP16101SB", "Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B", Some("Laptops - Apple Mac"), None, None, "USED / B", res(1).listingDetails.datePosted, "CEX", Map()),
+            Price(1, 1800.0),
+            Some(ResellPrice(BigDecimal(1044.0), BigDecimal(1260.0)))
+          ),
+          ResellableItem(
+            ItemDetails.Generic("Apple MacBook Pro 16,1/i9-9880H/16GB/1TB SSD/5500M 4GB/16\"/Space Grey/A"),
+            ListingDetails("https://uk.webuy.com/product-detail/?id=SLAPAPPMP16146SGA", "Apple MacBook Pro 16,1/i9-9880H/16GB/1TB SSD/5500M 4GB/16\"/Space Grey/A", Some("Laptops - Apple Mac"), None, None, "USED / A", res(2).listingDetails.datePosted, "CEX", Map()),
+            Price(1, 2200.0),
+            Some(ResellPrice(BigDecimal(1276.0), BigDecimal(1540.0)))
+          )
+        )))
     }
 
     "find minimal resell price" in {

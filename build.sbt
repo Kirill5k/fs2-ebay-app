@@ -19,7 +19,6 @@ lazy val root = (project in file("."))
 lazy val core = (project in file("core"))
   .settings(
     name := "fs2-ebay-app-core",
-    scalafmtOnCompile := true,
     libraryDependencies ++= Dependencies.core ++ Dependencies.test
   )
 
