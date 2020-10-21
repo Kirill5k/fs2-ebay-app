@@ -1,13 +1,6 @@
-package kirill5k.ebayapp.resellables
+package kirill5k.ebayapp.domain
 
 import cats.implicits._
-
-sealed trait Packaging
-
-object Packaging {
-  final case object Single extends Packaging
-  final case object Bundle extends Packaging
-}
 
 sealed trait ItemDetails {
   def fullName: Option[String]
@@ -37,8 +30,7 @@ object ItemDetails {
       name: Option[String],
       platform: Option[String],
       releaseYear: Option[String],
-      genre: Option[String],
-      packaging: Packaging = Packaging.Single
+      genre: Option[String]
   ) extends ItemDetails {
     val fullName: Option[String] = {
       (name, platform).mapN {

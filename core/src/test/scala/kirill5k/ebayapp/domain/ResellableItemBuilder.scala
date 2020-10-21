@@ -1,11 +1,12 @@
-package kirill5k.ebayapp.resellables
+package kirill5k.ebayapp.domain
 
 import java.time.Instant
 
-import kirill5k.ebayapp.resellables.ItemDetails.{Game, Phone}
-import kirill5k.ebayapp.resellables.ResellableItem.{GenericItem, MobilePhone, VideoGame}
+import kirill5k.ebayapp.domain.ItemDetails.{Game, Phone}
+import kirill5k.ebayapp.domain.ResellableItem.{GenericItem, MobilePhone, VideoGame}
+import kirill5k.ebayapp.domain.search._
 
-object ResellablesBuilder {
+object ResellableItemBuilder {
 
   def generic(name: String, quantity: Int = 1, price: Double = 1800.0): GenericItem =
     ResellableItem(

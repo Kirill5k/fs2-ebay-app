@@ -3,7 +3,8 @@ package kirill5k.ebayapp.clients.cex
 import java.time.Instant
 
 import kirill5k.ebayapp.clients.cex.CexClient.SearchResult
-import kirill5k.ebayapp.resellables.{ItemDetails, ListingDetails, Price, ResellPrice, ResellableItem}
+import kirill5k.ebayapp.domain.{ItemDetails, ResellableItem}
+import kirill5k.ebayapp.domain.search._
 
 object mappers {
 

@@ -1,4 +1,6 @@
-package kirill5k.ebayapp.resellables
+package kirill5k.ebayapp.domain
+
+import kirill5k.ebayapp.domain.search.{ListingDetails, Price, ResellPrice}
 
 final case class ResellableItem[D <: ItemDetails](
     itemDetails: D,

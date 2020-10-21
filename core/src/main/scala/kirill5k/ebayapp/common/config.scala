@@ -5,6 +5,8 @@ import pureconfig.generic.auto._
 import pureconfig.module.catseffect.syntax._
 import cats.effect.{Blocker, ContextShift, Sync}
 
+import scala.concurrent.duration.FiniteDuration
+
 object config {
 
   final case class MongoConfig(
@@ -26,8 +28,14 @@ object config {
       credentials: List[EbayCredentials]
   )
 
+  final case class CexPriceFindConfig(
+      cacheExpiration: FiniteDuration,
+      cacheValidationPeriod: FiniteDuration
+  )
+
   final case class CexConfig(
-      baseUri: String
+      baseUri: String,
+      priceFind: CexPriceFindConfig
   )
 
   final case class TelegramConfig(

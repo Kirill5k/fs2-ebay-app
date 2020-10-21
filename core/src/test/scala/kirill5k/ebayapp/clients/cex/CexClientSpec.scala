@@ -2,9 +2,10 @@ package kirill5k.ebayapp.clients.cex
 
 import cats.effect.IO
 import kirill5k.ebayapp.SttpClientSpec
-import kirill5k.ebayapp.common.config.CexConfig
+import kirill5k.ebayapp.common.config.{CexPriceFindConfig, CexConfig}
 import kirill5k.ebayapp.common.errors.ApplicationError.{HttpError, JsonParsingError}
-import kirill5k.ebayapp.resellables.{ItemDetails, ListingDetails, Price, ResellPrice, ResellableItem, SearchQuery}
+import kirill5k.ebayapp.domain.{ItemDetails, ResellableItem}
+import kirill5k.ebayapp.domain.search._
 import sttp.client
 import sttp.client.Response
 import sttp.client.asynchttpclient.WebSocketHandler
@@ -12,11 +13,13 @@ import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client.testing.SttpBackendStub
 import sttp.model.{Method, StatusCode}
 
+import scala.concurrent.duration._
+
 class CexClientSpec extends SttpClientSpec {
 
   "CexClient" should {
 
-    val config = CexConfig("http://cex.com")
+    val config = CexConfig("http://cex.com", CexPriceFindConfig(3.seconds, 1.second))
 
     "get current stock" in {
       val query = SearchQuery("macbook pro 16,1")
@@ -106,7 +109,7 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.findResellPrice(query))
 
       result.unsafeToFuture().map { price =>
-        price must be(Some(ResellPrice(BigDecimal.valueOf(108), BigDecimal.valueOf(153))))
+        price must be(Some(ResellPrice(BigDecimal(108), BigDecimal(153))))
       }
     }
 
@@ -127,8 +130,30 @@ class CexClientSpec extends SttpClientSpec {
       } yield rp
 
       result.unsafeToFuture().map { price =>
-        val expectedPrice = Some(ResellPrice(BigDecimal.valueOf(108), BigDecimal.valueOf(153)))
+        val expectedPrice = Some(ResellPrice(BigDecimal(108), BigDecimal(153)))
         price must be(expectedPrice)
+      }
+    }
+
+    "perform another request after cache expired" in {
+      val query = SearchQuery("super mario 3 XBOX ONE")
+      val testingBackend: SttpBackendStub[IO, Nothing, WebSocketHandler] = AsyncHttpClientCatsBackend
+        .stub[IO]
+        .whenAnyRequest
+        .thenRespondCyclicResponses(
+          Response.ok(json("cex/search-iphone-success-response.json")),
+          Response(json("cex/search-error-response.json"), StatusCode.BadRequest)
+        )
+
+      val result = for {
+        cexClient <- CexClient.make[IO](config, testingBackend)
+        _         <- cexClient.findResellPrice(query)
+        _         <- timer.sleep(4.seconds)
+        rp        <- cexClient.findResellPrice(query)
+      } yield rp
+
+      result.attempt.unsafeToFuture().map { res =>
+        res must be(Left(HttpError(400, "error sending request to cex: 400")))
       }
     }
 
@@ -207,7 +232,7 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.findResellPrice(query))
 
       result.unsafeToFuture().map { price =>
-        price must be(Some(ResellPrice(BigDecimal.valueOf(108), BigDecimal.valueOf(153))))
+        price must be(Some(ResellPrice(BigDecimal(108), BigDecimal(153))))
       }
     }
 

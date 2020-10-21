@@ -10,7 +10,8 @@ import kirill5k.ebayapp.common.Cache
 import kirill5k.ebayapp.common.config.CexConfig
 import kirill5k.ebayapp.common.errors.ApplicationError
 import kirill5k.ebayapp.common.errors.ApplicationError.JsonParsingError
-import kirill5k.ebayapp.resellables.{ItemDetails, ResellPrice, ResellableItem, SearchQuery}
+import kirill5k.ebayapp.domain.{ItemDetails, ResellableItem}
+import kirill5k.ebayapp.domain.search._
 import sttp.client.circe.asJson
 import sttp.client.{NothingT, SttpBackend, _}
 import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
@@ -19,7 +20,7 @@ import scala.concurrent.duration._
 
 final class CexClient[F[_]](
     private val config: CexConfig,
-    private val searchResultsCache: Cache[F, SearchQuery, Option[ResellPrice]]
+    private val resellPriceCache: Cache[F, SearchQuery, Option[ResellPrice]]
 )(
     implicit val B: SttpBackend[F, Nothing, NothingT],
     S: Sync[F],
@@ -28,14 +29,14 @@ final class CexClient[F[_]](
 ) {
 
   def findResellPrice(query: SearchQuery): F[Option[ResellPrice]] =
-    searchResultsCache.get(query).flatMap {
+    resellPriceCache.get(query).flatMap {
       case Some(rp) => S.pure(rp)
       case None =>
         search(uri"${config.baseUri}/v3/boxes?q=${query.value}")
           .map(getMinResellPrice)
           .flatTap { rp =>
             if (rp.isEmpty) L.warn(s"search '${query.value}' returned 0 results")
-            else searchResultsCache.put(query, rp)
+            else resellPriceCache.put(query, rp)
           }
     }
 
@@ -103,7 +104,9 @@ object CexClient {
       config: CexConfig,
       backend: SttpBackend[F, Nothing, NothingT]
   ): F[CexClient[F]] =
-    Cache.make[F, SearchQuery, Option[ResellPrice]](24.hours, 1.hour).map { cache =>
-      new CexClient[F](config, cache)(B = backend, S = Sync[F], T = Timer[F], L = Logger[F])
-    }
+    Cache
+      .make[F, SearchQuery, Option[ResellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
+      .map { cache =>
+        new CexClient[F](config, cache)(B = backend, S = Sync[F], T = Timer[F], L = Logger[F])
+      }
 }
