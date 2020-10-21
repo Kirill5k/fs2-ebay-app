@@ -17,16 +17,16 @@ object stock {
       override def toString: String = "New in stock"
     }
     final case class PriceDrop(previous: BigDecimal, current: BigDecimal) extends StockUpdateType {
-      override def toString: String = s"Price has reduced from £${previous} to £${current}"
+      override def toString: String = s"Price has reduced from £$previous to £$current"
     }
     final case class PriceRaise(previous: BigDecimal, current: BigDecimal) extends StockUpdateType {
-      override def toString: String = s"Price has increased from £${previous} to £${current}"
+      override def toString: String = s"Price has increased from £$previous to £$current"
     }
     final case class StockIncrease(previous: Int, current: Int) extends StockUpdateType {
-      override def toString: String = s"Stock quantity has increased from ${previous} to ${current}"
+      override def toString: String = s"Stock quantity has increased from $previous to ${current}"
     }
     final case class StockDecrease(previous: Int, current: Int) extends StockUpdateType {
-      override def toString: String = s"Stock quantity has decreased from ${previous} to ${current}"
+      override def toString: String = s"Stock quantity has decreased from $previous to $current"
     }
   }
 
