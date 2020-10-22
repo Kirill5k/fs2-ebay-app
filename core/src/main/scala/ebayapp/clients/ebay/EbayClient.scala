@@ -3,7 +3,7 @@ package ebayapp.clients.ebay
 import java.time.Instant
 import java.time.temporal.ChronoField.MILLI_OF_SECOND
 
-import cats.effect.Sync
+import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.ebay.auth.EbayAuthClient
 import ebayapp.clients.ebay.browse.EbayBrowseClient
@@ -16,8 +16,9 @@ import ebayapp.common.errors.ApplicationError
 import ebayapp.domain.search.SearchQuery
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import io.chrisdavenport.log4cats.Logger
+import sttp.client.{NothingT, SttpBackend}
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
 
 trait EbayClient[F[_]] {
   def findLatestItems[D <: ItemDetails](
@@ -86,10 +87,10 @@ final private[ebay] class LiveEbayClient[F[_]](
   private val hasTrustedSeller: EbayItemSummary => Boolean = itemSummary =>
     (for {
       feedbackPercentage <- itemSummary.seller.feedbackPercentage
-      if feedbackPercentage > config.search.minFeedbackPercentage
+      goodPercentage = feedbackPercentage > config.search.minFeedbackPercentage
       feedbackScore <- itemSummary.seller.feedbackScore
-      if feedbackScore > config.search.minFeedbackScore
-    } yield ()).isDefined
+      goodScore = feedbackScore > config.search.minFeedbackScore
+    } yield goodPercentage && goodScore).exists(identity)
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, fs2.Stream[F, ResellableItem[D]]] = {
     case ApplicationError.Auth(message) =>
@@ -108,4 +109,17 @@ final private[ebay] class LiveEbayClient[F[_]](
   }
 }
 
-object EbayClient {}
+object EbayClient {
+
+  def make[F[_]: Concurrent: Logger: Timer](
+      config: EbayConfig,
+      backend: SttpBackend[F, Nothing, NothingT]
+  ): F[EbayClient[F]] = {
+    val auth = EbayAuthClient.make[F](config, backend)
+    val browse = EbayBrowseClient.make[F](config, backend)
+    val cache = Cache.make[F, String, Unit](2.hours, 5.minutes)
+    (auth, browse, cache).mapN {
+      case (a, b, c) => new LiveEbayClient[F](config, a, b, c)
+    }
+  }
+}

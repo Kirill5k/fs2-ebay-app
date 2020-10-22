@@ -18,7 +18,12 @@ import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import scala.concurrent.duration._
 
-private[ebay] final class EbayAuthClient[F[_]](
+private[ebay] trait EbayAuthClient[F[_]] {
+  def accessToken: F[String]
+  def switchAccount(): F[Unit]
+}
+
+final private[ebay] class LiveEbayAuthClient[F[_]](
     private val config: EbayConfig,
     private val authToken: Ref[F, EbayAuthToken],
     private val credentials: Ref[F, List[EbayCredentials]]
@@ -27,7 +32,7 @@ private[ebay] final class EbayAuthClient[F[_]](
     val S: Sync[F],
     val L: Logger[F],
     val T: Timer[F]
-) {
+) extends EbayAuthClient[F] {
 
   def accessToken: F[String] =
     for {
@@ -96,7 +101,7 @@ private[ebay] object EbayAuthClient {
     val token = Ref.of[F, EbayAuthToken](EbayAuthToken("expired", 0))
     val creds = Ref.of[F, List[EbayCredentials]](config.credentials)
     (token, creds).mapN {
-      case (t, c) => new EbayAuthClient[F](config, t, c)(B = backend, S = Sync[F], L = Logger[F], T = Timer[F])
+      case (t, c) => new LiveEbayAuthClient[F](config, t, c)(B = backend, S = Sync[F], L = Logger[F], T = Timer[F])
     }
   }
 }

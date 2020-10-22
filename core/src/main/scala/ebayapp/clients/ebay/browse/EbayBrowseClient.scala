@@ -11,13 +11,18 @@ import sttp.client._
 import sttp.client.circe._
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
-private[ebay] final class EbayBrowseClient[F[_]](
+private[ebay] trait EbayBrowseClient[F[_]] {
+  def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]]
+  def getItem(accessToken: String, itemId: String): F[Option[EbayItem]]
+}
+
+private[ebay] final class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig
 )(
     implicit val B: SttpBackend[F, Nothing, NothingT],
     val S: Sync[F],
     val L: Logger[F]
-) {
+) extends EbayBrowseClient[F] {
 
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]] =
     basicRequest
@@ -72,5 +77,5 @@ private[ebay] object EbayBrowseClient {
       config: EbayConfig,
       backend: SttpBackend[F, Nothing, NothingT]
   ): F[EbayBrowseClient[F]] =
-    Sync[F].delay(new EbayBrowseClient[F](config)(B = backend, S = Sync[F], L = Logger[F]))
+    Sync[F].delay(new LiveEbayBrowseClient[F](config)(B = backend, S = Sync[F], L = Logger[F]))
 }
