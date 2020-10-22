@@ -30,7 +30,7 @@ final class TelegramClient[F[_]](
           case Right(_) => S.unit
           case Left(error) =>
             L.error(s"error sending message to telegram: ${r.code}\n$error") *>
-              S.raiseError(ApplicationError.HttpError(r.code.code, s"error sending message to telegram channel $channelId: ${r.code}"))
+              S.raiseError(ApplicationError.Http(r.code.code, s"error sending message to telegram channel $channelId: ${r.code}"))
         }
       }
 }

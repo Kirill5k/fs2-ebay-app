@@ -31,18 +31,18 @@ private[ebay] object responses {
       condition: String,
       image: Option[ItemImage],
       seller: ItemSeller,
-      localizedAspects: Option[Seq[ItemProperty]],
-      buyingOptions: Seq[String],
+      localizedAspects: Option[List[ItemProperty]],
+      buyingOptions: List[String],
       itemWebUrl: String,
       color: Option[String],
       brand: Option[String],
       mpn: Option[String],
       itemEndDate: Option[Instant],
-      shippingOptions: Option[Seq[ItemShippingOption]]
+      shippingOptions: Option[List[ItemShippingOption]]
   ) extends EbayBrowseResponse
 
-  final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[Seq[EbayItemSummary]]) extends EbayBrowseResponse
+  final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) extends EbayBrowseResponse
 
   final case class EbayError(errorId: Long, domain: String, category: String, message: String)
-  final case class EbayErrorResponse(errors: Seq[EbayError]) extends EbayBrowseResponse
+  final case class EbayErrorResponse(errors: List[EbayError]) extends EbayBrowseResponse
 }

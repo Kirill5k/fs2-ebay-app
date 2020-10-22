@@ -7,11 +7,11 @@ object errors {
   }
 
   object ApplicationError {
-    final case class HttpError(status: Int, message: String) extends ApplicationError
-    final case class InternalError(message: String)          extends ApplicationError
-    final case class AuthError(message: String)              extends ApplicationError
-    final case class JsonParsingError(message: String)       extends ApplicationError
-    final case class DbError(message: String)                extends ApplicationError
-    final case class NotEnoughDetailsError(message: String)  extends ApplicationError
+    final case class Http(status: Int, message: String) extends ApplicationError
+    final case class Internal(message: String)          extends ApplicationError
+    final case class Auth(message: String)              extends ApplicationError
+    final case class Json(message: String)              extends ApplicationError
+    final case class Db(message: String)                extends ApplicationError
+    final case class NotEnoughDetails(message: String)  extends ApplicationError
   }
 }

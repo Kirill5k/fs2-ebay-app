@@ -3,7 +3,7 @@ package kirill5k.ebayapp.clients.cex
 import cats.effect.IO
 import kirill5k.ebayapp.SttpClientSpec
 import kirill5k.ebayapp.common.config.{CexConfig, CexPriceFindConfig}
-import kirill5k.ebayapp.common.errors.ApplicationError.{HttpError, JsonParsingError}
+import kirill5k.ebayapp.common.errors.ApplicationError
 import kirill5k.ebayapp.domain.search._
 import kirill5k.ebayapp.domain.{ItemDetails, ResellableItem}
 import sttp.client
@@ -111,7 +111,7 @@ class CexClientSpec extends SttpClientSpec {
       } yield rp
 
       result.attempt.unsafeToFuture().map { res =>
-        res must be(Left(HttpError(400, "error sending request to cex: 400")))
+        res must be(Left(ApplicationError.Http(400, "error sending request to cex: 400")))
       }
     }
 
@@ -148,7 +148,7 @@ class CexClientSpec extends SttpClientSpec {
 
       result.attempt.unsafeToFuture().map { price =>
         price must be(
-          Left(JsonParsingError("error parsing json: DecodingFailure(C[A], List(DownField(boxes), DownField(data), DownField(response)))"))
+          Left(ApplicationError.Json("error parsing json: DecodingFailure(C[A], List(DownField(boxes), DownField(data), DownField(response)))"))
         )
       }
     }
@@ -167,7 +167,7 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.findResellPrice(query))
 
       result.attempt.unsafeToFuture().map { price =>
-        price must be(Left(HttpError(400, "error sending request to cex: 400")))
+        price must be(Left(ApplicationError.Http(400, "error sending request to cex: 400")))
       }
     }
 

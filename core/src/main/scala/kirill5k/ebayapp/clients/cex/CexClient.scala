@@ -9,7 +9,6 @@ import kirill5k.ebayapp.clients.cex.mappers.CexItemMapper
 import kirill5k.ebayapp.common.Cache
 import kirill5k.ebayapp.common.config.CexConfig
 import kirill5k.ebayapp.common.errors.ApplicationError
-import kirill5k.ebayapp.common.errors.ApplicationError.JsonParsingError
 import kirill5k.ebayapp.domain.{ItemDetails, ResellableItem}
 import kirill5k.ebayapp.domain.search._
 import sttp.client.circe.asJson
@@ -65,15 +64,15 @@ final class CexClient[F[_]](
         r.code match {
           case s if s.isSuccess =>
             val searchResponse = r.body.left.map {
-              case DeserializationError(_, e) => JsonParsingError(s"error parsing json: $e")
-              case e                          => JsonParsingError(s"error parsing json: ${e.getMessage}")
+              case DeserializationError(_, e) => ApplicationError.Json(s"error parsing json: $e")
+              case e                          => ApplicationError.Json(s"error parsing json: ${e.getMessage}")
             }
             S.fromEither(searchResponse)
           case StatusCode.TooManyRequests =>
             L.error(s"too many requests to cex. retrying") *> T.sleep(500.millis) *> search(uri)
           case s =>
             L.error(s"error sending price query to cex: $s\n${r.body.fold(_.getMessage, _.toString)}") *>
-              S.raiseError(ApplicationError.HttpError(s.code, s"error sending request to cex: $s"))
+              S.raiseError(ApplicationError.Http(s.code, s"error sending request to cex: $s"))
         }
       }
 }

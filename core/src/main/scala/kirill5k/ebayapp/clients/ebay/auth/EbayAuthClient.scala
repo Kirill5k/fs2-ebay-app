@@ -18,7 +18,7 @@ import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import scala.concurrent.duration._
 
-class EbayAuthClient[F[_]](
+final class EbayAuthClient[F[_]](
     private val config: EbayConfig,
     private val authToken: Ref[F, EbayAuthToken],
     private val credentials: Ref[F, List[EbayCredentials]]
