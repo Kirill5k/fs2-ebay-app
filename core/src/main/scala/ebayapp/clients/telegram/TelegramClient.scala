@@ -3,7 +3,7 @@ package ebayapp.clients.telegram
 import cats.effect.Sync
 import cats.implicits._
 import ebayapp.common.config.TelegramConfig
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import io.chrisdavenport.log4cats.Logger
 import sttp.client._
 
@@ -30,7 +30,7 @@ final class TelegramClient[F[_]](
           case Right(_) => S.unit
           case Left(error) =>
             L.error(s"error sending message to telegram: ${r.code}\n$error") *>
-              S.raiseError(ApplicationError.Http(r.code.code, s"error sending message to telegram channel $channelId: ${r.code}"))
+              S.raiseError(AppError.Http(r.code.code, s"error sending message to telegram channel $channelId: ${r.code}"))
         }
       }
 }

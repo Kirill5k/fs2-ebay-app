@@ -7,7 +7,7 @@ import ebayapp.clients.ebay.browse.EbayBrowseClient
 import ebayapp.clients.ebay.browse.responses.{EbayItem, EbayItemSummary, ItemImage, ItemPrice, ItemProperty, ItemSeller, ItemShippingOption, ShippingCost}
 import ebayapp.common.Cache
 import ebayapp.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import ebayapp.domain.ItemDetails
 import ebayapp.domain.ItemDetails.Game
 import ebayapp.domain.search.SearchQuery
@@ -53,7 +53,7 @@ class EbayClientSpec extends CatsSpec with AsyncMockitoSugar with ArgumentMatche
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(authClient.switchAccount()).thenReturn(IO.unit)
-      when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.raiseError(ApplicationError.Auth("Too many requests")))
+      when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.raiseError(AppError.Auth("Too many requests")))
 
       val itemsResponse = videoGameSearchClient.findLatestItems[ItemDetails.Game](searchQuery, 15.minutes)
 
@@ -72,7 +72,7 @@ class EbayClientSpec extends CatsSpec with AsyncMockitoSugar with ArgumentMatche
       val videoGameSearchClient = new LiveEbayClient[IO](config, authClient, browseClient, cache)
 
       when(browseClient.search(any[String], anyMap[String, String]))
-        .thenReturn(IO.raiseError(ApplicationError.Http(400, "Bad request")))
+        .thenReturn(IO.raiseError(AppError.Http(400, "Bad request")))
 
       val itemsResponse = videoGameSearchClient.findLatestItems[ItemDetails.Game](searchQuery, 15.minutes)
 

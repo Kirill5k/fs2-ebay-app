@@ -3,7 +3,7 @@ package ebayapp.clients.telegram
 import cats.effect.IO
 import ebayapp.SttpClientSpec
 import ebayapp.common.config.TelegramConfig
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import sttp.client.{NothingT, Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
 
@@ -75,7 +75,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val result = telegramClient.flatMap(_.sendMessageToMainChannel(message))
 
-      result.attempt.unsafeToFuture().map(_ must be(Left(ApplicationError.Http(400, "error sending message to telegram channel m1: 400"))))
+      result.attempt.unsafeToFuture().map(_ must be(Left(AppError.Http(400, "error sending message to telegram channel m1: 400"))))
     }
   }
 }

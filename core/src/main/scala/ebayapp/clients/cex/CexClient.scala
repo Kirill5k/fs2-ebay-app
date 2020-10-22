@@ -6,7 +6,7 @@ import ebayapp.clients.cex.CexClient.{CexSearchResponse, SearchResult}
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
 import ebayapp.common.config.CexConfig
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search._
 import io.chrisdavenport.log4cats.Logger
@@ -64,15 +64,15 @@ final class CexClient[F[_]](
         r.code match {
           case s if s.isSuccess =>
             val searchResponse = r.body.left.map {
-              case DeserializationError(_, e) => ApplicationError.Json(s"error parsing json: $e")
-              case e                          => ApplicationError.Json(s"error parsing json: ${e.getMessage}")
+              case DeserializationError(_, e) => AppError.Json(s"error parsing json: $e")
+              case e                          => AppError.Json(s"error parsing json: ${e.getMessage}")
             }
             S.fromEither(searchResponse)
           case StatusCode.TooManyRequests =>
             L.error(s"too many requests to cex. retrying") *> T.sleep(500.millis) *> search(uri)
           case s =>
             L.error(s"error sending price query to cex: $s\n${r.body.fold(_.getMessage, _.toString)}") *>
-              S.raiseError(ApplicationError.Http(s.code, s"error sending request to cex: $s"))
+              S.raiseError(AppError.Http(s.code, s"error sending request to cex: $s"))
         }
       }
 }

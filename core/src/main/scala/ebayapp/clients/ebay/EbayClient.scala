@@ -12,7 +12,7 @@ import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.Cache
 import ebayapp.common.config.EbayConfig
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import ebayapp.domain.search.SearchQuery
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import io.chrisdavenport.log4cats.Logger
@@ -93,12 +93,12 @@ final private[ebay] class LiveEbayClient[F[_]](
     } yield goodPercentage && goodScore).exists(identity)
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, fs2.Stream[F, ResellableItem[D]]] = {
-    case ApplicationError.Auth(message) =>
+    case AppError.Auth(message) =>
       fs2.Stream.eval {
         L.warn(s"auth error from ebay client ($message). switching account") *>
           authClient.switchAccount()
       }.drain
-    case error: ApplicationError =>
+    case error: AppError =>
       fs2.Stream
         .eval(L.error(s"api client error while getting items from ebay: ${error.message}"))
         .drain

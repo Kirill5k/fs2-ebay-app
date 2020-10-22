@@ -3,7 +3,7 @@ package ebayapp.clients.ebay.browse
 import cats.effect.IO
 import ebayapp.SttpClientSpec
 import ebayapp.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import sttp.client.{NothingT, Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
 
@@ -62,7 +62,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val result = ebaySearchClient.flatMap(_.search(accessToken, searchQueryParams))
 
       result.attempt.unsafeToFuture().map { error =>
-        error must be (Left(ApplicationError.Auth("ebay account has expired: 403")))
+        error must be (Left(AppError.Auth("ebay account has expired: 403")))
       }
     }
 
@@ -110,7 +110,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val result = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
 
       result.attempt.unsafeToFuture().map { error =>
-        error must be (Left(ApplicationError.Auth("ebay account has expired: 403")))
+        error must be (Left(AppError.Auth("ebay account has expired: 403")))
       }
     }
 

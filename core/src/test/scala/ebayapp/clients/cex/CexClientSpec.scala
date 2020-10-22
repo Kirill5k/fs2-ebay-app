@@ -3,7 +3,7 @@ package ebayapp.clients.cex
 import cats.effect.IO
 import ebayapp.SttpClientSpec
 import ebayapp.common.config.{CexConfig, CexPriceFindConfig}
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search._
 import sttp.client
@@ -111,7 +111,7 @@ class CexClientSpec extends SttpClientSpec {
       } yield rp
 
       result.attempt.unsafeToFuture().map { res =>
-        res must be(Left(ApplicationError.Http(400, "error sending request to cex: 400")))
+        res must be(Left(AppError.Http(400, "error sending request to cex: 400")))
       }
     }
 
@@ -148,7 +148,7 @@ class CexClientSpec extends SttpClientSpec {
 
       result.attempt.unsafeToFuture().map { price =>
         price must be(
-          Left(ApplicationError.Json("error parsing json: DecodingFailure(C[A], List(DownField(boxes), DownField(data), DownField(response)))"))
+          Left(AppError.Json("error parsing json: DecodingFailure(C[A], List(DownField(boxes), DownField(data), DownField(response)))"))
         )
       }
     }
@@ -167,7 +167,7 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.findResellPrice(query))
 
       result.attempt.unsafeToFuture().map { price =>
-        price must be(Left(ApplicationError.Http(400, "error sending request to cex: 400")))
+        price must be(Left(AppError.Http(400, "error sending request to cex: 400")))
       }
     }
 

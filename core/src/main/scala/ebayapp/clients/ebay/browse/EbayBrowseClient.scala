@@ -6,7 +6,7 @@ import io.chrisdavenport.log4cats.Logger
 import ebayapp.common.config.EbayConfig
 import io.circe.generic.auto._
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
-import ebayapp.common.errors.ApplicationError
+import ebayapp.common.errors.AppError
 import sttp.client._
 import sttp.client.circe._
 import sttp.model.{HeaderNames, MediaType, StatusCode}
@@ -39,10 +39,10 @@ private[ebay] final class LiveEbayBrowseClient[F[_]](
           case status if status.isSuccess =>
             S.fromEither(r.body.map(_.itemSummaries.getOrElse(List())))
           case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
-            S.raiseError(ApplicationError.Auth(s"ebay account has expired: ${r.code}"))
+            S.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
           case status =>
             L.error(s"error sending search request to ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
-              S.raiseError(ApplicationError.Http(status.code, s"error sending request to ebay search api: $status"))
+              S.raiseError(AppError.Http(status.code, s"error sending request to ebay search api: $status"))
         }
       }
 
@@ -63,10 +63,10 @@ private[ebay] final class LiveEbayBrowseClient[F[_]](
           case StatusCode.NotFound =>
             S.pure(None)
           case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
-            S.raiseError(ApplicationError.Auth(s"ebay account has expired: ${r.code}"))
+            S.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
           case status =>
             L.error(s"error getting item from ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
-              S.raiseError(ApplicationError.Http(status.code, s"error getting item from ebay search api: $status"))
+              S.raiseError(AppError.Http(status.code, s"error getting item from ebay search api: $status"))
         }
       }
 }
