@@ -5,7 +5,7 @@ import cats.effect.concurrent.Ref
 import cats.implicits._
 import ebayapp.SttpClientSpec
 import ebayapp.clients.ebay.auth.EbayAuthClient.EbayAuthToken
-import ebayapp.common.config.{EbayConfig, EbayCredentials}
+import ebayapp.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import sttp.client
 import sttp.client.{NothingT, Response, SttpBackend}
 import sttp.model._
@@ -13,7 +13,7 @@ import sttp.model._
 class EbayAuthClientSpec extends SttpClientSpec {
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials)
+  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92))
 
   "EbayAuthClient" should {
 

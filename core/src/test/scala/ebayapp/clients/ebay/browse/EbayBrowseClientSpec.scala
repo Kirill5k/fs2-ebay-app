@@ -2,7 +2,7 @@ package ebayapp.clients.ebay.browse
 
 import cats.effect.IO
 import ebayapp.SttpClientSpec
-import ebayapp.common.config.{EbayConfig, EbayCredentials}
+import ebayapp.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import ebayapp.common.errors.ApplicationError
 import sttp.client.{NothingT, Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
@@ -14,7 +14,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
   val searchQueryParams = Map("q" -> "iphone")
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials)
+  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92))
 
   "EbaySearchClient" should {
 

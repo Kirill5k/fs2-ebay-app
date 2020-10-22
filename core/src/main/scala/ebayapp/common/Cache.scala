@@ -12,6 +12,7 @@ import scala.concurrent.duration.FiniteDuration
 trait Cache[F[_], K, V] {
   def get(key: K): F[Option[V]]
   def put(key: K, value: V): F[Unit]
+  def contains(key: K): F[Boolean]
 }
 
 final private class RefbasedCache[F[_]: Sync, K, V](
@@ -23,6 +24,9 @@ final private class RefbasedCache[F[_]: Sync, K, V](
 
   override def put(key: K, value: V): F[Unit] =
     state.update(s => s + (key -> (value -> Instant.now())))
+
+  override def contains(key: K): F[Boolean] =
+    state.get.map(_.contains(key))
 }
 
 object Cache {

@@ -23,9 +23,15 @@ object config {
       clientSecret: String
   )
 
+  final case class EbaySearchConfig(
+      minFeedbackScore: Int,
+      minFeedbackPercentage: Int
+  )
+
   final case class EbayConfig(
       baseUri: String,
-      credentials: List[EbayCredentials]
+      credentials: List[EbayCredentials],
+      search: EbaySearchConfig
   )
 
   final case class CexPriceFindConfig(

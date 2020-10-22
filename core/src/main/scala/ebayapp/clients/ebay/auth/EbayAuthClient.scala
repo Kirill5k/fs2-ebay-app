@@ -18,7 +18,7 @@ import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import scala.concurrent.duration._
 
-final class EbayAuthClient[F[_]](
+private[ebay] final class EbayAuthClient[F[_]](
     private val config: EbayConfig,
     private val authToken: Ref[F, EbayAuthToken],
     private val credentials: Ref[F, List[EbayCredentials]]
@@ -77,7 +77,7 @@ final class EbayAuthClient[F[_]](
     decode[EbayAuthErrorResponse](json).fold(_ => json, e => s"${e.error}: ${e.error_description}")
 }
 
-object EbayAuthClient {
+private[ebay] object EbayAuthClient {
   private[auth] val ExpiredToken = EbayAuthToken("expired", 0)
 
   private[auth] case class EbayAuthToken(token: String, expiresAt: Instant) {

@@ -11,7 +11,7 @@ import sttp.client._
 import sttp.client.circe._
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
-final class EbayBrowseClient[F[_]](
+private[ebay] final class EbayBrowseClient[F[_]](
     private val config: EbayConfig
 )(
     implicit val B: SttpBackend[F, Nothing, NothingT],
@@ -66,7 +66,7 @@ final class EbayBrowseClient[F[_]](
       }
 }
 
-object EbayBrowseClient {
+private[ebay] object EbayBrowseClient {
 
   def make[F[_]: Sync: Logger](
       config: EbayConfig,
