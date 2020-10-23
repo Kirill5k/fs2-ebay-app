@@ -5,7 +5,8 @@ import ebayapp.clients.Clients
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import ebayapp.common.config.AppConfig
-import ebayapp.repositories.MongoRepositories
+import ebayapp.repositories.Repositories
+import ebayapp.services.Services
 
 object Application extends IOApp {
 
@@ -14,15 +15,13 @@ object Application extends IOApp {
   override def run(args: List[String]): IO[ExitCode] =
     for {
       _      <- logger.info("starting ebay-app")
-      config <- Blocker[IO].use(AppConfig.load[IO])
-      _      <- logger.info("loaded config")
+      config <- Blocker[IO].use(AppConfig.load[IO]) <* logger.info("loaded config")
       _ <- Resources.make[IO](config).use { resources =>
         for {
-          _ <- logger.info("created resources")
-          _ <- Clients.make(config, resources.httpClientBackend)
-          _ <- logger.info("created clients")
-          _ <- MongoRepositories.make(resources.mongoClient)
-          _ <- logger.info("created repositories")
+          _            <- logger.info("created resources")
+          clients      <- Clients.make(config, resources.httpClientBackend) <* logger.info("created clients")
+          repositories <- Repositories.make(resources.mongoClient) <* logger.info("created repositories")
+          _            <- Services.make(config, clients, repositories) <* logger.info("created service")
         } yield ()
       }
     } yield ExitCode.Success

@@ -5,14 +5,14 @@ import cats.implicits._
 import ebayapp.repositories.ResellableItemRepository._
 import mongo4cats.client.MongoClientF
 
-final case class MongoRepositories[F[_]](
+final case class Repositories[F[_]](
     videoGames: VideoGameRepository[F]
 )
 
-object MongoRepositories {
+object Repositories {
 
   def make[F[_]: ConcurrentEffect](
       mongoClient: MongoClientF[F]
-  ): F[MongoRepositories[F]] =
-    ResellableItemRepository.videoGamesMongo(mongoClient).map(MongoRepositories.apply)
+  ): F[Repositories[F]] =
+    ResellableItemRepository.videoGamesMongo(mongoClient).map(Repositories.apply)
 }
