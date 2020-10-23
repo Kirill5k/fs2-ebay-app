@@ -6,8 +6,8 @@ import ebayapp.clients.cex.CexClient
 import ebayapp.clients.ebay.EbayClient
 import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
+import ebayapp.common.config.SearchQuery
 import ebayapp.domain.ItemDetails.Game
-import ebayapp.domain.search.SearchQuery
 import ebayapp.domain.{ResellableItem, ResellableItemBuilder}
 import fs2.Stream
 

@@ -4,8 +4,6 @@ import java.time.Instant
 
 object search {
 
-  final case class SearchQuery(value: String) extends AnyVal
-
   final case class SellPrice(
       cash: BigDecimal,
       credit: BigDecimal

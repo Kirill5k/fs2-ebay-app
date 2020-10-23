@@ -18,6 +18,18 @@ object config {
       port: String
   )
 
+  final case class SearchQuery(value: String) extends AnyVal
+
+  final case class VideoGamesDealsConfig(
+      searchFrequency: FiniteDuration,
+      searchQueries: List[SearchQuery],
+      minMarginPercentage: Int
+  )
+
+  final case class EbayDealsConfig(
+      videoGames: VideoGamesDealsConfig
+  )
+
   final case class EbayCredentials(
       clientId: String,
       clientSecret: String
@@ -31,7 +43,8 @@ object config {
   final case class EbayConfig(
       baseUri: String,
       credentials: List[EbayCredentials],
-      search: EbaySearchConfig
+      search: EbaySearchConfig,
+      deals: EbayDealsConfig
   )
 
   final case class CexPriceFindConfig(

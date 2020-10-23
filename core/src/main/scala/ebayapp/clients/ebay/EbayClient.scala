@@ -11,9 +11,8 @@ import ebayapp.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
 import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.Cache
-import ebayapp.common.config.EbayConfig
+import ebayapp.common.config.{EbayConfig, SearchQuery}
 import ebayapp.common.errors.AppError
-import ebayapp.domain.search.SearchQuery
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import io.chrisdavenport.log4cats.Logger
 import sttp.client.{NothingT, SttpBackend}

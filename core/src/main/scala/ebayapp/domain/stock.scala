@@ -1,6 +1,6 @@
 package ebayapp.domain
 
-import search.SearchQuery
+import ebayapp.common.config.SearchQuery
 
 object stock {
 

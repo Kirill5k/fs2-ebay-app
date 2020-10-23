@@ -5,7 +5,7 @@ import cats.implicits._
 import ebayapp.clients.cex.CexClient.{CexSearchResponse, SearchResult}
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
-import ebayapp.common.config.CexConfig
+import ebayapp.common.config.{CexConfig, SearchQuery}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search._
