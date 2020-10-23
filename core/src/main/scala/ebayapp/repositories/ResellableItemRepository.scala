@@ -58,7 +58,7 @@ object ResellableItemRepository {
 
   type VideoGameRepository[F[_]] = ResellableItemRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame]
 
-  def videoGameMongo[F[_]: ConcurrentEffect](
+  def videoGamesMongo[F[_]: ConcurrentEffect](
       mongoClient: MongoClientF[F]
   ): F[VideoGameRepository[F]] =
     for {

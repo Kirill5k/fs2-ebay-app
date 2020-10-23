@@ -17,7 +17,14 @@ import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
 
 import scala.concurrent.duration._
 
-final class CexClient[F[_]](
+trait CexClient[F[_]] {
+  def findResellPrice(query: SearchQuery): F[Option[SellPrice]]
+  def getCurrentStock[D <: ItemDetails](query: SearchQuery)(
+    implicit mapper: CexItemMapper[D]
+  ): F[List[ResellableItem[D]]]
+}
+
+final class CexApiClient[F[_]](
     private val config: CexConfig,
     private val resellPriceCache: Cache[F, SearchQuery, Option[SellPrice]]
 )(
@@ -25,7 +32,7 @@ final class CexClient[F[_]](
     S: Sync[F],
     T: Timer[F],
     L: Logger[F]
-) {
+) extends CexClient[F] {
 
   def findResellPrice(query: SearchQuery): F[Option[SellPrice]] =
     resellPriceCache.get(query).flatMap {
@@ -106,6 +113,6 @@ object CexClient {
     Cache
       .make[F, SearchQuery, Option[SellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
       .map { cache =>
-        new CexClient[F](config, cache)(B = backend, S = Sync[F], T = Timer[F], L = Logger[F])
+        new CexApiClient[F](config, cache)(backend, Sync[F], Timer[F], Logger[F])
       }
 }
