@@ -60,4 +60,7 @@ object NotificationService {
         url              = item.listingDetails.url
       } yield s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} $url"""
   }
+
+  def telegram[F[_]: Sync: Logger](client: TelegramClient[F]): F[NotificationService[F]] =
+    Sync[F].delay(new TelegramNotificationService[F](client))
 }
