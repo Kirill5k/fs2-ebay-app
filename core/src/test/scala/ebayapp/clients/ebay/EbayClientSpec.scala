@@ -6,7 +6,7 @@ import ebayapp.clients.ebay.auth.EbayAuthClient
 import ebayapp.clients.ebay.browse.EbayBrowseClient
 import ebayapp.clients.ebay.browse.responses._
 import ebayapp.common.Cache
-import ebayapp.common.config.{EbayConfig, EbayCredentials, EbayDealsConfig, EbaySearchConfig, SearchQuery, VideoGamesDealsConfig}
+import ebayapp.common.config.{EbayConfig, EbayCredentials, EbayDealsConfigs, EbaySearchConfig, SearchQuery, EbayDealsConfig}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.ItemDetails
 import ebayapp.domain.ItemDetails.Game
@@ -19,7 +19,7 @@ class EbayClientSpec extends CatsSpec {
   val accessToken = "access-token"
   val searchQuery = SearchQuery("xbox")
 
-  val deals = EbayDealsConfig(VideoGamesDealsConfig(60.seconds, Nil, 34))
+  val deals = EbayDealsConfigs(EbayDealsConfig(60.seconds, Nil, 20.minutes, 34))
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
   val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92), deals)
 

@@ -20,14 +20,15 @@ object config {
 
   final case class SearchQuery(value: String) extends AnyVal
 
-  final case class VideoGamesDealsConfig(
+  final case class EbayDealsConfig(
       searchFrequency: FiniteDuration,
       searchQueries: List[SearchQuery],
+      maxListingDuration: FiniteDuration,
       minMarginPercentage: Int
   )
 
-  final case class EbayDealsConfig(
-      videoGames: VideoGamesDealsConfig
+  final case class EbayDealsConfigs(
+      videoGames: EbayDealsConfig
   )
 
   final case class EbayCredentials(
@@ -44,7 +45,7 @@ object config {
       baseUri: String,
       credentials: List[EbayCredentials],
       search: EbaySearchConfig,
-      deals: EbayDealsConfig
+      deals: EbayDealsConfigs
   )
 
   final case class CexPriceFindConfig(
