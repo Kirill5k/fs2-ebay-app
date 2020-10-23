@@ -30,7 +30,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "return true if video game already exists by url" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo   <- ResellableItemRepository.videoGames[IO](client)
+            repo   <- ResellableItemRepository.videoGame[IO](client)
             _      <- repo.saveAll(videoGames)
             exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
           } yield exists
@@ -42,7 +42,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "return false if does not exist" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo   <- ResellableItemRepository.videoGames[IO](client)
+            repo   <- ResellableItemRepository.videoGame[IO](client)
             exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
           } yield exists
 
@@ -56,7 +56,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "return all video games" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo <- ResellableItemRepository.videoGames[IO](client)
+            repo <- ResellableItemRepository.videoGame[IO](client)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll().compile.toList
           } yield all
@@ -68,7 +68,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "return all video games posted after provided date" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo <- ResellableItemRepository.videoGames[IO](client)
+            repo <- ResellableItemRepository.videoGame[IO](client)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll(from = Some(Instant.now)).compile.toList
           } yield all
@@ -80,7 +80,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "return all video games posted between provided dates" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo <- ResellableItemRepository.videoGames[IO](client)
+            repo <- ResellableItemRepository.videoGame[IO](client)
             _    <- repo.saveAll(videoGames)
             from = Some(Instant.now().minusSeconds(100))
             to   = Some(Instant.now.plusSeconds(100))
@@ -94,7 +94,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "return all video games posted before provided date" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo <- ResellableItemRepository.videoGames[IO](client)
+            repo <- ResellableItemRepository.videoGame[IO](client)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll(to = Some(Instant.now.minusSeconds(100))).compile.toList
           } yield all
@@ -106,7 +106,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "return all video games with limit" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo <- ResellableItemRepository.videoGames[IO](client)
+            repo <- ResellableItemRepository.videoGame[IO](client)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll(limit = Some(1)).compile.toList
           } yield all
@@ -120,7 +120,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
       "save video game in db" in {
         withEmbeddedMongoClient { client =>
           val result = for {
-            repo <- ResellableItemRepository.videoGames[IO](client)
+            repo <- ResellableItemRepository.videoGame[IO](client)
             res  <- repo.save(ResellableItemBuilder.videoGame("Witcher 3"))
           } yield res
 

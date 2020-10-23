@@ -49,9 +49,11 @@ class ResellableItemRepository[F[_]: ConcurrentEffect, I <: ResellableItem[_], E
 
 object ResellableItemRepository {
 
-  def videoGames[F[_]: ConcurrentEffect](
+  type VideoGameRepository[F[_]] = ResellableItemRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame]
+
+  def videoGame[F[_]: ConcurrentEffect](
       mongoClient: MongoClientF[F]
-  ): F[ResellableItemRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame]] =
+  ): F[VideoGameRepository[F]] =
     for {
       db   <- mongoClient.getDatabase("ebay-app")
       coll <- db.getCollection[ResellableItemEntity.VideoGame]("videoGames", ResellableItemEntity.videoGameCodec)
