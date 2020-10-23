@@ -11,8 +11,9 @@ object Dependencies {
     lazy val logback    = "1.2.3"
     lazy val log4cats   = "1.1.1"
 
-    lazy val scalaTest = "3.2.2"
-    lazy val mockito   = "1.10.3"
+    lazy val scalaTest     = "3.2.2"
+    lazy val mockito       = "1.10.3"
+    lazy val embeddedMongo = "2.2.0"
   }
 
   object Libraries {
@@ -61,24 +62,26 @@ object Dependencies {
       lazy val all = Seq(core, dsl, server, blaze, circe)
     }
 
-    lazy val scalaTest        = "org.scalatest" %% "scalatest"               % Versions.scalaTest
-    lazy val mockitoCore      = "org.mockito"   %% "mockito-scala"           % Versions.mockito
-    lazy val mockitoScalatest = "org.mockito"   %% "mockito-scala-scalatest" % Versions.mockito
+    lazy val scalaTest        = "org.scalatest"       %% "scalatest"                % Versions.scalaTest
+    lazy val mockitoCore      = "org.mockito"         %% "mockito-scala"            % Versions.mockito
+    lazy val mockitoScalatest = "org.mockito"         %% "mockito-scala-scalatest"  % Versions.mockito
+    lazy val embeddedMongo    = "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % Versions.embeddedMongo
   }
 
   lazy val core = Seq(
     Libraries.fs2,
     Libraries.mongo4cats
   ) ++
-    Dependencies.Libraries.circe.all ++
-    Dependencies.Libraries.http4s.all ++
-    Dependencies.Libraries.logging.all ++
-    Dependencies.Libraries.sttp.all ++
-    Dependencies.Libraries.pureconfig.all
+    Libraries.circe.all ++
+    Libraries.http4s.all ++
+    Libraries.logging.all ++
+    Libraries.sttp.all ++
+    Libraries.pureconfig.all
 
   lazy val test = Seq(
-    Dependencies.Libraries.scalaTest        % Test,
-    Dependencies.Libraries.mockitoCore      % Test,
-    Dependencies.Libraries.mockitoScalatest % Test
+    Libraries.scalaTest        % Test,
+    Libraries.mockitoCore      % Test,
+    Libraries.mockitoScalatest % Test,
+    Libraries.embeddedMongo    % Test
   )
 }
