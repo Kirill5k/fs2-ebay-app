@@ -18,7 +18,10 @@ class EbayDealsServiceSpec extends CatsSpec {
   val videoGame = ResellableItemBuilder.videoGame("super mario 3")
   val videoGame2 = ResellableItemBuilder.videoGame("Battlefield 1", resellPrice = None)
 
-  "An EbayVideoGameSearchService" should {
+  implicit val mapper: EbayItemMapper[Game] = EbayItemMapper.gameDetailsMapper
+  implicit val params: EbaySearchParams[Game] = EbaySearchParams.videoGameSearchParams
+
+  "An EbayDealsSearchService" should {
     "return new items from ebay" in {
       val (ebayClient, cexClient) = mockDependecies
       val searchResponse = List(videoGame, videoGame2)
@@ -30,7 +33,7 @@ class EbayDealsServiceSpec extends CatsSpec {
         .doReturn(IO.pure(None))
         .when(cexClient).findSellPrice(any[SearchQuery])
 
-      val service = EbayDealsService.videoGames(ebayClient, cexClient)
+      val service = EbayDealsService.make(ebayClient, cexClient)
 
       val latestItemsResponse = service.flatMap(_.find(SearchQuery("xbox"), 10.minutes).compile.toList)
 
@@ -49,7 +52,7 @@ class EbayDealsServiceSpec extends CatsSpec {
       when(ebayClient.findLatestItems[Game](any[SearchQuery], any[FiniteDuration])(any[EbayItemMapper[Game]], any[EbaySearchParams[Game]]))
         .thenReturn(Stream.evalSeq(IO.pure(searchResponse)))
 
-      val service = EbayDealsService.videoGames(ebayClient, cexClient)
+      val service = EbayDealsService.make(ebayClient, cexClient)
 
       val latestItemsResponse = service.flatMap(_.find(SearchQuery("xbox"), 10.minutes).compile.toList)
 

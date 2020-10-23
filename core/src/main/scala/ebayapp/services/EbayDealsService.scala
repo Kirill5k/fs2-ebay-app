@@ -12,52 +12,47 @@ import io.chrisdavenport.log4cats.Logger
 
 import scala.concurrent.duration._
 
-trait EbayDealsService[F[_], A] {
-  def find(query: SearchQuery, duration: FiniteDuration): fs2.Stream[F, A]
+trait EbayDealsService[F[_]] {
+  def find[D <: ItemDetails](
+      query: SearchQuery,
+      duration: FiniteDuration
+  )(
+      implicit m: EbayItemMapper[D],
+      p: EbaySearchParams[D]
+  ): fs2.Stream[F, ResellableItem[D]]
 }
 
-final class ResellableItemEbayDealsService[F[_], D <: ItemDetails](
+final class LiveEbayDealsService[F[_]: Timer: Logger: Sync](
     private val ebayClient: EbayClient[F],
     private val cexClient: CexClient[F]
-)(
-    implicit val M: EbayItemMapper[D],
-    val P: EbaySearchParams[D],
-    val S: Sync[F],
-    val L: Logger[F],
-    val T: Timer[F]
-) extends EbayDealsService[F, ResellableItem[D]] {
+) extends EbayDealsService[F] {
 
-  override def find(query: SearchQuery, duration: FiniteDuration): fs2.Stream[F, ResellableItem[D]] =
+  override def find[D <: ItemDetails](
+      query: SearchQuery,
+      duration: FiniteDuration
+  )(
+      implicit m: EbayItemMapper[D],
+      p: EbaySearchParams[D]
+  ): fs2.Stream[F, ResellableItem[D]] =
     ebayClient
       .findLatestItems[D](query, duration)
       .evalMap { item =>
         item.itemDetails.fullName match {
           case Some(name) =>
-            T.sleep(200.millis) *>
+            Timer[F].sleep(200.millis) *>
               cexClient.findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
           case None =>
-            L.warn(s"not enough details to query for resell price ${item.itemDetails}") *>
-              S.pure(item)
+            Logger[F].warn(s"not enough details to query for resell price ${item.itemDetails}") *>
+              Sync[F].pure(item)
         }
       }
 }
 
 object EbayDealsService {
 
-  def videoGames[F[_]: Sync: Timer: Logger](
+  def make[F[_]: Sync: Timer: Logger](
       ebayClient: EbayClient[F],
       cexClient: CexClient[F]
-  ): F[EbayDealsService[F, ResellableItem.VideoGame]] =
-    Sync[F].delay(
-      new ResellableItemEbayDealsService[F, ItemDetails.Game](
-        ebayClient,
-        cexClient
-      )(
-        EbayItemMapper.gameDetailsMapper,
-        EbaySearchParams.videoGameSearchParams,
-        Sync[F],
-        Logger[F],
-        Timer[F]
-      )
-    )
+  ): F[EbayDealsService[F]] =
+    Sync[F].delay(new LiveEbayDealsService[F](ebayClient, cexClient))
 }
