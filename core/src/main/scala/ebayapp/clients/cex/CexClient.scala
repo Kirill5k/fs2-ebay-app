@@ -18,8 +18,8 @@ import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
 import scala.concurrent.duration._
 
 trait CexClient[F[_]] {
-  def findResellPrice(query: SearchQuery): F[Option[SellPrice]]
-  def getCurrentStock[D <: ItemDetails](query: SearchQuery)(
+  def findSellPrice(query: SearchQuery): F[Option[SellPrice]]
+  def findItem[D <: ItemDetails](query: SearchQuery)(
     implicit mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]]
 }
@@ -34,7 +34,7 @@ final class CexApiClient[F[_]](
     L: Logger[F]
 ) extends CexClient[F] {
 
-  def findResellPrice(query: SearchQuery): F[Option[SellPrice]] =
+  def findSellPrice(query: SearchQuery): F[Option[SellPrice]] =
     resellPriceCache.get(query).flatMap {
       case Some(rp) => S.pure(rp)
       case None =>
@@ -52,7 +52,7 @@ final class CexApiClient[F[_]](
       cheapest <- data.boxes.minByOption(_.exchangePrice)
     } yield SellPrice(BigDecimal(cheapest.cashPrice), BigDecimal(cheapest.exchangePrice))
 
-  def getCurrentStock[D <: ItemDetails](query: SearchQuery)(
+  def findItem[D <: ItemDetails](query: SearchQuery)(
       implicit mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]] =
     search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")

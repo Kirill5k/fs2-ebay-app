@@ -34,7 +34,7 @@ final class ResellableItemEbayDealsService[F[_], D <: ItemDetails](
         item.itemDetails.fullName match {
           case Some(name) =>
             T.sleep(200.millis) *>
-              cexClient.findResellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
+              cexClient.findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
           case None =>
             L.warn(s"not enough details to query for resell price ${item.itemDetails}") *>
               S.pure(item)

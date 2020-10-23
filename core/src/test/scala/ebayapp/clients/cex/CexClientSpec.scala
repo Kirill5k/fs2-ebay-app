@@ -18,7 +18,7 @@ class CexClientSpec extends SttpClientSpec {
 
     val config = CexConfig("http://cex.com", CexPriceFindConfig(3.seconds, 1.second))
 
-    "get current stock" in {
+    "find items" in {
       val query = SearchQuery("macbook pro 16,1")
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
@@ -29,7 +29,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.getCurrentStock[ItemDetails.Generic](query))
+      val result = cexClient.flatMap(_.findItem[ItemDetails.Generic](query))
 
       result
         .unsafeToFuture()
@@ -55,7 +55,7 @@ class CexClientSpec extends SttpClientSpec {
         )))
     }
 
-    "find minimal resell price" in {
+    "find minimal sell price" in {
       val query = SearchQuery("super mario 3 XBOX ONE")
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
@@ -66,7 +66,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.findResellPrice(query))
+      val result = cexClient.flatMap(_.findSellPrice(query))
 
       result.unsafeToFuture().map { price =>
         price must be(Some(SellPrice(BigDecimal(108), BigDecimal(153))))
@@ -84,8 +84,8 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = for {
         cexClient <- CexClient.make[IO](config, testingBackend)
-        _         <- cexClient.findResellPrice(query)
-        rp        <- cexClient.findResellPrice(query)
+        _         <- cexClient.findSellPrice(query)
+        rp        <- cexClient.findSellPrice(query)
       } yield rp
 
       result.unsafeToFuture().map { price =>
@@ -105,9 +105,9 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = for {
         cexClient <- CexClient.make[IO](config, testingBackend)
-        _         <- cexClient.findResellPrice(query)
+        _         <- cexClient.findSellPrice(query)
         _         <- timer.sleep(4.seconds)
-        rp        <- cexClient.findResellPrice(query)
+        rp        <- cexClient.findSellPrice(query)
       } yield rp
 
       result.attempt.unsafeToFuture().map { res =>
@@ -126,7 +126,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.findResellPrice(query))
+      val result = cexClient.flatMap(_.findSellPrice(query))
 
       result.unsafeToFuture().map { price =>
         price must be(None)
@@ -144,7 +144,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.findResellPrice(query))
+      val result = cexClient.flatMap(_.findSellPrice(query))
 
       result.attempt.unsafeToFuture().map { price =>
         price must be(
@@ -164,7 +164,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.findResellPrice(query))
+      val result = cexClient.flatMap(_.findSellPrice(query))
 
       result.attempt.unsafeToFuture().map { price =>
         price must be(Left(AppError.Http(400, "error sending request to cex: 400")))
@@ -183,7 +183,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.findResellPrice(query))
+      val result = cexClient.flatMap(_.findSellPrice(query))
 
       result.unsafeToFuture().map { price =>
         price must be(Some(SellPrice(BigDecimal(108), BigDecimal(153))))

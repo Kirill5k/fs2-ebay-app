@@ -28,7 +28,7 @@ class EbayDealsServiceSpec extends CatsSpec {
 
       doReturn(IO.pure(videoGame.sellPrice))
         .doReturn(IO.pure(None))
-        .when(cexClient).findResellPrice(any[SearchQuery])
+        .when(cexClient).findSellPrice(any[SearchQuery])
 
       val service = EbayDealsService.videoGames(ebayClient, cexClient)
 
@@ -36,7 +36,7 @@ class EbayDealsServiceSpec extends CatsSpec {
 
       latestItemsResponse.unsafeToFuture().map { items =>
         verify(ebayClient).findLatestItems[Game](SearchQuery("xbox"), 10.minutes)
-        verify(cexClient, times(2)).findResellPrice(any[SearchQuery])
+        verify(cexClient, times(2)).findSellPrice(any[SearchQuery])
         items must be (List(videoGame, videoGame2))
       }
     }
@@ -55,7 +55,7 @@ class EbayDealsServiceSpec extends CatsSpec {
 
       latestItemsResponse.unsafeToFuture().map { items =>
         verify(ebayClient).findLatestItems[Game](SearchQuery("xbox"), 10.minutes)
-        verify(cexClient, never).findResellPrice(any[SearchQuery])
+        verify(cexClient, never).findSellPrice(any[SearchQuery])
         items must be (List(ResellableItem(itemDetails, videoGame.listingDetails, videoGame.buyPrice, None)))
       }
     }

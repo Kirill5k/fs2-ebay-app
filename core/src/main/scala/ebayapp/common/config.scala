@@ -39,9 +39,15 @@ object config {
       cacheValidationPeriod: FiniteDuration
   )
 
+  final case class CexStockCheckConfig(
+      cacheExpiration: FiniteDuration,
+      cacheValidationPeriod: FiniteDuration
+  )
+
   final case class CexConfig(
       baseUri: String,
-      priceFind: CexPriceFindConfig
+      priceFind: CexPriceFindConfig,
+      stockCheck: CexStockCheckConfig
   )
 
   final case class TelegramConfig(
