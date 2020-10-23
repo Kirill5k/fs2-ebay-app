@@ -5,7 +5,7 @@ import ebayapp.clients.Clients
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import ebayapp.common.config.AppConfig
-import ebayapp.repositories.Repositories
+import ebayapp.repositories.MongoRepositories
 
 object Application extends IOApp {
 
@@ -21,7 +21,7 @@ object Application extends IOApp {
           _ <- logger.info("created resources")
           _ <- Clients.make(config, resources.httpClientBackend)
           _ <- logger.info("created clients")
-          _ <- Repositories.make(resources.mongoClient)
+          _ <- MongoRepositories.make(resources.mongoClient)
           _ <- logger.info("created repositories")
         } yield ()
       }
