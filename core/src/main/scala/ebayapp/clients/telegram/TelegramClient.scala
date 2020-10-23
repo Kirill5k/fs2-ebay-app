@@ -7,13 +7,19 @@ import ebayapp.common.errors.AppError
 import io.chrisdavenport.log4cats.Logger
 import sttp.client._
 
-final class TelegramClient[F[_]](
+trait TelegramClient[F[_]] {
+  def sendMessageToMainChannel(message: String): F[Unit]
+  def sendMessageToSecondaryChannel(message: String): F[Unit]
+  def sendMessage(channelId: String, message: String): F[Unit]
+}
+
+final class TelegramApiClient[F[_]](
     val config: TelegramConfig
 )(
     implicit val B: SttpBackend[F, Nothing, NothingT],
     val S: Sync[F],
     val L: Logger[F]
-) {
+) extends TelegramClient[F] {
 
   def sendMessageToMainChannel(message: String): F[Unit] =
     sendMessage(config.mainChannelId, message)
@@ -41,5 +47,5 @@ object TelegramClient {
       config: TelegramConfig,
       backend: SttpBackend[F, Nothing, NothingT]
   ): F[TelegramClient[F]] =
-    Sync[F].delay(new TelegramClient[F](config)(B = backend, S = Sync[F], L = Logger[F]))
+    Sync[F].delay(new TelegramApiClient[F](config)(B = backend, S = Sync[F], L = Logger[F]))
 }

@@ -4,20 +4,18 @@ import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.ebay.auth.EbayAuthClient
 import ebayapp.clients.ebay.browse.EbayBrowseClient
-import ebayapp.clients.ebay.browse.responses.{EbayItem, EbayItemSummary, ItemImage, ItemPrice, ItemProperty, ItemSeller, ItemShippingOption, ShippingCost}
+import ebayapp.clients.ebay.browse.responses._
 import ebayapp.common.Cache
 import ebayapp.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.ItemDetails
 import ebayapp.domain.ItemDetails.Game
 import ebayapp.domain.search.SearchQuery
-import org.mockito.ArgumentMatchersSugar
 import org.mockito.captor.ArgCaptor
-import org.mockito.scalatest.AsyncMockitoSugar
 
 import scala.concurrent.duration._
 
-class EbayClientSpec extends CatsSpec with AsyncMockitoSugar with ArgumentMatchersSugar {
+class EbayClientSpec extends CatsSpec {
 
   val accessToken = "access-token"
   val searchQuery = SearchQuery("xbox")
