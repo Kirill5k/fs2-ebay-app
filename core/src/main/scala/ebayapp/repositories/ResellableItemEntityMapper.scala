@@ -3,7 +3,7 @@ package ebayapp.repositories
 import ebayapp.domain.search.{BuyPrice, SellPrice}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.repositories.entities.ResellableItemEntity
-import ebayapp.repositories.entities.ResellableItemEntity.ItemPrice
+import ebayapp.repositories.entities.ItemPrice
 import cats.implicits._
 import org.mongodb.scala.bson.ObjectId
 

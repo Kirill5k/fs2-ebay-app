@@ -9,16 +9,16 @@ import org.mongodb.scala.bson.codecs.Macros._
 
 private[repositories] object entities {
 
+  final case class ItemPrice(
+      buy: String,
+      quantityAvailable: Int,
+      sell: Option[String],
+      credit: Option[String]
+  )
+
   sealed trait ResellableItemEntity
 
   object ResellableItemEntity {
-
-    final case class ItemPrice(
-        buy: String,
-        quantityAvailable: Int,
-        sell: Option[String],
-        credit: Option[String]
-    )
 
     final case class VideoGame(
         _id: ObjectId,
