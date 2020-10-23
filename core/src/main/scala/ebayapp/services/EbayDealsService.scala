@@ -12,11 +12,11 @@ import io.chrisdavenport.log4cats.Logger
 
 import scala.concurrent.duration._
 
-trait EbayDealsSearchService[F[_], A] {
+trait EbayDealsService[F[_], A] {
   def find(query: SearchQuery, duration: FiniteDuration): fs2.Stream[F, A]
 }
 
-final class ResellableItemEbayDealsSearchService[F[_], D <: ItemDetails](
+final class ResellableItemEbayDealsService[F[_], D <: ItemDetails](
     private val ebayClient: EbayClient[F],
     private val cexClient: CexClient[F]
 )(
@@ -25,7 +25,7 @@ final class ResellableItemEbayDealsSearchService[F[_], D <: ItemDetails](
     val S: Sync[F],
     val L: Logger[F],
     val T: Timer[F]
-) extends EbayDealsSearchService[F, ResellableItem[D]] {
+) extends EbayDealsService[F, ResellableItem[D]] {
 
   override def find(query: SearchQuery, duration: FiniteDuration): fs2.Stream[F, ResellableItem[D]] =
     ebayClient
@@ -42,14 +42,14 @@ final class ResellableItemEbayDealsSearchService[F[_], D <: ItemDetails](
       }
 }
 
-object EbayDealsSearchService {
+object EbayDealsService {
 
   def videoGames[F[_]: Sync: Timer: Logger](
       ebayClient: EbayClient[F],
       cexClient: CexClient[F]
-  ): F[EbayDealsSearchService[F, ResellableItem.VideoGame]] =
+  ): F[EbayDealsService[F, ResellableItem.VideoGame]] =
     Sync[F].delay(
-      new ResellableItemEbayDealsSearchService[F, ItemDetails.Game](
+      new ResellableItemEbayDealsService[F, ItemDetails.Game](
         ebayClient,
         cexClient
       )(

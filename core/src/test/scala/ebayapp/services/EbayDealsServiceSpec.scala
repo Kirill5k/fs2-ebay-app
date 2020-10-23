@@ -13,7 +13,7 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-class EbayDealsSearchServiceSpec extends CatsSpec {
+class EbayDealsServiceSpec extends CatsSpec {
 
   val videoGame = ResellableItemBuilder.videoGame("super mario 3")
   val videoGame2 = ResellableItemBuilder.videoGame("Battlefield 1", resellPrice = None)
@@ -30,7 +30,7 @@ class EbayDealsSearchServiceSpec extends CatsSpec {
         .doReturn(IO.pure(None))
         .when(cexClient).findResellPrice(any[SearchQuery])
 
-      val service = EbayDealsSearchService.videoGames(ebayClient, cexClient)
+      val service = EbayDealsService.videoGames(ebayClient, cexClient)
 
       val latestItemsResponse = service.flatMap(_.find(SearchQuery("xbox"), 10.minutes).compile.toList)
 
@@ -49,7 +49,7 @@ class EbayDealsSearchServiceSpec extends CatsSpec {
       when(ebayClient.findLatestItems[Game](any[SearchQuery], any[FiniteDuration])(any[EbayItemMapper[Game]], any[EbaySearchParams[Game]]))
         .thenReturn(Stream.evalSeq(IO.pure(searchResponse)))
 
-      val service = EbayDealsSearchService.videoGames(ebayClient, cexClient)
+      val service = EbayDealsService.videoGames(ebayClient, cexClient)
 
       val latestItemsResponse = service.flatMap(_.find(SearchQuery("xbox"), 10.minutes).compile.toList)
 
