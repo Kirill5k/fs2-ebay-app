@@ -1,6 +1,6 @@
 package ebayapp.tasks
 
-import cats.effect.{IO, Sync, Timer}
+import cats.effect.{Sync, Timer}
 import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.EbayDealsConfig
@@ -31,7 +31,7 @@ abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
         Stream.eval(Logger[F].error(error)(s"error obtaining new items from ebay: ${error.getMessage}")).drain
       }
       .drain
-      .evalTap(_ => Timer[F].sleep(dealsConfig.searchFrequency))
+      .delayBy(dealsConfig.searchFrequency)
       .repeat
 
   private val isProfitableToResell: ResellableItem[D] => Boolean =
