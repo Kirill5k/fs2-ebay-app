@@ -1,12 +1,12 @@
 package ebayapp.domain
 
-import ebayapp.domain.search.{ListingDetails, Price, ResellPrice}
+import ebayapp.domain.search.{BuyPrice, ListingDetails, SellPrice}
 
 final case class ResellableItem[D <: ItemDetails](
     itemDetails: D,
     listingDetails: ListingDetails,
-    price: Price,
-    resellPrice: Option[ResellPrice]
+    buyPrice: BuyPrice,
+    sellPrice: Option[SellPrice]
 )
 
 object ResellableItem {

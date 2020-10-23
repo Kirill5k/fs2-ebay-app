@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 
 final class CexClient[F[_]](
     private val config: CexConfig,
-    private val resellPriceCache: Cache[F, SearchQuery, Option[ResellPrice]]
+    private val resellPriceCache: Cache[F, SearchQuery, Option[SellPrice]]
 )(
     implicit val B: SttpBackend[F, Nothing, NothingT],
     S: Sync[F],
@@ -27,7 +27,7 @@ final class CexClient[F[_]](
     L: Logger[F]
 ) {
 
-  def findResellPrice(query: SearchQuery): F[Option[ResellPrice]] =
+  def findResellPrice(query: SearchQuery): F[Option[SellPrice]] =
     resellPriceCache.get(query).flatMap {
       case Some(rp) => S.pure(rp)
       case None =>
@@ -39,11 +39,11 @@ final class CexClient[F[_]](
           }
     }
 
-  private def getMinResellPrice(searchResponse: CexSearchResponse): Option[ResellPrice] =
+  private def getMinResellPrice(searchResponse: CexSearchResponse): Option[SellPrice] =
     for {
       data     <- searchResponse.response.data
       cheapest <- data.boxes.minByOption(_.exchangePrice)
-    } yield ResellPrice(BigDecimal(cheapest.cashPrice), BigDecimal(cheapest.exchangePrice))
+    } yield SellPrice(BigDecimal(cheapest.cashPrice), BigDecimal(cheapest.exchangePrice))
 
   def getCurrentStock[D <: ItemDetails](query: SearchQuery)(
       implicit mapper: CexItemMapper[D]
@@ -104,7 +104,7 @@ object CexClient {
       backend: SttpBackend[F, Nothing, NothingT]
   ): F[CexClient[F]] =
     Cache
-      .make[F, SearchQuery, Option[ResellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
+      .make[F, SearchQuery, Option[SellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
       .map { cache =>
         new CexClient[F](config, cache)(B = backend, S = Sync[F], T = Timer[F], L = Logger[F])
       }

@@ -6,12 +6,12 @@ object search {
 
   final case class SearchQuery(value: String) extends AnyVal
 
-  final case class ResellPrice(
+  final case class SellPrice(
       cash: BigDecimal,
       credit: BigDecimal
   )
 
-  final case class Price(
+  final case class BuyPrice(
       quantityAvailable: Int,
       value: BigDecimal
   )

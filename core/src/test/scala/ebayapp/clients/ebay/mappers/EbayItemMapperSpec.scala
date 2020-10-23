@@ -2,7 +2,7 @@ package ebayapp.clients.ebay.mappers
 
 import ebayapp.clients.ebay.browse.responses._
 import ebayapp.domain.ItemDetails
-import ebayapp.domain.search.{ListingDetails, Price}
+import ebayapp.domain.search.{ListingDetails, BuyPrice}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -83,7 +83,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
         )
       ))
 
-      game.price must be(Price(1, BigDecimal(32.99)))
+      game.buyPrice must be(BuyPrice(1, BigDecimal(32.99)))
     }
 
     "transform to GameDetails even if no shipping options" in {
@@ -108,7 +108,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
         )
       ))
 
-      game.price must be(Price(1, BigDecimal(30.0)))
+      game.buyPrice must be(BuyPrice(1, BigDecimal(30.0)))
     }
 
     "transform to PhoneDetails" in {
@@ -141,7 +141,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
         )
       ))
 
-      phone.price must be(Price(1, BigDecimal(429.99)))
+      phone.buyPrice must be(BuyPrice(1, BigDecimal(429.99)))
     }
   }
 }

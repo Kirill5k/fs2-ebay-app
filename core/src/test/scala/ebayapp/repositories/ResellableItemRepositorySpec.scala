@@ -1,6 +1,7 @@
 package ebayapp.repositories
 
 import java.time.Instant
+import java.time.temporal.ChronoField.MILLI_OF_SECOND
 
 import cats.effect.{ContextShift, IO}
 import ebayapp.domain.{ResellableItem, ResellableItemBuilder}
@@ -18,9 +19,9 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
   implicit val logger: Logger[IO]   = Slf4jLogger.getLogger[IO]
 
   val videoGames: List[ResellableItem.VideoGame] = List(
-    ResellableItemBuilder.videoGame("GTA 5", Instant.now().minusSeconds(1000)),
-    ResellableItemBuilder.videoGame("Call of Duty WW2", Instant.now()),
-    ResellableItemBuilder.videoGame("Super Mario 3", Instant.now().plusSeconds(1000))
+    ResellableItemBuilder.videoGame("GTA 5", Instant.now().minusSeconds(1000).`with`(MILLI_OF_SECOND, 0)),
+    ResellableItemBuilder.videoGame("Call of Duty WW2", Instant.now().`with`(MILLI_OF_SECOND, 0)),
+    ResellableItemBuilder.videoGame("Super Mario 3", Instant.now().plusSeconds(1000).`with`(MILLI_OF_SECOND, 0))
   )
 
   "VideoGameRepository" should {
@@ -110,7 +111,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.findAll(limit = Some(1)).compile.toList
           } yield all
 
-          result.unsafeRunSync() must be(List(videoGames(1)))
+          result.unsafeRunSync() must be(List(videoGames(2)))
         }
       }
     }

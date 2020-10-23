@@ -1,29 +1,39 @@
 package ebayapp.repositories
 
 import ebayapp.domain.ItemDetails
-import ebayapp.domain.search.{ListingDetails, Price, ResellPrice}
-import org.mongodb.scala.bson.ObjectId
-import org.mongodb.scala.bson.codecs.Macros._
+import ebayapp.domain.search.ListingDetails
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
+import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.bson.codecs.Macros._
 
 private[repositories] object entities {
 
-  final case class ResellableItemEntity[D <: ItemDetails](
-      _id: Option[ObjectId],
-      itemDetails: D,
-      listingDetails: ListingDetails,
-      price: Price,
-      resellPrice: Option[ResellPrice]
-  )
+  sealed trait ResellableItemEntity
 
   object ResellableItemEntity {
-    type VideoGame = ResellableItemEntity[ItemDetails.Game]
+
+    final case class ItemPrice(
+        buy: String,
+        quantityAvailable: Int,
+        sell: Option[String],
+        credit: Option[String]
+    )
+
+    final case class VideoGame(
+        _id: ObjectId,
+        itemDetails: ItemDetails.Game,
+        listingDetails: ListingDetails,
+        price: ItemPrice
+    ) extends ResellableItemEntity
 
     val videoGameCodec = fromRegistries(
-      fromProviders(classOf[ResellableItemEntity[ItemDetails.Game]]),
-      fromProviders(classOf[ListingDetails]),
-      fromProviders(classOf[ResellPrice]),
+      fromProviders(
+        classOf[ResellableItemEntity],
+        classOf[ItemDetails],
+        classOf[ListingDetails],
+        classOf[ItemPrice]
+      ),
       DEFAULT_CODEC_REGISTRY
     )
   }

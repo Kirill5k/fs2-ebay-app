@@ -4,7 +4,7 @@ import java.time.Instant
 
 import ebayapp.clients.cex.CexClient.SearchResult
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.domain.search.{ListingDetails, Price, ResellPrice}
+import ebayapp.domain.search.{ListingDetails, BuyPrice, SellPrice}
 
 object mappers {
 
@@ -22,11 +22,11 @@ object mappers {
       )
   }
 
-  private def price(sr: SearchResult): Price =
-    Price(sr.ecomQuantityOnHand, sr.sellPrice)
+  private def price(sr: SearchResult): BuyPrice =
+    BuyPrice(sr.ecomQuantityOnHand, sr.sellPrice)
 
-  private def resellPrice(sr: SearchResult): ResellPrice =
-    ResellPrice(sr.cashPrice, sr.exchangePrice)
+  private def resellPrice(sr: SearchResult): SellPrice =
+    SellPrice(sr.cashPrice, sr.exchangePrice)
 
   private def listingDetails(sr: SearchResult): ListingDetails =
     ListingDetails(

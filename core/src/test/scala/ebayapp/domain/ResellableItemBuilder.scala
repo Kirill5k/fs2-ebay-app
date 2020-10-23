@@ -2,7 +2,7 @@ package ebayapp.domain
 
 import java.time.Instant
 
-import ebayapp.domain.search.ResellPrice
+import ebayapp.domain.search.SellPrice
 import ItemDetails.{Game, Phone}
 import ResellableItem.{GenericItem, MobilePhone, VideoGame}
 import search._
@@ -13,7 +13,7 @@ object ResellableItemBuilder {
     ResellableItem(
       ItemDetails.Generic(name),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, "USED", Instant.now(), "CEX", Map()),
-      Price(quantity, BigDecimal(price)),
+      BuyPrice(quantity, BigDecimal(price)),
       None
     )
 
@@ -21,7 +21,7 @@ object ResellableItemBuilder {
       name: String,
       datePosted: Instant = Instant.now(),
       platform: Option[String] = Some("XBOX ONE"),
-      resellPrice: Option[ResellPrice] = Some(ResellPrice(BigDecimal.valueOf(100), BigDecimal.valueOf(80)))
+      resellPrice: Option[SellPrice] = Some(SellPrice(BigDecimal.valueOf(100), BigDecimal.valueOf(80)))
   ): VideoGame =
     ResellableItem(
       Game(Some(name), platform, Some("2019"), Some("Action")),
@@ -43,7 +43,7 @@ object ResellableItemBuilder {
           "Genre"        -> "Action"
         )
       ),
-      Price(1, BigDecimal(32.99)),
+      BuyPrice(1, BigDecimal(32.99)),
       resellPrice
     )
 
@@ -67,7 +67,7 @@ object ResellableItemBuilder {
         "EBAY:168.robinhood",
         Map()
       ),
-      Price(1, BigDecimal(99.99)),
-      Some(ResellPrice(BigDecimal.valueOf(150), BigDecimal.valueOf(110)))
+      BuyPrice(1, BigDecimal(99.99)),
+      Some(SellPrice(BigDecimal.valueOf(150), BigDecimal.valueOf(110)))
     )
 }
