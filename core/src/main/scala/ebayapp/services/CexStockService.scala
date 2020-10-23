@@ -28,7 +28,7 @@ final class StatefulCexStockService[F[_]: Sync, D <: ItemDetails](
       .map(_.filter(_.itemDetails.fullName.isDefined))
       .flatMap { items =>
         searchHistory.contains(request.query).flatMap {
-          case false => Sync[F].pure(Nil) <* updateCache(items)
+          case false => Sync[F].pure(List.empty[StockUpdate[D]]) <* updateCache(items)
           case true  => getStockUpdates(items, request.monitorStockChange, request.monitorPriceChange) <* updateCache(items)
         }
       }
