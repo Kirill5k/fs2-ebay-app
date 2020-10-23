@@ -2,7 +2,7 @@ package ebayapp.repositories
 
 import java.time.Instant
 
-import cats.effect.{Async, ConcurrentEffect}
+import cats.effect.ConcurrentEffect
 import cats.implicits._
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.repositories.entities.ResellableItemEntity
@@ -22,6 +22,9 @@ class ResellableItemRepository[F[_]: ConcurrentEffect, D <: ItemDetails](
 
   def save(item: ResellableItem[D]): F[Unit] =
     mongoCollection.insertOne[F](entityMapper.toEntity(item)).void
+
+  def saveAll(items: Seq[ResellableItem[D]]): F[Unit] =
+    mongoCollection.insertMany[F](items.map(entityMapper.toEntity)).void
 
   def findAll(
       limit: Option[Int] = None,
