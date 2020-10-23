@@ -2,7 +2,7 @@ package ebayapp.clients.cex
 
 import cats.effect.IO
 import ebayapp.SttpClientSpec
-import ebayapp.common.config.{CexConfig, CexPriceFindConfig, CexStockCheckConfig}
+import ebayapp.common.config.{CexConfig, CexPriceFindConfig, CexStockCheckConfig, SearchQuery}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search._

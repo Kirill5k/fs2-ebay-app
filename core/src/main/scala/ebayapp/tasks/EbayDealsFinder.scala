@@ -28,7 +28,7 @@ abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
       .filter(isProfitableToResell)
       .evalTap(notificationService.cheapItem)
       .handleErrorWith { error =>
-        Stream.eval(Logger[F].error(error)(s"error obtaining new items from ebay: ${error.getMessage}")).drain
+        Stream.eval(Logger[F].error(error)(s"error getting deals from ebay")).drain
       }
       .drain
       .delayBy(dealsConfig.searchFrequency)

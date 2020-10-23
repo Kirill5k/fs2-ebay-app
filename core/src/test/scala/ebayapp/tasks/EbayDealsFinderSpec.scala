@@ -13,8 +13,8 @@ import scala.concurrent.duration._
 
 class EbayDealsFinderSpec extends CatsSpec {
 
-  val searchQueries = List(SearchQuery("q1"), SearchQuery("q1"))
-  val dealConfig    = EbayDealsConfig(3.seconds, searchQueries, 20.minutes, 34)
+  val searchQueries = List(SearchQuery("q1"), SearchQuery("q2"))
+  val dealConfig    = EbayDealsConfig(2.seconds, searchQueries, 20.minutes, 34)
 
   implicit val mapper: EbayItemMapper[Game]   = EbayItemMapper.gameDetailsMapper
   implicit val params: EbaySearchParams[Game] = EbaySearchParams.videoGameSearchParams
@@ -23,20 +23,38 @@ class EbayDealsFinderSpec extends CatsSpec {
 
     "retry forever periodically" in {
       val services = mocks
-      when(
-        services.ebayDeals
-          .find(any[SearchQuery], any[FiniteDuration])(any[EbayItemMapper[ItemDetails.Game]], any[EbaySearchParams[ItemDetails.Game]])
-      ).thenReturn(fs2.Stream.empty)
+      when(services.ebayDeals.find(any[SearchQuery], any[FiniteDuration])(eqTo(mapper), eqTo(params)))
+        .thenReturn(fs2.Stream.empty)
 
       val result = for {
         task  <- EbayDealsFinder.videoGames(dealConfig, services)
         fiber <- task.searchForCheapItems().compile.drain.start
-        _     <- IO.sleep(10.seconds)
+        _     <- IO.sleep(5.seconds)
         _     <- fiber.cancel
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals, times(6)).find(any[SearchQuery], eqTo(20.minutes))(eqTo(mapper), eqTo(params))
+        verify(services.ebayDeals, times(2)).find(SearchQuery("q1"), 20.minutes)(mapper, params)
+        verify(services.ebayDeals, times(2)).find(SearchQuery("q2"), 20.minutes)(mapper, params)
+        r must be(())
+      }
+    }
+
+    "continue despite errors" in {
+      val services = mocks
+      when(services.ebayDeals.find(SearchQuery("q1"), 20.minutes)(mapper, params))
+        .thenReturn(fs2.Stream.raiseError[IO](new RuntimeException("uh-oh")))
+
+      val result = for {
+        task  <- EbayDealsFinder.videoGames(dealConfig, services)
+        fiber <- task.searchForCheapItems().compile.drain.start
+        _     <- IO.sleep(5.seconds)
+        _     <- fiber.cancel
+      } yield ()
+
+      result.unsafeToFuture().map { r =>
+        verify(services.ebayDeals, times(2)).find(SearchQuery("q1"), 20.minutes)(mapper, params)
+        verify(services.ebayDeals, never).find(SearchQuery("q2"), 20.minutes)(mapper, params)
         r must be(())
       }
     }
