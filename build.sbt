@@ -13,7 +13,7 @@ lazy val docker = Seq(
   packageName := moduleName.value,
   version := sys.env.getOrElse("APP_VERSION", version.value),
   maintainer := "immotional@aol.com",
-  dockerBaseImage := "docker pull adoptopenjdk/openjdk15-openj9:alpine-jre",
+  dockerBaseImage := "adoptopenjdk/openjdk15-openj9:alpine-jre",
   dockerUpdateLatest := true,
   makeBatScripts := List()
 )
