@@ -25,10 +25,10 @@ jobs:
       - name: Stage docker image
         run: sbt docker:stage
       - name: Push to heroku
-        working-directory: ./core/target/docker/stage
         uses: akhileshns/heroku-deploy@v3.6.8
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "fs2-ebay"
           heroku_email: "immotional@aol.com"
           usedocker: true
+          appdir: ./core/target/docker/stage
