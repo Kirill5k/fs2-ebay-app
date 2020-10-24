@@ -1,6 +1,6 @@
 package ebayapp.services
 
-import cats.effect.{Sync, Timer}
+import cats.effect.Sync
 import cats.implicits._
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.ebay.EbayClient
@@ -22,7 +22,7 @@ trait EbayDealsService[F[_]] {
   ): fs2.Stream[F, ResellableItem[D]]
 }
 
-final class LiveEbayDealsService[F[_]: Timer: Logger: Sync](
+final class LiveEbayDealsService[F[_]: Logger: Sync](
     private val ebayClient: EbayClient[F],
     private val cexClient: CexClient[F]
 ) extends EbayDealsService[F] {
@@ -39,8 +39,7 @@ final class LiveEbayDealsService[F[_]: Timer: Logger: Sync](
       .evalMap { item =>
         item.itemDetails.fullName match {
           case Some(name) =>
-            Timer[F].sleep(200.millis) *>
-              cexClient.findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
+            cexClient.findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
           case None =>
             Logger[F].warn(s"not enough details to query for resell price ${item.itemDetails}") *>
               Sync[F].pure(item)
@@ -50,7 +49,7 @@ final class LiveEbayDealsService[F[_]: Timer: Logger: Sync](
 
 object EbayDealsService {
 
-  def make[F[_]: Sync: Timer: Logger](
+  def make[F[_]: Sync: Logger](
       ebayClient: EbayClient[F],
       cexClient: CexClient[F]
   ): F[EbayDealsService[F]] =
