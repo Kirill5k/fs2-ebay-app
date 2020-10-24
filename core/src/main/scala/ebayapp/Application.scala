@@ -7,6 +7,7 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import ebayapp.common.config.AppConfig
 import ebayapp.repositories.Repositories
 import ebayapp.services.Services
+import ebayapp.tasks.Tasks
 
 object Application extends IOApp {
 
@@ -21,7 +22,8 @@ object Application extends IOApp {
           _            <- logger.info("created resources")
           clients      <- Clients.make(config, resources.httpClientBackend) <* logger.info("created clients")
           repositories <- Repositories.make(resources.mongoClient) <* logger.info("created repositories")
-          _            <- Services.make(config, clients, repositories) <* logger.info("created service")
+          services     <- Services.make(config, clients, repositories) <* logger.info("created services")
+          _            <- Tasks.make(config, services) <* logger.info("created tasks")
         } yield ()
       }
     } yield ExitCode.Success
