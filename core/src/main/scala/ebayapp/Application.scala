@@ -30,7 +30,7 @@ object Application extends IOApp {
           controllers  <- Controllers.make(resources.blocker, services) <* logger.info("created controllers")
           server       <- HttpServer.make(config.server, controllers.routes, ExecutionContext.global)
           _            <- server.start() <* logger.info("started http server")
-          _            <- tasks.processes.compile.drain
+          _            <- logger.info("initiating search tasks") *> tasks.processes.compile.drain
         } yield ()
       }
     } yield ExitCode.Success
