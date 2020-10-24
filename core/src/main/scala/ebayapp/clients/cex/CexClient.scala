@@ -57,7 +57,7 @@ final class CexApiClient[F[_]](
   ): F[List[ResellableItem[D]]] =
     search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")
       .map(_.response.data.fold(List.empty[SearchResult])(_.boxes))
-      .flatTap(res => L.info(s""""${query.value}" stock request returned ${res.size} results"""))
+      .flatTap(res => L.info(s""""${query.value}" find request returned ${res.size} results"""))
       .map(_.map(mapper.toDomain))
 
   private def search(uri: Uri): F[CexSearchResponse] =

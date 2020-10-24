@@ -13,7 +13,7 @@ final case class Tasks[F[_]: Concurrent](
 ) {
   def processes: fs2.Stream[F, Unit] = fs2.Stream(
     genericCexStockMonitor.monitorStock(),
-    videoGamesEbayDealsFinder.searchForCheapItems()
+//    videoGamesEbayDealsFinder.searchForCheapItems()
   ).covary[F].parJoinUnbounded
 }
 

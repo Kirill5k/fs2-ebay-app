@@ -34,8 +34,8 @@ class EbayDealsFinderSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals, times(2)).find(SearchQuery("q1"), 20.minutes)(mapper, params)
-        verify(services.ebayDeals, times(2)).find(SearchQuery("q2"), 20.minutes)(mapper, params)
+        verify(services.ebayDeals, times(3)).find(SearchQuery("q1"), 20.minutes)(mapper, params)
+        verify(services.ebayDeals, times(3)).find(SearchQuery("q2"), 20.minutes)(mapper, params)
         r must be(())
       }
     }
@@ -53,7 +53,7 @@ class EbayDealsFinderSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals, times(2)).find(SearchQuery("q1"), 20.minutes)(mapper, params)
+        verify(services.ebayDeals, times(3)).find(SearchQuery("q1"), 20.minutes)(mapper, params)
         verify(services.ebayDeals, never).find(SearchQuery("q2"), 20.minutes)(mapper, params)
         r must be(())
       }

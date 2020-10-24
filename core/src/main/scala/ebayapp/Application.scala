@@ -9,6 +9,8 @@ import ebayapp.controllers.Controllers
 import ebayapp.repositories.Repositories
 import ebayapp.services.Services
 import ebayapp.tasks.Tasks
+import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.implicits._
 
 import scala.concurrent.ExecutionContext
 
@@ -28,9 +30,14 @@ object Application extends IOApp {
           services     <- Services.make(config, clients, repositories) <* logger.info("created services")
           tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
           controllers  <- Controllers.make(resources.blocker, services) <* logger.info("created controllers")
-          server       <- HttpServer.make(config.server, controllers.routes, ExecutionContext.global)
-          _            <- server.start() <* logger.info("started http server")
-          _            <- logger.info("initiating search tasks") *> tasks.processes.compile.drain
+          _            <- logger.info("initiating search tasks") *> tasks.processes.compile.drain.start
+          _            <- logger.info("starting http server")
+          _ <- BlazeServerBuilder[IO](ExecutionContext.global)
+            .bindHttp(config.server.port, config.server.host)
+            .withHttpApp(controllers.routes.orNotFound)
+            .serve
+            .compile
+            .drain
         } yield ()
       }
     } yield ExitCode.Success

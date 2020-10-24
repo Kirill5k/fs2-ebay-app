@@ -15,17 +15,17 @@ abstract class CexStockMonitor[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
   protected def notificationService: NotificationService[F]
 
   def monitorStock(): fs2.Stream[F, Unit] =
-    fs2.Stream
-      .emits(stockMonitorConfig.monitoringRequests)
-      .evalMap(stockService.getUpdates)
-      .flatMap(fs2.Stream.emits)
-      .evalTap(notificationService.stockUpdate[D])
-      .handleErrorWith { error =>
-        Stream.eval(Logger[F].error(error)(s"error obtaining stock updates from cex")).drain
-      }
-      .drain
-      .delayBy(stockMonitorConfig.monitoringFrequency)
-      .repeat
+    (
+      fs2.Stream
+        .emits(stockMonitorConfig.monitoringRequests)
+        .evalMap(stockService.getUpdates)
+        .flatMap(fs2.Stream.emits)
+        .evalTap(notificationService.stockUpdate[D])
+        .handleErrorWith { error =>
+          Stream.eval(Logger[F].error(error)(s"error obtaining stock updates from cex")).drain
+        }
+        .drain ++ Stream.sleep(stockMonitorConfig.monitoringFrequency)
+    ).repeat
 }
 
 object CexStockMonitor {
