@@ -4,9 +4,9 @@ import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.cex.CexClient
 import ebayapp.common.Cache
-import ebayapp.common.config.SearchQuery
+import ebayapp.common.config.{SearchQuery, StockMonitorRequest}
 import ebayapp.domain.ItemDetails.Generic
-import ebayapp.domain.stock.{StockMonitorRequest, StockUpdate, StockUpdateType}
+import ebayapp.domain.stock.{StockUpdate, StockUpdateType}
 import ebayapp.domain.{ResellableItem, ResellableItemBuilder}
 
 class CexStockServiceSpec extends CatsSpec {

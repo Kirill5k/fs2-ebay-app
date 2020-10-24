@@ -1,14 +1,6 @@
 package ebayapp.domain
 
-import ebayapp.common.config.SearchQuery
-
 object stock {
-
-  final case class StockMonitorRequest(
-      query: SearchQuery,
-      monitorStockChange: Boolean = true,
-      monitorPriceChange: Boolean = true
-  )
 
   sealed trait StockUpdateType
 

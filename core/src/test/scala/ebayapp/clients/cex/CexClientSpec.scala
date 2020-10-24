@@ -19,7 +19,7 @@ class CexClientSpec extends SttpClientSpec {
     val config = CexConfig(
       "http://cex.com",
       CexPriceFindConfig(3.seconds, 1.second),
-      CexStockCheckConfig(3.seconds, 1.second)
+      CexStockCheckConfig(3.seconds, 1.second, 10.minutes, Nil)
     )
 
     "find items" in {

@@ -5,9 +5,9 @@ import cats.implicits._
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
-import ebayapp.common.config.{CexConfig, SearchQuery}
+import ebayapp.common.config.{CexConfig, SearchQuery, StockMonitorRequest}
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.domain.stock.{StockMonitorRequest, StockUpdate, StockUpdateType}
+import ebayapp.domain.stock.{StockUpdate, StockUpdateType}
 
 trait CexStockService[F[_], D <: ItemDetails] {
   def getUpdates(request: StockMonitorRequest): F[List[StockUpdate[D]]]

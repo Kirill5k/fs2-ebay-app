@@ -53,9 +53,17 @@ object config {
       cacheValidationPeriod: FiniteDuration
   )
 
+  final case class StockMonitorRequest(
+      query: SearchQuery,
+      monitorStockChange: Boolean,
+      monitorPriceChange: Boolean
+  )
+
   final case class CexStockCheckConfig(
       cacheExpiration: FiniteDuration,
-      cacheValidationPeriod: FiniteDuration
+      cacheValidationPeriod: FiniteDuration,
+      monitoringFrequency: FiniteDuration,
+      monitoringRequests: List[StockMonitorRequest]
   )
 
   final case class CexConfig(
