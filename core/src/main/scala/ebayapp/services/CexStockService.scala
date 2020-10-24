@@ -66,9 +66,9 @@ object CexStockService {
       client: CexClient[F]
   ): F[CexStockService[F, ItemDetails.Generic]] = {
     val searchHistory =
-      Cache.make[F, SearchQuery, Unit](config.stockCheck.cacheExpiration, config.stockCheck.cacheValidationPeriod)
+      Cache.make[F, SearchQuery, Unit](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
     val itemsCache =
-      Cache.make[F, String, ResellableItem[ItemDetails.Generic]](config.stockCheck.cacheExpiration, config.stockCheck.cacheValidationPeriod)
+      Cache.make[F, String, ResellableItem[ItemDetails.Generic]](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
 
     (searchHistory, itemsCache).mapN((s, i) => new StatefulCexStockService[F, ItemDetails.Generic](client, s, i))
   }

@@ -59,7 +59,7 @@ object config {
       monitorPriceChange: Boolean
   )
 
-  final case class CexStockCheckConfig(
+  final case class CexStockMonitorConfig(
       cacheExpiration: FiniteDuration,
       cacheValidationPeriod: FiniteDuration,
       monitoringFrequency: FiniteDuration,
@@ -69,7 +69,7 @@ object config {
   final case class CexConfig(
       baseUri: String,
       priceFind: CexPriceFindConfig,
-      stockCheck: CexStockCheckConfig
+      stockMonitor: CexStockMonitorConfig
   )
 
   final case class TelegramConfig(
