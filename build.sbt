@@ -10,13 +10,11 @@ lazy val noPublish = Seq(
 )
 
 lazy val docker = Seq(
-  Docker / packageName := moduleName.value,
-  Docker / version := sys.env.getOrElse("APP_VERSION", version.value),
-  maintainer := "ingress@wejo.com",
+  packageName := moduleName.value,
+  version := sys.env.getOrElse("APP_VERSION", version.value),
+  maintainer := "immotional@aol.com",
   dockerBaseImage := "openjdk:11.0.4-jre-slim",
   dockerUpdateLatest := true,
-  Docker / daemonUserUid := None,
-  Docker / daemonUser := "daemon",
   makeBatScripts := List()
 )
 
