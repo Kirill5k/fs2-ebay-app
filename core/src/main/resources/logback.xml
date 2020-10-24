@@ -13,8 +13,8 @@
   <logger name="application" level="INFO" />
 
   <logger name="org.http4s.client.middleware" level="INFO"/>
-
   <logger name="org.http4s.server.middleware" level="INFO"/>
+  <logger name="org.http4s.blaze.channel" level="WARN" />
 
   <root level="INFO">
     <appender-ref ref="ASYNCSTDOUT" />
