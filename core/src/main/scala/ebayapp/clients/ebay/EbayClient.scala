@@ -74,7 +74,7 @@ final private[ebay] class LiveEbayClient[F[_]](
       all   <- browseClient.search(token, searchParams)
       valid = all.filter(hasTrustedSeller).filter(removeUnwanted)
       complete <- valid.traverse(getCompleteItem).map(_.flatten)
-      _        <- L.info(s"search ${searchParams("q")} returned ${complete.size} new items (total - ${all.size})")
+      _        <- L.info(s"""ebay-search "${searchParams("q")}" returned ${complete.size} new items (total - ${all.size})""")
     } yield complete
 
   private def getCompleteItem(itemSummary: EbayItemSummary): F[Option[EbayItem]] =

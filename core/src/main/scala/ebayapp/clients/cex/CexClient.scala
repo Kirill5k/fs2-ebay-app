@@ -1,5 +1,8 @@
 package ebayapp.clients.cex
 
+import java.nio.charset.StandardCharsets
+import java.util.Base64
+
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.cex.CexClient.{CexSearchResponse, SearchResult}
@@ -26,7 +29,7 @@ trait CexClient[F[_]] {
 
 final class CexApiClient[F[_]](
     private val config: CexConfig,
-    private val resellPriceCache: Cache[F, SearchQuery, Option[SellPrice]]
+    private val resellPriceCache: Cache[F, String, Option[SellPrice]]
 )(
     implicit val B: SttpBackend[F, Nothing, NothingT],
     S: Sync[F],
@@ -35,14 +38,14 @@ final class CexApiClient[F[_]](
 ) extends CexClient[F] {
 
   def findSellPrice(query: SearchQuery): F[Option[SellPrice]] =
-    resellPriceCache.get(query).flatMap {
+    resellPriceCache.get(encode(query)).flatMap {
       case Some(rp) => S.pure(rp)
       case None =>
         search(uri"${config.baseUri}/v3/boxes?q=${query.value}")
           .map(getMinResellPrice)
           .flatTap { rp =>
-            if (rp.isEmpty) L.warn(s"search '${query.value}' returned 0 results")
-            else resellPriceCache.put(query, rp)
+            if (rp.isEmpty) L.warn(s"""cex-price-match "${query.value}" returned 0 results""")
+            else resellPriceCache.put(encode(query), rp)
           }
     }
 
@@ -57,7 +60,7 @@ final class CexApiClient[F[_]](
   ): F[List[ResellableItem[D]]] =
     search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")
       .map(_.response.data.fold(List.empty[SearchResult])(_.boxes))
-      .flatTap(res => L.info(s""""${query.value}" find request returned ${res.size} results"""))
+      .flatTap(res => L.info(s"""cex-search "${query.value}" returned ${res.size} results"""))
       .map(_.map(mapper.toDomain))
 
   private def search(uri: Uri): F[CexSearchResponse] =
@@ -82,6 +85,9 @@ final class CexApiClient[F[_]](
               S.raiseError(AppError.Http(s.code, s"error sending request to cex: $s"))
         }
       }
+
+  private def encode(query: SearchQuery): String =
+    Base64.getEncoder.encodeToString(query.value.replaceAll(" ", "").getBytes(StandardCharsets.UTF_8))
 }
 
 object CexClient {
@@ -111,7 +117,7 @@ object CexClient {
       backend: SttpBackend[F, Nothing, NothingT]
   ): F[CexClient[F]] =
     Cache
-      .make[F, SearchQuery, Option[SellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
+      .make[F, String, Option[SellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
       .map { cache =>
         new CexApiClient[F](config, cache)(backend, Sync[F], Timer[F], Logger[F])
       }
