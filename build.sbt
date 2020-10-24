@@ -9,6 +9,17 @@ lazy val noPublish = Seq(
   publish / skip := true
 )
 
+lazy val docker = Seq(
+  Docker / packageName := moduleName.value,
+  Docker / version := sys.env.getOrElse("APP_VERSION", version.value),
+  maintainer := "ingress@wejo.com",
+  dockerBaseImage := "openjdk:11.0.4-jre-slim",
+  dockerUpdateLatest := true,
+  Docker / daemonUserUid := None,
+  Docker / daemonUser := "daemon",
+  makeBatScripts := List()
+)
+
 lazy val root = (project in file("."))
   .settings(noPublish)
   .settings(
@@ -17,8 +28,11 @@ lazy val root = (project in file("."))
   .aggregate(core)
 
 lazy val core = (project in file("core"))
+  .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
+  .settings(docker)
   .settings(
     name := "fs2-ebay-app-core",
+    moduleName := "fs2-ebay-app-core",
     libraryDependencies ++= Dependencies.core ++ Dependencies.test
   )
 
