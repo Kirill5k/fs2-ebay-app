@@ -21,9 +21,9 @@ final case class Controllers[F[_]: Sync: Logger: ContextShift](
 
 object Controllers {
 
-  def make[F[_]: Sync: Logger: ContextShift](blocker: Blocker, services: Services[F]): F[Controller[F]] =
+  def make[F[_]: Sync: Logger: ContextShift](blocker: Blocker, services: Services[F]): F[Controllers[F]] =
     (
       Controller.home(blocker),
       Controller.videoGame(services.videoGame)
-    ).mapN(Controllers.apply)
+    ).mapN(Controllers.apply[F])
 }
