@@ -1,6 +1,6 @@
 package ebayapp
 
-import cats.effect.{Concurrent, ContextShift, Resource}
+import cats.effect.{Blocker, Concurrent, ContextShift, Resource}
 import cats.implicits._
 import ebayapp.common.config.{AppConfig, MongoConfig}
 import mongo4cats.client.MongoClientF
@@ -8,6 +8,7 @@ import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client.{NothingT, SttpBackend}
 
 final case class Resources[F[_]](
+    blocker: Blocker,
     httpClientBackend: SttpBackend[F, Nothing, NothingT],
     mongoClient: MongoClientF[F]
 )
@@ -21,5 +22,5 @@ object Resources {
     Resource.make(AsyncHttpClientCatsBackend[F]())(_.close())
 
   def make[F[_]: Concurrent: ContextShift](config: AppConfig): Resource[F, Resources[F]] =
-    (httpClientBackend[F], mongoClient[F](config.mongo)).mapN(Resources.apply[F])
+    (Blocker[F], httpClientBackend[F], mongoClient[F](config.mongo)).mapN(Resources.apply[F])
 }

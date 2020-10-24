@@ -15,7 +15,7 @@ object config {
 
   final case class ServerConfig(
       host: String,
-      port: String
+      port: Int
   )
 
   final case class SearchQuery(value: String) extends AnyVal

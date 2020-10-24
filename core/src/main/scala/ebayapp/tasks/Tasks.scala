@@ -1,6 +1,6 @@
 package ebayapp.tasks
 
-import cats.effect.{Concurrent, Sync, Timer}
+import cats.effect.{Concurrent, Timer}
 import cats.implicits._
 import ebayapp.common.config.AppConfig
 import ebayapp.domain.ItemDetails
@@ -23,5 +23,5 @@ object Tasks {
     (
       CexStockMonitor.generic(config.cex.stockMonitor, services),
       EbayDealsFinder.videoGames(config.ebay.deals.videoGames, services)
-    ).mapN(Tasks.apply)
+    ).mapN(Tasks.apply[F])
 }

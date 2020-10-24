@@ -5,9 +5,12 @@ import ebayapp.clients.Clients
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import ebayapp.common.config.AppConfig
+import ebayapp.controllers.Controllers
 import ebayapp.repositories.Repositories
 import ebayapp.services.Services
 import ebayapp.tasks.Tasks
+
+import scala.concurrent.ExecutionContext
 
 object Application extends IOApp {
 
@@ -23,7 +26,11 @@ object Application extends IOApp {
           clients      <- Clients.make(config, resources.httpClientBackend) <* logger.info("created clients")
           repositories <- Repositories.make(resources.mongoClient) <* logger.info("created repositories")
           services     <- Services.make(config, clients, repositories) <* logger.info("created services")
-          _            <- Tasks.make(config, services) <* logger.info("created tasks")
+          tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
+          controllers  <- Controllers.make(resources.blocker, services) <* logger.info("created controllers")
+          server       <- HttpServer.make(config.server, controllers.routes, ExecutionContext.global)
+          _            <- server.start() <* logger.info("started http server")
+          _            <- tasks.processes.compile.drain
         } yield ()
       }
     } yield ExitCode.Success
