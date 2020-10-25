@@ -41,7 +41,7 @@ final class LiveEbayDealsService[F[_]: Logger: Sync](
           case Some(name) =>
             cexClient.findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
           case None =>
-            Logger[F].warn(s"not enough details to query for resell price ${item.itemDetails}") *>
+            Logger[F].warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *>
               Sync[F].pure(item)
         }
       }
