@@ -1,5 +1,5 @@
 ThisBuild / scalaVersion     := "2.13.3"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
+ThisBuild / version          := "0.1.0"
 ThisBuild / organization     := "io.github.kirill5k"
 
 lazy val noPublish = Seq(
