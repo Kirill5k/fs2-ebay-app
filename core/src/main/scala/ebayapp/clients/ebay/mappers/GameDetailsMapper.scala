@@ -24,7 +24,6 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL2_TITLE_WORDS_REPLACEMENTS = List(
     CONSOLE_REGEX_PATTERN,
-    "[^\\p{L}\\p{N}\\p{P}\\p{Z}]",
     "\\d{5,}(\\w+)?",
     "\\d{3,}\\s+\\d{4,}",
     "for (the )?playstation( )?vr", "((ps( )?)?(vr|move)|kinect|fit|balance board) (needed|required|compatible)", "requires kinect( sensor)?",
@@ -74,7 +73,7 @@ private[mappers] object GameDetailsMapper {
     "classic(s)?( (hit(s)?|version))?", "(case|box).{0,20}(complete|manual)", "very rare", "award winning", "official licenced", "Instruction(s)? Book",
     "Unwanted Gift", "limited quantity", "region (free|1)", "gift idea", "in case", "add( |-)?on( content pack)?", "jeu console", "\\b(For )?age(s)? \\d+\\b",
     "must see", "see (photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "in wrappp(ing|er)",
-    "\\brated \\d+\\b", "\\d supplied", "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( \\d+)?( (region|format|version))?", "\\ben\\b", "\\bcr\\b", "\\bnc\\b",
+    "\\brated \\d+\\b", "\\d supplied", "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?", "\\ben\\b", "\\bcr\\b", "\\bnc\\b",
     "\\bfr\\b", "\\bes\\b", "(in )?\\bvg(c| con(d)?(ition)?)?\\b", "\\ban\\b", "\\bLTD\\b", "\\b\\w+VG\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b",
     "\\bnsw\\b", "\\bsft\\b", "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?",
     "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", "(ultra )?\\b(u)?hd(r)?\\b", "(\\b4k\\b|\\bone x\\b)( enhanced)?",
@@ -207,6 +206,8 @@ private[mappers] object GameDetailsMapper {
       str
         .replaceAll("100%$", "")
         .replaceAll("£\\d+(\\.\\d+)?", "")
+        .replaceAll("[^\\p{L}\\p{N}\\p{P}\\p{Z}]", " ")
+        .replaceAll("[\uD83C-\uDBFF\uDC00-\uDFFF]", " ")
         .replaceAll("é", "e")
         .replaceAll("\\P{Print}", "")
         .replaceAll("\\\\x\\p{XDigit}{2}", "")
