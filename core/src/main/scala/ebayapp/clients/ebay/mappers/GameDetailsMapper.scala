@@ -206,7 +206,7 @@ private[mappers] object GameDetailsMapper {
       str
         .replaceAll("100%$", "")
         .replaceAll("£\\d+(\\.\\d+)?", "")
-        .replaceAll("[^\\p{L}\\p{N}\\p{P}\\p{Z}]", " ")
+        .replaceAll("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]", " ")
         .replaceAll("[\uD83C-\uDBFF\uDC00-\uDFFF]", " ")
         .replaceAll("é", "e")
         .replaceAll("\\P{Print}", "")
