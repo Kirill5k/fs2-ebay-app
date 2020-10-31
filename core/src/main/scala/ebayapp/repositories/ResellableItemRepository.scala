@@ -16,10 +16,11 @@ trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItem
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: I): F[Unit]
   def saveAll(items: Seq[I]): F[Unit]
-  def findAll(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): fs2.Stream[F, I]
+  def findAll(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): F[List[I]]
+  def stream(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): fs2.Stream[F, I]
 }
 
-final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: ResellableItem[_], E <: ResellableItemEntity] (
+final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: ResellableItem[_], E <: ResellableItemEntity](
     private val mongoCollection: MongoCollectionF[E],
     private val entityMapper: ResellableItemEntityMapper[I, E]
 ) extends ResellableItemRepository[F, I, E] {
@@ -34,6 +35,18 @@ final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: Resellabl
     mongoCollection.insertMany[F](items.map(entityMapper.toEntity)).void
 
   def findAll(
+      limit: Option[Int] = None,
+      from: Option[Instant] = None,
+      to: Option[Instant] = None
+  ): F[List[I]] =
+    mongoCollection.find
+      .sort(Sorts.descending("listingDetails.datePosted"))
+      .filter(postedDateRangeSelector(from, to))
+      .limit(limit.getOrElse(0))
+      .all[F]
+      .map(_.map(entityMapper.toDomain).toList)
+
+  def stream(
       limit: Option[Int] = None,
       from: Option[Instant] = None,
       to: Option[Instant] = None

@@ -10,7 +10,8 @@ import ebayapp.repositories.ResellableItemRepository.VideoGameRepository
 
 trait ResellableItemService[F[_], D <: ItemDetails] {
   def save(item: ResellableItem[D]): F[Unit]
-  def get(limit: Option[Int], from: Option[Instant], to: Option[Instant]): fs2.Stream[F, ResellableItem[D]]
+  def find(limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
+  def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): fs2.Stream[F, ResellableItem[D]]
   def isNew(item: ResellableItem[D]): F[Boolean]
 }
 
@@ -21,11 +22,14 @@ final class VideoGameService[F[_]: Sync](
   override def save(item: VideoGame): F[Unit] =
     repository.save(item)
 
-  override def get(limit: Option[Int], from: Option[Instant], to: Option[Instant]): fs2.Stream[F, VideoGame] =
-    repository.findAll(limit, from, to)
+  override def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): fs2.Stream[F, VideoGame] =
+    repository.stream(limit, from, to)
 
   override def isNew(item: VideoGame): F[Boolean] =
     repository.existsByUrl(item.listingDetails.url).map(!_)
+
+  override def find(limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[VideoGame]] =
+    repository.findAll(limit, from, to)
 }
 
 object ResellableItemService {

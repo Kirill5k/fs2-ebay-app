@@ -58,7 +58,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
           val result = for {
             repo <- ResellableItemRepository.videoGamesMongo[IO](client)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll().compile.toList
+            all  <- repo.findAll()
           } yield all
 
           result.unsafeRunSync() must be(videoGames.reverse)
@@ -70,7 +70,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
           val result = for {
             repo <- ResellableItemRepository.videoGamesMongo[IO](client)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(from = Some(Instant.now)).compile.toList
+            all  <- repo.findAll(from = Some(Instant.now))
           } yield all
 
           result.unsafeRunSync() must be(List(videoGames(2)))
@@ -84,7 +84,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             _    <- repo.saveAll(videoGames)
             from = Some(Instant.now().minusSeconds(100))
             to   = Some(Instant.now.plusSeconds(100))
-            all <- repo.findAll(from = from, to = to).compile.toList
+            all <- repo.findAll(from = from, to = to)
           } yield all
 
           result.unsafeRunSync() must be(List(videoGames(1)))
@@ -96,7 +96,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
           val result = for {
             repo <- ResellableItemRepository.videoGamesMongo[IO](client)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(to = Some(Instant.now.minusSeconds(100))).compile.toList
+            all  <- repo.findAll(to = Some(Instant.now.minusSeconds(100)))
           } yield all
 
           result.unsafeRunSync() must be(List(videoGames(0)))
@@ -108,7 +108,72 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
           val result = for {
             repo <- ResellableItemRepository.videoGamesMongo[IO](client)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(limit = Some(1)).compile.toList
+            all  <- repo.findAll(limit = Some(1))
+          } yield all
+
+          result.unsafeRunSync() must be(List(videoGames(2)))
+        }
+      }
+    }
+
+    "stream" should {
+
+      "return all video games" in {
+        withEmbeddedMongoClient { client =>
+          val result = for {
+            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            _    <- repo.saveAll(videoGames)
+            all  <- repo.stream().compile.toList
+          } yield all
+
+          result.unsafeRunSync() must be(videoGames.reverse)
+        }
+      }
+
+      "return all video games posted after provided date" in {
+        withEmbeddedMongoClient { client =>
+          val result = for {
+            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            _    <- repo.saveAll(videoGames)
+            all  <- repo.stream(from = Some(Instant.now)).compile.toList
+          } yield all
+
+          result.unsafeRunSync() must be(List(videoGames(2)))
+        }
+      }
+
+      "return all video games posted between provided dates" in {
+        withEmbeddedMongoClient { client =>
+          val result = for {
+            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            _    <- repo.saveAll(videoGames)
+            from = Some(Instant.now().minusSeconds(100))
+            to   = Some(Instant.now.plusSeconds(100))
+            all <- repo.stream(from = from, to = to).compile.toList
+          } yield all
+
+          result.unsafeRunSync() must be(List(videoGames(1)))
+        }
+      }
+
+      "return all video games posted before provided date" in {
+        withEmbeddedMongoClient { client =>
+          val result = for {
+            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            _    <- repo.saveAll(videoGames)
+            all  <- repo.stream(to = Some(Instant.now.minusSeconds(100))).compile.toList
+          } yield all
+
+          result.unsafeRunSync() must be(List(videoGames(0)))
+        }
+      }
+
+      "return all video games with limit" in {
+        withEmbeddedMongoClient { client =>
+          val result = for {
+            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            _    <- repo.saveAll(videoGames)
+            all  <- repo.stream(limit = Some(1)).compile.toList
           } yield all
 
           result.unsafeRunSync() must be(List(videoGames(2)))

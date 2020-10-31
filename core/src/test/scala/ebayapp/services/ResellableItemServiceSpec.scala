@@ -36,13 +36,27 @@ class ResellableItemServiceSpec extends CatsSpec {
       }
     }
 
-    "get latest items from db" in {
+    "stream latest items from db" in {
       val repository = mock[VideoGameRepository[IO]]
-      when(repository.findAll(any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(fs2.Stream.evalSeq(IO.pure(List(videoGame))))
+      when(repository.stream(any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(fs2.Stream.evalSeq(IO.pure(List(videoGame))))
 
       val latestResult = ResellableItemService
         .videoGame(repository)
-        .flatMap(_.get(Some(10), None, None).compile.toList)
+        .flatMap(_.stream(Some(10), None, None).compile.toList)
+
+      latestResult.unsafeToFuture().map { latest =>
+        verify(repository).stream(Some(10), None, None)
+        latest must be (List(videoGame))
+      }
+    }
+
+    "get latest items from db" in {
+      val repository = mock[VideoGameRepository[IO]]
+      when(repository.findAll(any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(IO.pure(List(videoGame)))
+
+      val latestResult = ResellableItemService
+        .videoGame(repository)
+        .flatMap(_.find(Some(10), None, None))
 
       latestResult.unsafeToFuture().map { latest =>
         verify(repository).findAll(Some(10), None, None)

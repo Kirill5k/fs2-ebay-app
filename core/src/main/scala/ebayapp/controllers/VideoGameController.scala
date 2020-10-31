@@ -22,21 +22,21 @@ final private[controllers] class VideoGameController[F[_]](
       case GET -> Root / "video-games" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
         withErrorHandling {
           for {
-            games <- videoGameService.get(limit, from, to).compile.toList
+            games <- videoGameService.find(limit, from, to)
             resp  <- Ok(games.map(VideoGameResponse.from).asJson)
           } yield resp
         }
       case GET -> Root / "video-games" / "stream" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
         Ok {
           videoGameService
-            .get(limit, from, to)
+            .stream(limit, from, to)
             .map(VideoGameResponse.from)
             .map(_.asJson)
         }
       case GET -> Root / "video-games" / "summary" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
         withErrorHandling {
           for {
-            games <- videoGameService.get(limit, from, to).compile.toList
+            games <- videoGameService.find(limit, from, to)
             resp  <- Ok(resellableItemsSummaryResponse(games).asJson)
           } yield resp
         }
