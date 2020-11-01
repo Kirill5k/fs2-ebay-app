@@ -43,7 +43,7 @@ object NotificationService {
   implicit class StockUpdateOps[D <: ItemDetails](private val update: StockUpdate[D]) extends AnyVal {
     def notification: Option[String] =
       update.item.itemDetails.fullName.map { name =>
-        val price    = update.item.buyPrice.value
+        val price    = update.item.buyPrice.rrp
         val quantity = update.item.buyPrice.quantityAvailable
         val url      = update.item.listingDetails.url
         s"STOCK UPDATE for $name (£$price, $quantity): ${update.updateType} $url"
@@ -55,7 +55,7 @@ object NotificationService {
       for {
         itemSummary <- item.itemDetails.fullName
         sell        <- item.sellPrice
-        buy              = item.buyPrice.value
+        buy              = item.buyPrice.rrp
         profitPercentage = sell.credit * 100 / buy - 100
         url              = item.listingDetails.url
       } yield s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} $url"""

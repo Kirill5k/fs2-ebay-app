@@ -13,7 +13,7 @@ private[repositories] trait ResellableItemEntityMapper[I <: ResellableItem[_], E
 
   protected def mapPrice(price: BuyPrice, resellPrice: Option[SellPrice]): ItemPrice =
     ItemPrice(
-      price.value.toString(),
+      price.rrp.toString(),
       price.quantityAvailable,
       resellPrice.map(_.cash.toString()),
       resellPrice.map(_.credit.toString())

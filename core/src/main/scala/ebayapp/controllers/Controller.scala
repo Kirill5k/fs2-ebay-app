@@ -49,7 +49,7 @@ trait Controller[F[_]] extends Http4sDsl[F] {
 
   protected def resellableItemsSummaryResponse[D <: ItemDetails](items: List[ResellableItem[D]]): ResellableItemsSummaryResponse = {
     val withoutResellPrice  = items.filter(_.sellPrice.isEmpty)
-    val profitableForResell = items.filter(i => i.sellPrice.exists(rp => rp.cash > i.buyPrice.value))
+    val profitableForResell = items.filter(i => i.sellPrice.exists(rp => rp.cash > i.buyPrice.rrp))
     val rest                = items.filter(i => !withoutResellPrice.contains(i) && !profitableForResell.contains(i))
     ResellableItemsSummaryResponse(
       items.size,
@@ -62,7 +62,7 @@ trait Controller[F[_]] extends Http4sDsl[F] {
   private def toItemsSummary[D <: ItemDetails](items: List[ResellableItem[D]]): ItemsSummary =
     ItemsSummary(
       items.size,
-      items.map(i => ItemSummary(i.itemDetails.fullName, i.listingDetails.url, i.buyPrice.value))
+      items.map(i => ItemSummary(i.itemDetails.fullName, i.listingDetails.url, i.buyPrice.rrp))
     )
 }
 

@@ -64,7 +64,7 @@ private[controllers] object VideoGameController {
         game.itemDetails,
         game.listingDetails,
         ItemPrice(
-          game.buyPrice.value,
+          game.buyPrice.rrp,
           game.buyPrice.quantityAvailable,
           game.sellPrice.map(_.cash),
           game.sellPrice.map(_.credit)

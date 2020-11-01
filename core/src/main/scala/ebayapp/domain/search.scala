@@ -11,7 +11,7 @@ object search {
 
   final case class BuyPrice(
       quantityAvailable: Int,
-      value: BigDecimal
+      rrp: BigDecimal
   )
 
   final case class ListingDetails(

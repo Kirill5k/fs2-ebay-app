@@ -35,7 +35,7 @@ abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
     ).repeat
 
   private val isProfitableToResell: ResellableItem[D] => Boolean =
-    item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.value - 100) > dealsConfig.minMarginPercentage)
+    item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.rrp - 100) > dealsConfig.minMarginPercentage)
 }
 
 object EbayDealsFinder {

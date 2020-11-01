@@ -49,10 +49,10 @@ final class StatefulCexStockService[F[_]: Sync, D <: ItemDetails](
             Some(StockUpdate(StockUpdateType.StockDecrease(prev.buyPrice.quantityAvailable, i.buyPrice.quantityAvailable), i))
           case Some(prev) if checkQuantity && prev.buyPrice.quantityAvailable < i.buyPrice.quantityAvailable =>
             Some(StockUpdate(StockUpdateType.StockIncrease(prev.buyPrice.quantityAvailable, i.buyPrice.quantityAvailable), i))
-          case Some(prev) if checkPrice && prev.buyPrice.value > i.buyPrice.value =>
-            Some(StockUpdate(StockUpdateType.PriceDrop(prev.buyPrice.value, i.buyPrice.value), i))
-          case Some(prev) if checkPrice && prev.buyPrice.value < i.buyPrice.value =>
-            Some(StockUpdate(StockUpdateType.PriceRaise(prev.buyPrice.value, i.buyPrice.value), i))
+          case Some(prev) if checkPrice && prev.buyPrice.rrp > i.buyPrice.rrp =>
+            Some(StockUpdate(StockUpdateType.PriceDrop(prev.buyPrice.rrp, i.buyPrice.rrp), i))
+          case Some(prev) if checkPrice && prev.buyPrice.rrp < i.buyPrice.rrp =>
+            Some(StockUpdate(StockUpdateType.PriceRaise(prev.buyPrice.rrp, i.buyPrice.rrp), i))
           case _ => None
         }
       }
