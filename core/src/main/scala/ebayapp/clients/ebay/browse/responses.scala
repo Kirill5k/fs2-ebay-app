@@ -44,7 +44,7 @@ private[ebay] object responses {
       mpn: Option[String],
       itemEndDate: Option[Instant],
       shippingOptions: Option[List[ItemShippingOption]],
-      estimatedAvailabilities: List[ItemAvailabilities]
+      estimatedAvailabilities: Option[List[ItemAvailabilities]]
   ) extends EbayBrowseResponse
 
   final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) extends EbayBrowseResponse

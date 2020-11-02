@@ -5,7 +5,7 @@ import java.time.Instant
 import ebayapp.clients.ebay.browse.responses.EbayItem
 import ebayapp.domain
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.domain.search.{ListingDetails, BuyPrice}
+import ebayapp.domain.search.{BuyPrice, ListingDetails}
 
 trait EbayItemMapper[D <: ItemDetails] {
   def toDomain(ebayItem: EbayItem): ResellableItem[D]
@@ -41,10 +41,13 @@ object EbayItemMapper {
 
   private[mappers] def price(item: EbayItem): BuyPrice = {
     val postageCost = for {
-      shippings <- item.shippingOptions
+      shippings       <- item.shippingOptions
       minShippingCost <- shippings.map(_.shippingCost).map(_.value).minOption
     } yield minShippingCost
-    val quantity = item.estimatedAvailabilities.map(_.estimatedAvailableQuantity).minOption
+    val quantity = for {
+      availabilities <- item.estimatedAvailabilities
+      quantity       <- availabilities.map(_.estimatedAvailableQuantity).minOption
+    } yield quantity
     BuyPrice(quantity.getOrElse(1), item.price.value + postageCost.getOrElse(BigDecimal(0)))
   }
 }
