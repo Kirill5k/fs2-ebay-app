@@ -44,6 +44,7 @@ object EbayItemMapper {
       shippings <- item.shippingOptions
       minShippingCost <- shippings.map(_.shippingCost).map(_.value).minOption
     } yield minShippingCost
-    BuyPrice(1, item.price.value + postageCost.getOrElse(BigDecimal.valueOf(0)))
+    val quantity = item.estimatedAvailabilities.map(_.estimatedAvailableQuantity).minOption
+    BuyPrice(quantity.getOrElse(1), item.price.value + postageCost.getOrElse(BigDecimal(0)))
   }
 }

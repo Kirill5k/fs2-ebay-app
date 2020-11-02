@@ -18,7 +18,12 @@ private[ebay] object responses {
       itemId: String,
       title: String,
       price: Option[ItemPrice],
-      seller: ItemSeller
+      seller: ItemSeller,
+      shortDescription: Option[String] // This field is returned by the search method only when fieldgroups = EXTENDED.
+  )
+
+  final case class ItemAvailabilities(
+      estimatedAvailableQuantity: Int
   )
 
   final case class EbayItem(
@@ -38,7 +43,8 @@ private[ebay] object responses {
       brand: Option[String],
       mpn: Option[String],
       itemEndDate: Option[Instant],
-      shippingOptions: Option[List[ItemShippingOption]]
+      shippingOptions: Option[List[ItemShippingOption]],
+      estimatedAvailabilities: List[ItemAvailabilities]
   ) extends EbayBrowseResponse
 
   final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) extends EbayBrowseResponse

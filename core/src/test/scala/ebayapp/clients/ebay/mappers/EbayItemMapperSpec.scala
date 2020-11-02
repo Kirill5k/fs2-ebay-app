@@ -30,7 +30,8 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     None,
     None,
     None,
-    Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal.valueOf(4.99), "GBR")), ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal.valueOf(2.99), "GBR"))))
+    Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal.valueOf(4.99), "GBR")), ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal.valueOf(2.99), "GBR")))),
+    List(ItemAvailabilities(5))
   )
 
   val mobilePhoneEbayItem = EbayItem(
@@ -56,7 +57,8 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     Some("Samsung"),
     None,
     None,
-    Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal.valueOf(4.99), "GBR"))))
+    Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal.valueOf(4.99), "GBR")))),
+    Nil
   )
 
   "EbayItemMapper" should {
@@ -83,7 +85,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
         )
       ))
 
-      game.buyPrice must be(BuyPrice(1, BigDecimal(32.99)))
+      game.buyPrice must be(BuyPrice(5, BigDecimal(32.99)))
     }
 
     "transform to GameDetails even if no shipping options" in {
@@ -108,7 +110,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
         )
       ))
 
-      game.buyPrice must be(BuyPrice(1, BigDecimal(30.0)))
+      game.buyPrice must be(BuyPrice(5, BigDecimal(30.0)))
     }
 
     "transform to PhoneDetails" in {

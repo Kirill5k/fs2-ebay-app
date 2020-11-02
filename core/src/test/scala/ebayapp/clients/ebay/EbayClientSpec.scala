@@ -195,7 +195,8 @@ class EbayClientSpec extends CatsSpec {
       id,
       name,
       Some(ItemPrice(BigDecimal.valueOf(30.00), "GBP")),
-      ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore))
+      ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore)),
+      None
     )
 
   def ebayItem: EbayItem =
@@ -221,6 +222,7 @@ class EbayClientSpec extends CatsSpec {
       None,
       None,
       None,
-      Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal.valueOf(4.99), "GBR"))))
+      Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal.valueOf(4.99), "GBR")))),
+      List(ItemAvailabilities(1))
     )
 }
