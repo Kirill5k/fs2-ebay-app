@@ -23,7 +23,7 @@ private[ebay] object responses {
   )
 
   final case class ItemAvailabilities(
-      estimatedAvailableQuantity: Int
+      estimatedAvailableQuantity: Option[Int]
   )
 
   final case class EbayItem(

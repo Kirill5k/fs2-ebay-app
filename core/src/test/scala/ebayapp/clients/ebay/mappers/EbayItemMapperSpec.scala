@@ -31,7 +31,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     None,
     None,
     Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR")), ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal(2.99), "GBR")))),
-    Some(List(ItemAvailabilities(5)))
+    Some(List(ItemAvailabilities(Some(5))))
   )
 
   val mobilePhoneEbayItem = EbayItem(
