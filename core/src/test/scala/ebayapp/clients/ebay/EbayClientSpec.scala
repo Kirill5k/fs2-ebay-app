@@ -225,6 +225,6 @@ class EbayClientSpec extends CatsSpec {
       None,
       None,
       Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal.valueOf(4.99), "GBR")))),
-      Some(List(ItemAvailabilities(None)))
+      Some(List(ItemAvailabilities(Some(10), None)))
     )
 }

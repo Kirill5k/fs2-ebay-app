@@ -46,7 +46,7 @@ object EbayItemMapper {
     } yield minShippingCost
     val quantity = for {
       availabilities <- item.estimatedAvailabilities
-      quantity       <- availabilities.flatMap(_.estimatedAvailableQuantity).minOption
+      quantity       <- availabilities.flatMap(av => av.estimatedAvailableQuantity.orElse(av.availabilityThreshold)).minOption
     } yield quantity
     BuyPrice(quantity.getOrElse(1), item.price.value + postageCost.getOrElse(BigDecimal(0)))
   }

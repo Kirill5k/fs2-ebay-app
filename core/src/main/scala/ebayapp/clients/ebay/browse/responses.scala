@@ -23,6 +23,7 @@ private[ebay] object responses {
   )
 
   final case class ItemAvailabilities(
+      availabilityThreshold: Option[Int],
       estimatedAvailableQuantity: Option[Int]
   )
 
