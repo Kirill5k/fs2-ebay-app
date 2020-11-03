@@ -49,6 +49,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     val time   = Instant.now.minusMillis(duration.toMillis).`with`(MILLI_OF_SECOND, 0)
     val filter = params.searchFilterTemplate.format(time).replaceAll("\\{", "%7B").replaceAll("}", "%7D")
     val searchParams = Map(
+      "fieldgroups" -> "EXTENDED",
       "category_ids" -> params.categoryId.toString,
       "filter"       -> filter,
       "limit"        -> "200",

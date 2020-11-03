@@ -37,7 +37,9 @@ class EbayClientSpec extends CatsSpec {
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), searchParamsCaptor)
+        searchParamsCaptor.value must have size 5
         searchParamsCaptor.values.map(_("q")) must be (List("xbox"))
+        searchParamsCaptor.value("fieldgroups") must be ("EXTENDED")
         searchParamsCaptor.value("limit") must be ("200")
         searchParamsCaptor.value("category_ids") must be ("139973")
         searchParamsCaptor.value("filter") must startWith ("conditionIds:%7B1000|1500|2000|2500|3000|4000|5000%7D,itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:%7BFIXED_PRICE%7D,itemStartDate:[")
