@@ -18,7 +18,7 @@ class NotificationServiceSpec extends CatsSpec {
       val result = NotificationService.telegram(client).flatMap(_.cheapItem(videoGame))
 
       result.unsafeToFuture().map { r =>
-        verify(client).sendMessageToMainChannel("""NEW "super mario 3 SWITCH" - ebay: £32.99, cex: £80(142%)/£100 (available: 1) https://www.ebay.co.uk/itm/super-mario-3""")
+        verify(client).sendMessageToMainChannel("""NEW "super mario 3 SWITCH" - ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3""")
         r must be (())
       }
     }

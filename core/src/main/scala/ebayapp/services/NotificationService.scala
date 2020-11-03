@@ -59,7 +59,7 @@ object NotificationService {
         buy              = item.buyPrice.rrp
         profitPercentage = sell.credit * 100 / buy - 100
         url              = item.listingDetails.url
-      } yield s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (available: ${quantity}) $url"""
+      } yield s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: ${quantity}) $url"""
   }
 
   def telegram[F[_]: Sync: Logger](client: TelegramClient[F]): F[NotificationService[F]] =
