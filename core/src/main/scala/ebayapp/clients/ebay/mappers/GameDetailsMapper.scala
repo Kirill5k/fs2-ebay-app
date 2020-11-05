@@ -69,7 +69,7 @@ private[mappers] object GameDetailsMapper {
     "never played", "(only )?played (once|twice)", "best price", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted|eBay|best|from ebays biggest) Seller(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
     "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?", "deluxe", "standard", "Officially Licenced", "machine cleaned",
-    "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|same day)( )?(delivery|dispatch|post)",
+    "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|same day)( )?(delivery|dispatch|post)", "for kids",
     "fast free", "blu( )?ray", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", "essentials", "Re Mars tered", "booklet",
     "classic(s)?( (hit(s)?|version))?", "(case|box).{0,20}(complete|manual)", "very rare", "award winning", "official licenced", "Instruction(s)? Book",
     "Unwanted Gift", "limited (release|quantity)", "region (free|1)", "gift idea", "in case", "add( |-)?on( content pack)?", "jeu console", "\\b(For )?age(s)? \\d+\\b",
@@ -160,10 +160,12 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(\\bProstreet\\b)", "Pro Street")
       .replaceAll("(?i)(mariokart)", "Mario Kart")
       .replaceAll("(?i)(warhammer 40( )?000)", "Warhammer 40k")
+      .replaceAll("(?i)(wafare)", "Warfare")
       .replaceAll("(?i)(diablo 3)", "diablo iii")
       .replaceAll("(?i)(World Rally Championship)", "WRC")
       .replaceAll("(?i)(\\bPVZ\\b)", "Plants vs Zombies ")
       .replaceAll("(?i)(\\bnsane\\b)", "N Sane")
+      .replaceAll("(?i)(\\bmoto gp\\b)", "MotoGP")
       .replaceAll("(?i)(\\bww2|ww11\\b)", "wwii")
       .replaceAll("(?i)(\\bcod\\b)", "Call of Duty ")
       .replaceAll("(?i)(\\bmysims\\b)", "my sims")
