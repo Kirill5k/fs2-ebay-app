@@ -5,9 +5,9 @@ import cats.implicits._
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
-import ebayapp.common.config.{CexConfig, SearchQuery, StockMonitorRequest}
-import ebayapp.domain.{ItemDetails, ResellableItem}
+import ebayapp.common.config.{CexConfig, StockMonitorRequest}
 import ebayapp.domain.stock.{StockUpdate, StockUpdateType}
+import ebayapp.domain.{ItemDetails, ResellableItem}
 
 trait CexStockService[F[_], D <: ItemDetails] {
   def getUpdates(request: StockMonitorRequest): F[List[StockUpdate[D]]]
@@ -15,7 +15,7 @@ trait CexStockService[F[_], D <: ItemDetails] {
 
 final class StatefulCexStockService[F[_]: Sync, D <: ItemDetails](
     private val client: CexClient[F],
-    private val searchHistory: Cache[F, SearchQuery, Unit],
+    private val searchHistory: Cache[F, String, Unit],
     private val itemsCache: Cache[F, String, ResellableItem[D]]
 )(
     implicit val mapper: CexItemMapper[D]
@@ -26,12 +26,12 @@ final class StatefulCexStockService[F[_]: Sync, D <: ItemDetails](
       .findItem[D](request.query)
       .map(_.filter(_.itemDetails.fullName.isDefined))
       .flatMap { items =>
-        searchHistory.contains(request.query).flatMap {
+        searchHistory.contains(request.query.base64).flatMap {
           case false => Sync[F].pure(List.empty[StockUpdate[D]]) <* updateCache(items)
           case true  => getStockUpdates(items, request.monitorStockChange, request.monitorPriceChange) <* updateCache(items)
         }
       }
-      .flatTap(_ => searchHistory.put(request.query, ()))
+      .flatTap(_ => searchHistory.put(request.query.base64, ()))
 
   private def updateCache(items: List[ResellableItem[D]]): F[Unit] =
     items.traverse(i => itemsCache.put(i.itemDetails.fullName.get, i)).void
@@ -66,7 +66,7 @@ object CexStockService {
       client: CexClient[F]
   ): F[CexStockService[F, ItemDetails.Generic]] = {
     val searchHistory =
-      Cache.make[F, SearchQuery, Unit](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
+      Cache.make[F, String, Unit](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
     val itemsCache =
       Cache.make[F, String, ResellableItem[ItemDetails.Generic]](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
 

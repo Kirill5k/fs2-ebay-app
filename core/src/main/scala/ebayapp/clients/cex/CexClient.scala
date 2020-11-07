@@ -1,8 +1,5 @@
 package ebayapp.clients.cex
 
-import java.nio.charset.StandardCharsets
-import java.util.Base64
-
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.cex.CexClient.{CexSearchResponse, SearchResult}
@@ -38,14 +35,14 @@ final class CexApiClient[F[_]](
 ) extends CexClient[F] {
 
   def findSellPrice(query: SearchQuery): F[Option[SellPrice]] =
-    resellPriceCache.get(encode(query)).flatMap {
+    resellPriceCache.get(query.base64).flatMap {
       case Some(rp) => S.pure(rp)
       case None =>
         search(uri"${config.baseUri}/v3/boxes?q=${query.value}")
           .map(getMinResellPrice)
           .flatTap { rp =>
             if (rp.isEmpty) L.warn(s"""cex-price-match "${query.value}" returned 0 results""")
-            else resellPriceCache.put(encode(query), rp)
+            else resellPriceCache.put(query.base64, rp)
           }
     }
 
@@ -85,9 +82,6 @@ final class CexApiClient[F[_]](
               S.raiseError(AppError.Http(s.code, s"error sending request to cex: $s"))
         }
       }
-
-  private def encode(query: SearchQuery): String =
-    Base64.getEncoder.encodeToString(query.value.replaceAll(" ", "").getBytes(StandardCharsets.UTF_8))
 }
 
 object CexClient {
