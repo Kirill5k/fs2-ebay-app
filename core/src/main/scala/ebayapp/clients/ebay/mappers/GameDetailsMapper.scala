@@ -8,7 +8,7 @@ private[mappers] object GameDetailsMapper {
 
   private val CONSOLE_REGEX_PATTERN =
     "((new|rare|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(the )?" +
-      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|(microsoft )?\\bx( )?b(ox)?(( )?(live|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
+      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|ms) )?\\bx( )?b(ox)?(( )?(live|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
       "(( )?game(s)?)?( (platform|formula (1|one)|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(

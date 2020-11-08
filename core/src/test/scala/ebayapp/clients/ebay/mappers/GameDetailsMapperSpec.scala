@@ -282,6 +282,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare - complete free 1st class uk postage",
         "Call of Duty: Infinite Warfare the official authentic videogame - new unopened",
         "Call of Duty: Infinite Warfare for microsoft xbox one",
+        "Call of Duty: Infinite Warfare for ms xbox one",
         "Call of Duty: Infinite Warfare comes with both manuals",
         "Call of Duty: Infinite Warfare with both manuals",
         "Call of Duty: Infinite Warfare VideoGames",
