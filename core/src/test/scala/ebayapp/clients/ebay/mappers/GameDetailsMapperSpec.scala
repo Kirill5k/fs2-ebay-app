@@ -118,7 +118,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
-      gameDetails.name must be (Some("Wolfenstein The NEW Colosus"))
+      gameDetails.name must be (Some("Wolfenstein NEW Colosus"))
     }
 
     "remove new from the end and beginning of title" in {
@@ -134,7 +134,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
-      gameDetails.name must be (Some("Marvel Ultimate Alliance 3 The Black Order"))
+      gameDetails.name must be (Some("Marvel Ultimate Alliance 3 Black Order"))
     }
 
     "map bundles" in {
