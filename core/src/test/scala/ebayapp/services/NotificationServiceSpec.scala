@@ -34,7 +34,7 @@ class NotificationServiceSpec extends CatsSpec {
       val result = NotificationService.telegram(client).flatMap(_.stockUpdate(update))
 
       result.unsafeToFuture().map { r =>
-        verify(client).sendMessageToSecondaryChannel("""STOCK UPDATE for macbook pro (£50.0, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro""")
+        verify(client).sendMessageToSecondaryChannel("""PRICE/DROP for macbook pro (£50.0, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro""")
         r must be (())
       }
     }

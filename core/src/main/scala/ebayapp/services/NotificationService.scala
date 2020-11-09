@@ -46,7 +46,7 @@ object NotificationService {
         val price    = update.item.buyPrice.rrp
         val quantity = update.item.buyPrice.quantityAvailable
         val url      = update.item.listingDetails.url
-        s"STOCK UPDATE for $name (£$price, $quantity): ${update.updateType} $url"
+        s"${update.updateType.header} for $name (£$price, $quantity): ${update.updateType.message} $url"
       }
   }
 
