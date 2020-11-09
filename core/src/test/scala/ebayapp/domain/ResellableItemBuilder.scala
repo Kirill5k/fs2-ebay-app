@@ -21,7 +21,8 @@ object ResellableItemBuilder {
       name: String,
       datePosted: Instant = Instant.now(),
       platform: Option[String] = Some("XBOX ONE"),
-      resellPrice: Option[SellPrice] = Some(SellPrice(BigDecimal.valueOf(100), BigDecimal.valueOf(80)))
+      buyPrice: BuyPrice = BuyPrice(1, BigDecimal(32.99)),
+      sellPrice: Option[SellPrice] = Some(SellPrice(BigDecimal(100), BigDecimal(80)))
   ): VideoGame =
     ResellableItem(
       Game(Some(name), platform, Some("2019"), Some("Action")),
@@ -43,8 +44,8 @@ object ResellableItemBuilder {
           "Genre"        -> "Action"
         )
       ),
-      BuyPrice(1, BigDecimal(32.99)),
-      resellPrice
+      buyPrice,
+      sellPrice
     )
 
   def mobilePhone(
@@ -68,6 +69,6 @@ object ResellableItemBuilder {
         Map()
       ),
       BuyPrice(1, BigDecimal(99.99)),
-      Some(SellPrice(BigDecimal.valueOf(150), BigDecimal.valueOf(110)))
+      Some(SellPrice(BigDecimal(150), BigDecimal(110)))
     )
 }

@@ -20,12 +20,12 @@ class VideoGameControllerSpec extends ControllerSpec {
   val game2 = ResellableItemBuilder.videoGame(
     "Battlefield 1",
     datePosted = Instant.ofEpochMilli(1577836800000L),
-    resellPrice = None
+    sellPrice = None
   )
   val game3 = ResellableItemBuilder.videoGame(
     "Battlefield 1",
     datePosted = Instant.ofEpochMilli(1577836800000L),
-    resellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5)))
+    sellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5)))
   )
 
   "A VideoGameController" should {

@@ -22,7 +22,7 @@ class ResellableItemOpsSpec extends AnyWordSpec with Matchers {
     }
 
     "return none if resell price is missing" in {
-      val game = ResellableItemBuilder.videoGame("super mario 3", resellPrice = None)
+      val game = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
       val query = game.cheapItemNotification
       query must be (None)
     }

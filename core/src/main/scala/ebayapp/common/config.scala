@@ -30,7 +30,8 @@ object config {
       searchFrequency: FiniteDuration,
       searchQueries: List[SearchQuery],
       maxListingDuration: FiniteDuration,
-      minMarginPercentage: Int
+      minMarginPercentage: Int,
+      maxExpectedQuantity: Int
   )
 
   final case class EbayDealsConfigs(

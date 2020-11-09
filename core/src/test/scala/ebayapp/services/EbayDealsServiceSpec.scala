@@ -16,7 +16,7 @@ import scala.concurrent.duration._
 class EbayDealsServiceSpec extends CatsSpec {
 
   val videoGame = ResellableItemBuilder.videoGame("super mario 3")
-  val videoGame2 = ResellableItemBuilder.videoGame("Battlefield 1", resellPrice = None)
+  val videoGame2 = ResellableItemBuilder.videoGame("Battlefield 1", sellPrice = None)
 
   implicit val mapper: EbayItemMapper[Game] = EbayItemMapper.gameDetailsMapper
   implicit val params: EbaySearchParams[Game] = EbaySearchParams.videoGameSearchParams

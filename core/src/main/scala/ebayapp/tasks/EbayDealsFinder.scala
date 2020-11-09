@@ -26,6 +26,7 @@ abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
         .flatMap(ebayDealsService.find[D](_, dealsConfig.maxListingDuration))
         .evalFilter(resellableItemService.isNew)
         .evalTap(resellableItemService.save)
+        .filter(isNotScam)
         .filter(isProfitableToResell)
         .evalTap(notificationService.cheapItem)
         .handleErrorWith { error =>
@@ -33,6 +34,9 @@ abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
         }
         .drain ++ Stream.sleep(dealsConfig.searchFrequency)
     ).repeat
+
+  private val isNotScam: ResellableItem[D] => Boolean =
+    item => item.buyPrice.quantityAvailable < dealsConfig.maxExpectedQuantity
 
   private val isProfitableToResell: ResellableItem[D] => Boolean =
     item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.rrp - 100) > dealsConfig.minMarginPercentage)
