@@ -34,7 +34,7 @@ private[mappers] object GameDetailsMapper {
     "(royal mail )?(1st|2nd|first) class.*$",
     "(?<=\\w+ )((all|fully) )?(boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$",
-    "((with| inc(ludes)?|contain)).{0,20}(dlc|pass|content|bonus|pack)(?s).*$",
+    "((\\bW\\b|with| inc(ludes)?|contain|bonus)).{0,20}(dlc|pass|content|bonus|pack)(?s).*$",
     "(supplied|comes)? (with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
     "(in )?(near )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full )?working|perfect|used|(fully )?tested|lovely|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
@@ -161,7 +161,8 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(\\bProstreet\\b)", "Pro Street")
       .replaceAll("(?i)(mariokart)", "Mario Kart")
       .replaceAll("(?i)(warhammer 40( )?000)", "Warhammer 40k")
-      .replaceAll("(?i)(wafare)", "Warfare")
+      .replaceAll("(?i)(wafare|warefare)", "Warfare")
+      .replaceAll("(?i)(assasin)", "Assassin")
       .replaceAll("(?i)(diablo 3)", "diablo iii")
       .replaceAll("(?i)(World Rally Championship)", "WRC")
       .replaceAll("(?i)(\\bPVZ\\b)", "Plants vs Zombies ")
@@ -211,7 +212,7 @@ private[mappers] object GameDetailsMapper {
     def withoutSpecialChars: String =
       str
         .replaceAll("100%$", "")
-        .replaceAll("(?i)(\\bAND\\b|\\bA\\b|\\bTHE\\b)", "")
+        .replaceAll("(?i)(\\bAND\\b|\\bA\\b(?!\\.)|\\bTHE\\b)", "")
         .replaceAll("£\\d+(\\.\\d+)?", "")
         .replaceAll("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]", " ")
         .replaceAll("[\uD83C-\uDBFF\uDC00-\uDFFF]", " ")

@@ -224,8 +224,17 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.name must be (Some("Call of Duty Infinite Warfare"))
     }
 
+    "should keep A if used in acronym" in {
+      val listingDetails = testListing.copy(title = "L.A. Noire")
+
+      val gameDetails = GameDetailsMapper.from(listingDetails)
+
+      gameDetails.name must be (Some("LA Noire"))
+    }
+
     "remove noise words from title" in {
       val titles = List(
+        "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",
         "Call of Duty Infinite Warfare £54.99",
         "Call of Duty Infinite Warfare game for kids",
         "Call of Duty Infinite Warfare also works on ps4",
