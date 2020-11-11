@@ -24,7 +24,7 @@ object search {
         "bundle", "job( |-)?lot",
         "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)",
         "(demo|game)( )?(code|disc|key|cart|pass)", "(store|reservation|access|cd|unused|digital|upgrade|test|psn|beta|no)( )?(redeem )?(game|code|key)",
-        "(software|cartridge(s)?|cart|game|disk|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card) only",
+        "(software|cartridge(s)?|cart|game|disk|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo) only",
         "(case|variety|accessor(ies|y)|storage|charge|robot) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass",
         "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|protection|protective)\\s+(pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging) (station|stand)", "download",

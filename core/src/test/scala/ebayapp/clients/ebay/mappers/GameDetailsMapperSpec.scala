@@ -232,6 +232,14 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.name must be (Some("LA Noire"))
     }
 
+    "remove D from GranD turismo" in {
+      val listingDetails = testListing.copy(title = "Grand Turismo")
+
+      val gameDetails = GameDetailsMapper.from(listingDetails)
+
+      gameDetails.name must be (Some("Gran Turismo"))
+    }
+
     "remove noise words from title" in {
       val titles = List(
         "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",
