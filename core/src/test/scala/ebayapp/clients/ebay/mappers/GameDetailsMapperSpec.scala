@@ -240,6 +240,14 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.name must be (Some("Gran Turismo"))
     }
 
+    "add mising space between number and ps" in {
+      val listingDetails = testListing.copy(title = "Far Cry 2PS4")
+
+      val gameDetails = GameDetailsMapper.from(listingDetails)
+
+      gameDetails.name must be (Some("Far Cry 2"))
+    }
+
     "remove noise words from title" in {
       val titles = List(
         "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",

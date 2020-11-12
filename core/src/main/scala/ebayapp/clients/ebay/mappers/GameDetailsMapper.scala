@@ -40,7 +40,7 @@ private[mappers] object GameDetailsMapper {
     "(in )?(near )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full )?working|perfect|used|(fully )?tested|lovely|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(\\bUK\\b|\\bEU\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
-    "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|WB Games|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bros|rockstar games|ubisoft|(bandai )?namco|Bend Studio|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision|square enix|Dreamworks|Insomniac(s)?|LucasArt(s)?)( presents)?",
+    "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|WB Games|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision|square enix|Dreamworks|Insomniac(s)?|LucasArt(s)?)( presents)?",
     "currys", "James Camerons", "\\bTom clancy(s)?\\b", "gamecube", "James Bond", "Peter Jacksons", "Marvels", "Sid Meiers",
     "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "\\d games in (one|1)",
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal|formula)(?s).*",
@@ -215,6 +215,7 @@ private[mappers] object GameDetailsMapper {
     def withoutSpecialChars: String =
       str
         .replaceAll("100%$", "")
+        .replaceAll("(?i)((?<=\\d)PS)", " PS")
         .replaceAll("(?i)(\\bAND\\b|\\bA\\b(?!\\.)|\\bTHE\\b)", "")
         .replaceAll("£\\d+(\\.\\d+)?", "")
         .replaceAll("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]", " ")
