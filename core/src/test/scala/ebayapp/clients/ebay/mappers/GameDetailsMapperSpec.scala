@@ -52,6 +52,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "XB360" -> "XBOX 360",
         "XBOX 360" -> "XBOX 360",
         "X BOX ONE" -> "XBOX ONE",
+        "Sony Playstation 2016 PS3" -> "PS3"
       )
 
       forAll (platforms) { platform =>
@@ -240,18 +241,19 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.name must be (Some("Gran Turismo"))
     }
 
-    "add mising space between number and ps" in {
+    "add missing space between number and ps" in {
       val listingDetails = testListing.copy(title = "Far Cry 2PS4")
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
       gameDetails.name must be (Some("Far Cry 2"))
+      gameDetails.platform must be (Some("PS4"))
     }
 
     "remove noise words from title" in {
       val titles = List(
         "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",
-        "Call of Duty Infinite Warfare £54.99",
+        "Call of Duty Infinite Warfare \\ £54.99",
         "Call of Duty Infinite Warfare game for kids",
         "Call of Duty Infinite Warfare also works on ps4",
         "Call of Duty Infinite Warfare also plays on ps4",
