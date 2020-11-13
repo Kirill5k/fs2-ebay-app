@@ -197,6 +197,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val titles = Map(
         "FIFA 19 2019" -> "FIFA 19",
         "FIFA 2019" -> "FIFA 19",
+        "FIFA19" -> "FIFA 19",
         "FIFA 2020" -> "FIFA 20",
         "WWE 2k17 2019" -> "WWE 2k17",
         "Call of Duty: Infinite Warfare 2 2019" -> "Call of Duty Infinite Warfare 2"

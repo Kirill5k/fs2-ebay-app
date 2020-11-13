@@ -155,7 +155,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)\\bll\\b", "II")
       .replaceAll("(?i)\\blll\\b", "III")
       .replaceAll("(?i)playerunknown", "Player Unknown")
-      .replaceAll("(?i)(NBA|FIFA)(?=\\d+)", "FIFA ")
+      .replaceAll("(?i)(?<=(NBA|FIFA))(?=\\d+)", " ")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(farcry)", "Far Cry")
       .replaceAll("(?i)(superheroes)", "Super Heroes")

@@ -49,7 +49,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     val time   = Instant.now.minusMillis(duration.toMillis).`with`(MILLI_OF_SECOND, 0)
     val filter = params.searchFilterTemplate.format(time).replaceAll("\\{", "%7B").replaceAll("}", "%7D")
     val searchParams = Map(
-      "fieldgroups" -> "EXTENDED",
+      "fieldgroups"  -> "EXTENDED",
       "category_ids" -> params.categoryId.toString,
       "filter"       -> filter,
       "limit"        -> "200",
@@ -115,9 +115,9 @@ object EbayClient {
       config: EbayConfig,
       backend: SttpBackend[F, Nothing, NothingT]
   ): F[EbayClient[F]] = {
-    val auth = EbayAuthClient.make[F](config, backend)
+    val auth   = EbayAuthClient.make[F](config, backend)
     val browse = EbayBrowseClient.make[F](config, backend)
-    val cache = Cache.make[F, String, Unit](2.hours, 5.minutes)
+    val cache  = Cache.make[F, String, Unit](2.hours, 5.minutes)
     (auth, browse, cache).mapN {
       case (a, b, c) => new LiveEbayClient[F](config, a, b, c)
     }
