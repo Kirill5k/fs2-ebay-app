@@ -28,13 +28,16 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
 ) extends EbayDealsService[F] {
 
   override def deals[D <: ItemDetails](config: EbayDealsConfig)(
-    implicit m: EbayItemMapper[D],
-    p: EbaySearchParams[D]
+      implicit m: EbayItemMapper[D],
+      p: EbaySearchParams[D]
   ): fs2.Stream[F, ResellableItem[D]] =
-    fs2.Stream.emits(config.searchQueries)
-      .map(query => find(query, config.maxListingDuration) ++ fs2.Stream.sleep(config.searchFrequency).drain)
-      .parJoinUnbounded
-      .repeat
+    (
+      fs2.Stream
+        .emits(config.searchQueries)
+        .map(query => find(query, config.maxListingDuration))
+        .parJoinUnbounded ++
+        fs2.Stream.sleep(config.searchFrequency).drain
+    ).repeat
 
   private def find[D <: ItemDetails](
       query: SearchQuery,
