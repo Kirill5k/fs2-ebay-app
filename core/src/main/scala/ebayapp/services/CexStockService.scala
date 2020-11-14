@@ -10,12 +10,13 @@ import ebayapp.domain.search.BuyPrice
 import ebayapp.domain.stock.{ItemStockUpdates, StockUpdate}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.services.CexStockService.CexStockSearchResult
+import io.chrisdavenport.log4cats.Logger
 
 trait CexStockService[F[_]] {
   def stockUpdates[D <: ItemDetails](config: CexStockMonitorConfig)(implicit m: CexItemMapper[D]): fs2.Stream[F, ItemStockUpdates[D]]
 }
 
-final class StatefulCexStockService[F[_]: Concurrent: Timer](
+final class RefbasedlCexStockService[F[_]: Concurrent: Timer: Logger](
     private val client: CexClient[F],
     private val searchHistory: Cache[F, String, Unit],
     private val itemsCache: Cache[F, String, BuyPrice]
@@ -50,6 +51,9 @@ final class StatefulCexStockService[F[_]: Concurrent: Timer](
       }
       .evalTap(upd => itemsCache.put(upd.item.itemDetails.fullName.get, upd.item.buyPrice))
       .filter(_.updates.nonEmpty)
+      .handleErrorWith { error =>
+        fs2.Stream.eval_(Logger[F].error(error)(s"error obtaining stock updates from cex"))
+      }
 
   private def getStockUpdates[D <: ItemDetails](
       i: ResellableItem[D],
@@ -68,9 +72,9 @@ final class StatefulCexStockService[F[_]: Concurrent: Timer](
 
 object CexStockService {
 
-  final case class CexStockSearchResult[D](item: ResellableItem[D], isRepeated: Boolean)
+  final case class CexStockSearchResult[D <: ItemDetails](item: ResellableItem[D], isRepeated: Boolean)
 
-  def genericStateful[F[_]: Concurrent: Timer](
+  def refbased[F[_]: Concurrent: Timer: Logger](
       config: CexConfig,
       client: CexClient[F]
   ): F[CexStockService[F]] = {
@@ -82,6 +86,6 @@ object CexStockService {
         config.stockMonitor.cacheValidationPeriod
       )
 
-    (searchHistory, itemsCache).mapN((s, i) => new StatefulCexStockService[F](client, s, i))
+    (searchHistory, itemsCache).mapN((s, i) => new RefbasedlCexStockService[F](client, s, i))
   }
 }

@@ -74,6 +74,6 @@ class EbayDealsFinderSpec extends CatsSpec {
     mock[NotificationService[IO]],
     mock[ResellableItemService[IO, ItemDetails.Game]],
     mock[EbayDealsService[IO]],
-    mock[CexStockService[IO, ItemDetails.Generic]]
+    mock[CexStockService[IO]]
   )
 }

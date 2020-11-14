@@ -26,6 +26,6 @@ object Services {
       NotificationService.telegram[F](clients.telegram),
       ResellableItemService.videoGame[F](repositories.videoGames),
       EbayDealsService.make[F](clients.ebay, clients.cex),
-      CexStockService.genericStateful[F](config.cex, clients.cex)
+      CexStockService.refbased[F](config.cex, clients.cex)
     ).mapN(Services.apply)
 }
