@@ -1,23 +1,22 @@
 package ebayapp.tasks
 
-import cats.effect.{Sync, Timer}
+import cats.effect.Sync
 import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.EbayDealsConfig
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.services.{EbayDealsService, NotificationService, ResellableItemService, Services}
 import fs2.Stream
-import io.chrisdavenport.log4cats.Logger
 
-abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
-
-  protected def dealsConfig: EbayDealsConfig
-  protected def ebayDealsService: EbayDealsService[F]
-  protected def resellableItemService: ResellableItemService[F, D]
-  protected def notificationService: NotificationService[F]
-
-  implicit def mapper: EbayItemMapper[D]
-  implicit def params: EbaySearchParams[D]
+final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails](
+    private val dealsConfig: EbayDealsConfig,
+    private val ebayDealsService: EbayDealsService[F],
+    private val resellableItemService: ResellableItemService[F, D],
+    private val notificationService: NotificationService[F]
+)(
+    implicit private val mapper: EbayItemMapper[D],
+    implicit private val params: EbaySearchParams[D]
+) {
 
   def searchForCheapItems(): Stream[F, Unit] =
     ebayDealsService
@@ -38,18 +37,20 @@ abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
 
 object EbayDealsFinder {
 
-  def videoGames[F[_]: Sync: Logger: Timer](
+  def videoGames[F[_]: Sync](
       config: EbayDealsConfig,
       services: Services[F]
   ): F[EbayDealsFinder[F, ItemDetails.Game]] =
     Sync[F].delay {
-      new EbayDealsFinder[F, ItemDetails.Game] {
-        override protected def dealsConfig: EbayDealsConfig                                      = config
-        override protected def ebayDealsService: EbayDealsService[F]                             = services.ebayDeals
-        override protected def resellableItemService: ResellableItemService[F, ItemDetails.Game] = services.videoGame
-        override protected def notificationService: NotificationService[F]                       = services.notification
-        implicit override def mapper: EbayItemMapper[ItemDetails.Game]                           = EbayItemMapper.gameDetailsMapper
-        implicit override def params: EbaySearchParams[ItemDetails.Game]                         = EbaySearchParams.videoGameSearchParams
-      }
+      new EbayDealsFinder[F, ItemDetails.Game](
+        config,
+        services.ebayDeals,
+        services.videoGame,
+        services.notification
+      )(
+        Sync[F],
+        EbayItemMapper.gameDetailsMapper,
+        EbaySearchParams.videoGameSearchParams
+      )
     }
 }
