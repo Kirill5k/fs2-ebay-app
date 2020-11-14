@@ -94,18 +94,15 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, fs2.Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
-      fs2.Stream.eval {
+      fs2.Stream.eval_ {
         L.warn(s"auth error from ebay client ($message). switching account") *>
           authClient.switchAccount()
-      }.drain
+      }
     case error: AppError =>
-      fs2.Stream
-        .eval(L.error(s"api client error while getting items from ebay: ${error.message}"))
-        .drain
+      fs2.Stream.eval_(L.error(s"api client error while getting items from ebay: ${error.message}"))
     case error =>
       fs2.Stream
-        .eval(L.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
-        .drain
+        .eval_(L.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
   }
 }
 

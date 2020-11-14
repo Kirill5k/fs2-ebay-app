@@ -5,15 +5,15 @@ import cats.implicits._
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
-import ebayapp.common.config.{CexConfig, StockMonitorRequest}
+import ebayapp.common.config.{CexConfig, CexStockMonitorConfig, StockMonitorRequest}
 import ebayapp.domain.stock.{StockUpdate, StockUpdateType}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 
 trait CexStockService[F[_], D <: ItemDetails] {
-  def getUpdates(request: StockMonitorRequest): F[List[StockUpdate[D]]]
+  def stockUpdates(config: CexStockMonitorConfig): fs2.Stream[F, StockUpdate[D]]
 }
 
-final class StatefulCexStockService[F[_]: Sync, D <: ItemDetails](
+final class StatefulCexStockService[F[_]: Concurrent: Timer, D <: ItemDetails](
     private val client: CexClient[F],
     private val searchHistory: Cache[F, String, Unit],
     private val itemsCache: Cache[F, String, ResellableItem[D]]
@@ -21,7 +21,16 @@ final class StatefulCexStockService[F[_]: Sync, D <: ItemDetails](
     implicit val mapper: CexItemMapper[D]
 ) extends CexStockService[F, D] {
 
-  override def getUpdates(request: StockMonitorRequest): F[List[StockUpdate[D]]] =
+  override def stockUpdates(config: CexStockMonitorConfig): fs2.Stream[F, StockUpdate[D]] =
+    (
+      fs2.Stream
+        .emits(config.monitoringRequests)
+        .map(req => fs2.Stream.evalSeq(getUpdates(req)))
+        .parJoinUnbounded ++
+        fs2.Stream.sleep_(config.monitoringFrequency)
+    ).repeat
+
+  private def getUpdates(request: StockMonitorRequest): F[List[StockUpdate[D]]] =
     client
       .findItem[D](request.query)
       .map(_.filter(_.itemDetails.fullName.isDefined))
@@ -68,7 +77,10 @@ object CexStockService {
     val searchHistory =
       Cache.make[F, String, Unit](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
     val itemsCache =
-      Cache.make[F, String, ResellableItem[ItemDetails.Generic]](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
+      Cache.make[F, String, ResellableItem[ItemDetails.Generic]](
+        config.stockMonitor.cacheExpiration,
+        config.stockMonitor.cacheValidationPeriod
+      )
 
     (searchHistory, itemsCache).mapN((s, i) => new StatefulCexStockService[F, ItemDetails.Generic](client, s, i))
   }

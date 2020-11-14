@@ -21,10 +21,8 @@ abstract class CexStockMonitor[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
         .evalMap(stockService.getUpdates)
         .flatMap(fs2.Stream.emits)
         .evalTap(notificationService.stockUpdate[D])
-        .handleErrorWith { error =>
-          Stream.eval(Logger[F].error(error)(s"error obtaining stock updates from cex")).drain
-        }
-        .drain ++ Stream.sleep(stockMonitorConfig.monitoringFrequency)
+
+        .drain ++ Stream.sleep_(stockMonitorConfig.monitoringFrequency)
     ).repeat
 }
 

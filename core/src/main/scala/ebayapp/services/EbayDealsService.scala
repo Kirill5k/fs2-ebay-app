@@ -36,7 +36,7 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
         .emits(config.searchQueries)
         .map(query => find(query, config.maxListingDuration))
         .parJoinUnbounded ++
-        fs2.Stream.sleep(config.searchFrequency).drain
+        fs2.Stream.sleep_(config.searchFrequency)
     ).repeat
 
   private def find[D <: ItemDetails](
@@ -58,7 +58,7 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
         }
       }
       .handleErrorWith { error =>
-        Stream.eval(Logger[F].error(error)(s"error getting deals from ebay")).drain
+        Stream.eval_(Logger[F].error(error)(s"error getting deals from ebay"))
       }
 }
 
