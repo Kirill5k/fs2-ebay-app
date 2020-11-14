@@ -1,33 +1,42 @@
 package ebayapp.services
 
-import cats.effect.Sync
+import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.ebay.EbayClient
 import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
-import ebayapp.common.config.SearchQuery
+import ebayapp.common.config.{EbayDealsConfig, SearchQuery}
 import ebayapp.domain.{ItemDetails, ResellableItem}
+import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 
 import scala.concurrent.duration._
 
 trait EbayDealsService[F[_]] {
-  def find[D <: ItemDetails](
-      query: SearchQuery,
-      duration: FiniteDuration
+  def deals[D <: ItemDetails](
+      config: EbayDealsConfig
   )(
       implicit m: EbayItemMapper[D],
       p: EbaySearchParams[D]
   ): fs2.Stream[F, ResellableItem[D]]
 }
 
-final class LiveEbayDealsService[F[_]: Logger: Sync](
+final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
     private val ebayClient: EbayClient[F],
     private val cexClient: CexClient[F]
 ) extends EbayDealsService[F] {
 
-  override def find[D <: ItemDetails](
+  override def deals[D <: ItemDetails](config: EbayDealsConfig)(
+    implicit m: EbayItemMapper[D],
+    p: EbaySearchParams[D]
+  ): fs2.Stream[F, ResellableItem[D]] =
+    fs2.Stream.emits(config.searchQueries)
+      .map(query => find(query, config.maxListingDuration) ++ fs2.Stream.sleep(config.searchFrequency).drain)
+      .parJoinUnbounded
+      .repeat
+
+  private def find[D <: ItemDetails](
       query: SearchQuery,
       duration: FiniteDuration
   )(
@@ -45,11 +54,14 @@ final class LiveEbayDealsService[F[_]: Logger: Sync](
               Sync[F].pure(item)
         }
       }
+      .handleErrorWith { error =>
+        Stream.eval(Logger[F].error(error)(s"error getting deals from ebay")).drain
+      }
 }
 
 object EbayDealsService {
 
-  def make[F[_]: Sync: Logger](
+  def make[F[_]: Concurrent: Logger: Timer](
       ebayClient: EbayClient[F],
       cexClient: CexClient[F]
   ): F[EbayDealsService[F]] =

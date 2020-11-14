@@ -20,20 +20,14 @@ abstract class EbayDealsFinder[F[_]: Sync: Logger: Timer, D <: ItemDetails] {
   implicit def params: EbaySearchParams[D]
 
   def searchForCheapItems(): Stream[F, Unit] =
-    (
-      fs2.Stream
-        .emits(dealsConfig.searchQueries)
-        .flatMap(ebayDealsService.find[D](_, dealsConfig.maxListingDuration))
-        .evalFilter(resellableItemService.isNew)
-        .evalTap(resellableItemService.save)
-        .filter(isNotScam)
-        .filter(isProfitableToResell)
-        .evalTap(notificationService.cheapItem)
-        .handleErrorWith { error =>
-          Stream.eval(Logger[F].error(error)(s"error getting deals from ebay")).drain
-        }
-        .drain ++ Stream.sleep(dealsConfig.searchFrequency)
-    ).repeat
+    ebayDealsService
+      .deals[D](dealsConfig)
+      .evalFilter(resellableItemService.isNew)
+      .evalTap(resellableItemService.save)
+      .filter(isNotScam)
+      .filter(isProfitableToResell)
+      .evalTap(notificationService.cheapItem)
+      .drain
 
   private val isNotScam: ResellableItem[D] => Boolean =
     item => item.buyPrice.quantityAvailable < dealsConfig.maxExpectedQuantity
