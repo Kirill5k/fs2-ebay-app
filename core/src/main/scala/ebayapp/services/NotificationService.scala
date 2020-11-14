@@ -9,7 +9,7 @@ import io.chrisdavenport.log4cats.Logger
 
 trait NotificationService[F[_]] {
   def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit]
-  def stockUpdate[D <: ItemDetails](update: StockUpdate[D]): F[Unit]
+  def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit]
 }
 
 final class TelegramNotificationService[F[_]](
@@ -29,8 +29,8 @@ final class TelegramNotificationService[F[_]](
         L.warn(s"not enough details for sending cheap item notification $item")
     }
 
-  override def stockUpdate[D <: ItemDetails](update: StockUpdate[D]): F[Unit] =
-    S.pure(update.notification).flatMap {
+  override def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit] =
+    S.pure(item.stockUpdateNotification(update)).flatMap {
       case Some(message) =>
         L.info(s"""sending "$message"""") *>
           telegramClient.sendMessageToSecondaryChannel(message)
@@ -40,16 +40,6 @@ final class TelegramNotificationService[F[_]](
 }
 
 object NotificationService {
-  implicit class StockUpdateOps[D <: ItemDetails](private val update: StockUpdate[D]) extends AnyVal {
-    def notification: Option[String] =
-      update.item.itemDetails.fullName.map { name =>
-        val price    = update.item.buyPrice.rrp
-        val quantity = update.item.buyPrice.quantityAvailable
-        val url      = update.item.listingDetails.url
-        s"${update.updateType.header} for $name (£$price, $quantity): ${update.updateType.message} $url"
-      }
-  }
-
   implicit class ResellableItemOps[D <: ItemDetails](private val item: ResellableItem[D]) extends AnyVal {
     def cheapItemNotification: Option[String] =
       for {
@@ -60,6 +50,14 @@ object NotificationService {
         profitPercentage = sell.credit * 100 / buy - 100
         url              = item.listingDetails.url
       } yield s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: ${quantity}) $url"""
+
+    def stockUpdateNotification(update: StockUpdate): Option[String] =
+      item.itemDetails.fullName.map { name =>
+        val price    = item.buyPrice.rrp
+        val quantity = item.buyPrice.quantityAvailable
+        val url      = item.listingDetails.url
+        s"${update.header} for $name (£$price, $quantity): ${update.message} $url"
+      }
   }
 
   def telegram[F[_]: Sync: Logger](client: TelegramClient[F]): F[NotificationService[F]] =

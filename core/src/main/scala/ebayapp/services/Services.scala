@@ -12,7 +12,7 @@ final case class Services[F[_]](
     notification: NotificationService[F],
     videoGame: ResellableItemService[F, ItemDetails.Game],
     ebayDeals: EbayDealsService[F],
-    genericCexStockCheck: CexStockService[F, ItemDetails.Generic]
+    cexStock: CexStockService[F]
 )
 
 object Services {

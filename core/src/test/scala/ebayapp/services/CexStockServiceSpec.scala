@@ -6,7 +6,7 @@ import ebayapp.clients.cex.CexClient
 import ebayapp.common.Cache
 import ebayapp.common.config.{SearchQuery, StockMonitorRequest}
 import ebayapp.domain.ItemDetails.Generic
-import ebayapp.domain.stock.{StockUpdate, StockUpdateType}
+import ebayapp.domain.stock.{StockUpdate, StockUpdate}
 import ebayapp.domain.{ResellableItem, ResellableItemBuilder}
 
 class CexStockServiceSpec extends CatsSpec {
@@ -52,7 +52,7 @@ class CexStockServiceSpec extends CatsSpec {
         verify(searchHistory).put(request.query.base64, ())
         verify(itemsCache).put("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", mb1)
         verify(itemsCache).put("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B", mb2)
-        u must be (List(StockUpdate(StockUpdateType.New, mb2)))
+        u must be (List(StockUpdate(StockUpdate.New, mb2)))
       }
     }
 
@@ -87,7 +87,7 @@ class CexStockServiceSpec extends CatsSpec {
         verify(itemsCache).get("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A")
         verify(itemsCache).put("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", mb1)
         verify(searchHistory).put(request.query.base64, ())
-        u must be (List(StockUpdate(StockUpdateType.StockIncrease(1, 2), mb1)))
+        u must be (List(StockUpdate(StockUpdate.StockIncrease(1, 2), mb1)))
       }
     }
 
@@ -105,7 +105,7 @@ class CexStockServiceSpec extends CatsSpec {
         verify(itemsCache).get("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A")
         verify(itemsCache).put("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", mb1)
         verify(searchHistory).put(request.query.base64, ())
-        u must be (List(StockUpdate(StockUpdateType.StockDecrease(3, 2), mb1)))
+        u must be (List(StockUpdate(StockUpdate.StockDecrease(3, 2), mb1)))
       }
     }
 
@@ -140,7 +140,7 @@ class CexStockServiceSpec extends CatsSpec {
         verify(itemsCache).get("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A")
         verify(itemsCache).put("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", mb1)
         verify(searchHistory).put(request.query.base64, ())
-        u must be (List(StockUpdate(StockUpdateType.PriceRaise(BigDecimal(950.0), BigDecimal(1950.0)), mb1)))
+        u must be (List(StockUpdate(StockUpdate.PriceRaise(BigDecimal(950.0), BigDecimal(1950.0)), mb1)))
       }
     }
 
@@ -157,7 +157,7 @@ class CexStockServiceSpec extends CatsSpec {
         verify(itemsCache).get("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A")
         verify(itemsCache).put("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", mb1)
         verify(searchHistory).put(request.query.base64, ())
-        u must be (List(StockUpdate(StockUpdateType.PriceDrop(BigDecimal(2950.0), BigDecimal(1950.0)), mb1)))
+        u must be (List(StockUpdate(StockUpdate.PriceDrop(BigDecimal(2950.0), BigDecimal(1950.0)), mb1)))
       }
     }
 

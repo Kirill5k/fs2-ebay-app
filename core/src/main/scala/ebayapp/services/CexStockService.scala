@@ -6,82 +6,82 @@ import ebayapp.clients.cex.CexClient
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
 import ebayapp.common.config.{CexConfig, CexStockMonitorConfig, StockMonitorRequest}
-import ebayapp.domain.stock.{StockUpdate, StockUpdateType}
+import ebayapp.domain.search.BuyPrice
+import ebayapp.domain.stock.{ItemStockUpdates, StockUpdate}
 import ebayapp.domain.{ItemDetails, ResellableItem}
+import ebayapp.services.CexStockService.CexStockSearchResult
 
-trait CexStockService[F[_], D <: ItemDetails] {
-  def stockUpdates(config: CexStockMonitorConfig): fs2.Stream[F, StockUpdate[D]]
+trait CexStockService[F[_]] {
+  def stockUpdates[D <: ItemDetails](config: CexStockMonitorConfig)(implicit m: CexItemMapper[D]): fs2.Stream[F, ItemStockUpdates[D]]
 }
 
-final class StatefulCexStockService[F[_]: Concurrent: Timer, D <: ItemDetails](
+final class StatefulCexStockService[F[_]: Concurrent: Timer](
     private val client: CexClient[F],
     private val searchHistory: Cache[F, String, Unit],
-    private val itemsCache: Cache[F, String, ResellableItem[D]]
-)(
-    implicit val mapper: CexItemMapper[D]
-) extends CexStockService[F, D] {
+    private val itemsCache: Cache[F, String, BuyPrice]
+) extends CexStockService[F] {
 
-  override def stockUpdates(config: CexStockMonitorConfig): fs2.Stream[F, StockUpdate[D]] =
+  override def stockUpdates[D <: ItemDetails](
+      config: CexStockMonitorConfig
+  )(
+      implicit m: CexItemMapper[D]
+  ): fs2.Stream[F, ItemStockUpdates[D]] =
     (
       fs2.Stream
         .emits(config.monitoringRequests)
-        .map(req => fs2.Stream.evalSeq(getUpdates(req)))
+        .map(req => getUpdates(req))
         .parJoinUnbounded ++
         fs2.Stream.sleep_(config.monitoringFrequency)
     ).repeat
 
-  private def getUpdates(request: StockMonitorRequest): F[List[StockUpdate[D]]] =
-    client
-      .findItem[D](request.query)
-      .map(_.filter(_.itemDetails.fullName.isDefined))
-      .flatMap { items =>
-        searchHistory.contains(request.query.base64).flatMap {
-          case false => Sync[F].pure(List.empty[StockUpdate[D]]) <* updateCache(items)
-          case true  => getStockUpdates(items, request.monitorStockChange, request.monitorPriceChange) <* updateCache(items)
-        }
+  private def getUpdates[D <: ItemDetails](req: StockMonitorRequest)(implicit m: CexItemMapper[D]): fs2.Stream[F, ItemStockUpdates[D]] =
+    fs2.Stream
+      .eval(searchHistory.contains(req.query.base64))
+      .flatMap { isRepeated =>
+        fs2.Stream.evalSeq(client.findItem[D](req.query)).map(item => CexStockSearchResult(item, isRepeated)) ++
+          fs2.Stream.eval_(searchHistory.put(req.query.base64, ()))
       }
-      .flatTap(_ => searchHistory.put(request.query.base64, ()))
+      .filter(_.item.itemDetails.fullName.isDefined)
+      .evalMap {
+        case CexStockSearchResult(item, false) =>
+          Sync[F].pure(ItemStockUpdates(item, Nil))
+        case CexStockSearchResult(item, true) =>
+          getStockUpdates(item, req.monitorStockChange, req.monitorPriceChange).map(upd => ItemStockUpdates(item, upd))
+      }
+      .evalTap(upd => itemsCache.put(upd.item.itemDetails.fullName.get, upd.item.buyPrice))
+      .filter(_.updates.nonEmpty)
 
-  private def updateCache(items: List[ResellableItem[D]]): F[Unit] =
-    items.traverse(i => itemsCache.put(i.itemDetails.fullName.get, i)).void
-
-  private def getStockUpdates(
-      items: List[ResellableItem[D]],
+  private def getStockUpdates[D <: ItemDetails](
+      i: ResellableItem[D],
       checkQuantity: Boolean,
       checkPrice: Boolean
-  ): F[List[StockUpdate[D]]] =
-    items
-      .traverse { i =>
-        itemsCache.get(i.itemDetails.fullName.get).map {
-          case None => Some(StockUpdate(StockUpdateType.New, i))
-          case Some(prev) if checkQuantity && prev.buyPrice.quantityAvailable > i.buyPrice.quantityAvailable =>
-            Some(StockUpdate(StockUpdateType.StockDecrease(prev.buyPrice.quantityAvailable, i.buyPrice.quantityAvailable), i))
-          case Some(prev) if checkQuantity && prev.buyPrice.quantityAvailable < i.buyPrice.quantityAvailable =>
-            Some(StockUpdate(StockUpdateType.StockIncrease(prev.buyPrice.quantityAvailable, i.buyPrice.quantityAvailable), i))
-          case Some(prev) if checkPrice && prev.buyPrice.rrp > i.buyPrice.rrp =>
-            Some(StockUpdate(StockUpdateType.PriceDrop(prev.buyPrice.rrp, i.buyPrice.rrp), i))
-          case Some(prev) if checkPrice && prev.buyPrice.rrp < i.buyPrice.rrp =>
-            Some(StockUpdate(StockUpdateType.PriceRaise(prev.buyPrice.rrp, i.buyPrice.rrp), i))
-          case _ => None
-        }
-      }
-      .map(_.flatten)
+  ): F[List[StockUpdate]] =
+    itemsCache.get(i.itemDetails.fullName.get).map {
+      case None => List(StockUpdate.New)
+      case Some(prevPrice) =>
+        List(
+          if (checkPrice) StockUpdate.priceChanged(prevPrice, i.buyPrice) else None,
+          if (checkQuantity) StockUpdate.quantityChanged(prevPrice, i.buyPrice) else None
+        ).flatten
+    }
 }
 
 object CexStockService {
 
+  final case class CexStockSearchResult[D](item: ResellableItem[D], isRepeated: Boolean)
+
   def genericStateful[F[_]: Concurrent: Timer](
       config: CexConfig,
       client: CexClient[F]
-  ): F[CexStockService[F, ItemDetails.Generic]] = {
+  ): F[CexStockService[F]] = {
     val searchHistory =
       Cache.make[F, String, Unit](config.stockMonitor.cacheExpiration, config.stockMonitor.cacheValidationPeriod)
     val itemsCache =
-      Cache.make[F, String, ResellableItem[ItemDetails.Generic]](
+      Cache.make[F, String, BuyPrice](
         config.stockMonitor.cacheExpiration,
         config.stockMonitor.cacheValidationPeriod
       )
 
-    (searchHistory, itemsCache).mapN((s, i) => new StatefulCexStockService[F, ItemDetails.Generic](client, s, i))
+    (searchHistory, itemsCache).mapN((s, i) => new StatefulCexStockService[F](client, s, i))
   }
 }

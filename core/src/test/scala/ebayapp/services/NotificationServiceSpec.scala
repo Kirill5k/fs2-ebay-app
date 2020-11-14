@@ -4,7 +4,7 @@ import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.telegram.TelegramClient
 import ebayapp.domain.ResellableItemBuilder
-import ebayapp.domain.stock.{StockUpdate, StockUpdateType}
+import ebayapp.domain.stock.{StockUpdate, StockUpdate}
 
 class NotificationServiceSpec extends CatsSpec {
 
@@ -27,7 +27,7 @@ class NotificationServiceSpec extends CatsSpec {
       val client = mock[TelegramClient[IO]]
       when(client.sendMessageToSecondaryChannel(any[String])).thenReturn(IO.unit)
       val update = StockUpdate(
-        StockUpdateType.PriceDrop(BigDecimal(100.0), BigDecimal(50.0)),
+        StockUpdate.PriceDrop(BigDecimal(100.0), BigDecimal(50.0)),
         ResellableItemBuilder.generic("macbook pro", price = 50.0)
       )
 
