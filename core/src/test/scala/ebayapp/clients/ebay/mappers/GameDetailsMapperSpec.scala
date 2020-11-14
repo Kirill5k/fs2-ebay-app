@@ -167,6 +167,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val titles = Map(
         "gta5" -> "Grand Theft Auto 5",
         "gta 5" -> "Grand Theft Auto 5",
+        "Grand Theft Auto VI + map" -> "Grand Theft Auto VI",
         "grand theft auto gta" -> "grand theft auto Grand Theft Auto",
         "rdr" -> "Red Dead Redemption",
         "sunset overdrive" -> "sunset overdrive",
@@ -262,6 +263,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty Infinite Warfare pre-owned multi-player xbox 360",
         "Call of Duty Infinite Warfare multi - player xbox 360",
         "Call of Duty-Infinite Warfare by rockstar games",
+        "Call of Duty-Infinite Warfare 2017 version",
         "Call of Duty-Infinite Warfare from rockstar games",
         "Call of Duty-Infinite Warfare 20th Year Celebration",
         "Call of Duty-Infinite Warfare from EA sports",
