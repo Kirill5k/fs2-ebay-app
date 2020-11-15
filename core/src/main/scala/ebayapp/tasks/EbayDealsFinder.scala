@@ -23,13 +23,13 @@ final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails](
       .deals[D](dealsConfig)
       .evalFilter(resellableItemService.isNew)
       .evalTap(resellableItemService.save)
-      .filter(isNotScam)
+      .filter(hasRequiredStock)
       .filter(isProfitableToResell)
       .evalTap(notificationService.cheapItem)
       .drain
 
-  private val isNotScam: ResellableItem[D] => Boolean =
-    item => item.buyPrice.quantityAvailable < dealsConfig.maxExpectedQuantity
+  private val hasRequiredStock: ResellableItem[D] => Boolean =
+    item =>  item.buyPrice.quantityAvailable > 0 && item.buyPrice.quantityAvailable < dealsConfig.maxExpectedQuantity
 
   private val isProfitableToResell: ResellableItem[D] => Boolean =
     item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.rrp - 100) > dealsConfig.minMarginPercentage)
