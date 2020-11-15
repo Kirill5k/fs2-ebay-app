@@ -1,12 +1,10 @@
 package ebayapp.services
 
-import cats.effect.{Concurrent, Timer}
+import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.cex.mappers.CexItemMapper
-import ebayapp.common.Cache
-import ebayapp.common.config.{CexConfig, CexStockMonitorConfig, SearchQuery, StockMonitorRequest}
-import ebayapp.domain.search.BuyPrice
+import ebayapp.common.config.{CexStockMonitorConfig, SearchQuery, StockMonitorRequest}
 import ebayapp.domain.stock.{ItemStockUpdates, StockUpdate}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import io.chrisdavenport.log4cats.Logger
@@ -18,10 +16,8 @@ trait CexStockService[F[_]] {
   def stockUpdates[D <: ItemDetails](config: CexStockMonitorConfig)(implicit m: CexItemMapper[D]): Stream[F, ItemStockUpdates[D]]
 }
 
-final class RefbasedlCexStockService[F[_]: Concurrent: Timer: Logger](
-    private val client: CexClient[F],
-    private val searchHistory: Cache[F, String, Unit],
-    private val itemsCache: Cache[F, String, BuyPrice]
+final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
+    private val client: CexClient[F]
 ) extends CexStockService[F] {
 
   override def stockUpdates[D <: ItemDetails](
@@ -79,21 +75,6 @@ final class RefbasedlCexStockService[F[_]: Concurrent: Timer: Logger](
 
 object CexStockService {
 
-  final case class CexStockSearchResult[D <: ItemDetails](item: ResellableItem[D], isRepeated: Boolean)
-
-  def refbased[F[_]: Concurrent: Timer: Logger](
-      config: CexConfig,
-      client: CexClient[F]
-  ): F[CexStockService[F]] = {
-    val searchHistory = Cache.make[F, String, Unit](
-      config.stockMonitor.cacheExpiration,
-      config.stockMonitor.cacheValidationPeriod
-    )
-    val itemsCache = Cache.make[F, String, BuyPrice](
-      config.stockMonitor.cacheExpiration,
-      config.stockMonitor.cacheValidationPeriod
-    )
-
-    (searchHistory, itemsCache).mapN((s, i) => new RefbasedlCexStockService[F](client, s, i))
-  }
+  def make[F[_]: Concurrent: Timer: Logger](client: CexClient[F]): F[CexStockService[F]] =
+    Sync[F].delay(new LiveCexStockService[F](client))
 }

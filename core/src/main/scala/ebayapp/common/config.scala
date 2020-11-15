@@ -67,8 +67,6 @@ object config {
   )
 
   final case class CexStockMonitorConfig(
-      cacheExpiration: FiniteDuration,
-      cacheValidationPeriod: FiniteDuration,
       monitoringFrequency: FiniteDuration,
       monitoringRequests: List[StockMonitorRequest]
   )

@@ -27,7 +27,7 @@ object Application extends IOApp {
           _            <- logger.info("created resources")
           clients      <- Clients.make(config, resources.httpClientBackend) <* logger.info("created clients")
           repositories <- Repositories.make(resources.mongoClient) <* logger.info("created repositories")
-          services     <- Services.make(config, clients, repositories) <* logger.info("created services")
+          services     <- Services.make(clients, repositories) <* logger.info("created services")
           tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
           controllers  <- Controllers.make(resources.blocker, services) <* logger.info("created controllers")
           _            <- logger.info("initiating search tasks") *> tasks.processes.compile.drain.start
