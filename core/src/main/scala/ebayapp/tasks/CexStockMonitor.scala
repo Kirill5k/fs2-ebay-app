@@ -6,6 +6,7 @@ import ebayapp.clients.cex.mappers._
 import ebayapp.common.config.CexStockMonitorConfig
 import ebayapp.domain.ItemDetails
 import ebayapp.services.{CexStockService, NotificationService, Services}
+import fs2.Stream
 
 final class CexStockMonitor[F[_]: Sync, D <: ItemDetails](
     private val stockMonitorConfig: CexStockMonitorConfig,
@@ -15,7 +16,7 @@ final class CexStockMonitor[F[_]: Sync, D <: ItemDetails](
     implicit private val mapper: CexItemMapper[D]
 ) {
 
-  def monitorStock(): fs2.Stream[F, Unit] =
+  def monitorStock(): Stream[F, Unit] =
     stockService
       .stockUpdates[D](stockMonitorConfig)
       .evalMap(upd => upd.updates.traverse_(u => notificationService.stockUpdate(upd.item, u)))

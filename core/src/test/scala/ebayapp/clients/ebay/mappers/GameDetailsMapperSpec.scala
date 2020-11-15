@@ -111,7 +111,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
-      gameDetails.name must be (Some("Player Unknowns battlegrounds"))
+      gameDetails.name must be (Some("Player unknowns battlegrounds"))
     }
 
     "leave new in the middle of title" in {
@@ -211,6 +211,19 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       }
     }
 
+    "separate words where appropriate" in {
+      val titles = Map(
+        "racedriver grid" -> "race driver grid",
+        "racedriver: grid" -> "race driver grid"
+      )
+
+      forAll (titles) { case (title, expected) =>
+        val listingDetails = testListing.copy(title = title)
+        val gameDetails = GameDetailsMapper.from(listingDetails)
+        gameDetails.name must be (Some(expected))
+      }
+    }
+
     "remove wrestling after 2k17 title" in {
       val listingDetails = testListing.copy(title = "WWE 2k19 Wrestling")
 
@@ -244,11 +257,11 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     }
 
     "add missing space between number and ps" in {
-      val listingDetails = testListing.copy(title = "Far Cry 2PS4")
+      val listingDetails = testListing.copy(title = "Farcry 2PS4")
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
-      gameDetails.name must be (Some("Far Cry 2"))
+      gameDetails.name must be (Some("Far cry 2"))
       gameDetails.platform must be (Some("PS4"))
     }
 
@@ -256,6 +269,9 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val titles = List(
         "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",
         "Call of Duty Infinite Warfare \\ £54.99",
+        "5 PS3 Games Call of Duty Infinite Warfare",
+        "Call of Duty Infinite Warfare xbox one series x s",
+        "Call of Duty Infinite Warfare xbox one x series x/s",
         "Call of Duty Infinite Warfare game for kids",
         "Call of Duty Infinite Warfare also works on ps4",
         "Call of Duty Infinite Warfare also plays on ps4",

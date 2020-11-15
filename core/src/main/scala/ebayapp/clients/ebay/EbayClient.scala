@@ -16,6 +16,7 @@ import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import io.chrisdavenport.log4cats.Logger
 import sttp.client.{NothingT, SttpBackend}
+import fs2._
 
 import scala.concurrent.duration._
 
@@ -26,7 +27,7 @@ trait EbayClient[F[_]] {
   )(
       implicit mapper: EbayItemMapper[D],
       params: EbaySearchParams[D]
-  ): fs2.Stream[F, ResellableItem[D]]
+  ): Stream[F, ResellableItem[D]]
 }
 
 final private[ebay] class LiveEbayClient[F[_]](
@@ -45,7 +46,7 @@ final private[ebay] class LiveEbayClient[F[_]](
   )(
       implicit mapper: EbayItemMapper[D],
       params: EbaySearchParams[D]
-  ): fs2.Stream[F, ResellableItem[D]] = {
+  ): Stream[F, ResellableItem[D]] = {
     val time   = Instant.now.minusMillis(duration.toMillis).`with`(MILLI_OF_SECOND, 0)
     val filter = params.searchFilterTemplate.format(time).replaceAll("\\{", "%7B").replaceAll("}", "%7D")
     val searchParams = Map(
@@ -56,10 +57,9 @@ final private[ebay] class LiveEbayClient[F[_]](
       "q"            -> query.value
     )
 
-    fs2
-      .Stream(searchParams)
+    Stream(searchParams)
       .map(searchForItems(params.removeUnwanted))
-      .flatMap(fs2.Stream.evalSeq)
+      .flatMap(Stream.evalSeq)
       .evalTap(item => itemIdsCache.put(item.itemId, ()))
       .map(mapper.toDomain)
       .handleErrorWith(switchAccountIfItHasExpired)
@@ -92,16 +92,16 @@ final private[ebay] class LiveEbayClient[F[_]](
       goodScore = feedbackScore > config.search.minFeedbackScore
     } yield goodPercentage && goodScore).exists(identity)
 
-  private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, fs2.Stream[F, ResellableItem[D]]] = {
+  private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
-      fs2.Stream.eval_ {
+      Stream.eval_ {
         L.warn(s"auth error from ebay client ($message). switching account") *>
           authClient.switchAccount()
       }
     case error: AppError =>
-      fs2.Stream.eval_(L.error(s"api client error while getting items from ebay: ${error.message}"))
+      Stream.eval_(L.error(s"api client error while getting items from ebay: ${error.message}"))
     case error =>
-      fs2.Stream
+      Stream
         .eval_(L.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
   }
 }

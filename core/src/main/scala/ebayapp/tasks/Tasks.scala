@@ -6,12 +6,13 @@ import ebayapp.common.config.AppConfig
 import ebayapp.domain.ItemDetails
 import ebayapp.services.Services
 import io.chrisdavenport.log4cats.Logger
+import fs2.Stream
 
 final case class Tasks[F[_]: Concurrent](
     genericCexStockMonitor: CexStockMonitor[F, ItemDetails.Generic],
     videoGamesEbayDealsFinder: EbayDealsFinder[F, ItemDetails.Game]
 ) {
-  def processes: fs2.Stream[F, Unit] = fs2.Stream(
+  def processes: Stream[F, Unit] = Stream(
     genericCexStockMonitor.monitorStock(),
     videoGamesEbayDealsFinder.searchForCheapItems()
   ).covary[F].parJoinUnbounded

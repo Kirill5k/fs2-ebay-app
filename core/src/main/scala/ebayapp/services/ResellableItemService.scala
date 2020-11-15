@@ -7,11 +7,12 @@ import cats.implicits._
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.ResellableItem.VideoGame
 import ebayapp.repositories.ResellableItemRepository.VideoGameRepository
+import fs2.Stream
 
 trait ResellableItemService[F[_], D <: ItemDetails] {
   def save(item: ResellableItem[D]): F[Unit]
   def find(limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
-  def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): fs2.Stream[F, ResellableItem[D]]
+  def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): Stream[F, ResellableItem[D]]
   def isNew(item: ResellableItem[D]): F[Boolean]
 }
 
@@ -22,7 +23,7 @@ final class VideoGameService[F[_]: Sync](
   override def save(item: VideoGame): F[Unit] =
     repository.save(item)
 
-  override def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): fs2.Stream[F, VideoGame] =
+  override def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): Stream[F, VideoGame] =
     repository.stream(limit, from, to)
 
   override def isNew(item: VideoGame): F[Boolean] =

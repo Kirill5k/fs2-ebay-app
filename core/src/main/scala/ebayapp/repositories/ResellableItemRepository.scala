@@ -11,13 +11,14 @@ import mongo4cats.database.MongoCollectionF
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.{Filters, Sorts}
+import fs2._
 
 trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItemEntity] {
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: I): F[Unit]
   def saveAll(items: Seq[I]): F[Unit]
   def findAll(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): F[List[I]]
-  def stream(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): fs2.Stream[F, I]
+  def stream(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): Stream[F, I]
 }
 
 final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: ResellableItem[_], E <: ResellableItemEntity](
@@ -50,7 +51,7 @@ final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: Resellabl
       limit: Option[Int] = None,
       from: Option[Instant] = None,
       to: Option[Instant] = None
-  ): fs2.Stream[F, I] =
+  ): Stream[F, I] =
     mongoCollection.find
       .sort(Sorts.descending("listingDetails.datePosted"))
       .filter(postedDateRangeSelector(from, to))

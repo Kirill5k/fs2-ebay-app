@@ -8,8 +8,8 @@ import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.{EbayDealsConfig, SearchQuery}
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
+import fs2._
 
 import scala.concurrent.duration._
 
@@ -19,7 +19,7 @@ trait EbayDealsService[F[_]] {
   )(
       implicit m: EbayItemMapper[D],
       p: EbaySearchParams[D]
-  ): fs2.Stream[F, ResellableItem[D]]
+  ): Stream[F, ResellableItem[D]]
 }
 
 final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
@@ -30,13 +30,13 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
   override def deals[D <: ItemDetails](config: EbayDealsConfig)(
       implicit m: EbayItemMapper[D],
       p: EbaySearchParams[D]
-  ): fs2.Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem[D]] =
     (
-      fs2.Stream
+      Stream
         .emits(config.searchQueries)
         .map(query => find(query, config.maxListingDuration))
         .parJoinUnbounded ++
-        fs2.Stream.sleep_(config.searchFrequency)
+        Stream.sleep_(config.searchFrequency)
     ).repeat
 
   private def find[D <: ItemDetails](
@@ -45,7 +45,7 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
   )(
       implicit m: EbayItemMapper[D],
       p: EbaySearchParams[D]
-  ): fs2.Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem[D]] =
     ebayClient
       .findLatestItems[D](query, duration)
       .evalMap { item =>
