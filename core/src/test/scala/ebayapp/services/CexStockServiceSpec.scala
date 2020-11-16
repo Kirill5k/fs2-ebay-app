@@ -176,5 +176,21 @@ class CexStockServiceSpec extends CatsSpec {
         u must be (Nil)
       }
     }
+
+    "return updates for multiple items" in {
+      val client = mock[CexClient[IO]]
+
+      when(client.findItem(req1.query))
+        .thenReturn(IO.pure(List(mb1.copy(buyPrice = BuyPrice(3, 3000.0)), mb2.copy(buyPrice = BuyPrice(3, 3000.0)))))
+        .andThen(IO.pure(List(mb1, mb2)))
+
+      val service = new LiveCexStockService[IO](client)
+      val result = service.stockUpdates(config).interruptAfter(2.second).compile.toList
+
+      result.unsafeToFuture().map { u =>
+        u must have size 2
+        u.flatMap(_.updates) must have size 4
+      }
+    }
   }
 }

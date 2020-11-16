@@ -68,7 +68,7 @@ private[mappers] object GameDetailsMapper {
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest on ebay", "strategy guide", "Enhanced for Series X",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Ultimate Fighting Champion(ship)?", "available now",
-    "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
+    "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "in stock( now)?",
     "never played", "(only )?played (once|twice)", "best price", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted|eBay|best|from ebays biggest) Seller(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",

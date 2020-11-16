@@ -32,7 +32,9 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
 
   private def findItems[D <: ItemDetails](query: SearchQuery)(implicit m: CexItemMapper[D]): F[Map[String, ResellableItem[D]]] =
     client.findItem[D](query).map { items =>
-      items.filter(_.itemDetails.fullName.isDefined).map(i => (i.itemDetails.fullName.get, i)).toMap
+      items.groupBy(_.itemDetails.fullName).collect {
+        case (Some(name), group) => (name, group.head)
+      }
     }
 
   private def compareItems[D <: ItemDetails](
@@ -51,7 +53,7 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
             ).flatten
         }
         ItemStockUpdates(currItem, updates)
-    }.toList
+    }.filter(_.updates.nonEmpty).toList
 
   private def getUpdates[D <: ItemDetails](
       req: StockMonitorRequest,
@@ -66,7 +68,6 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
         }
       }
       .flatMap(ups => Stream.emits(ups) ++ Stream.sleep_(freq))
-      .filter(_.updates.nonEmpty)
       .handleErrorWith { error =>
         Stream.eval_(Logger[F].error(error)(s"error obtaining stock updates from cex")) ++
           getUpdates(req, freq)
