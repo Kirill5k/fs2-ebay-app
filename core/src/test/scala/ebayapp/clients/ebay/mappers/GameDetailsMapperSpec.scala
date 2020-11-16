@@ -185,6 +185,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "formula 1 f1 2019" -> "f1 2019",
         "formula one f1 2019" -> "f1 2019",
         "f1 formula one 2019" -> "f1 2019",
+        "f1 2019 xbox one formula one" -> "f1 2019",
       )
 
       forAll (titles) { case (title, expected) =>
