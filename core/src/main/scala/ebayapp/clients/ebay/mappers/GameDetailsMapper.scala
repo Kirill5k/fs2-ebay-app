@@ -43,14 +43,15 @@ private[mappers] object GameDetailsMapper {
     "cleaned( )?(fully )?tested",
     // removes common publishers
     "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( Blizzard)?|square enix|Dreamworks|Insomniac(s)?|LucasArt(s)?)( presents)?",
-    "currys", "James Camerons", "\\bTom clancy(s)?\\b", "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b", "Sid Meiers",
+    "currys", "James Camerons", "\\bTom clan\\w+\\b", "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b", "Sid Meiers",
     "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "\\d games in (one|1)",
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal)(?s).*",
     "(?<=FIFA) (soccer|football)", "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling", "(?<=(FIFA|MotoGP) )20(?=\\d\\d)",
     "(?<=F1)\\s+(Formula (one|1))( racing)?", "(?<=20\\d\\d).*formula(?s).*",
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
     "\\bGT\\b (?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(deadpool|Spider))",
-    "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b"
+    "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
+    "(?<=(call of duty|gran turismo|assassins creed|tom clanc).*)20\\d\\d(?s).*"
   ).mkString("(?i)", "|", "")
 
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
