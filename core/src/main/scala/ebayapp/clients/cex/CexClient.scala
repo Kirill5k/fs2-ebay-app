@@ -76,7 +76,7 @@ final class CexApiClient[F[_]](
             }
             S.fromEither(searchResponse)
           case StatusCode.TooManyRequests =>
-            L.warn(s"too many requests to cex. retrying") *> T.sleep(1.second) *> search(uri)
+            L.warn(s"too many requests to cex. retrying") *> T.sleep(3.second) *> search(uri)
           case s =>
             L.error(s"error sending price query to cex: $s\n${r.body.fold(_.getMessage, _.toString)}") *>
               S.raiseError(AppError.Http(s.code, s"error sending request to cex: $s"))
