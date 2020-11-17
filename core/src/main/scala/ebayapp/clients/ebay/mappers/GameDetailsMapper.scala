@@ -51,7 +51,8 @@ private[mappers] object GameDetailsMapper {
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
     "\\bGT\\b (?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(deadpool|Spider))",
     "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
-    "(?<=(call of duty|gran turismo|assassins creed|tom clanc).*)20\\d\\d(?s).*"
+    // removes year from some titles
+    "(?<=(need for speed|Tomb Raider|call of duty|gran turismo|assassins creed|tom clanc).*)20\\d\\d(?s).*"
   ).mkString("(?i)", "|", "")
 
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
@@ -69,7 +70,7 @@ private[mappers] object GameDetailsMapper {
     "(sealed )?brand new( (case|sealed|still wrapped))?( in packaging)?( 20\\d\\d)?", "\\d \\d players", "1 ONE",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest on ebay", "strategy guide", "Enhanced for Series X",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
-    "Ultimate Fighting Champion(ship)?", "available now",
+    "Ultimate Fighting Champion(ship)?", "available now", "cross-gen",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "in stock( now)?",
     "never played", "(only )?played (once|twice)", "best price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",

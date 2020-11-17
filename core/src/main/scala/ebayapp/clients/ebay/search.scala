@@ -44,7 +44,7 @@ object search {
         "arabic", "slovakian", "czech", "NTSC USA", "to be updated",
         "\\bhori\\b", "\\bDE\\b", "ID59z", "\\bemail\\b", "steel( )?(box|case)",
         "ark(?s).*pve", "Code(-| )?in(-| )?(a)?(-| )?Box",
-        "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite",
+        "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|recipe|fossil|dino|egg|gold)",
         "(gta|grand theft)(?s).* (fast run|cars|boost|money|online|mill)",
