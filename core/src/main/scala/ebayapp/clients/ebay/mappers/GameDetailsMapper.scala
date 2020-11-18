@@ -70,7 +70,7 @@ private[mappers] object GameDetailsMapper {
     "(sealed )?brand new( (condition|case|sealed|still wrapped))?( in packaging)?( 20\\d\\d)?", "\\d \\d players", "1 ONE",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest on ebay", "strategy guide", "Enhanced for Series X",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
-    "Ultimate Fighting Champion(ship)?", "available now", "cross-gen",
+    "Ultimate Fighting Champion(ship)?", "available now", "cross-gen", "\\bSeries (S|X)\\b",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "in stock( now)?",
     "never played", "(only )?played (once|twice)", "best price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
@@ -101,7 +101,7 @@ private[mappers] object GameDetailsMapper {
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
     "Standart$", "^SALE", "(brand )?new$", "^BOXED", "^SALE", "^NEW", "^best", "^software", "^un( )?opened",
     "un( )?opened$", "rare$", "^rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
-    "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheapest",
+    "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheapest( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
   ).mkString("(?i)", "|", "")
 

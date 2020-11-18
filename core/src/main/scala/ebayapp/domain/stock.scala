@@ -14,6 +14,10 @@ object stock {
       override def header: String  = "STOCK/NEW"
       override def message: String = "New in stock"
     }
+    final case object OutOfStock extends StockUpdate {
+      override def header: String  = "STOCK/OOS"
+      override def message: String = "Out of stock"
+    }
     final case class PriceDrop(previous: BigDecimal, current: BigDecimal) extends StockUpdate {
       override def message: String = s"Price has reduced from £$previous to £$current"
       override def header: String  = "PRICE/DROP"
@@ -38,6 +42,7 @@ object stock {
     }
 
     def quantityChanged(prev: BuyPrice, curr: BuyPrice): Option[StockUpdate] = (prev.quantityAvailable, curr.quantityAvailable) match {
+      case (p, 0) if p > 0 => Some(OutOfStock)
       case (p, c) if p > c => Some(StockDecrease(p, c))
       case (p, c) if p < c => Some(StockIncrease(p, c))
       case _               => None
