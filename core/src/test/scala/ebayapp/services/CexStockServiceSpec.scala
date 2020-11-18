@@ -45,8 +45,8 @@ class CexStockServiceSpec extends CatsSpec {
       val result = service.stockUpdates(config.copy(monitoringRequests = List(req1, req2))).interruptAfter(1.second).compile.toList
 
       result.unsafeToFuture().map { u =>
-        verify(client, times(2)).findItem(req1.query)
-        verify(client, times(2)).findItem(req2.query)
+        verify(client, atLeast(2)).findItem(req1.query)
+        verify(client, atLeast(2)).findItem(req2.query)
         u must be (Nil)
       }
     }
