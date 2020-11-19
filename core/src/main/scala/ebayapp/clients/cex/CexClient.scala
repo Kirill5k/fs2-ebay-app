@@ -18,7 +18,7 @@ import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
 import scala.concurrent.duration._
 
 trait CexClient[F[_]] {
-  def findSellPrice(query: SearchQuery): F[Option[SellPrice]]
+  def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]]
   def findItem[D <: ItemDetails](query: SearchQuery)(
     implicit mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]]
@@ -34,7 +34,15 @@ final class CexApiClient[F[_]](
     L: Logger[F]
 ) extends CexClient[F] {
 
-  def findSellPrice(query: SearchQuery): F[Option[SellPrice]] =
+  override def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]] =
+    item.itemDetails.fullName match {
+      case None =>
+        L.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
+      case Some(name) =>
+        findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
+    }
+
+  private def findSellPrice(query: SearchQuery): F[Option[SellPrice]] =
     resellPriceCache.get(query.base64).flatMap {
       case Some(rp) => S.pure(rp)
       case None =>

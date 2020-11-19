@@ -1,7 +1,6 @@
 package ebayapp.services
 
 import cats.effect.{Concurrent, Sync, Timer}
-import cats.implicits._
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.ebay.EbayClient
 import ebayapp.clients.ebay.mappers.EbayItemMapper
@@ -48,15 +47,7 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
   ): Stream[F, ResellableItem[D]] =
     ebayClient
       .findLatestItems[D](query, duration)
-      .evalMap { item =>
-        item.itemDetails.fullName match {
-          case Some(name) =>
-            cexClient.findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
-          case None =>
-            Logger[F].warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *>
-              Sync[F].pure(item)
-        }
-      }
+      .evalMap(cexClient.withUpdatedSellPrice)
       .handleErrorWith { error =>
         Stream.eval_(Logger[F].error(error)(s"error getting deals from ebay"))
       }
