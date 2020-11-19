@@ -67,7 +67,8 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
           (prevOpt.fold(List.empty[ItemStockUpdates[D]])(prev => compareItems(prev, curr, req)), Some(curr.some))
         }
       }
-      .flatMap(ups => Stream.emits(ups) ++ Stream.sleep_(freq))
+      .zipLeft(Stream.awakeEvery[F](freq))
+      .flatMap(Stream.emits)
       .handleErrorWith { error =>
         Stream.eval_(Logger[F].error(error)(s"error obtaining stock updates from cex")) ++
           getUpdates(req, freq)

@@ -7,7 +7,7 @@ import ebayapp.domain.search.ListingDetails
 private[mappers] object GameDetailsMapper {
 
   private val CONSOLE_REGEX_PATTERN =
-    "((new|rare|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
+    "((new|rare|Excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
       "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|ms) )?\\bx( )?b(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
       "(( )?game(s)?)?( (platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
 
@@ -17,7 +17,7 @@ private[mappers] object GameDetailsMapper {
     s"(?<=.{10})$CONSOLE_REGEX_PATTERN(?s).*",
     "\\bday\\b (one|1|zero|0)( (edition|\\be(d)?(i)?(t)?(i)?\\b))?(?s).*$",
     //remove edition and preceding word
-    "(\\bHD\\b|20\\d\\d|steel case|headline|\\bel\\b \\w+|standar|nuketown|wild run|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|(digital )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|collection|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
+    "(\\bHD\\b|20\\d\\d|steel case|headline|\\bel\\b \\w+|standar|nuketown|wild run|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|(digital )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
     "(?<=.{5})((new|pristine|\\binc\\b) )?(super|cheap( )?)?(free|fast|quick)?( )?(super( )?)?(prompt|free|fast|quick|(next|same|1|one) day|tracked|recorded|speedy|worldwide|bargain|\\bsc\\b|\\bfc\\b).{0,20}(dispatch|ship(ping)?|post(age)?|delivery|p( )?p).*$",
     "(?<=.{15})((brand )?new.{0,15})?(still )?((factory |un)?sealed|unopened|shrink( )?wrap)(?s).*$",
     "(?<=.{10})\\b(kids( \\w+)?|hack slash|single player|open world|Family Fun|basketball|(fun )?adventure|console single|tactical|3rd person|rpg|fps|survival|action|racing|role|wrestling|fighting|multi( )?player)\\b.{0,20}game(?s).*"
@@ -38,7 +38,7 @@ private[mappers] object GameDetailsMapper {
     "((\\bW\\b|with| inc(ludes)?|contain|bonus)).{0,20}(guide|dlc|pass|content|bonus|pack)(?s).*$",
     "(supplied|comes)? (with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
-    "(in )?(near )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
+    "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(\\bUK\\b|\\bEU\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     "cleaned( )?(fully )?tested",
     // removes common publishers
@@ -74,12 +74,12 @@ private[mappers] object GameDetailsMapper {
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "in stock( now)?",
     "never played", "(only )?played (once|twice)", "best price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
-    "(trusted|eBay|best|from ebays biggest) Seller(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
+    "(trusted|eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
     "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|(1|one|same)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", "essentials", "Re Mars tered", "booklet",
     "classic(s)?( (hit(s)?|version))?", "(case|box).{0,20}(complete|manual)", "(super|very) rare", "award winning", "Instruction(s)? Book", "works perfectly( fine)?",
-    "Unwanted Gift", "limited (release|quantity)", "region (free|1)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", "\\b(Rated )?(For )?age(s)? \\d+(\\s+over)?\\b",
+    "Unwanted Gift", "limited (release|quantity)", "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", "\\b(Rated )?(For )?age(s)? \\d+(\\s+over)?\\b",
     "must see", "see (photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "in wrap(p)?(ing|er)",
     "\\brated \\d+\\b", "\\d supplied", "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?", "\\ben\\b", "\\bcr\\b", "\\bnc\\b",
     "\\bfr\\b", "\\bes\\b", "(in )?\\bvg(c| con(d)?(ition)?)?\\b", "\\ban\\b", "\\bLTD\\b", "\\b\\w+VG\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b",
