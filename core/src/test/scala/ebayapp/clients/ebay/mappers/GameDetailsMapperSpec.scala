@@ -43,6 +43,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val platforms = Map(
         "PS4" -> "PS4",
         "PS2" -> "PS2",
+        "PS5" -> "PS5",
         "PLAYSTATION4" -> "PS4",
         "PLAYSTATION 4" -> "PS4",
         "PLAYSTATION 3" -> "PS3",
