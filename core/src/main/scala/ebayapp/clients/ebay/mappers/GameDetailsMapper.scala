@@ -7,7 +7,7 @@ import ebayapp.domain.search.ListingDetails
 private[mappers] object GameDetailsMapper {
 
   private val CONSOLE_REGEX_PATTERN =
-    "((new|rare|Excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
+    "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
       "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|ms) )?\\bx( )?b(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
       "(( )?game(s)?)?( (platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
 
@@ -90,13 +90,13 @@ private[mappers] object GameDetailsMapper {
     "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( )?)?VR\\b( version)?", "\\bDEFY\\b",
     "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b", "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b",
     "(?<=\\d)PS\\d",
-    "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "SEALED(\\s+)?$", "NEW(\\s+)?$"
+    "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "SEALED(\\s+)?$", "(contidition )?NEW(\\s+)?$"
   ).mkString("(?i)", "|", "")
 
   private val EDGE_WORDS_REPLACEMENTS = List(
     "Playstation( \\d)?\\s+(?=PS)",
     "^genuine ",
-    "^bnwt ", "^brand new ",
+    "^bnwt ", "^(brand|condition) new ",
     "^\\w+ condition ",
     "^(((brand )?NEW|BNIB|Factory) )?SEALED( in Packaging)?( )?",
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
