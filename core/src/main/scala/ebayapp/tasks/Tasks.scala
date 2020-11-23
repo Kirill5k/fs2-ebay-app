@@ -8,14 +8,23 @@ import ebayapp.services.Services
 import io.chrisdavenport.log4cats.Logger
 import fs2.Stream
 
-final case class Tasks[F[_]: Concurrent](
+import scala.concurrent.duration._
+
+final case class Tasks[F[_]: Concurrent: Logger: Timer](
     genericCexStockMonitor: CexStockMonitor[F, ItemDetails.Generic],
     videoGamesEbayDealsFinder: EbayDealsFinder[F, ItemDetails.Game]
 ) {
-  def processes: Stream[F, Unit] = Stream(
-    genericCexStockMonitor.monitorStock(),
-    videoGamesEbayDealsFinder.searchForCheapItems()
-  ).covary[F].parJoinUnbounded
+  def processes: Stream[F, Unit] =
+    Stream(
+      genericCexStockMonitor.monitorStock(),
+      videoGamesEbayDealsFinder.searchForCheapItems()
+    ).covary[F]
+      .parJoinUnbounded
+      .handleErrorWith { error =>
+        Stream.eval_(Logger[F].error(error)("error during task processing")) ++
+          Stream.sleep_(1.minute) ++
+          processes
+      }
 }
 
 object Tasks {
