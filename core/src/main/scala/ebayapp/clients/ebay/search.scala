@@ -41,7 +41,7 @@ object search {
         "(xp|level|lvl) boost", "gamer score", "trophy service", "platinum trophy", "arcade mini", "boosting levels", "rare promo",
         "samsung", "huawei", "iphone", "sandisk", "server", "wireless", "Tempered Glass", "Early Access", "beta test",
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
-        "arabic", "slovakian", "czech", "NTSC USA", "to be updated",
+        "arabic", "slovakian", "czech", "NTSC USA", "to be updated", "(ps\\d|xbox( one)?) digital",
         "\\bhori\\b", "\\bDE\\b", "ID59z", "\\bemail\\b", "steel( )?(box|case)",
         "ark(?s).*pve", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d",
