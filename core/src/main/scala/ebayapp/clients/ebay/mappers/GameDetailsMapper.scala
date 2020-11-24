@@ -90,7 +90,7 @@ private[mappers] object GameDetailsMapper {
     "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( )?)?VR\\b( version)?", "\\bDEFY\\b",
     "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b", "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b",
     "(?<=\\d)PS\\d",
-    "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "SEALED(\\s+)?$", "(contidition )?NEW(\\s+)?$"
+    "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "SEALED(\\s+)?$", "(condition )?NEW(\\s+)?$"
   ).mkString("(?i)", "|", "")
 
   private val EDGE_WORDS_REPLACEMENTS = List(
@@ -178,7 +178,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(wolfenstein 2)", "Wolfenstein II")
       .replaceAll("(?i)(warhammer 40( )?000)", "Warhammer 40k")
       .replaceAll("(?i)(wafare|warefare)", "Warfare")
-      .replaceAll("(?i)(assasin)", "Assassin")
+      .replaceAll("(?i)(as(s)?a(s)?(s)?in)", "Assassin")
       .replaceAll("(?i)(diablo 3)", "diablo iii")
       .replaceAll("(?i)(World Rally Championship)", "WRC")
       .replaceAll("(?i)(\\bPVZ\\b)", "Plants vs Zombies ")
