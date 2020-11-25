@@ -9,7 +9,7 @@ private[mappers] object GameDetailsMapper {
   private val CONSOLE_REGEX_PATTERN =
     "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
       "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|ms) )?\\bx( )?b(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
-      "(( )?game(s)?)?( (platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
+      "(( )?game(s)?)?( (classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
     "(gold )?((greatest|playstation|ps) )?\\bhits\\b( (range|edition))?",
@@ -100,7 +100,7 @@ private[mappers] object GameDetailsMapper {
     "^\\w+ condition ",
     "^(((brand )?NEW|BNIB|Factory) )?SEALED( in Packaging)?( )?",
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
-    "Standart$", "^SALE", "(brand )?new$", "^BOXED", "^SALE", "^NEW", "^best", "^software", "^un( )?opened",
+    "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^SALE", "^NEW", "^best", "^software", "^un( )?opened",
     "un( )?opened$", "rare$", "^rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
     "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheapest( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
