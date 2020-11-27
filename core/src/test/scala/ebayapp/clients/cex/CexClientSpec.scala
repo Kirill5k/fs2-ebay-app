@@ -152,7 +152,7 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
           Response.ok(json("cex/search-iphone-success-response.json")),
-          Response(json("cex/search-error-response.json"), StatusCode.BadRequest)
+          Response.ok(json("cex/search-noresults-response.json"))
         )
 
       val result = for {
@@ -162,8 +162,8 @@ class CexClientSpec extends SttpClientSpec {
         rp        <- cexClient.withUpdatedSellPrice(item)
       } yield rp
 
-      result.attempt.unsafeToFuture().map { res =>
-        res must be(Left(AppError.Http(400, "error sending request to cex: 400")))
+      result.unsafeToFuture().map { res =>
+        res.sellPrice mustBe None
       }
     }
 
@@ -205,24 +205,6 @@ class CexClientSpec extends SttpClientSpec {
       }
     }
 
-    "return http error when not success" in {
-      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
-        .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "super mario 3 XBOX ONE")) =>
-            Response(json("cex/search-error-response.json"), StatusCode.BadRequest)
-          case _ => throw new RuntimeException()
-        }
-
-      val cexClient = CexClient.make[IO](config, testingBackend)
-
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
-
-      result.attempt.unsafeToFuture().map { price =>
-        price must be(Left(AppError.Http(400, "error sending request to cex: 400")))
-      }
-    }
-
     "retry when 429 returned" in {
       val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub.whenAnyRequest
@@ -238,6 +220,24 @@ class CexClientSpec extends SttpClientSpec {
 
       result.unsafeToFuture().map { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
+      }
+    }
+
+    "retry on others http errors" in {
+      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub.whenAnyRequest
+        .thenRespondCyclicResponses(
+          Response(json("cex/search-error-response.json"), StatusCode.BadRequest),
+          Response(json("cex/search-error-response.json"), StatusCode.BadRequest),
+          Response.ok(json("cex/search-iphone-success-response.json"))
+        )
+
+      val cexClient = CexClient.make[IO](config, testingBackend)
+
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+
+      result.unsafeToFuture().map { item =>
+        item.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
       }
     }
 
