@@ -8,7 +8,7 @@ private[mappers] object GameDetailsMapper {
 
   private val CONSOLE_REGEX_PATTERN =
     "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
-      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|ms) )?\\bx( )?b(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
+      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|\\bms\\b) )?\\bx( )?b(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
       "(( )?game(s)?)?( (classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
@@ -38,7 +38,7 @@ private[mappers] object GameDetailsMapper {
     "((\\bW\\b|with| inc(ludes)?|contain|bonus)).{0,20}(guide|dlc|pass|content|bonus|pack)(?s).*$",
     "(supplied|comes)? (with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
-    "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
+    "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(\\bUK\\b|\\bEU\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     "cleaned( )?(fully )?tested",
     // removes common publishers
@@ -75,11 +75,11 @@ private[mappers] object GameDetailsMapper {
     "\\d \\d players", "1 ONE",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
-    "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve",
+    "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve", "plays perfect",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "in stock( now)?",
     "never played", "(only )?played (once|twice)", "best price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
-    "(trusted|eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
+    "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
     "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|(1|one|same)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", "essentials", "Re Mars tered", "booklet",
@@ -87,7 +87,7 @@ private[mappers] object GameDetailsMapper {
     "Unwanted Gift", "limited (release|quantity)", "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", "\\b(Rated )?(For )?age(s)? \\d+(\\s+over)?\\b",
     "must see", "see (photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "in wrap(p)?(ing|er)",
     "\\brated \\d+\\b", "\\d supplied", "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?", "\\ben\\b", "\\bcr\\b", "\\bnc\\b",
-    "\\bfr\\b", "\\bes\\b", "(in )?\\bvg(c| con(d)?(ition)?)?\\b", "\\ban\\b", "\\bLTD\\b", "\\b\\w+VG\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b",
+    "\\bfr\\b", "\\bes\\b", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?", "\\ban\\b", "\\bLTD\\b", "\\b\\w+VG\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b",
     "\\bnsw\\b", "\\bsft\\b", "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", "\\bWAR L\\d+\\b",
     "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", "(ultra )?\\b(u)?hd(r)?\\b", "(\\b4k\\b|\\bone x\\b)( enhanced)?",
     "\\buns\\b", "\\bx360\\b", "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b", "\\bSE\\b",
@@ -107,7 +107,7 @@ private[mappers] object GameDetailsMapper {
     "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^SALE", "^NEW", "^best", "^software", "^un( )?opened",
     "un( )?opened$", "rare$", "^rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
     "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheapest( on ebay)?",
-    "boxed$", "brand$", "good$", "brilliant$", "excellent$", "working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
+    "boxed$", "brand$", "good$", "brilliant$", "excellent$", "(fully )?working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
   ).mkString("(?i)", "|", "")
 
   private val SEPARATORS = List(
