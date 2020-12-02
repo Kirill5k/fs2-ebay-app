@@ -49,7 +49,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=FIFA) (soccer|football)", "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling", "(?<=(FIFA|MotoGP) )20(?=\\d\\d)",
     "(?<=F1)\\s+(Formula (one|1))( racing)?", "(?<=20\\d\\d).*formula(?s).*",
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
-    "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b",
+    "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)",
     "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(deadpool|Spider))",
     "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
     // removes year from some titles

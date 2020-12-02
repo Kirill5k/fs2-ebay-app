@@ -108,12 +108,13 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.name mustBe (Some("Gran Turismo"))
     }
 
-    "remove GT from gran turismo title" in {
+    "remove GT from gran turismo title or similar" in {
       val titles = Map(
         "GTS Gran Turismo Sport"      -> "Gran Turismo Sport",
         "GT Sport Gran Turismo Sport" -> "Gran Turismo Sport",
         "Gran Turismo Sport GTS"      -> "Gran Turismo Sport",
-        "Gran Turismo Sport GT Sport" -> "Gran Turismo Sport Sport"
+        "Gran Turismo Sport GT Sport" -> "Gran Turismo Sport Sport",
+        "Gears of War 5" -> "Gears 5"
       )
 
       forAll(titles) {
