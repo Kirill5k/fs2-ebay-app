@@ -53,8 +53,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "XB360"                     -> "XBOX 360",
         "XBOX 360"                  -> "XBOX 360",
         "X BOX ONE"                 -> "XBOX ONE",
-        "SERIES X"                  -> "XBOX SERIES X",
-        "XBOX SERIES X"             -> "XBOX SERIES X",
+        "SERIES X"                  -> "XBOX",
+        "XBOX SERIES X"             -> "XBOX",
         "Sony Playstation 2016 PS3" -> "PS3"
       )
 

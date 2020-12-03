@@ -77,7 +77,7 @@ private[mappers] object GameDetailsMapper {
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve", "plays perfect",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
-    "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "in stock( now)?",
+    "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "(last one )?in stock( now)?",
     "never played", "(only )?played (once|twice)", "best price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
     "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned",
@@ -120,7 +120,7 @@ private[mappers] object GameDetailsMapper {
     "PS[1-5]", "PLAYSTATION(\\s+)?([1-5](?!\\d+)|one)", "PSVR",
     "NINTENDO SWITCH", "SWITCH",
     "\\bWII( )?U\\b", "\\bWII\\b",
-    "XBOX SERIES X", "SERIES \\bX\\b",
+    "SERIES \\bX\\b",
     "X( )?B(OX)?(\\s+)?(ONE|\\d+)",
     "X360", "XBOX"
   ).mkString("(?i)", "|", "").r
@@ -138,8 +138,7 @@ private[mappers] object GameDetailsMapper {
     "PLAYSTATIONONE"   -> "PS1",
     "PLAYSTATION"      -> "PS",
     "NINTENDOSWITCH"   -> "SWITCH",
-    "XBOXSERIESX"      -> "XBOX SERIES X",
-    "SERIESX"          -> "XBOX SERIES X",
+    "SERIESX"          -> "XBOX",
     "XBOX1"            -> "XBOX ONE",
     "XBOX360"          -> "XBOX 360",
     "XB1"              -> "XBOX ONE",
@@ -183,6 +182,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(warhammer 40( )?000)", "Warhammer 40k")
       .replaceAll("(?i)(wafare|warefare)", "Warfare")
       .replaceAll("(?i)(as(s)?a(s)?(s)?in)", "Assassin")
+      .replaceAll("(?i)(va(l)?(l)?hal(l)?a)", "Valhalla")
       .replaceAll("(?i)(diablo 3)", "diablo iii")
       .replaceAll("(?i)(World Rally Championship)", "WRC")
       .replaceAll("(?i)(\\bPVZ\\b)", "Plants vs Zombies ")
