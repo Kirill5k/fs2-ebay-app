@@ -114,14 +114,13 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "GT Sport Gran Turismo Sport" -> "Gran Turismo Sport",
         "Gran Turismo Sport GTS"      -> "Gran Turismo Sport",
         "Gran Turismo Sport GT Sport" -> "Gran Turismo Sport Sport",
-        "Gears of War 5" -> "Gears 5"
+        "Gears of War 5"              -> "Gears 5"
       )
 
-      forAll(titles) {
-        case (title, expected) =>
-          val listingDetails = testListing.copy(title = title)
-          val gameDetails    = GameDetailsMapper.from(listingDetails)
-          gameDetails.name mustBe Some(expected)
+      forAll(titles) { case (title, expected) =>
+        val listingDetails = testListing.copy(title = title)
+        val gameDetails    = GameDetailsMapper.from(listingDetails)
+        gameDetails.name mustBe Some(expected)
       }
     }
 
@@ -184,11 +183,10 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "sunset overdrive"          -> "sunset overdrive"
       )
 
-      forAll(titles) {
-        case (title, expected) =>
-          val listingDetails = testListing.copy(title = title)
-          val gameDetails    = GameDetailsMapper.from(listingDetails)
-          gameDetails.name mustBe Some(expected)
+      forAll(titles) { case (title, expected) =>
+        val listingDetails = testListing.copy(title = title)
+        val gameDetails    = GameDetailsMapper.from(listingDetails)
+        gameDetails.name mustBe Some(expected)
       }
     }
 
@@ -202,11 +200,10 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare 2 2019" -> "Call of Duty Infinite Warfare 2"
       )
 
-      forAll(titles) {
-        case (title, expected) =>
-          val listingDetails = testListing.copy(title = title)
-          val gameDetails    = GameDetailsMapper.from(listingDetails)
-          gameDetails.name mustBe Some(expected)
+      forAll(titles) { case (title, expected) =>
+        val listingDetails = testListing.copy(title = title)
+        val gameDetails    = GameDetailsMapper.from(listingDetails)
+        gameDetails.name mustBe Some(expected)
       }
     }
 
@@ -217,11 +214,10 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "NEW Playerunknowns battlegrounds pal PSVR Ultimate Evil Ed" -> "Player unknowns battlegrounds"
       )
 
-      forAll(titles) {
-        case (title, expected) =>
-          val listingDetails = testListing.copy(title = title)
-          val gameDetails    = GameDetailsMapper.from(listingDetails)
-          gameDetails.name mustBe Some(expected)
+      forAll(titles) { case (title, expected) =>
+        val listingDetails = testListing.copy(title = title)
+        val gameDetails    = GameDetailsMapper.from(listingDetails)
+        gameDetails.name mustBe Some(expected)
       }
     }
 
@@ -348,10 +344,9 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "witcher 3 iii"                -> "witcher 3"
       )
 
-      forAll(titles) {
-        case (title, expected) =>
-          val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map()))
-          details.name mustBe Some(expected)
+      forAll(titles) { case (title, expected) =>
+        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map()))
+        details.name mustBe Some(expected)
       }
     }
 

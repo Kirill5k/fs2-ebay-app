@@ -28,8 +28,8 @@ object Dependencies {
     }
 
     object logging {
-      lazy val logback  = "ch.qos.logback"    % "logback-classic" % Versions.logback
-      lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % Versions.log4cats
+      lazy val logback  = "ch.qos.logback"     % "logback-classic" % Versions.logback
+      lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j"  % Versions.log4cats
 
       lazy val all = Seq(log4cats, logback)
     }
@@ -62,9 +62,9 @@ object Dependencies {
       lazy val all = Seq(core, dsl, server, blaze, circe)
     }
 
-    lazy val scalaTest        = "org.scalatest"       %% "scalatest"                % Versions.scalaTest
-    lazy val mockitoCore      = "org.mockito"         %% "mockito-scala"            % Versions.mockito
-    lazy val mockitoScalatest = "org.mockito"         %% "mockito-scala-scalatest"  % Versions.mockito
+    lazy val scalaTest        = "org.scalatest"      %% "scalatest"                 % Versions.scalaTest
+    lazy val mockitoCore      = "org.mockito"        %% "mockito-scala"             % Versions.mockito
+    lazy val mockitoScalatest = "org.mockito"        %% "mockito-scala-scalatest"   % Versions.mockito
     lazy val embeddedMongo    = "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % Versions.embeddedMongo
   }
 

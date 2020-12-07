@@ -13,8 +13,8 @@ import scala.concurrent.duration._
 
 class CexStockServiceSpec extends CatsSpec {
 
-  val req1 = StockMonitorRequest(SearchQuery("macbook"), true, true)
-  val req2 = StockMonitorRequest(SearchQuery("iphone"), true, true)
+  val req1   = StockMonitorRequest(SearchQuery("macbook"), true, true)
+  val req2   = StockMonitorRequest(SearchQuery("iphone"), true, true)
   val config = CexStockMonitorConfig(1.seconds, List(req1))
 
   val mb1 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0)
@@ -28,11 +28,11 @@ class CexStockServiceSpec extends CatsSpec {
       when(client.findItem(req1.query)).thenReturn(IO.pure(List(mb1, mb2)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(1100.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(1100.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         verify(client, times(2)).findItem(req1.query)
-        u must be (Nil)
+        u must be(Nil)
       }
     }
 
@@ -42,12 +42,12 @@ class CexStockServiceSpec extends CatsSpec {
       when(client.findItem(any[SearchQuery])(any[CexItemMapper[ItemDetails.Generic]])).thenReturn(IO.pure(Nil))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config.copy(monitoringRequests = List(req1, req2))).interruptAfter(1100.millis).compile.toList
+      val result  = service.stockUpdates(config.copy(monitoringRequests = List(req1, req2))).interruptAfter(1100.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         verify(client, atLeast(2)).findItem(req1.query)
         verify(client, atLeast(2)).findItem(req2.query)
-        u must be (Nil)
+        u must be(Nil)
       }
     }
 
@@ -59,7 +59,7 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(IO.pure(List(mb1)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.New)))
@@ -74,7 +74,7 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(IO.pure(List(mb1)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.StockIncrease(1, 2))))
@@ -89,7 +89,7 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(IO.pure(List(mb1)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.StockDecrease(3, 2))))
@@ -111,7 +111,7 @@ class CexStockServiceSpec extends CatsSpec {
         .toList
 
       result.unsafeToFuture().map { u =>
-        u must be (Nil)
+        u must be(Nil)
       }
     }
 
@@ -122,7 +122,7 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(IO.pure(List(mb1)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.PriceRaise(BigDecimal(950.0), BigDecimal(1950.0)))))
@@ -136,7 +136,7 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(IO.pure(List(mb1)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.PriceDrop(BigDecimal(2950.0), BigDecimal(1950.0)))))
@@ -152,7 +152,7 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(IO.pure(List(mb1)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(6200.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(6200.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         u must have size 3
@@ -173,7 +173,7 @@ class CexStockServiceSpec extends CatsSpec {
         .toList
 
       result.unsafeToFuture().map { u =>
-        u must be (Nil)
+        u must be(Nil)
       }
     }
 
@@ -185,7 +185,7 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(IO.pure(List(mb1, mb2)))
 
       val service = new LiveCexStockService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
+      val result  = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { u =>
         u must have size 2
