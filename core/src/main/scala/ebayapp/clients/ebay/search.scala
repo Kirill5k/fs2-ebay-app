@@ -22,7 +22,7 @@ object search {
 
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot",
-        "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)",
+        "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)", "postcards", "stickers",
         "(demo|game)( )?(code|disc|key|cart|pass)", "(store|reservation|access|cd|unused|digital|upgrade|test|psn|beta|no)( )?(redeem )?(game|code|key)",
         "(software|cartridge(s)?|cart|game|disk|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo) only",
         "(case|variety|accessor(ies|y)|storage|charge|robot) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass",
