@@ -42,7 +42,7 @@ object search {
         "samsung", "huawei", "iphone", "sandisk", "server", "wireless", "Tempered Glass", "Early Access", "beta test",
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
         "arabic", "slovakian", "czech", "NTSC USA", "to be updated", "(ps\\d|xbox( one)?) digital",
-        "\\bhori\\b", "\\bDE\\b", "ID59z", "\\bemail\\b", "steel( )?(box|case)",
+        "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)",
         "ark(?s).*pve", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero",
