@@ -126,6 +126,7 @@ private[mappers] object GameDetailsMapper {
   ).mkString("(?i)", "|", "").r
 
   private val PLATFORM_MAPPINGS: Map[String, String] = Map(
+    "PLAYSTATION5"     -> "PS5",
     "SONYPLAYSTATION4" -> "PS4",
     "PLAYSTATION4"     -> "PS4",
     "PSVR"             -> "PS4",
