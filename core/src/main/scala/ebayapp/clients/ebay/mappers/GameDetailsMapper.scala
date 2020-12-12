@@ -35,7 +35,7 @@ private[mappers] object GameDetailsMapper {
     "(royal mail )?(1st|2nd|first) class.*$",
     "(?<=\\w+ )((all|fully) )?(boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$",
-    "((\\bW\\b|with| inc(ludes)?|contain|bonus)).{0,20}(guide|dlc|pass|content|bonus|pack)(?s).*$",
+    "(\\bW\\b|with| inc(ludes)?|contain|bonus|plus).{0,20}(guide|dlc|pass|content|bonus|pack)(?s).*$",
     "(supplied|comes)? (with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
     "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
@@ -72,7 +72,7 @@ private[mappers] object GameDetailsMapper {
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football)", "football soccer( sim(ulator)?)?", "action stealth", "(car|motorcycles|rally) (Driving|Racing)",
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer", "Multi Player", "life simulation", "racing rally",
     "\\bpegi( \\d+)?\\b(?s).*$", "((\\d+|ten)th|(20|ten))( year(s)?)? (anniversary|celebration)", "(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?",
-    "\\d \\d players", "1 ONE",
+    "\\d \\d players", "1 ONE", "flash sale",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve", "plays perfect",
@@ -104,7 +104,7 @@ private[mappers] object GameDetailsMapper {
     "^\\w+ condition ",
     "^(((brand )?NEW|BNIB|Factory) )?SEALED( in Packaging)?( )?",
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
-    "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^SALE", "^NEW", "^best", "^software", "^un( )?opened",
+    "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^NEW", "^best", "^software", "^un( )?opened",
     "un( )?opened$", "rare$", "^rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
     "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheapest( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "(fully )?working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
@@ -217,6 +217,7 @@ private[mappers] object GameDetailsMapper {
       .map(_.replaceAll(" |-", ""))
       .map(platform => PLATFORM_MAPPINGS.getOrElse(platform, platform))
       .map(_.trim)
+      .filterNot(_.equalsIgnoreCase("SEEDESCRIPTIONFORDETAILS"))
 
   private def mapGenre(listingDetails: ListingDetails): Option[String] =
     List(
