@@ -128,7 +128,7 @@ class EbayClientSpec extends CatsSpec {
 
       doReturn(IO.pure(List(
         ebayItemSummary("1", name = "fallout 4 disc only"),
-        ebayItemSummary("2", name = "fallout 76 blah blah blah blah blah"),
+        ebayItemSummary("2", name = "fallout 76 blah damage blah blah blah"),
         ebayItemSummary("3", name = "call of duty digital code"),
         ebayItemSummary("4", name = "lego worlds read description"),
         ebayItemSummary("5", name = """Borderlands 3 "Spooling Recursion" X2 Godroll Moze Splash Damage (Xbox One)"""),
