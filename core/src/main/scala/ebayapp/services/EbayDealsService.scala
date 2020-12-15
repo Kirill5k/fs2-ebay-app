@@ -6,6 +6,7 @@ import ebayapp.clients.ebay.EbayClient
 import ebayapp.clients.ebay.mappers.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.{EbayDealsConfig, SearchQuery}
+import ebayapp.common.stream._
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import io.chrisdavenport.log4cats.Logger
 import fs2._
@@ -30,13 +31,11 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
       implicit m: EbayItemMapper[D],
       p: EbaySearchParams[D]
   ): Stream[F, ResellableItem[D]] =
-    (
-      Stream
-        .emits(config.searchQueries)
-        .map(query => find(query, config.maxListingDuration))
-        .parJoinUnbounded ++
-        Stream.sleep_(config.searchFrequency)
-    ).repeat
+    Stream
+      .emits(config.searchQueries)
+      .map(query => find(query, config.maxListingDuration))
+      .parJoinUnbounded
+      .repeatEvery(config.searchFrequency)
 
   private def find[D <: ItemDetails](
       query: SearchQuery,
