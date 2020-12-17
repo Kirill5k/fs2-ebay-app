@@ -47,7 +47,7 @@ object search {
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|recipe|fossil|dino|egg|gold)",
-        "(gta|grand theft)(?s).* (fast run|cars|boost|money|online|mill)",
+        "(gta|grand theft)(?s).* (fast run|character|cars|boost|money|online|mill)",
         "(cod|of duty)(?s).* (boost|unlock|warzone)",
         "(damage|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
         "fallout(?s).* (damage|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",

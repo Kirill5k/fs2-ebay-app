@@ -9,7 +9,7 @@ private[mappers] object GameDetailsMapper {
   private val CONSOLE_REGEX_PATTERN =
     "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
       "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|\\bms\\b) )?\\bx( )?b(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
-      "(( )?game(s)?)?( (classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
+      "(( )?game(s)?)?( (promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( 20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
     "(gold )?((greatest|playstation|ps) )?\\bhits\\b( (range|edition))?",
@@ -85,7 +85,7 @@ private[mappers] object GameDetailsMapper {
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", "essentials", "Re Mars tered", "booklet",
     "classic(s)?( (hit(s)?|version))?", "(case|box).{0,20}(complete|manual)", "(super|very) rare", "award winning", "Instruction(s)? Book", "works perfectly( fine)?",
     "Unwanted Gift", "limited (release|quantity)", "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", "\\b(Rated )?(For )?age(s)? \\d+(\\s+over)?\\b",
-    "must see", "see (photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "in wrap(p)?(ing|er)",
+    "must see", "see (photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "(still )?in wrap(p)?(ing|er)",
     "\\brated \\d+\\b", "\\d supplied", "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?", "\\ben\\b", "\\bcr\\b", "\\bnc\\b",
     "\\bfr\\b", "\\bes\\b", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?", "\\ban\\b", "\\bLTD\\b", "\\b\\w+VG\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b",
     "\\bnsw\\b", "\\bsft\\b", "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", "\\bWAR L\\d+\\b",
@@ -126,18 +126,17 @@ private[mappers] object GameDetailsMapper {
   ).mkString("(?i)", "|", "").r
 
   private val PLATFORM_MAPPINGS: Map[String, String] = Map(
-    "PLAYSTATION5"     -> "PS5",
-    "SONYPLAYSTATION4" -> "PS4",
-    "PLAYSTATION4"     -> "PS4",
-    "PSVR"             -> "PS4",
-    "SONYPLAYSTATION3" -> "PS3",
-    "PLAYSTATION3"     -> "PS3",
-    "SONYPLAYSTATION2" -> "PS2",
-    "PLAYSTATION2"     -> "PS2",
-    "SONYPLAYSTATION1" -> "PS1",
-    "SONYPLAYSTATION"  -> "PS",
-    "PLAYSTATIONONE"   -> "PS1",
-    "PLAYSTATION"      -> "PS",
+    "PS5"              -> "PLAYSTATION5",
+    "PS4"              -> "PLAYSTATION4",
+    "PS3"              -> "PLAYSTATION3",
+    "PS2"              -> "PLAYSTATION2",
+    "PS"               -> "PLAYSTATION",
+    "PSVR"             -> "PLAYSTATION",
+    "SONYPLAYSTATION3" -> "PLAYSTATION3",
+    "SONYPLAYSTATION2" -> "PLAYSTATION2",
+    "SONYPLAYSTATION1" -> "PLAYSTATION",
+    "SONYPLAYSTATION"  -> "PLAYSTATION",
+    "PLAYSTATIONONE"   -> "PLAYSTATION",
     "NINTENDOSWITCH"   -> "SWITCH",
     "SERIESX"          -> "XBOX",
     "XBOX1"            -> "XBOX ONE",
