@@ -140,9 +140,9 @@ private[mappers] object GameDetailsMapper {
     "SONYPLAYSTATION"  -> "PLAYSTATION",
     "PLAYSTATIONONE"   -> "PLAYSTATION",
     "NINTENDOSWITCH"   -> "SWITCH",
-    "XBOXSERIES"       -> "XBOX SERIES",
-    "XBOXXSERIES"      -> "XBOX SERIES",
-    "SERIESX"          -> "XBOX SERIES",
+    "XBOXSERIES"       -> "XBOX",
+    "XBOXXSERIES"      -> "XBOX",
+    "SERIESX"          -> "XBOX",
     "XBOX1"            -> "XBOX ONE",
     "XBOX360"          -> "XBOX 360",
     "XB1"              -> "XBOX ONE",
@@ -153,7 +153,7 @@ private[mappers] object GameDetailsMapper {
     "MICROSOFTXBOXONE" -> "XBOX ONE",
     "MICROSOFTXBOX360" -> "XBOX 360",
     "MICROSOFTXBOX"    -> "XBOX",
-    "XBOX"             -> "XBOX",
+    "XBOXX"             -> "XBOX",
     "WIIU"             -> "WII U",
     "WII"              -> "WII"
   )
