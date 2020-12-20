@@ -63,11 +63,19 @@ trait Controller[F[_]] extends Http4sDsl[F] {
     )
   }
 
-  private def toItemsSummary[D <: ItemDetails](items: List[ResellableItem[D]]): ItemsSummary =
+  private def toItemsSummary[D <: ItemDetails](items: List[ResellableItem[D]]): ItemsSummary = {
+    def itemSummary(i: ResellableItem[D]): ItemSummary =
+      ItemSummary(
+        i.itemDetails.fullName,
+        i.listingDetails.url,
+        i.buyPrice.rrp,
+        i.sellPrice.map(_.credit)
+      )
     ItemsSummary(
       items.size,
-      items.map(i => ItemSummary(i.itemDetails.fullName, i.listingDetails.url, i.buyPrice.rrp))
+      items.map(itemSummary)
     )
+  }
 }
 
 object Controller {
@@ -76,7 +84,8 @@ object Controller {
   final case class ItemSummary(
       name: Option[String],
       url: String,
-      price: BigDecimal
+      price: BigDecimal,
+      exchange: Option[BigDecimal]
   )
 
   final case class ItemsSummary(
