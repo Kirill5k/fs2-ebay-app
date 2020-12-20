@@ -34,23 +34,24 @@ final class CexApiClient[F[_]](
     L: Logger[F]
 ) extends CexClient[F] {
 
-  //private val categories: Map[String, List[Int]] = Map(
-    //"Games" -> List(1000, 1147, 1003, 1141, 1064)
-  //)
+  private val categoriesMap: Map[String, List[Int]] = Map(
+    "Games" -> List(1000, 1147, 1003, 1141, 1064)
+  )
 
   override def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]] =
     item.itemDetails.fullName match {
       case None =>
         L.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
       case Some(name) =>
-        findSellPrice(SearchQuery(name)).map(sp => item.copy(sellPrice = sp))
+        val categories = item.listingDetails.category.flatMap(categoriesMap.get)
+        findSellPrice(SearchQuery(name), categories).map(sp => item.copy(sellPrice = sp))
     }
 
-  private def findSellPrice(query: SearchQuery): F[Option[SellPrice]] =
+  private def findSellPrice(query: SearchQuery, categories: Option[List[Int]]): F[Option[SellPrice]] =
     resellPriceCache.get(query.base64).flatMap {
       case Some(rp) => rp.pure[F]
       case None =>
-        search(uri"${config.baseUri}/v3/boxes?q=${query.value}")
+        search(uri"${config.baseUri}/v3/boxes?q=${query.value}&categoryIds=${categories.map(_.mkString("[", ",", "]"))}")
           .map(getMinResellPrice)
           .flatTap { rp =>
             if (rp.isEmpty) L.warn(s"""cex-price-match "${query.value}" returned 0 results""")
