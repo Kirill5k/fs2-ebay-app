@@ -34,6 +34,10 @@ final class CexApiClient[F[_]](
     L: Logger[F]
 ) extends CexClient[F] {
 
+  //private val categories: Map[String, List[Int]] = Map(
+    //"Games" -> List(1000, 1147, 1003, 1141, 1064)
+  //)
+
   override def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]] =
     item.itemDetails.fullName match {
       case None =>
