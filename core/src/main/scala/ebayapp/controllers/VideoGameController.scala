@@ -33,10 +33,10 @@ final private[controllers] class VideoGameController[F[_]](
             .map(VideoGameResponse.from)
             .map(_.asJson)
         }
-      case GET -> Root / "video-games" / "summary" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
+      case GET -> Root / "video-games" / "summary" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) +& SearchQueryParam(query) =>
         withErrorHandling {
           for {
-            games <- videoGameService.findAll(limit, from, to)
+            games <- query.fold(videoGameService.findAll(limit, from, to))(q => videoGameService.findBy(q, limit, from, to))
             resp  <- Ok(resellableItemsSummaryResponse(games).asJson)
           } yield resp
         }
