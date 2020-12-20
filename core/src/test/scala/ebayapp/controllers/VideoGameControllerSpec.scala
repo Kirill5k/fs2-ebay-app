@@ -1,13 +1,13 @@
 package ebayapp.controllers
 
 import java.time.Instant
-
 import cats.effect.IO
 import ebayapp.ControllerSpec
+import ebayapp.common.config.SearchQuery
 import ebayapp.domain.ResellableItem.VideoGame
 import ebayapp.domain.{ItemDetails, ResellableItemBuilder}
 import ebayapp.domain.search.SellPrice
-import ebayapp.services.{ResellableItemService}
+import ebayapp.services.ResellableItemService
 import org.http4s.implicits._
 import org.http4s.{Request, Status, _}
 
@@ -69,6 +69,19 @@ class VideoGameControllerSpec extends ControllerSpec {
 
       verifyJsonResponse(response, Status.Ok, Some("""[]"""))
       verify(service).findAll(Some(100), Some(Instant.parse("2020-01-01T00:00:00Z")), Some(Instant.parse("2020-01-01T00:00:01Z")))
+    }
+
+    "parse search query params" in {
+      val service = mock[ResellableItemService[IO, ItemDetails.Game]]
+      when(service.findBy(any[SearchQuery], any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(IO.pure(Nil))
+
+      val controller = new VideoGameController[IO](service)
+
+      val request  = Request[IO](uri = uri"/video-games?limit=100&query=foo-bar", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      verifyJsonResponse(response, Status.Ok, Some("""[]"""))
+      verify(service).findBy(SearchQuery("foo-bar"), Some(100), None, None)
     }
 
     "return error" in {
