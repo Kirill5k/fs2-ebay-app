@@ -12,6 +12,11 @@ trait EbayItemMapper[D <: ItemDetails] {
 }
 
 object EbayItemMapper {
+
+  private val categories: Map[Int, String] = Map(
+    139973 -> "Games"
+  )
+
   implicit val phoneDetailsMapper = new EbayItemMapper[ItemDetails.Phone] {
     override def toDomain(ebayItem: EbayItem): ResellableItem[ItemDetails.Phone] = {
       val listing = listingDetails(ebayItem)
@@ -30,6 +35,7 @@ object EbayItemMapper {
     ListingDetails(
       url = item.itemWebUrl,
       title = item.title,
+      category = categories.get(item.categoryId),
       shortDescription = item.shortDescription,
       description = item.description.map(_.replaceAll("(?i)<[^>]*>", "")).map(_.slice(0, 500)),
       image = item.image.map(_.imageUrl),

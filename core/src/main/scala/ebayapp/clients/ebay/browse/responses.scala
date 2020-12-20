@@ -33,6 +33,7 @@ private[ebay] object responses {
       shortDescription: Option[String],
       description: Option[String],
       categoryPath: String,
+      categoryId: Int,
       price: ItemPrice,
       condition: String,
       image: Option[ItemImage],

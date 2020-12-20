@@ -32,7 +32,8 @@ object mappers {
     ListingDetails(
       s"https://uk.webuy.com/product-detail/?id=${sr.boxId}",
       sr.boxName,
-      Some(sr.categoryName),
+      Some(sr.categoryFriendlyName),
+      None,
       None,
       None,
       s"USED / ${sr.boxName.last}",

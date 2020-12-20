@@ -12,7 +12,7 @@ object ResellableItemBuilder {
   def generic(name: String, quantity: Int = 1, price: Double = 1800.0): GenericItem =
     ResellableItem(
       ItemDetails.Generic(name),
-      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, "USED", Instant.now(), "CEX", Map()),
+      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
       BuyPrice(quantity, BigDecimal(price)),
       None
     )
@@ -29,6 +29,7 @@ object ResellableItemBuilder {
       ListingDetails(
         s"https://www.ebay.co.uk/itm/$name".toLowerCase.replaceAll(" ", "-"),
         name,
+        Some("Games"),
         Some(
           s"$name xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."
         ),
@@ -60,6 +61,7 @@ object ResellableItemBuilder {
       ListingDetails(
         s"https://www.ebay.co.uk/itm/$make-$model-$colour".toLowerCase.replaceAll(" ", "-"),
         s"$make $model $colour $storage",
+        Some("Mobile phones"),
         Some(s"$make $model $colour $storage. Condition is Used. Dispatched with Royal Mail 1st Class Small parcel."),
         None,
         Some("https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg"),

@@ -97,6 +97,7 @@ object CexClient {
       boxId: String,
       boxName: String,
       categoryName: String,
+      categoryFriendlyName: String,
       sellPrice: Double,
       exchangePrice: Double,
       cashPrice: Double,

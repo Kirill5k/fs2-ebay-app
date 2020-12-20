@@ -17,6 +17,7 @@ object search {
   final case class ListingDetails(
       url: String,
       title: String,
+      category: Option[String],
       shortDescription: Option[String],
       description: Option[String],
       image: Option[String],
