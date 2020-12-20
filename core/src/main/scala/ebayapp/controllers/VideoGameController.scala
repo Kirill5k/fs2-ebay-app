@@ -19,10 +19,10 @@ final private[controllers] class VideoGameController[F[_]](
 
   override def routes(implicit cs: ContextShift[F], s: Sync[F], l: Logger[F]): HttpRoutes[F] =
     HttpRoutes.of[F] {
-      case GET -> Root / "video-games" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
+      case GET -> Root / "video-games" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) +& SearchQueryParam(query) =>
         withErrorHandling {
           for {
-            games <- videoGameService.findAll(limit, from, to)
+            games <- query.fold(videoGameService.findAll(limit, from, to))(q => videoGameService.findBy(q, limit, from, to))
             resp  <- Ok(games.map(VideoGameResponse.from).asJson)
           } yield resp
         }
@@ -46,7 +46,7 @@ final private[controllers] class VideoGameController[F[_]](
 private[controllers] object VideoGameController {
 
   final case class ItemPrice(
-      buy:  BigDecimal,
+      buy: BigDecimal,
       quantityAvailable: Int,
       sell: Option[BigDecimal],
       credit: Option[BigDecimal]

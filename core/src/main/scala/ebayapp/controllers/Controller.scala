@@ -1,9 +1,9 @@
 package ebayapp.controllers
 
 import java.time.{Instant, LocalDate, ZoneOffset}
-
 import cats.effect._
 import cats.implicits._
+import ebayapp.common.config.SearchQuery
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.services.ResellableItemService
 import io.chrisdavenport.log4cats.Logger
@@ -26,6 +26,10 @@ trait Controller[F[_]] extends Http4sDsl[F] {
       date.toOption.toRight(ParseFailure(s"Invalid date format: $dateString", dateString))
     }
 
+  implicit val searchQueryParamDecoder: QueryParamDecoder[SearchQuery] =
+    QueryParamDecoder[String].map(SearchQuery.apply)
+
+  object SearchQueryParam extends OptionalQueryParamDecoderMatcher[SearchQuery]("query")
   object LimitQueryParam extends OptionalQueryParamDecoderMatcher[Int]("limit")
   object FromQueryParam  extends OptionalQueryParamDecoderMatcher[Instant]("from")
   object ToQueryParam    extends OptionalQueryParamDecoderMatcher[Instant]("to")
