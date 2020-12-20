@@ -35,7 +35,7 @@ final class CexApiClient[F[_]](
 ) extends CexClient[F] {
 
   private val categoriesMap: Map[String, List[Int]] = Map(
-    "Games" -> List(1000, 1147, 1003, 1141, 1064)
+    "Games" -> List(1000, 1147, 1003, 1141, 1064, 1146)
   )
 
   override def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]] =
