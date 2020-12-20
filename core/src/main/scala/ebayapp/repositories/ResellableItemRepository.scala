@@ -1,9 +1,9 @@
 package ebayapp.repositories
 
 import java.time.Instant
-
 import cats.effect.ConcurrentEffect
 import cats.implicits._
+import ebayapp.common.config.SearchQuery
 import ebayapp.domain.ResellableItem
 import ebayapp.repositories.entities.ResellableItemEntity
 import mongo4cats.client.MongoClientF
@@ -17,6 +17,7 @@ trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItem
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: I): F[Unit]
   def saveAll(items: Seq[I]): F[Unit]
+  def search(query: SearchQuery, from: Option[Instant] = None, to: Option[Instant] = None, limit: Option[Int] = None): F[List[I]]
   def findAll(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): F[List[I]]
   def stream(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): Stream[F, I]
 }
@@ -34,6 +35,20 @@ final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: Resellabl
 
   def saveAll(items: Seq[I]): F[Unit] =
     mongoCollection.insertMany[F](items.map(entityMapper.toEntity)).void
+
+  def search(
+      query: SearchQuery,
+      from: Option[Instant] = None,
+      to: Option[Instant] = None,
+      limit: Option[Int] = None
+  ): F[List[I]] =
+    mongoCollection
+      .find
+      .filter(postedDateRangeSelector(from, to))
+      .filter(Filters.text(query.value))
+      .limit(limit.getOrElse(0))
+      .all[F]
+      .map(_.map(entityMapper.toDomain).toList)
 
   def findAll(
       limit: Option[Int] = None,

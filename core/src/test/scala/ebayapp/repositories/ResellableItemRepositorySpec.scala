@@ -1,16 +1,17 @@
 package ebayapp.repositories
 
-import java.time.Instant
-import java.time.temporal.ChronoField.MILLI_OF_SECOND
-
 import cats.effect.{ContextShift, IO}
+import ebayapp.common.config.SearchQuery
 import ebayapp.domain.{ResellableItem, ResellableItemBuilder}
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import mongo4cats.client.MongoClientF
+import org.mongodb.scala.Document
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.time.Instant
+import java.time.temporal.ChronoField.MILLI_OF_SECOND
 import scala.concurrent.ExecutionContext
 
 class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with EmbeddedMongo {
@@ -47,6 +48,24 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
           } yield exists
 
           result.unsafeRunSync() must be(false)
+        }
+      }
+    }
+
+    "search" should {
+
+      "find video games through search" in {
+        withEmbeddedMongoClient { client =>
+          val result = for {
+            db   <- client.getDatabase("ebay-app")
+            coll <- db.getCollection("videoGames")
+            _    <- coll.createIndex[IO](Document("itemDetails.name" -> "text", "itemDetails.platform" -> "text"))
+            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            _    <- repo.saveAll(videoGames)
+            res  <- repo.search(SearchQuery("mario"))
+          } yield res
+
+          result.unsafeRunSync() must be(List(videoGames.last))
         }
       }
     }
