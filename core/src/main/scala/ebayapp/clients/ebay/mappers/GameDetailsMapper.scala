@@ -121,7 +121,7 @@ private[mappers] object GameDetailsMapper {
     "NINTENDO SWITCH", "SWITCH",
     "\\bWII( )?U\\b", "\\bWII\\b",
     "SERIES \\bX\\b",
-    "X( )?B(OX)?(\\s+)?(X|ONE|\\d+)",
+    "X( )?B(OX)?(\\s+)?((X )?SERIES|X|ONE|\\d+)",
     "X360", "XBOX"
   ).mkString("(?i)", "|", "").r
 
@@ -140,8 +140,9 @@ private[mappers] object GameDetailsMapper {
     "SONYPLAYSTATION"  -> "PLAYSTATION",
     "PLAYSTATIONONE"   -> "PLAYSTATION",
     "NINTENDOSWITCH"   -> "SWITCH",
-    "XBOXX"            -> "XBOX",
-    "SERIESX"          -> "XBOX",
+    "XBOXSERIES"       -> "XBOX SERIES",
+    "XBOXXSERIES"      -> "XBOX SERIES",
+    "SERIESX"          -> "XBOX SERIES",
     "XBOX1"            -> "XBOX ONE",
     "XBOX360"          -> "XBOX 360",
     "XB1"              -> "XBOX ONE",
