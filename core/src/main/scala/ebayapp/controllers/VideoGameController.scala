@@ -22,7 +22,7 @@ final private[controllers] class VideoGameController[F[_]](
       case GET -> Root / "video-games" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
         withErrorHandling {
           for {
-            games <- videoGameService.find(limit, from, to)
+            games <- videoGameService.findAll(limit, from, to)
             resp  <- Ok(games.map(VideoGameResponse.from).asJson)
           } yield resp
         }
@@ -36,7 +36,7 @@ final private[controllers] class VideoGameController[F[_]](
       case GET -> Root / "video-games" / "summary" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
         withErrorHandling {
           for {
-            games <- videoGameService.find(limit, from, to)
+            games <- videoGameService.findAll(limit, from, to)
             resp  <- Ok(resellableItemsSummaryResponse(games).asJson)
           } yield resp
         }

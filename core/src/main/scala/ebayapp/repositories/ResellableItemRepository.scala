@@ -17,7 +17,7 @@ trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItem
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: I): F[Unit]
   def saveAll(items: Seq[I]): F[Unit]
-  def search(query: SearchQuery, from: Option[Instant] = None, to: Option[Instant] = None, limit: Option[Int] = None): F[List[I]]
+  def search(query: SearchQuery, limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): F[List[I]]
   def findAll(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): F[List[I]]
   def stream(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): Stream[F, I]
 }
@@ -38,9 +38,9 @@ final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: Resellabl
 
   def search(
       query: SearchQuery,
+      limit: Option[Int] = None,
       from: Option[Instant] = None,
-      to: Option[Instant] = None,
-      limit: Option[Int] = None
+      to: Option[Instant] = None
   ): F[List[I]] =
     mongoCollection
       .find
