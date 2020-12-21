@@ -46,14 +46,17 @@ object EbayItemMapper {
     )
 
   private[mappers] def price(item: EbayItem): BuyPrice = {
-    val postageCost = for {
-      shippings       <- item.shippingOptions
-      minShippingCost <- shippings.map(_.shippingCost).map(_.value).minOption
-    } yield minShippingCost
-    val quantity = for {
-      availabilities <- item.estimatedAvailabilities
-      quantity       <- availabilities.flatMap(av => av.estimatedAvailableQuantity.orElse(av.availabilityThreshold)).minOption
-    } yield quantity
+    val postageCost = item.shippingOptions
+      .getOrElse(Nil)
+      .map(_.shippingCost)
+      .map(_.value)
+      .minOption
+
+    val quantity = item.estimatedAvailabilities
+      .getOrElse(Nil)
+      .flatMap(av => av.estimatedAvailableQuantity.orElse(av.availabilityThreshold))
+      .minOption
+
     BuyPrice(quantity.getOrElse(1), item.price.value + postageCost.getOrElse(BigDecimal(0)))
   }
 }
