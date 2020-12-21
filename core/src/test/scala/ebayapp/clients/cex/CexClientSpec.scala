@@ -26,7 +26,7 @@ class CexClientSpec extends SttpClientSpec {
       val query = SearchQuery("macbook pro 16,1")
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> query.value, "inStock" -> "1", "inStockOnline" -> "1")) =>
+          case r if isQueryRequest(r, Map("q" -> "macbook pro 16,1", "inStock" -> "1", "inStockOnline" -> "1")) =>
             Response.ok(json("cex/search-macbook-success-response.json"))
           case _ => throw new RuntimeException()
         }
@@ -101,7 +101,7 @@ class CexClientSpec extends SttpClientSpec {
       val item = ResellableItemBuilder.mobilePhone("Apple", "iPhone 6S", "Grey")
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "Apple iPhone 6S 16GB Grey Unlocked")) =>
+          case r if isQueryRequest(r, Map("q" -> "Apple iPhone6S16GB Grey Unlocked")) =>
             Response.ok(json("cex/search-iphone-success-response.json"))
           case _ => throw new RuntimeException()
         }
@@ -119,7 +119,7 @@ class CexClientSpec extends SttpClientSpec {
       val item = ResellableItemBuilder.videoGame("UFC 3", sellPrice = None, platform = Some("PLAYSTATION4"))
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "UFC 3 PLAYSTATION4", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+          case r if isQueryRequest(r, Map("q" -> "UFC3 PLAYSTATION4", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
             Response.ok(json("cex/search-game-success-response.json"))
           case _ => throw new RuntimeException()
         }
@@ -152,7 +152,7 @@ class CexClientSpec extends SttpClientSpec {
     }
 
     "return resell price from cache" in {
-      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
+      val item = ResellableItemBuilder.videoGame("super mario3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
           Response.ok(json("cex/search-iphone-success-response.json")),
@@ -207,10 +207,10 @@ class CexClientSpec extends SttpClientSpec {
     }
 
     "return none when no results" in {
-      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
+      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None, platform = Some("SWITCH"))
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "super mario 3 XBOX ONE", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+          case r if isQueryRequest(r, Map("q" -> "super mario3 SWITCH", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
             Response.ok(json("cex/search-noresults-response.json"))
           case _ => throw new RuntimeException()
         }
@@ -225,10 +225,10 @@ class CexClientSpec extends SttpClientSpec {
     }
 
     "return internal error when failed to parse json" in {
-      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
+      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None, platform = Some("SWITCH"))
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "super mario 3 XBOX ONE", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+          case r if isQueryRequest(r, Map("q" -> "super mario3 SWITCH", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
             Response.ok(json("cex/search-unexpected-response.json"))
           case _ => throw new RuntimeException()
         }
