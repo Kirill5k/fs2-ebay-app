@@ -51,7 +51,7 @@ final class CexApiClient[F[_]](
     resellPriceCache.get(query.base64).flatMap {
       case Some(rp) => rp.pure[F]
       case None =>
-        val q = query.value.replaceAll(" (?=\\d+)", "")
+        val q = query.value.replaceAll("(?<!\\d) (?=\\d+)", "")
         val categoryIds = categories.map(_.mkString("[", ",", "]"))
         search(uri"${config.baseUri}/v3/boxes?q=$q&categoryIds=$categoryIds")
           .map(getMinResellPrice)
@@ -62,10 +62,12 @@ final class CexApiClient[F[_]](
     }
 
   private def getMinResellPrice(searchResponse: CexSearchResponse): Option[SellPrice] =
-    for {
-      data     <- searchResponse.response.data
-      cheapest <- data.boxes.filter(_.cannotBuy == 0).minByOption(_.exchangePrice)
-    } yield SellPrice(BigDecimal(cheapest.cashPrice), BigDecimal(cheapest.exchangePrice))
+    searchResponse.response.data
+      .map(_.boxes)
+      .getOrElse(Nil)
+      .filter(_.cannotBuy == 0)
+      .minByOption(_.exchangePrice)
+      .map(c => SellPrice(BigDecimal(c.cashPrice), BigDecimal(c.exchangePrice)))
 
   override def findItem[D <: ItemDetails](query: SearchQuery)(
       implicit mapper: CexItemMapper[D]
