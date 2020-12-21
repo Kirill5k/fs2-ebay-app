@@ -1,0 +1,318 @@
+{
+  "response": {
+    "ack": "Success",
+    "data": {
+      "boxes": [
+        {
+          "boxId": "5035225122478",
+          "masterBoxId": null,
+          "boxName": "Need For Speed (NFS) Heat",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5035225122478_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5035225122478_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5035225122478_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 22,
+          "cashPrice": 9,
+          "exchangePrice": 13,
+          "boxRating": 4.4,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5030936121567",
+          "masterBoxId": null,
+          "boxName": "Need For Speed Payback",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030936121567_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030936121567_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030936121567_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 18,
+          "cashPrice": 7,
+          "exchangePrice": 11,
+          "boxRating": 4.1,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5030944113738",
+          "masterBoxId": null,
+          "boxName": "Need For Speed 2015",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030944113738_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030944113738_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030944113738_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 15,
+          "cashPrice": 6,
+          "exchangePrice": 9,
+          "boxRating": 4.1,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5030947111342",
+          "masterBoxId": null,
+          "boxName": "Need For Speed Rivals",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030947111342_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030947111342_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030947111342_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 15,
+          "cashPrice": 6,
+          "exchangePrice": 9,
+          "boxRating": 4.3,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5030942124057",
+          "masterBoxId": null,
+          "boxName": "Need for Speed: Hot Pursuit Remastered",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030942124057_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030942124057_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030942124057_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 32,
+          "cashPrice": 13,
+          "exchangePrice": 20,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5700002139276",
+          "masterBoxId": null,
+          "boxName": "Need For Speed (NFS) Heat Col Ed w/ Car, 4 Magnets, Steelbook (No Game)",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5700002139276_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5700002139276_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5700002139276_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 1,
+          "isNewBox": 0,
+          "sellPrice": 90,
+          "cashPrice": 0,
+          "exchangePrice": 0,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 3,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 0,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 0
+        }
+      ],
+      "totalRecords": 6,
+      "minPrice": 15,
+      "maxPrice": 90,
+      "facets": {
+        "superCatName": [
+          {
+            "name": "Gaming",
+            "id": 1,
+            "count": 6
+          }
+        ],
+        "categoryFriendlyName": [
+          {
+            "name": "Playstation4 Games",
+            "id": 1003,
+            "count": 6
+          }
+        ],
+        "attributeInfo": [
+          {
+            "attributeId": 15,
+            "attributeFriendlyName": "Genre",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "Racing",
+                "count": 4
+              }
+            ]
+          },
+          {
+            "attributeId": 20,
+            "attributeFriendlyName": "Publisher",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "Electronic Arts",
+                "count": 4
+              }
+            ]
+          },
+          {
+            "attributeId": 31,
+            "attributeFriendlyName": "PEGI Certificate",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "12+",
+                "count": 2
+              },
+              {
+                "attributeValue": "7+",
+                "count": 1
+              }
+            ]
+          },
+          {
+            "attributeId": 34,
+            "attributeFriendlyName": "Players",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "1-6",
+                "count": 1
+              },
+              {
+                "attributeValue": "1-8",
+                "count": 2
+              }
+            ]
+          },
+          {
+            "attributeId": 35,
+            "attributeFriendlyName": "Developer",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "Ghost",
+                "count": 4
+              }
+            ]
+          }
+        ],
+        "manufacturerName": null,
+        "networkName": null,
+        "attributeStructureInfo": null
+      }
+    },
+    "error": {
+      "code": "",
+      "internal_message": "",
+      "moreInfo": []
+    }
+  }
+}

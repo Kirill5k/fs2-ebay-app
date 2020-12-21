@@ -62,7 +62,7 @@ final class CexApiClient[F[_]](
   private def getMinResellPrice(searchResponse: CexSearchResponse): Option[SellPrice] =
     for {
       data     <- searchResponse.response.data
-      cheapest <- data.boxes.minByOption(_.exchangePrice)
+      cheapest <- data.boxes.filter(_.cannotBuy == 0).minByOption(_.exchangePrice)
     } yield SellPrice(BigDecimal(cheapest.cashPrice), BigDecimal(cheapest.exchangePrice))
 
   override def findItem[D <: ItemDetails](query: SearchQuery)(
@@ -103,6 +103,7 @@ object CexClient {
       boxName: String,
       categoryName: String,
       categoryFriendlyName: String,
+      cannotBuy: Int,
       sellPrice: Double,
       exchangePrice: Double,
       cashPrice: Double,

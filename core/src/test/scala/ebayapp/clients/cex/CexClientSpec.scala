@@ -133,6 +133,24 @@ class CexClientSpec extends SttpClientSpec {
       }
     }
 
+    "ignore items that cannot be sold anymore" in {
+      val item = ResellableItemBuilder.videoGame("Need for speed", sellPrice = None, platform = Some("PLAYSTATION4"))
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+        .whenRequestMatchesPartial {
+          case r if isQueryRequest(r, Map("q" -> "Need for speed PLAYSTATION4", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+            Response.ok(json("cex/search-game-cannotbuy-success-response.json"))
+          case _ => throw new RuntimeException()
+        }
+
+      val cexClient = CexClient.make[IO](config, testingBackend)
+
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+
+      result.unsafeToFuture().map { updatedItem =>
+        updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(6.0), BigDecimal(9.0)))
+      }
+    }
+
     "return resell price from cache" in {
       val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub.whenAnyRequest
