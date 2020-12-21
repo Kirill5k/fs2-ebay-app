@@ -1,0 +1,244 @@
+{
+  "response": {
+    "ack": "Success",
+    "data": {
+      "boxes": [
+        {
+          "boxId": "5030945122494",
+          "masterBoxId": null,
+          "boxName": "UFC 4",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030945122494_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030945122494_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030945122494_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 40,
+          "cashPrice": 16,
+          "exchangePrice": 25,
+          "boxRating": null,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5035223112525",
+          "masterBoxId": null,
+          "boxName": "UFC",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5035223112525_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5035223112525_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5035223112525_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 4,
+          "cashPrice": 0.8,
+          "exchangePrice": 1.4,
+          "boxRating": 4.2,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5030946121595",
+          "masterBoxId": null,
+          "boxName": "UFC 3",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030946121595_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030946121595_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030946121595_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 18,
+          "cashPrice": 7,
+          "exchangePrice": 11,
+          "boxRating": 4.3,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        },
+        {
+          "boxId": "5030948113772",
+          "masterBoxId": null,
+          "boxName": "UFC 2",
+          "isMasterBox": 0,
+          "categoryId": 1003,
+          "categoryName": "Playstation4 Software",
+          "categoryFriendlyName": "Playstation4 Games",
+          "superCatId": 1,
+          "superCatName": "Gaming",
+          "superCatFriendlyName": "Gaming",
+          "imageUrls": {
+            "large": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030948113772_l.jpg",
+            "medium": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030948113772_m.jpg",
+            "small": "https://uk.static.webuy.com/product_images/Gaming/Playstation4 Software/5030948113772_s.jpg",
+            "masterBoxLarge": null,
+            "masterBoxMedium": null,
+            "masterBoxSmall": null
+          },
+          "cannotBuy": 0,
+          "isNewBox": 0,
+          "sellPrice": 10,
+          "cashPrice": 4,
+          "exchangePrice": 6,
+          "boxRating": 4.3,
+          "outOfStock": 0,
+          "outOfEcomStock": 0,
+          "ecomQuantityOnHand": 50,
+          "firstPrice": null,
+          "previousPrice": null,
+          "lastPriceUpdatedDate": null,
+          "displayableBoxAttribute": null,
+          "boxWebSaleAllowed": 1,
+          "boxWebBuyAllowed": 1,
+          "boxSaleAllowed": 1,
+          "boxBuyAllowed": 1
+        }
+      ],
+      "totalRecords": 4,
+      "minPrice": 4,
+      "maxPrice": 40,
+      "facets": {
+        "superCatName": [
+          {
+            "name": "Gaming",
+            "id": 1,
+            "count": 4
+          }
+        ],
+        "categoryFriendlyName": [
+          {
+            "name": "Playstation4 Games",
+            "id": 1003,
+            "count": 4
+          }
+        ],
+        "attributeInfo": [
+          {
+            "attributeId": 15,
+            "attributeFriendlyName": "Genre",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "Beat 'Em Up",
+                "count": 1
+              },
+              {
+                "attributeValue": "Sport",
+                "count": 3
+              }
+            ]
+          },
+          {
+            "attributeId": 20,
+            "attributeFriendlyName": "Publisher",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "Electronic Arts",
+                "count": 3
+              }
+            ]
+          },
+          {
+            "attributeId": 31,
+            "attributeFriendlyName": "PEGI Certificate",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "16+",
+                "count": 3
+              }
+            ]
+          },
+          {
+            "attributeId": 34,
+            "attributeFriendlyName": "Players",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": 1,
+                "count": 1
+              },
+              {
+                "attributeValue": "1-2",
+                "count": 2
+              }
+            ]
+          },
+          {
+            "attributeId": 35,
+            "attributeFriendlyName": "Developer",
+            "attributeValuesInfo": [
+              {
+                "attributeValue": "EA Canada",
+                "count": 3
+              }
+            ]
+          }
+        ],
+        "manufacturerName": null,
+        "networkName": null,
+        "attributeStructureInfo": null
+      }
+    },
+    "error": {
+      "code": "",
+      "internal_message": "",
+      "moreInfo": []
+    }
+  }
+}
