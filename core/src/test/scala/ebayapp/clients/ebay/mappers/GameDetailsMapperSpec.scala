@@ -353,6 +353,17 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       }
     }
 
+    "do special replacements" in {
+      val titles = Map(
+        "the last of us part 2" -> "last of us Part II"
+      )
+
+      forAll(titles) { case (title, expected) =>
+        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map()))
+        details.name mustBe Some(expected)
+      }
+    }
+
     "quick test" in {
       val listingDetails = testListing.copy(title = "motorsport kids racing motorbike game")
 
