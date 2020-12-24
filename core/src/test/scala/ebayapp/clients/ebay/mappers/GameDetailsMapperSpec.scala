@@ -296,6 +296,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare Anniversary CE",
         "Call of Duty: Infinite Warfare for ages 18 and over",
         "Call of Duty: Infinite Warfare HD collection",
+        "Call of Duty: Infinite Warfare xbox one x xbox series x",
         "Call of Duty: Infinite Warfare xbox 360 classics 2017",
         "Call of Duty: Infinite Warfare only on Playstation 4",
         "Call of Duty: Infinite Warfare - game of the year edition goty",
@@ -355,7 +356,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
     "do special replacements" in {
       val titles = Map(
-        "the last of us part 2" -> "last of us Part II"
+        "the last of us part 2" -> "last of us Part II",
+        "XBOX ONE GAME F1 2018 HEADLINE EDITION" -> "F1 2018",
       )
 
       forAll(titles) { case (title, expected) =>
