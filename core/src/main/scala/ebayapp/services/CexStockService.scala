@@ -13,27 +13,25 @@ import fs2._
 import scala.concurrent.duration.FiniteDuration
 
 trait CexStockService[F[_]] {
-  def stockUpdates[D <: ItemDetails](config: CexStockMonitorConfig)(implicit m: CexItemMapper[D]): Stream[F, ItemStockUpdates[D]]
+  def stockUpdates[D <: ItemDetails: CexItemMapper](config: CexStockMonitorConfig): Stream[F, ItemStockUpdates[D]]
 }
 
 final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
     private val client: CexClient[F]
 ) extends CexStockService[F] {
 
-  override def stockUpdates[D <: ItemDetails](
+  override def stockUpdates[D <: ItemDetails: CexItemMapper](
       config: CexStockMonitorConfig
-  )(
-      implicit m: CexItemMapper[D]
   ): Stream[F, ItemStockUpdates[D]] =
     Stream
       .emits(config.monitoringRequests)
       .map(req => getUpdates(req, config.monitoringFrequency))
       .parJoinUnbounded
 
-  private def findItems[D <: ItemDetails](query: SearchQuery)(implicit m: CexItemMapper[D]): F[Map[String, ResellableItem[D]]] =
+  private def findItems[D <: ItemDetails: CexItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client.findItem[D](query).map { items =>
-      items.groupBy(_.itemDetails.fullName).collect {
-        case (Some(name), group) => (name, group.head)
+      items.groupBy(_.itemDetails.fullName).collect { case (Some(name), group) =>
+        (name, group.head)
       }
     }
 
@@ -42,8 +40,8 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
       curr: Map[String, ResellableItem[D]],
       req: StockMonitorRequest
   ): List[ItemStockUpdates[D]] =
-    curr.map {
-      case (name, currItem) =>
+    curr
+      .map { case (name, currItem) =>
         val updates = prev.get(name) match {
           case None => List(StockUpdate.New)
           case Some(prevItem) =>
@@ -53,13 +51,13 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
             ).flatten
         }
         ItemStockUpdates(currItem, updates)
-    }.filter(_.updates.nonEmpty).toList
+      }
+      .filter(_.updates.nonEmpty)
+      .toList
 
-  private def getUpdates[D <: ItemDetails](
+  private def getUpdates[D <: ItemDetails: CexItemMapper](
       req: StockMonitorRequest,
       freq: FiniteDuration
-  )(
-      implicit m: CexItemMapper[D]
   ): Stream[F, ItemStockUpdates[D]] =
     Stream
       .unfoldLoopEval[F, Option[Map[String, ResellableItem[D]]], List[ItemStockUpdates[D]]](None) { prevOpt =>

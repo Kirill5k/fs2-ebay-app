@@ -8,14 +8,11 @@ import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.services.{EbayDealsService, NotificationService, ResellableItemService, Services}
 import fs2.Stream
 
-final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails](
+final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails: EbayItemMapper: EbaySearchParams](
     private val dealsConfig: EbayDealsConfig,
     private val ebayDealsService: EbayDealsService[F],
     private val resellableItemService: ResellableItemService[F, D],
     private val notificationService: NotificationService[F]
-)(
-    implicit private val mapper: EbayItemMapper[D],
-    implicit private val params: EbaySearchParams[D]
 ) {
 
   def searchForCheapItems(): Stream[F, Unit] =
@@ -29,7 +26,7 @@ final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails](
       .drain
 
   private val hasRequiredStock: ResellableItem[D] => Boolean =
-    item =>  item.buyPrice.quantityAvailable > 0 && item.buyPrice.quantityAvailable < dealsConfig.maxExpectedQuantity
+    item => item.buyPrice.quantityAvailable > 0 && item.buyPrice.quantityAvailable < dealsConfig.maxExpectedQuantity
 
   private val isProfitableToResell: ResellableItem[D] => Boolean =
     item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.rrp - 100) > dealsConfig.minMarginPercentage)

@@ -14,12 +14,7 @@ import fs2._
 import scala.concurrent.duration._
 
 trait EbayDealsService[F[_]] {
-  def deals[D <: ItemDetails](
-      config: EbayDealsConfig
-  )(
-      implicit m: EbayItemMapper[D],
-      p: EbaySearchParams[D]
-  ): Stream[F, ResellableItem[D]]
+  def deals[D <: ItemDetails: EbayItemMapper: EbaySearchParams](config: EbayDealsConfig): Stream[F, ResellableItem[D]]
 }
 
 final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
@@ -27,22 +22,16 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
     private val cexClient: CexClient[F]
 ) extends EbayDealsService[F] {
 
-  override def deals[D <: ItemDetails](config: EbayDealsConfig)(
-      implicit m: EbayItemMapper[D],
-      p: EbaySearchParams[D]
-  ): Stream[F, ResellableItem[D]] =
+  override def deals[D <: ItemDetails: EbayItemMapper: EbaySearchParams](config: EbayDealsConfig): Stream[F, ResellableItem[D]] =
     Stream
       .emits(config.searchQueries)
       .map(query => find(query, config.maxListingDuration))
       .parJoinUnbounded
       .repeatEvery(config.searchFrequency)
 
-  private def find[D <: ItemDetails](
+  private def find[D <: ItemDetails: EbayItemMapper: EbaySearchParams](
       query: SearchQuery,
       duration: FiniteDuration
-  )(
-      implicit m: EbayItemMapper[D],
-      p: EbaySearchParams[D]
   ): Stream[F, ResellableItem[D]] =
     ebayClient
       .findLatestItems[D](query, duration)

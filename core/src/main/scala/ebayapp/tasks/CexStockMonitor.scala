@@ -8,12 +8,10 @@ import ebayapp.domain.ItemDetails
 import ebayapp.services.{CexStockService, NotificationService, Services}
 import fs2.Stream
 
-final class CexStockMonitor[F[_]: Sync, D <: ItemDetails](
+final class CexStockMonitor[F[_]: Sync, D <: ItemDetails: CexItemMapper](
     private val stockMonitorConfig: CexStockMonitorConfig,
     private val stockService: CexStockService[F],
     private val notificationService: NotificationService[F]
-)(
-    implicit private val mapper: CexItemMapper[D]
 ) {
 
   def monitorStock(): Stream[F, Unit] =

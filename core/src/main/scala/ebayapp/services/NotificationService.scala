@@ -14,14 +14,14 @@ trait NotificationService[F[_]] {
 
 final class TelegramNotificationService[F[_]](
     private val telegramClient: TelegramClient[F]
-)(
-    implicit val S: Sync[F],
+)(implicit
+    val F: Sync[F],
     val L: Logger[F]
 ) extends NotificationService[F] {
   import NotificationService._
 
   override def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit] =
-    S.pure(item.cheapItemNotification).flatMap {
+    F.pure(item.cheapItemNotification).flatMap {
       case Some(message) =>
         L.info(s"""sending "$message"""") *>
           telegramClient.sendMessageToMainChannel(message)
@@ -30,7 +30,7 @@ final class TelegramNotificationService[F[_]](
     }
 
   override def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit] =
-    S.pure(item.stockUpdateNotification(update)).flatMap {
+    F.pure(item.stockUpdateNotification(update)).flatMap {
       case Some(message) =>
         L.info(s"""sending "$message"""") *>
           telegramClient.sendMessageToSecondaryChannel(message)
@@ -45,7 +45,7 @@ object NotificationService {
       for {
         itemSummary <- item.itemDetails.fullName
         sell        <- item.sellPrice
-        quantity = item.buyPrice.quantityAvailable
+        quantity         = item.buyPrice.quantityAvailable
         buy              = item.buyPrice.rrp
         profitPercentage = sell.credit * 100 / buy - 100
         url              = item.listingDetails.url
