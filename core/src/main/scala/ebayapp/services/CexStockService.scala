@@ -30,8 +30,8 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
 
   private def findItems[D <: ItemDetails: CexItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client.findItem[D](query).map { items =>
-      items.groupBy(_.itemDetails.fullName).collect { case (Some(name), group) =>
-        (name, group.head)
+      items.groupBy(_.itemDetails.fullName).collect {
+        case (Some(name), group) => (name, group.head)
       }
     }
 
