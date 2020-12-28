@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    lazy val fs2        = "2.4.6"
+    lazy val fs2        = "2.5.0"
     lazy val mongo4cats = "0.1.3"
     lazy val pureConfig = "0.14.0"
     lazy val circe      = "0.13.0"
