@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker._
+
 ThisBuild / scalaVersion     := "2.13.3"
 ThisBuild / version          := "0.1.0"
 ThisBuild / organization     := "io.github.kirill5k"
@@ -15,7 +17,15 @@ lazy val docker = Seq(
   maintainer := "immotional@aol.com",
   dockerBaseImage := "adoptopenjdk/openjdk15-openj9:alpine-jre",
   dockerUpdateLatest := true,
-  makeBatScripts := List()
+  makeBatScripts := List(),
+  dockerCommands := {
+    val commands         = dockerCommands.value
+    val (stage0, stage1) = commands.span(_ != DockerStageBreak)
+    val (before, after)      = stage1.splitAt(4)
+    val installBash = Cmd("RUN", "apk update && apk upgrade && apk add bash")
+    stage0 ++ before ++ List(installBash) ++ after
+  }
+
 )
 
 lazy val root = (project in file("."))
