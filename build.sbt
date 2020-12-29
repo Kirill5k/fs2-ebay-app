@@ -25,7 +25,6 @@ lazy val docker = Seq(
     val installBash = Cmd("RUN", "apk update && apk upgrade && apk add bash")
     stage0 ++ before ++ List(installBash) ++ after
   }
-
 )
 
 lazy val root = (project in file("."))
