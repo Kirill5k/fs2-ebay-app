@@ -17,7 +17,7 @@ private[mappers] object GameDetailsMapper {
     s"(?<=.{10})$CONSOLE_REGEX_PATTERN(?s).*",
     "\\bday\\b (one|1|zero|0)( (edition|\\be(d)?(i)?(t)?(i)?\\b))?(?s).*$",
     //remove edition and preceding word
-    "(\\bHD\\b|steel case|n(e)?xt l(e)?v(e)?l|headline|\\bel\\b \\w+|standar|nuketown|wild run|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|(digital )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
+    "(\\bHD\\b|steel case|n(e)?xt l(e)?v(e)?l|headline|\\bel\\b \\w+|standar|nuketown|wild run|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th|ten year)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|(digital )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
     "(?<=.{5})((new|pristine|\\binc\\b) )?(super|cheap( )?)?(free|fast|quick)?( )?(super( )?)?(prompt|free|fast|quick|(next|same|1|one) day|tracked|recorded|speedy|worldwide|bargain|\\bsc\\b|\\bfc\\b).{0,20}(dispatch|ship(ping)?|post(age)?|delivery|p( )?p).*$",
     "(?<=.{15})((brand )?new.{0,15})?(still )?((factory |un)?sealed|unopened|shrink( )?wrap)(?s).*$",
     "(?<=.{10})\\b(kids( \\w+)?|hack slash|single player|open world|Family Fun|basketball|(fun )?adventure|console single|tactical|3rd person|(action )?rpg|fps|survival|action|racing|role|wrestling|fighting|multi( )?player)\\b.{0,20}game(?s).*"
@@ -78,7 +78,7 @@ private[mappers] object GameDetailsMapper {
     "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve", "plays perfect",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "(last one )?in stock( now)?",
-    "never( been)? (opened|played)", "(only )?played (once|twice)", "best price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
+    "never( been)? (opened|played)", "(only )?played (once|twice)", "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
     "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|(1|one|same)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids",
@@ -91,7 +91,7 @@ private[mappers] object GameDetailsMapper {
     "\\bnsw\\b", "\\bsft\\b", "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", "\\bWAR L\\d+\\b",
     "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", "(ultra )?\\b(u)?hd(r)?\\b", "(\\b4k\\b|\\bone x\\b)( enhanced)?",
     "\\buns\\b", "\\bx360\\b", "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b", "\\bSE\\b",
-    "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( )?)?VR\\b( version)?", "\\bDEFY\\b",
+    "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( )?)?VR\\b( version)?", "\\bDEFY\\b", "\\bArgos\\b",
     "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b", "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b",
     "(?<=\\d)PS\\d",
     "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "(condition )?NEW(\\s+)?$"
@@ -99,6 +99,7 @@ private[mappers] object GameDetailsMapper {
 
   private val EDGE_WORDS_REPLACEMENTS = List(
     "Playstation( \\d)?\\s+(?=PS)",
+    "(?<=Definitive) edition",
     "^genuine ",
     "^bnwt ", "^(brand|condition) new ",
     "^\\w+ condition ",
@@ -113,7 +114,7 @@ private[mappers] object GameDetailsMapper {
   private val SEPARATORS = List(
     "(?<=Far)(?=Cry)", "(?<=Star)(?=Wars)", "(?<=Mario)(?=Kart)", "(?<=Pro)(?=Street)", "(?<=player)(?=unknown)", "(?<=south)(?=park)",
     "(?<=Super)(?=Heroes)", "(?<=Rock)(?=Band)", "(?<=My)(?=Sims)", "(?<=Nier)(?=Automata)", "(?<=Race)(?=driver grid)",
-    "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)"
+    "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)", "(?<=WATCH)(?=DOGS)"
   ).mkString("(?i)", "|", "")
 
   private val PLATFORMS_MATCH_REGEX = List(
