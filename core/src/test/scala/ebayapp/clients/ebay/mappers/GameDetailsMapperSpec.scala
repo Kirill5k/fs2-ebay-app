@@ -339,13 +339,13 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       }
     }
 
-    "remove roman numbers followed by digit or vice versa" in {
+    "do special replacements" in {
       val titles = Map(
-        "Call of Duty Black Ops iii 3" -> "Call of Duty Black Ops iii",
-        "Call of Duty Black Ops iv 4"  -> "Call of Duty Black Ops iv",
-        "Call of Duty Black Ops ii 2"  -> "Call of Duty Black Ops ii",
-        "Call of Duty Black Ops 2 ii"  -> "Call of Duty Black Ops 2",
-        "witcher 3 iii"                -> "witcher 3"
+        "the last of us part 2" -> "last of us Part II",
+        "XBOX ONE GAME F1 2018 HEADLINE EDITION" -> "F1 2018",
+        "Mafia Definitive Edition" -> "Mafia Definitive",
+        "FIFA 21 NEXT LEVEL" -> "FIFA 21",
+        "pga tour 2k21 golf fun" -> "pga tour 2k21",
       )
 
       forAll(titles) { case (title, expected) =>
@@ -354,11 +354,13 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       }
     }
 
-    "do special replacements" in {
+    "remove roman numbers followed by digit or vice versa" in {
       val titles = Map(
-        "the last of us part 2" -> "last of us Part II",
-        "XBOX ONE GAME F1 2018 HEADLINE EDITION" -> "F1 2018",
-        "Mafia Definitive Edition" -> "Mafia Definitive",
+        "Call of Duty Black Ops iii 3" -> "Call of Duty Black Ops iii",
+        "Call of Duty Black Ops iv 4"  -> "Call of Duty Black Ops iv",
+        "Call of Duty Black Ops ii 2"  -> "Call of Duty Black Ops ii",
+        "Call of Duty Black Ops 2 ii"  -> "Call of Duty Black Ops 2",
+        "witcher 3 iii"                -> "witcher 3"
       )
 
       forAll(titles) { case (title, expected) =>

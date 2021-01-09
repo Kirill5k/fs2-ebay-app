@@ -21,7 +21,7 @@ import fs2._
 import scala.concurrent.duration._
 
 trait EbayClient[F[_]] {
-  def findLatestItems[D <: ItemDetails](
+  def latest[D <: ItemDetails](
       query: SearchQuery,
       duration: FiniteDuration
   )(
@@ -40,7 +40,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     val L: Logger[F]
 ) extends EbayClient[F] {
 
-  def findLatestItems[D <: ItemDetails](
+  def latest[D <: ItemDetails](
       query: SearchQuery,
       duration: FiniteDuration
   )(

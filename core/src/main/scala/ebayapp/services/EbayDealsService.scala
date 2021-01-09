@@ -34,7 +34,7 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
       duration: FiniteDuration
   ): Stream[F, ResellableItem[D]] =
     ebayClient
-      .findLatestItems[D](query, duration)
+      .latest[D](query, duration)
       .evalMap(cexClient.withUpdatedSellPrice)
       .handleErrorWith { error =>
         Stream.eval_(Logger[F].error(error)(s"error getting deals from ebay"))

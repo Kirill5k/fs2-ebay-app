@@ -43,11 +43,12 @@ private[mappers] object GameDetailsMapper {
     "cleaned( )?(fully )?tested",
     // removes common publishers
     "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Capcom|CD Projekt Red|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( Blizzard)?|square enix|Dreamworks|Insomniac(s)?|LucasArt(s)?)( presents)?",
-    "currys", "James Camerons", "\\bTom clan\\w+\\b", "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b", "Sid Meiers",
+    "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b", "Sid Meiers",
     "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "\\d games in (one|1)",
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal)(?s).*",
     "(?<=FIFA) (soccer|football)", "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling", "(?<=(FIFA|MotoGP) )20(?=\\d\\d)",
     "(?<=F1)\\s+(Formula (one|1))( racing)?", "(?<=20\\d\\d).*formula(?s).*",
+    "(?<=Fifa 21.*) (NXT LVL|Next level)", "(?<=PGA Tour.*) golf.*",
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
     "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)",
     "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))",
@@ -75,7 +76,7 @@ private[mappers] object GameDetailsMapper {
     "\\d \\d players", "1 ONE", "flash sale",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
-    "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve", "plays perfect",
+    "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve", "plays perfect", "100 trusted seller",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual|instructions)(\\s+map)?( (is|are))?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "(last one )?in stock( now)?",
     "never( been)? (opened|played)", "(only )?played (once|twice)", "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
@@ -114,7 +115,7 @@ private[mappers] object GameDetailsMapper {
   private val SEPARATORS = List(
     "(?<=Far)(?=Cry)", "(?<=Star)(?=Wars)", "(?<=Mario)(?=Kart)", "(?<=Pro)(?=Street)", "(?<=player)(?=unknown)", "(?<=south)(?=park)",
     "(?<=Super)(?=Heroes)", "(?<=Rock)(?=Band)", "(?<=My)(?=Sims)", "(?<=Nier)(?=Automata)", "(?<=Race)(?=driver grid)",
-    "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)", "(?<=WATCH)(?=DOGS)"
+    "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)", "(?<=WATCH)(?=DOGS)", "(?<=PES)(?=20\\d\\d)"
   ).mkString("(?i)", "|", "")
 
   private val PLATFORMS_MATCH_REGEX = List(

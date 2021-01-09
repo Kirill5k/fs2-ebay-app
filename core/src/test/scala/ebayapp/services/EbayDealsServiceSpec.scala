@@ -27,11 +27,11 @@ class EbayDealsServiceSpec extends CatsSpec {
       val dealsConfig             = EbayDealsConfig(2.seconds, List(SearchQuery("q1"), SearchQuery("q2")), 5.minutes, 5, 10)
       val (ebayClient, cexClient) = mockDependecies
 
-      when(ebayClient.findLatestItems[Game](eqTo(SearchQuery("q1")), eqTo(5.minutes))(eqTo(mapper), eqTo(params)))
+      when(ebayClient.latest[Game](eqTo(SearchQuery("q1")), eqTo(5.minutes))(eqTo(mapper), eqTo(params)))
         .thenReturn(Stream.evalSeq(IO.pure(List(videoGame, videoGame2))))
         .andThen(Stream.empty)
 
-      when(ebayClient.findLatestItems[Game](eqTo(SearchQuery("q2")), eqTo(5.minutes))(eqTo(mapper), eqTo(params)))
+      when(ebayClient.latest[Game](eqTo(SearchQuery("q2")), eqTo(5.minutes))(eqTo(mapper), eqTo(params)))
         .thenReturn(Stream.empty)
 
       doReturn(IO.pure(videoGame))
@@ -45,8 +45,8 @@ class EbayDealsServiceSpec extends CatsSpec {
       } yield items
 
       result.unsafeToFuture().map { items =>
-        verify(ebayClient, times(2)).findLatestItems[Game](SearchQuery("q1"), 5.minutes)
-        verify(ebayClient, times(2)).findLatestItems[Game](SearchQuery("q2"), 5.minutes)
+        verify(ebayClient, times(2)).latest[Game](SearchQuery("q1"), 5.minutes)
+        verify(ebayClient, times(2)).latest[Game](SearchQuery("q2"), 5.minutes)
         verify(cexClient, times(2)).withUpdatedSellPrice(any[ResellableItem[ItemDetails.Game]])
         items mustBe List(videoGame, videoGame2)
       }
@@ -56,7 +56,7 @@ class EbayDealsServiceSpec extends CatsSpec {
       val dealsConfig             = EbayDealsConfig(2.seconds, List(SearchQuery("q1")), 5.minutes, 5, 10)
       val (ebayClient, cexClient) = mockDependecies
 
-      when(ebayClient.findLatestItems[Game](any[SearchQuery], any[FiniteDuration])(eqTo(mapper), eqTo(params)))
+      when(ebayClient.latest[Game](any[SearchQuery], any[FiniteDuration])(eqTo(mapper), eqTo(params)))
         .thenReturn(Stream.eval(IO.raiseError(new RuntimeException())))
         .andThen((Stream.evalSeq(IO.pure(List(videoGame)))))
 
@@ -70,7 +70,7 @@ class EbayDealsServiceSpec extends CatsSpec {
       } yield items
 
       result.unsafeToFuture().map { items =>
-        verify(ebayClient, times(2)).findLatestItems[Game](SearchQuery("q1"), 5.minutes)
+        verify(ebayClient, times(2)).latest[Game](SearchQuery("q1"), 5.minutes)
         verify(cexClient).withUpdatedSellPrice(any[ResellableItem[ItemDetails.Game]])
         items mustBe List(videoGame)
       }
