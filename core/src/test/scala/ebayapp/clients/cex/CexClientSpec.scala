@@ -239,7 +239,7 @@ class CexClientSpec extends SttpClientSpec {
 
       result.attempt.unsafeToFuture().map { price =>
         price must be(
-          Left(AppError.Json("error parsing json: DecodingFailure(C[A], List(DownField(boxes), DownField(data), DownField(response)))"))
+          Left(AppError.Json("error parsing json: C[A]: DownField(boxes),DownField(data),DownField(response)"))
         )
       }
     }

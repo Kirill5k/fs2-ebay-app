@@ -2,6 +2,7 @@ package ebayapp.clients.cex
 
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
+import ebayapp.Resources
 import ebayapp.clients.cex.CexClient.{CexSearchResponse, SearchResult}
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
@@ -19,16 +20,16 @@ import scala.concurrent.duration._
 
 trait CexClient[F[_]] {
   def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]]
-  def findItem[D <: ItemDetails](query: SearchQuery)(
-    implicit mapper: CexItemMapper[D]
+  def findItem[D <: ItemDetails](query: SearchQuery)(implicit
+      mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]]
 }
 
 final class CexApiClient[F[_]](
     private val config: CexConfig,
     private val resellPriceCache: Cache[F, String, Option[SellPrice]]
-)(
-    implicit val B: SttpBackend[F, Nothing, NothingT],
+)(implicit
+    val B: SttpBackend[F, Nothing, NothingT],
     S: Sync[F],
     T: Timer[F],
     L: Logger[F]
@@ -51,7 +52,7 @@ final class CexApiClient[F[_]](
     resellPriceCache.get(query.base64).flatMap {
       case Some(rp) => rp.pure[F]
       case None =>
-        val q = query.value.replaceAll("(?<!\\d) (?=\\d+)", "")
+        val q           = query.value.replaceAll("(?<!\\d) (?=\\d+)", "")
         val categoryIds = categories.map(_.mkString("[", ",", "]"))
         search(uri"${config.baseUri}/v3/boxes?q=$q&categoryIds=$categoryIds")
           .map(getMinResellPrice)
@@ -69,8 +70,8 @@ final class CexApiClient[F[_]](
       .minByOption(_.exchangePrice)
       .map(c => SellPrice(BigDecimal(c.cashPrice), BigDecimal(c.exchangePrice)))
 
-  override def findItem[D <: ItemDetails](query: SearchQuery)(
-      implicit mapper: CexItemMapper[D]
+  override def findItem[D <: ItemDetails](query: SearchQuery)(implicit
+      mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]] =
     search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")
       .map(_.response.data.fold(List.empty[SearchResult])(_.boxes))
@@ -85,17 +86,16 @@ final class CexApiClient[F[_]](
       .response(asJson[CexSearchResponse])
       .send()
       .flatMap { r =>
-        r.code match {
-          case s if s.isSuccess =>
-            val searchResponse = r.body.left.map {
-              case DeserializationError(_, e) => AppError.Json(s"error parsing json: $e")
-              case e                          => AppError.Json(s"error parsing json: ${e.getMessage}")
-            }
-            S.fromEither(searchResponse)
-          case StatusCode.TooManyRequests =>
+        r.body match {
+          case Right(response) =>
+            response.pure[F]
+          case Left(DeserializationError(body, error)) =>
+            L.error(s"error parsing json: ${error.getMessage}\n$body") *>
+              AppError.Json(s"error parsing json: ${error.getMessage}").raiseError[F, CexSearchResponse]
+          case Left(HttpError(_, StatusCode.TooManyRequests)) =>
             L.warn(s"too many requests to cex. retrying") *> T.sleep(5.seconds) *> search(uri)
-          case s =>
-            L.error(s"error sending price query to cex: $s\n${r.body.fold(_.getMessage, _.toString)}") *>
+          case Left(error) =>
+            L.error(s"error sending price query to cex: ${r.code}\n$error") *>
               T.sleep(5.second) *> search(uri)
         }
       }

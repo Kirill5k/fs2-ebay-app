@@ -16,11 +16,11 @@ private[ebay] trait EbayBrowseClient[F[_]] {
   def getItem(accessToken: String, itemId: String): F[Option[EbayItem]]
 }
 
-private[ebay] final class LiveEbayBrowseClient[F[_]](
+final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig
-)(
-    implicit val B: SttpBackend[F, Nothing, NothingT],
-    val S: Sync[F],
+)(implicit
+    val B: SttpBackend[F, Nothing, NothingT],
+    val F: Sync[F],
     val L: Logger[F]
 ) extends EbayBrowseClient[F] {
 
@@ -37,12 +37,12 @@ private[ebay] final class LiveEbayBrowseClient[F[_]](
       .flatMap { r =>
         r.code match {
           case status if status.isSuccess =>
-            S.fromEither(r.body.map(_.itemSummaries.getOrElse(List())))
+            F.fromEither(r.body.map(_.itemSummaries.getOrElse(List())))
           case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
-            S.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
+            F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
           case status =>
             L.error(s"error sending search request to ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
-              S.raiseError(AppError.Http(status.code, s"error sending request to ebay search api: $status"))
+              F.raiseError(AppError.Http(status.code, s"error sending request to ebay search api: $status"))
         }
       }
 
@@ -59,14 +59,14 @@ private[ebay] final class LiveEbayBrowseClient[F[_]](
       .flatMap { r =>
         r.code match {
           case status if status.isSuccess =>
-            S.fromEither(r.body.map(_.some))
+            F.fromEither(r.body.map(_.some))
           case StatusCode.NotFound =>
-            S.pure(None)
+            F.pure(None)
           case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
-            S.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
+            F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
           case status =>
             L.error(s"error getting item from ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
-              S.raiseError(AppError.Http(status.code, s"error getting item from ebay search api: $status"))
+              F.raiseError(AppError.Http(status.code, s"error getting item from ebay search api: $status"))
         }
       }
 }
@@ -77,5 +77,5 @@ private[ebay] object EbayBrowseClient {
       config: EbayConfig,
       backend: SttpBackend[F, Nothing, NothingT]
   ): F[EbayBrowseClient[F]] =
-    Sync[F].delay(new LiveEbayBrowseClient[F](config)(B = backend, S = Sync[F], L = Logger[F]))
+    Sync[F].delay(new LiveEbayBrowseClient[F](config)(B = backend, F = Sync[F], L = Logger[F]))
 }
