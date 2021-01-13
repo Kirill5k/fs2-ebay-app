@@ -2,7 +2,6 @@ package ebayapp.clients.cex
 
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
-import ebayapp.Resources
 import ebayapp.clients.cex.CexClient.{CexSearchResponse, SearchResult}
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.Cache
