@@ -7,7 +7,7 @@ import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.search.BuyPrice
 import sttp.client
 import sttp.client.{NothingT, Response, SttpBackend}
-import sttp.model.Method
+import sttp.model.{Method, StatusCode}
 
 class SelfridgesClientSpec extends SttpClientSpec {
 
@@ -47,6 +47,32 @@ class SelfridgesClientSpec extends SttpClientSpec {
         item.buyPrice mustBe BuyPrice(0, BigDecimal(50.00), Some(63))
         item.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XS")
       }
+    }
+
+    "return empty stream in case of errors" in {
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+        .whenRequestMatchesPartial {
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1")) =>
+            Response("foo-bar", StatusCode.BadRequest)
+          case _ => throw new RuntimeException()
+        }
+
+      val client = SelfridgesClient.make[IO](config, testingBackend)
+
+      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
+    }
+
+    "return empty stream when failed to deserialize response" in {
+      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+        .whenRequestMatchesPartial {
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1")) =>
+            Response.ok("""{"foo":"bar"}""")
+          case _ => throw new RuntimeException()
+        }
+
+      val client = SelfridgesClient.make[IO](config, testingBackend)
+
+      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
     }
   }
 
