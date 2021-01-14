@@ -33,7 +33,7 @@ object mappers {
     private def price(item: CatalogItem, stock: ItemStock): BuyPrice = {
       val current  = item.price.map(_.lowestPrice).min
       val rrp      = item.price.flatMap(p => p.lowestWasWasPrice.orElse(p.lowestWasPrice)).maxOption
-      val discount = rrp.map(current * 100 / _).map(_.toInt)
+      val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
 
       BuyPrice(
         stock.`Stock Quantity Available to Purchase`,
