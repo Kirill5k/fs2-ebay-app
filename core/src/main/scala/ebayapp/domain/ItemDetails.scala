@@ -14,6 +14,14 @@ object ItemDetails {
     val fullName: Option[String] = Some(name)
   }
 
+  final case class Clothing(
+      name: String,
+      brand: String,
+      size: String
+  ) extends ItemDetails {
+    val fullName: Option[String] = Some(s"$brand - $name, size ${size.capitalize}")
+  }
+
   final case class Phone(
       make: Option[String],
       model: Option[String],
@@ -32,9 +40,8 @@ object ItemDetails {
       releaseYear: Option[String],
       genre: Option[String]
   ) extends ItemDetails {
-    val fullName: Option[String] = {
+    val fullName: Option[String] =
       (name, platform).mapN((n, p) => s"$n $p")
-    }
   }
 
 }

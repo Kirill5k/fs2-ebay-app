@@ -77,6 +77,10 @@ object config {
       stockMonitor: CexStockMonitorConfig
   )
 
+  final case class SelfridgesConfig(
+      baseUri: String
+  )
+
   final case class TelegramConfig(
       baseUri: String,
       botKey: String,
@@ -89,6 +93,7 @@ object config {
       mongo: MongoConfig,
       cex: CexConfig,
       ebay: EbayConfig,
+      selfridges: SelfridgesConfig,
       telegram: TelegramConfig
   )
 
