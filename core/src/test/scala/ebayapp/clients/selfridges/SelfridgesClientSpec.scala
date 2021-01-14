@@ -3,6 +3,7 @@ package ebayapp.clients.selfridges
 import cats.effect.IO
 import ebayapp.SttpClientSpec
 import ebayapp.common.config.{SearchQuery, SelfridgesConfig}
+import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.search.BuyPrice
 import sttp.client
 import sttp.client.{NothingT, Response, SttpBackend}
@@ -17,7 +18,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
       "foo-bar"
     )
 
-    val query = SearchQuery("Calvin Klein")
+    val query = SearchQuery("EA7 Armani")
 
     "return stream of clothing items" in {
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
@@ -44,12 +45,13 @@ class SelfridgesClientSpec extends SttpClientSpec {
         val item = items.head
 
         item.buyPrice mustBe BuyPrice(0, BigDecimal(50.00), Some(63))
+        item.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XS")
       }
     }
   }
 
   def isSearchRequest(req: client.Request[_, _], params: Map[String, String]): Boolean =
-    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "search", "Calvin Klein"), params)
+    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "search", "EA7 Armani"), params)
 
   def isGetStockRequest(req: client.Request[_, _], id: String): Boolean =
     isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "stock", "byId", id))
