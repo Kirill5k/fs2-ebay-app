@@ -1,0 +1,109 @@
+{
+  "recordSetTotal": "3",
+  "recordSetCount": "1",
+  "noOfPages": "3",
+  "pageNumber": "2",
+  "resourceId": "/api/GB/en/search/ea7",
+  "pageTitle": "Search results for 'ea7' - Selfridges | Shop Online",
+  "metaDescription": "Shop the null range from our null department for a wide range of null products | Available to buy online from Selfridges.com",
+  "canonicalURL": "",
+  "h1Tag": "",
+  "categoryId": "search",
+  "catalogEntryNavView": [
+    {
+      "name": "Brand-print cotton-blend jersey sweatshirt",
+      "imageName": "R03631641_BLACK_M",
+      "seoKey": "ea7-armani-brand-print-cotton-blend-jersey-sweatshirt_R03631641",
+      "brandName": "EA7 ARMANI",
+      "previewAttribute": "BLACK",
+      "productId": "8866786",
+      "multiColour": "N",
+      "productType": "Standard",
+      "shortDescription": "Ea Sweatshirt",
+      "isPartOfBundle": "N",
+      "partNumber": "R03631641",
+      "price": [
+        {
+          "lowestPrice": "30.00",
+          "lowestWasPrice": "60.00",
+          "lowestWasWasPrice": "100.00",
+          "currency": "GBP"
+        }
+      ]
+    }
+  ],
+  "facetView": [
+    {
+      "name": "categories",
+      "customDisplayName": "Refine by Category",
+      "multiSelect": "N",
+      "entry": [
+        {
+          "name": "Mens",
+          "count": "3",
+          "seoPath": "mens",
+          "seoKey": "mens",
+          "selected": "N"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "customDisplayName": "Size",
+      "multiSelect": "Y",
+      "entry": [
+        {
+          "name": "M",
+          "count": "1",
+          "seoPath": "size-m",
+          "seoKey": "size-m",
+          "selected": "N"
+        },
+        {
+          "name": "XL",
+          "count": "1",
+          "seoPath": "size-xl",
+          "seoKey": "size-xl",
+          "selected": "N"
+        },
+        {
+          "name": "XXL",
+          "count": "1",
+          "seoPath": "size-xxl",
+          "seoKey": "size-xxl",
+          "selected": "N"
+        }
+      ]
+    },
+    {
+      "name": "price_gbp",
+      "customDisplayName": "Price",
+      "multiSelect": "N",
+      "entry": [
+        {
+          "name": "30.00",
+          "count": "1",
+          "seoPath": "ce_price_gbp-30.0",
+          "seoKey": "ce_price_gbp-30.0",
+          "selected": "N"
+        }
+      ]
+    },
+    {
+      "name": "price1_gbp",
+      "customDisplayName": "Price",
+      "multiSelect": "N",
+      "entry": [
+        {
+          "name": "50.00",
+          "count": "2",
+          "seoPath": "ce_price1_gbp-50.0",
+          "seoKey": "ce_price1_gbp-50.0",
+          "selected": "N"
+        }
+      ]
+    }
+  ],
+  "wishListEnabled": "Y",
+  "searchTerm": "ea7"
+}

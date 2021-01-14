@@ -1,0 +1,109 @@
+{
+  "recordSetTotal": "3",
+  "recordSetCount": "1",
+  "noOfPages": "3",
+  "pageNumber": "3",
+  "resourceId": "/api/GB/en/search/ea7",
+  "pageTitle": "Search results for 'ea7' - Selfridges | Shop Online",
+  "metaDescription": "Shop the null range from our null department for a wide range of null products | Available to buy online from Selfridges.com",
+  "canonicalURL": "",
+  "h1Tag": "",
+  "categoryId": "search",
+  "catalogEntryNavView": [
+    {
+      "name": "Brand-appliqu&eacute;d hooded cotton-blend jersey hoody",
+      "imageName": "R03631642_BLACK_M",
+      "seoKey": "ea7-armani-brand-appliqueacuted-hooded-cotton-blend-jersey-hoody_R03631642",
+      "brandName": "EA7 ARMANI",
+      "previewAttribute": "BLACK",
+      "productId": "8887089",
+      "multiColour": "N",
+      "productType": "Standard",
+      "shortDescription": "Ea Gold Series Sweatshirt",
+      "isPartOfBundle": "N",
+      "partNumber": "R03631642",
+      "price": [
+        {
+          "lowestPrice": "50.00",
+          "lowestWasPrice": "70.00",
+          "lowestWasWasPrice": "125.00",
+          "currency": "GBP"
+        }
+      ]
+    }
+  ],
+  "facetView": [
+    {
+      "name": "categories",
+      "customDisplayName": "Refine by Category",
+      "multiSelect": "N",
+      "entry": [
+        {
+          "name": "Mens",
+          "count": "3",
+          "seoPath": "mens",
+          "seoKey": "mens",
+          "selected": "N"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "customDisplayName": "Size",
+      "multiSelect": "Y",
+      "entry": [
+        {
+          "name": "M",
+          "count": "1",
+          "seoPath": "size-m",
+          "seoKey": "size-m",
+          "selected": "N"
+        },
+        {
+          "name": "XL",
+          "count": "1",
+          "seoPath": "size-xl",
+          "seoKey": "size-xl",
+          "selected": "N"
+        },
+        {
+          "name": "XXL",
+          "count": "1",
+          "seoPath": "size-xxl",
+          "seoKey": "size-xxl",
+          "selected": "N"
+        }
+      ]
+    },
+    {
+      "name": "price_gbp",
+      "customDisplayName": "Price",
+      "multiSelect": "N",
+      "entry": [
+        {
+          "name": "30.00",
+          "count": "1",
+          "seoPath": "ce_price_gbp-30.0",
+          "seoKey": "ce_price_gbp-30.0",
+          "selected": "N"
+        }
+      ]
+    },
+    {
+      "name": "price1_gbp",
+      "customDisplayName": "Price",
+      "multiSelect": "N",
+      "entry": [
+        {
+          "name": "50.00",
+          "count": "2",
+          "seoPath": "ce_price1_gbp-50.0",
+          "seoKey": "ce_price1_gbp-50.0",
+          "selected": "N"
+        }
+      ]
+    }
+  ],
+  "wishListEnabled": "Y",
+  "searchTerm": "ea7"
+}

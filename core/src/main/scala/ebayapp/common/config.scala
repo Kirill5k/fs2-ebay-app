@@ -78,7 +78,8 @@ object config {
   )
 
   final case class SelfridgesConfig(
-      baseUri: String
+      baseUri: String,
+      apiKey: String
   )
 
   final case class TelegramConfig(
