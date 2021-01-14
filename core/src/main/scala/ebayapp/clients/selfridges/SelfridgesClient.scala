@@ -35,7 +35,7 @@ final private class LiveSelfridgesClient[F[_]](
 
   private def searchForItems(query: SearchQuery)(page: Int): F[(List[CatalogItem], Option[Int])] =
     basicRequest
-      .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/search/${query.value}?pageSize=60&pageNumber=$page")
+      .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60")
       .contentType(MediaType.ApplicationJson)
       .header("api-key", config.apiKey)
       .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())

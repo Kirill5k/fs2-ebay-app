@@ -23,11 +23,11 @@ class SelfridgesClientSpec extends SttpClientSpec {
     "return stream of clothing items" in {
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1")) =>
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok(json("selfridges/search-page-1.json"))
-          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "2")) =>
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "2", "ids" -> "EA7-Armani")) =>
             Response.ok(json("selfridges/search-page-2.json"))
-          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "3")) =>
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "3", "ids" -> "EA7-Armani")) =>
             Response.ok(json("selfridges/search-page-3.json"))
           case r if isGetStockRequest(r, "R03631644") =>
             Response.ok(json("selfridges/stock-R03631644.json"))
@@ -52,7 +52,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     "return empty stream in case of errors" in {
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1")) =>
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response("foo-bar", StatusCode.BadRequest)
           case _ => throw new RuntimeException()
         }
@@ -65,7 +65,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     "return empty stream when failed to deserialize response" in {
       val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
         .whenRequestMatchesPartial {
-          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1")) =>
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok("""{"foo":"bar"}""")
           case _ => throw new RuntimeException()
         }
@@ -77,7 +77,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
   }
 
   def isSearchRequest(req: client.Request[_, _], params: Map[String, String]): Boolean =
-    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "search", "EA7 Armani"), params)
+    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "productview", "byCategory", "byIds"), params)
 
   def isGetStockRequest(req: client.Request[_, _], id: String): Boolean =
     isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "stock", "byId", id))
