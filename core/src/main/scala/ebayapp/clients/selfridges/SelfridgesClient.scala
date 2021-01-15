@@ -65,7 +65,7 @@ final private class LiveSelfridgesClient[F[_]](
       .flatMap { r =>
         r.body match {
           case Right(res) =>
-            F.pure(res.stocks)
+            F.pure(res.stocks.getOrElse(Nil))
           case Left(DeserializationError(body, error)) =>
             L.error(s"error parsing selfdridges item stock response: ${error.getMessage}\n$body") *>
               F.pure(Nil)
@@ -84,7 +84,7 @@ object SelfridgesClient {
   )
 
   final case class SelfridgesItemStockResponse(
-      stocks: List[ItemStock]
+      stocks: Option[List[ItemStock]]
   )
 
   final case class ItemPrice(
