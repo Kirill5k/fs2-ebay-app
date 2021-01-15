@@ -25,15 +25,33 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
   ): Stream[F, ItemStockUpdates[D]] =
     Stream
       .emits(config.monitoringRequests)
-      .map(req => getUpdates(req, config.monitoringFrequency))
+      .map(req => getUpdates(req, config.monitoringFrequency, findItems(req.query)))
       .parJoinUnbounded
 
   private def findItems[D <: ItemDetails: CexItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client.findItem[D](query).map { items =>
-      items.groupBy(_.itemDetails.fullName).collect {
-        case (Some(name), group) => (name, group.head)
+      items.groupBy(_.itemDetails.fullName).collect { case (Some(name), group) =>
+        (name, group.head)
       }
     }
+
+  private def getUpdates[D <: ItemDetails](
+      req: StockMonitorRequest,
+      freq: FiniteDuration,
+      findItemsEffect: => F[Map[String, ResellableItem[D]]]
+  ): Stream[F, ItemStockUpdates[D]] =
+    Stream
+      .unfoldLoopEval[F, Option[Map[String, ResellableItem[D]]], List[ItemStockUpdates[D]]](None) { prevOpt =>
+        findItemsEffect.map { curr =>
+          (prevOpt.fold(List.empty[ItemStockUpdates[D]])(prev => compareItems(prev, curr, req)), Some(curr.some))
+        }
+      }
+      .zipLeft(Stream.awakeEvery[F](freq))
+      .flatMap(Stream.emits)
+      .handleErrorWith { error =>
+        Stream.eval_(Logger[F].error(error)(s"error obtaining stock updates from cex")) ++
+          getUpdates(req, freq, findItemsEffect)
+      }
 
   private def compareItems[D <: ItemDetails](
       prev: Map[String, ResellableItem[D]],
@@ -54,23 +72,6 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
       }
       .filter(_.updates.nonEmpty)
       .toList
-
-  private def getUpdates[D <: ItemDetails: CexItemMapper](
-      req: StockMonitorRequest,
-      freq: FiniteDuration
-  ): Stream[F, ItemStockUpdates[D]] =
-    Stream
-      .unfoldLoopEval[F, Option[Map[String, ResellableItem[D]]], List[ItemStockUpdates[D]]](None) { prevOpt =>
-        findItems(req.query).map { curr =>
-          (prevOpt.fold(List.empty[ItemStockUpdates[D]])(prev => compareItems(prev, curr, req)), Some(curr.some))
-        }
-      }
-      .zipLeft(Stream.awakeEvery[F](freq))
-      .flatMap(Stream.emits)
-      .handleErrorWith { error =>
-        Stream.eval_(Logger[F].error(error)(s"error obtaining stock updates from cex")) ++
-          getUpdates(req, freq)
-      }
 }
 
 object CexStockService {
