@@ -79,7 +79,7 @@ final private class LiveSelfridgesClient[F[_]](
 object SelfridgesClient {
 
   final case class ItemStock(
-      value: String,
+      value: Option[String],
       `Stock Quantity Available to Purchase`: Int
   )
 

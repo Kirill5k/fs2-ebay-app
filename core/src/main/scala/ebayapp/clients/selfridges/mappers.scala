@@ -27,7 +27,7 @@ object mappers {
       Clothing(
         item.name,
         item.brandName,
-        stock.value
+        stock.value.getOrElse("ONE SIZE")
       )
 
     private def price(item: CatalogItem, stock: ItemStock): BuyPrice = {
