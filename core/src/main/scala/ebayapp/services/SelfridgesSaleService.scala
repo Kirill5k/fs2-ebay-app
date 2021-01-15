@@ -1,6 +1,7 @@
 package ebayapp.services
 
 import cats.effect.{Concurrent, Sync, Timer}
+import cats.implicits._
 import ebayapp.clients.selfridges.SelfridgesClient
 import ebayapp.common.config.{SearchQuery, StockMonitorConfig}
 import ebayapp.domain.ItemDetails.Clothing
@@ -34,6 +35,7 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
       }
       .compile
       .to(Map)
+      .flatTap(i => Logger[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))
 }
 
 object SelfridgesSaleService {
