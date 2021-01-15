@@ -4,7 +4,7 @@ import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.cex.mappers.CexItemMapper
-import ebayapp.common.config.{CexStockMonitorConfig, SearchQuery, StockMonitorRequest}
+import ebayapp.common.config.{StockMonitorConfig, SearchQuery, StockMonitorRequest}
 import ebayapp.domain.search.BuyPrice
 import ebayapp.domain.stock.{ItemStockUpdates, StockUpdate}
 import ebayapp.domain.{ItemDetails, ResellableItemBuilder}
@@ -15,7 +15,7 @@ class CexStockServiceSpec extends CatsSpec {
 
   val req1   = StockMonitorRequest(SearchQuery("macbook"), true, true)
   val req2   = StockMonitorRequest(SearchQuery("iphone"), true, true)
-  val config = CexStockMonitorConfig(1.seconds, List(req1))
+  val config = StockMonitorConfig(1.seconds, List(req1))
 
   val mb1 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0)
   val mb2 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B")

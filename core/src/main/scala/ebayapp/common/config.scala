@@ -66,7 +66,7 @@ object config {
       monitorPriceChange: Boolean
   )
 
-  final case class CexStockMonitorConfig(
+  final case class StockMonitorConfig(
       monitoringFrequency: FiniteDuration,
       monitoringRequests: List[StockMonitorRequest]
   )
@@ -74,12 +74,13 @@ object config {
   final case class CexConfig(
       baseUri: String,
       priceFind: CexPriceFindConfig,
-      stockMonitor: CexStockMonitorConfig
+      stockMonitor: StockMonitorConfig
   )
 
   final case class SelfridgesConfig(
       baseUri: String,
-      apiKey: String
+      apiKey: String,
+      stockMonitor: StockMonitorConfig
   )
 
   final case class TelegramConfig(

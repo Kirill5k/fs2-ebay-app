@@ -2,12 +2,14 @@ package ebayapp.clients.selfridges
 
 import cats.effect.IO
 import ebayapp.SttpClientSpec
-import ebayapp.common.config.{SearchQuery, SelfridgesConfig}
+import ebayapp.common.config.{SearchQuery, SelfridgesConfig, StockMonitorConfig}
 import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.search.BuyPrice
 import sttp.client
 import sttp.client.{NothingT, Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
+
+import scala.concurrent.duration._
 
 class SelfridgesClientSpec extends SttpClientSpec {
 
@@ -15,7 +17,8 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
     val config = SelfridgesConfig(
       "http://selfridges.com",
-      "foo-bar"
+      "foo-bar",
+      StockMonitorConfig(10.second, Nil)
     )
 
     val query = SearchQuery("EA7 Armani")

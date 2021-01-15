@@ -2,7 +2,7 @@ package ebayapp.clients.cex
 
 import cats.effect.IO
 import ebayapp.SttpClientSpec
-import ebayapp.common.config.{CexConfig, CexPriceFindConfig, CexStockMonitorConfig, SearchQuery}
+import ebayapp.common.config.{CexConfig, CexPriceFindConfig, StockMonitorConfig, SearchQuery}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
 import ebayapp.domain.search._
@@ -19,7 +19,7 @@ class CexClientSpec extends SttpClientSpec {
     val config = CexConfig(
       "http://cex.com",
       CexPriceFindConfig(3.seconds, 1.second),
-      CexStockMonitorConfig(10.minutes, Nil)
+      StockMonitorConfig(10.minutes, Nil)
     )
 
     "find items" in {
