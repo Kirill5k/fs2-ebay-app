@@ -12,12 +12,14 @@ import scala.concurrent.duration._
 
 final case class Tasks[F[_]: Concurrent: Logger: Timer](
     genericCexStockMonitor: CexStockMonitor[F, ItemDetails.Generic],
-    videoGamesEbayDealsFinder: EbayDealsFinder[F, ItemDetails.Game]
+    videoGamesEbayDealsFinder: EbayDealsFinder[F, ItemDetails.Game],
+    selfridgesSaleMonitor: SelfridgesSaleMonitor[F]
 ) {
   def processes: Stream[F, Unit] =
     Stream(
       genericCexStockMonitor.monitorStock(),
-      videoGamesEbayDealsFinder.searchForCheapItems()
+      videoGamesEbayDealsFinder.searchForCheapItems(),
+      selfridgesSaleMonitor.monitorSale()
     ).covary[F]
       .parJoinUnbounded
       .handleErrorWith { error =>
@@ -32,6 +34,7 @@ object Tasks {
   def make[F[_]: Concurrent: Logger: Timer](config: AppConfig, services: Services[F]): F[Tasks[F]] =
     (
       CexStockMonitor.generic(config.cex.stockMonitor, services),
-      EbayDealsFinder.videoGames(config.ebay.deals.videoGames, services)
+      EbayDealsFinder.videoGames(config.ebay.deals.videoGames, services),
+      SelfridgesSaleMonitor.make(config.selfridges.stockMonitor, services)
     ).mapN(Tasks.apply[F])
 }
