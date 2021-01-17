@@ -44,7 +44,7 @@ final private class LiveSelfridgesClient[F[_]](
       .flatMap { r =>
         r.body match {
           case Right(res) =>
-            F.pure((res.catalogEntryNavView, if (res.noOfPages == res.pageNumber) None else Some(page + 1)))
+            F.pure((res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
           case Left(DeserializationError(body, error)) =>
             L.error(s"error parsing selfdridges search response: ${error.getMessage}\n$body") *>
               F.pure((Nil, None))
@@ -105,7 +105,7 @@ object SelfridgesClient {
 
   final case class SelfridgesSearchResponse(
       noOfPages: Int,
-      pageNumber: Int,
+      pageNumber: Option[Int],
       catalogEntryNavView: List[CatalogItem]
   )
 
