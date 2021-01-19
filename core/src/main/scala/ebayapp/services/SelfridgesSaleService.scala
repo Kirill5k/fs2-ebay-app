@@ -30,9 +30,7 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
       .filter(_.buyPrice.discount.exists(_ > 30))
       .filter(_.buyPrice.quantityAvailable > 0)
       .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) =>
-        (name, item)
-      }
+      .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
       .flatTap(i => Logger[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))

@@ -53,9 +53,8 @@ object search {
         "fallout(?s).* (ammo|damage|tesla|weapon|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",
         "fifa(?s).* (\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa(?s)",
         "borderlands(?s).* (takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
-        "rocket(?s).* (item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)", "((\\w+|\\d+)\\s+){1,}rocket league(\\s+(\\w+|\\d+)){2,}", "((\\w+|\\d+)\\s+){3,}rocket league",
-        "((\\w+|\\d+)\\s+){3,}swordshield", "((\\w+|\\d+)\\s+){3,}pokemon", "pokemon(\\s+(\\w+|\\d+)){6,}",
-        "\\bPS(1|2)\\b", "\\bPlaystation 1\\b"
+        "rocket(?s).* (octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
+        "\\bPS(1|2|3)\\b", "\\bPlaystation (1|2|3)\\b"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       override val categoryId: Int = 139973
