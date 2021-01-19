@@ -138,7 +138,6 @@ class EbayClientSpec extends CatsSpec {
         ebayItemSummary("9", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
         ebayItemSummary("10", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
         ebayItemSummary("11", name = """call of duty pre-order bonus"""),
-        ebayItemSummary("12", name = """All Shiny Max IV Battle Ready Eeveelutions Pokemon Sword Shield Nintendo Switch"""),
         ebayItemSummary("13", name = """Call of Duty WW2 no case XBOX 360"""),
         ebayItemSummary("14", name = """Call of Duty WW2 digital code XBOX"""),
         ebayItemSummary("15", name = """Call of Duty WW2 with carry bag XBOX"""),
@@ -147,8 +146,7 @@ class EbayClientSpec extends CatsSpec {
         ebayItemSummary("18", name = """fifa 2020 million 100 point XBOX"""),
         ebayItemSummary("19", name = """animal crossing dinosaur recipe card"""),
         ebayItemSummary("20", name = """fallout 76 5000 caps"""),
-        ebayItemSummary("21", name = """borderlands 4 promotional copy"""),
-        ebayItemSummary("22", name = """Shiny 6IV Go Park Level 1 Timid Trace Gardevoir Sword/Shield Switch Master Ball""")
+        ebayItemSummary("21", name = """borderlands 4 promotional copy""")
       )))
         .when(browseClient).search(any[String], anyMap[String, String])
 
