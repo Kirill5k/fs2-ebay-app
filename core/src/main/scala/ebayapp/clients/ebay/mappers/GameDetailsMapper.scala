@@ -60,7 +60,7 @@ private[mappers] object GameDetailsMapper {
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
     // removes the word GAME
     "((new|all) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|limited run|(\\d+ )?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( (\\d+|in one))?( new)?",
-    "(\\b(\\d player|kids( \\w+)?|multiplayer|football sport|rally|driving|shooting|hacker|(car )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
+    "(\\b(\\d player|kids( \\w+)?|multiplayer|football sport|rally|driving|shooting|fighting|hacker|(car )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
     // removes the word USED
     "((barely|condition|never|hardly) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
     // removes the word VERSION
@@ -82,7 +82,7 @@ private[mappers] object GameDetailsMapper {
     "never( been)? (opened|played)", "(only )?played (once|twice)", "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm", "Ultimate Fighting Championship",
     "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned",
-    "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|(1|one|same)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids",
+    "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", "essentials", "Re Mars tered", "booklet",
     "classic(s)?( (hit(s)?|version))?", "(case|box).{0,20}(complete|manual)", "(super|very) rare", "award winning", "Instruction(s)? Book", "works perfectly( fine)?",
     "Unwanted Gift", "limited (release|quantity)", "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b",
