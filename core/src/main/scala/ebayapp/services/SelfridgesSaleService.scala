@@ -18,6 +18,11 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
     private val client: SelfridgesClient[F]
 ) extends StockComparer[F] with SelfridgesSaleService[F] {
 
+  private val minDiscount: Int = 30
+  private val filters: String = List(
+    "\\d+-\\d+ year", "thong", "\\bBRA\\b", "bikini", "jersey brief", "swimsuit"
+  ).mkString("(?i).*(", "|", ").*")
+
   override def newSaleItems(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]] =
     Stream
       .emits(config.monitoringRequests)
@@ -27,7 +32,8 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
   private def findItems(query: SearchQuery): F[Map[String, ResellableItem[Clothing]]] =
     client
       .search(query)
-      .filter(_.buyPrice.discount.exists(_ > 30))
+      .filter(!_.itemDetails.name.matches(filters))
+      .filter(_.buyPrice.discount.exists(_ > minDiscount))
       .filter(_.buyPrice.quantityAvailable > 0)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
