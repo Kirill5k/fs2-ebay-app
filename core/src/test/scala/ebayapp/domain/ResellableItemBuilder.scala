@@ -1,13 +1,20 @@
 package ebayapp.domain
 
+import ebayapp.domain.ItemDetails.{Game, Phone}
+import ebayapp.domain.ResellableItem.{GenericItem, MobilePhone, VideoGame, Clothe}
+import ebayapp.domain.search.{SellPrice, _}
+
 import java.time.Instant
 
-import ebayapp.domain.search.SellPrice
-import ItemDetails.{Game, Phone}
-import ResellableItem.{GenericItem, MobilePhone, VideoGame}
-import search._
-
 object ResellableItemBuilder {
+
+  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Int = 50): Clothe =
+    ResellableItem(
+      ItemDetails.Clothing(name, "Foo-bar", "XXL"),
+      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
+      BuyPrice(quantity, BigDecimal(price), Some(discount)),
+      None
+    )
 
   def generic(name: String, quantity: Int = 1, price: Double = 1800.0): GenericItem =
     ResellableItem(

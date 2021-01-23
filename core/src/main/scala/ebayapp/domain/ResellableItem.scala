@@ -13,4 +13,5 @@ object ResellableItem {
   type GenericItem = ResellableItem[ItemDetails.Generic]
   type VideoGame   = ResellableItem[ItemDetails.Game]
   type MobilePhone = ResellableItem[ItemDetails.Phone]
+  type Clothe      = ResellableItem[ItemDetails.Clothing]
 }
