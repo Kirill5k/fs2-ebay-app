@@ -5,7 +5,7 @@ import cats.implicits._
 import ebayapp.common.config.TelegramConfig
 import ebayapp.common.errors.AppError
 import io.chrisdavenport.log4cats.Logger
-import sttp.client._
+import sttp.client3._
 
 trait TelegramClient[F[_]] {
   def sendMessageToMainChannel(message: String): F[Unit]
@@ -14,9 +14,9 @@ trait TelegramClient[F[_]] {
 }
 
 final class TelegramApiClient[F[_]](
-    val config: TelegramConfig
-)(
-    implicit val B: SttpBackend[F, Nothing, NothingT],
+    private val config: TelegramConfig,
+    private val backend: SttpBackend[F, Nothing]
+)(implicit
     val S: Sync[F],
     val L: Logger[F]
 ) extends TelegramClient[F] {
@@ -30,7 +30,7 @@ final class TelegramApiClient[F[_]](
   def sendMessage(channelId: String, message: String): F[Unit] =
     basicRequest
       .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=$channelId&text=$message")
-      .send()
+      .send(backend)
       .flatMap { r =>
         r.body match {
           case Right(_) => S.unit
@@ -45,7 +45,7 @@ object TelegramClient {
 
   def make[F[_]: Sync: Logger](
       config: TelegramConfig,
-      backend: SttpBackend[F, Nothing, NothingT]
+      backend: SttpBackend[F, Nothing]
   ): F[TelegramClient[F]] =
-    Sync[F].delay(new TelegramApiClient[F](config)(B = backend, S = Sync[F], L = Logger[F]))
+    Sync[F].delay(new TelegramApiClient[F](config, backend))
 }

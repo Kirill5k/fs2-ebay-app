@@ -10,8 +10,8 @@ import ebayapp.domain.ResellableItem
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 import io.circe.generic.auto._
-import sttp.client._
-import sttp.client.circe.asJson
+import sttp.client3._
+import sttp.client3.circe.asJson
 import sttp.model.{HeaderNames, MediaType}
 
 trait SelfridgesClient[F[_]] {
@@ -19,9 +19,9 @@ trait SelfridgesClient[F[_]] {
 }
 
 final private class LiveSelfridgesClient[F[_]](
-    private val config: SelfridgesConfig
+    private val config: SelfridgesConfig,
+    private val backend: SttpBackend[F, Nothing]
 )(implicit
-    val B: SttpBackend[F, Nothing, NothingT],
     F: Sync[F],
     L: Logger[F]
 ) extends SelfridgesClient[F] {
@@ -61,12 +61,12 @@ final private class LiveSelfridgesClient[F[_]](
       .header("api-key", config.apiKey)
       .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
       .response(asJson[SelfridgesItemStockResponse])
-      .send()
+      .send(backend)
       .flatMap { r =>
         r.body match {
           case Right(res) =>
             F.pure(res.stocks.getOrElse(Nil))
-          case Left(DeserializationError(body, error)) =>
+          case Left(DeserializationException(body, error)) =>
             L.error(s"error parsing selfdridges item stock response: ${error.getMessage}\n$body") *>
               F.pure(Nil)
           case Left(error) =>
@@ -111,7 +111,7 @@ object SelfridgesClient {
 
   def make[F[_]: Sync: Logger](
       config: SelfridgesConfig,
-      backend: SttpBackend[F, Nothing, NothingT]
+      backend: SttpBackend[F, Nothing]
   ): F[SelfridgesClient[F]] =
-    Sync[F].delay(new LiveSelfridgesClient[F](config)(backend, Sync[F], Logger[F]))
+    Sync[F].delay(new LiveSelfridgesClient[F](config, backend))
 }

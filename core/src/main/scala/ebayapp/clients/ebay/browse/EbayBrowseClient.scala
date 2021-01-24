@@ -7,8 +7,8 @@ import ebayapp.common.config.EbayConfig
 import io.circe.generic.auto._
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
 import ebayapp.common.errors.AppError
-import sttp.client._
-import sttp.client.circe._
+import sttp.client3._
+import sttp.client3.circe._
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 private[ebay] trait EbayBrowseClient[F[_]] {
@@ -17,9 +17,9 @@ private[ebay] trait EbayBrowseClient[F[_]] {
 }
 
 final private[ebay] class LiveEbayBrowseClient[F[_]](
-    private val config: EbayConfig
+    private val config: EbayConfig,
+    private val backend: SttpBackend[F, Nothing]
 )(implicit
-    val B: SttpBackend[F, Nothing, NothingT],
     val F: Sync[F],
     val L: Logger[F]
 ) extends EbayBrowseClient[F] {
@@ -33,7 +33,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
       .bearer(accessToken)
       .get(uri"${config.baseUri}/buy/browse/v1/item_summary/search?$queryParams")
       .response(asJson[EbayBrowseResult])
-      .send()
+      .send(backend)
       .flatMap { r =>
         r.code match {
           case status if status.isSuccess =>
@@ -55,7 +55,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
       .bearer(accessToken)
       .get(uri"${config.baseUri}/buy/browse/v1/item/$itemId")
       .response(asJson[EbayItem])
-      .send()
+      .send(backend)
       .flatMap { r =>
         r.code match {
           case status if status.isSuccess =>
@@ -75,7 +75,7 @@ private[ebay] object EbayBrowseClient {
 
   def make[F[_]: Sync: Logger](
       config: EbayConfig,
-      backend: SttpBackend[F, Nothing, NothingT]
+      backend: SttpBackend[F, Nothing]
   ): F[EbayBrowseClient[F]] =
-    Sync[F].delay(new LiveEbayBrowseClient[F](config)(B = backend, F = Sync[F], L = Logger[F]))
+    Sync[F].delay(new LiveEbayBrowseClient[F](config, backend))
 }

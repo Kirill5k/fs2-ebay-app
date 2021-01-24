@@ -1,8 +1,5 @@
 package ebayapp.clients.ebay
 
-import java.time.Instant
-import java.time.temporal.ChronoField.MILLI_OF_SECOND
-
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.ebay.auth.EbayAuthClient
@@ -15,9 +12,11 @@ import ebayapp.common.config.{EbayConfig, SearchQuery}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import io.chrisdavenport.log4cats.Logger
-import sttp.client.{NothingT, SttpBackend}
 import fs2._
+import sttp.client3.SttpBackend
 
+import java.time.Instant
+import java.time.temporal.ChronoField.MILLI_OF_SECOND
 import scala.concurrent.duration._
 
 trait EbayClient[F[_]] {
@@ -110,7 +109,7 @@ object EbayClient {
 
   def make[F[_]: Concurrent: Logger: Timer](
       config: EbayConfig,
-      backend: SttpBackend[F, Nothing, NothingT]
+      backend: SttpBackend[F, Nothing]
   ): F[EbayClient[F]] = {
     val auth   = EbayAuthClient.make[F](config, backend)
     val browse = EbayBrowseClient.make[F](config, backend)

@@ -11,9 +11,8 @@ import io.circe.parser._
 import EbayAuthClient.{EbayAuthToken, ExpiredToken}
 import responses.{EbayAuthErrorResponse, EbayAuthSuccessResponse}
 import ebayapp.common.config.{EbayConfig, EbayCredentials}
-import sttp.client.{NothingT, SttpBackend}
-import sttp.client._
-import sttp.client.circe._
+import sttp.client3._
+import sttp.client3.circe._
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import scala.concurrent.duration._
@@ -26,10 +25,10 @@ private[ebay] trait EbayAuthClient[F[_]] {
 final private[ebay] class LiveEbayAuthClient[F[_]](
     private val config: EbayConfig,
     private val authToken: Ref[F, EbayAuthToken],
-    private val credentials: Ref[F, List[EbayCredentials]]
-)(
-    implicit val B: SttpBackend[F, Nothing, NothingT],
-    val S: Sync[F],
+    private val credentials: Ref[F, List[EbayCredentials]],
+    private val backend: SttpBackend[F, Nothing]
+)(implicit
+    val F: Sync[F],
     val L: Logger[F],
     val T: Timer[F]
 ) extends EbayAuthClient[F] {
@@ -37,7 +36,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
   def accessToken: F[String] =
     for {
       token      <- authToken.get
-      validToken <- if (token.isValid) S.pure(token) else authenticate().flatTap(authToken.set)
+      validToken <- if (token.isValid) F.pure(token) else authenticate().flatTap(authToken.set)
     } yield validToken.token
 
   def switchAccount(): F[Unit] =
@@ -55,11 +54,11 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
         .post(uri"${config.baseUri}/identity/v1/oauth2/token")
         .body(Map("scope" -> "https://api.ebay.com/oauth/api_scope", "grant_type" -> "client_credentials"))
         .response(asJson[EbayAuthSuccessResponse])
-        .send()
+        .send(backend)
         .flatMap { r =>
           r.body match {
             case Right(token) =>
-              S.pure(EbayAuthToken(token.access_token, token.expires_in))
+              F.pure(EbayAuthToken(token.access_token, token.expires_in))
             case Left(HttpError(_, StatusCode.TooManyRequests)) =>
               L.error(s"reached api calls limit (cid - ${creds.clientId})") *>
                 switchAccount() *> authenticate()
@@ -96,12 +95,12 @@ private[ebay] object EbayAuthClient {
 
   def make[F[_]: Sync: Logger: Timer](
       config: EbayConfig,
-      backend: SttpBackend[F, Nothing, NothingT]
+      backend: SttpBackend[F, Nothing]
   ): F[EbayAuthClient[F]] = {
     val token = Ref.of[F, EbayAuthToken](EbayAuthToken("expired", 0))
     val creds = Ref.of[F, List[EbayCredentials]](config.credentials)
-    (token, creds).mapN {
-      case (t, c) => new LiveEbayAuthClient[F](config, t, c)(B = backend, S = Sync[F], L = Logger[F], T = Timer[F])
+    (token, creds).mapN { case (t, c) =>
+      new LiveEbayAuthClient[F](config, t, c, backend)
     }
   }
 }

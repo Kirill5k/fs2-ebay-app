@@ -8,7 +8,7 @@ import ebayapp.clients.selfridges.SelfridgesClient
 import ebayapp.clients.telegram.TelegramClient
 import ebayapp.common.config.AppConfig
 import io.chrisdavenport.log4cats.Logger
-import sttp.client.{NothingT, SttpBackend}
+import sttp.client3.SttpBackend
 
 final case class Clients[F[_]](
     ebay: EbayClient[F],
@@ -21,7 +21,7 @@ object Clients {
 
   def make[F[_]: Concurrent: Timer: Logger](
       config: AppConfig,
-      backend: SttpBackend[F, Nothing, NothingT]
+      backend: SttpBackend[F, Nothing]
   ): F[Clients[F]] = {
     val ebay = EbayClient.make[F](config.ebay, backend)
     val cex = CexClient.make[F](config.cex, backend)

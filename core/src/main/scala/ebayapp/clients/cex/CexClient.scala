@@ -11,8 +11,8 @@ import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search._
 import io.chrisdavenport.log4cats.Logger
 import io.circe.generic.auto._
-import sttp.client.circe.asJson
-import sttp.client.{NothingT, SttpBackend, _}
+import sttp.client3.circe.asJson
+import sttp.client3.{SttpBackend, _}
 import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
 
 import scala.concurrent.duration._
@@ -26,9 +26,9 @@ trait CexClient[F[_]] {
 
 final class CexApiClient[F[_]](
     private val config: CexConfig,
-    private val resellPriceCache: Cache[F, String, Option[SellPrice]]
+    private val resellPriceCache: Cache[F, String, Option[SellPrice]],
+    private val backend: SttpBackend[F, Nothing]
 )(implicit
-    val B: SttpBackend[F, Nothing, NothingT],
     S: Sync[F],
     T: Timer[F],
     L: Logger[F]
@@ -83,12 +83,12 @@ final class CexApiClient[F[_]](
       .contentType(MediaType.ApplicationJson)
       .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
       .response(asJson[CexSearchResponse])
-      .send()
+      .send(backend)
       .flatMap { r =>
         r.body match {
           case Right(response) =>
             response.pure[F]
-          case Left(DeserializationError(body, error)) =>
+          case Left(DeserializationException(body, error)) =>
             L.error(s"error parsing json: ${error.getMessage}\n$body") *>
               AppError.Json(s"error parsing json: ${error.getMessage}").raiseError[F, CexSearchResponse]
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
@@ -126,11 +126,9 @@ object CexClient {
 
   def make[F[_]: Concurrent: Timer: Logger](
       config: CexConfig,
-      backend: SttpBackend[F, Nothing, NothingT]
+      backend: SttpBackend[F, Nothing]
   ): F[CexClient[F]] =
     Cache
       .make[F, String, Option[SellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
-      .map { cache =>
-        new CexApiClient[F](config, cache)(backend, Sync[F], Timer[F], Logger[F])
-      }
+      .map(cache => new CexApiClient[F](config, cache, backend))
 }
