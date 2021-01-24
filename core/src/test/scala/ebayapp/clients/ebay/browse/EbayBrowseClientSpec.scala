@@ -22,7 +22,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
   "EbaySearchClient" should {
 
     "make get request to search api" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isGoingToWithSpecificContent(r, Method.GET, "ebay.com", List("buy", "browse", "v1", "item_summary", "search"), searchQueryParams) =>
             Response.ok(json("ebay/search-success-response.json"))
@@ -38,7 +38,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     }
 
     "return empty seq when nothing found" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isGoingToWithSpecificContent(r, Method.GET, "ebay.com", List("buy", "browse", "v1", "item_summary", "search"), searchQueryParams) =>
             Response.ok(json("ebay/search-empty-response.json"))
@@ -54,7 +54,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     }
 
     "return autherror when token expired during search" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isGoingToWithSpecificContent(r, Method.GET, "ebay.com", List("buy", "browse", "v1", "item_summary", "search"), searchQueryParams) =>
             Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
@@ -70,7 +70,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     }
 
     "make get request to obtain item details" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isGoingToWithSpecificContent(r, Method.GET, "ebay.com", List("buy", "browse", "v1", "item", itemId)) =>
             Response.ok(json("ebay/get-item-1-success-response.json"))
@@ -86,7 +86,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     }
 
     "make get request to obtain item details without aspects" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isGoingToWithSpecificContent(r, Method.GET, "ebay.com", List("buy", "browse", "v1", "item", itemId)) =>
             Response.ok(json("ebay/get-item-3-no-aspects-success-response.json"))
@@ -102,7 +102,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     }
 
     "return autherror when token expired" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isGoingToWithSpecificContent(r, Method.GET, "ebay.com", List("buy", "browse", "v1", "item", itemId)) =>
             Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
@@ -118,7 +118,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     }
 
     "return None when 404" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isGoingToWithSpecificContent(r, Method.GET, "ebay.com", List("buy", "browse", "v1", "item", itemId)) =>
             Response(json("ebay/get-item-notfound-error-response.json"), StatusCode.NotFound)

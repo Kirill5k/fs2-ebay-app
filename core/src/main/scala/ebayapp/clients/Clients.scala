@@ -21,7 +21,7 @@ object Clients {
 
   def make[F[_]: Concurrent: Timer: Logger](
       config: AppConfig,
-      backend: SttpBackend[F, Nothing]
+      backend: SttpBackend[F, Any]
   ): F[Clients[F]] = {
     val ebay = EbayClient.make[F](config.ebay, backend)
     val cex = CexClient.make[F](config.cex, backend)

@@ -37,7 +37,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
     }
 
     "return existing token if it is valid" in {
-      implicit val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case _ => throw new RuntimeException()
         }
@@ -45,7 +45,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = (
         Ref.of[IO, EbayAuthToken](EbayAuthToken("test-token", 7200)),
         Ref.of[IO, List[EbayCredentials]](Nil)
-      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c))
+      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).unsafeToFuture().map { token =>
         token must be("test-token")
@@ -74,7 +74,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
     }
 
     "make another request when original token has expired" in {
-      implicit val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) =>
             Response.ok(json("ebay/auth-success-response.json"))
@@ -84,7 +84,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = (
         Ref.of[IO, EbayAuthToken](EbayAuthToken("test-token", 0)),
         Ref.of[IO, List[EbayCredentials]](credentials)
-      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c))
+      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c,testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).unsafeToFuture().map { token =>
         token must be("KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA==")
@@ -126,7 +126,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       }
     }
 
-    def isAuthRequest(req: client.Request[_, _]): Boolean =
+    def isAuthRequest(req: client3.Request[_, _]): Boolean =
       isGoingToWithSpecificContent(
         req,
         Method.POST,

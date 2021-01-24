@@ -109,7 +109,7 @@ object EbayClient {
 
   def make[F[_]: Concurrent: Logger: Timer](
       config: EbayConfig,
-      backend: SttpBackend[F, Nothing]
+      backend: SttpBackend[F, Any]
   ): F[EbayClient[F]] = {
     val auth   = EbayAuthClient.make[F](config, backend)
     val browse = EbayBrowseClient.make[F](config, backend)

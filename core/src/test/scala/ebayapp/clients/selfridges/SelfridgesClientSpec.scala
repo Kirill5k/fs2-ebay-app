@@ -24,7 +24,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     val query = SearchQuery("EA7 Armani")
 
     "return stream of clothing items" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok(json("selfridges/search-page-1.json"))
@@ -53,7 +53,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     }
 
     "return empty stream in case of errors" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response("foo-bar", StatusCode.BadRequest)
@@ -66,7 +66,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     }
 
     "return empty stream when failed to deserialize response" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok("""{"foo":"bar"}""")

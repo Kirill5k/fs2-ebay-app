@@ -20,7 +20,7 @@ trait SttpClientSpec extends CatsSpec {
       paths: Seq[String] = Nil,
       params: Map[String, String] = Map.empty
   ): Boolean =
-    req.uri.host == host &&
+    req.uri.host.get == host &&
       (paths.isEmpty || req.uri.path == paths) &&
       req.method == method &&
       req.uri.params.toMap.toSet[(String, String)].subsetOf(params.toSet)

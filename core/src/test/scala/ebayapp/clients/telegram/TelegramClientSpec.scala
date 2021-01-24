@@ -15,7 +15,7 @@ class TelegramClientSpec extends SttpClientSpec {
   "TelegramClient" should {
 
     "send message to the main channel" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>
@@ -31,7 +31,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "send message to the secondary channel" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m2", "text" -> message)) =>
@@ -47,7 +47,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "send message to the channel" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>
@@ -63,7 +63,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "return error when not success" in {
-      val testingBackend: SttpBackend[IO, Nothing] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>
