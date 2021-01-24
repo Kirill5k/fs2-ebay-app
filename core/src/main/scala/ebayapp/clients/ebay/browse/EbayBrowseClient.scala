@@ -18,7 +18,7 @@ private[ebay] trait EbayBrowseClient[F[_]] {
 
 final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig,
-    private val backend: SttpBackend[F, Nothing]
+    private val backend: SttpBackend[F, Any]
 )(implicit
     val F: Sync[F],
     val L: Logger[F]
@@ -75,7 +75,7 @@ private[ebay] object EbayBrowseClient {
 
   def make[F[_]: Sync: Logger](
       config: EbayConfig,
-      backend: SttpBackend[F, Nothing]
+      backend: SttpBackend[F, Any]
   ): F[EbayBrowseClient[F]] =
     Sync[F].delay(new LiveEbayBrowseClient[F](config, backend))
 }

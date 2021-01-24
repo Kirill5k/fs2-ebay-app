@@ -5,8 +5,8 @@ import ebayapp.SttpClientSpec
 import ebayapp.common.config.{SearchQuery, SelfridgesConfig, StockMonitorConfig}
 import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.search.BuyPrice
-import sttp.client
-import sttp.client.{NothingT, Response, SttpBackend}
+import sttp.client3
+import sttp.client3.{Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
 
 import scala.concurrent.duration._
@@ -24,7 +24,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     val query = SearchQuery("EA7 Armani")
 
     "return stream of clothing items" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Nothing] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok(json("selfridges/search-page-1.json"))
@@ -53,7 +53,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     }
 
     "return empty stream in case of errors" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Nothing] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response("foo-bar", StatusCode.BadRequest)
@@ -66,7 +66,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
     }
 
     "return empty stream when failed to deserialize response" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Nothing] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok("""{"foo":"bar"}""")
@@ -79,9 +79,9 @@ class SelfridgesClientSpec extends SttpClientSpec {
     }
   }
 
-  def isSearchRequest(req: client.Request[_, _], params: Map[String, String]): Boolean =
+  def isSearchRequest(req: client3.Request[_, _], params: Map[String, String]): Boolean =
     isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "productview", "byCategory", "byIds"), params)
 
-  def isGetStockRequest(req: client.Request[_, _], id: String): Boolean =
+  def isGetStockRequest(req: client3.Request[_, _], id: String): Boolean =
     isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "stock", "byId", id))
 }

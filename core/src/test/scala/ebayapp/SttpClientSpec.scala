@@ -1,21 +1,20 @@
 package ebayapp
 
 import cats.effect.IO
-import sttp.client
-import sttp.client.asynchttpclient.WebSocketHandler
-import sttp.client.asynchttpclient.cats.AsyncHttpClientCatsBackend
-import sttp.client.testing.SttpBackendStub
+import sttp.client3
+import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
+import sttp.client3.testing.SttpBackendStub
 import sttp.model.{Header, HeaderNames, MediaType, Method}
 
 import scala.io.Source
 
 trait SttpClientSpec extends CatsSpec {
 
-  def backendStub: SttpBackendStub[IO, Nothing, WebSocketHandler] =
+  def backendStub: SttpBackendStub[IO, Any] =
     AsyncHttpClientCatsBackend.stub[IO]
 
   def isGoingTo(
-      req: client.Request[_, _],
+      req: client3.Request[_, _],
       method: Method,
       host: String,
       paths: Seq[String] = Nil,
@@ -27,7 +26,7 @@ trait SttpClientSpec extends CatsSpec {
       req.uri.params.toMap.toSet[(String, String)].subsetOf(params.toSet)
 
   def isGoingToWithSpecificContent(
-      req: client.Request[_, _],
+      req: client3.Request[_, _],
       method: Method,
       host: String,
       paths: Seq[String] = Nil,

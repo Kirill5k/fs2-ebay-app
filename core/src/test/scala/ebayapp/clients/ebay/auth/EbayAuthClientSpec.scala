@@ -6,8 +6,8 @@ import cats.implicits._
 import ebayapp.SttpClientSpec
 import ebayapp.clients.ebay.auth.EbayAuthClient.EbayAuthToken
 import ebayapp.common.config.{EbayConfig, EbayCredentials, EbayDealsConfigs, EbaySearchConfig, EbayDealsConfig}
-import sttp.client
-import sttp.client.{NothingT, Response, SttpBackend}
+import sttp.client3
+import sttp.client3.{Response, SttpBackend}
 import sttp.model._
 
 import scala.concurrent.duration._
@@ -21,7 +21,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
   "EbayAuthClient" should {
 
     "make post request to obtain auth token" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) =>
             Response.ok(json("ebay/auth-success-response.json"))
@@ -37,7 +37,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
     }
 
     "return existing token if it is valid" in {
-      implicit val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      implicit val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case _ => throw new RuntimeException()
         }
@@ -53,7 +53,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
     }
 
     "authenticate with different account when switched" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMTpzZWNyZXQtMQ==")) =>
             throw new RuntimeException()
@@ -74,7 +74,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
     }
 
     "make another request when original token has expired" in {
-      implicit val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      implicit val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) =>
             Response.ok(json("ebay/auth-success-response.json"))
@@ -92,7 +92,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
     }
 
     "retry on errors from ebay" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenAnyRequest
         .thenRespondCyclicResponses(
           Response(json("ebay/auth-error-response.json"), StatusCode.BadRequest),
@@ -109,7 +109,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
     }
 
     "switch account when 429 received" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMTpzZWNyZXQtMQ==")) =>
             Response(json("ebay/auth-error-response.json"), StatusCode.TooManyRequests)

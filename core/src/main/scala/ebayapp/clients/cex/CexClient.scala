@@ -27,7 +27,7 @@ trait CexClient[F[_]] {
 final class CexApiClient[F[_]](
     private val config: CexConfig,
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
-    private val backend: SttpBackend[F, Nothing]
+    private val backend: SttpBackend[F, Any]
 )(implicit
     S: Sync[F],
     T: Timer[F],
@@ -126,7 +126,7 @@ object CexClient {
 
   def make[F[_]: Concurrent: Timer: Logger](
       config: CexConfig,
-      backend: SttpBackend[F, Nothing]
+      backend: SttpBackend[F, Any]
   ): F[CexClient[F]] =
     Cache
       .make[F, String, Option[SellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)

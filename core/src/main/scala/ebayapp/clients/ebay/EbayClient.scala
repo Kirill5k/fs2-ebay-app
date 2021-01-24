@@ -34,9 +34,9 @@ final private[ebay] class LiveEbayClient[F[_]](
     private val authClient: EbayAuthClient[F],
     private val browseClient: EbayBrowseClient[F],
     private val itemIdsCache: Cache[F, String, Unit]
-)(
-    implicit val S: Sync[F],
-    val L: Logger[F]
+)(implicit
+  val F: Sync[F],
+  val L: Logger[F]
 ) extends EbayClient[F] {
 
   def latest[D <: ItemDetails](
@@ -80,7 +80,7 @@ final private[ebay] class LiveEbayClient[F[_]](
   private def getCompleteItem(itemSummary: EbayItemSummary): F[Option[EbayItem]] =
     itemIdsCache.contains(itemSummary.itemId).flatMap {
       case false => authClient.accessToken.flatMap(t => browseClient.getItem(t, itemSummary.itemId))
-      case true  => S.pure(None)
+      case true  => F.pure(None)
     }
 
   private val hasTrustedSeller: EbayItemSummary => Boolean = itemSummary =>

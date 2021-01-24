@@ -4,7 +4,7 @@ import cats.effect.IO
 import ebayapp.SttpClientSpec
 import ebayapp.common.config.TelegramConfig
 import ebayapp.common.errors.AppError
-import sttp.client.{NothingT, Response, SttpBackend}
+import sttp.client3.{Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
 
 class TelegramClientSpec extends SttpClientSpec {
@@ -15,7 +15,7 @@ class TelegramClientSpec extends SttpClientSpec {
   "TelegramClient" should {
 
     "send message to the main channel" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Nothing] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>
@@ -31,7 +31,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "send message to the secondary channel" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Nothing] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m2", "text" -> message)) =>
@@ -47,7 +47,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "send message to the channel" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Nothing] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>
@@ -63,7 +63,7 @@ class TelegramClientSpec extends SttpClientSpec {
     }
 
     "return error when not success" in {
-      val testingBackend: SttpBackend[IO, Nothing, NothingT] = backendStub
+      val testingBackend: SttpBackend[IO, Nothing] = backendStub
         .whenRequestMatchesPartial {
           case r
             if isGoingTo(r, Method.GET, "telegram.com", List("botBOT-KEY", "sendMessage"), Map("chat_id" -> "m1", "text" -> message)) =>

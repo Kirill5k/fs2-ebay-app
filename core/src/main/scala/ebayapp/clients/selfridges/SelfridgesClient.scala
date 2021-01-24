@@ -20,7 +20,7 @@ trait SelfridgesClient[F[_]] {
 
 final private class LiveSelfridgesClient[F[_]](
     private val config: SelfridgesConfig,
-    private val backend: SttpBackend[F, Nothing]
+    private val backend: SttpBackend[F, Any]
 )(implicit
     F: Sync[F],
     L: Logger[F]
@@ -40,12 +40,12 @@ final private class LiveSelfridgesClient[F[_]](
       .header("api-key", config.apiKey)
       .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
       .response(asJson[SelfridgesSearchResponse])
-      .send()
+      .send(backend)
       .flatMap { r =>
         r.body match {
           case Right(res) =>
             F.pure((res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
-          case Left(DeserializationError(body, error)) =>
+          case Left(DeserializationException(body, error)) =>
             L.error(s"error parsing selfdridges search response: ${error.getMessage}\n$body") *>
               F.pure((Nil, None))
           case Left(error) =>
@@ -111,7 +111,7 @@ object SelfridgesClient {
 
   def make[F[_]: Sync: Logger](
       config: SelfridgesConfig,
-      backend: SttpBackend[F, Nothing]
+      backend: SttpBackend[F, Any]
   ): F[SelfridgesClient[F]] =
     Sync[F].delay(new LiveSelfridgesClient[F](config, backend))
 }

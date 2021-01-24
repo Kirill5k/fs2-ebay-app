@@ -15,7 +15,7 @@ trait TelegramClient[F[_]] {
 
 final class TelegramApiClient[F[_]](
     private val config: TelegramConfig,
-    private val backend: SttpBackend[F, Nothing]
+    private val backend: SttpBackend[F, Any]
 )(implicit
     val S: Sync[F],
     val L: Logger[F]
@@ -45,7 +45,7 @@ object TelegramClient {
 
   def make[F[_]: Sync: Logger](
       config: TelegramConfig,
-      backend: SttpBackend[F, Nothing]
+      backend: SttpBackend[F, Any]
   ): F[TelegramClient[F]] =
     Sync[F].delay(new TelegramApiClient[F](config, backend))
 }

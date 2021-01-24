@@ -26,7 +26,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
     private val config: EbayConfig,
     private val authToken: Ref[F, EbayAuthToken],
     private val credentials: Ref[F, List[EbayCredentials]],
-    private val backend: SttpBackend[F, Nothing]
+    private val backend: SttpBackend[F, Any]
 )(implicit
     val F: Sync[F],
     val L: Logger[F],
@@ -95,7 +95,7 @@ private[ebay] object EbayAuthClient {
 
   def make[F[_]: Sync: Logger: Timer](
       config: EbayConfig,
-      backend: SttpBackend[F, Nothing]
+      backend: SttpBackend[F, Any]
   ): F[EbayAuthClient[F]] = {
     val token = Ref.of[F, EbayAuthToken](EbayAuthToken("expired", 0))
     val creds = Ref.of[F, List[EbayCredentials]](config.credentials)
