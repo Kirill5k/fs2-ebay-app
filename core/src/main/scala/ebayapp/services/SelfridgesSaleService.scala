@@ -20,7 +20,7 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
 
   private val minDiscount: Int = 30
   private val filters: String = List(
-    "\\d+-\\d+ year", "thong", "\\bBRA\\b", "bikini", "jersey brief", "swimsuit"
+    "\\d+-\\d+ (year|month)", "thong", "\\bBRA\\b", "bikini", "jersey brief", "swimsuit"
   ).mkString("(?i).*(", "|", ").*")
 
   override def newSaleItems(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]] =
