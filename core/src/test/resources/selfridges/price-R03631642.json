@@ -1,0 +1,39 @@
+{
+  "prices": [
+    {
+      "Currency Code": "GBP",
+      "Current Retail Price": "20.00",
+      "SKUID": "39479119",
+      "Was Was Retail Price": "125.00",
+      "Was Retail Price": "50.00"
+    },
+    {
+      "Currency Code": "GBP",
+      "Current Retail Price": "20.00",
+      "SKUID": "39479127",
+      "Was Was Retail Price": "125.00",
+      "Was Retail Price": "50.00"
+    },
+    {
+      "Currency Code": "GBP",
+      "Current Retail Price": "20.00",
+      "SKUID": "39479135",
+      "Was Was Retail Price": "125.00",
+      "Was Retail Price": "50.00"
+    },
+    {
+      "Currency Code": "GBP",
+      "Current Retail Price": "20.00",
+      "SKUID": "39479143",
+      "Was Was Retail Price": "125.00",
+      "Was Retail Price": "50.00"
+    },
+    {
+      "Currency Code": "GBP",
+      "Current Retail Price": "20.00",
+      "SKUID": "39479151",
+      "Was Was Retail Price": "125.00",
+      "Was Retail Price": "50.00"
+    }
+  ]
+}

@@ -2,7 +2,7 @@ package ebayapp.clients.selfridges
 
 import cats.effect.Sync
 import cats.implicits._
-import ebayapp.clients.selfridges.SelfridgesClient.{CatalogItem, ItemStock, SelfridgesItemStockResponse, SelfridgesSearchResponse}
+import ebayapp.clients.selfridges.SelfridgesClient._
 import ebayapp.clients.selfridges.mappers._
 import ebayapp.common.config.{SearchQuery, SelfridgesConfig}
 import ebayapp.domain.ItemDetails.Clothing
@@ -30,12 +30,25 @@ final private class LiveSelfridgesClient[F[_]](
     Stream
       .unfoldLoopEval(1)(searchForItems(query))
       .flatMap(Stream.emits)
-      .flatMap(item => Stream.evalSeq(getItemStock(item.partNumber)).map(stock => (item, stock)))
-      .map { case (item, stock) => clothingMapper.toDomain(item, stock) }
+      .flatMap { item =>
+        Stream
+          .evalSeq(getItemDetails(item))
+          .map { case (stock, price) => (item, stock, price)}
+      }
+      .map { case (item, stock, price) => clothingMapper.toDomain(item, stock, price) }
+
+  private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
+    (getItemStock(item.partNumber), getItemPrice(item.partNumber))
+      .mapN { case (stock, prices) =>
+        val pricesBySkuid = prices.groupBy(_.SKUID)
+        stock.map(s => (s, pricesBySkuid.get(s.SKUID).flatMap(_.headOption)))
+      }
 
   private def searchForItems(query: SearchQuery)(page: Int): F[(List[CatalogItem], Option[Int])] =
     basicRequest
-      .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60")
+      .get(
+        uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60"
+      )
       .contentType(MediaType.ApplicationJson)
       .header("api-key", config.apiKey)
       .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
@@ -51,6 +64,27 @@ final private class LiveSelfridgesClient[F[_]](
           case Left(error) =>
             L.error(s"error sending search request to selfridges: ${r.code}\n$error") *>
               F.pure((Nil, None))
+        }
+      }
+
+  private def getItemPrice(number: String): F[List[ItemPrice]] =
+    basicRequest
+      .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/price/byId/$number")
+      .contentType(MediaType.ApplicationJson)
+      .header("api-key", config.apiKey)
+      .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
+      .response(asJson[SelfridgesItemPriceResponse])
+      .send(backend)
+      .flatMap { r =>
+        r.body match {
+          case Right(res) =>
+            F.pure(res.prices.getOrElse(Nil))
+          case Left(DeserializationException(body, error)) =>
+            L.error(s"error parsing selfdridges item price response: ${error.getMessage}\n$body") *>
+              F.pure(Nil)
+          case Left(error) =>
+            L.error(s"error sending item price request to selfridges: ${r.code}\n$error") *>
+              F.pure(Nil)
         }
       }
 
@@ -78,7 +112,19 @@ final private class LiveSelfridgesClient[F[_]](
 
 object SelfridgesClient {
 
+  final case class ItemPrice(
+      SKUID: String,
+      `Current Retail Price`: BigDecimal,
+      `Was Retail Price`: Option[BigDecimal],
+      `Was Was Retail Price`: Option[BigDecimal]
+  )
+
+  final case class SelfridgesItemPriceResponse(
+      prices: Option[List[ItemPrice]]
+  )
+
   final case class ItemStock(
+      SKUID: String,
       value: Option[String],
       `Stock Quantity Available to Purchase`: Int
   )
@@ -87,7 +133,7 @@ object SelfridgesClient {
       stocks: Option[List[ItemStock]]
   )
 
-  final case class ItemPrice(
+  final case class CatalogItemPrice(
       lowestPrice: BigDecimal,
       lowestWasPrice: Option[BigDecimal],
       lowestWasWasPrice: Option[BigDecimal],
@@ -100,7 +146,7 @@ object SelfridgesClient {
       imageName: String,
       name: String,
       brandName: String,
-      price: List[ItemPrice]
+      price: List[CatalogItemPrice]
   )
 
   final case class SelfridgesSearchResponse(

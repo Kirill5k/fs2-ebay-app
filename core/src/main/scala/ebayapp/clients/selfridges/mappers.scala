@@ -1,6 +1,6 @@
 package ebayapp.clients.selfridges
 
-import ebayapp.clients.selfridges.SelfridgesClient.{CatalogItem, ItemStock}
+import ebayapp.clients.selfridges.SelfridgesClient.{CatalogItem, ItemPrice, ItemStock}
 import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.search.{BuyPrice, ListingDetails}
 import ebayapp.domain.{ItemDetails, ResellableItem}
@@ -10,16 +10,16 @@ import java.time.Instant
 object mappers {
 
   trait SelfridgesItemMapper[D <: ItemDetails] {
-    def toDomain(item: CatalogItem, stock: ItemStock): ResellableItem[D]
+    def toDomain(item: CatalogItem, stock: ItemStock, price: Option[ItemPrice]): ResellableItem[D]
   }
 
   implicit val clothingMapper: SelfridgesItemMapper[ItemDetails.Clothing] = new SelfridgesItemMapper[ItemDetails.Clothing] {
 
-    override def toDomain(item: CatalogItem, stock: ItemStock): ResellableItem[ItemDetails.Clothing] =
+    override def toDomain(item: CatalogItem, stock: ItemStock, price: Option[ItemPrice]): ResellableItem[ItemDetails.Clothing] =
       ResellableItem[ItemDetails.Clothing](
         itemDetails(item, stock),
         listingDetails(item),
-        price(item, stock),
+        buyPrice(item, stock, price),
         None
       )
 
@@ -30,9 +30,11 @@ object mappers {
         stock.value.getOrElse("ONE SIZE")
       )
 
-    private def price(item: CatalogItem, stock: ItemStock): BuyPrice = {
-      val current  = item.price.map(_.lowestPrice).min
-      val rrp      = item.price.flatMap(p => p.lowestWasWasPrice.orElse(p.lowestWasPrice)).maxOption
+    private def buyPrice(item: CatalogItem, stock: ItemStock, price: Option[ItemPrice]): BuyPrice = {
+      val current  = price.map(_.`Current Retail Price`).getOrElse(item.price.map(_.lowestPrice).min)
+      val rrp      = price.flatMap(_.`Was Was Retail Price`)
+        .orElse(price.flatMap(_.`Was Retail Price`))
+        .orElse(item.price.flatMap(p => p.lowestWasWasPrice.orElse(p.lowestWasPrice)).maxOption)
       val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
 
       BuyPrice(
