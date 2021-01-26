@@ -26,8 +26,7 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
   override def newSaleItems(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]] =
     Stream
       .emits(config.monitoringRequests)
-      .map(req => getUpdates[Clothing](req, config.monitoringFrequency, findItems(req.query)))
-      .parJoinUnbounded
+      .flatMap(req => getUpdates[Clothing](req, config.monitoringFrequency, findItems(req.query)))
 
   private def findItems(query: SearchQuery): F[Map[String, ResellableItem[Clothing]]] =
     client
