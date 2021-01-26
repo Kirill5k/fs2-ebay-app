@@ -38,6 +38,12 @@ class SelfridgesClientSpec extends SttpClientSpec {
             Response.ok(json("selfridges/stock-R03631641.json"))
           case r if isGetStockRequest(r, "R03631642") =>
             Response.ok(json("selfridges/stock-R03631642.json"))
+          case r if isGetPriceRequest(r, "R03631644") =>
+            Response.ok(json("selfridges/price-R03631644.json"))
+          case r if isGetPriceRequest(r, "R03631641") =>
+            Response.ok(json("selfridges/price-R03631641.json"))
+          case r if isGetPriceRequest(r, "R03631642") =>
+            Response.ok(json("selfridges/price-R03631642.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -47,7 +53,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
         items must have size 16
         val item = items.head
 
-        item.buyPrice mustBe BuyPrice(0, BigDecimal(50.00), Some(63))
+        item.buyPrice mustBe BuyPrice(0, BigDecimal(20.0), Some(86))
         item.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XS")
       }
     }
@@ -84,4 +90,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
   def isGetStockRequest(req: client3.Request[_, _], id: String): Boolean =
     isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "stock", "byId", id))
+
+  def isGetPriceRequest(req: client3.Request[_, _], id: String): Boolean =
+    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "price", "byId", id))
 }
