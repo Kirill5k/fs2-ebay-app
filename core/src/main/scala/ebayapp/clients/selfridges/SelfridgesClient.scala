@@ -36,9 +36,9 @@ final private class LiveSelfridgesClient[F[_]](
       .flatMap { item =>
         Stream
           .evalSeq(getItemDetails(item))
+          .metered(100.millis)
           .map { case (stock, price) => (item, stock, price) }
       }
-      .metered(5.second)
       .map { case (item, stock, price) => clothingMapper.toDomain(item, stock, price) }
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
