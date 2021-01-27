@@ -1,6 +1,6 @@
 package ebayapp.clients.selfridges
 
-import cats.effect.Sync
+import cats.effect.{Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.selfridges.SelfridgesClient._
 import ebayapp.clients.selfridges.mappers._
@@ -14,6 +14,8 @@ import sttp.client3._
 import sttp.client3.circe.asJson
 import sttp.model.{HeaderNames, MediaType}
 
+import scala.concurrent.duration._
+
 trait SelfridgesClient[F[_]] {
   def search(query: SearchQuery): Stream[F, ResellableItem[Clothing]]
 }
@@ -23,7 +25,8 @@ final private class LiveSelfridgesClient[F[_]](
     private val backend: SttpBackend[F, Any]
 )(implicit
     F: Sync[F],
-    L: Logger[F]
+    L: Logger[F],
+    T: Timer[F]
 ) extends SelfridgesClient[F] {
 
   override def search(query: SearchQuery): Stream[F, ResellableItem[Clothing]] =
@@ -33,8 +36,9 @@ final private class LiveSelfridgesClient[F[_]](
       .flatMap { item =>
         Stream
           .evalSeq(getItemDetails(item))
-          .map { case (stock, price) => (item, stock, price)}
+          .map { case (stock, price) => (item, stock, price) }
       }
+      .metered(5.second)
       .map { case (item, stock, price) => clothingMapper.toDomain(item, stock, price) }
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
@@ -155,7 +159,7 @@ object SelfridgesClient {
       catalogEntryNavView: List[CatalogItem]
   )
 
-  def make[F[_]: Sync: Logger](
+  def make[F[_]: Sync: Logger: Timer](
       config: SelfridgesConfig,
       backend: SttpBackend[F, Any]
   ): F[SelfridgesClient[F]] =
