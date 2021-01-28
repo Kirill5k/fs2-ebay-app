@@ -5,9 +5,10 @@ import cats.implicits._
 import ebayapp.clients.telegram.TelegramClient
 import ebayapp.domain.stock.StockUpdate
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.common.Logger
+import ebayapp.common.{CriticalError, Logger}
 
 trait NotificationService[F[_]] {
+  def alert(error: CriticalError): F[Unit]
   def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit]
   def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit]
 }

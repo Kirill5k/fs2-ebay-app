@@ -87,7 +87,8 @@ object config {
       baseUri: String,
       botKey: String,
       mainChannelId: String,
-      secondaryChannelId: String
+      secondaryChannelId: String,
+      alertsChannelId: String
   )
 
   final case class AppConfig(

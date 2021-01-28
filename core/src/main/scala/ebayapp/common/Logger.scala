@@ -9,9 +9,9 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 
 import java.time.Instant
 
-final case class Alert(
+final case class CriticalError(
     message: String,
-    time: Instant
+    time: Instant = Instant.now()
 )
 
 trait Logger[F[_]] extends Logger4Cats[F] {
@@ -20,10 +20,10 @@ trait Logger[F[_]] extends Logger4Cats[F] {
 
 final private class LiveLogger[F[_]: Monad](
     private val logger: Logger4Cats[F],
-    val alerts: Queue[F, Alert]
+    private val criticalErrors: Queue[F, CriticalError]
 ) extends Logger[F] {
   override def critical(message: => String): F[Unit] =
-    alerts.enqueue1(Alert(message, Instant.now())) *> error(message)
+    criticalErrors.enqueue1(CriticalError(message)) *> error(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
     logger.error(t)(message)
@@ -61,6 +61,6 @@ object Logger {
 
   def make[F[_]: Concurrent]: F[Logger[F]] =
     Queue
-      .unbounded[F, Alert]
+      .unbounded[F, CriticalError]
       .map(queue => new LiveLogger[F](Slf4jLogger.getLogger[F], queue))
 }
