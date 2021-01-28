@@ -6,7 +6,7 @@ import cats.implicits._
 import ebayapp.common.config.SearchQuery
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.services.ResellableItemService
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.circe._
@@ -34,13 +34,13 @@ trait Controller[F[_]] extends Http4sDsl[F] {
   object FromQueryParam  extends OptionalQueryParamDecoderMatcher[Instant]("from")
   object ToQueryParam    extends OptionalQueryParamDecoderMatcher[Instant]("to")
 
-  def routes(implicit cs: ContextShift[F], s: Sync[F], l: LoggerF[F]): HttpRoutes[F]
+  def routes(implicit cs: ContextShift[F], s: Sync[F], l: Logger[F]): HttpRoutes[F]
 
   protected def withErrorHandling(
       response: => F[Response[F]]
   )(
       implicit s: Sync[F],
-      l: LoggerF[F]
+      l: Logger[F]
   ): F[Response[F]] =
     response.handleErrorWith {
       case error: MessageFailure =>

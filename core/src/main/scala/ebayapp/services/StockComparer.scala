@@ -7,11 +7,11 @@ import ebayapp.common.config.StockMonitorRequest
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.Stream
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 
 import scala.concurrent.duration.FiniteDuration
 
-abstract class StockComparer[F[_]: Monad: Timer: LoggerF] {
+abstract class StockComparer[F[_]: Monad: Timer: Logger] {
 
   protected def getUpdates[D <: ItemDetails](
       req: StockMonitorRequest,
@@ -27,7 +27,7 @@ abstract class StockComparer[F[_]: Monad: Timer: LoggerF] {
       .zipLeft(Stream.awakeEvery[F](freq))
       .flatMap(Stream.emits)
       .handleErrorWith { error =>
-        Stream.eval_(LoggerF[F].error(error)(s"error obtaining stock updates")) ++
+        Stream.eval_(Logger[F].error(error)(s"error obtaining stock updates")) ++
           getUpdates(req, freq, findItemsEffect)
       }
 

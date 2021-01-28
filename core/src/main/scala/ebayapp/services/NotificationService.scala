@@ -5,7 +5,7 @@ import cats.implicits._
 import ebayapp.clients.telegram.TelegramClient
 import ebayapp.domain.stock.StockUpdate
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 
 trait NotificationService[F[_]] {
   def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit]
@@ -16,7 +16,7 @@ final class TelegramNotificationService[F[_]](
     private val telegramClient: TelegramClient[F]
 )(implicit
     val F: Sync[F],
-    val L: LoggerF[F]
+    val L: Logger[F]
 ) extends NotificationService[F] {
   import NotificationService._
 
@@ -60,6 +60,6 @@ object NotificationService {
       }
   }
 
-  def telegram[F[_]: Sync: LoggerF](client: TelegramClient[F]): F[NotificationService[F]] =
+  def telegram[F[_]: Sync: Logger](client: TelegramClient[F]): F[NotificationService[F]] =
     Sync[F].delay(new TelegramNotificationService[F](client))
 }

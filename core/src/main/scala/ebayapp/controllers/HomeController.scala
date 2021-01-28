@@ -1,14 +1,14 @@
 package ebayapp.controllers
 
 import cats.effect.{Blocker, ContextShift, Sync}
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import org.http4s.{HttpRoutes, StaticFile}
 
 private[controllers] class HomeController[F[_]](blocker: Blocker) extends Controller[F] {
 
   private val expectedFiles = List(".txt", ".ico", ".svg", ".png", ".json", ".js", ".css", ".map", ".html", ".webm")
 
-  override def routes(implicit cs: ContextShift[F], s: Sync[F], l: LoggerF[F]): HttpRoutes[F] =
+  override def routes(implicit cs: ContextShift[F], s: Sync[F], l: Logger[F]): HttpRoutes[F] =
     HttpRoutes.of[F] {
       case req @ GET -> Root =>
         StaticFile.fromResource("static/index.html", blocker, Some(req)).getOrElseF(NotFound())

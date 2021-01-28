@@ -4,7 +4,7 @@ import cats.Monad
 import cats.effect.Concurrent
 import cats.implicits._
 import fs2.concurrent.Queue
-import io.chrisdavenport.log4cats.Logger
+import io.chrisdavenport.log4cats.{Logger => Logger4Cats}
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 
 import java.time.Instant
@@ -14,14 +14,14 @@ final case class Alert(
     time: Instant
 )
 
-trait LoggerF[F[_]] extends Logger[F] {
+trait Logger[F[_]] extends Logger4Cats[F] {
   def critical(message: => String): F[Unit]
 }
 
-final private class LiveLoggerF[F[_]: Monad](
-    private val logger: Logger[F],
+final private class LiveLogger[F[_]: Monad](
+    private val logger: Logger4Cats[F],
     val alerts: Queue[F, Alert]
-) extends LoggerF[F] {
+) extends Logger[F] {
   override def critical(message: => String): F[Unit] =
     alerts.enqueue1(Alert(message, Instant.now())) *> error(message)
 
@@ -56,11 +56,11 @@ final private class LiveLoggerF[F[_]: Monad](
     logger.trace(message)
 }
 
-object LoggerF {
-  def apply[F[_]](implicit ev: LoggerF[F]): LoggerF[F] = ev
+object Logger {
+  def apply[F[_]](implicit ev: Logger[F]): Logger[F] = ev
 
-  def make[F[_]: Concurrent]: F[LoggerF[F]] =
+  def make[F[_]: Concurrent]: F[Logger[F]] =
     Queue
       .unbounded[F, Alert]
-      .map(queue => new LiveLoggerF[F](Slf4jLogger.getLogger[F], queue))
+      .map(queue => new LiveLogger[F](Slf4jLogger.getLogger[F], queue))
 }

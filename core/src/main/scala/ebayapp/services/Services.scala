@@ -5,7 +5,7 @@ import cats.implicits._
 import ebayapp.clients.Clients
 import ebayapp.domain.ItemDetails
 import ebayapp.repositories.Repositories
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 
 final case class Services[F[_]](
     notification: NotificationService[F],
@@ -17,7 +17,7 @@ final case class Services[F[_]](
 
 object Services {
 
-  def make[F[_]: Concurrent: Timer: LoggerF](
+  def make[F[_]: Concurrent: Timer: Logger](
       clients: Clients[F],
       repositories: Repositories[F]
   ): F[Services[F]] =

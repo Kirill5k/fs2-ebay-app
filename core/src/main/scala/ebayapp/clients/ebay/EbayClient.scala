@@ -11,7 +11,7 @@ import ebayapp.common.Cache
 import ebayapp.common.config.{EbayConfig, SearchQuery}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import fs2._
 import sttp.client3.SttpBackend
 
@@ -36,7 +36,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     private val itemIdsCache: Cache[F, String, Unit]
 )(implicit
   val F: Sync[F],
-  val L: LoggerF[F]
+  val L: Logger[F]
 ) extends EbayClient[F] {
 
   def latest[D <: ItemDetails](
@@ -107,7 +107,7 @@ final private[ebay] class LiveEbayClient[F[_]](
 
 object EbayClient {
 
-  def make[F[_]: Concurrent: LoggerF: Timer](
+  def make[F[_]: Concurrent: Logger: Timer](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
   ): F[EbayClient[F]] = {

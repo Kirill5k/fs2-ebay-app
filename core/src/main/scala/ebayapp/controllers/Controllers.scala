@@ -3,11 +3,11 @@ package ebayapp.controllers
 import cats.effect.{Blocker, ContextShift, Sync}
 import cats.implicits._
 import ebayapp.services.Services
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 
-final case class Controllers[F[_]: Sync: LoggerF: ContextShift](
+final case class Controllers[F[_]: Sync: Logger: ContextShift](
     home: Controller[F],
     videoGame: Controller[F]
 ) {
@@ -21,7 +21,7 @@ final case class Controllers[F[_]: Sync: LoggerF: ContextShift](
 
 object Controllers {
 
-  def make[F[_]: Sync: LoggerF: ContextShift](blocker: Blocker, services: Services[F]): F[Controllers[F]] =
+  def make[F[_]: Sync: Logger: ContextShift](blocker: Blocker, services: Services[F]): F[Controllers[F]] =
     (
       Controller.home(blocker),
       Controller.videoGame(services.videoGame)

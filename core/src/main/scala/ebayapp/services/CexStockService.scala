@@ -7,14 +7,14 @@ import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.common.config.{StockMonitorConfig, SearchQuery}
 import ebayapp.domain.stock.ItemStockUpdates
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import fs2._
 
 trait CexStockService[F[_]] {
   def stockUpdates[D <: ItemDetails: CexItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]]
 }
 
-final class LiveCexStockService[F[_]: Concurrent: Timer: LoggerF](
+final class LiveCexStockService[F[_]: Concurrent: Timer: Logger](
     private val client: CexClient[F]
 ) extends StockComparer[F] with CexStockService[F] {
 
@@ -36,6 +36,6 @@ final class LiveCexStockService[F[_]: Concurrent: Timer: LoggerF](
 
 object CexStockService {
 
-  def make[F[_]: Concurrent: Timer: LoggerF](client: CexClient[F]): F[CexStockService[F]] =
+  def make[F[_]: Concurrent: Timer: Logger](client: CexClient[F]): F[CexStockService[F]] =
     Sync[F].delay(new LiveCexStockService[F](client))
 }

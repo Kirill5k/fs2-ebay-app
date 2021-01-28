@@ -5,12 +5,12 @@ import cats.implicits._
 import ebayapp.common.config.AppConfig
 import ebayapp.domain.ItemDetails
 import ebayapp.services.Services
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import fs2.Stream
 
 import scala.concurrent.duration._
 
-final case class Tasks[F[_]: Concurrent: LoggerF: Timer](
+final case class Tasks[F[_]: Concurrent: Logger: Timer](
     genericCexStockMonitor: CexStockMonitor[F, ItemDetails.Generic],
     videoGamesEbayDealsFinder: EbayDealsFinder[F, ItemDetails.Game],
     selfridgesSaleMonitor: SelfridgesSaleMonitor[F]
@@ -23,7 +23,7 @@ final case class Tasks[F[_]: Concurrent: LoggerF: Timer](
     ).covary[F]
       .parJoinUnbounded
       .handleErrorWith { error =>
-        Stream.eval_(LoggerF[F].error(error)("error during task processing")) ++
+        Stream.eval_(Logger[F].error(error)("error during task processing")) ++
           Stream.sleep_(1.minute) ++
           processes
       }
@@ -31,7 +31,7 @@ final case class Tasks[F[_]: Concurrent: LoggerF: Timer](
 
 object Tasks {
 
-  def make[F[_]: Concurrent: LoggerF: Timer](config: AppConfig, services: Services[F]): F[Tasks[F]] =
+  def make[F[_]: Concurrent: Logger: Timer](config: AppConfig, services: Services[F]): F[Tasks[F]] =
     (
       CexStockMonitor.generic(config.cex.stockMonitor, services),
       EbayDealsFinder.videoGames(config.ebay.deals.videoGames, services),

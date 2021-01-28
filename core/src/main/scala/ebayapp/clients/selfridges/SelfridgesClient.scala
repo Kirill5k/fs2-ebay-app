@@ -8,7 +8,7 @@ import ebayapp.common.config.{SearchQuery, SelfridgesConfig}
 import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.ResellableItem
 import fs2.Stream
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import io.circe.generic.auto._
 import sttp.client3._
 import sttp.client3.circe.asJson
@@ -23,9 +23,9 @@ final private class LiveSelfridgesClient[F[_]](
     private val config: SelfridgesConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
-    F: Sync[F],
-    L: LoggerF[F],
-    T: Timer[F]
+  F: Sync[F],
+  L: Logger[F],
+  T: Timer[F]
 ) extends SelfridgesClient[F] {
 
   private def headers(apiKey: String) = Map(
@@ -77,7 +77,7 @@ final private class LiveSelfridgesClient[F[_]](
             L.error(s"error parsing selfdridges search response: ${error.getMessage}\n$body") *>
               F.pure((Nil, None))
           case Left(error) =>
-            L.error(s"error sending search request to selfridges: ${r.code}\n$error") *>
+            L.critical(s"error sending search request to selfridges: ${r.code}\n$error") *>
               F.pure((Nil, None))
         }
       }
@@ -166,7 +166,7 @@ object SelfridgesClient {
       catalogEntryNavView: List[CatalogItem]
   )
 
-  def make[F[_]: Sync: LoggerF: Timer](
+  def make[F[_]: Sync: Logger: Timer](
       config: SelfridgesConfig,
       backend: SttpBackend[F, Any]
   ): F[SelfridgesClient[F]] =

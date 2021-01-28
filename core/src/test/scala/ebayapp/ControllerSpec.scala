@@ -1,8 +1,7 @@
 package ebayapp
 
 import cats.effect.{ContextShift, IO}
-import ebayapp.common.LoggerF
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import ebayapp.common.Logger
 import io.circe.parser._
 import org.http4s.{Response, Status}
 import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
@@ -17,7 +16,7 @@ import scala.io.Source
 trait ControllerSpec extends AnyWordSpec with MockitoSugar with ArgumentMatchersSugar with Matchers {
 
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.Implicits.global)
-  implicit val logger: LoggerF[IO]   = Slf4jLogger.getLogger[IO]
+  implicit val logger: Logger[IO]   = MockLogger.make[IO]
 
   def verifyJsonResponse(
       actual: IO[Response[IO]],

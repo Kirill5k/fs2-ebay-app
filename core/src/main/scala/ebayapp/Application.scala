@@ -2,7 +2,7 @@ package ebayapp
 
 import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import ebayapp.clients.Clients
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import ebayapp.common.config.AppConfig
 import ebayapp.controllers.Controllers
 import ebayapp.repositories.Repositories
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext
 object Application extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
-    LoggerF.make[IO].flatMap { implicit logger =>
+    Logger.make[IO].flatMap { implicit logger =>
       for {
         _      <- logger.info("starting ebay-app")
         config <- Blocker[IO].use(AppConfig.load[IO]) <* logger.info("loaded config")

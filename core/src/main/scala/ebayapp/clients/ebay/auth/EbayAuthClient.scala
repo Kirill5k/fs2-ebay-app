@@ -5,7 +5,7 @@ import java.time.Instant
 import cats.effect.{Sync, Timer}
 import cats.effect.concurrent.Ref
 import cats.implicits._
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import io.circe.generic.auto._
 import io.circe.parser._
 import EbayAuthClient.{EbayAuthToken, ExpiredToken}
@@ -28,9 +28,9 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
     private val credentials: Ref[F, List[EbayCredentials]],
     private val backend: SttpBackend[F, Any]
 )(implicit
-    val F: Sync[F],
-    val L: LoggerF[F],
-    val T: Timer[F]
+  val F: Sync[F],
+  val L: Logger[F],
+  val T: Timer[F]
 ) extends EbayAuthClient[F] {
 
   def accessToken: F[String] =
@@ -93,7 +93,7 @@ private[ebay] object EbayAuthClient {
       new EbayAuthToken(token, Instant.now().plusSeconds(expiresIn).minusSeconds(precisionError.toSeconds))
   }
 
-  def make[F[_]: Sync: LoggerF: Timer](
+  def make[F[_]: Sync: Logger: Timer](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
   ): F[EbayAuthClient[F]] = {

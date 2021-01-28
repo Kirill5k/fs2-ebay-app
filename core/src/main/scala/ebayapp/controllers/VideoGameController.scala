@@ -7,7 +7,7 @@ import ebayapp.domain.ItemDetails
 import ebayapp.domain.ResellableItem.VideoGame
 import ebayapp.domain.search.ListingDetails
 import ebayapp.services.ResellableItemService
-import ebayapp.common.LoggerF
+import ebayapp.common.Logger
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.HttpRoutes
@@ -17,7 +17,7 @@ final private[controllers] class VideoGameController[F[_]](
     private val videoGameService: ResellableItemService[F, ItemDetails.Game]
 ) extends Controller[F] {
 
-  override def routes(implicit cs: ContextShift[F], s: Sync[F], l: LoggerF[F]): HttpRoutes[F] =
+  override def routes(implicit cs: ContextShift[F], s: Sync[F], l: Logger[F]): HttpRoutes[F] =
     HttpRoutes.of[F] {
       case GET -> Root / "video-games" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) +& SearchQueryParam(query) =>
         withErrorHandling {
