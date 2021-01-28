@@ -8,7 +8,7 @@ import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.ResellableItem
 import ebayapp.domain.stock.ItemStockUpdates
 import fs2.Stream
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 
 import scala.concurrent.duration._
 
@@ -16,7 +16,7 @@ trait SelfridgesSaleService[F[_]] {
   def newSaleItems(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]]
 }
 
-final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
+final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: LoggerF](
     private val client: SelfridgesClient[F]
 ) extends StockComparer[F] with SelfridgesSaleService[F] {
 
@@ -43,10 +43,10 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))
+      .flatTap(i => LoggerF[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))
 }
 
 object SelfridgesSaleService {
-  def make[F[_]: Concurrent: Timer: Logger](client: SelfridgesClient[F]): F[SelfridgesSaleService[F]] =
+  def make[F[_]: Concurrent: Timer: LoggerF](client: SelfridgesClient[F]): F[SelfridgesSaleService[F]] =
     Sync[F].delay(new LiveSelfridgesSaleService[F](client))
 }

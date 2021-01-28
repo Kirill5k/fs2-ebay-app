@@ -8,7 +8,7 @@ import ebayapp.common.config.{SearchQuery, SelfridgesConfig}
 import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.ResellableItem
 import fs2.Stream
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import io.circe.generic.auto._
 import sttp.client3._
 import sttp.client3.circe.asJson
@@ -24,7 +24,7 @@ final private class LiveSelfridgesClient[F[_]](
     private val backend: SttpBackend[F, Any]
 )(implicit
     F: Sync[F],
-    L: Logger[F],
+    L: LoggerF[F],
     T: Timer[F]
 ) extends SelfridgesClient[F] {
 
@@ -166,7 +166,7 @@ object SelfridgesClient {
       catalogEntryNavView: List[CatalogItem]
   )
 
-  def make[F[_]: Sync: Logger: Timer](
+  def make[F[_]: Sync: LoggerF: Timer](
       config: SelfridgesConfig,
       backend: SttpBackend[F, Any]
   ): F[SelfridgesClient[F]] =

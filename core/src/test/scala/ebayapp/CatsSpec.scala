@@ -1,7 +1,7 @@
 package ebayapp
 
 import cats.effect.{ContextShift, IO, Timer}
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import org.mockito.ArgumentMatchersSugar
 import org.mockito.scalatest.AsyncMockitoSugar
@@ -14,5 +14,5 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
 
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val timer: Timer[IO]     = IO.timer(ExecutionContext.global)
-  implicit val logger: Logger[IO]   = Slf4jLogger.getLogger[IO]
+  implicit val logger: LoggerF[IO]   = Slf4jLogger.getLogger[IO]
 }

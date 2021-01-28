@@ -3,7 +3,7 @@ package ebayapp.repositories
 import cats.effect.{ContextShift, IO}
 import ebayapp.common.config.SearchQuery
 import ebayapp.domain.{ResellableItem, ResellableItemBuilder}
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import mongo4cats.client.MongoClientF
 import org.mongodb.scala.Document
@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext
 class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with EmbeddedMongo {
 
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  implicit val logger: Logger[IO]   = Slf4jLogger.getLogger[IO]
+  implicit val logger: LoggerF[IO]   = Slf4jLogger.getLogger[IO]
 
   val videoGames: List[ResellableItem.VideoGame] = List(
     ResellableItemBuilder.videoGame("GTA 5", Instant.now().minusSeconds(1000).`with`(MILLI_OF_SECOND, 0)),

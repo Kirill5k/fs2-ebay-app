@@ -9,7 +9,7 @@ import ebayapp.common.config.{CexConfig, SearchQuery}
 import ebayapp.common.errors.AppError
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search._
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import io.circe.generic.auto._
 import sttp.client3.circe.asJson
 import sttp.client3.{SttpBackend, _}
@@ -31,7 +31,7 @@ final class CexApiClient[F[_]](
 )(implicit
     S: Sync[F],
     T: Timer[F],
-    L: Logger[F]
+    L: LoggerF[F]
 ) extends CexClient[F] {
 
   private val categoriesMap: Map[String, List[Int]] = Map(
@@ -124,7 +124,7 @@ object CexClient {
 
   final case class CexSearchResponse(response: SearchResponse)
 
-  def make[F[_]: Concurrent: Timer: Logger](
+  def make[F[_]: Concurrent: Timer: LoggerF](
       config: CexConfig,
       backend: SttpBackend[F, Any]
   ): F[CexClient[F]] =

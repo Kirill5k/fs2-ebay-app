@@ -4,7 +4,7 @@ import cats.effect.Sync
 import cats.implicits._
 import ebayapp.common.config.TelegramConfig
 import ebayapp.common.errors.AppError
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import sttp.client3._
 
 trait TelegramClient[F[_]] {
@@ -18,7 +18,7 @@ final class TelegramApiClient[F[_]](
     private val backend: SttpBackend[F, Any]
 )(implicit
     val S: Sync[F],
-    val L: Logger[F]
+    val L: LoggerF[F]
 ) extends TelegramClient[F] {
 
   def sendMessageToMainChannel(message: String): F[Unit] =
@@ -43,7 +43,7 @@ final class TelegramApiClient[F[_]](
 
 object TelegramClient {
 
-  def make[F[_]: Sync: Logger](
+  def make[F[_]: Sync: LoggerF](
       config: TelegramConfig,
       backend: SttpBackend[F, Any]
   ): F[TelegramClient[F]] =

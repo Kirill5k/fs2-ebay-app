@@ -7,7 +7,7 @@ import ebayapp.clients.ebay.EbayClient
 import ebayapp.clients.selfridges.SelfridgesClient
 import ebayapp.clients.telegram.TelegramClient
 import ebayapp.common.config.AppConfig
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import sttp.client3.SttpBackend
 
 final case class Clients[F[_]](
@@ -19,7 +19,7 @@ final case class Clients[F[_]](
 
 object Clients {
 
-  def make[F[_]: Concurrent: Timer: Logger](
+  def make[F[_]: Concurrent: Timer: LoggerF](
       config: AppConfig,
       backend: SttpBackend[F, Any]
   ): F[Clients[F]] = {

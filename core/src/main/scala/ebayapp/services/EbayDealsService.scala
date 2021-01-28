@@ -8,7 +8,7 @@ import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.{EbayDealsConfig, SearchQuery}
 import ebayapp.common.stream._
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import fs2._
 
 import scala.concurrent.duration._
@@ -17,7 +17,7 @@ trait EbayDealsService[F[_]] {
   def deals[D <: ItemDetails: EbayItemMapper: EbaySearchParams](config: EbayDealsConfig): Stream[F, ResellableItem[D]]
 }
 
-final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
+final class LiveEbayDealsService[F[_]: LoggerF: Concurrent: Timer](
     private val ebayClient: EbayClient[F],
     private val cexClient: CexClient[F]
 ) extends EbayDealsService[F] {
@@ -37,13 +37,13 @@ final class LiveEbayDealsService[F[_]: Logger: Concurrent: Timer](
       .latest[D](query, duration)
       .evalMap(cexClient.withUpdatedSellPrice)
       .handleErrorWith { error =>
-        Stream.eval_(Logger[F].error(error)(s"error getting deals from ebay"))
+        Stream.eval_(LoggerF[F].error(error)(s"error getting deals from ebay"))
       }
 }
 
 object EbayDealsService {
 
-  def make[F[_]: Concurrent: Logger: Timer](
+  def make[F[_]: Concurrent: LoggerF: Timer](
       ebayClient: EbayClient[F],
       cexClient: CexClient[F]
   ): F[EbayDealsService[F]] =

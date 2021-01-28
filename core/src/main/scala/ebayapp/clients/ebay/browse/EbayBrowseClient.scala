@@ -2,7 +2,7 @@ package ebayapp.clients.ebay.browse
 
 import cats.effect.Sync
 import cats.implicits._
-import io.chrisdavenport.log4cats.Logger
+import ebayapp.common.LoggerF
 import ebayapp.common.config.EbayConfig
 import io.circe.generic.auto._
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
@@ -21,7 +21,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val backend: SttpBackend[F, Any]
 )(implicit
     val F: Sync[F],
-    val L: Logger[F]
+    val L: LoggerF[F]
 ) extends EbayBrowseClient[F] {
 
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]] =
@@ -73,7 +73,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 
 private[ebay] object EbayBrowseClient {
 
-  def make[F[_]: Sync: Logger](
+  def make[F[_]: Sync: LoggerF](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
   ): F[EbayBrowseClient[F]] =
