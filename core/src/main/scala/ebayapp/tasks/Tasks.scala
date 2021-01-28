@@ -14,14 +14,14 @@ final case class Tasks[F[_]: Concurrent: Logger: Timer](
     genericCexStockMonitor: CexStockMonitor[F, ItemDetails.Generic],
     videoGamesEbayDealsFinder: EbayDealsFinder[F, ItemDetails.Game],
     selfridgesSaleMonitor: SelfridgesSaleMonitor[F],
-    alertsNotifier: AlertsNotifier[F]
+    errorsNotifier: ErrorsNotifier[F]
 ) {
   def processes: Stream[F, Unit] =
     Stream(
       genericCexStockMonitor.monitorStock(),
       videoGamesEbayDealsFinder.searchForCheapItems(),
       selfridgesSaleMonitor.monitorSale(),
-      alertsNotifier.notifyOnErrors()
+      errorsNotifier.alertOnErrors()
     ).covary[F]
       .parJoinUnbounded
       .handleErrorWith { error =>
@@ -38,6 +38,6 @@ object Tasks {
       CexStockMonitor.generic(config.cex.stockMonitor, services),
       EbayDealsFinder.videoGames(config.ebay.deals.videoGames, services),
       SelfridgesSaleMonitor.make(config.selfridges.stockMonitor, services),
-      AlertsNotifier.make[F](services)
+      ErrorsNotifier.make[F](services)
     ).mapN(Tasks.apply[F])
 }

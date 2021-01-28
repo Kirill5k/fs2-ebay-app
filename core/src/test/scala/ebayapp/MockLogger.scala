@@ -1,8 +1,9 @@
 package ebayapp
 
 import cats.effect.Sync
-import ebayapp.common.Logger
+import ebayapp.common.{CriticalError, Logger}
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import fs2.Stream
 
 object MockLogger {
 
@@ -10,6 +11,7 @@ object MockLogger {
     private val l = Slf4jLogger.getLogger[F]
 
     override def critical(message: => String): F[Unit] = l.error(message)
+    override def critical(t: Throwable)(message: => String): F[Unit] = l.error(t)(message)
     override def error(t: Throwable)(message: => String): F[Unit] = l.error(t)(message)
     override def error(message: => String): F[Unit] = l.error(message)
     override def warn(message: => String): F[Unit] = l.warn(message)
@@ -21,5 +23,9 @@ object MockLogger {
     override def trace(t: Throwable)(message: => String): F[Unit] = ???
     override def debug(message: => String): F[Unit] = ???
     override def trace(message: => String): F[Unit] = ???
+
+    override def errors: fs2.Stream[F, CriticalError] = Stream.empty
+
+
   }
 }

@@ -5,17 +5,17 @@ import ebayapp.common.Logger
 import ebayapp.services.{NotificationService, Services}
 import fs2.Stream
 
-final class AlertsNotifier[F[_]: Sync: Logger](
+final class ErrorsNotifier[F[_]: Sync: Logger](
     private val notificationService: NotificationService[F]
 ) {
 
-  def notifyOnErrors(): Stream[F, Unit] =
+  def alertOnErrors(): Stream[F, Unit] =
     Logger[F].errors.evalMap(notificationService.alert)
 }
 
-object AlertsNotifier {
+object ErrorsNotifier {
 
-  def make[F[_]: Sync: Logger](services: Services[F]): F[AlertsNotifier[F]] =
-    Sync[F].delay(new AlertsNotifier[F](services.notification))
+  def make[F[_]: Sync: Logger](services: Services[F]): F[ErrorsNotifier[F]] =
+    Sync[F].delay(new ErrorsNotifier[F](services.notification))
 }
 
