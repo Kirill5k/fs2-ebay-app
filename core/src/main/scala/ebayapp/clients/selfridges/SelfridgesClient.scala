@@ -12,7 +12,6 @@ import io.chrisdavenport.log4cats.Logger
 import io.circe.generic.auto._
 import sttp.client3._
 import sttp.client3.circe.asJson
-import sttp.model.{HeaderNames, MediaType}
 
 import scala.concurrent.duration._
 
@@ -28,6 +27,20 @@ final private class LiveSelfridgesClient[F[_]](
     L: Logger[F],
     T: Timer[F]
 ) extends SelfridgesClient[F] {
+
+  private def headers(apiKey: String) = Map(
+    "api-key"          -> apiKey,
+    "cache-control"    -> "no-cache",
+    "content-type"     -> "application/json; charset=utf-8",
+    "accept"           -> "application/json, text/javascript, */*; q=0.01",
+    "accept-language"  -> "en-GB,en-US;q=0.9,en;q=0.8",
+    "user-agent"       -> "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.344",
+    "x-requested-with" -> "XMLHttpRequest",
+    "referer"          -> "https://www.selfridges.com/",
+    "sec-fetch-dest"   -> "empty",
+    "sec-fetch-mode"   -> "cors",
+    "sec-fetch-site"   -> "same-origin"
+  )
 
   override def search(query: SearchQuery): Stream[F, ResellableItem[Clothing]] =
     Stream
@@ -53,9 +66,7 @@ final private class LiveSelfridgesClient[F[_]](
       .get(
         uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60"
       )
-      .contentType(MediaType.ApplicationJson)
-      .header("api-key", config.apiKey)
-      .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
+      .headers(headers(config.apiKey))
       .response(asJson[SelfridgesSearchResponse])
       .send(backend)
       .flatMap { r =>
@@ -74,9 +85,7 @@ final private class LiveSelfridgesClient[F[_]](
   private def getItemPrice(number: String): F[List[ItemPrice]] =
     basicRequest
       .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/price/byId/$number")
-      .contentType(MediaType.ApplicationJson)
-      .header("api-key", config.apiKey)
-      .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
+      .headers(headers(config.apiKey))
       .response(asJson[SelfridgesItemPriceResponse])
       .send(backend)
       .flatMap { r =>
@@ -95,9 +104,7 @@ final private class LiveSelfridgesClient[F[_]](
   private def getItemStock(number: String): F[List[ItemStock]] =
     basicRequest
       .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/stock/byId/$number")
-      .contentType(MediaType.ApplicationJson)
-      .header("api-key", config.apiKey)
-      .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
+      .headers(headers(config.apiKey))
       .response(asJson[SelfridgesItemStockResponse])
       .send(backend)
       .flatMap { r =>
