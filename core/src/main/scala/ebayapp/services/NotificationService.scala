@@ -38,6 +38,8 @@ final class TelegramNotificationService[F[_]](
       case None =>
         L.warn(s"not enough details for stock update notification $update")
     }
+
+  override def alert(error: CriticalError): F[Unit] = ???
 }
 
 object NotificationService {
