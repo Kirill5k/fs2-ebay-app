@@ -9,6 +9,7 @@ import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.ResellableItem
 import fs2.Stream
 import ebayapp.common.Logger
+import io.circe.Error
 import io.circe.generic.auto._
 import sttp.client3._
 import sttp.client3.circe.asJson
@@ -73,12 +74,8 @@ final private class LiveSelfridgesClient[F[_]](
         r.body match {
           case Right(res) =>
             F.pure((res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
-          case Left(DeserializationException(body, error)) =>
-            L.error(s"error parsing selfdridges search response: ${error.getMessage}\n$body") *>
-              F.pure((Nil, None))
           case Left(error) =>
-            L.critical(s"error sending search request to selfridges: ${r.code}\n$error") *>
-              F.pure((Nil, None))
+            handleError[(List[CatalogItem], Option[Int])]("products by ids", (Nil, None))(error)
         }
       }
 
@@ -90,14 +87,8 @@ final private class LiveSelfridgesClient[F[_]](
       .send(backend)
       .flatMap { r =>
         r.body match {
-          case Right(res) =>
-            F.pure(res.prices.getOrElse(Nil))
-          case Left(DeserializationException(body, error)) =>
-            L.error(s"error parsing selfdridges item price response: ${error.getMessage}\n$body") *>
-              F.pure(Nil)
-          case Left(error) =>
-            L.error(s"error sending item price request to selfridges: ${r.code}\n$error") *>
-              F.pure(Nil)
+          case Right(res) => F.pure(res.prices.getOrElse(Nil))
+          case Left(error) => handleError[List[ItemPrice]]("item price", Nil)(error)
         }
       }
 
@@ -109,16 +100,23 @@ final private class LiveSelfridgesClient[F[_]](
       .send(backend)
       .flatMap { r =>
         r.body match {
-          case Right(res) =>
-            F.pure(res.stocks.getOrElse(Nil))
-          case Left(DeserializationException(body, error)) =>
-            L.error(s"error parsing selfdridges item stock response: ${error.getMessage}\n$body") *>
-              F.pure(Nil)
-          case Left(error) =>
-            L.error(s"error sending item stock request to selfridges: ${r.code}\n$error") *>
-              F.pure(Nil)
+          case Right(res) => F.pure(res.stocks.getOrElse(Nil))
+          case Left(error) => handleError[List[ItemStock]]("item stock", Nil)(error)
         }
       }
+
+  private def handleError[A](endpoint: String, defaultResult: A)(error: ResponseException[String, Error]): F[A] =
+    error match {
+      case DeserializationException(_, error) =>
+        L.critical(s"error parsing selfdridges $endpoint response: ${error.getMessage}") *>
+          F.pure(defaultResult)
+      case HttpError(_, status) if status.isClientError =>
+        L.critical(s"error sending $endpoint request to selfridges: ${status}") *>
+          F.pure(defaultResult)
+      case error =>
+        L.error(s"error sending $endpoint request to selfridges: ${error.getMessage}") *>
+          F.pure(defaultResult)
+    }
 }
 
 object SelfridgesClient {

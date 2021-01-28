@@ -39,7 +39,10 @@ final class TelegramNotificationService[F[_]](
         L.warn(s"not enough details for stock update notification $update")
     }
 
-  override def alert(error: CriticalError): F[Unit] = ???
+  override def alert(error: CriticalError): F[Unit] = {
+    val alert = s"${error.time.toString} ERROR - ${error.message}"
+    telegramClient.sendMessageToAlertsChannel(alert)
+  }
 }
 
 object NotificationService {

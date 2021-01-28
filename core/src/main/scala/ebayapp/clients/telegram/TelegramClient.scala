@@ -11,7 +11,6 @@ trait TelegramClient[F[_]] {
   def sendMessageToMainChannel(message: String): F[Unit]
   def sendMessageToSecondaryChannel(message: String): F[Unit]
   def sendMessageToAlertsChannel(message: String): F[Unit]
-  def sendMessage(channelId: String, message: String): F[Unit]
 }
 
 final private class TelegramApiClient[F[_]: Sync](
@@ -28,7 +27,7 @@ final private class TelegramApiClient[F[_]: Sync](
   override def sendMessageToAlertsChannel(message: String): F[Unit] =
     sendMessage(config.alertsChannelId, message)
 
-  def sendMessage(channelId: String, message: String): F[Unit] =
+  private def sendMessage(channelId: String, message: String): F[Unit] =
     basicRequest
       .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=$channelId&text=$message")
       .send(backend)
