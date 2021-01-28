@@ -9,9 +9,9 @@ import ebayapp.services.{CexStockService, NotificationService, Services}
 import fs2.Stream
 
 final class CexStockMonitor[F[_]: Sync, D <: ItemDetails: CexItemMapper](
-                                                                          private val stockMonitorConfig: StockMonitorConfig,
-                                                                          private val stockService: CexStockService[F],
-                                                                          private val notificationService: NotificationService[F]
+    private val stockMonitorConfig: StockMonitorConfig,
+    private val stockService: CexStockService[F],
+    private val notificationService: NotificationService[F]
 ) {
 
   def monitorStock(): Stream[F, Unit] =
@@ -23,8 +23,8 @@ final class CexStockMonitor[F[_]: Sync, D <: ItemDetails: CexItemMapper](
 object CexStockMonitor {
 
   def generic[F[_]: Sync](
-                           config: StockMonitorConfig,
-                           services: Services[F]
+      config: StockMonitorConfig,
+      services: Services[F]
   ): F[CexStockMonitor[F, ItemDetails.Generic]] =
     Sync[F].delay {
       new CexStockMonitor[F, ItemDetails.Generic](

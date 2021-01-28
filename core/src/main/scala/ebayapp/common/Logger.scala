@@ -6,6 +6,7 @@ import cats.implicits._
 import fs2.concurrent.Queue
 import io.chrisdavenport.log4cats.{Logger => Logger4Cats}
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import fs2.Stream
 
 import java.time.Instant
 
@@ -15,15 +16,24 @@ final case class CriticalError(
 )
 
 trait Logger[F[_]] extends Logger4Cats[F] {
+  def errors: Stream[F, CriticalError]
   def critical(message: => String): F[Unit]
+  def critical(t: Throwable)(message: => String): F[Unit]
 }
 
 final private class LiveLogger[F[_]: Monad](
     private val logger: Logger4Cats[F],
     private val criticalErrors: Queue[F, CriticalError]
 ) extends Logger[F] {
+
+  override def errors: Stream[F, CriticalError] =
+    criticalErrors.dequeue
+
   override def critical(message: => String): F[Unit] =
     criticalErrors.enqueue1(CriticalError(message)) *> error(message)
+
+  override def critical(t: Throwable)(message: => String): F[Unit] =
+    criticalErrors.enqueue1(CriticalError(s"$message - ${t.getMessage}")) *> error(t)(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
     logger.error(t)(message)
