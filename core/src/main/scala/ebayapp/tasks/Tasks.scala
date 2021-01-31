@@ -26,8 +26,8 @@ final case class Tasks[F[_]: Concurrent: Logger: Timer](
       .parJoinUnbounded
       .handleErrorWith { error =>
         Stream.eval_(Logger[F].critical(error)("error during task processing")) ++
-          Stream.sleep_(1.minute) ++
-          processes
+          processes.delayBy(1.minute)
+
       }
 }
 

@@ -43,7 +43,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
         }
 
       val ebayAuthClient = (
-        Ref.of[IO, EbayAuthToken](EbayAuthToken("test-token", 7200)),
+        Ref.of[IO, Option[EbayAuthToken]](Some(EbayAuthToken("test-token", 7200))),
         Ref.of[IO, List[EbayCredentials]](Nil)
       ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
 
@@ -82,7 +82,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
         }
 
       val ebayAuthClient = (
-        Ref.of[IO, EbayAuthToken](EbayAuthToken("test-token", 0)),
+        Ref.of[IO, Option[EbayAuthToken]](Some(EbayAuthToken("test-token", 0))),
         Ref.of[IO, List[EbayCredentials]](credentials)
       ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c,testingBackend))
 
