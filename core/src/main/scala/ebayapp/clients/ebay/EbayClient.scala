@@ -87,7 +87,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     (is.seller.feedbackPercentage, is.seller.feedbackScore)
       .mapN { (percentage, score) =>
         percentage > config.search.minFeedbackPercentage && score > config.search.minFeedbackScore
-      }.isDefined
+      }.exists(identity)
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
