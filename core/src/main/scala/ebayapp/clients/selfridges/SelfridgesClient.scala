@@ -29,8 +29,7 @@ final private class LiveSelfridgesClient[F[_]](
   T: Timer[F]
 ) extends SelfridgesClient[F] {
 
-  private def headers(apiKey: String) = Map(
-    "api-key"          -> apiKey,
+  private val defaultHeaders = Map(
     "cache-control"    -> "no-cache",
     "content-type"     -> "application/json; charset=utf-8",
     "accept"           -> "application/json, text/javascript, */*; q=0.01",
@@ -67,7 +66,8 @@ final private class LiveSelfridgesClient[F[_]](
       .get(
         uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60"
       )
-      .headers(headers(config.apiKey))
+      .headers(defaultHeaders)
+      .header("api-key", config.apiKey)
       .response(asJson[SelfridgesSearchResponse])
       .send(backend)
       .flatMap { r =>
@@ -82,7 +82,8 @@ final private class LiveSelfridgesClient[F[_]](
   private def getItemPrice(number: String): F[List[ItemPrice]] =
     basicRequest
       .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/price/byId/$number")
-      .headers(headers(config.apiKey))
+      .headers(defaultHeaders)
+      .header("api-key", config.apiKey)
       .response(asJson[SelfridgesItemPriceResponse])
       .send(backend)
       .flatMap { r =>
@@ -95,7 +96,8 @@ final private class LiveSelfridgesClient[F[_]](
   private def getItemStock(number: String): F[List[ItemStock]] =
     basicRequest
       .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/stock/byId/$number")
-      .headers(headers(config.apiKey))
+      .headers(defaultHeaders)
+      .header("api-key", config.apiKey)
       .response(asJson[SelfridgesItemStockResponse])
       .send(backend)
       .flatMap { r =>

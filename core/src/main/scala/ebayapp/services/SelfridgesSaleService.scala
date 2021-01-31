@@ -29,7 +29,7 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>
-        Stream.sleep_((index * 20).seconds) ++ getUpdates[Clothing](req, config.monitoringFrequency, findItems(req.query))
+        getUpdates[Clothing](req, config.monitoringFrequency, findItems(req.query)).delayBy((index * 10).seconds)
       }
       .parJoinUnbounded
 
