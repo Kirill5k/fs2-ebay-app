@@ -24,11 +24,15 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
     val L: Logger[F]
 ) extends EbayBrowseClient[F] {
 
+  private val defaultHeaders: Map[String, String] = Map(
+    "X-EBAY-C-MARKETPLACE-ID" -> "EBAY_GB",
+    HeaderNames.Accept -> MediaType.ApplicationJson.toString(),
+    HeaderNames.ContentType -> MediaType.ApplicationJson.toString()
+  )
+
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]] =
     basicRequest
-      .header("X-EBAY-C-MARKETPLACE-ID", "EBAY_GB")
-      .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
-      .contentType(MediaType.ApplicationJson)
+      .headers(defaultHeaders)
       .auth
       .bearer(accessToken)
       .get(uri"${config.baseUri}/buy/browse/v1/item_summary/search?$queryParams")
@@ -48,9 +52,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 
   def getItem(accessToken: String, itemId: String): F[Option[EbayItem]] =
     basicRequest
-      .header("X-EBAY-C-MARKETPLACE-ID", "EBAY_GB")
-      .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
-      .contentType(MediaType.ApplicationJson)
+      .headers(defaultHeaders)
       .auth
       .bearer(accessToken)
       .get(uri"${config.baseUri}/buy/browse/v1/item/$itemId")

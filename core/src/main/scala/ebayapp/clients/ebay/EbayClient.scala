@@ -83,25 +83,20 @@ final private[ebay] class LiveEbayClient[F[_]](
       case true  => F.pure(None)
     }
 
-  private val hasTrustedSeller: EbayItemSummary => Boolean = itemSummary =>
-    (for {
-      feedbackPercentage <- itemSummary.seller.feedbackPercentage
-      goodPercentage = feedbackPercentage > config.search.minFeedbackPercentage
-      feedbackScore <- itemSummary.seller.feedbackScore
-      goodScore = feedbackScore > config.search.minFeedbackScore
-    } yield goodPercentage && goodScore).exists(identity)
+  private val hasTrustedSeller: EbayItemSummary => Boolean = is =>
+    (is.seller.feedbackPercentage, is.seller.feedbackScore)
+      .mapN { (percentage, score) =>
+        percentage > config.search.minFeedbackPercentage && score > config.search.minFeedbackScore
+      }.isDefined
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
-      Stream.eval_ {
-        L.warn(s"auth error from ebay client ($message). switching account") *>
-          authClient.switchAccount()
-      }
+      Stream.eval_(L.warn(s"auth error from ebay client ($message). switching account")) ++
+        Stream.eval_(authClient.switchAccount())
     case error: AppError =>
       Stream.eval_(L.error(s"api client error while getting items from ebay: ${error.message}"))
     case error =>
-      Stream
-        .eval_(L.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
+      Stream.eval_(L.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
   }
 }
 

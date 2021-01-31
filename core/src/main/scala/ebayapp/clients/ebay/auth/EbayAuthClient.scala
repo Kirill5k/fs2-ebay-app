@@ -35,7 +35,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Sync](
     authToken.get
       .flatMap {
         case Some(t) if t.isValid => t.pure[F]
-        case _                    => authenticate().flatTap(t => authToken.set(Some(t)))
+        case _                    => authenticate().flatTap(t => authToken.set(t.some))
       }
       .map(_.token)
 
