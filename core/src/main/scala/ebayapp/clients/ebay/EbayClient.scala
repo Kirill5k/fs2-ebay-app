@@ -23,8 +23,8 @@ trait EbayClient[F[_]] {
   def latest[D <: ItemDetails](
       query: SearchQuery,
       duration: FiniteDuration
-  )(
-      implicit mapper: EbayItemMapper[D],
+  )(implicit
+      mapper: EbayItemMapper[D],
       params: EbaySearchParams[D]
   ): Stream[F, ResellableItem[D]]
 }
@@ -35,15 +35,15 @@ final private[ebay] class LiveEbayClient[F[_]](
     private val browseClient: EbayBrowseClient[F],
     private val itemIdsCache: Cache[F, String, Unit]
 )(implicit
-  val F: Sync[F],
-  val L: Logger[F]
+    val F: Sync[F],
+    val L: Logger[F]
 ) extends EbayClient[F] {
 
   def latest[D <: ItemDetails](
       query: SearchQuery,
       duration: FiniteDuration
-  )(
-      implicit mapper: EbayItemMapper[D],
+  )(implicit
+      mapper: EbayItemMapper[D],
       params: EbaySearchParams[D]
   ): Stream[F, ResellableItem[D]] = {
     val time   = Instant.now.minusMillis(duration.toMillis).`with`(MILLI_OF_SECOND, 0)
@@ -56,23 +56,18 @@ final private[ebay] class LiveEbayClient[F[_]](
       "q"            -> query.value
     )
 
-    Stream(searchParams)
-      .map(searchForItems(params.removeUnwanted))
-      .flatMap(Stream.evalSeq)
+    Stream
+      .evalSeq(searchForItems(searchParams, params.filter))
       .evalTap(item => itemIdsCache.put(item.itemId, ()))
       .map(mapper.toDomain)
       .handleErrorWith(switchAccountIfItHasExpired)
   }
 
-  private def searchForItems(
-      removeUnwanted: EbayItemSummary => Boolean
-  )(
-      searchParams: Map[String, String]
-  ): F[List[EbayItem]] =
+  private def searchForItems(searchParams: Map[String, String], itemsFilter: EbayItemSummary => Boolean): F[List[EbayItem]] =
     for {
       token <- authClient.accessToken
       all   <- browseClient.search(token, searchParams)
-      valid = all.filter(hasTrustedSeller).filter(removeUnwanted)
+      valid = all.filter(hasTrustedSeller).filter(itemsFilter)
       complete <- valid.traverse(getCompleteItem).map(_.flatten)
       _        <- L.info(s"""ebay-search "${searchParams("q")}" returned ${complete.size} new items (total - ${all.size})""")
     } yield complete
@@ -87,7 +82,8 @@ final private[ebay] class LiveEbayClient[F[_]](
     (is.seller.feedbackPercentage, is.seller.feedbackScore)
       .mapN { (percentage, score) =>
         percentage > config.search.minFeedbackPercentage && score > config.search.minFeedbackScore
-      }.exists(identity)
+      }
+      .exists(identity)
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
@@ -109,8 +105,6 @@ object EbayClient {
     val auth   = EbayAuthClient.make[F](config, backend)
     val browse = EbayBrowseClient.make[F](config, backend)
     val cache  = Cache.make[F, String, Unit](2.hours, 5.minutes)
-    (auth, browse, cache).mapN {
-      case (a, b, c) => new LiveEbayClient[F](config, a, b, c)
-    }
+    (auth, browse, cache).mapN((a, b, c) => new LiveEbayClient[F](config, a, b, c))
   }
 }

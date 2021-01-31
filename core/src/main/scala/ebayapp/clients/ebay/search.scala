@@ -7,7 +7,7 @@ object search {
   sealed trait EbaySearchParams[D <: ItemDetails] {
     def categoryId: Int
     def searchFilterTemplate: String
-    def removeUnwanted: EbayItemSummary => Boolean
+    def filter: EbayItemSummary => Boolean
   }
 
   object EbaySearchParams {
@@ -61,7 +61,7 @@ object search {
 
       override val searchFilterTemplate: String = DEFAULT_SEARCH_FILTER + "buyingOptions:{FIXED_PRICE},itemStartDate:[%s]"
 
-      override val removeUnwanted: EbayItemSummary => Boolean =
+      override val filter: EbayItemSummary => Boolean =
         item => !LISTING_NAME_TRIGGER_WORDS.matches(item.title.replaceAll("[^a-zA-Z0-9 ]", ""))
     }
   }
