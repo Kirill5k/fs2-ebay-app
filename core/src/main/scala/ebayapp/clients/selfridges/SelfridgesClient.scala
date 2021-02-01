@@ -34,7 +34,6 @@ final private class LiveSelfridgesClient[F[_]](
     "content-type"     -> "application/json; charset=utf-8",
     "accept"           -> "application/json, text/javascript, */*; q=0.01",
     "accept-language"  -> "en-GB,en-US;q=0.9,en;q=0.8",
-    "user-agent"       -> "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.344",
     "x-requested-with" -> "XMLHttpRequest",
     "referer"          -> "https://www.selfridges.com/",
     "sec-fetch-dest"   -> "empty",
