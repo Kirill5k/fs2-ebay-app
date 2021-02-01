@@ -2,6 +2,7 @@ package ebayapp.tasks
 
 import cats.effect.{Concurrent, Sync, Timer}
 import ebayapp.common.Logger
+import ebayapp.common.stream._
 import ebayapp.services.{NotificationService, Services}
 import fs2.Stream
 
@@ -14,7 +15,7 @@ final class ErrorsNotifier[F[_]: Concurrent: Logger: Timer](
   def alertOnErrors(): Stream[F, Unit] =
     Logger[F]
       .errors
-      .debounce(3.seconds)
+      .throttle(5.seconds)
       .evalMap(notificationService.alert)
 }
 
