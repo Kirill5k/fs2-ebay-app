@@ -1,21 +1,26 @@
 package ebayapp.tasks
 
-import cats.effect.Sync
+import cats.effect.{Concurrent, Sync, Timer}
 import ebayapp.common.Logger
 import ebayapp.services.{NotificationService, Services}
 import fs2.Stream
 
-final class ErrorsNotifier[F[_]: Sync: Logger](
+import scala.concurrent.duration._
+
+final class ErrorsNotifier[F[_]: Concurrent: Logger: Timer](
     private val notificationService: NotificationService[F]
 ) {
 
   def alertOnErrors(): Stream[F, Unit] =
-    Logger[F].errors.evalMap(notificationService.alert)
+    Logger[F]
+      .errors
+      .debounce(3.seconds)
+      .evalMap(notificationService.alert)
 }
 
 object ErrorsNotifier {
 
-  def make[F[_]: Sync: Logger](services: Services[F]): F[ErrorsNotifier[F]] =
+  def make[F[_]: Concurrent: Logger: Timer](services: Services[F]): F[ErrorsNotifier[F]] =
     Sync[F].delay(new ErrorsNotifier[F](services.notification))
 }
 

@@ -1,6 +1,6 @@
 package ebayapp.tasks
 
-import cats.effect.{IO, Sync}
+import cats.effect.{Concurrent, IO, Timer}
 import ebayapp.CatsSpec
 import ebayapp.common.{CriticalError, Logger}
 import ebayapp.domain.ItemDetails
@@ -17,8 +17,9 @@ class ErrorsNotifierSpec extends CatsSpec {
       when(services.notification.alert(any[CriticalError])).thenReturn(IO.unit)
       val res = for {
         logger          <- Logger.make[IO]
-        notifier        <- ErrorsNotifier.make[IO](services)(Sync[IO], logger)
-        notifierProcess <- notifier.alertOnErrors().interruptAfter(1.seconds).compile.drain.start
+        notifier        <- ErrorsNotifier.make[IO](services)(Concurrent[IO], logger, Timer[IO])
+        notifierProcess <- notifier.alertOnErrors().interruptAfter(4.seconds).compile.drain.start
+        _               <- logger.critical("omg, critical error")
         _               <- logger.critical("omg, critical error")
         _               <- notifierProcess.join
       } yield ()
