@@ -15,7 +15,7 @@ final class ErrorsNotifier[F[_]: Concurrent: Logger: Timer](
   def alertOnErrors(): Stream[F, Unit] =
     Logger[F]
       .errors
-      .throttle(5.seconds)
+      .throttle(30.seconds)
       .evalMap(notificationService.alert)
 }
 
