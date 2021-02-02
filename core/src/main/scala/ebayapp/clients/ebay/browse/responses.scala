@@ -19,6 +19,7 @@ private[ebay] object responses {
       title: String,
       price: Option[ItemPrice],
       seller: ItemSeller,
+      itemGroupType: Option[String],
       shortDescription: Option[String] // This field is returned by the search method only when fieldgroups = EXTENDED.
   )
 

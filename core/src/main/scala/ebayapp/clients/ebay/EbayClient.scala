@@ -67,7 +67,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     for {
       token <- authClient.accessToken
       all   <- browseClient.search(token, searchParams)
-      valid = all.filter(hasTrustedSeller).filter(itemsFilter)
+      valid = all.filter(_.itemGroupType.isEmpty).filter(hasTrustedSeller).filter(itemsFilter)
       complete <- valid.traverse(getCompleteItem).map(_.flatten)
       _        <- L.info(s"""ebay-search "${searchParams("q")}" returned ${complete.size} new items (total - ${all.size})""")
     } yield complete

@@ -54,7 +54,7 @@ object search {
         "fifa(?s).* (\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa(?s)",
         "borderlands(?s).* (takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "rocket(?s).* (boost|level|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
-        "\\bPS(1|2|3)\\b", "\\bPlaystation( )?(1|2|3)\\b"
+        "\\bPS(1|2|3)\\b", "\\bPlaystation( )?(1|2|3)\\b", "XBOX( )?360"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       override val categoryId: Int = 139973
