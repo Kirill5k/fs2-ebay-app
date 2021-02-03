@@ -101,7 +101,7 @@ final private class LiveSelfridgesClient[F[_]](
               F.pure(defaultResponse)
           case Left(error) =>
             L.error(s"error sending $endpoint request to selfridges: ${error.getMessage}") *>
-              F.pure(defaultResponse)
+              T.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
         }
       }
 }
