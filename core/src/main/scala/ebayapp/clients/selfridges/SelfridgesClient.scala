@@ -4,15 +4,16 @@ import cats.effect.{Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.selfridges.SelfridgesClient._
 import ebayapp.clients.selfridges.mappers._
+import ebayapp.common.Logger
 import ebayapp.common.config.{SearchQuery, SelfridgesConfig}
 import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.ResellableItem
 import fs2.Stream
-import ebayapp.common.Logger
-import io.circe.Error
+import io.circe.Decoder
 import io.circe.generic.auto._
 import sttp.client3._
 import sttp.client3.circe.asJson
+import sttp.model.Uri
 
 import scala.concurrent.duration._
 
@@ -24,9 +25,9 @@ final private class LiveSelfridgesClient[F[_]](
     private val config: SelfridgesConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
-  F: Sync[F],
-  L: Logger[F],
-  T: Timer[F]
+    F: Sync[F],
+    L: Logger[F],
+    T: Timer[F]
 ) extends SelfridgesClient[F] {
 
   private val defaultHeaders = Map(
@@ -61,63 +62,48 @@ final private class LiveSelfridgesClient[F[_]](
       }
 
   private def searchForItems(query: SearchQuery)(page: Int): F[(List[CatalogItem], Option[Int])] =
+    sendRequest[SelfridgesSearchResponse](
+      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
+      "products by ids",
+      SelfridgesSearchResponse(0, None, Nil)
+    ).map(res => (res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
+
+  private def getItemPrice(number: String): F[List[ItemPrice]] =
+    sendRequest[SelfridgesItemPriceResponse](
+      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/price/byId/$number",
+      "item price",
+      SelfridgesItemPriceResponse(None)
+    ).map(res => res.prices.getOrElse(Nil))
+
+  private def getItemStock(number: String): F[List[ItemStock]] =
+    sendRequest[SelfridgesItemStockResponse](
+      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/stock/byId/$number",
+      "item stock",
+      SelfridgesItemStockResponse(None)
+    ).map(res => res.stocks.getOrElse(Nil))
+
+  private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
     basicRequest
-      .get(
-        uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60"
-      )
+      .get(uri)
       .headers(defaultHeaders)
       .header("api-key", config.apiKey)
-      .response(asJson[SelfridgesSearchResponse])
+      .response(asJson[A])
       .send(backend)
       .flatMap { r =>
         r.body match {
           case Right(res) =>
-            F.pure((res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
+            F.pure(res)
+          case Left(DeserializationException(_, error)) =>
+            L.critical(s"error parsing selfdridges $endpoint response: ${error.getMessage}") *>
+              F.pure(defaultResponse)
+          case Left(HttpError(_, status)) if status.isClientError =>
+            L.critical(s"error sending $endpoint request to selfridges: ${status}") *>
+              F.pure(defaultResponse)
           case Left(error) =>
-            handleError[(List[CatalogItem], Option[Int])]("products by ids", (Nil, None))(error)
+            L.error(s"error sending $endpoint request to selfridges: ${error.getMessage}") *>
+              F.pure(defaultResponse)
         }
       }
-
-  private def getItemPrice(number: String): F[List[ItemPrice]] =
-    basicRequest
-      .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/price/byId/$number")
-      .headers(defaultHeaders)
-      .header("api-key", config.apiKey)
-      .response(asJson[SelfridgesItemPriceResponse])
-      .send(backend)
-      .flatMap { r =>
-        r.body match {
-          case Right(res) => F.pure(res.prices.getOrElse(Nil))
-          case Left(error) => handleError[List[ItemPrice]]("item price", Nil)(error)
-        }
-      }
-
-  private def getItemStock(number: String): F[List[ItemStock]] =
-    basicRequest
-      .get(uri"${config.baseUri}/api/cms/ecom/v1/GB/en/stock/byId/$number")
-      .headers(defaultHeaders)
-      .header("api-key", config.apiKey)
-      .response(asJson[SelfridgesItemStockResponse])
-      .send(backend)
-      .flatMap { r =>
-        r.body match {
-          case Right(res) => F.pure(res.stocks.getOrElse(Nil))
-          case Left(error) => handleError[List[ItemStock]]("item stock", Nil)(error)
-        }
-      }
-
-  private def handleError[A](endpoint: String, defaultResult: A)(error: ResponseException[String, Error]): F[A] =
-    error match {
-      case DeserializationException(_, error) =>
-        L.critical(s"error parsing selfdridges $endpoint response: ${error.getMessage}") *>
-          F.pure(defaultResult)
-      case HttpError(_, status) if status.isClientError =>
-        L.critical(s"error sending $endpoint request to selfridges: ${status}") *>
-          F.pure(defaultResult)
-      case error =>
-        L.error(s"error sending $endpoint request to selfridges: ${error.getMessage}") *>
-          F.pure(defaultResult)
-    }
 }
 
 object SelfridgesClient {
