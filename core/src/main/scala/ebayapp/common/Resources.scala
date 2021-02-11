@@ -1,11 +1,11 @@
-package ebayapp
+package ebayapp.common
 
 import cats.effect.{Blocker, Concurrent, ContextShift, Resource}
 import cats.implicits._
 import ebayapp.common.config.{AppConfig, MongoConfig}
 import mongo4cats.client.MongoClientF
-import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.SttpBackend
+import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 
 final case class Resources[F[_]](
     blocker: Blocker,

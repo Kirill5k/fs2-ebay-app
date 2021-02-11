@@ -2,7 +2,6 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    lazy val fs2        = "2.5.0"
     lazy val mongo4cats = "0.1.5"
     lazy val pureConfig = "0.14.0"
     lazy val circe      = "0.13.0"
@@ -17,7 +16,6 @@ object Dependencies {
   }
 
   object Libraries {
-    lazy val fs2        = "co.fs2"             %% "fs2-core"        % Versions.fs2
     lazy val mongo4cats = "io.github.kirill5k" %% "mongo4cats-core" % Versions.mongo4cats
 
     object pureconfig {
@@ -69,7 +67,6 @@ object Dependencies {
   }
 
   lazy val core = Seq(
-    Libraries.fs2,
     Libraries.mongo4cats
   ) ++
     Libraries.circe.all ++

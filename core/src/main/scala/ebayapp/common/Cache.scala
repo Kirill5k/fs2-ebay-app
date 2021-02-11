@@ -16,7 +16,7 @@ trait Cache[F[_], K, V] {
 }
 
 final private class RefbasedCache[F[_]: Sync, K, V](
-    state: Ref[F, Map[K, (V, Instant)]]
+    private val state: Ref[F, Map[K, (V, Instant)]]
 ) extends Cache[F, K, V] {
 
   override def get(key: K): F[Option[V]] =
