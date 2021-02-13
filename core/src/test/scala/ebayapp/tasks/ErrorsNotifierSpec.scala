@@ -18,7 +18,7 @@ class ErrorsNotifierSpec extends CatsSpec {
       val res = for {
         logger          <- Logger.make[IO]
         notifier        <- ErrorsNotifier.make[IO](services)(Concurrent[IO], logger, Timer[IO])
-        notifierProcess <- notifier.alertOnErrors().interruptAfter(1.seconds).compile.drain.start
+        notifierProcess <- notifier.run().interruptAfter(1.seconds).compile.drain.start
         _               <- logger.critical("omg, critical error")
         _               <- logger.critical("omg, critical error")
         _               <- notifierProcess.join

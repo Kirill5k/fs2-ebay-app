@@ -34,7 +34,7 @@ class EbayDealsFinderSpec extends CatsSpec {
 
       val result = for {
         task <- EbayDealsFinder.videoGames(dealConfig, services)
-        _    <- task.searchForCheapItems().compile.drain
+        _    <- task.run().compile.drain
       } yield ()
 
       result.unsafeToFuture().map { r =>
@@ -58,7 +58,7 @@ class EbayDealsFinderSpec extends CatsSpec {
 
       val result = for {
         task <- EbayDealsFinder.videoGames(dealConfig, services)
-        _    <- task.searchForCheapItems().compile.drain
+        _    <- task.run().compile.drain
       } yield ()
 
       result.unsafeToFuture().map { r =>

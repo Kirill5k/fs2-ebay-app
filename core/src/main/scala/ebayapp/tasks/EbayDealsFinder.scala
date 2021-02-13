@@ -13,9 +13,9 @@ final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails: EbayItemMapper: EbaySe
     private val ebayDealsService: EbayDealsService[F],
     private val resellableItemService: ResellableItemService[F, D],
     private val notificationService: NotificationService[F]
-) {
+) extends Task[F] {
 
-  def searchForCheapItems(): Stream[F, Unit] =
+  def run(): Stream[F, Unit] =
     ebayDealsService
       .deals[D](dealsConfig)
       .evalFilter(resellableItemService.isNew)
@@ -37,7 +37,7 @@ object EbayDealsFinder {
   def videoGames[F[_]: Sync](
       config: EbayDealsConfig,
       services: Services[F]
-  ): F[EbayDealsFinder[F, ItemDetails.Game]] =
+  ): F[Task[F]] =
     Sync[F].delay {
       new EbayDealsFinder[F, ItemDetails.Game](
         config,

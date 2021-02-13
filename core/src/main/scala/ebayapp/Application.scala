@@ -28,7 +28,7 @@ object Application extends IOApp {
             services     <- Services.make(clients, repositories) <* logger.info("created services")
             tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
             controllers  <- Controllers.make(resources.blocker, services) <* logger.info("created controllers")
-            _            <- logger.info("initiating search tasks") *> tasks.processes.compile.drain.start
+            _            <- logger.info("initiating tasks") *> tasks.runAll.compile.drain.start
             _            <- logger.info("starting http server")
             _ <- BlazeServerBuilder[IO](ExecutionContext.global)
               .bindHttp(config.server.port, config.server.host)

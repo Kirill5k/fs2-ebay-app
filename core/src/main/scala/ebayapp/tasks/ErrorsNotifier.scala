@@ -10,9 +10,9 @@ import scala.concurrent.duration._
 
 final class ErrorsNotifier[F[_]: Concurrent: Logger: Timer](
     private val notificationService: NotificationService[F]
-) {
+) extends Task[F] {
 
-  def alertOnErrors(): Stream[F, Unit] =
+  def run(): Stream[F, Unit] =
     Logger[F]
       .errors
       .throttle(30.seconds)
@@ -21,7 +21,7 @@ final class ErrorsNotifier[F[_]: Concurrent: Logger: Timer](
 
 object ErrorsNotifier {
 
-  def make[F[_]: Concurrent: Logger: Timer](services: Services[F]): F[ErrorsNotifier[F]] =
+  def make[F[_]: Concurrent: Logger: Timer](services: Services[F]): F[Task[F]] =
     Sync[F].delay(new ErrorsNotifier[F](services.notification))
 }
 
