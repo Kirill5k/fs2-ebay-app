@@ -18,7 +18,7 @@ final case class Tasks[F[_]: Concurrent: Logger: Timer](
       .map(_.run().resumeOnError(1.minute))
       .parJoinUnbounded
 
-  implicit final private class StreamOps[O](private val stream: Stream[F, O]) {
+  implicit final private class StreamOps[O](private val stream: Stream[F, O]) extends AnyVal {
     def resumeOnError(delay: FiniteDuration)(implicit logger: Logger[F], timer: Timer[F]): Stream[F, O] =
       stream.handleErrorWith { error =>
         Stream.eval_(logger.critical(error)("error during task processing")) ++
