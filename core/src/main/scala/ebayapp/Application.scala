@@ -2,7 +2,7 @@ package ebayapp
 
 import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import ebayapp.clients.Clients
-import ebayapp.common.Logger
+import ebayapp.common.{Logger, Resources}
 import ebayapp.common.config.AppConfig
 import ebayapp.controllers.Controllers
 import ebayapp.repositories.Repositories

@@ -96,7 +96,7 @@ final private class LiveSelfridgesClient[F[_]](
           case Left(DeserializationException(_, error)) =>
             L.critical(s"error parsing selfdridges $endpoint response: ${error.getMessage}") *>
               F.pure(defaultResponse)
-          case Left(HttpError(_, status)) if status.isClientError =>
+          case Left(HttpError(_, status)) if status.isClientError || status.isServerError =>
             L.critical(s"error sending $endpoint request to selfridges: ${status}") *>
               F.pure(defaultResponse)
           case Left(error) =>
