@@ -15,12 +15,16 @@ final case class Tasks[F[_]: Concurrent: Logger: Timer](
   def runAll: Stream[F, Unit] =
     Stream
       .emits(tasks)
-      .map(_.run())
+      .map(_.run().resumeOnError(1.minute))
       .parJoinUnbounded
-      .handleErrorWith { error =>
-        Stream.eval_(Logger[F].critical(error)("error during task processing")) ++
-          runAll.delayBy(1.minute)
+
+  implicit final private class StreamOps[O](private val stream: Stream[F, O]) {
+    def resumeOnError(delay: FiniteDuration)(implicit logger: Logger[F], timer: Timer[F]): Stream[F, O] =
+      stream.handleErrorWith { error =>
+        Stream.eval_(logger.critical(error)("error during task processing")) ++
+          stream.delayBy(delay)(timer)
       }
+  }
 }
 
 object Tasks {
