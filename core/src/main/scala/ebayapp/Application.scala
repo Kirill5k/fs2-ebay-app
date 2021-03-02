@@ -38,6 +38,7 @@ object Application extends IOApp {
               .interruptWhen(logger.awaitSigTerm)
               .compile
               .drain
+              .attempt
             _ <- logger.info("stopping ebay-app")
             _ <- runningTasks.cancel *> IO.sleep(10.seconds)
           } yield ()
