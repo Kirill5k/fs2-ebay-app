@@ -8,7 +8,7 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-final class ErrorsNotifier[F[_]: Concurrent: Logger: Timer](
+final class ErrorsNotifier[F[_]: Logger: Timer](
     private val notificationService: NotificationService[F]
 ) extends Task[F] {
 

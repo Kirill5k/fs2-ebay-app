@@ -4,8 +4,8 @@ import cats.Monad
 import cats.effect.Concurrent
 import cats.implicits._
 import fs2.concurrent.Queue
-import io.chrisdavenport.log4cats.{Logger => Logger4Cats}
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.{Logger => Logger4Cats}
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import fs2.Stream
 
 import java.time.Instant

@@ -2,7 +2,7 @@ package ebayapp
 
 import cats.effect.Sync
 import ebayapp.common.{CriticalError, Logger}
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import fs2.Stream
 
 object MockLogger {
