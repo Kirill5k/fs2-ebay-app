@@ -6,7 +6,7 @@ import cats.implicits._
 import ebayapp.common.config.SearchQuery
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.services.ResellableItemService
-import ebayapp.common.Logger
+import ebayapp.common.{JsonCodecs, Logger}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.circe._
@@ -15,7 +15,7 @@ import org.http4s.{HttpRoutes, MessageFailure, ParseFailure, QueryParamDecoder, 
 
 import scala.util.Try
 
-trait Controller[F[_]] extends Http4sDsl[F] {
+trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
   import Controller._
 
   implicit val instantQueryParamDecoder: QueryParamDecoder[Instant] =
