@@ -10,5 +10,6 @@ object errors {
     final case class Http(status: Int, message: String) extends AppError
     final case class Auth(message: String)              extends AppError
     final case class Json(message: String)              extends AppError
+    final case class Critical(message: String)          extends AppError
   }
 }

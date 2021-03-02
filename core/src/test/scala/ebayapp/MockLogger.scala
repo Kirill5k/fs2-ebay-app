@@ -25,7 +25,6 @@ object MockLogger {
     override def trace(message: => String): F[Unit] = ???
 
     override def errors: fs2.Stream[F, Error] = Stream.empty
-
-
+    override def awaitSigTerm: F[Either[Throwable, Unit]] = Sync[F].pure(Right(()))
   }
 }
