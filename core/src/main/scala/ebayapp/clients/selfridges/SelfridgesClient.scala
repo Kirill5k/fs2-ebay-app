@@ -13,7 +13,7 @@ import io.circe.Decoder
 import io.circe.generic.auto._
 import sttp.client3._
 import sttp.client3.circe.asJson
-import sttp.model.Uri
+import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration._
 
@@ -26,8 +26,8 @@ final private class LiveSelfridgesClient[F[_]](
     private val backend: SttpBackend[F, Any]
 )(implicit
     F: Sync[F],
-    L: Logger[F],
-    T: Timer[F]
+    T: Timer[F],
+    logger: Logger[F]
 ) extends SelfridgesClient[F] {
 
   private val defaultHeaders = Map(
@@ -94,13 +94,16 @@ final private class LiveSelfridgesClient[F[_]](
           case Right(res) =>
             F.pure(res)
           case Left(DeserializationException(_, error)) =>
-            L.critical(s"error parsing selfdridges $endpoint response: ${error.getMessage}") *>
+            logger.error(s"error parsing selfdridges $endpoint response: ${error.getMessage}") *>
+              F.pure(defaultResponse)
+          case Left(HttpError(_, StatusCode.Forbidden)) =>
+            logger.critical(s"error sending $endpoint request to selfridges: forbidden") *>
               F.pure(defaultResponse)
           case Left(HttpError(_, status)) if status.isClientError || status.isServerError =>
-            L.critical(s"error sending $endpoint request to selfridges: ${status}") *>
+            logger.error(s"error sending $endpoint request to selfridges: $status") *>
               F.pure(defaultResponse)
           case Left(error) =>
-            L.error(s"error sending $endpoint request to selfridges: ${error.getMessage}") *>
+            logger.warn(s"error sending $endpoint request to selfridges: ${error.getMessage}") *>
               T.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
         }
       }

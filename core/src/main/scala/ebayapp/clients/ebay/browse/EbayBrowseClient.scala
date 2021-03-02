@@ -21,13 +21,13 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val backend: SttpBackend[F, Any]
 )(implicit
     val F: Sync[F],
-    val L: Logger[F]
+    val logger: Logger[F]
 ) extends EbayBrowseClient[F] {
 
   private val defaultHeaders: Map[String, String] = Map(
     "X-EBAY-C-MARKETPLACE-ID" -> "EBAY_GB",
-    HeaderNames.Accept -> MediaType.ApplicationJson.toString(),
-    HeaderNames.ContentType -> MediaType.ApplicationJson.toString()
+    HeaderNames.Accept        -> MediaType.ApplicationJson.toString(),
+    HeaderNames.ContentType   -> MediaType.ApplicationJson.toString()
   )
 
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]] =
@@ -45,7 +45,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
           case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
             F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
           case status =>
-            L.error(s"error sending search request to ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
+            logger.warn(s"error sending search request to ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
               F.raiseError(AppError.Http(status.code, s"error sending request to ebay search api: $status"))
         }
       }
@@ -67,7 +67,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
           case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
             F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
           case status =>
-            L.error(s"error getting item from ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
+            logger.warn(s"error getting item from ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
               F.raiseError(AppError.Http(status.code, s"error getting item from ebay search api: $status"))
         }
       }

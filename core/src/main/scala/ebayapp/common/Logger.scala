@@ -10,33 +10,36 @@ import fs2.Stream
 
 import java.time.Instant
 
-final case class CriticalError(
+final case class Error(
     message: String,
     time: Instant = Instant.now()
 )
 
 trait Logger[F[_]] extends Logger4Cats[F] {
-  def errors: Stream[F, CriticalError]
+  def errors: Stream[F, Error]
   def critical(message: => String): F[Unit]
   def critical(t: Throwable)(message: => String): F[Unit]
 }
 
 final private class LiveLogger[F[_]: Monad](
     private val logger: Logger4Cats[F],
-    private val criticalErrors: Queue[F, CriticalError]
+    private val loggedErrors: Queue[F, Error]
 ) extends Logger[F] {
 
-  override def errors: Stream[F, CriticalError] =
-    criticalErrors.dequeue
+  override def errors: Stream[F, Error] =
+    loggedErrors.dequeue
 
   override def critical(message: => String): F[Unit] =
-    criticalErrors.enqueue1(CriticalError(message)) *> error(message)
+    loggedErrors.enqueue1(Error(message)) *> error(message)
 
   override def critical(t: Throwable)(message: => String): F[Unit] =
-    criticalErrors.enqueue1(CriticalError(s"$message - ${t.getMessage}")) *> error(t)(message)
+    loggedErrors.enqueue1(Error(s"$message - ${t.getMessage}")) *> error(t)(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
-    logger.error(t)(message)
+    loggedErrors.enqueue1(Error(s"$message - ${t.getMessage}")) *> logger.error(t)(message)
+
+  override def error(message: => String): F[Unit] =
+    loggedErrors.enqueue1(Error(message)) *> logger.error(message)
 
   override def warn(t: Throwable)(message: => String): F[Unit] =
     logger.warn(t)(message)
@@ -49,9 +52,6 @@ final private class LiveLogger[F[_]: Monad](
 
   override def trace(t: Throwable)(message: => String): F[Unit] =
     logger.trace(t)(message)
-
-  override def error(message: => String): F[Unit] =
-    logger.error(message)
 
   override def warn(message: => String): F[Unit] =
     logger.warn(message)
@@ -71,6 +71,6 @@ object Logger {
 
   def make[F[_]: Concurrent]: F[Logger[F]] =
     Queue
-      .unbounded[F, CriticalError]
+      .unbounded[F, Error]
       .map(queue => new LiveLogger[F](Slf4jLogger.getLogger[F], queue))
 }

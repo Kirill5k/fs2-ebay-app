@@ -36,7 +36,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     private val itemIdsCache: Cache[F, String, Unit]
 )(implicit
     val F: Sync[F],
-    val L: Logger[F]
+    val logger: Logger[F]
 ) extends EbayClient[F] {
 
   def latest[D <: ItemDetails](
@@ -69,7 +69,7 @@ final private[ebay] class LiveEbayClient[F[_]](
       all   <- browseClient.search(token, searchParams)
       valid = all.filter(_.itemGroupType.isEmpty).filter(hasTrustedSeller).filter(itemsFilter)
       complete <- valid.traverse(getCompleteItem).map(_.flatten)
-      _        <- L.info(s"""ebay-search "${searchParams("q")}" returned ${complete.size} new items (total - ${all.size})""")
+      _        <- logger.info(s"""ebay-search "${searchParams("q")}" returned ${complete.size} new items (total - ${all.size})""")
     } yield complete
 
   private def getCompleteItem(itemSummary: EbayItemSummary): F[Option[EbayItem]] =
@@ -87,12 +87,12 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
-      Stream.eval_(L.warn(s"auth error from ebay client ($message). switching account")) ++
+      Stream.eval_(logger.warn(s"auth error from ebay client ($message). switching account")) ++
         Stream.eval_(authClient.switchAccount())
     case error: AppError =>
-      Stream.eval_(L.error(s"api client error while getting items from ebay: ${error.message}"))
+      Stream.eval_(logger.warn(s"api client error while getting items from ebay: ${error.message}"))
     case error =>
-      Stream.eval_(L.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
+      Stream.eval_(logger.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
   }
 }
 

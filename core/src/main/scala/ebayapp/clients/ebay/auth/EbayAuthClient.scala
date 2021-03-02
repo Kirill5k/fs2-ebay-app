@@ -27,7 +27,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Sync](
     private val credentials: Ref[F, List[EbayCredentials]],
     private val backend: SttpBackend[F, Any]
 )(implicit
-    val L: Logger[F],
+    val logger: Logger[F],
     val T: Timer[F]
 ) extends EbayAuthClient[F] {
 
@@ -40,7 +40,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Sync](
       .map(_.token)
 
   def switchAccount(): F[Unit] =
-    L.warn("switching ebay account") *>
+    logger.warn("switching ebay account") *>
       authToken.set(None) *>
       credentials.update(creds => creds.tail :+ creds.head)
 
@@ -60,16 +60,16 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Sync](
             case Right(token) =>
               EbayAuthToken(token.access_token, token.expires_in).pure[F]
             case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-              L.error(s"reached api calls limit (cid - ${creds.clientId})") *>
+              logger.warn(s"reached api calls limit (cid - ${creds.clientId})") *>
                 switchAccount() *> authenticate()
             case Left(HttpError(error, StatusCode.Unauthorized)) =>
-              L.error(s"unauthorized: ${error.error_description} (cid - ${creds.clientId})") *>
+              logger.warn(s"unauthorized: ${error.error_description} (cid - ${creds.clientId})") *>
                 switchAccount() *> authenticate()
             case Left(HttpError(error, status)) =>
-              L.error(s"http error authenticating with ebay ${status.code}: ${error.error_description} (cid - ${creds.clientId})") *>
+              logger.error(s"http error authenticating with ebay ${status.code}: ${error.error_description} (cid - ${creds.clientId})") *>
                 T.sleep(1.second) *> authenticate()
             case Left(error) =>
-              L.error(s"unexpected error authenticating with ebay: ${error.getMessage}") *>
+              logger.error(s"unexpected error authenticating with ebay: ${error.getMessage}") *>
                 T.sleep(1.second) *> authenticate()
 
           }

@@ -1,7 +1,7 @@
 package ebayapp
 
 import cats.effect.Sync
-import ebayapp.common.{CriticalError, Logger}
+import ebayapp.common.{Error, Logger}
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import fs2.Stream
 
@@ -16,15 +16,15 @@ object MockLogger {
     override def error(message: => String): F[Unit] = l.error(message)
     override def warn(message: => String): F[Unit] = l.warn(message)
     override def info(message: => String): F[Unit] = l.info(message)
+    override def warn(t: Throwable)(message: => String): F[Unit] = l.warn(t)(message)
 
-    override def warn(t: Throwable)(message: => String): F[Unit] = ???
     override def info(t: Throwable)(message: => String): F[Unit] = ???
     override def debug(t: Throwable)(message: => String): F[Unit] = ???
     override def trace(t: Throwable)(message: => String): F[Unit] = ???
     override def debug(message: => String): F[Unit] = ???
     override def trace(message: => String): F[Unit] = ???
 
-    override def errors: fs2.Stream[F, CriticalError] = Stream.empty
+    override def errors: fs2.Stream[F, Error] = Stream.empty
 
 
   }

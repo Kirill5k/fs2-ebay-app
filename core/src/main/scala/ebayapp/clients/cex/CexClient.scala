@@ -31,7 +31,7 @@ final class CexApiClient[F[_]](
 )(implicit
     S: Sync[F],
     T: Timer[F],
-    L: Logger[F]
+    logger: Logger[F]
 ) extends CexClient[F] {
 
   private val categoriesMap: Map[String, List[Int]] = Map(
@@ -41,7 +41,7 @@ final class CexApiClient[F[_]](
   override def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]] =
     item.itemDetails.fullName match {
       case None =>
-        L.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
+        logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
       case Some(name) =>
         val categories = item.listingDetails.category.flatMap(categoriesMap.get)
         findSellPrice(SearchQuery(name), categories).map(sp => item.copy(sellPrice = sp))
@@ -56,7 +56,7 @@ final class CexApiClient[F[_]](
         search(uri"${config.baseUri}/v3/boxes?q=$q&categoryIds=$categoryIds")
           .map(getMinResellPrice)
           .flatTap { rp =>
-            if (rp.isEmpty) L.warn(s"""cex-price-match "$q" returned 0 results""")
+            if (rp.isEmpty) logger.warn(s"""cex-price-match "$q" returned 0 results""")
             else resellPriceCache.put(query.base64, rp)
           }
     }
@@ -74,7 +74,7 @@ final class CexApiClient[F[_]](
   ): F[List[ResellableItem[D]]] =
     search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")
       .map(_.response.data.fold(List.empty[SearchResult])(_.boxes))
-      .flatTap(res => L.info(s"""cex-search "${query.value}" returned ${res.size} results"""))
+      .flatTap(res => logger.info(s"""cex-search "${query.value}" returned ${res.size} results"""))
       .map(_.map(mapper.toDomain))
 
   private def search(uri: Uri): F[CexSearchResponse] =
@@ -89,12 +89,12 @@ final class CexApiClient[F[_]](
           case Right(response) =>
             response.pure[F]
           case Left(DeserializationException(body, error)) =>
-            L.error(s"error parsing json: ${error.getMessage}\n$body") *>
+            logger.warn(s"error parsing json: ${error.getMessage}\n$body") *>
               AppError.Json(s"error parsing json: ${error.getMessage}").raiseError[F, CexSearchResponse]
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            L.warn(s"too many requests to cex. retrying") *> T.sleep(5.seconds) *> search(uri)
+            logger.warn(s"too many requests to cex. retrying") *> T.sleep(5.seconds) *> search(uri)
           case Left(error) =>
-            L.error(s"error sending price query to cex: ${r.code}\n$error") *>
+            logger.warn(s"error sending price query to cex: ${r.code}\n$error") *>
               T.sleep(5.second) *> search(uri)
         }
       }

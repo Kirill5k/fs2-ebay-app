@@ -5,10 +5,10 @@ import cats.implicits._
 import ebayapp.clients.telegram.TelegramClient
 import ebayapp.domain.stock.StockUpdate
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.common.{CriticalError, Logger}
+import ebayapp.common.{Error, Logger}
 
 trait NotificationService[F[_]] {
-  def alert(error: CriticalError): F[Unit]
+  def alert(error: Error): F[Unit]
   def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit]
   def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit]
 }
@@ -39,7 +39,7 @@ final class TelegramNotificationService[F[_]](
         L.warn(s"not enough details for stock update notification $update")
     }
 
-  override def alert(error: CriticalError): F[Unit] = {
+  override def alert(error: Error): F[Unit] = {
     val alert = s"${error.time.toString} ERROR - ${error.message}"
     telegramClient.sendMessageToAlertsChannel(alert)
   }

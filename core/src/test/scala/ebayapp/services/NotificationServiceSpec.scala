@@ -3,7 +3,7 @@ package ebayapp.services
 import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.telegram.TelegramClient
-import ebayapp.common.CriticalError
+import ebayapp.common.Error
 import ebayapp.domain.ResellableItemBuilder
 import ebayapp.domain.stock.StockUpdate
 
@@ -18,7 +18,7 @@ class NotificationServiceSpec extends CatsSpec {
       val client = mock[TelegramClient[IO]]
       when(client.sendMessageToAlertsChannel(any[String])).thenReturn(IO.unit)
 
-      val error = CriticalError("very serious error", Instant.parse("2021-01-01T00:10:00Z"))
+      val error = Error("very serious error", Instant.parse("2021-01-01T00:10:00Z"))
       val result = NotificationService.telegram(client).flatMap(_.alert(error))
 
       result.unsafeToFuture().map { r =>

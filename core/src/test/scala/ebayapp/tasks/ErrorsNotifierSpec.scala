@@ -2,7 +2,7 @@ package ebayapp.tasks
 
 import cats.effect.{Concurrent, IO, Timer}
 import ebayapp.CatsSpec
-import ebayapp.common.{CriticalError, Logger}
+import ebayapp.common.{Error, Logger}
 import ebayapp.domain.ItemDetails
 import ebayapp.services._
 
@@ -14,7 +14,7 @@ class ErrorsNotifierSpec extends CatsSpec {
 
     "send alerts on critical errors" in {
       val services = mocks
-      when(services.notification.alert(any[CriticalError])).thenReturn(IO.unit)
+      when(services.notification.alert(any[Error])).thenReturn(IO.unit)
       val res = for {
         logger          <- Logger.make[IO]
         notifier        <- ErrorsNotifier.make[IO](services)(Concurrent[IO], logger, Timer[IO])
@@ -25,7 +25,7 @@ class ErrorsNotifierSpec extends CatsSpec {
       } yield ()
 
       res.unsafeToFuture().map { r =>
-        verify(services.notification).alert(any[CriticalError])
+        verify(services.notification).alert(any[Error])
         r mustBe ()
       }
     }

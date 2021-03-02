@@ -16,7 +16,9 @@ trait TelegramClient[F[_]] {
 final private class TelegramApiClient[F[_]: Sync](
     private val config: TelegramConfig,
     private val backend: SttpBackend[F, Any]
-)(implicit val L: Logger[F]) extends TelegramClient[F] {
+)(implicit
+    val logger: Logger[F]
+) extends TelegramClient[F] {
 
   def sendMessageToMainChannel(message: String): F[Unit] =
     sendMessage(config.mainChannelId, message)
@@ -35,7 +37,7 @@ final private class TelegramApiClient[F[_]: Sync](
         r.body match {
           case Right(_) => ().pure[F]
           case Left(error) =>
-            L.error(s"error sending message to telegram: ${r.code}\n$error") *>
+            logger.warn(s"error sending message to telegram: ${r.code}\n$error") *>
               AppError.Http(r.code.code, s"error sending message to telegram channel $channelId: ${r.code}").raiseError[F, Unit]
         }
       }
