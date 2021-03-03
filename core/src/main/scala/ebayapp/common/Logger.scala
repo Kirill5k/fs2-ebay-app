@@ -32,22 +32,22 @@ trait Logger[F[_]] extends Logger4Cats[F] {
 final private class LiveLogger[F[_]: Monad](
     private val logger: Logger4Cats[F],
     private val loggedErrors: Queue[F, Error],
-    private val stopSwitch: Deferred[F, Either[Throwable, Unit]]
+    private val sigTerm: Deferred[F, Either[Throwable, Unit]]
 ) extends Logger[F] {
 
   override def awaitSigTerm: F[Either[Throwable, Unit]] =
-    stopSwitch.get
+    sigTerm.get
 
   override def errors: Stream[F, Error] =
     loggedErrors.dequeue
 
   override def critical(message: => String): F[Unit] =
-    stopSwitch.complete(Left(AppError.Critical(message))) *>
+    sigTerm.complete(Left(AppError.Critical(message))) *>
       loggedErrors.enqueue1(Error(message)) *>
       error(message)
 
   override def critical(t: Throwable)(message: => String): F[Unit] =
-    stopSwitch.complete(Left(t)) *>
+    sigTerm.complete(Left(t)) *>
       loggedErrors.enqueue1(Error(t, message)) *>
       error(t)(message)
 
