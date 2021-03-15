@@ -97,7 +97,7 @@ final private class LiveSelfridgesClient[F[_]](
             logger.error(s"error parsing selfdridges $endpoint response: ${error.getMessage}") *>
               F.pure(defaultResponse)
           case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
-            logger.critical(s"error sending $endpoint request to selfridges: $s") *>
+            logger.error(s"error sending $endpoint request to selfridges: $s") *>
               F.pure(defaultResponse)
           case Left(HttpError(_, status)) if status.isClientError || status.isServerError =>
             logger.error(s"error sending $endpoint request to selfridges: $status") *>
