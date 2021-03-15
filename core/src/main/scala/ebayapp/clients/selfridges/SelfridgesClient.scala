@@ -32,11 +32,12 @@ final private class LiveSelfridgesClient[F[_]](
 
   private val defaultHeaders = Map(
     "cache-control"    -> "no-cache",
+    "accept-encoding"  -> "gzip, deflate, br",
+    "accept-language"  -> "en-GB,en-US;q=0.9,en;q=0.8",
     "content-type"     -> "application/json; charset=utf-8",
     "accept"           -> "application/json, text/javascript, */*; q=0.01",
-    "accept-language"  -> "en-GB,en-US;q=0.9,en;q=0.8",
+    "connection"       -> "keep-alive",
     "x-requested-with" -> "XMLHttpRequest",
-    "referer"          -> "https://www.selfridges.com/",
     "sec-fetch-dest"   -> "empty",
     "sec-fetch-mode"   -> "cors",
     "sec-fetch-site"   -> "same-origin"
