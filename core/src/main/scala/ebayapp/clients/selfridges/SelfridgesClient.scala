@@ -47,7 +47,7 @@ final private class LiveSelfridgesClient[F[_]](
       .flatMap { item =>
         Stream
           .evalSeq(getItemDetails(item))
-          .metered(100.millis)
+          .metered(250.millis)
           .map { case (stock, price) => (item, stock, price) }
       }
       .map { case (item, stock, price) => clothingMapper.toDomain(item, stock, price) }
