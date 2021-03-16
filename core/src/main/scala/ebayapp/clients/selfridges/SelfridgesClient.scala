@@ -36,8 +36,7 @@ final private class LiveSelfridgesClient[F[_]](
     "Accept-Language"  -> "en-GB,en-US;q=0.9,en;q=0.8",
     "Content-Type"     -> "application/json; charset=utf-8",
     "Accept"           -> "application/json, text/javascript, */*; q=0.01",
-    "Connection"       -> "keep-alive",
-    "User-Agent"       -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
+    "Connection"       -> "keep-alive"
   )
 
   override def search(query: SearchQuery): Stream[F, ResellableItem[Clothing]] =
