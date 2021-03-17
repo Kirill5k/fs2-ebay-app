@@ -23,7 +23,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
     val query = SearchQuery("EA7 Armani")
 
-    "return stream of clothing items" in {
+    "return stream of clothing items that are on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
@@ -32,6 +32,8 @@ class SelfridgesClientSpec extends SttpClientSpec {
             Response.ok(json("selfridges/search-page-2.json"))
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "3", "ids" -> "EA7-Armani")) =>
             Response.ok(json("selfridges/search-page-3.json"))
+          case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "4", "ids" -> "EA7-Armani")) =>
+            Response.ok(json("selfridges/search-page-4.json"))
           case r if isGetStockRequest(r, "R03631644") =>
             Response.ok(json("selfridges/stock-R03631644.json"))
           case r if isGetStockRequest(r, "R03631641") =>
@@ -49,7 +51,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.searchSale(query).compile.toList).unsafeToFuture().map { items =>
         items must have size 16
         val item = items.head
 
@@ -73,7 +75,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
+      client.flatMap(_.searchSale(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
     }
 
     "return empty stream when failed to deserialize response" in {
@@ -86,7 +88,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
+      client.flatMap(_.searchSale(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
     }
   }
 

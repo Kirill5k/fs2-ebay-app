@@ -35,7 +35,7 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
 
   private def findItems(query: SearchQuery): F[Map[String, ResellableItem[Clothing]]] =
     client
-      .search(query)
+      .searchSale(query)
       .filter(!_.itemDetails.name.matches(filters))
       .filter(_.buyPrice.discount.exists(_ > minDiscount))
       .filter(_.buyPrice.quantityAvailable > 0)

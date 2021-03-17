@@ -18,7 +18,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration._
 
 trait SelfridgesClient[F[_]] {
-  def search(query: SearchQuery): Stream[F, ResellableItem[Clothing]]
+  def searchSale(query: SearchQuery): Stream[F, ResellableItem[Clothing]]
 }
 
 final private class LiveSelfridgesClient[F[_]](
@@ -36,13 +36,15 @@ final private class LiveSelfridgesClient[F[_]](
     "Accept-Language"  -> "en-GB,en-US;q=0.9,en;q=0.8",
     "Content-Type"     -> "application/json; charset=utf-8",
     "Accept"           -> "application/json, text/javascript, */*; q=0.01",
-    "Connection"       -> "keep-alive"
+    "Connection"       -> "keep-alive",
+    "User-Agent"       -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
   )
 
-  override def search(query: SearchQuery): Stream[F, ResellableItem[Clothing]] =
+  override def searchSale(query: SearchQuery): Stream[F, ResellableItem[Clothing]] =
     Stream
       .unfoldLoopEval(1)(searchForItems(query))
       .flatMap(Stream.emits)
+      .filter(_.price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined))
       .flatMap { item =>
         Stream
           .evalSeq(getItemDetails(item))

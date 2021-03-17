@@ -28,7 +28,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       )
 
       val client = mock[SelfridgesClient[IO]]
-      when(client.search(any[SearchQuery]))
+      when(client.searchSale(any[SearchQuery]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(unwantedItems))
 

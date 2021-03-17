@@ -2,7 +2,7 @@
   "recordSetTotal": "4",
   "recordSetCount": "1",
   "noOfPages": "4",
-  "pageNumber": "3",
+  "pageNumber": "4",
   "resourceId": "/api/GB/en/search/ea7",
   "pageTitle": "Search results for 'ea7' - Selfridges | Shop Online",
   "metaDescription": "Shop the null range from our null department for a wide range of null products | Available to buy online from Selfridges.com",
@@ -16,17 +16,15 @@
       "seoKey": "ea7-armani-brand-appliqueacuted-hooded-cotton-blend-jersey-hoody_R03631642",
       "brandName": "EA7 ARMANI",
       "previewAttribute": "BLACK",
-      "productId": "8887089",
+      "productId": "8888089",
       "multiColour": "N",
       "productType": "Standard",
       "shortDescription": "Ea Gold Series Sweatshirt",
       "isPartOfBundle": "N",
-      "partNumber": "R03631642",
+      "partNumber": "R03331666",
       "price": [
         {
           "lowestPrice": "50.00",
-          "lowestWasPrice": "70.00",
-          "lowestWasWasPrice": "125.00",
           "currency": "GBP"
         }
       ]
