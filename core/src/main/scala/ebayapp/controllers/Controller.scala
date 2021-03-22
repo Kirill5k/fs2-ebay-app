@@ -21,9 +21,10 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
   implicit val instantQueryParamDecoder: QueryParamDecoder[Instant] =
     QueryParamDecoder[String].emap { dateString =>
       val localDate =
-        if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay())
-        else Try(LocalDateTime.parse(dateString))
-      localDate.map(_.toInstant(ZoneOffset.UTC)).toEither.leftMap(e => ParseFailure(s"Invalid date format: $dateString", e.getMessage))
+        if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay().toInstant(ZoneOffset.UTC))
+        else if (dateString.length == 19) Try(LocalDateTime.parse(dateString)).map(_.toInstant(ZoneOffset.UTC))
+        else Try(Instant.parse(dateString))
+      localDate.toEither.leftMap(e => ParseFailure(s"Invalid date format: $dateString", e.getMessage))
     }
 
   implicit val searchQueryParamDecoder: QueryParamDecoder[SearchQuery] =

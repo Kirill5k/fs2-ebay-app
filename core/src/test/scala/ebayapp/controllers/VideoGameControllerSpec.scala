@@ -71,6 +71,19 @@ class VideoGameControllerSpec extends ControllerSpec {
       verify(service).findAll(Some(100), Some(Instant.parse("2020-01-01T00:00:00Z")), Some(Instant.parse("2020-01-01T00:00:01Z")))
     }
 
+    "parse date query params" in {
+      val service = mock[ResellableItemService[IO, ItemDetails.Game]]
+      when(service.findAll(any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(IO.pure(Nil))
+
+      val controller = new VideoGameController[IO](service)
+
+      val request  = Request[IO](uri = uri"/video-games?from=2020-01-01&to=2020-01-01T00:00:01", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      verifyJsonResponse(response, Status.Ok, Some("""[]"""))
+      verify(service).findAll(None, Some(Instant.parse("2020-01-01T00:00:00Z")), Some(Instant.parse("2020-01-01T00:00:01Z")))
+    }
+
     "parse search query params" in {
       val service = mock[ResellableItemService[IO, ItemDetails.Game]]
       when(service.findBy(any[SearchQuery], any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(IO.pure(Nil))
