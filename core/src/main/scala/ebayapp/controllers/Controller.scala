@@ -1,6 +1,6 @@
 package ebayapp.controllers
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import cats.effect._
 import cats.implicits._
 import ebayapp.common.config.SearchQuery
@@ -20,27 +20,27 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
 
   implicit val instantQueryParamDecoder: QueryParamDecoder[Instant] =
     QueryParamDecoder[String].emap { dateString =>
-      val date =
-        if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay(ZoneOffset.UTC).toInstant)
-        else Try(Instant.parse(dateString))
-      date.toOption.toRight(ParseFailure(s"Invalid date format: $dateString", dateString))
+      val localDate =
+        if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay())
+        else Try(LocalDateTime.parse(dateString))
+      localDate.map(_.toInstant(ZoneOffset.UTC)).toEither.leftMap(e => ParseFailure(s"Invalid date format: $dateString", e.getMessage))
     }
 
   implicit val searchQueryParamDecoder: QueryParamDecoder[SearchQuery] =
     QueryParamDecoder[String].map(SearchQuery.apply)
 
   object SearchQueryParam extends OptionalQueryParamDecoderMatcher[SearchQuery]("query")
-  object LimitQueryParam extends OptionalQueryParamDecoderMatcher[Int]("limit")
-  object FromQueryParam  extends OptionalQueryParamDecoderMatcher[Instant]("from")
-  object ToQueryParam    extends OptionalQueryParamDecoderMatcher[Instant]("to")
+  object LimitQueryParam  extends OptionalQueryParamDecoderMatcher[Int]("limit")
+  object FromQueryParam   extends OptionalQueryParamDecoderMatcher[Instant]("from")
+  object ToQueryParam     extends OptionalQueryParamDecoderMatcher[Instant]("to")
 
   def routes: HttpRoutes[F]
 
   protected def withErrorHandling(
       response: => F[Response[F]]
-  )(
-    implicit F: Sync[F],
-    logger: Logger[F]
+  )(implicit
+      F: Sync[F],
+      logger: Logger[F]
   ): F[Response[F]] =
     response.handleErrorWith {
       case error: MessageFailure =>
