@@ -1,5 +1,6 @@
 package ebayapp.controllers
 
+import cats.Monad
 import cats.effect.{Blocker, ContextShift, Sync}
 import cats.implicits._
 import ebayapp.services.Services
@@ -7,7 +8,7 @@ import ebayapp.common.Logger
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 
-final case class Controllers[F[_]: Sync: Logger: ContextShift](
+final case class Controllers[F[_]: Monad](
     home: Controller[F],
     videoGame: Controller[F]
 ) {

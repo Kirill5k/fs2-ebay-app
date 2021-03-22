@@ -1,30 +1,29 @@
 package ebayapp.controllers
 
-import cats.effect.{ContextShift, Sync}
+import cats.effect.Sync
 import cats.implicits._
+import ebayapp.common.Logger
 import ebayapp.controllers.VideoGameController.VideoGameResponse
 import ebayapp.domain.ItemDetails
 import ebayapp.domain.ResellableItem.VideoGame
 import ebayapp.domain.search.ListingDetails
 import ebayapp.services.ResellableItemService
-import ebayapp.common.Logger
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.HttpRoutes
 import org.http4s.circe._
 
-final private[controllers] class VideoGameController[F[_]](
+final private[controllers] class VideoGameController[F[_]: Sync: Logger](
     private val videoGameService: ResellableItemService[F, ItemDetails.Game]
 ) extends Controller[F] {
 
-  override def routes(implicit cs: ContextShift[F], s: Sync[F], l: Logger[F]): HttpRoutes[F] =
+  override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
       case GET -> Root / "video-games" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) +& SearchQueryParam(query) =>
         withErrorHandling {
-          for {
-            games <- query.fold(videoGameService.findAll(limit, from, to))(q => videoGameService.findBy(q, limit, from, to))
-            resp  <- Ok(games.map(VideoGameResponse.from).asJson)
-          } yield resp
+          query
+            .fold(videoGameService.findAll(limit, from, to))(q => videoGameService.findBy(q, limit, from, to))
+            .flatMap(games => Ok(games.map(VideoGameResponse.from).asJson))
         }
       case GET -> Root / "video-games" / "stream" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
         Ok {
@@ -35,10 +34,9 @@ final private[controllers] class VideoGameController[F[_]](
         }
       case GET -> Root / "video-games" / "summary" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) +& SearchQueryParam(query) =>
         withErrorHandling {
-          for {
-            games <- query.fold(videoGameService.findAll(limit, from, to))(q => videoGameService.findBy(q, limit, from, to))
-            resp  <- Ok(resellableItemsSummaryResponse(games).asJson)
-          } yield resp
+          query
+            .fold(videoGameService.findAll(limit, from, to))(q => videoGameService.findBy(q, limit, from, to))
+            .flatMap(games => Ok(resellableItemsSummaryResponse(games).asJson))
         }
     }
 }

@@ -34,21 +34,21 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
   object FromQueryParam  extends OptionalQueryParamDecoderMatcher[Instant]("from")
   object ToQueryParam    extends OptionalQueryParamDecoderMatcher[Instant]("to")
 
-  def routes(implicit cs: ContextShift[F], s: Sync[F], l: Logger[F]): HttpRoutes[F]
+  def routes: HttpRoutes[F]
 
   protected def withErrorHandling(
       response: => F[Response[F]]
   )(
-      implicit s: Sync[F],
-      l: Logger[F]
+    implicit F: Sync[F],
+    logger: Logger[F]
   ): F[Response[F]] =
     response.handleErrorWith {
       case error: MessageFailure =>
-        l.error(error)(s"error parsing json}") *>
+        logger.error(error)(s"error parsing json}") *>
           BadRequest(ErrorResponse(error.getMessage()).asJson)
       case error =>
-        l.error(error)(s"unexpected error") *>
-          InternalServerError(ErrorResponse(error.getMessage()).asJson)
+        logger.error(error)(s"unexpected error") *>
+          InternalServerError(ErrorResponse(error.getMessage).asJson)
     }
 
   protected def resellableItemsSummaryResponse[D <: ItemDetails](items: List[ResellableItem[D]]): ResellableItemsSummaryResponse = {
@@ -99,9 +99,9 @@ object Controller {
       rest: ItemsSummary
   )
 
-  def home[F[_]: Sync](blocker: Blocker): F[Controller[F]] =
+  def home[F[_]: Sync: ContextShift](blocker: Blocker): F[Controller[F]] =
     Sync[F].delay(new HomeController[F](blocker))
 
-  def videoGame[F[_]: Sync](service: ResellableItemService[F, ItemDetails.Game]): F[Controller[F]] =
+  def videoGame[F[_]: Sync: Logger](service: ResellableItemService[F, ItemDetails.Game]): F[Controller[F]] =
     Sync[F].delay(new VideoGameController[F](service))
 }
