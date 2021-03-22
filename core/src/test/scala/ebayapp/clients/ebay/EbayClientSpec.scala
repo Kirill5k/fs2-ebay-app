@@ -228,6 +228,7 @@ class EbayClientSpec extends CatsSpec {
       Some(ItemPrice(BigDecimal.valueOf(30.00), "GBP")),
       ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore)),
       itemGroup,
+      List("FIXED_PRICE"),
       None
     )
 
