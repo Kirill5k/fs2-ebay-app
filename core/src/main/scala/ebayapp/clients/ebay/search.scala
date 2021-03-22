@@ -67,7 +67,8 @@ object search {
 
       override val filter: EbayItemSummary => Boolean = { item =>
         !LISTING_NAME_TRIGGER_WORDS.matches(item.title.replaceAll("[^a-zA-Z0-9 ]", "")) &&
-          !LISTING_DESCRIPTION_TRIGGER_WORDS.matches(item.shortDescription.fold("")(_.replaceAll("[^a-zA-Z0-9 ]", "")))
+          !LISTING_DESCRIPTION_TRIGGER_WORDS.matches(item.shortDescription.fold("")(_.replaceAll("[^a-zA-Z0-9 ]", ""))) &&
+          item.buyingOptions.exists(List("FIXED_PRICE", "BEST_OFFER").contains)
       }
     }
   }

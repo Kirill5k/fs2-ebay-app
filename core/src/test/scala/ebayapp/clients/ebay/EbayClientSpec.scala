@@ -1,6 +1,7 @@
 package ebayapp.clients.ebay
 
 import cats.effect.IO
+import cats.implicits._
 import ebayapp.CatsSpec
 import ebayapp.clients.ebay.auth.EbayAuthClient
 import ebayapp.clients.ebay.browse.EbayBrowseClient
@@ -94,7 +95,7 @@ class EbayClientSpec extends CatsSpec {
       val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
 
       when(cache.contains(any[String])).thenReturn(IO.pure(true))
-      when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.pure(ebayItemSummaries("item-1")))
+      when(browseClient.search(any[String], anyMap[String, String])).thenReturn(ebayItemSummaries("item-1").pure[IO])
 
       val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
 
@@ -112,7 +113,7 @@ class EbayClientSpec extends CatsSpec {
       val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
 
       when(browseClient.search(any[String], anyMap[String, String]))
-        .thenReturn(IO.pure(List(ebayItemSummary("1", feedbackPercentage = 90), ebayItemSummary("1", feedbackScore = 4))))
+        .thenReturn(List(ebayItemSummary("1", feedbackPercentage = 90), ebayItemSummary("1", feedbackScore = 4)).pure[IO])
 
       val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
 
@@ -130,7 +131,7 @@ class EbayClientSpec extends CatsSpec {
       val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
 
       when(browseClient.search(any[String], anyMap[String, String]))
-        .thenReturn(IO.pure(List(ebayItemSummary("1", itemGroup = Some("USER_DEFINED")))))
+        .thenReturn(List(ebayItemSummary("1", itemGroup = Some("USER_DEFINED"))).pure[IO])
 
       val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
 
@@ -147,32 +148,44 @@ class EbayClientSpec extends CatsSpec {
       val (authClient, browseClient, cache) = mocks
       val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
 
-      doReturn(
-        IO.pure(
-          List(
-            ebayItemSummary("1", name = "fallout 4 disc only"),
-            ebayItemSummary("2", name = "fallout 76 blah damage blah blah blah"),
-            ebayItemSummary("3", name = "call of duty digital code"),
-            ebayItemSummary("4", name = "lego worlds read description"),
-            ebayItemSummary("5", name = """Borderlands 3 "Spooling Recursion" X2 Godroll Moze Splash Damage (Xbox One)"""),
-            ebayItemSummary("6", name = """Borderlands 3 - (ps4) (new maliwan takedown pistol) Moonfire (Anointed) x3 (op)"""),
-            ebayItemSummary("7", name = """Borderlands 3 - (ps4) S3RV 80's Execute (anointed 50% cyro ase )(new takedown)"""),
-            ebayItemSummary("8", name = """Borderlands 3 -(ps4) Redistributor(anointed 100% dam ase x 6 pack)(new takedown)"""),
-            ebayItemSummary("9", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
-            ebayItemSummary("10", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
-            ebayItemSummary("11", name = """call of duty pre-order bonus"""),
-            ebayItemSummary("13", name = """Call of Duty WW2 no case XBOX 360"""),
-            ebayItemSummary("14", name = """Call of Duty WW2 digital code XBOX"""),
-            ebayItemSummary("15", name = """Call of Duty WW2 with carry bag XBOX"""),
-            ebayItemSummary("16", name = """xbox game pass XBOX"""),
-            ebayItemSummary("17", name = """xbox gamepass XBOX"""),
-            ebayItemSummary("18", name = """fifa 2020 million 100 point XBOX"""),
-            ebayItemSummary("19", name = """animal crossing dinosaur recipe card"""),
-            ebayItemSummary("20", name = """fallout 76 5000 caps"""),
-            ebayItemSummary("21", name = """borderlands 4 promotional copy""")
-          )
-        )
-      )
+      val response = List(
+        ebayItemSummary("1", name = "fallout 4 disc only"),
+        ebayItemSummary("2", name = "fallout 76 blah damage blah blah blah"),
+        ebayItemSummary("3", name = "call of duty digital code"),
+        ebayItemSummary("4", name = "lego worlds read description"),
+        ebayItemSummary("5", name = """Borderlands 3 "Spooling Recursion" X2 Godroll Moze Splash Damage (Xbox One)"""),
+        ebayItemSummary("6", name = """Borderlands 3 - (ps4) (new maliwan takedown pistol) Moonfire (Anointed) x3 (op)"""),
+        ebayItemSummary("7", name = """Borderlands 3 - (ps4) S3RV 80's Execute (anointed 50% cyro ase )(new takedown)"""),
+        ebayItemSummary("8", name = """Borderlands 3 -(ps4) Redistributor(anointed 100% dam ase x 6 pack)(new takedown)"""),
+        ebayItemSummary("9", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
+        ebayItemSummary("10", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
+        ebayItemSummary("11", name = """call of duty pre-order bonus"""),
+        ebayItemSummary("13", name = """Call of Duty WW2 no case XBOX 360"""),
+        ebayItemSummary("14", name = """Call of Duty WW2 digital code XBOX"""),
+        ebayItemSummary("15", name = """Call of Duty WW2 with carry bag XBOX"""),
+        ebayItemSummary("16", name = """xbox game pass XBOX"""),
+        ebayItemSummary("17", name = """xbox gamepass XBOX"""),
+        ebayItemSummary("18", name = """fifa 2020 million 100 point XBOX"""),
+        ebayItemSummary("19", name = """animal crossing dinosaur recipe card"""),
+        ebayItemSummary("20", name = """fallout 76 5000 caps"""),
+        ebayItemSummary("21", name = """borderlands 4 promotional copy""")
+      ).pure[IO]
+
+      doReturn(response).when(browseClient).search(any[String], anyMap[String, String])
+
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+
+      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+        verify(cache, never).put(any[String], any[Unit])
+        items must be(List())
+      }
+    }
+
+    "filter out items that are not buy it now" in {
+      val (authClient, browseClient, cache) = mocks
+      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+
+      doReturn(List(ebayItemSummary(buyingOptions = List("AUCTION"))).pure[IO])
         .when(browseClient)
         .search(any[String], anyMap[String, String])
 
@@ -188,14 +201,12 @@ class EbayClientSpec extends CatsSpec {
       val (authClient, browseClient, cache) = mocks
       val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
 
-      doReturn(
-        IO.pure(
-          List(
-            ebayItemSummary(shortDescription = Some("this is a shared account")),
-            ebayItemSummary(shortDescription = Some("shared xbox account. playable worldwide"))
-          )
-        )
-      )
+      val response = List(
+        ebayItemSummary(shortDescription = Some("this is a shared account")),
+        ebayItemSummary(shortDescription = Some("shared xbox account. playable worldwide"))
+      ).pure[IO]
+
+      doReturn(response)
         .when(browseClient)
         .search(any[String], anyMap[String, String])
 
@@ -245,6 +256,7 @@ class EbayClientSpec extends CatsSpec {
       feedbackScore: Int = 150,
       feedbackPercentage: Int = 150,
       itemGroup: Option[String] = None,
+      buyingOptions: List[String] = List("FIXED_PRICE"),
       shortDescription: Option[String] = None
   ): EbayItemSummary =
     EbayItemSummary(
@@ -253,7 +265,7 @@ class EbayClientSpec extends CatsSpec {
       Some(ItemPrice(BigDecimal.valueOf(30.00), "GBP")),
       ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore)),
       itemGroup,
-      List("FIXED_PRICE"),
+      buyingOptions,
       shortDescription
     )
 
