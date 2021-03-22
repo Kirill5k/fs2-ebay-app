@@ -12,6 +12,7 @@ import ebayapp.domain.ItemDetails
 import ebayapp.domain.ItemDetails.Game
 import org.mockito.captor.ArgCaptor
 
+import java.util.UUID
 import scala.concurrent.duration._
 
 class EbayClientSpec extends CatsSpec {
@@ -183,6 +184,29 @@ class EbayClientSpec extends CatsSpec {
       }
     }
 
+    "filter out items with bad description" in {
+      val (authClient, browseClient, cache) = mocks
+      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+
+      doReturn(
+        IO.pure(
+          List(
+            ebayItemSummary(shortDescription = Some("this is a shared account")),
+            ebayItemSummary(shortDescription = Some("shared xbox account. playable worldwide"))
+          )
+        )
+      )
+        .when(browseClient)
+        .search(any[String], anyMap[String, String])
+
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+
+      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+        verify(cache, never).put(any[String], any[Unit])
+        items must be(List())
+      }
+    }
+
     "get item details for each item id" in {
       val (authClient, browseClient, cache) = mocks
       val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
@@ -216,11 +240,12 @@ class EbayClientSpec extends CatsSpec {
     ids.map(ebayItemSummary(_)).toList
 
   def ebayItemSummary(
-      id: String,
+      id: String = UUID.randomUUID().toString,
       name: String = "ebay item",
       feedbackScore: Int = 150,
       feedbackPercentage: Int = 150,
-      itemGroup: Option[String] = None
+      itemGroup: Option[String] = None,
+      shortDescription: Option[String] = None
   ): EbayItemSummary =
     EbayItemSummary(
       id,
@@ -229,7 +254,7 @@ class EbayClientSpec extends CatsSpec {
       ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore)),
       itemGroup,
       List("FIXED_PRICE"),
-      None
+      shortDescription
     )
 
   def ebayItem: EbayItem =
