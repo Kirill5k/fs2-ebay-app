@@ -53,14 +53,18 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
     }
 
   protected def resellableItemsSummaryResponse[D <: ItemDetails](items: List[ResellableItem[D]]): ResellableItemsSummaryResponse = {
-    val withoutResellPrice  = items.filter(_.sellPrice.isEmpty)
-    val profitableForResell = items.filter(i => i.sellPrice.exists(rp => rp.cash > i.buyPrice.rrp))
-    val rest                = items.filter(i => !withoutResellPrice.contains(i) && !profitableForResell.contains(i))
+    val (worp, prof, rest) = items.foldLeft((List.empty[ResellableItem[D]], List.empty[ResellableItem[D]], List.empty[ResellableItem[D]])) {
+      case ((withoutResell, profitable, rest), item) =>
+        if (item.sellPrice.isEmpty) (item :: withoutResell, profitable, rest)
+        else if (item.sellPrice.exists(rp => rp.cash > item.buyPrice.rrp)) (withoutResell, item :: profitable, rest)
+        else (withoutResell, profitable, item :: rest)
+    }
+
     ResellableItemsSummaryResponse(
       items.size,
-      toItemsSummary(withoutResellPrice),
-      toItemsSummary(profitableForResell),
-      toItemsSummary(rest)
+      toItemsSummary(worp.reverse),
+      toItemsSummary(prof.reverse),
+      toItemsSummary(rest.reverse)
     )
   }
 
