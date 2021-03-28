@@ -58,7 +58,7 @@ object search {
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       private val LISTING_DESCRIPTION_TRIGGER_WORDS = List(
-        "shared.*account", "playable worldwide", "will get ACCESS", "send.*instructions"
+        "shared.*account", "playable worldwide", "will get ACCESS", "send.*instructions", "download code"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       override val categoryId: Int = 139973
