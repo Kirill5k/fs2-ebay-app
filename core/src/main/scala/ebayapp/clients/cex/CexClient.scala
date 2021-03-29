@@ -51,12 +51,11 @@ final class CexApiClient[F[_]](
     resellPriceCache.get(query.base64).flatMap {
       case Some(rp) => rp.pure[F]
       case None =>
-        val q           = query.value.replaceAll("(?<!\\d) (?=\\d+)", "")
         val categoryIds = categories.map(_.mkString("[", ",", "]"))
-        search(uri"${config.baseUri}/v3/boxes?q=$q&categoryIds=$categoryIds")
+        search(uri"${config.baseUri}/v3/boxes?q=${query.value}&categoryIds=$categoryIds")
           .map(getMinResellPrice)
           .flatTap { rp =>
-            if (rp.isEmpty) logger.warn(s"""cex-price-match "$q" returned 0 results""")
+            if (rp.isEmpty) logger.warn(s"""cex-price-match "${query.value}" returned 0 results""")
             else resellPriceCache.put(query.base64, rp)
           }
     }
