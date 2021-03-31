@@ -183,6 +183,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(Read Dead Redemption)", "Red Dead Redemption")
       .replaceAll("(?i)(W2K)", "WWE 2k")
+      .replaceAll("(?i)Mortal Comba(t|r)", "Mortal Kombat")
       .replaceAll("(?i)(Hello Neighbour)", "Hello Neighbor")
       .replaceAll("(?i)(witcher iii)", "witcher 3")
       .replaceAll("(?i)(wolfenstein 2)", "Wolfenstein II")
