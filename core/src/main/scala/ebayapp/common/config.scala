@@ -83,6 +83,10 @@ object config {
       stockMonitor: StockMonitorConfig
   )
 
+  final case class ArgosConfig(
+      baseUri: String
+  )
+
   final case class TelegramConfig(
       baseUri: String,
       botKey: String,
