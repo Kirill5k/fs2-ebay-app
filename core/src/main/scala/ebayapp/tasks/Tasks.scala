@@ -34,6 +34,7 @@ object Tasks {
       CexStockMonitor.generic(config.cex.stockMonitor, services),
       EbayDealsFinder.videoGames(config.ebay.deals.videoGames, services),
       SelfridgesSaleMonitor.make(config.selfridges.stockMonitor, services),
+      ArgosStockMonitor.generic(config.argos.stockMonitor, services),
       ErrorsNotifier.make[F](services)
     ).sequence.map(Tasks[F])
 }

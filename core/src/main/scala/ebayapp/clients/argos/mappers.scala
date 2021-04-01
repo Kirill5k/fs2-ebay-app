@@ -7,13 +7,13 @@ import ebayapp.domain.{ItemDetails, ResellableItem}
 
 import java.time.Instant
 
-private[argos] object mappers {
+object mappers {
 
   trait ArgosItemMapper[D <: ItemDetails] {
     def toDomain(data: ResponseData): ResellableItem[D]
   }
 
-  implicit def generic: ArgosItemMapper[ItemDetails.Generic] = new ArgosItemMapper[ItemDetails.Generic] {
+  implicit def argosGeneric: ArgosItemMapper[ItemDetails.Generic] = new ArgosItemMapper[ItemDetails.Generic] {
 
     override def toDomain(data: ResponseData): ResellableItem[ItemDetails.Generic] =
       ResellableItem[ItemDetails.Generic](

@@ -84,7 +84,8 @@ object config {
   )
 
   final case class ArgosConfig(
-      baseUri: String
+      baseUri: String,
+      stockMonitor: StockMonitorConfig
   )
 
   final case class TelegramConfig(

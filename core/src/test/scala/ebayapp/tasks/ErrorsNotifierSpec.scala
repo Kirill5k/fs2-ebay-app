@@ -52,6 +52,7 @@ class ErrorsNotifierSpec extends CatsSpec {
     mock[ResellableItemService[IO, ItemDetails.Game]],
     mock[EbayDealsService[IO]],
     mock[CexStockService[IO]],
-    mock[SelfridgesSaleService[IO]]
+    mock[SelfridgesSaleService[IO]],
+    mock[ArgosStockService[IO]]
   )
 }

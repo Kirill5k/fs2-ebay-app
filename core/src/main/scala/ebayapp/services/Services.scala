@@ -12,7 +12,8 @@ final case class Services[F[_]](
     videoGame: ResellableItemService[F, ItemDetails.Game],
     ebayDeals: EbayDealsService[F],
     cexStock: CexStockService[F],
-    selfridgesSale: SelfridgesSaleService[F]
+    selfridgesSale: SelfridgesSaleService[F],
+    argosStock: ArgosStockService[F]
 )
 
 object Services {
@@ -26,6 +27,7 @@ object Services {
       ResellableItemService.videoGame[F](repositories.videoGames),
       EbayDealsService.make[F](clients.ebay, clients.cex),
       CexStockService.make[F](clients.cex),
-      SelfridgesSaleService.make[F](clients.selfridges)
-    ).mapN(Services.apply)
+      SelfridgesSaleService.make[F](clients.selfridges),
+      ArgosStockService.make[F](clients.argos)
+    ).mapN(Services[F])
 }

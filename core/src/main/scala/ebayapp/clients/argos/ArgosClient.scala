@@ -21,22 +21,23 @@ trait ArgosClient[F[_]] {
 }
 
 final private class LiveArgosClient[F[_]: Sync](
-     private val config: ArgosConfig,
-     private val backend: SttpBackend[F, Any]
+    private val config: ArgosConfig,
+    private val backend: SttpBackend[F, Any]
 )(implicit
-  logger: Logger[F],
-  timer: Timer[F]
+    logger: Logger[F],
+    timer: Timer[F]
 ) extends ArgosClient[F] {
 
   override def findItem[D <: ItemDetails](query: SearchQuery)(implicit
       mapper: ArgosItemMapper[D]
   ): Stream[F, ResellableItem[D]] =
-    Stream.unfoldLoopEval(1) { page =>
-      search(query, page).map {
-        case Some(res) => (res.response.data, res.response.meta.nextPage)
-        case None =>(Nil, None)
+    Stream
+      .unfoldLoopEval(1) { page =>
+        search(query, page).map {
+          case Some(res) => (res.response.data, res.response.meta.nextPage)
+          case None      => (Nil, None)
+        }
       }
-    }
       .flatMap(Stream.emits)
       .filter(_.attributes.relevancyRank == 1)
       .filter(i => i.attributes.deliverable || i.attributes.reservable)
@@ -44,7 +45,9 @@ final private class LiveArgosClient[F[_]: Sync](
 
   private def search(query: SearchQuery, page: Int): F[Option[SearchData]] =
     basicRequest
-      .get(uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true")
+      .get(
+        uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true"
+      )
       .response(asJson[ArgosSearchResponse])
       .send(backend)
       .flatMap { r =>
