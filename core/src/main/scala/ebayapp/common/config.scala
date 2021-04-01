@@ -101,6 +101,7 @@ object config {
       cex: CexConfig,
       ebay: EbayConfig,
       selfridges: SelfridgesConfig,
+      argos: ArgosConfig,
       telegram: TelegramConfig
   )
 

@@ -2,6 +2,7 @@ package ebayapp.clients
 
 import cats.effect.{Concurrent, Timer}
 import cats.implicits._
+import ebayapp.clients.argos.ArgosClient
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.ebay.EbayClient
 import ebayapp.clients.selfridges.SelfridgesClient
@@ -14,7 +15,8 @@ final case class Clients[F[_]](
     ebay: EbayClient[F],
     cex: CexClient[F],
     telegram: TelegramClient[F],
-    selfridges: SelfridgesClient[F]
+    selfridges: SelfridgesClient[F],
+    argos: ArgosClient[F]
 )
 
 object Clients {
@@ -27,6 +29,7 @@ object Clients {
     val cex = CexClient.make[F](config.cex, backend)
     val telegram = TelegramClient.make[F](config.telegram, backend)
     val selfridges = SelfridgesClient.make[F](config.selfridges, backend)
-    (ebay, cex, telegram, selfridges).mapN(Clients.apply)
+    val argos = ArgosClient.make[F](config.argos, backend)
+    (ebay, cex, telegram, selfridges, argos).mapN(Clients.apply)
   }
 }

@@ -44,7 +44,7 @@ final private class LiveArgosClient[F[_]: Sync](
 
   private def search(query: SearchQuery, page: Int): F[Option[SearchData]] =
     basicRequest
-      .get(uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={\"page\":\"$page\",\"templateType\":null};searchTerm=${query.value};searchType=null?returnMeta=true")
+      .get(uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true")
       .response(asJson[ArgosSearchResponse])
       .send(backend)
       .flatMap { r =>
@@ -61,4 +61,12 @@ final private class LiveArgosClient[F[_]: Sync](
               timer.sleep(1.second) *> search(query, page)
         }
       }
+}
+
+object ArgosClient {
+  def make[F[_]: Sync: Logger: Timer](
+      config: ArgosConfig,
+      backend: SttpBackend[F, Any]
+  ): F[ArgosClient[F]] =
+    Sync[F].delay(new LiveArgosClient[F](config, backend))
 }

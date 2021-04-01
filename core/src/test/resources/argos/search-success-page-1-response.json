@@ -1,0 +1,262 @@
+{
+  "data": {
+    "requestUrl": "/product;isSearch=true;queryParams=%7B%22page%22:%221%22,%22templateType%22:null%7D;searchTerm=PlayStation%205%20Console;searchType=null?returnMeta=true",
+    "searchType": null,
+    "status": 200,
+    "searchTerm": "PlayStation 5 Console",
+    "response": {
+      "meta": {
+        "listerType": "SEARCH",
+        "totalData": 3,
+        "pageSize": 30,
+        "currentPage": 1,
+        "totalPages": 2,
+        "canned": false,
+        "categoryMatch": false,
+        "leafMatch": false,
+        "appliedSorts": [
+          {
+            "name": "relevance",
+            "order": "desc"
+          }
+        ],
+        "appliedFilters": [],
+        "suggestions": [],
+        "productCategorySuggestions": [],
+        "aggregations": [
+          {
+            "id": "category",
+            "label": "Category",
+            "values": [
+              {
+                "id": "798632",
+                "label": "Gaming",
+                "value": 3,
+                "applicableFilter": "filter[category]=798632",
+                "children": [
+                  {
+                    "id": "824671",
+                    "label": "Consoles",
+                    "value": 3,
+                    "applicableFilter": "filter[category]=824671",
+                    "children": [
+                      {
+                        "id": "37328849",
+                        "label": "PS4 consoles",
+                        "value": 1,
+                        "applicableFilter": "filter[category]=37328849",
+                        "children": []
+                      },
+                      {
+                        "id": "50002575",
+                        "label": "PS5 Consoles",
+                        "value": 2,
+                        "applicableFilter": "filter[category]=50002575",
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "50000098",
+                    "label": "Virtual reality headsets",
+                    "value": 1,
+                    "applicableFilter": "filter[category]=50000098",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "price",
+            "label": "Price",
+            "values": [
+              {
+                "id": "£250 - £500",
+                "label": "£250 - £500",
+                "value": 3,
+                "applicableFilter": "filter[price]=%C2%A3250+-+%C2%A3500",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "customer rating",
+            "label": "Customer Rating",
+            "values": [
+              {
+                "id": "show all",
+                "label": "Show All",
+                "value": 3,
+                "applicableFilter": "filter[customer rating]=show+all",
+                "children": []
+              },
+              {
+                "id": "4 or more",
+                "label": "4 Or More",
+                "value": 1,
+                "applicableFilter": "filter[customer rating]=4+or+more",
+                "children": []
+              },
+              {
+                "id": "3 or more",
+                "label": "3 Or More",
+                "value": 1,
+                "applicableFilter": "filter[customer rating]=3+or+more",
+                "children": []
+              },
+              {
+                "id": "2 or more",
+                "label": "2 Or More",
+                "value": 1,
+                "applicableFilter": "filter[customer rating]=2+or+more",
+                "children": []
+              },
+              {
+                "id": "1 or more",
+                "label": "1 Or More",
+                "value": 1,
+                "applicableFilter": "filter[customer rating]=1+or+more",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "brands",
+            "label": "Brands",
+            "values": [
+              {
+                "id": "playstation 5",
+                "label": "PlayStation 5",
+                "value": 2,
+                "applicableFilter": "filter[brands]=playstation+5",
+                "children": []
+              },
+              {
+                "id": "playstation vr",
+                "label": "PlayStation VR",
+                "value": 1,
+                "applicableFilter": "filter[brands]=playstation+vr",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "type",
+            "label": "Type",
+            "values": [
+              {
+                "id": "standalone",
+                "label": "Standalone",
+                "value": 2,
+                "applicableFilter": "filter[type]=standalone",
+                "children": []
+              },
+              {
+                "id": "bundle",
+                "label": "bundle",
+                "value": 1,
+                "applicableFilter": "filter[type]=bundle",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "displayableSorts": {
+          "Price: Low - High": "price",
+          "Customer Rating": "-customer rating",
+          "Price: High - Low": "-price",
+          "Most Popular": "-relevance"
+        },
+        "tracking": [
+          {
+            "name": "termLength",
+            "value": "3"
+          },
+          {
+            "name": "category",
+            "value": ""
+          },
+          {
+            "name": "attribute",
+            "value": ""
+          },
+          {
+            "name": "algoType",
+            "value": "min_match"
+          },
+          {
+            "name": "categoryId",
+            "value": "0"
+          }
+        ]
+      },
+      "data": [
+        {
+          "id": "8349000",
+          "type": "product",
+          "attributes": {
+            "relevancyRank": 1,
+            "name": "Sony PlayStation 5 Console",
+            "price": 449.99,
+            "wasPrice": 0,
+            "wasText": "",
+            "avgRating": 0,
+            "reviewsCount": 0,
+            "deliverable": false,
+            "reservable": false,
+            "freeDelivery": false,
+            "specialOfferText": "",
+            "hasVariations": false,
+            "hasMultiplePrices": false,
+            "variants": {},
+            "badge": {},
+            "brand": "PlayStation 5",
+            "detailAttributes": []
+          }
+        },
+        {
+          "id": "7606160",
+          "type": "product",
+          "attributes": {
+            "relevancyRank": 2,
+            "name": "PS VR with VR Worlds Mega Starter Bundle",
+            "price": 259.99,
+            "wasPrice": 0,
+            "wasText": "",
+            "avgRating": 4.800992,
+            "reviewsCount": 992,
+            "deliverable": true,
+            "reservable": true,
+            "freeDelivery": false,
+            "specialOfferText": "",
+            "hasVariations": false,
+            "hasMultiplePrices": false,
+            "variants": {},
+            "badge": {
+              "BADGE_DELIVERY": [
+                "limited_stock"
+              ]
+            },
+            "brand": "PlayStation VR",
+            "detailAttributes": []
+          }
+        }
+      ],
+      "links": {
+        "first": "/search/products/?q=playstation 5 console&sort=-relevance&categorySize=9999&page[offset]=1&page[limit]=30",
+        "self": "/search/products/?q=playstation 5 console&sort=-relevance&categorySize=9999&page[offset]=1&page[limit]=30",
+        "canonical": "http://www.argos.co.uk/search/playstation-5-console/"
+      },
+      "errors": [],
+      "included": []
+    },
+    "noIndex": true,
+    "searchCanonical": "https://www.argos.co.uk/search/playstation-5-console/",
+    "spellcheckedSearch": false,
+    "inputSearchTerm": "PlayStation 5 Console"
+  },
+  "meta": {
+    "statusCode": 200
+  }
+}
