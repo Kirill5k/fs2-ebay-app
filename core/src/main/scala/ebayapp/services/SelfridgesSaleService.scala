@@ -13,7 +13,7 @@ import ebayapp.common.Logger
 import scala.concurrent.duration._
 
 trait SelfridgesSaleService[F[_]] {
-  def newSaleItems(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]]
+  def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]]
 }
 
 final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
@@ -25,7 +25,7 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
     "\\d+-\\d+ (year|month)", "thong", "\\bBRA\\b", "bikini", "jersey brief", "swimsuit", "jock( )?strap", "bralette"
   ).mkString("(?i).*(", "|", ").*")
 
-  override def newSaleItems(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]] =
+  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>

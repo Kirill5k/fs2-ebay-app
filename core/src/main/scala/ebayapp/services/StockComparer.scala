@@ -1,9 +1,8 @@
 package ebayapp.services
 
-import cats.Monad
-import cats.effect.Timer
+import cats.effect.{Concurrent, Timer}
 import cats.implicits._
-import ebayapp.common.config.StockMonitorRequest
+import ebayapp.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.Stream
@@ -11,7 +10,16 @@ import ebayapp.common.Logger
 
 import scala.concurrent.duration.FiniteDuration
 
-abstract class StockComparer[F[_]: Monad: Timer: Logger] {
+abstract class StockComparer[F[_]: Concurrent: Timer: Logger] {
+
+  protected def stockUpdatesStream[D <: ItemDetails](
+      config: StockMonitorConfig,
+      findItemsEffect: StockMonitorRequest => F[Map[String, ResellableItem[D]]]
+  ): Stream[F, ItemStockUpdates[D]] =
+    Stream
+      .emits(config.monitoringRequests)
+      .map(req => getUpdates[D](req, config.monitoringFrequency, findItemsEffect(req)))
+      .parJoinUnbounded
 
   protected def getUpdates[D <: ItemDetails](
       req: StockMonitorRequest,
@@ -31,7 +39,7 @@ abstract class StockComparer[F[_]: Monad: Timer: Logger] {
           getUpdates(req, freq, findItemsEffect)
       }
 
-  protected def compareItems[D <: ItemDetails](
+  private def compareItems[D <: ItemDetails](
       prev: Map[String, ResellableItem[D]],
       curr: Map[String, ResellableItem[D]],
       req: StockMonitorRequest

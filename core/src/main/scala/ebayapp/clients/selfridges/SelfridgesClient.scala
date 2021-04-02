@@ -49,9 +49,9 @@ final private class LiveSelfridgesClient[F[_]](
         Stream
           .evalSeq(getItemDetails(item))
           .metered(250.millis)
-          .map { case (stock, price) => (item, stock, price) }
+          .map { case (stock, price) => SelfridgesItem(item, stock, price) }
       }
-      .map { case (item, stock, price) => clothingMapper.toDomain(item, stock, price) }
+      .map(clothingMapper.toDomain)
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))

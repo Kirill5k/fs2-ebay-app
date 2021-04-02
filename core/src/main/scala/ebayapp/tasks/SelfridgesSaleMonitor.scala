@@ -14,7 +14,7 @@ final class SelfridgesSaleMonitor[F[_]: Sync](
 
   def run(): Stream[F, Unit] =
     saleService
-      .newSaleItems(stockMonitorConfig)
+      .stockUpdates(stockMonitorConfig)
       .evalMap(upd => upd.updates.traverse_(u => notificationService.stockUpdate(upd.item, u)))
 }
 

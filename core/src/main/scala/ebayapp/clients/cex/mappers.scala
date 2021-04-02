@@ -1,14 +1,15 @@
 package ebayapp.clients.cex
 
-import java.time.Instant
+import ebayapp.clients.ItemMapper
 
+import java.time.Instant
 import ebayapp.clients.cex.CexClient.SearchResult
 import ebayapp.domain.{ItemDetails, ResellableItem}
-import ebayapp.domain.search.{ListingDetails, BuyPrice, SellPrice}
+import ebayapp.domain.search.{BuyPrice, ListingDetails, SellPrice}
 
 object mappers {
 
-  trait CexItemMapper[D <: ItemDetails] {
+  trait CexItemMapper[D <: ItemDetails] extends ItemMapper[SearchResult, D] {
     def toDomain(sr: SearchResult): ResellableItem[D]
   }
 

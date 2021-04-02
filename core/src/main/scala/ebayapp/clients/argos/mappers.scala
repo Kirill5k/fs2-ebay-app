@@ -1,5 +1,6 @@
 package ebayapp.clients.argos
 
+import ebayapp.clients.ItemMapper
 import ebayapp.clients.argos.responses.ResponseData
 import ebayapp.domain.ItemDetails.Generic
 import ebayapp.domain.search.{BuyPrice, ListingDetails}
@@ -9,7 +10,7 @@ import java.time.Instant
 
 object mappers {
 
-  trait ArgosItemMapper[D <: ItemDetails] {
+  trait ArgosItemMapper[D <: ItemDetails] extends ItemMapper[ResponseData, D] {
     def toDomain(data: ResponseData): ResellableItem[D]
   }
 

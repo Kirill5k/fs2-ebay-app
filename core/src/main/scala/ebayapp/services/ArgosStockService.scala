@@ -4,7 +4,7 @@ import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.argos.ArgosClient
 import ebayapp.clients.argos.mappers.ArgosItemMapper
-import ebayapp.common.config.{SearchQuery, StockMonitorConfig}
+import ebayapp.common.config.{SearchQuery, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.domain.stock.ItemStockUpdates
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.common.Logger
@@ -21,10 +21,7 @@ final class LiveArgosStockService[F[_]: Concurrent: Timer: Logger](
   override def stockUpdates[D <: ItemDetails: ArgosItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
-    Stream
-      .emits(config.monitoringRequests)
-      .map(req => getUpdates[D](req, config.monitoringFrequency, findItems(req.query)))
-      .parJoinUnbounded
+    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req.query))
 
   private def findItems[D <: ItemDetails: ArgosItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client

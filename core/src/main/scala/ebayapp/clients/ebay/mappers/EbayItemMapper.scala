@@ -1,13 +1,14 @@
 package ebayapp.clients.ebay.mappers
 
-import java.time.Instant
+import ebayapp.clients.ItemMapper
 
+import java.time.Instant
 import ebayapp.clients.ebay.browse.responses.EbayItem
 import ebayapp.domain
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search.{BuyPrice, ListingDetails}
 
-trait EbayItemMapper[D <: ItemDetails] {
+trait EbayItemMapper[D <: ItemDetails] extends ItemMapper[EbayItem, D] {
   def toDomain(ebayItem: EbayItem): ResellableItem[D]
 }
 

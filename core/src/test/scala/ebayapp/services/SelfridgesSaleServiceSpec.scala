@@ -33,7 +33,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
         .andThen(Stream.emits(unwantedItems))
 
       val service = new LiveSelfridgesSaleService[IO](client)
-      val result = service.newSaleItems(config).interruptAfter(2200.millis).compile.toList
+      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { updates =>
         updates must have size 1
