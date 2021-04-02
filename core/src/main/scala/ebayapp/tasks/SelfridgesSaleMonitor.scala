@@ -3,6 +3,7 @@ package ebayapp.tasks
 import cats.effect.Sync
 import cats.implicits._
 import ebayapp.common.config.StockMonitorConfig
+import ebayapp.domain.ItemDetails
 import ebayapp.services.{NotificationService, SelfridgesSaleService, Services}
 import fs2.Stream
 
@@ -14,7 +15,7 @@ final class SelfridgesSaleMonitor[F[_]: Sync](
 
   def run(): Stream[F, Unit] =
     saleService
-      .stockUpdates(stockMonitorConfig)
+      .stockUpdates[ItemDetails.Clothing](stockMonitorConfig)
       .evalMap(upd => upd.updates.traverse_(u => notificationService.stockUpdate(upd.item, u)))
 }
 

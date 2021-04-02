@@ -3,7 +3,9 @@ package ebayapp.services
 import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.selfridges.SelfridgesClient
+import ebayapp.clients.selfridges.mappers.SelfridgesItemMapper
 import ebayapp.common.config.{SearchQuery, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.domain.ItemDetails
 import ebayapp.domain.ResellableItemBuilder.clothing
 import fs2.Stream
 
@@ -28,12 +30,12 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       )
 
       val client = mock[SelfridgesClient[IO]]
-      when(client.searchSale(any[SearchQuery]))
+      when(client.searchSale(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(unwantedItems))
 
       val service = new LiveSelfridgesSaleService[IO](client)
-      val result = service.stockUpdates(config).interruptAfter(2200.millis).compile.toList
+      val result = service.stockUpdates[ItemDetails.Clothing](config).interruptAfter(2200.millis).compile.toList
 
       result.unsafeToFuture().map { updates =>
         updates must have size 1

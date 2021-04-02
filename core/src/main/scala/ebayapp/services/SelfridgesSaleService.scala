@@ -3,9 +3,9 @@ package ebayapp.services
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.selfridges.SelfridgesClient
+import ebayapp.clients.selfridges.mappers.SelfridgesItemMapper
 import ebayapp.common.config.{SearchQuery, StockMonitorConfig}
-import ebayapp.domain.ItemDetails.Clothing
-import ebayapp.domain.ResellableItem
+import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.stock.ItemStockUpdates
 import fs2.Stream
 import ebayapp.common.Logger
@@ -13,7 +13,7 @@ import ebayapp.common.Logger
 import scala.concurrent.duration._
 
 trait SelfridgesSaleService[F[_]] {
-  def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]]
+  def stockUpdates[D <: ItemDetails: SelfridgesItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]]
 }
 
 final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
@@ -25,22 +25,24 @@ final private class LiveSelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
     "\\d+-\\d+ (year|month)", "thong", "\\bBRA\\b", "bikini", "jersey brief", "swimsuit", "jock( )?strap", "bralette"
   ).mkString("(?i).*(", "|", ").*")
 
-  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates[Clothing]] =
+  override def stockUpdates[D <: ItemDetails: SelfridgesItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>
-        getUpdates[Clothing](req, config.monitoringFrequency, findItems(req.query)).delayBy((index * 10).seconds)
+        getUpdates[D](req, config.monitoringFrequency, findItems(req.query)).delayBy((index * 10).seconds)
       }
       .parJoinUnbounded
 
-  private def findItems(query: SearchQuery): F[Map[String, ResellableItem[Clothing]]] =
+  private def findItems[D <: ItemDetails: SelfridgesItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client
-      .searchSale(query)
-      .filter(!_.itemDetails.name.matches(filters))
-      .filter(_.buyPrice.discount.exists(_ > minDiscount))
-      .filter(_.buyPrice.quantityAvailable > 0)
+      .searchSale[D](query)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
+      .filter { case (name, item) =>
+        item.buyPrice.discount.exists(_ > minDiscount) &&
+          item.buyPrice.quantityAvailable > 0 &&
+          !name.matches(filters)
+      }
       .compile
       .to(Map)
       .flatTap(i => Logger[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))

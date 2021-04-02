@@ -6,8 +6,7 @@ import ebayapp.clients.selfridges.SelfridgesClient._
 import ebayapp.clients.selfridges.mappers._
 import ebayapp.common.Logger
 import ebayapp.common.config.{SearchQuery, SelfridgesConfig}
-import ebayapp.domain.ItemDetails.Clothing
-import ebayapp.domain.ResellableItem
+import ebayapp.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
 import io.circe.Decoder
 import io.circe.generic.auto._
@@ -18,7 +17,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration._
 
 trait SelfridgesClient[F[_]] {
-  def searchSale(query: SearchQuery): Stream[F, ResellableItem[Clothing]]
+  def searchSale[D <: ItemDetails: SelfridgesItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]]
 }
 
 final private class LiveSelfridgesClient[F[_]](
@@ -31,16 +30,16 @@ final private class LiveSelfridgesClient[F[_]](
 ) extends SelfridgesClient[F] {
 
   private val defaultHeaders = Map(
-    "Cache-Control"    -> "no-cache",
-    "Accept-Encoding"  -> "gzip, deflate, br",
-    "Accept-Language"  -> "en-GB,en-US;q=0.9,en;q=0.8",
-    "Content-Type"     -> "application/json; charset=utf-8",
-    "Accept"           -> "application/json, text/javascript, */*; q=0.01",
-    "Connection"       -> "keep-alive",
-    "User-Agent"       -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
+    "Cache-Control"   -> "no-cache",
+    "Accept-Encoding" -> "gzip, deflate, br",
+    "Accept-Language" -> "en-GB,en-US;q=0.9,en;q=0.8",
+    "Content-Type"    -> "application/json; charset=utf-8",
+    "Accept"          -> "application/json, text/javascript, */*; q=0.01",
+    "Connection"      -> "keep-alive",
+    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
   )
 
-  override def searchSale(query: SearchQuery): Stream[F, ResellableItem[Clothing]] =
+  override def searchSale[D <: ItemDetails](query: SearchQuery)(implicit mapper: SelfridgesItemMapper[D]): Stream[F, ResellableItem[D]] =
     Stream
       .unfoldLoopEval(1)(searchForItems(query))
       .flatMap(Stream.emits)
@@ -51,7 +50,7 @@ final private class LiveSelfridgesClient[F[_]](
           .metered(250.millis)
           .map { case (stock, price) => SelfridgesItem(item, stock, price) }
       }
-      .map(clothingMapper.toDomain)
+      .map(mapper.toDomain)
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
