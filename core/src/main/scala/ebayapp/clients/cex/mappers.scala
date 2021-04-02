@@ -3,18 +3,18 @@ package ebayapp.clients.cex
 import ebayapp.clients.ItemMapper
 
 import java.time.Instant
-import ebayapp.clients.cex.CexClient.SearchResult
+import ebayapp.clients.cex.responses.CexItem
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search.{BuyPrice, ListingDetails, SellPrice}
 
 object mappers {
 
-  trait CexItemMapper[D <: ItemDetails] extends ItemMapper[SearchResult, D] {
-    def toDomain(sr: SearchResult): ResellableItem[D]
+  trait CexItemMapper[D <: ItemDetails] extends ItemMapper[CexItem, D] {
+    def toDomain(sr: CexItem): ResellableItem[D]
   }
 
   implicit val genericItemMapper: CexItemMapper[ItemDetails.Generic] = new CexItemMapper[ItemDetails.Generic] {
-    override def toDomain(sr: SearchResult): ResellableItem[ItemDetails.Generic] =
+    override def toDomain(sr: CexItem): ResellableItem[ItemDetails.Generic] =
       ResellableItem[ItemDetails.Generic](
         ItemDetails.Generic(sr.boxName),
         listingDetails(sr),
@@ -23,13 +23,13 @@ object mappers {
       )
   }
 
-  private def price(sr: SearchResult): BuyPrice =
+  private def price(sr: CexItem): BuyPrice =
     BuyPrice(sr.ecomQuantityOnHand, sr.sellPrice)
 
-  private def resellPrice(sr: SearchResult): SellPrice =
+  private def resellPrice(sr: CexItem): SellPrice =
     SellPrice(sr.cashPrice, sr.exchangePrice)
 
-  private def listingDetails(sr: SearchResult): ListingDetails =
+  private def listingDetails(sr: CexItem): ListingDetails =
     ListingDetails(
       s"https://uk.webuy.com/product-detail/?id=${sr.boxId}",
       sr.boxName,

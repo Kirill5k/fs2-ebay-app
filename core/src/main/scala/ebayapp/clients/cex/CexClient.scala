@@ -2,8 +2,8 @@ package ebayapp.clients.cex
 
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
-import ebayapp.clients.cex.CexClient.{CexSearchResponse, SearchResult}
 import ebayapp.clients.cex.mappers.CexItemMapper
+import ebayapp.clients.cex.responses._
 import ebayapp.common.Cache
 import ebayapp.common.config.{CexConfig, SearchQuery}
 import ebayapp.common.errors.AppError
@@ -72,7 +72,7 @@ final class CexApiClient[F[_]](
       mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]] =
     search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")
-      .map(_.response.data.fold(List.empty[SearchResult])(_.boxes))
+      .map(_.response.data.fold(List.empty[CexItem])(_.boxes))
       .flatTap(res => logger.info(s"""cex-search "${query.value}" returned ${res.size} results"""))
       .map(_.map(mapper.toDomain))
 
@@ -100,28 +100,7 @@ final class CexApiClient[F[_]](
 }
 
 object CexClient {
-  final case class SearchResult(
-      boxId: String,
-      boxName: String,
-      categoryName: String,
-      categoryFriendlyName: String,
-      cannotBuy: Int,
-      sellPrice: Double,
-      exchangePrice: Double,
-      cashPrice: Double,
-      ecomQuantityOnHand: Int
-  )
 
-  final case class SearchResults(
-      boxes: List[SearchResult],
-      totalRecords: Int,
-      minPrice: Double,
-      maxPrice: Double
-  )
-
-  final case class SearchResponse(data: Option[SearchResults])
-
-  final case class CexSearchResponse(response: SearchResponse)
 
   def make[F[_]: Concurrent: Timer: Logger](
       config: CexConfig,

@@ -1,7 +1,7 @@
 package ebayapp.clients.argos
 
 import ebayapp.clients.ItemMapper
-import ebayapp.clients.argos.responses.ResponseData
+import ebayapp.clients.argos.responses.ArgosItem
 import ebayapp.domain.ItemDetails.Generic
 import ebayapp.domain.search.{BuyPrice, ListingDetails}
 import ebayapp.domain.{ItemDetails, ResellableItem}
@@ -10,13 +10,13 @@ import java.time.Instant
 
 object mappers {
 
-  trait ArgosItemMapper[D <: ItemDetails] extends ItemMapper[ResponseData, D] {
-    def toDomain(data: ResponseData): ResellableItem[D]
+  trait ArgosItemMapper[D <: ItemDetails] extends ItemMapper[ArgosItem, D] {
+    def toDomain(data: ArgosItem): ResellableItem[D]
   }
 
   implicit def argosGeneric: ArgosItemMapper[ItemDetails.Generic] = new ArgosItemMapper[ItemDetails.Generic] {
 
-    override def toDomain(data: ResponseData): ResellableItem[ItemDetails.Generic] =
+    override def toDomain(data: ArgosItem): ResellableItem[ItemDetails.Generic] =
       ResellableItem[ItemDetails.Generic](
         Generic(data.attributes.name),
         ListingDetails(

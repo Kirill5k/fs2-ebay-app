@@ -2,7 +2,7 @@ package ebayapp.clients.argos
 
 import cats.implicits._
 
-private[argos] object responses {
+ object responses {
 
   final case class DataAttributes(
       relevancyRank: Int,
@@ -13,7 +13,7 @@ private[argos] object responses {
       reservable: Boolean
   )
 
-  final case class ResponseData(
+  final case class ArgosItem(
       id: String,
       attributes: DataAttributes
   )
@@ -27,7 +27,7 @@ private[argos] object responses {
 
   final case class SearchResponse(
       meta: ResponseMeta,
-      data: List[ResponseData]
+      data: List[ArgosItem]
   )
 
   final case class SearchData(response: SearchResponse)
