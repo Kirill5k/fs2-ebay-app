@@ -1,11 +1,6 @@
 package ebayapp.services
 
 import ebayapp.clients.ItemMapper
-import ebayapp.clients.argos.mappers.ArgosItemMapper
-import ebayapp.clients.argos.responses.ArgosItem
-import ebayapp.clients.cex.mappers.CexItemMapper
-import ebayapp.clients.cex.responses.CexItem
-import ebayapp.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.common.config.StockMonitorConfig
 import ebayapp.domain.ItemDetails
 import ebayapp.domain.stock.ItemStockUpdates
