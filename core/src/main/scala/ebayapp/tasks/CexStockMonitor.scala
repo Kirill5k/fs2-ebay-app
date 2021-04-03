@@ -3,14 +3,15 @@ package ebayapp.tasks
 import cats.effect.Sync
 import cats.implicits._
 import ebayapp.clients.cex.mappers._
+import ebayapp.clients.cex.responses.CexItem
 import ebayapp.common.config.StockMonitorConfig
 import ebayapp.domain.ItemDetails
-import ebayapp.services.{CexStockService, NotificationService, Services}
+import ebayapp.services.{NotificationService, Services, StockService}
 import fs2.Stream
 
 final class CexStockMonitor[F[_]: Sync, D <: ItemDetails: CexItemMapper](
     private val stockMonitorConfig: StockMonitorConfig,
-    private val stockService: CexStockService[F],
+    private val stockService: StockService[F, CexItem],
     private val notificationService: NotificationService[F]
 ) extends Task[F] {
 

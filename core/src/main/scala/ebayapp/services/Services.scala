@@ -3,6 +3,9 @@ package ebayapp.services
 import cats.effect.{Concurrent, Timer}
 import cats.implicits._
 import ebayapp.clients.Clients
+import ebayapp.clients.argos.responses.ArgosItem
+import ebayapp.clients.cex.responses.CexItem
+import ebayapp.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.domain.ItemDetails
 import ebayapp.repositories.Repositories
 import ebayapp.common.Logger
@@ -11,9 +14,9 @@ final case class Services[F[_]](
     notification: NotificationService[F],
     videoGame: ResellableItemService[F, ItemDetails.Game],
     ebayDeals: EbayDealsService[F],
-    cexStock: CexStockService[F],
-    selfridgesSale: SelfridgesSaleService[F],
-    argosStock: ArgosStockService[F]
+    cexStock: StockService[F, CexItem],
+    selfridgesSale: StockService[F, SelfridgesItem],
+    argosStock: StockService[F, ArgosItem]
 )
 
 object Services {
@@ -26,8 +29,8 @@ object Services {
       NotificationService.telegram[F](clients.telegram),
       ResellableItemService.videoGame[F](repositories.videoGames),
       EbayDealsService.make[F](clients.ebay, clients.cex),
-      CexStockService.make[F](clients.cex),
-      SelfridgesSaleService.make[F](clients.selfridges),
-      ArgosStockService.make[F](clients.argos)
+      StockService.cex[F](clients.cex),
+      StockService.selfridges[F](clients.selfridges),
+      StockService.argos[F](clients.argos)
     ).mapN(Services[F])
 }

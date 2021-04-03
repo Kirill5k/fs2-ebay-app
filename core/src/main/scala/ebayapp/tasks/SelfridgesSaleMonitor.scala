@@ -2,14 +2,15 @@ package ebayapp.tasks
 
 import cats.effect.Sync
 import cats.implicits._
+import ebayapp.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.common.config.StockMonitorConfig
 import ebayapp.domain.ItemDetails
-import ebayapp.services.{NotificationService, SelfridgesSaleService, Services}
+import ebayapp.services.{NotificationService, Services, StockService}
 import fs2.Stream
 
 final class SelfridgesSaleMonitor[F[_]: Sync](
     private val stockMonitorConfig: StockMonitorConfig,
-    private val saleService: SelfridgesSaleService[F],
+    private val saleService: StockService[F, SelfridgesItem],
     private val notificationService: NotificationService[F]
 ) extends Task[F] {
 

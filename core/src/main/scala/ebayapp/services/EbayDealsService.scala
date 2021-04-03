@@ -3,7 +3,7 @@ package ebayapp.services
 import cats.effect.{Concurrent, Sync, Timer}
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.ebay.EbayClient
-import ebayapp.clients.ebay.mappers.EbayItemMapper
+import ebayapp.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.{EbayDealsConfig, SearchQuery}
 import ebayapp.common.stream._

@@ -4,8 +4,6 @@ import cats.effect.{Concurrent, IO, Timer}
 import ebayapp.CatsSpec
 import ebayapp.common.errors.AppError
 import ebayapp.common.{Error, Logger}
-import ebayapp.domain.ItemDetails
-import ebayapp.services._
 
 import scala.concurrent.duration._
 
@@ -14,7 +12,7 @@ class ErrorsNotifierSpec extends CatsSpec {
   "An ErrorsNotifier" should {
 
     "send alerts on critical errors" in {
-      val services = mocks
+      val services = servicesMock
       when(services.notification.alert(any[Error])).thenReturn(IO.unit)
       val res = for {
         logger          <- Logger.make[IO]
@@ -32,7 +30,7 @@ class ErrorsNotifierSpec extends CatsSpec {
     }
 
     "send termination signal on critical errors" in {
-      val services = mocks
+      val services = servicesMock
       val res = for {
         logger          <- Logger.make[IO]
         notifier        <- ErrorsNotifier.make[IO](services)(Concurrent[IO], logger, Timer[IO])
@@ -46,13 +44,4 @@ class ErrorsNotifierSpec extends CatsSpec {
       }
     }
   }
-
-  def mocks: Services[IO] = Services[IO](
-    mock[NotificationService[IO]],
-    mock[ResellableItemService[IO, ItemDetails.Game]],
-    mock[EbayDealsService[IO]],
-    mock[CexStockService[IO]],
-    mock[SelfridgesSaleService[IO]],
-    mock[ArgosStockService[IO]]
-  )
 }

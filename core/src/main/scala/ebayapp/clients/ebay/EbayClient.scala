@@ -5,7 +5,7 @@ import cats.implicits._
 import ebayapp.clients.ebay.auth.EbayAuthClient
 import ebayapp.clients.ebay.browse.EbayBrowseClient
 import ebayapp.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
-import ebayapp.clients.ebay.mappers.EbayItemMapper
+import ebayapp.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.Cache
 import ebayapp.common.config.{EbayConfig, SearchQuery}

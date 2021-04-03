@@ -3,12 +3,12 @@ package ebayapp.tasks
 import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.ebay.mappers.EbayItemMapper
+import ebayapp.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.{EbayDealsConfig, SearchQuery}
-import ebayapp.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
 import ebayapp.domain.ItemDetails.Game
 import ebayapp.domain.search.BuyPrice
-import ebayapp.services._
+import ebayapp.domain.{ResellableItem, ResellableItemBuilder}
 
 import scala.concurrent.duration._
 
@@ -24,7 +24,7 @@ class EbayDealsFinderSpec extends CatsSpec {
 
     "send notification for cheap items" in {
       val game     = ResellableItemBuilder.videoGame("Super Mario 3", buyPrice = BuyPrice(1, BigDecimal(5)))
-      val services = mocks
+      val services = servicesMock
       when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper), eqTo(params)))
         .thenReturn(fs2.Stream.evalSeq(IO.pure(List(game))))
 
@@ -48,7 +48,7 @@ class EbayDealsFinderSpec extends CatsSpec {
 
     "ignore items with quantity gte 10" in {
       val game     = ResellableItemBuilder.videoGame("Super Mario 3", buyPrice = BuyPrice(15, BigDecimal(5)))
-      val services = mocks
+      val services = servicesMock
 
       when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper), eqTo(params)))
         .thenReturn(fs2.Stream.evalSeq(IO.pure(List(game))))
@@ -69,13 +69,4 @@ class EbayDealsFinderSpec extends CatsSpec {
     }
 
   }
-
-  def mocks: Services[IO] = Services[IO](
-    mock[NotificationService[IO]],
-    mock[ResellableItemService[IO, ItemDetails.Game]],
-    mock[EbayDealsService[IO]],
-    mock[CexStockService[IO]],
-    mock[SelfridgesSaleService[IO]],
-    mock[ArgosStockService[IO]]
-  )
 }

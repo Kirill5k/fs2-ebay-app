@@ -3,7 +3,7 @@ package ebayapp.services
 import cats.effect.IO
 import ebayapp.CatsSpec
 import ebayapp.clients.selfridges.SelfridgesClient
-import ebayapp.clients.selfridges.mappers.SelfridgesItemMapper
+import ebayapp.clients.selfridges.mappers._
 import ebayapp.common.config.{SearchQuery, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.domain.ItemDetails
 import ebayapp.domain.ResellableItemBuilder.clothing
@@ -13,7 +13,7 @@ import scala.concurrent.duration._
 
 class SelfridgesSaleServiceSpec extends CatsSpec {
 
-  val query = SearchQuery("foo")
+  val query  = SearchQuery("foo")
   val config = StockMonitorConfig(1.second, List(StockMonitorRequest(SearchQuery("foo"), true, true)))
 
   "A LiveSelfridgesSaleService" should {
@@ -34,8 +34,9 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(unwantedItems))
 
-      val service = new LiveSelfridgesSaleService[IO](client)
-      val result = service.stockUpdates[ItemDetails.Clothing](config).interruptAfter(2200.millis).compile.toList
+      val result = StockService.selfridges[IO](client).flatMap {
+        _.stockUpdates[ItemDetails.Clothing](config).interruptAfter(2200.millis).compile.toList
+      }
 
       result.unsafeToFuture().map { updates =>
         updates must have size 1

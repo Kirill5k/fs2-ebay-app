@@ -2,6 +2,7 @@ package ebayapp.tasks
 
 import cats.effect.Sync
 import ebayapp.clients.ebay.mappers.EbayItemMapper
+import ebayapp.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.clients.ebay.search.EbaySearchParams
 import ebayapp.common.config.EbayDealsConfig
 import ebayapp.domain.{ItemDetails, ResellableItem}

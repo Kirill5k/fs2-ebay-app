@@ -16,9 +16,7 @@ object mappers {
       price: Option[ItemPrice]
   )
 
-  trait SelfridgesItemMapper[D <: ItemDetails] extends ItemMapper[SelfridgesItem, D] {
-    def toDomain(si: SelfridgesItem): ResellableItem[D]
-  }
+  type SelfridgesItemMapper[D <: ItemDetails] = ItemMapper[SelfridgesItem, D]
 
   implicit val clothingMapper: SelfridgesItemMapper[ItemDetails.Clothing] = new SelfridgesItemMapper[ItemDetails.Clothing] {
 

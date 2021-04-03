@@ -8,11 +8,9 @@ import ebayapp.domain
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import ebayapp.domain.search.{BuyPrice, ListingDetails}
 
-trait EbayItemMapper[D <: ItemDetails] extends ItemMapper[EbayItem, D] {
-  def toDomain(ebayItem: EbayItem): ResellableItem[D]
-}
-
 object EbayItemMapper {
+
+  type EbayItemMapper[D <: ItemDetails] = ItemMapper[EbayItem, D]
 
   private val categories: Map[Int, String] = Map(
     139973 -> "Games"

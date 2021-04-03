@@ -6,6 +6,7 @@ import ebayapp.CatsSpec
 import ebayapp.clients.ebay.auth.EbayAuthClient
 import ebayapp.clients.ebay.browse.EbayBrowseClient
 import ebayapp.clients.ebay.browse.responses._
+import ebayapp.clients.ebay.mappers.EbayItemMapper._
 import ebayapp.common.Cache
 import ebayapp.common.config.{EbayConfig, EbayCredentials, EbayDealsConfig, EbayDealsConfigs, EbaySearchConfig, SearchQuery}
 import ebayapp.common.errors.AppError

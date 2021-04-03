@@ -10,9 +10,7 @@ import java.time.Instant
 
 object mappers {
 
-  trait ArgosItemMapper[D <: ItemDetails] extends ItemMapper[ArgosItem, D] {
-    def toDomain(data: ArgosItem): ResellableItem[D]
-  }
+  type ArgosItemMapper[D <: ItemDetails] = ItemMapper[ArgosItem, D]
 
   implicit def argosGeneric: ArgosItemMapper[ItemDetails.Generic] = new ArgosItemMapper[ItemDetails.Generic] {
 
