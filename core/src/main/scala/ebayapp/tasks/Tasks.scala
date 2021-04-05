@@ -32,7 +32,7 @@ object Tasks {
   def make[F[_]: Concurrent: Logger: Timer](config: AppConfig, services: Services[F]): F[Tasks[F]] =
     List(
       ErrorsNotifier.make[F](services),
-      EbayDealsFinder.videoGames(config.ebay.deals.videoGames, services),
+      EbayDealsFinder.videoGames[F](config.ebay.deals.videoGames, services),
       StockMonitor.make[F](config, services)
     ).sequence.map(Tasks[F])
 }

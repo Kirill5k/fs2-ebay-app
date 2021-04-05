@@ -30,7 +30,7 @@ final class StockMonitor[F[_]: Concurrent](
 }
 
 object StockMonitor {
-  def make[F[_]: Concurrent](config: AppConfig, services: Services[F]): F[StockMonitor[F]] =
+  def make[F[_]: Concurrent](config: AppConfig, services: Services[F]): F[Task[F]] =
     Sync[F].delay(
       new StockMonitor[F](
         config,
