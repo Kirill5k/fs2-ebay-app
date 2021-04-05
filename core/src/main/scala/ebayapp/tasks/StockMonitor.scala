@@ -1,6 +1,6 @@
 package ebayapp.tasks
 
-import cats.effect.Concurrent
+import cats.effect.{Concurrent, Sync}
 import cats.implicits._
 import ebayapp.clients.argos.mappers._
 import ebayapp.clients.argos.responses.ArgosItem
@@ -9,7 +9,7 @@ import ebayapp.clients.cex.responses.CexItem
 import ebayapp.clients.selfridges.mappers._
 import ebayapp.common.config.AppConfig
 import ebayapp.domain.ItemDetails
-import ebayapp.services.{NotificationService, StockService}
+import ebayapp.services.{NotificationService, Services, StockService}
 import fs2.Stream
 
 final class StockMonitor[F[_]: Concurrent](
@@ -27,4 +27,17 @@ final class StockMonitor[F[_]: Concurrent](
       selfridgesStockService.stockUpdates[ItemDetails.Clothing](config.selfridges.stockMonitor)
     ).parJoinUnbounded
       .evalMap(upd => upd.updates.traverse_(u => notificationService.stockUpdate(upd.item, u)))
+}
+
+object StockMonitor {
+  def make[F[_]: Concurrent](config: AppConfig, services: Services[F]): F[StockMonitor[F]] =
+    Sync[F].delay(
+      new StockMonitor[F](
+        config,
+        services.cexStock,
+        services.argosStock,
+        services.selfridgesSale,
+        services.notification
+      )
+    )
 }
