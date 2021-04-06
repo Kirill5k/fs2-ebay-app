@@ -9,8 +9,8 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-final case class Tasks[F[_]: Concurrent: Logger: Timer](
-    tasks: List[Task[F]]
+final class Tasks[F[_]: Concurrent: Logger: Timer](
+    val tasks: List[Task[F]]
 ) {
   def runAll: Stream[F, Unit] =
     Stream
@@ -34,5 +34,5 @@ object Tasks {
       ErrorsNotifier.make[F](services),
       EbayDealsFinder.videoGames[F](config.ebay.deals.videoGames, services),
       StockMonitor.make[F](config, services)
-    ).sequence.map(Tasks[F])
+    ).sequence.map(tasks => new Tasks[F](tasks))
 }

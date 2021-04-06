@@ -11,25 +11,34 @@ import ebayapp.common.config.AppConfig
 import ebayapp.common.Logger
 import sttp.client3.SttpBackend
 
-final case class Clients[F[_]](
-    ebay: EbayClient[F],
-    cex: CexClient[F],
-    telegram: TelegramClient[F],
-    selfridges: SelfridgesClient[F],
-    argos: ArgosClient[F]
-)
+trait Clients[F[_]] {
+  def ebay: EbayClient[F]
+  def cex: CexClient[F]
+  def telegram: TelegramClient[F]
+  def selfridges: SelfridgesClient[F]
+  def argos: ArgosClient[F]
+}
 
 object Clients {
 
   def make[F[_]: Concurrent: Timer: Logger](
       config: AppConfig,
       backend: SttpBackend[F, Any]
-  ): F[Clients[F]] = {
-    val ebay = EbayClient.make[F](config.ebay, backend)
-    val cex = CexClient.make[F](config.cex, backend)
-    val telegram = TelegramClient.make[F](config.telegram, backend)
-    val selfridges = SelfridgesClient.make[F](config.selfridges, backend)
-    val argos = ArgosClient.make[F](config.argos, backend)
-    (ebay, cex, telegram, selfridges, argos).mapN(Clients.apply)
-  }
+  ): F[Clients[F]] =
+    (
+      EbayClient.make[F](config.ebay, backend),
+      CexClient.make[F](config.cex, backend),
+      TelegramClient.make[F](config.telegram, backend),
+      SelfridgesClient.make[F](config.selfridges, backend),
+      ArgosClient.make[F](config.argos, backend)
+    ).mapN { (ec, cc, tc, sc, ac) =>
+      new Clients[F] {
+        def ebay: EbayClient[F]             = ec
+        def cex: CexClient[F]               = cc
+        def telegram: TelegramClient[F]     = tc
+        def selfridges: SelfridgesClient[F] = sc
+        def argos: ArgosClient[F]           = ac
+      }
+    }
+
 }

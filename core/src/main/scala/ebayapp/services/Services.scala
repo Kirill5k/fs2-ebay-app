@@ -10,14 +10,14 @@ import ebayapp.domain.ItemDetails
 import ebayapp.repositories.Repositories
 import ebayapp.common.Logger
 
-final case class Services[F[_]](
-    notification: NotificationService[F],
-    videoGame: ResellableItemService[F, ItemDetails.Game],
-    ebayDeals: EbayDealsService[F],
-    cexStock: StockService[F, CexItem],
-    selfridgesSale: StockService[F, SelfridgesItem],
-    argosStock: StockService[F, ArgosItem]
-)
+trait Services[F[_]] {
+  def notification: NotificationService[F]
+  def videoGame: ResellableItemService[F, ItemDetails.Game]
+  def ebayDeals: EbayDealsService[F]
+  def cexStock: StockService[F, CexItem]
+  def selfridgesSale: StockService[F, SelfridgesItem]
+  def argosStock: StockService[F, ArgosItem]
+}
 
 object Services {
 
@@ -32,5 +32,14 @@ object Services {
       StockService.cex[F](clients.cex),
       StockService.selfridges[F](clients.selfridges),
       StockService.argos[F](clients.argos)
-    ).mapN(Services[F])
+    ).mapN((ns, vs, es, cs, ss, as) =>
+      new Services[F] {
+        def notification: NotificationService[F]                  = ns
+        def videoGame: ResellableItemService[F, ItemDetails.Game] = vs
+        def ebayDeals: EbayDealsService[F]                        = es
+        def cexStock: StockService[F, CexItem]                    = cs
+        def selfridgesSale: StockService[F, SelfridgesItem]       = ss
+        def argosStock: StockService[F, ArgosItem]                = as
+      }
+    )
 }

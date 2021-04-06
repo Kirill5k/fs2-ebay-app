@@ -8,12 +8,11 @@ import ebayapp.common.Logger
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 
-final case class Controllers[F[_]: Monad](
-    home: Controller[F],
-    videoGame: Controller[F]
-) {
+trait Controllers[F[_]] {
+  def home: Controller[F]
+  def videoGame: Controller[F]
 
-  def routes: HttpRoutes[F] =
+  def routes(implicit M: Monad[F]): HttpRoutes[F] =
     Router(
       "api" -> videoGame.routes,
       ""    -> home.routes
@@ -26,5 +25,10 @@ object Controllers {
     (
       Controller.home(blocker),
       Controller.videoGame(services.videoGame)
-    ).mapN(Controllers.apply[F])
+    ).mapN((h, v) =>
+      new Controllers[F] {
+        def home: Controller[F]      = h
+        def videoGame: Controller[F] = v
+      }
+    )
 }
