@@ -343,8 +343,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val titles = Map(
         "the last of us part 2" -> "last of us Part II",
         "XBOX ONE GAME F1 2018 HEADLINE EDITION" -> "F1 2018",
-        "Mafia Definitive Edition" -> "Mafia Definitive",
         "FIFA 21 NEXT LEVEL" -> "FIFA 21",
+        "Resident Evil 7 Biohazard" -> "Resident Evil 7",
         "pga tour 2k21 golf fun" -> "pga tour 2k21",
       )
 
