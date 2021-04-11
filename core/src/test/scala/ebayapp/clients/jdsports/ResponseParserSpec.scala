@@ -1,6 +1,6 @@
 package ebayapp.clients.jdsports
 
-import ebayapp.clients.jdsports.parsers.{ItemStock, ResponseParser}
+import ebayapp.clients.jdsports.parsers.{CatalogItem, ItemDetails, ItemStock, ResponseParser}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -14,7 +14,28 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "parse raw html search response into list of objects" in {
         val result = ResponseParser.parseSearchResponse(html("jdsports/search-by-brand.html"))
 
-        result mustBe Right(Nil)
+        result mustBe Right(List(
+          CatalogItem("16022719", "black", "Emporio Armani EA7 Tape 2 T-Shirt", true),
+          CatalogItem("16026576", "black", "Emporio Armani EA7 Padded Zip Bubble Jacket", true),
+          CatalogItem("1274081", "black", "Emporio Armani EA7 Train Mini Cross Body Bag", false)
+        ))
+      }
+    }
+
+    "parseItemDetails" should {
+      "parse item details" in {
+        val result = ResponseParser.parseItemDetails(html("jdsports/get-item.html"))
+
+        result mustBe Right(ItemDetails(
+          "16022719",
+          "Emporio Armani EA7 Tape 2 T-Shirt",
+          BigDecimal(20.00),
+          BigDecimal(50.00),
+          "Emporio Armani EA7",
+          "men",
+          "black",
+          "https://i8.amplience.net/i/jpl/jd_366443_a?qlt=92"
+        ))
       }
     }
 

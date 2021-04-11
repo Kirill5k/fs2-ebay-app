@@ -11,9 +11,7 @@ private[jdsports] object parsers {
       plu: String,
       colour: String,
       description: String,
-      brand: String,
-      sale: Boolean,
-      categoryId: String
+      sale: Boolean
   ) {
     val name: String = s"$colour-$description".replaceAll(" ", "-").replaceAll("-+", "-")
   }
@@ -22,7 +20,20 @@ private[jdsports] object parsers {
       sizes: List[String]
   )
 
+  final case class ItemDetails(
+      Id: String,
+      Name: String,
+      UnitPrice: BigDecimal,
+      PreviousUnitPrice: BigDecimal,
+      Brand: String,
+      Category: String,
+      Colour: String,
+      PrimaryImage: String
+  )
+
   object ResponseParser {
+    private val sizePattern = ".*title=\"Select Size ([ 0-9A-Za-z]+)\".*$.*".r
+
     def parseSearchResponse(rawHtml: String): Either[AppError, List[CatalogItem]] = {
       val rawDataObject = rawHtml
         .split("var dataObject = ")
@@ -37,12 +48,24 @@ private[jdsports] object parsers {
         .replaceAll(":", "\":")
 
       decode[List[CatalogItem]](rawDataObject.slice(0, rawDataObject.length - 2))
-        .leftMap(e => AppError.Json(s"error parsing jdsports reponse ${e.getMessage}"))
+        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}"))
     }
 
-    private val sizePattern = ".*title=\"Select Size ([ 0-9A-Za-z]+)\".*$.*".r
+    def parseItemDetails(rawHtml: String): Either[AppError, ItemDetails] = {
+      val rawProduct = rawHtml
+        .split("var ProductType = ")
+        .last
+        .split("</script>")
+        .head
+        .trim
+        .replaceAll("(?<!https):", "\":")
+        .replaceAll("(?<!\") {4,10}", "\"")
 
-    def parseStockResponse(rawHtml: String): Either[AppError, ItemStock] = {
+      decode[ItemDetails](rawProduct.slice(0, rawProduct.length - 1))
+        .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}"))
+    }
+
+    def parseStockResponse(rawHtml: String): Either[AppError, ItemStock] =
       if (rawHtml.contains("outOfStock")) ItemStock(Nil).asRight[AppError]
       else {
         val sizes = rawHtml
@@ -53,6 +76,5 @@ private[jdsports] object parsers {
           }
         ItemStock(sizes).asRight[AppError]
       }
-    }
   }
 }
