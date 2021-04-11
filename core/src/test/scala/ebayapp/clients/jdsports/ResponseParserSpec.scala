@@ -22,12 +22,6 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
           )
         )
       }
-
-      "parse another html with errors" in {
-        val result = ResponseParser.parseSearchResponse(html("jdsports/search-by-brand-2.html"))
-
-        result.isRight mustBe true
-      }
     }
 
     "parseItemDetails" should {
