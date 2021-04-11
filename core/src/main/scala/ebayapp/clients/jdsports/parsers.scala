@@ -7,20 +7,20 @@ import io.circe.parser._
 
 private[jdsports] object parsers {
 
-  final case class CatalogItem(
+  final case class JdCatalogItem(
       plu: String,
       colour: String,
       description: String,
       sale: Boolean
   ) {
-    val name: String = s"$colour-$description".replaceAll(" ", "-").replaceAll("-+", "-")
+    val fullName: String = s"$colour-$description".replaceAll(" ", "-").replaceAll("-+", "-").toLowerCase
   }
 
-  final case class ItemStock(
+  final case class JdItemStock(
       sizes: List[String]
   )
 
-  final case class ItemDetails(
+  final case class JdItemDetails(
       Id: String,
       Name: String,
       UnitPrice: BigDecimal,
@@ -34,7 +34,7 @@ private[jdsports] object parsers {
   object ResponseParser {
     private val sizePattern = ".*title=\"Select Size ([ 0-9A-Za-z]+)\".*$.*".r
 
-    def parseSearchResponse(rawHtml: String): Either[AppError, List[CatalogItem]] = {
+    def parseSearchResponse(rawHtml: String): Either[AppError, List[JdCatalogItem]] = {
       val rawDataObject = rawHtml
         .split("var dataObject = ")
         .last
@@ -47,11 +47,11 @@ private[jdsports] object parsers {
         .replaceAll("(?<!\\}),", ",\"")
         .replaceAll(":", "\":")
 
-      decode[List[CatalogItem]](rawDataObject.slice(0, rawDataObject.length - 2))
+      decode[List[JdCatalogItem]](rawDataObject.slice(0, rawDataObject.length - 2))
         .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}"))
     }
 
-    def parseItemDetails(rawHtml: String): Either[AppError, ItemDetails] = {
+    def parseItemDetails(rawHtml: String): Either[AppError, JdItemDetails] = {
       val rawProduct = rawHtml
         .split("var ProductType = ")
         .last
@@ -61,12 +61,12 @@ private[jdsports] object parsers {
         .replaceAll("(?<!https):", "\":")
         .replaceAll("(?<!\") {4,10}", "\"")
 
-      decode[ItemDetails](rawProduct.slice(0, rawProduct.length - 1))
+      decode[JdItemDetails](rawProduct.slice(0, rawProduct.length - 1))
         .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}"))
     }
 
-    def parseStockResponse(rawHtml: String): Either[AppError, ItemStock] =
-      if (rawHtml.contains("outOfStock")) ItemStock(Nil).asRight[AppError]
+    def parseStockResponse(rawHtml: String): Either[AppError, JdItemStock] =
+      if (rawHtml.contains("outOfStock")) JdItemStock(Nil).asRight[AppError]
       else {
         val sizes = rawHtml
           .split("pdp-productDetails-size")
@@ -74,7 +74,7 @@ private[jdsports] object parsers {
           .flatMap { s =>
             Option(s).collect { case sizePattern(size) => size }
           }
-        ItemStock(sizes).asRight[AppError]
+        JdItemStock(sizes).asRight[AppError]
       }
   }
 }

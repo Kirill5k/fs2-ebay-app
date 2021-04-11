@@ -1,6 +1,6 @@
 package ebayapp.clients.jdsports
 
-import ebayapp.clients.jdsports.parsers.{CatalogItem, ItemDetails, ItemStock, ResponseParser}
+import ebayapp.clients.jdsports.parsers.{JdCatalogItem, JdItemDetails, JdItemStock, ResponseParser}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -14,11 +14,13 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "parse raw html search response into list of objects" in {
         val result = ResponseParser.parseSearchResponse(html("jdsports/search-by-brand.html"))
 
-        result mustBe Right(List(
-          CatalogItem("16022719", "black", "Emporio Armani EA7 Tape 2 T-Shirt", true),
-          CatalogItem("16026576", "black", "Emporio Armani EA7 Padded Zip Bubble Jacket", true),
-          CatalogItem("1274081", "black", "Emporio Armani EA7 Train Mini Cross Body Bag", false)
-        ))
+        result mustBe Right(
+          List(
+            JdCatalogItem("16022719", "black", "Emporio Armani EA7 Tape 2 T-Shirt", true),
+            JdCatalogItem("16026576", "black", "Emporio Armani EA7 Padded Zip Bubble Jacket", true),
+            JdCatalogItem("1274081", "black", "Emporio Armani EA7 Train Mini Cross Body Bag", false)
+          )
+        )
       }
     }
 
@@ -26,16 +28,18 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "parse item details" in {
         val result = ResponseParser.parseItemDetails(html("jdsports/get-item.html"))
 
-        result mustBe Right(ItemDetails(
-          "16022719",
-          "Emporio Armani EA7 Tape 2 T-Shirt",
-          BigDecimal(20.00),
-          BigDecimal(50.00),
-          "Emporio Armani EA7",
-          "men",
-          "black",
-          "https://i8.amplience.net/i/jpl/jd_366443_a?qlt=92"
-        ))
+        result mustBe Right(
+          JdItemDetails(
+            "16022719",
+            "Emporio Armani EA7 Tape 2 T-Shirt",
+            BigDecimal(20.00),
+            BigDecimal(50.00),
+            "Emporio Armani EA7",
+            "men",
+            "black",
+            "https://i8.amplience.net/i/jpl/jd_366443_a?qlt=92"
+          )
+        )
       }
     }
 
@@ -43,19 +47,19 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "return available sizes" in {
         val result = ResponseParser.parseStockResponse(html("jdsports/get-stock-multiple.html"))
 
-        result mustBe Right(ItemStock(List("XS", "S", "M", "L", "XL", "XXL")))
+        result mustBe Right(JdItemStock(List("XS", "S", "M", "L", "XL", "XXL")))
       }
 
       "return single size when only 1 is available" in {
         val result = ResponseParser.parseStockResponse(html("jdsports/get-stock-single.html"))
 
-        result mustBe Right(ItemStock(List("ONE SIZE")))
+        result mustBe Right(JdItemStock(List("ONE SIZE")))
       }
 
       "return nil when out of stock" in {
         val result = ResponseParser.parseStockResponse(html("jdsports/get-stock-oos.html"))
 
-        result mustBe Right(ItemStock(Nil))
+        result mustBe Right(JdItemStock(Nil))
       }
     }
   }

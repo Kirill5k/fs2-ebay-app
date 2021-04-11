@@ -2,8 +2,8 @@ package ebayapp.clients.jdsports
 
 import cats.effect.{Sync, Timer}
 import cats.implicits._
-import ebayapp.clients.jdsports.mappers.JdsportsItemMapper
-import ebayapp.clients.jdsports.parsers.{CatalogItem, ResponseParser}
+import ebayapp.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
+import ebayapp.clients.jdsports.parsers.{JdCatalogItem, JdItemDetails, JdItemStock, ResponseParser}
 import ebayapp.common.Logger
 import ebayapp.common.config.{JdsportsConfig, SearchQuery}
 import ebayapp.domain.{ItemDetails, ResellableItem}
@@ -31,9 +31,32 @@ final private class LiveJdsportsClient[F[_]](
     "Referer"    -> "https://www.jdsports.co.uk/men/brand/"
   )
 
-  override def searchSale[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]] = ???
+  override def searchSale[D <: ItemDetails](query: SearchQuery)(implicit mapper: JdsportsItemMapper[D]): Stream[F, ResellableItem[D]] =
+    Stream
+      .evalSeq(searchByBrand(query))
+      .filter(_.sale)
+      .evalMap { ci =>
+        (getItem(ci), getStock(ci)).mapN { (details, stock) =>
+          (details, stock).mapN((d, s) => s.sizes.map { size =>
+            JdsportsItem(
+              ci.plu,
+              ci.description,
+              d.UnitPrice,
+              d.PreviousUnitPrice,
+              d.Brand,
+              d.Colour,
+              size,
+              d.PrimaryImage,
+              d.Category
+            )
+          })
+        }
+      }
+      .unNone
+      .flatMap(Stream.emits)
+      .map(mapper.toDomain)
 
-  private def searchByBrand(query: SearchQuery): F[List[CatalogItem]] =
+  private def searchByBrand(query: SearchQuery): F[List[JdCatalogItem]] =
     basicRequest
       .get(uri"${config.baseUri}/men/brand/${query.value.toLowerCase.replace(" ", "-")}/?max=408&sort=price-low-high")
       .headers(defaultHeaders)
@@ -43,12 +66,47 @@ final private class LiveJdsportsClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
           case Left(error) if r.code.isClientError || r.code.isServerError =>
-            logger.error(s"error sending search request to selfridges: ${r.code}\n$error") *>
+            logger.error(s"error sending search request to jdsports: ${r.code}\n$error") *>
               F.pure(Nil)
           case Left(error) =>
-            logger.warn(s"error sending search request to selfridges: ${error}") *>
+            logger.error(s"error sending search request to jdsports: ${error}") *>
               T.sleep(1.second) *> searchByBrand(query)
         }
       }
 
+  private def getStock(ci: JdCatalogItem): F[Option[JdItemStock]] =
+    basicRequest
+      .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/quickview/stock")
+      .headers(defaultHeaders)
+      .send(backend)
+      .flatMap { r =>
+        r.body match {
+          case Right(html) =>
+            F.fromEither(ResponseParser.parseStockResponse(html)).map(_.some)
+          case Left(error) if r.code.isClientError || r.code.isServerError =>
+            logger.error(s"error sending get stock request to jdsports: ${r.code}\n$error") *>
+              F.pure(None)
+          case Left(error) =>
+            logger.error(s"error sending get stock request to jdsports: ${error}") *>
+              T.sleep(1.second) *> getStock(ci)
+        }
+      }
+
+  private def getItem(ci: JdCatalogItem): F[Option[JdItemDetails]] =
+    basicRequest
+      .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/quickview")
+      .headers(defaultHeaders)
+      .send(backend)
+      .flatMap { r =>
+        r.body match {
+          case Right(html) =>
+            F.fromEither(ResponseParser.parseItemDetails(html)).map(_.some)
+          case Left(error) if r.code.isClientError || r.code.isServerError =>
+            logger.error(s"error sending get item request to jdsports: ${r.code}\n$error") *>
+              F.pure(None)
+          case Left(error) =>
+            logger.error(s"error sending get item request to jdsports: ${error}") *>
+              T.sleep(1.second) *> getItem(ci)
+        }
+      }
 }
