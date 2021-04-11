@@ -33,7 +33,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
             "16022719",
             "Emporio Armani EA7 Tape 2 T-Shirt",
             BigDecimal(20.00),
-            BigDecimal(50.00),
+            Some(BigDecimal(50.00)),
             "Emporio Armani EA7",
             "men",
             "black",
@@ -47,7 +47,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "return available sizes" in {
         val result = ResponseParser.parseStockResponse(html("jdsports/get-stock-multiple.html"))
 
-        result mustBe Right(JdItemStock(List("XS", "S", "M", "L", "XL", "XXL")))
+        result mustBe Right(JdItemStock(List("XS", "S", "M")))
       }
 
       "return single size when only 1 is available" in {

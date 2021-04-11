@@ -24,7 +24,7 @@ private[jdsports] object parsers {
       Id: String,
       Name: String,
       UnitPrice: BigDecimal,
-      PreviousUnitPrice: BigDecimal,
+      PreviousUnitPrice: Option[BigDecimal],
       Brand: String,
       Category: String,
       Colour: String,
@@ -60,6 +60,7 @@ private[jdsports] object parsers {
         .trim
         .replaceAll("(?<!https):", "\":")
         .replaceAll("(?<!\") {4,10}", "\"")
+        .replaceAll("undefined", "null")
 
       decode[JdItemDetails](rawProduct.slice(0, rawProduct.length - 1))
         .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}"))

@@ -8,7 +8,7 @@ import ebayapp.common.Logger
 import ebayapp.common.config.{JdsportsConfig, SearchQuery}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
-import sttp.client3.{SttpBackend, basicRequest}
+import sttp.client3.{basicRequest, SttpBackend}
 import sttp.client3._
 
 import scala.concurrent.duration._
@@ -37,19 +37,21 @@ final private class LiveJdsportsClient[F[_]](
       .filter(_.sale)
       .evalMap { ci =>
         (getItem(ci), getStock(ci)).mapN { (details, stock) =>
-          (details, stock).mapN((d, s) => s.sizes.map { size =>
-            JdsportsItem(
-              ci.plu,
-              ci.description,
-              d.UnitPrice,
-              d.PreviousUnitPrice,
-              d.Brand,
-              d.Colour,
-              size,
-              d.PrimaryImage,
-              d.Category
-            )
-          })
+          (details, stock).mapN((d, s) =>
+            s.sizes.map { size =>
+              JdsportsItem(
+                ci.plu,
+                ci.description,
+                d.UnitPrice,
+                d.PreviousUnitPrice,
+                d.Brand,
+                d.Colour,
+                size,
+                d.PrimaryImage,
+                d.Category
+              )
+            }
+          )
         }
       }
       .unNone
@@ -109,4 +111,12 @@ final private class LiveJdsportsClient[F[_]](
               T.sleep(1.second) *> getItem(ci)
         }
       }
+}
+
+object JdsportsClient {
+  def make[F[_]: Sync: Logger: Timer](
+      config: JdsportsConfig,
+      backend: SttpBackend[F, Any]
+  ): F[JdsportsClient[F]] =
+    Sync[F].delay(new LiveJdsportsClient[F](config, backend))
 }

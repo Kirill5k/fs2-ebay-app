@@ -13,7 +13,7 @@ object mappers {
       id: String,
       name: String,
       currentPrice: BigDecimal,
-      previousPrice: BigDecimal,
+      previousPrice: Option[BigDecimal],
       brand: String,
       colour: String,
       size: String,
@@ -44,13 +44,13 @@ object mappers {
 
     private def buyPrice(jdi: JdsportsItem): BuyPrice = {
       val current  = jdi.currentPrice
-      val rrp      = jdi.previousPrice
-      val discount = 100 - (current * 100 / rrp).toInt
+      val rrp = jdi.previousPrice
+      val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
 
       BuyPrice(
         1,
         current,
-        Some(discount)
+        discount
       )
     }
 
