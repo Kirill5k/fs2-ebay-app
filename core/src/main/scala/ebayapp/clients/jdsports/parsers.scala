@@ -70,6 +70,7 @@ private[jdsports] object parsers {
     def parseStockResponse(rawHtml: String): Either[AppError, JdItemStock] =
       if (rawHtml.contains("outOfStock")) JdItemStock(Nil).asRight[AppError]
       else {
+        println(rawHtml)
         val sizes = rawHtml
           .split("pdp-productDetails-size")
           .toList
