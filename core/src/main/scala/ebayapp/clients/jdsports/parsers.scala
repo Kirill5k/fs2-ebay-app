@@ -42,7 +42,7 @@ private[jdsports] object parsers {
         .head
         .split("items: ")
         .last
-        .replaceAll("\t", "")
+        .replaceAll("\t|\n", "")
         .replaceAll("\\{", "\\{\"")
         .replaceAll("(?<!\\}),", ",\"")
         .replaceAll(":", "\":")
