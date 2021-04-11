@@ -108,7 +108,7 @@ final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
     private val client: JdsportsClient[F]
 ) extends StockService[F, JdsportsItem] {
 
-  private val minDiscount: Int = 20
+  private val minDiscount: Int = 35
 
   override def stockUpdates[D <: ItemDetails: JdsportsItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
     Stream
@@ -121,7 +121,6 @@ final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
   private def findItems[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client
       .searchSale[D](query)
-      .evalTap(i => Logger[F].info(s"${i.itemDetails} ${i.buyPrice} ${i.listingDetails.url}"))
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .filter { case (_, item) =>
