@@ -3,6 +3,7 @@ package ebayapp
 import cats.effect.{ContextShift, IO, Timer}
 import ebayapp.clients.argos.responses.ArgosItem
 import ebayapp.clients.cex.responses.CexItem
+import ebayapp.clients.jdsports.mappers.JdsportsItem
 import ebayapp.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.common.Logger
 import ebayapp.domain.ItemDetails
@@ -27,5 +28,6 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
     val cexStock: StockService[IO, CexItem] = mock[StockService[IO, CexItem]]
     val selfridgesSale: StockService[IO, SelfridgesItem] = mock[StockService[IO, SelfridgesItem]]
     val argosStock: StockService[IO, ArgosItem] = mock[StockService[IO, ArgosItem]]
+    val jdsportsSale: StockService[IO, JdsportsItem] = mock[StockService[IO, JdsportsItem]]
   }
 }

@@ -9,6 +9,8 @@ import ebayapp.clients.argos.responses.ArgosItem
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.cex.mappers.CexItemMapper
 import ebayapp.clients.cex.responses.CexItem
+import ebayapp.clients.jdsports.JdsportsClient
+import ebayapp.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.clients.selfridges.SelfridgesClient
 import ebayapp.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.common.Logger
@@ -102,6 +104,33 @@ final private class SelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
       .flatTap(i => Logger[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))
 }
 
+final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
+    private val client: JdsportsClient[F]
+) extends StockService[F, JdsportsItem] {
+
+  private val minDiscount: Int = 30
+
+  override def stockUpdates[D <: ItemDetails: JdsportsItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
+    Stream
+      .emits(config.monitoringRequests.zipWithIndex)
+      .map { case (req, index) =>
+        getUpdates[D](req, config.monitoringFrequency, findItems(req.query)).delayBy((index * 10).seconds)
+      }
+      .parJoinUnbounded
+
+  private def findItems[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
+    client
+      .searchSale[D](query)
+      .map(item => (item.itemDetails.fullName, item))
+      .collect { case (Some(name), item) => (name, item) }
+      .filter { case (_, item) =>
+        item.buyPrice.discount.exists(_ > minDiscount)
+      }
+      .compile
+      .to(Map)
+      .flatTap(i => Logger[F].info(s"""jdsports-search "${query.value}" returned ${i.size} results"""))
+}
+
 object StockService {
 
   def argos[F[_]: Concurrent: Timer: Logger](client: ArgosClient[F]): F[StockService[F, ArgosItem]] =
@@ -112,4 +141,7 @@ object StockService {
 
   def selfridges[F[_]: Concurrent: Timer: Logger](client: SelfridgesClient[F]): F[StockService[F, SelfridgesItem]] =
     Sync[F].delay(new SelfridgesSaleService[F](client))
+
+  def jdsports[F[_]: Concurrent: Timer: Logger](client: JdsportsClient[F]): F[StockService[F, JdsportsItem]] =
+    Sync[F].delay(new JdsportsSaleService[F](client))
 }

@@ -5,6 +5,7 @@ import ebayapp.CatsSpec
 import ebayapp.clients.ItemMapper
 import ebayapp.clients.argos.responses.ArgosItem
 import ebayapp.clients.cex.responses.CexItem
+import ebayapp.clients.jdsports.mappers.JdsportsItem
 import ebayapp.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.common.config.{AppConfig, StockMonitorConfig}
 import ebayapp.domain.ItemDetails.{Clothing, Generic}
@@ -30,6 +31,8 @@ class StockMonitorSpec extends CatsSpec {
         .thenReturn(Stream.empty)
       when(services.selfridgesSale.stockUpdates[Clothing](any[StockMonitorConfig])(any[ItemMapper[SelfridgesItem, Clothing]]))
         .thenReturn(Stream.emit(updateClothing))
+      when(services.jdsportsSale.stockUpdates[Clothing](any[StockMonitorConfig])(any[ItemMapper[JdsportsItem, Clothing]]))
+        .thenReturn(Stream.empty)
       when(services.notification.stockUpdate[Clothing](any[ResellableItem[Clothing]], any[StockUpdate])).thenReturn(IO.unit)
       when(services.notification.stockUpdate[Generic](any[ResellableItem[Generic]], any[StockUpdate])).thenReturn(IO.unit)
 
@@ -43,6 +46,7 @@ class StockMonitorSpec extends CatsSpec {
         verify(services.cexStock).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[CexItem, Generic]])
         verify(services.argosStock).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[ArgosItem, Generic]])
         verify(services.selfridgesSale).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[SelfridgesItem, Clothing]])
+        verify(services.jdsportsSale).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[JdsportsItem, Clothing]])
         verify(services.notification).stockUpdate(updateGeneric.item, updateGeneric.updates.head)
         verify(services.notification).stockUpdate(updateGeneric.item, updateGeneric.updates.last)
         verify(services.notification).stockUpdate(updateClothing.item, updateClothing.updates.last)

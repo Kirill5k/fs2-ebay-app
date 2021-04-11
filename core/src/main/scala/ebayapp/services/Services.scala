@@ -5,6 +5,7 @@ import cats.implicits._
 import ebayapp.clients.Clients
 import ebayapp.clients.argos.responses.ArgosItem
 import ebayapp.clients.cex.responses.CexItem
+import ebayapp.clients.jdsports.mappers.JdsportsItem
 import ebayapp.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.domain.ItemDetails
 import ebayapp.repositories.Repositories
@@ -17,6 +18,7 @@ trait Services[F[_]] {
   def cexStock: StockService[F, CexItem]
   def selfridgesSale: StockService[F, SelfridgesItem]
   def argosStock: StockService[F, ArgosItem]
+  def jdsportsSale: StockService[F, JdsportsItem]
 }
 
 object Services {
@@ -31,8 +33,9 @@ object Services {
       EbayDealsService.make[F](clients.ebay, clients.cex),
       StockService.cex[F](clients.cex),
       StockService.selfridges[F](clients.selfridges),
-      StockService.argos[F](clients.argos)
-    ).mapN((ns, vs, es, cs, ss, as) =>
+      StockService.argos[F](clients.argos),
+      StockService.jdsports[F](clients.jdsports)
+    ).mapN((ns, vs, es, cs, ss, as, js) =>
       new Services[F] {
         def notification: NotificationService[F]                  = ns
         def videoGame: ResellableItemService[F, ItemDetails.Game] = vs
@@ -40,6 +43,7 @@ object Services {
         def cexStock: StockService[F, CexItem]                    = cs
         def selfridgesSale: StockService[F, SelfridgesItem]       = ss
         def argosStock: StockService[F, ArgosItem]                = as
+        def jdsportsSale: StockService[F, JdsportsItem]           = js
       }
     )
 }
