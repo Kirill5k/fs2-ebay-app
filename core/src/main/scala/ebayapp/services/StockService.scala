@@ -121,6 +121,7 @@ final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
   private def findItems[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client
       .searchSale[D](query)
+      .evalTap(i => Logger[F].info(s"${i.itemDetails} ${i.buyPrice} ${i.listingDetails.url}"))
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .filter { case (_, item) =>
