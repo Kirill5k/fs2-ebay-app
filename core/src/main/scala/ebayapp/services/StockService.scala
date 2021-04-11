@@ -108,7 +108,7 @@ final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
     private val client: JdsportsClient[F]
 ) extends StockService[F, JdsportsItem] {
 
-  private val minDiscount: Int = 30
+  private val minDiscount: Int = 20
 
   override def stockUpdates[D <: ItemDetails: JdsportsItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
     Stream

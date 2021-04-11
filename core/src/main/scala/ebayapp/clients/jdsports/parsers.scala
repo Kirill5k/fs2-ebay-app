@@ -48,7 +48,7 @@ private[jdsports] object parsers {
         .replaceAll(":", "\":")
 
       decode[List[JdCatalogItem]](rawDataObject.slice(0, rawDataObject.length - 2))
-        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawDataObject"))
+        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}"))
     }
 
     def parseItemDetails(rawHtml: String): Either[AppError, JdItemDetails] = {
@@ -64,7 +64,7 @@ private[jdsports] object parsers {
         .replaceAll("undefined", "null")
 
       decode[JdItemDetails](rawProduct.slice(0, rawProduct.length - 1))
-        .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}\n$rawProduct"))
+        .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}"))
     }
 
     def parseStockResponse(rawHtml: String): Either[AppError, JdItemStock] =
