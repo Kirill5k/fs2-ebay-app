@@ -20,6 +20,10 @@ private[jdsports] object parsers {
       sizes: List[String]
   )
 
+  object JdItemStock {
+    val OOS = JdItemStock(Nil)
+  }
+
   final case class JdItemDetails(
       Id: String,
       Name: String,
@@ -67,7 +71,7 @@ private[jdsports] object parsers {
     }
 
     def parseStockResponse(rawHtml: String): Either[AppError, JdItemStock] =
-      if (rawHtml.contains("outOfStock")) JdItemStock(Nil).asRight[AppError]
+      if (rawHtml.contains("outOfStock")) JdItemStock.OOS.asRight[AppError]
       else {
         val sizes = rawHtml
           .split("title=\"Select Size ")
