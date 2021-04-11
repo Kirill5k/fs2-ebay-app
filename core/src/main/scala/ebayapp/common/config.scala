@@ -89,7 +89,8 @@ object config {
   )
 
   final case class JdsportsConfig(
-      baseUri: String
+      baseUri: String,
+      stockMonitor: StockMonitorConfig
   )
 
   final case class TelegramConfig(

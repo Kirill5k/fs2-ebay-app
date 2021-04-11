@@ -3,17 +3,20 @@ package ebayapp.clients.jdsports
 import cats.effect.IO
 import ebayapp.SttpClientSpec
 import ebayapp.requests._
-import ebayapp.common.config.{JdsportsConfig, SearchQuery}
+import ebayapp.common.config.{JdsportsConfig, SearchQuery, StockMonitorConfig}
 import ebayapp.domain.ItemDetails.Clothing
 import ebayapp.domain.search.BuyPrice
 import sttp.client3.{Response, SttpBackend}
+
+import scala.concurrent.duration._
 
 class JdsportsClientSpec extends SttpClientSpec {
 
   "A JdsportsClient" should {
 
     val config = JdsportsConfig(
-      "http://jdsports.com"
+      "http://jdsports.com",
+      StockMonitorConfig(10.second, Nil)
     )
 
     val query = SearchQuery("Emporio Armani EA7")

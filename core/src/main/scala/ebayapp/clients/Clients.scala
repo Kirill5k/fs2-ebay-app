@@ -5,6 +5,7 @@ import cats.implicits._
 import ebayapp.clients.argos.ArgosClient
 import ebayapp.clients.cex.CexClient
 import ebayapp.clients.ebay.EbayClient
+import ebayapp.clients.jdsports.JdsportsClient
 import ebayapp.clients.selfridges.SelfridgesClient
 import ebayapp.clients.telegram.TelegramClient
 import ebayapp.common.config.AppConfig
@@ -17,6 +18,7 @@ trait Clients[F[_]] {
   def telegram: TelegramClient[F]
   def selfridges: SelfridgesClient[F]
   def argos: ArgosClient[F]
+  def jdsports: JdsportsClient[F]
 }
 
 object Clients {
@@ -30,14 +32,16 @@ object Clients {
       CexClient.make[F](config.cex, backend),
       TelegramClient.make[F](config.telegram, backend),
       SelfridgesClient.make[F](config.selfridges, backend),
-      ArgosClient.make[F](config.argos, backend)
-    ).mapN { (ec, cc, tc, sc, ac) =>
+      ArgosClient.make[F](config.argos, backend),
+      JdsportsClient.make[F](config.jdsports, backend)
+    ).mapN { (ec, cc, tc, sc, ac, jc) =>
       new Clients[F] {
         def ebay: EbayClient[F]             = ec
         def cex: CexClient[F]               = cc
         def telegram: TelegramClient[F]     = tc
         def selfridges: SelfridgesClient[F] = sc
         def argos: ArgosClient[F]           = ac
+        def jdsports: JdsportsClient[F] = jc
       }
     }
 
