@@ -39,6 +39,7 @@ final private class LiveJdsportsClient[F[_]](
     Stream
       .evalSeq(searchByBrand(query))
       .filter(_.sale)
+      .metered(500.millis)
       .evalMap { ci =>
         (getItem(ci), getStock(ci))
           .mapN { (details, stock) =>
