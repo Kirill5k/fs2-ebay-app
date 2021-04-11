@@ -36,27 +36,34 @@ final private class LiveJdsportsClient[F[_]](
       .evalSeq(searchByBrand(query))
       .filter(_.sale)
       .evalMap { ci =>
-        (getItem(ci), getStock(ci)).mapN { (details, stock) =>
-          (details, stock).mapN((d, s) =>
-            s.sizes.map { size =>
-              JdsportsItem(
-                ci.plu,
-                ci.description,
-                d.UnitPrice,
-                d.PreviousUnitPrice,
-                d.Brand,
-                d.Colour,
-                size,
-                d.PrimaryImage,
-                d.Category
-              )
-            }
-          )
-        }
+        (getItem(ci), getStock(ci))
+          .mapN { (details, stock) =>
+            (details, stock).mapN((d, s) =>
+              s.sizes.map { size =>
+                JdsportsItem(
+                  ci.plu,
+                  ci.description,
+                  d.UnitPrice,
+                  d.PreviousUnitPrice,
+                  d.Brand,
+                  d.Colour,
+                  size,
+                  d.PrimaryImage,
+                  d.Category
+                )
+              }
+            )
+          }
+          .handleErrorWith { e =>
+            logger.error(e)(e.getMessage) *> none[List[JdsportsItem]].pure[F]
+          }
       }
       .unNone
       .flatMap(Stream.emits)
       .map(mapper.toDomain)
+      .handleErrorWith { e =>
+        Stream.eval(logger.error(e)(e.getMessage)).drain
+      }
 
   private def searchByBrand(query: SearchQuery): F[List[JdCatalogItem]] =
     basicRequest

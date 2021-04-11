@@ -51,9 +51,6 @@ final private class LiveSelfridgesClient[F[_]](
           .map { case (stock, price) => SelfridgesItem(item, stock, price) }
       }
       .map(mapper.toDomain)
-      .handleErrorWith { e =>
-        Stream.eval(logger.error(e)(e.getMessage)).drain
-      }
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))

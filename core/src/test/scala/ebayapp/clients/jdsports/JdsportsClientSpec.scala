@@ -44,7 +44,7 @@ class JdsportsClientSpec extends SttpClientSpec {
           Clothing("Emporio Armani EA7 Tape 2 T-Shirt", "Emporio Armani EA7", "M")
         )
 
-        items.map(_.buyPrice) mustBe Set(
+        items.map(_.buyPrice).toSet mustBe Set(
           BuyPrice(1, BigDecimal(20.0), Some(60))
         )
       }
