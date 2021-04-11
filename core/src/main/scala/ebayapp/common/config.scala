@@ -88,6 +88,10 @@ object config {
       stockMonitor: StockMonitorConfig
   )
 
+  final case class JdsportsConfig(
+      baseUri: String
+  )
+
   final case class TelegramConfig(
       baseUri: String,
       botKey: String,
@@ -103,6 +107,7 @@ object config {
       ebay: EbayConfig,
       selfridges: SelfridgesConfig,
       argos: ArgosConfig,
+      jdsports: JdsportsConfig,
       telegram: TelegramConfig
   )
 
