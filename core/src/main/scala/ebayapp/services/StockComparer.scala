@@ -32,8 +32,7 @@ abstract class StockComparer[F[_]: Concurrent: Timer: Logger] {
           (prevOpt.fold(List.empty[ItemStockUpdates[D]])(prev => compareItems(prev, curr, req)), Some(curr.some))
         }
       }
-      .zipLeft(Stream.awakeEvery[F](freq))
-      .flatMap(Stream.emits)
+      .flatMap(r => Stream.emits(r) ++ Stream.sleep_(freq))
       .handleErrorWith { error =>
         Stream.eval_(Logger[F].error(error)(s"error obtaining stock updates")) ++
           getUpdates(req, freq, findItemsEffect)

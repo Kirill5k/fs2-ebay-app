@@ -35,7 +35,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
         .andThen(Stream.emits(unwantedItems))
 
       val result = StockService.selfridges[IO](client).flatMap {
-        _.stockUpdates[ItemDetails.Clothing](config).interruptAfter(2200.millis).compile.toList
+        _.stockUpdates[ItemDetails.Clothing](config).interruptAfter(1200.millis).compile.toList
       }
 
       result.unsafeToFuture().map { updates =>
