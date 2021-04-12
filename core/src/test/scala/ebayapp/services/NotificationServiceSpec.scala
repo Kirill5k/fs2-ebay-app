@@ -44,12 +44,12 @@ class NotificationServiceSpec extends CatsSpec {
       val client = mock[TelegramClient[IO]]
       when(client.sendMessageToSecondaryChannel(any[String])).thenReturn(IO.unit)
 
-      val item = ResellableItemBuilder.generic("macbook pro", price = 50.0)
+      val item = ResellableItemBuilder.generic("macbook pro", price = 50.0, discount = Some(25))
       val update = StockUpdate.PriceDrop(BigDecimal(100.0), BigDecimal(50.0))
       val result = NotificationService.telegram(client).flatMap(_.stockUpdate(item, update))
 
       result.unsafeToFuture().map { r =>
-        verify(client).sendMessageToSecondaryChannel("""PRICE/DROP for macbook pro (£50.0, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro""")
+        verify(client).sendMessageToSecondaryChannel("""PRICE/DROP for macbook pro (£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro""")
         r must be (())
       }
     }

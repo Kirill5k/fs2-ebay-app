@@ -61,8 +61,9 @@ object NotificationService {
       item.itemDetails.fullName.map { name =>
         val price    = item.buyPrice.rrp
         val quantity = item.buyPrice.quantityAvailable
+        val discount = item.buyPrice.discount.fold("")(d => s", $d% off")
         val url      = item.listingDetails.url
-        s"${update.header} for $name (£$price, $quantity): ${update.message} $url"
+        s"${update.header} for $name (£$price$discount, $quantity): ${update.message} $url"
       }
   }
 

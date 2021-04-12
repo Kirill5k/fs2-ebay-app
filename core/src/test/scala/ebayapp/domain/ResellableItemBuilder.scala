@@ -16,11 +16,11 @@ object ResellableItemBuilder {
       None
     )
 
-  def generic(name: String, quantity: Int = 1, price: Double = 1800.0): GenericItem =
+  def generic(name: String, quantity: Int = 1, price: Double = 1800.0, discount: Option[Int] = None): GenericItem =
     ResellableItem(
       ItemDetails.Generic(name),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
-      BuyPrice(quantity, BigDecimal(price)),
+      BuyPrice(quantity, BigDecimal(price), discount),
       None
     )
 
