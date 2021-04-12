@@ -30,7 +30,7 @@ final private class LiveSelfridgesClient[F[_]](
 ) extends SelfridgesClient[F] {
 
   private val defaultHeaders = Map(
-    "Cache-Control"   -> "no-cache",
+    "Cache-Control"   -> "no-store",
     "Accept-Encoding" -> "gzip, deflate, br",
     "Accept-Language" -> "en-GB,en-US;q=0.9,en;q=0.8",
     "Content-Type"    -> "application/json; charset=utf-8",
