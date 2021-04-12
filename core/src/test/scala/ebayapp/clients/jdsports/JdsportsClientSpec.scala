@@ -42,9 +42,9 @@ class JdsportsClientSpec extends SttpClientSpec {
       client.flatMap(_.searchSale(query).compile.toList).unsafeToFuture().map { items =>
         items must have size 3
         items.map(_.itemDetails) mustBe List(
-          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black)", "Emporio Armani EA7", "XS"),
-          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black)", "Emporio Armani EA7", "S"),
-          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black)", "Emporio Armani EA7", "M")
+          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "XS"),
+          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
+          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
         )
 
         items.map(_.buyPrice).toSet mustBe Set(

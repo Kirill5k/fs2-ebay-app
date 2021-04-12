@@ -37,7 +37,7 @@ object mappers {
 
     private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing =
       Clothing(
-        s"${jdi.name} (${jdi.colour})",
+        s"${jdi.name} (${jdi.colour}, ${jdi.id})",
         jdi.brand,
         jdi.size
       )

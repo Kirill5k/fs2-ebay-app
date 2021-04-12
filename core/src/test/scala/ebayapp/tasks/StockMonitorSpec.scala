@@ -25,10 +25,10 @@ class StockMonitorSpec extends CatsSpec {
     "get stock updates from various outlets" in {
       val services = servicesMock
 
+      when(services.argosStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[ArgosItem, Generic]]))
+        .thenReturn(Stream.sleep_(2.hours))
       when(services.cexStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[CexItem, Generic]]))
         .thenReturn(Stream.emit(updateGeneric))
-      when(services.argosStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[ArgosItem, Generic]]))
-        .thenReturn(Stream.empty)
       when(services.selfridgesSale.stockUpdates[Clothing](any[StockMonitorConfig])(any[ItemMapper[SelfridgesItem, Clothing]]))
         .thenReturn(Stream.emit(updateClothing))
       when(services.jdsportsSale.stockUpdates[Clothing](any[StockMonitorConfig])(any[ItemMapper[JdsportsItem, Clothing]]))

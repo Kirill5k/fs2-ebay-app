@@ -50,8 +50,8 @@ abstract class StockComparer[F[_]: Concurrent: Timer: Logger] {
           case None => List(StockUpdate.New)
           case Some(prevItem) =>
             List(
-              if (req.monitorPriceChange) StockUpdate.priceChanged(prevItem.buyPrice, currItem.buyPrice) else None,
-              if (req.monitorStockChange) StockUpdate.quantityChanged(prevItem.buyPrice, currItem.buyPrice) else None
+              req.monitorPriceChange.guard[Option].flatMap(_ => StockUpdate.priceChanged(prevItem.buyPrice, currItem.buyPrice)),
+              req.monitorStockChange.guard[Option].flatMap(_ => StockUpdate.quantityChanged(prevItem.buyPrice, currItem.buyPrice))
             ).flatten
         }
         ItemStockUpdates(currItem, updates)
