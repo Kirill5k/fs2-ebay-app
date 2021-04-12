@@ -79,7 +79,7 @@ final private class LiveJdsportsClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
-          case Left(error) if r.code.isClientError || r.code.isServerError =>
+          case Left(_) if r.code.isClientError || r.code.isServerError =>
             logger.error(s"error sending search request to jdsports: ${r.code}") *>
               F.pure(Nil)
           case Left(error) =>
