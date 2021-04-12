@@ -80,7 +80,7 @@ final private class LiveJdsportsClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
           case Left(error) if r.code.isClientError || r.code.isServerError =>
-            logger.error(s"error sending search request to jdsports: ${r.code}\n$error") *>
+            logger.error(s"error sending search request to jdsports: ${r.code}") *>
               F.pure(Nil)
           case Left(error) =>
             logger.error(s"error sending search request to jdsports: ${error}") *>
@@ -97,8 +97,8 @@ final private class LiveJdsportsClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseStockResponse(html)).map(_.some)
-          case Left(error) if r.code.isClientError || r.code.isServerError =>
-            logger.error(s"error sending get stock request to jdsports: ${r.code}\n$error") *>
+          case Left(_) if r.code.isClientError || r.code.isServerError =>
+            logger.error(s"error sending get stock request to jdsports: ${r.code}") *>
               F.pure(None)
           case Left(error) =>
             logger.error(s"error sending get stock request to jdsports: ${error}") *>
@@ -115,8 +115,8 @@ final private class LiveJdsportsClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseItemDetails(html)).map(_.some)
-          case Left(error) if r.code.isClientError || r.code.isServerError =>
-            logger.error(s"error sending get item request to jdsports: ${r.code}\n$error") *>
+          case Left(_) if r.code.isClientError || r.code.isServerError =>
+            logger.error(s"error sending get item request to jdsports: ${r.code}") *>
               F.pure(None)
           case Left(error) =>
             logger.error(s"error sending get item request to jdsports: ${error}") *>
