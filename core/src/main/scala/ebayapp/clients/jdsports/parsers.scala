@@ -16,15 +16,12 @@ private[jdsports] object parsers {
     val fullName: String = s"$colour-$description".replaceAll(" ", "-").replaceAll("-+", "-").toLowerCase
   }
 
-  final case class JdItemStock(
-      sizes: List[String]
+  final case class JdProduct(
+      details: JdProductDetails,
+      availableSizes: List[String]
   )
 
-  object JdItemStock {
-    val OOS = JdItemStock(Nil)
-  }
-
-  final case class JdItemDetails(
+  final case class JdProductDetails(
       Id: String,
       Name: String,
       UnitPrice: BigDecimal,
@@ -54,31 +51,35 @@ private[jdsports] object parsers {
         .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}"))
     }
 
-    def parseItemDetails(rawHtml: String): Either[AppError, JdItemDetails] = {
+    def parseProductStockResponse(rawHtml: String): Either[AppError, JdProduct] =
+      for {
+        details <- parseItemDetails(rawHtml)
+        size    <- parseAvailableSizes(rawHtml)
+      } yield JdProduct(details, size)
+
+    private def parseItemDetails(rawHtml: String): Either[AppError, JdProductDetails] = {
       val rawProduct = rawHtml
         .split("var ProductType = ")
         .last
         .split("</script>")
         .head
         .trim
-        .replaceAll("\n", "")
-        .replaceAll("(?<!https):", "\":")
-        .replaceAll("(?<!\") {4,10}", "\"")
         .replaceAll("undefined", "null")
+        .replaceAll("\n|\t", "")
+        .replaceAll("(?<!https):", "\":")
+        .replaceAll(" +", " ")
+        .replaceAll("(?<=(\\d,|true,|false,|\",|\\{)) ", " \"")
 
-      decode[JdItemDetails](rawProduct.slice(0, rawProduct.length - 1))
+      decode[JdProductDetails](rawProduct.slice(0, rawProduct.length - 1))
         .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}"))
     }
 
-    def parseStockResponse(rawHtml: String): Either[AppError, JdItemStock] =
-      if (rawHtml.contains("outOfStock")) JdItemStock.OOS.asRight[AppError]
-      else {
-        val sizes = rawHtml
-          .split("title=\"Select Size ")
-          .toList
-          .tail
-          .flatMap(_.split("\"").headOption)
-        JdItemStock(sizes).asRight[AppError]
-      }
+    private def parseAvailableSizes(rawHtml: String): Either[AppError, List[String]] =
+      rawHtml
+        .split("title=\"Select Size ")
+        .toList
+        .tail
+        .flatMap(_.split("\"").headOption)
+        .asRight[AppError]
   }
 }

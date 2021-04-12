@@ -3,13 +3,12 @@ package ebayapp.clients.jdsports
 import cats.effect.{Sync, Timer}
 import cats.implicits._
 import ebayapp.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
-import ebayapp.clients.jdsports.parsers.{JdCatalogItem, JdItemDetails, JdItemStock, ResponseParser}
+import ebayapp.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.common.Logger
 import ebayapp.common.config.{JdsportsConfig, SearchQuery}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
-import sttp.client3.{basicRequest, SttpBackend}
-import sttp.client3._
+import sttp.client3.{SttpBackend, basicRequest, _}
 
 import scala.concurrent.duration._
 
@@ -40,30 +39,23 @@ final private class LiveJdsportsClient[F[_]](
       .evalSeq(searchByBrand(query))
       .filter(_.sale)
       .metered(100.millis)
-      .evalMap { ci =>
-        (getItem(ci), getStock(ci))
-          .mapN { (details, stock) =>
-            (details, stock).mapN((d, s) =>
-              s.sizes.map { size =>
-                JdsportsItem(
-                  ci.plu,
-                  ci.description,
-                  d.UnitPrice,
-                  d.PreviousUnitPrice,
-                  d.Brand,
-                  d.Colour,
-                  size,
-                  d.PrimaryImage,
-                  d.Category
-                )
-              }
-            )
-          }
-          .handleErrorWith { e =>
-            logger.error(e)(e.getMessage) *> none[List[JdsportsItem]].pure[F]
-          }
-      }
+      .evalMap(ci => getProductStock(ci))
       .unNone
+      .map { p =>
+        p.availableSizes.map { size =>
+          JdsportsItem(
+            p.details.Id,
+            p.details.Name,
+            p.details.UnitPrice,
+            p.details.PreviousUnitPrice,
+            p.details.Brand,
+            p.details.Colour,
+            size,
+            p.details.PrimaryImage,
+            p.details.Category
+          )
+        }
+      }
       .flatMap(Stream.emits)
       .map(mapper.toDomain)
       .handleErrorWith { e =>
@@ -88,39 +80,21 @@ final private class LiveJdsportsClient[F[_]](
         }
       }
 
-  private def getStock(ci: JdCatalogItem): F[Option[JdItemStock]] =
+  private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     basicRequest
-      .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/quickview/stock")
+      .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock")
       .headers(defaultHeaders)
       .send(backend)
       .flatMap { r =>
         r.body match {
           case Right(html) =>
-            F.fromEither(ResponseParser.parseStockResponse(html)).map(_.some)
+            F.fromEither(ResponseParser.parseProductStockResponse(html)).map(_.some)
           case Left(_) if r.code.isClientError || r.code.isServerError =>
             logger.error(s"error sending get stock request to jdsports: ${r.code}") *>
               F.pure(None)
           case Left(error) =>
             logger.error(s"error sending get stock request to jdsports: ${error}") *>
-              T.sleep(1.second) *> getStock(ci)
-        }
-      }
-
-  private def getItem(ci: JdCatalogItem): F[Option[JdItemDetails]] =
-    basicRequest
-      .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/quickview")
-      .headers(defaultHeaders)
-      .send(backend)
-      .flatMap { r =>
-        r.body match {
-          case Right(html) =>
-            F.fromEither(ResponseParser.parseItemDetails(html)).map(_.some)
-          case Left(_) if r.code.isClientError || r.code.isServerError =>
-            logger.error(s"error sending get item request to jdsports: ${r.code}") *>
-              F.pure(None)
-          case Left(error) =>
-            logger.error(s"error sending get item request to jdsports: ${error}") *>
-              T.sleep(1.second) *> getItem(ci)
+              T.sleep(1.second) *> getProductStock(ci)
         }
       }
 }

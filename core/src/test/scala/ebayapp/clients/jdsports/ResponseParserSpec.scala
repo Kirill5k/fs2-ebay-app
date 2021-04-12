@@ -1,6 +1,6 @@
 package ebayapp.clients.jdsports
 
-import ebayapp.clients.jdsports.parsers.{JdCatalogItem, JdItemDetails, JdItemStock, ResponseParser}
+import ebayapp.clients.jdsports.parsers.{JdCatalogItem, JdProductDetails, JdProduct, ResponseParser}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -24,42 +24,45 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    "parseItemDetails" should {
-      "parse item details" in {
-        val result = ResponseParser.parseItemDetails(html("jdsports/get-item.html"))
+    "parseProductStockResponse" should {
+      "parse raw html product stock response into an object" in {
+        val result = ResponseParser.parseProductStockResponse(html("jdsports/get-product-stock.html"))
 
         result mustBe Right(
-          JdItemDetails(
-            "16022719",
-            "Emporio Armani EA7 Tape 2 T-Shirt",
-            BigDecimal(20.00),
-            Some(BigDecimal(50.00)),
-            "Emporio Armani EA7",
-            "men",
-            "black",
-            "https://i8.amplience.net/i/jpl/jd_366443_a?qlt=92"
+          JdProduct(
+            JdProductDetails(
+              "16035629",
+              "Calvin Klein Pocket Logo T-Shirt",
+              BigDecimal(15.00),
+              Some(BigDecimal(40.00)),
+              "Calvin Klein",
+              "men",
+              "white",
+              "https://i8.amplience.net/i/jpl/jd_377478_a?qlt=92"
+            ),
+            List("S", "M")
           )
         )
       }
-    }
 
-    "parseStockResponse" should {
-      "return available sizes" in {
-        val result = ResponseParser.parseStockResponse(html("jdsports/get-stock-multiple.html"))
+      "should return no size when out of stock" in {
+        val result = ResponseParser.parseProductStockResponse(html("jdsports/get-product-stock-oos.html"))
 
-        result mustBe Right(JdItemStock(List("XS", "S", "M")))
-      }
-
-      "return single size when only 1 is available" in {
-        val result = ResponseParser.parseStockResponse(html("jdsports/get-stock-single.html"))
-
-        result mustBe Right(JdItemStock(List("ONE SIZE")))
-      }
-
-      "return nil when out of stock" in {
-        val result = ResponseParser.parseStockResponse(html("jdsports/get-stock-oos.html"))
-
-        result mustBe Right(JdItemStock(Nil))
+        result mustBe Right(
+          JdProduct(
+            JdProductDetails(
+              "16035629",
+              "Calvin Klein Pocket Logo T-Shirt",
+              BigDecimal(15.00),
+              Some(BigDecimal(40.00)),
+              "Calvin Klein",
+              "men",
+              "white",
+              "https://i8.amplience.net/i/jpl/jd_377478_a?qlt=92"
+            ),
+            Nil
+          )
+        )
       }
     }
   }

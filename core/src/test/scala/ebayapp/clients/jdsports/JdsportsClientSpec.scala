@@ -26,23 +26,18 @@ class JdsportsClientSpec extends SttpClientSpec {
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("jdsports.com/men/brand/emporio-armani-ea7") =>
             Response.ok(json("jdsports/search-by-brand.html"))
-          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/quickview/stock") =>
-            Response.ok(json("jdsports/get-stock-multiple.html"))
-          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/quickview") =>
-            Response.ok(json("jdsports/get-item-2.html"))
-          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/quickview") =>
-            Response.ok(json("jdsports/get-item.html"))
-          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/quickview/stock") =>
-            Response.ok(json("jdsports/get-stock-oos.html"))
+          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock") =>
+            Response.ok(json("jdsports/get-product-stock.html"))
+          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock") =>
+            Response.ok(json("jdsports/get-product-stock-oos.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
       val client = JdsportsClient.make[IO](config, testingBackend)
 
       client.flatMap(_.searchSale(query).compile.toList).unsafeToFuture().map { items =>
-        items must have size 3
+        items must have size 2
         items.map(_.itemDetails) mustBe List(
-          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "XS"),
           Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
           Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
         )
