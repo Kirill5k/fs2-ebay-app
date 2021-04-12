@@ -43,7 +43,7 @@ class JdsportsClientSpec extends SttpClientSpec {
         )
 
         items.map(_.buyPrice).toSet mustBe Set(
-          BuyPrice(1, BigDecimal(20.0), Some(60))
+          BuyPrice(1, BigDecimal(20.0), Some(67))
         )
       }
     }

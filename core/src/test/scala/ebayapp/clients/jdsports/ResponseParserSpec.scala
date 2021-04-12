@@ -31,13 +31,13 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
         result mustBe Right(
           JdProduct(
             JdProductDetails(
-              "16035629",
-              "Calvin Klein Pocket Logo T-Shirt",
-              BigDecimal(15.00),
-              Some(BigDecimal(40.00)),
-              "Calvin Klein",
+              "16022719",
+              "Emporio Armani EA7 Tape 2 T-Shirt",
+              BigDecimal(20.00),
+              Some(BigDecimal(60.00)),
+              "Emporio Armani EA7",
               "men",
-              "white",
+              "black",
               "https://i8.amplience.net/i/jpl/jd_377478_a?qlt=92"
             ),
             List("S", "M")
