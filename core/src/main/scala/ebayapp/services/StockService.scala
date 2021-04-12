@@ -117,6 +117,7 @@ final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
         getUpdates[D](req, config.monitoringFrequency, findItems(req.query)).delayBy((index * 10).seconds)
       }
       .parJoinUnbounded
+      .evalTap(u => Logger[F].info(s"""jdsports-stock-update $u"""))
 
   private def findItems[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
     client
