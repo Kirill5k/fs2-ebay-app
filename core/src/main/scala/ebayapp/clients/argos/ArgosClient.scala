@@ -54,13 +54,13 @@ final private class LiveArgosClient[F[_]: Sync](
         r.body match {
           case Right(response) => response.data.some.pure[F]
           case Left(DeserializationException(body, error)) =>
-            logger.error(s"error parsing argos search response: ${error.getMessage}, \n$body") *>
+            logger.error(s"argos-search response parsing error: ${error.getMessage}, \n$body") *>
               none[SearchData].pure[F]
           case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.error(s"error sending search request to argos: $status, \n$body") *>
+            logger.error(s"argos-search/$status-error, \n$body") *>
               none[SearchData].pure[F]
           case Left(error) =>
-            logger.warn(s"error sending search request to argos: ${error.getMessage}") *>
+            logger.warn(s"argos-search errorl: ${error.getMessage}") *>
               timer.sleep(1.second) *> search(query, page)
         }
       }

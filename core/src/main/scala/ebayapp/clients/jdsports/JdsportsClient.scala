@@ -9,6 +9,7 @@ import ebayapp.common.config.{JdsportsConfig, SearchQuery}
 import ebayapp.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
 import sttp.client3.{SttpBackend, basicRequest, _}
+import sttp.model.StatusCode
 
 import scala.concurrent.duration._
 
@@ -71,11 +72,14 @@ final private class LiveJdsportsClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
+          case Left(_) if r.code == StatusCode.Forbidden =>
+            logger.warn(s"jdsports-search/forbidden") *>
+              T.sleep(30.seconds) *> searchByBrand(query)
           case Left(_) if r.code.isClientError || r.code.isServerError =>
-            logger.error(s"error sending search request to jdsports: ${r.code}") *>
+            logger.error(s"jdsports-search/${r.code}-error") *>
               F.pure(Nil)
           case Left(error) =>
-            logger.error(s"error sending search request to jdsports: ${error}") *>
+            logger.error(s"jdsports-search error: $error") *>
               T.sleep(1.second) *> searchByBrand(query)
         }
       }
@@ -90,10 +94,10 @@ final private class LiveJdsportsClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html)).map(_.some)
           case Left(_) if r.code.isClientError || r.code.isServerError =>
-            logger.error(s"error sending get stock request to jdsports: ${r.code}") *>
+            logger.error(s"jdsports-get-stock/${r.code}-error") *>
               F.pure(None)
           case Left(error) =>
-            logger.error(s"error sending get stock request to jdsports: ${error}") *>
+            logger.error(s"jdsports-get-stock: $error") *>
               T.sleep(1.second) *> getProductStock(ci)
         }
       }

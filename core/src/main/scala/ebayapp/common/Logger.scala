@@ -17,11 +17,6 @@ final case class Error(
     time: Instant = Instant.now()
 )
 
-object Error {
-  def apply(t: Throwable, message: => String): Error =
-    Error(s"$message - ${t.getMessage}")
-}
-
 trait Logger[F[_]] extends Logger4Cats[F] {
   def errors: Stream[F, Error]
   def awaitSigTerm: F[Either[Throwable, Unit]]
@@ -35,6 +30,12 @@ final private class LiveLogger[F[_]: Monad](
     private val sigTerm: Deferred[F, Either[Throwable, Unit]]
 ) extends Logger[F] {
 
+  private def enqueue(t: Throwable, message: => String): F[Unit] =
+    enqueue(s"${message.split("\n").head} - ${t.getMessage}")
+
+  private def enqueue(message: => String): F[Unit] =
+    loggedErrors.enqueue1(Error(message.split("\n").head))
+
   override def awaitSigTerm: F[Either[Throwable, Unit]] =
     sigTerm.get
 
@@ -42,20 +43,16 @@ final private class LiveLogger[F[_]: Monad](
     loggedErrors.dequeue
 
   override def critical(message: => String): F[Unit] =
-    sigTerm.complete(Left(AppError.Critical(message))) *>
-      loggedErrors.enqueue1(Error(message)) *>
-      error(message)
+    sigTerm.complete(Left(AppError.Critical(message))) *> error(message)
 
   override def critical(t: Throwable)(message: => String): F[Unit] =
-    sigTerm.complete(Left(t)) *>
-      loggedErrors.enqueue1(Error(t, message)) *>
-      error(t)(message)
+    sigTerm.complete(Left(t)) *> error(t)(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
-    loggedErrors.enqueue1(Error(t, message)) *> logger.error(t)(message)
+    enqueue(t, message) *> logger.error(t)(message)
 
   override def error(message: => String): F[Unit] =
-    loggedErrors.enqueue1(Error(message)) *> logger.error(message)
+    enqueue(message) *> logger.error(message)
 
   override def warn(t: Throwable)(message: => String): F[Unit] =
     logger.warn(t)(message)
