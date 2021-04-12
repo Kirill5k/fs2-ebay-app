@@ -126,6 +126,9 @@ final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
       .filter { case (_, item) =>
         item.buyPrice.discount.exists(_ > minDiscount)
       }
+      .evalTap { case (name, item) =>
+        Logger[F].info(s"$name - ${item.buyPrice}")
+      }
       .compile
       .to(Map)
       .flatTap(i => Logger[F].info(s"""jdsports-search "${query.value}" returned ${i.size} results"""))
