@@ -22,20 +22,6 @@ class CexStockServiceSpec extends CatsSpec {
 
   "A GenericStatefulCexStockService" should {
 
-    "return empty list when there are no changes in items" in {
-      val client = mock[CexClient[IO]]
-
-      when(client.findItem(req1.query)).thenReturn(IO.pure(List(mb1, mb2)))
-
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(1100.millis).compile.toList)
-
-      result.unsafeToFuture().map { u =>
-        verify(client, times(2)).findItem(req1.query)
-        u mustBe (Nil)
-      }
-    }
-
     "monitor multiple requests concurrently" in {
       val client = mock[CexClient[IO]]
 
