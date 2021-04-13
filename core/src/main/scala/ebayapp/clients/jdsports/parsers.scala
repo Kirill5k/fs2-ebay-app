@@ -51,11 +51,11 @@ private[jdsports] object parsers {
         .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawDataObject"))
     }
 
-    def parseProductStockResponse(rawHtml: String): Either[AppError, JdProduct] =
-      for {
-        details <- parseItemDetails(rawHtml)
-        size    <- parseAvailableSizes(rawHtml)
-      } yield JdProduct(details, size)
+    def parseProductStockResponse(rawHtml: String): Either[AppError, Option[JdProduct]] =
+      parseAvailableSizes(rawHtml).flatMap {
+        case Nil => None.asRight[AppError]
+        case sizes => parseItemDetails(rawHtml).map(d => Some(JdProduct(d, sizes)))
+      }
 
     private def parseItemDetails(rawHtml: String): Either[AppError, JdProductDetails] = {
       val rawProduct = rawHtml

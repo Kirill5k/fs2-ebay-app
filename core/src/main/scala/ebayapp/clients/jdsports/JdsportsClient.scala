@@ -92,7 +92,7 @@ final private class LiveJdsportsClient[F[_]](
       .flatMap { r =>
         r.body match {
           case Right(html) =>
-            F.fromEither(ResponseParser.parseProductStockResponse(html)).map(_.some)
+            F.fromEither(ResponseParser.parseProductStockResponse(html))
           case Left(_) if r.code.isClientError || r.code.isServerError =>
             logger.error(s"jdsports-get-stock/${r.code}-error") *>
               F.pure(None)

@@ -29,18 +29,20 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
         val result = ResponseParser.parseProductStockResponse(html("jdsports/get-product-stock.html"))
 
         result mustBe Right(
-          JdProduct(
-            JdProductDetails(
-              "16022719",
-              "Emporio Armani EA7 Tape 2 T-Shirt",
-              BigDecimal(20.00),
-              Some(BigDecimal(60.00)),
-              "Emporio Armani EA7",
-              "men",
-              "black",
-              "https://i8.amplience.net/i/jpl/jd_377478_a?qlt=92"
-            ),
-            List("S", "M")
+          Some(
+            JdProduct(
+              JdProductDetails(
+                "16022719",
+                "Emporio Armani EA7 Tape 2 T-Shirt",
+                BigDecimal(20.00),
+                Some(BigDecimal(60.00)),
+                "Emporio Armani EA7",
+                "men",
+                "black",
+                "https://i8.amplience.net/i/jpl/jd_377478_a?qlt=92"
+              ),
+              List("S", "M")
+            )
           )
         )
       }
@@ -48,21 +50,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "should return no size when out of stock" in {
         val result = ResponseParser.parseProductStockResponse(html("jdsports/get-product-stock-oos.html"))
 
-        result mustBe Right(
-          JdProduct(
-            JdProductDetails(
-              "16035629",
-              "Calvin Klein Pocket Logo T-Shirt",
-              BigDecimal(15.00),
-              Some(BigDecimal(40.00)),
-              "Calvin Klein",
-              "men",
-              "white",
-              "https://i8.amplience.net/i/jpl/jd_377478_a?qlt=92"
-            ),
-            Nil
-          )
-        )
+        result mustBe Right(None)
       }
     }
   }
