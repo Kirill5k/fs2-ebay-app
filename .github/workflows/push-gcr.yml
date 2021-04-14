@@ -1,4 +1,4 @@
-name: Build and push container images
+name: Build and push container images to ECR
 on: [workflow_dispatch]
 
 jobs:
