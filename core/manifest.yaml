@@ -44,11 +44,11 @@ spec:
                 name: "fs2-app-secret"
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "0.4"
+              memory: "256Mi"
+              cpu: "0.1"
             limits:
               memory: "1024Mi"
-              cpu: "0.8"
+              cpu: "0.3"
           readinessProbe:
             httpGet:
               path: /health/status
