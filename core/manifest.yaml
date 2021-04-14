@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: "fs2-app-core"
 spec:
+  type: NodePort
   ports:
     - targetPort: 8080
       port: 8080
