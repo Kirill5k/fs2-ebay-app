@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "fs2-app-core"
+spec:
+  ports:
+    - targetPort: 8080
+      port: 8080
+      nodePort: 30000
+  selector:
+    app: "fs2-app-core"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "fs2-app-core"
+  namespace: "default"
+  labels:
+    app: "fs2-app-core"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: "fs2-app-core"
+  template:
+    metadata:
+      labels:
+        app: "fs2-app-core"
+    spec:
+      containers:
+        - name: "core"
+          image: "us.gcr.io/fs2-app/core:latest"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+          envFrom:
+            - secretRef:
+                name: "fs2-app-secret"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "0.4"
+            limits:
+              memory: "1024Mi"
+              cpu: "0.8"
+          readinessProbe:
+            httpGet:
+              path: /health/status
+              port: 8080
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /health/status
+              port: 8080
+            periodSeconds: 60

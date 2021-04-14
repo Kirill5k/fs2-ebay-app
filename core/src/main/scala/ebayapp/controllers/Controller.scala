@@ -105,8 +105,11 @@ object Controller {
   )
 
   def home[F[_]: Sync: ContextShift](blocker: Blocker): F[Controller[F]] =
-    Sync[F].delay(new HomeController[F](blocker))
+    Sync[F].pure(new HomeController[F](blocker))
 
   def videoGame[F[_]: Sync: Logger](service: ResellableItemService[F, ItemDetails.Game]): F[Controller[F]] =
-    Sync[F].delay(new VideoGameController[F](service))
+    Sync[F].pure(new VideoGameController[F](service))
+
+  def health[F[_]: Sync]: F[Controller[F]] =
+    Sync[F].pure(new HealthController[F])
 }

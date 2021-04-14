@@ -11,11 +11,16 @@ import org.http4s.server.Router
 trait Controllers[F[_]] {
   def home: Controller[F]
   def videoGame: Controller[F]
+  def health: Controller[F]
 
   def routes(implicit M: Monad[F]): HttpRoutes[F] =
     Router(
       "api" -> videoGame.routes,
-      ""    -> home.routes
+      ""    -> {
+        val homeRoutes = home.routes
+        val healthRoutes = health.routes
+        homeRoutes <+> healthRoutes
+      }
     )
 }
 
@@ -24,11 +29,13 @@ object Controllers {
   def make[F[_]: Sync: Logger: ContextShift](blocker: Blocker, services: Services[F]): F[Controllers[F]] =
     (
       Controller.home(blocker),
-      Controller.videoGame(services.videoGame)
-    ).mapN((h, v) =>
+      Controller.videoGame(services.videoGame),
+      Controller.health
+    ).mapN((ho, vg, he) =>
       new Controllers[F] {
-        def home: Controller[F]      = h
-        def videoGame: Controller[F] = v
+        def home: Controller[F]      = ho
+        def videoGame: Controller[F] = vg
+        def health: Controller[F] = he
       }
     )
 }
