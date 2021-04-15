@@ -33,7 +33,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "fs2-ebay-app"
   )
-  .aggregate(core)
+  .aggregate(core, proxy)
 
 lazy val core = (project in file("core"))
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
