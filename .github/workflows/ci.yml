@@ -12,6 +12,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v10
         with:
-          java-version: adopt@1.15
+          java-version: adopt@1.16
       - name: Run unit tests
         run: sbt clean test
