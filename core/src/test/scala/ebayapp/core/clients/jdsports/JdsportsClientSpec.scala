@@ -15,7 +15,7 @@ class JdsportsClientSpec extends SttpClientSpec {
   "A JdsportsClient" should {
 
     val config = JdsportsConfig(
-      "http://jdsports.com",
+      "http://jdsports.com/proxy",
       StockMonitorConfig(10.second, Nil)
     )
 
@@ -24,11 +24,11 @@ class JdsportsClientSpec extends SttpClientSpec {
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGoingTo("jdsports.com/men/brand/emporio-armani-ea7") =>
+          case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") =>
             Response.ok(json("jdsports/search-by-brand.html"))
-          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock") =>
+          case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock") =>
             Response.ok(json("jdsports/get-product-stock.html"))
-          case r if r.isGoingTo("jdsports.com/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock") =>
+          case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock") =>
             Response.ok(json("jdsports/get-product-stock-oos.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }
