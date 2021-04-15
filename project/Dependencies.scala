@@ -51,13 +51,14 @@ object Dependencies {
     }
 
     object http4s {
-      lazy val core   = "org.http4s" %% "http4s-core"         % Versions.http4s
-      lazy val dsl    = "org.http4s" %% "http4s-dsl"          % Versions.http4s
-      lazy val server = "org.http4s" %% "http4s-server"       % Versions.http4s
-      lazy val blaze  = "org.http4s" %% "http4s-blaze-server" % Versions.http4s
-      lazy val circe  = "org.http4s" %% "http4s-circe"        % Versions.http4s
+      lazy val core        = "org.http4s" %% "http4s-core"         % Versions.http4s
+      lazy val dsl         = "org.http4s" %% "http4s-dsl"          % Versions.http4s
+      lazy val server      = "org.http4s" %% "http4s-server"       % Versions.http4s
+      lazy val blazeClient = "org.http4s" %% "http4s-blaze-client" % Versions.http4s
+      lazy val blazeServer = "org.http4s" %% "http4s-blaze-server" % Versions.http4s
+      lazy val circe       = "org.http4s" %% "http4s-circe"        % Versions.http4s
 
-      lazy val all = Seq(core, dsl, server, blaze, circe)
+      lazy val all = Seq(core, dsl, server, blazeServer, circe)
     }
 
     lazy val scalaTest        = "org.scalatest"      %% "scalatest"                 % Versions.scalaTest
@@ -74,6 +75,15 @@ object Dependencies {
     Libraries.logging.all ++
     Libraries.sttp.all ++
     Libraries.pureconfig.all
+
+  lazy val proxy = {
+    Seq(
+      Libraries.http4s.blazeClient
+    ) ++
+      Libraries.pureconfig.all ++
+      Libraries.http4s.all ++
+      Libraries.logging.all
+  }
 
   lazy val test = Seq(
     Libraries.scalaTest        % Test,

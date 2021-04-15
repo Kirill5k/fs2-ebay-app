@@ -44,3 +44,13 @@ lazy val core = (project in file("core"))
     Docker / packageName := "fs2-app/core",
     libraryDependencies ++= Dependencies.core ++ Dependencies.test
   )
+
+lazy val proxy = (project in file("proxy"))
+  .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
+  .settings(docker)
+  .settings(
+    name := "fs2-ebay-app-proxy",
+    moduleName := "fs2-ebay-app-proxy",
+    Docker / packageName := "fs2-app/proxy",
+    libraryDependencies ++= Dependencies.proxy ++ Dependencies.test
+  )
