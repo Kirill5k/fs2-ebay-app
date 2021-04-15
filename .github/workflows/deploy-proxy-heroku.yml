@@ -1,4 +1,4 @@
-name: Deploy to Heroku
+name: Deploy Proxy to Heroku
 on: [workflow_dispatch]
 
 jobs:
