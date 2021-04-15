@@ -7,6 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.15
+      - name: Stage docker image
+        run: sbt docker:stage
       - name: Push to heroku
         uses: akhileshns/heroku-deploy@v3.6.8
         with:
@@ -14,4 +19,4 @@ jobs:
           heroku_app_name: "fs2-ebay-proxy"
           heroku_email: "immotional@aol.com"
           usedocker: true
-          appdir: ./proxy
+          appdir: ./proxy/target/docker/stage
