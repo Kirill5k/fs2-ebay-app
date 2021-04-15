@@ -75,9 +75,12 @@ final private class LiveJdsportsClient[F[_]](
           case Left(_) if r.code == StatusCode.Forbidden =>
             logger.warn(s"jdsports-search/forbidden") *>
               T.sleep(30.seconds) *> searchByBrand(query)
-          case Left(_) if r.code.isClientError || r.code.isServerError =>
+          case Left(_) if r.code.isClientError =>
             logger.error(s"jdsports-search/${r.code}-error") *>
               F.pure(Nil)
+          case Left(_) if r.code.isServerError =>
+            logger.error(s"jdsports-search/${r.code}-repeatable") *>
+              T.sleep(1.second) *> searchByBrand(query)
           case Left(error) =>
             logger.error(s"jdsports-search error: $error") *>
               T.sleep(1.second) *> searchByBrand(query)
@@ -93,9 +96,12 @@ final private class LiveJdsportsClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html))
-          case Left(_) if r.code.isClientError || r.code.isServerError =>
+          case Left(_) if r.code.isClientError =>
             logger.error(s"jdsports-get-stock/${r.code}-error") *>
               F.pure(None)
+          case Left(_) if r.code.isServerError =>
+            logger.error(s"jdsports-get-stock/${r.code}-repeatable") *>
+              T.sleep(1.second) *> getProductStock(ci)
           case Left(error) =>
             logger.error(s"jdsports-get-stock: $error") *>
               T.sleep(1.second) *> getProductStock(ci)

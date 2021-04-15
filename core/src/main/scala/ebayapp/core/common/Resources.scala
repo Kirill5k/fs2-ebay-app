@@ -21,7 +21,7 @@ object Resources {
     MongoClientF.fromConnectionString[F](config.connectionUri)
 
   private def httpClientBackend[F[_]: Concurrent: ContextShift]: Resource[F, SttpBackend[F, Any]] =
-    Resource.make(AsyncHttpClientCatsBackend[F](SttpBackendOptions.Default.connectionTimeout(3.minutes)))(_.close())
+    Resource.make(AsyncHttpClientCatsBackend[F](SttpBackendOptions.connectionTimeout(3.minutes)))(_.close())
 
   def make[F[_]: Concurrent: ContextShift](config: AppConfig): Resource[F, Resources[F]] =
     (

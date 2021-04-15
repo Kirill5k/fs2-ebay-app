@@ -96,11 +96,14 @@ final private class LiveSelfridgesClient[F[_]](
               F.pure(defaultResponse)
           case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
             //TODO: revert back to critical
-            logger.error(s"selfridges-$endpoint/${s}-critical") *>
+            logger.error(s"selfridges-$endpoint/$s-critical") *>
               F.pure(defaultResponse)
-          case Left(HttpError(_, status)) if status.isClientError || status.isServerError =>
+          case Left(HttpError(_, status)) if status.isClientError =>
             logger.error(s"selfridges-$endpoint/$status-error") *>
               F.pure(defaultResponse)
+          case Left(HttpError(_, status)) if status.isServerError =>
+            logger.error(s"selfridges-$endpoint/$status-repeatable") *>
+              T.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
           case Left(error) =>
             logger.warn(s"selfridges-$endpoint error: ${error.getMessage}") *>
               T.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
