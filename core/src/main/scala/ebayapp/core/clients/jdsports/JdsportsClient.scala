@@ -79,10 +79,10 @@ final private class LiveJdsportsClient[F[_]](
             logger.error(s"jdsports-search/${r.code}-error") *>
               F.pure(Nil)
           case Left(_) if r.code.isServerError =>
-            logger.error(s"jdsports-search/${r.code}-repeatable") *>
+            logger.warn(s"jdsports-search/${r.code}-repeatable") *>
               T.sleep(1.second) *> searchByBrand(query)
           case Left(error) =>
-            logger.error(s"jdsports-search error: $error") *>
+            logger.error(s"jdsports-search/error: $error") *>
               T.sleep(1.second) *> searchByBrand(query)
         }
       }
@@ -100,7 +100,7 @@ final private class LiveJdsportsClient[F[_]](
             logger.error(s"jdsports-get-stock/${r.code}-error") *>
               F.pure(None)
           case Left(_) if r.code.isServerError =>
-            logger.error(s"jdsports-get-stock/${r.code}-repeatable") *>
+            logger.warn(s"jdsports-get-stock/${r.code}-repeatable") *>
               T.sleep(1.second) *> getProductStock(ci)
           case Left(error) =>
             logger.error(s"jdsports-get-stock: $error") *>

@@ -88,12 +88,14 @@ final class CexApiClient[F[_]](
           case Right(response) =>
             response.pure[F]
           case Left(DeserializationException(body, error)) =>
-            logger.warn(s"error parsing json: ${error.getMessage}\n$body") *>
-              AppError.Json(s"error parsing json: ${error.getMessage}").raiseError[F, CexSearchResponse]
+            logger.warn(s"cex-search/json-error: ${error.getMessage}\n$body") *>
+              AppError.Json(s"cex-search/json-error: ${error.getMessage}").raiseError[F, CexSearchResponse]
+          case Left(HttpError(_, StatusCode.Forbidden)) =>
+            logger.error(s"cex-search/403-critical") *> T.sleep(5.seconds) *> search(uri)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"too many requests to cex. retrying") *> T.sleep(5.seconds) *> search(uri)
+            logger.warn(s"cex-search/429-retry") *> T.sleep(5.seconds) *> search(uri)
           case Left(error) =>
-            logger.warn(s"error sending price query to cex: ${r.code}\n$error") *>
+            logger.warn(s"cex-search/${r.code}-error\n$error") *>
               T.sleep(5.second) *> search(uri)
         }
       }

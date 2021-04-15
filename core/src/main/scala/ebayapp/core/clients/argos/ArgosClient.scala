@@ -60,7 +60,7 @@ final private class LiveArgosClient[F[_]: Sync](
             logger.error(s"argos-search/$status-error, \n$body") *>
               none[SearchData].pure[F]
           case Left(error) =>
-            logger.warn(s"argos-search errorl: ${error.getMessage}") *>
+            logger.error(s"argos-search/error: ${error.getMessage}\n$error") *>
               timer.sleep(1.second) *> search(query, page)
         }
       }
