@@ -1,5 +1,6 @@
 package ebayapp.proxy
 
+import cats.effect.concurrent.Deferred
 import cats.effect.{Blocker, ExitCode, IO, IOApp}
 import cats.implicits._
 import ebayapp.proxy.common.Resources
@@ -22,14 +23,16 @@ object Application extends IOApp {
       _ <- Resources.make[IO].use { resources =>
         for {
           _                  <- logger.info("created resources")
-          redirectController <- Controller.redirect[IO](config.uris, resources.blazeClient)
+          sigTerm            <- Deferred[IO, Either[Throwable, Unit]]
+          redirectController <- Controller.redirect[IO](config.uris, resources.blazeClient, sigTerm)
           healthController   <- Controller.health[IO]
           routes = redirectController.routes <+> healthController.routes
-          _                  <- logger.info("starting http server")
+          _ <- logger.info("starting http server")
           _ <- BlazeServerBuilder[IO](ExecutionContext.global)
             .bindHttp(config.server.port, config.server.host)
             .withHttpApp(routes.orNotFound)
             .serve
+            .interruptWhen(sigTerm)
             .compile
             .drain
         } yield ()
