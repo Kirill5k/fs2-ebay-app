@@ -1,6 +1,6 @@
 package ebayapp.core.tasks
 
-import cats.effect.{Blocker, IO}
+import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.clients.argos.responses.ArgosItem
@@ -26,7 +26,7 @@ class StockMonitorSpec extends CatsSpec {
       val services = servicesMock
 
       when(services.argosStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[ArgosItem, Generic]]))
-        .thenReturn(Stream.sleep_(2.hours))
+        .thenReturn(Stream.sleep[IO](2.hours).drain)
       when(services.cexStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[CexItem, Generic]]))
         .thenReturn(Stream.emit(updateGeneric))
       when(services.selfridgesSale.stockUpdates[Clothing](any[StockMonitorConfig])(any[ItemMapper[SelfridgesItem, Clothing]]))
@@ -37,8 +37,7 @@ class StockMonitorSpec extends CatsSpec {
       when(services.notification.stockUpdate[Generic](any[ResellableItem[Generic]], any[StockUpdate])).thenReturn(IO.unit)
 
       val result = for {
-        config       <- Blocker[IO].use(AppConfig.load[IO])
-        stockMonitor <- StockMonitor.make[IO](config, services)
+        stockMonitor <- StockMonitor.make[IO](AppConfig.load, services)
         _            <- stockMonitor.run().interruptAfter(2.seconds).compile.drain
       } yield ()
 

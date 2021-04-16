@@ -1,6 +1,7 @@
 package ebayapp.core.tasks
 
-import cats.effect.{Concurrent, IO, Timer}
+import cats.effect.kernel.Outcome.Errored
+import cats.effect.{IO, Temporal}
 import ebayapp.core.CatsSpec
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Error, Logger}
@@ -16,7 +17,7 @@ class ErrorsNotifierSpec extends CatsSpec {
       when(services.notification.alert(any[Error])).thenReturn(IO.unit)
       val res = for {
         logger          <- Logger.make[IO]
-        notifier        <- ErrorsNotifier.make[IO](services)(Concurrent[IO], logger, Timer[IO])
+        notifier        <- ErrorsNotifier.make[IO](services)(Temporal[IO], logger)
         notifierProcess <- notifier.run().interruptAfter(1.seconds).compile.drain.start
         _               <- logger.error("omg, error")
         _               <- logger.error("omg, error")
@@ -33,14 +34,14 @@ class ErrorsNotifierSpec extends CatsSpec {
       val services = servicesMock
       val res = for {
         logger          <- Logger.make[IO]
-        notifier        <- ErrorsNotifier.make[IO](services)(Concurrent[IO], logger, Timer[IO])
+        notifier        <- ErrorsNotifier.make[IO](services)(Temporal[IO], logger)
         notifierProcess <- notifier.run().interruptWhen(logger.awaitSigTerm).compile.drain.start
         _               <- logger.critical("omg, critical error")
         error           <- notifierProcess.join.attempt
       } yield error
 
       res.unsafeToFuture().map { r =>
-        r mustBe Left(AppError.Critical("omg, critical error"))
+        r mustBe Right(Errored(AppError.Critical("omg, critical error")))
       }
     }
   }

@@ -99,6 +99,9 @@ final private class LiveJdsportsClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html))
+          case Left(_) if r.code == StatusCode.NotFound =>
+            logger.warn(s"jdsports-get-stock/404") *>
+              F.pure(None)
           case Left(_) if r.code.isClientError =>
             logger.error(s"jdsports-get-stock/${r.code}-error") *>
               F.pure(None)

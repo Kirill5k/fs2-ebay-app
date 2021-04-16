@@ -198,7 +198,7 @@ class CexClientSpec extends SttpClientSpec {
       val result = for {
         cexClient <- CexClient.make[IO](config, testingBackend)
         _         <- cexClient.withUpdatedSellPrice(item)
-        _         <- timer.sleep(4.seconds)
+        _         <- IO.sleep(4.seconds)
         rp        <- cexClient.withUpdatedSellPrice(item)
       } yield rp
 

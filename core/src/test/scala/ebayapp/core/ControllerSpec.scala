@@ -1,6 +1,7 @@
 package ebayapp.core
 
-import cats.effect.{ContextShift, IO}
+import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import ebayapp.core.common.Logger
 import io.circe.parser._
 import org.http4s.{Response, Status}
@@ -10,12 +11,11 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.http4s.circe._
 
-import scala.concurrent.ExecutionContext
 import scala.io.Source
 
 trait ControllerSpec extends AnyWordSpec with MockitoSugar with ArgumentMatchersSugar with Matchers {
 
-  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.Implicits.global)
+  implicit val rt: IORuntime      = IORuntime.global
   implicit val logger: Logger[IO]   = MockLogger.make[IO]
 
   def verifyJsonResponse(

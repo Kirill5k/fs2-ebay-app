@@ -1,11 +1,11 @@
 package ebayapp.core.clients.ebay.auth
 
 import cats.effect.IO
-import cats.effect.concurrent.Ref
+import cats.effect.kernel.Ref
 import cats.implicits._
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.EbayAuthToken
-import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbayDealsConfigs, EbaySearchConfig, EbayDealsConfig}
+import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbayDealsConfig, EbayDealsConfigs, EbaySearchConfig}
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model._
@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 
 class EbayAuthClientSpec extends SttpClientSpec {
 
-  val deals = EbayDealsConfigs(EbayDealsConfig(60.seconds, Nil, 20.minutes, 34, 10))
+  val deals       = EbayDealsConfigs(EbayDealsConfig(60.seconds, Nil, 20.minutes, 34, 10))
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
   val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92), deals)
 
@@ -32,14 +32,14 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val accessToken    = ebayAuthClient.flatMap(_.accessToken)
 
       accessToken.unsafeToFuture().map { token =>
-        token must be("KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA==")
+        token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
 
     "return existing token if it is valid" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
-        .whenRequestMatchesPartial {
-          case _ => throw new RuntimeException()
+        .whenRequestMatchesPartial { case _ =>
+          throw new RuntimeException()
         }
 
       val ebayAuthClient = (
@@ -48,7 +48,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).unsafeToFuture().map { token =>
-        token must be("test-token")
+        token mustBe "test-token"
       }
     }
 
@@ -69,7 +69,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       } yield token
 
       result.unsafeToFuture().map { token =>
-        token must be("KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA==")
+        token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
 
@@ -84,16 +84,15 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = (
         Ref.of[IO, Option[EbayAuthToken]](Some(EbayAuthToken("test-token", 0))),
         Ref.of[IO, List[EbayCredentials]](credentials)
-      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c,testingBackend))
+      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).unsafeToFuture().map { token =>
-        token must be("KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA==")
+        token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
 
     "retry on errors from ebay" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
-        .whenAnyRequest
+      val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
           Response(json("ebay/auth-error-response.json"), StatusCode.BadRequest),
           Response(json("ebay/auth-error-response.json"), StatusCode.BadRequest),
@@ -104,7 +103,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val accessToken    = ebayAuthClient.flatMap(_.accessToken)
 
       accessToken.unsafeToFuture().map { token =>
-        token must be("KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA==")
+        token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
 
@@ -122,7 +121,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val accessToken    = ebayAuthClient.flatMap(_.accessToken)
 
       accessToken.unsafeToFuture().map { token =>
-        token must be("KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA==")
+        token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
 

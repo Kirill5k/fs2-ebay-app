@@ -85,6 +85,9 @@ final class CexApiClient[F[_]](
         r.body match {
           case Right(response) =>
             response.pure[F]
+          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+            logger.warn(s"cex-search/exhausted input") *>
+              T.sleep(1.second) *> search(uri)
           case Left(DeserializationException(body, error)) =>
             logger.warn(s"cex-search/json-error: ${error.getMessage}\n$body") *>
               AppError.Json(s"cex-search/json-error: ${error.getMessage}").raiseError[F, CexSearchResponse]

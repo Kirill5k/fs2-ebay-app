@@ -1,6 +1,7 @@
 package ebayapp.core.repositories
 
-import cats.effect.{ContextShift, IO}
+import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import ebayapp.core.MockLogger
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.SearchQuery
@@ -12,12 +13,11 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import java.time.Instant
 import java.time.temporal.ChronoField.MILLI_OF_SECOND
-import scala.concurrent.ExecutionContext
 
 class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with EmbeddedMongo {
 
-  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  implicit val logger: Logger[IO]   = MockLogger.make[IO]
+  implicit val rt: IORuntime      = IORuntime.global
+  implicit val logger: Logger[IO] = MockLogger.make[IO]
 
   val videoGames: List[ResellableItem.VideoGame] = List(
     ResellableItemBuilder.videoGame("GTA 5", Instant.now().minusSeconds(1000).`with`(MILLI_OF_SECOND, 0)),
