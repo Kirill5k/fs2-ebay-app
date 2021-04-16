@@ -3,7 +3,7 @@ package ebayapp.proxy.controllers
 import cats.effect.Deferred
 import cats.effect.kernel.Concurrent
 import cats.implicits._
-import ebayapp.proxy.config.RedirectionUrisConfig
+import ebayapp.proxy.common.config.RedirectionUrisConfig
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
 import org.http4s._

@@ -1,6 +1,6 @@
-package ebayapp.proxy
+package ebayapp.proxy.common
 
-import pureconfig._
+import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 
 object config {
