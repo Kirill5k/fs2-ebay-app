@@ -1,5 +1,7 @@
 package ebayapp.core.controllers
 
+import cats.MonadError
+
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import cats.effect._
 import cats.implicits._
@@ -40,7 +42,7 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
   protected def withErrorHandling(
       response: => F[Response[F]]
   )(implicit
-      F: Sync[F],
+      F: MonadError[F, Throwable],
       logger: Logger[F]
   ): F[Response[F]] =
     response.handleErrorWith {
@@ -104,8 +106,8 @@ object Controller {
       rest: ItemsSummary
   )
 
-  def home[F[_]: Sync: ContextShift](blocker: Blocker): F[Controller[F]] =
-    Sync[F].pure(new HomeController[F](blocker))
+  def home[F[_]: Sync]: F[Controller[F]] =
+    Sync[F].pure(new HomeController[F])
 
   def videoGame[F[_]: Sync: Logger](service: ResellableItemService[F, ItemDetails.Game]): F[Controller[F]] =
     Sync[F].pure(new VideoGameController[F](service))

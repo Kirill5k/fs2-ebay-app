@@ -1,9 +1,9 @@
 package ebayapp.core.common
 
-import java.time.Instant
+import cats.Monad
 
-import cats.effect.{Concurrent, Sync, Timer}
-import cats.effect.concurrent.Ref
+import java.time.Instant
+import cats.effect.{Ref, Temporal}
 import cats.effect.implicits._
 import cats.implicits._
 
@@ -15,7 +15,7 @@ trait Cache[F[_], K, V] {
   def contains(key: K): F[Boolean]
 }
 
-final private class RefbasedCache[F[_]: Sync, K, V](
+final private class RefbasedCache[F[_]: Monad, K, V](
     private val state: Ref[F, Map[K, (V, Instant)]]
 ) extends Cache[F, K, V] {
 
@@ -31,7 +31,7 @@ final private class RefbasedCache[F[_]: Sync, K, V](
 
 object Cache {
 
-  def make[F[_]: Concurrent: Timer, K, V](
+  def make[F[_]: Temporal, K, V](
       expiresIn: FiniteDuration,
       checkOnEvery: FiniteDuration
   ): F[Cache[F, K, V]] = {
@@ -41,7 +41,7 @@ object Cache {
         case (_, (_, exp)) => exp.plusNanos(expiresIn.toNanos).isAfter(Instant.now)
       })
 
-      Timer[F].sleep(checkOnEvery) >> process >> checkExpirations(state)
+      Temporal[F].sleep(checkOnEvery) >> process >> checkExpirations(state)
     }
 
     Ref.of[F, Map[K, (V, Instant)]](Map())

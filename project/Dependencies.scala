@@ -2,13 +2,13 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    lazy val mongo4cats = "0.1.5"
+    lazy val mongo4cats = "0.2.0"
     lazy val pureConfig = "0.14.1"
     lazy val circe      = "0.13.0"
-    lazy val sttp       = "3.1.7"
-    lazy val http4s     = "0.21.20"
+    lazy val sttp       = "3.3.0-RC2"
+    lazy val http4s     = "1.0.0-M21"
     lazy val logback    = "1.2.3"
-    lazy val log4cats   = "1.2.0"
+    lazy val log4cats   = "2.0.1"
 
     lazy val scalaTest     = "3.2.6"
     lazy val mockito       = "1.16.29"
@@ -20,9 +20,6 @@ object Dependencies {
 
     object pureconfig {
       lazy val core       = "com.github.pureconfig" %% "pureconfig"             % Versions.pureConfig
-      lazy val catsEffect = "com.github.pureconfig" %% "pureconfig-cats-effect" % Versions.pureConfig
-
-      lazy val all = Seq(core, catsEffect)
     }
 
     object logging {
@@ -68,19 +65,19 @@ object Dependencies {
   }
 
   lazy val core = Seq(
-    Libraries.mongo4cats
+    Libraries.mongo4cats,
+    Libraries.pureconfig.core
   ) ++
     Libraries.circe.all ++
     Libraries.http4s.all ++
     Libraries.logging.all ++
-    Libraries.sttp.all ++
-    Libraries.pureconfig.all
+    Libraries.sttp.all
 
   lazy val proxy = {
     Seq(
-      Libraries.http4s.blazeClient
+      Libraries.http4s.blazeClient,
+      Libraries.pureconfig.core
     ) ++
-      Libraries.pureconfig.all ++
       Libraries.http4s.all ++
       Libraries.logging.all
   }

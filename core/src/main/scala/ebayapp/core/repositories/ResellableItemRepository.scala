@@ -1,7 +1,7 @@
 package ebayapp.core.repositories
 
 import java.time.Instant
-import cats.effect.ConcurrentEffect
+import cats.effect.{Async}
 import cats.implicits._
 import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.ResellableItem
@@ -22,7 +22,7 @@ trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItem
   def stream(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): Stream[F, I]
 }
 
-final class ResellableItemMongoRepository[F[_]: ConcurrentEffect, I <: ResellableItem[_], E <: ResellableItemEntity](
+final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E <: ResellableItemEntity](
     private val mongoCollection: MongoCollectionF[E],
     private val entityMapper: ResellableItemEntityMapper[I, E]
 ) extends ResellableItemRepository[F, I, E] {
@@ -87,7 +87,7 @@ object ResellableItemRepository {
 
   type VideoGameRepository[F[_]] = ResellableItemRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame]
 
-  def videoGamesMongo[F[_]: ConcurrentEffect](
+  def videoGamesMongo[F[_]: Async](
       mongoClient: MongoClientF[F]
   ): F[VideoGameRepository[F]] =
     for {

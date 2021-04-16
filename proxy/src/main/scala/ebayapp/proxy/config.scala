@@ -1,9 +1,7 @@
 package ebayapp.proxy
 
-import cats.effect.{Blocker, ContextShift, Sync}
 import pureconfig._
 import pureconfig.generic.auto._
-import pureconfig.module.catseffect.syntax._
 
 object config {
 
@@ -25,8 +23,8 @@ object config {
 
   object AppConfig {
 
-    def load[F[_]: Sync: ContextShift](blocker: Blocker): F[AppConfig] =
-      ConfigSource.default.loadF[F, AppConfig](blocker)
+    def load: AppConfig =
+      ConfigSource.default.loadOrThrow[AppConfig]
   }
 
 }

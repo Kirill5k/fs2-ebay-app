@@ -1,6 +1,6 @@
 package ebayapp.core.clients.ebay.browse
 
-import cats.effect.Sync
+import cats.MonadError
 import cats.implicits._
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.EbayConfig
@@ -20,8 +20,8 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
-    val F: Sync[F],
-    val logger: Logger[F]
+    F: MonadError[F, Throwable],
+    logger: Logger[F]
 ) extends EbayBrowseClient[F] {
 
   private val defaultHeaders: Map[String, String] = Map(
@@ -75,9 +75,9 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 
 private[ebay] object EbayBrowseClient {
 
-  def make[F[_]: Sync: Logger](
+  def make[F[_]: Logger](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
-  ): F[EbayBrowseClient[F]] =
-    Sync[F].delay(new LiveEbayBrowseClient[F](config, backend))
+  )(implicit F: MonadError[F, Throwable]): F[EbayBrowseClient[F]] =
+    F.pure(new LiveEbayBrowseClient[F](config, backend))
 }

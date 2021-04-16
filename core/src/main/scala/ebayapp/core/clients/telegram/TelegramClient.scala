@@ -1,6 +1,6 @@
 package ebayapp.core.clients.telegram
 
-import cats.effect.Sync
+import cats.MonadError
 import cats.implicits._
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.errors.AppError
@@ -13,11 +13,12 @@ trait TelegramClient[F[_]] {
   def sendMessageToAlertsChannel(message: String): F[Unit]
 }
 
-final private class TelegramApiClient[F[_]: Sync](
+final private class TelegramApiClient[F[_]](
     private val config: TelegramConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
-    val logger: Logger[F]
+    F: MonadError[F, Throwable],
+    logger: Logger[F]
 ) extends TelegramClient[F] {
 
   def sendMessageToMainChannel(message: String): F[Unit] =
@@ -45,9 +46,9 @@ final private class TelegramApiClient[F[_]: Sync](
 
 object TelegramClient {
 
-  def make[F[_]: Sync: Logger](
+  def make[F[_]: Logger](
       config: TelegramConfig,
       backend: SttpBackend[F, Any]
-  ): F[TelegramClient[F]] =
-    Sync[F].delay(new TelegramApiClient[F](config, backend))
+  )(implicit F: MonadError[F, Throwable]): F[TelegramClient[F]] =
+    F.pure(new TelegramApiClient[F](config, backend))
 }

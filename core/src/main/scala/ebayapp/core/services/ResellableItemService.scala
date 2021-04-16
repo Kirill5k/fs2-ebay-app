@@ -1,7 +1,8 @@
 package ebayapp.core.services
 
+
 import java.time.Instant
-import cats.effect.Sync
+import cats.Monad
 import cats.implicits._
 import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
@@ -17,7 +18,7 @@ trait ResellableItemService[F[_], D <: ItemDetails] {
   def findBy(query: SearchQuery, limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
 }
 
-final class VideoGameService[F[_]: Sync](
+final class VideoGameService[F[_]: Monad](
     private val repository: VideoGameRepository[F]
 ) extends ResellableItemService[F, ItemDetails.Game] {
 
@@ -44,6 +45,6 @@ final class VideoGameService[F[_]: Sync](
 
 object ResellableItemService {
 
-  def videoGame[F[_]: Sync](repository: VideoGameRepository[F]): F[ResellableItemService[F, ItemDetails.Game]] =
-    Sync[F].delay(new VideoGameService[F](repository))
+  def videoGame[F[_]: Monad](repository: VideoGameRepository[F]): F[ResellableItemService[F, ItemDetails.Game]] =
+    Monad[F].pure(new VideoGameService[F](repository))
 }

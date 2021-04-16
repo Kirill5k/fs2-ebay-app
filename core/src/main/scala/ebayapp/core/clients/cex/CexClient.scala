@@ -1,15 +1,14 @@
 package ebayapp.core.clients.cex
 
-import cats.effect.{Concurrent, Sync, Timer}
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.cex.mappers.CexItemMapper
 import ebayapp.core.clients.cex.responses._
-import ebayapp.core.common.Cache
+import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.{CexConfig, SearchQuery}
 import ebayapp.core.common.errors.AppError
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.domain.search._
-import ebayapp.core.common.Logger
+import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import io.circe.generic.auto._
 import sttp.client3.circe.asJson
 import sttp.client3.{SttpBackend, _}
@@ -29,8 +28,7 @@ final class CexApiClient[F[_]](
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
     private val backend: SttpBackend[F, Any]
 )(implicit
-    S: Sync[F],
-    T: Timer[F],
+    T: Temporal[F],
     logger: Logger[F]
 ) extends CexClient[F] {
 
@@ -104,7 +102,7 @@ final class CexApiClient[F[_]](
 object CexClient {
 
 
-  def make[F[_]: Concurrent: Timer: Logger](
+  def make[F[_]: Temporal: Logger](
       config: CexConfig,
       backend: SttpBackend[F, Any]
   ): F[CexClient[F]] =

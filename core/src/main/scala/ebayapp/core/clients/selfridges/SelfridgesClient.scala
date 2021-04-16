@@ -1,6 +1,7 @@
 package ebayapp.core.clients.selfridges
 
-import cats.effect.{Sync, Timer}
+import cats.Monad
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.selfridges.SelfridgesClient._
 import ebayapp.core.clients.selfridges.mappers._
@@ -24,8 +25,7 @@ final private class LiveSelfridgesClient[F[_]](
     private val config: SelfridgesConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
-    F: Sync[F],
-    T: Timer[F],
+    F: Temporal[F],
     logger: Logger[F]
 ) extends SelfridgesClient[F] {
 
@@ -93,7 +93,7 @@ final private class LiveSelfridgesClient[F[_]](
             F.pure(res)
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"selfdridges-$endpoint/exhausted input") *>
-              T.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
+              F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
           case Left(DeserializationException(_, error)) =>
             logger.error(s"selfdridges-$endpoint response parsing error: ${error.getMessage}") *>
               F.pure(defaultResponse)
@@ -105,10 +105,10 @@ final private class LiveSelfridgesClient[F[_]](
               F.pure(defaultResponse)
           case Left(HttpError(_, status)) if status.isServerError =>
             logger.warn(s"selfridges-$endpoint/$status-repeatable") *>
-              T.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
+              F.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
           case Left(error) =>
             logger.error(s"selfridges-$endpoint error: ${error.getMessage}") *>
-              T.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
+              F.sleep(1.second) *> sendRequest(uri, endpoint, defaultResponse)
         }
       }
 }
@@ -158,9 +158,9 @@ object SelfridgesClient {
       catalogEntryNavView: List[CatalogItem]
   )
 
-  def make[F[_]: Sync: Logger: Timer](
+  def make[F[_]: Temporal: Logger](
       config: SelfridgesConfig,
       backend: SttpBackend[F, Any]
   ): F[SelfridgesClient[F]] =
-    Sync[F].delay(new LiveSelfridgesClient[F](config, backend))
+    Monad[F].pure(new LiveSelfridgesClient[F](config, backend))
 }

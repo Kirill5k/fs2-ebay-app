@@ -1,15 +1,15 @@
 package ebayapp.core.services
 
-import cats.effect.{Concurrent, Timer}
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.Clients
 import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.mappers.JdsportsItem
 import ebayapp.core.clients.selfridges.mappers.SelfridgesItem
+import ebayapp.core.common.Logger
 import ebayapp.core.domain.ItemDetails
 import ebayapp.core.repositories.Repositories
-import ebayapp.core.common.Logger
 
 trait Services[F[_]] {
   def notification: NotificationService[F]
@@ -23,7 +23,7 @@ trait Services[F[_]] {
 
 object Services {
 
-  def make[F[_]: Concurrent: Timer: Logger](
+  def make[F[_]: Temporal: Logger](
       clients: Clients[F],
       repositories: Repositories[F]
   ): F[Services[F]] =

@@ -1,6 +1,7 @@
 package ebayapp.core.services
 
-import cats.effect.{Concurrent, Sync, Timer}
+import cats.Monad
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.clients.argos.ArgosClient
@@ -15,8 +16,8 @@ import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{SearchQuery, StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.domain.stock.ItemStockUpdates
+import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
 
 import scala.concurrent.duration._
@@ -29,7 +30,7 @@ trait StockService[F[_], I] extends StockComparer[F] {
   ): Stream[F, ItemStockUpdates[D]]
 }
 
-final private class ArgosStockService[F[_]: Concurrent: Timer: Logger](
+final private class ArgosStockService[F[_]: Temporal: Logger](
     private val client: ArgosClient[F]
 ) extends StockService[F, ArgosItem] {
 
@@ -48,7 +49,7 @@ final private class ArgosStockService[F[_]: Concurrent: Timer: Logger](
       .flatTap(i => Logger[F].info(s"""argos-search "${query.value}" returned ${i.size} results"""))
 }
 
-final private class CexStockService[F[_]: Concurrent: Timer: Logger](
+final private class CexStockService[F[_]: Temporal: Logger](
     private val client: CexClient[F]
 ) extends StockService[F, CexItem] {
 
@@ -65,7 +66,7 @@ final private class CexStockService[F[_]: Concurrent: Timer: Logger](
     }
 }
 
-final private class SelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
+final private class SelfridgesSaleService[F[_]: Temporal: Logger](
     private val client: SelfridgesClient[F]
 ) extends StockService[F, SelfridgesItem] {
 
@@ -104,7 +105,7 @@ final private class SelfridgesSaleService[F[_]: Concurrent: Timer: Logger](
       .flatTap(i => Logger[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))
 }
 
-final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
+final private class JdsportsSaleService[F[_]: Temporal: Logger](
     private val client: JdsportsClient[F]
 ) extends StockService[F, JdsportsItem] {
 
@@ -133,15 +134,15 @@ final private class JdsportsSaleService[F[_]: Concurrent: Timer: Logger](
 
 object StockService {
 
-  def argos[F[_]: Concurrent: Timer: Logger](client: ArgosClient[F]): F[StockService[F, ArgosItem]] =
-    Sync[F].delay(new ArgosStockService[F](client))
+  def argos[F[_]: Temporal: Logger](client: ArgosClient[F]): F[StockService[F, ArgosItem]] =
+    Monad[F].pure(new ArgosStockService[F](client))
 
-  def cex[F[_]: Concurrent: Timer: Logger](client: CexClient[F]): F[StockService[F, CexItem]] =
-    Sync[F].delay(new CexStockService[F](client))
+  def cex[F[_]: Temporal: Logger](client: CexClient[F]): F[StockService[F, CexItem]] =
+    Monad[F].pure(new CexStockService[F](client))
 
-  def selfridges[F[_]: Concurrent: Timer: Logger](client: SelfridgesClient[F]): F[StockService[F, SelfridgesItem]] =
-    Sync[F].delay(new SelfridgesSaleService[F](client))
+  def selfridges[F[_]: Temporal: Logger](client: SelfridgesClient[F]): F[StockService[F, SelfridgesItem]] =
+    Monad[F].pure(new SelfridgesSaleService[F](client))
 
-  def jdsports[F[_]: Concurrent: Timer: Logger](client: JdsportsClient[F]): F[StockService[F, JdsportsItem]] =
-    Sync[F].delay(new JdsportsSaleService[F](client))
+  def jdsports[F[_]: Temporal: Logger](client: JdsportsClient[F]): F[StockService[F, JdsportsItem]] =
+    Monad[F].pure(new JdsportsSaleService[F](client))
 }

@@ -1,6 +1,7 @@
 package ebayapp.core.tasks
 
-import cats.effect.{Concurrent, Sync}
+import cats.Monad
+import cats.effect.Concurrent
 import cats.implicits._
 import ebayapp.core.clients.argos.mappers._
 import ebayapp.core.clients.argos.responses.ArgosItem
@@ -35,7 +36,7 @@ final class StockMonitor[F[_]: Concurrent](
 
 object StockMonitor {
   def make[F[_]: Concurrent](config: AppConfig, services: Services[F]): F[Task[F]] =
-    Sync[F].delay(
+    Monad[F].pure(
       new StockMonitor[F](
         config,
         services.cexStock,

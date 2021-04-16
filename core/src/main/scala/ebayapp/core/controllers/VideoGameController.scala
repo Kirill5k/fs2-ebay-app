@@ -1,6 +1,6 @@
 package ebayapp.core.controllers
 
-import cats.effect.Sync
+import cats.MonadError
 import cats.implicits._
 import ebayapp.core.common.Logger
 import ebayapp.core.controllers.VideoGameController.VideoGameResponse
@@ -13,9 +13,9 @@ import io.circe.syntax._
 import org.http4s.HttpRoutes
 import org.http4s.circe._
 
-final private[controllers] class VideoGameController[F[_]: Sync: Logger](
+final private[controllers] class VideoGameController[F[_]: Logger](
     private val videoGameService: ResellableItemService[F, ItemDetails.Game]
-) extends Controller[F] {
+)(implicit F: MonadError[F, Throwable]) extends Controller[F] {
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {

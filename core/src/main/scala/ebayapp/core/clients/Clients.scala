@@ -1,6 +1,6 @@
 package ebayapp.core.clients
 
-import cats.effect.{Concurrent, Timer}
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.argos.ArgosClient
 import ebayapp.core.clients.cex.CexClient
@@ -8,8 +8,8 @@ import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.clients.jdsports.JdsportsClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.telegram.TelegramClient
-import ebayapp.core.common.config.AppConfig
 import ebayapp.core.common.Logger
+import ebayapp.core.common.config.AppConfig
 import sttp.client3.SttpBackend
 
 trait Clients[F[_]] {
@@ -23,7 +23,7 @@ trait Clients[F[_]] {
 
 object Clients {
 
-  def make[F[_]: Concurrent: Timer: Logger](
+  def make[F[_]: Temporal: Logger](
       config: AppConfig,
       backend: SttpBackend[F, Any]
   ): F[Clients[F]] =

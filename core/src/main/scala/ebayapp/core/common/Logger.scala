@@ -1,14 +1,13 @@
 package ebayapp.core.common
 
 import cats.Monad
-import cats.effect.Concurrent
-import cats.effect.concurrent.Deferred
+import cats.effect.std.Queue
+import cats.effect.{Async, Deferred}
 import cats.implicits._
 import ebayapp.core.common.errors.AppError
-import fs2.concurrent.Queue
-import org.typelevel.log4cats.{Logger => Logger4Cats}
-import org.typelevel.log4cats.slf4j.Slf4jLogger
 import fs2.Stream
+import org.typelevel.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.{Logger => Logger4Cats}
 
 import java.time.Instant
 
@@ -34,13 +33,13 @@ final private class LiveLogger[F[_]: Monad](
     enqueue(s"${message.split("\n").head} - ${t.getMessage}")
 
   private def enqueue(message: => String): F[Unit] =
-    loggedErrors.enqueue1(Error(message.split("\n").head))
+    loggedErrors.offer(Error(message.split("\n").head))
 
   override def awaitSigTerm: F[Either[Throwable, Unit]] =
     sigTerm.get
 
   override def errors: Stream[F, Error] =
-    loggedErrors.dequeue
+    Stream.fromQueueUnterminated(loggedErrors)
 
   override def critical(message: => String): F[Unit] =
     sigTerm.complete(Left(AppError.Critical(message))) *> error(message)
@@ -82,7 +81,7 @@ final private class LiveLogger[F[_]: Monad](
 object Logger {
   def apply[F[_]](implicit ev: Logger[F]): Logger[F] = ev
 
-  def make[F[_]: Concurrent]: F[Logger[F]] =
+  def make[F[_]: Async]: F[Logger[F]] =
     (Queue.unbounded[F, Error], Deferred[F, Either[Throwable, Unit]])
       .mapN((q, s) => new LiveLogger[F](Slf4jLogger.getLogger[F], q, s))
 }

@@ -2,11 +2,8 @@ package ebayapp.core.common
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64
-
 import pureconfig._
 import pureconfig.generic.auto._
-import pureconfig.module.catseffect.syntax._
-import cats.effect.{Blocker, ContextShift, Sync}
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -114,8 +111,8 @@ object config {
 
   object AppConfig {
 
-    def load[F[_]: Sync: ContextShift](blocker: Blocker): F[AppConfig] =
-      ConfigSource.default.loadF[F, AppConfig](blocker)
+    def load: AppConfig =
+      ConfigSource.default.loadOrThrow[AppConfig]
   }
 
 }

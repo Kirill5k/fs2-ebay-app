@@ -1,7 +1,7 @@
 package ebayapp.core.controllers
 
 import cats.Monad
-import cats.effect.{Blocker, ContextShift, Sync}
+import cats.effect.{Sync}
 import cats.implicits._
 import ebayapp.core.services.Services
 import ebayapp.core.common.Logger
@@ -26,9 +26,9 @@ trait Controllers[F[_]] {
 
 object Controllers {
 
-  def make[F[_]: Sync: Logger: ContextShift](blocker: Blocker, services: Services[F]): F[Controllers[F]] =
+  def make[F[_]: Sync: Logger](services: Services[F]): F[Controllers[F]] =
     (
-      Controller.home(blocker),
+      Controller.home,
       Controller.videoGame(services.videoGame),
       Controller.health
     ).mapN((ho, vg, he) =>

@@ -1,6 +1,6 @@
 package ebayapp.core.services
 
-import cats.effect.Sync
+import cats.Monad
 import cats.implicits._
 import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.domain.stock.StockUpdate
@@ -16,27 +16,27 @@ trait NotificationService[F[_]] {
 final class TelegramNotificationService[F[_]](
     private val telegramClient: TelegramClient[F]
 )(implicit
-    val F: Sync[F],
-    val L: Logger[F]
+    F: Monad[F],
+    logger: Logger[F]
 ) extends NotificationService[F] {
   import NotificationService._
 
   override def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit] =
     F.pure(item.cheapItemNotification).flatMap {
       case Some(message) =>
-        L.info(s"""sending "$message"""") *>
+        logger.info(s"""sending "$message"""") *>
           telegramClient.sendMessageToMainChannel(message)
       case None =>
-        L.warn(s"not enough details for sending cheap item notification $item")
+        logger.warn(s"not enough details for sending cheap item notification $item")
     }
 
   override def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit] =
     F.pure(item.stockUpdateNotification(update)).flatMap {
       case Some(message) =>
-        L.info(s"""sending "$message"""") *>
+        logger.info(s"""sending "$message"""") *>
           telegramClient.sendMessageToSecondaryChannel(message)
       case None =>
-        L.warn(s"not enough details for stock update notification $update")
+        logger.warn(s"not enough details for stock update notification $update")
     }
 
   override def alert(error: Error): F[Unit] = {
@@ -67,6 +67,6 @@ object NotificationService {
       }
   }
 
-  def telegram[F[_]: Sync: Logger](client: TelegramClient[F]): F[NotificationService[F]] =
-    Sync[F].delay(new TelegramNotificationService[F](client))
+  def telegram[F[_]: Monad: Logger](client: TelegramClient[F]): F[NotificationService[F]] =
+    Monad[F].pure(new TelegramNotificationService[F](client))
 }

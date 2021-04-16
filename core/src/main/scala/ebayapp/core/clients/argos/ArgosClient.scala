@@ -1,6 +1,7 @@
 package ebayapp.core.clients.argos
 
-import cats.effect.{Sync, Timer}
+import cats.Monad
+import cats.effect.{Temporal}
 import cats.implicits._
 import ebayapp.core.clients.argos.mappers.ArgosItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
@@ -20,12 +21,12 @@ trait ArgosClient[F[_]] {
   ): Stream[F, ResellableItem[D]]
 }
 
-final private class LiveArgosClient[F[_]: Sync](
+final private class LiveArgosClient[F[_]](
     private val config: ArgosConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
-    timer: Timer[F]
+    timer: Temporal[F]
 ) extends ArgosClient[F] {
 
   override def findItem[D <: ItemDetails](query: SearchQuery)(implicit
@@ -67,9 +68,9 @@ final private class LiveArgosClient[F[_]: Sync](
 }
 
 object ArgosClient {
-  def make[F[_]: Sync: Logger: Timer](
+  def make[F[_]: Temporal: Logger](
       config: ArgosConfig,
       backend: SttpBackend[F, Any]
   ): F[ArgosClient[F]] =
-    Sync[F].delay(new LiveArgosClient[F](config, backend))
+    Monad[F].pure(new LiveArgosClient[F](config, backend))
 }

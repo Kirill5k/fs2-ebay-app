@@ -1,6 +1,7 @@
 package ebayapp.core.clients.jdsports
 
-import cats.effect.{Sync, Timer}
+import cats.Monad
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
@@ -21,8 +22,7 @@ final private class LiveJdsportsClient[F[_]](
     private val config: JdsportsConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
-    F: Sync[F],
-    T: Timer[F],
+    F: Temporal[F],
     logger: Logger[F]
 ) extends JdsportsClient[F] {
 
@@ -74,7 +74,7 @@ final private class LiveJdsportsClient[F[_]](
             F.fromEither(ResponseParser.parseSearchResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
             logger.error(s"jdsports-search/forbidden") *>
-              T.sleep(30.seconds) *> searchByBrand(query)
+              F.sleep(30.seconds) *> searchByBrand(query)
           case Left(_) if r.code == StatusCode.NotFound =>
             logger.warn(s"jdsports-search/404") *>
               F.pure(Nil)
@@ -83,10 +83,10 @@ final private class LiveJdsportsClient[F[_]](
               F.pure(Nil)
           case Left(_) if r.code.isServerError =>
             logger.warn(s"jdsports-search/${r.code}-repeatable") *>
-              T.sleep(1.second) *> searchByBrand(query)
+              F.sleep(1.second) *> searchByBrand(query)
           case Left(error) =>
             logger.error(s"jdsports-search/error: $error") *>
-              T.sleep(1.second) *> searchByBrand(query)
+              F.sleep(1.second) *> searchByBrand(query)
         }
       }
 
@@ -104,18 +104,18 @@ final private class LiveJdsportsClient[F[_]](
               F.pure(None)
           case Left(_) if r.code.isServerError =>
             logger.warn(s"jdsports-get-stock/${r.code}-repeatable") *>
-              T.sleep(1.second) *> getProductStock(ci)
+              F.sleep(1.second) *> getProductStock(ci)
           case Left(error) =>
             logger.error(s"jdsports-get-stock: $error") *>
-              T.sleep(1.second) *> getProductStock(ci)
+              F.sleep(1.second) *> getProductStock(ci)
         }
       }
 }
 
 object JdsportsClient {
-  def make[F[_]: Sync: Logger: Timer](
+  def make[F[_]: Temporal: Logger](
       config: JdsportsConfig,
       backend: SttpBackend[F, Any]
   ): F[JdsportsClient[F]] =
-    Sync[F].delay(new LiveJdsportsClient[F](config, backend))
+    Monad[F].pure(new LiveJdsportsClient[F](config, backend))
 }

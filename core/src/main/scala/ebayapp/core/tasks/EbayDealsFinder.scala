@@ -1,6 +1,6 @@
 package ebayapp.core.tasks
 
-import cats.effect.Sync
+import cats.Monad
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.core.clients.ebay.search.EbaySearchParams
@@ -9,7 +9,7 @@ import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.services.{EbayDealsService, NotificationService, ResellableItemService, Services}
 import fs2.Stream
 
-final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails: EbayItemMapper: EbaySearchParams](
+final class EbayDealsFinder[F[_]: Monad, D <: ItemDetails: EbayItemMapper: EbaySearchParams](
     private val dealsConfig: EbayDealsConfig,
     private val ebayDealsService: EbayDealsService[F],
     private val resellableItemService: ResellableItemService[F, D],
@@ -35,18 +35,18 @@ final class EbayDealsFinder[F[_]: Sync, D <: ItemDetails: EbayItemMapper: EbaySe
 
 object EbayDealsFinder {
 
-  def videoGames[F[_]: Sync](
+  def videoGames[F[_]: Monad](
       config: EbayDealsConfig,
       services: Services[F]
   ): F[Task[F]] =
-    Sync[F].delay {
+    Monad[F].pure {
       new EbayDealsFinder[F, ItemDetails.Game](
         config,
         services.ebayDeals,
         services.videoGame,
         services.notification
       )(
-        Sync[F],
+        Monad[F],
         EbayItemMapper.gameDetailsMapper,
         EbaySearchParams.videoGameSearchParams
       )

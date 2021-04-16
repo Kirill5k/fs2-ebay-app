@@ -1,6 +1,6 @@
 package ebayapp.core.clients.ebay
 
-import cats.effect.{Concurrent, Sync, Timer}
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
@@ -35,7 +35,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     private val browseClient: EbayBrowseClient[F],
     private val itemIdsCache: Cache[F, String, Unit]
 )(implicit
-    val F: Sync[F],
+    val F: Temporal[F],
     val logger: Logger[F]
 ) extends EbayClient[F] {
 
@@ -87,18 +87,19 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
-      Stream.eval_(logger.warn(s"auth error from ebay client ($message). switching account")) ++
-        Stream.eval_(authClient.switchAccount())
+      Stream.eval(logger.warn(s"auth error from ebay client ($message). switching account"))
+        .evalTap(_ => authClient.switchAccount())
+        .drain
     case error: AppError =>
-      Stream.eval_(logger.warn(s"api client error while getting items from ebay: ${error.message}"))
+      Stream.eval(logger.warn(s"api client error while getting items from ebay: ${error.message}")).drain
     case error =>
-      Stream.eval_(logger.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}"))
+      Stream.eval(logger.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}")).drain
   }
 }
 
 object EbayClient {
 
-  def make[F[_]: Concurrent: Logger: Timer](
+  def make[F[_]: Temporal: Logger](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
   ): F[EbayClient[F]] = {

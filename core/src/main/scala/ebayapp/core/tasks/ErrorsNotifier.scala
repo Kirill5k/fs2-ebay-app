@@ -1,6 +1,7 @@
 package ebayapp.core.tasks
 
-import cats.effect.{Concurrent, Sync, Timer}
+import cats.Monad
+import cats.effect.kernel.Temporal
 import ebayapp.core.common.Logger
 import ebayapp.core.common.stream._
 import ebayapp.core.services.{NotificationService, Services}
@@ -8,7 +9,7 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-final class ErrorsNotifier[F[_]: Logger: Timer](
+final class ErrorsNotifier[F[_]: Logger: Temporal](
     private val notificationService: NotificationService[F]
 ) extends Task[F] {
 
@@ -21,7 +22,7 @@ final class ErrorsNotifier[F[_]: Logger: Timer](
 
 object ErrorsNotifier {
 
-  def make[F[_]: Concurrent: Logger: Timer](services: Services[F]): F[Task[F]] =
-    Sync[F].delay(new ErrorsNotifier[F](services.notification))
+  def make[F[_]: Temporal: Logger](services: Services[F]): F[Task[F]] =
+    Monad[F].pure(new ErrorsNotifier[F](services.notification))
 }
 
