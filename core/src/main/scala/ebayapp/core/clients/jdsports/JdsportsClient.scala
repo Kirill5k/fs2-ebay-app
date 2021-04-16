@@ -73,8 +73,11 @@ final private class LiveJdsportsClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.warn(s"jdsports-search/forbidden") *>
+            logger.error(s"jdsports-search/forbidden") *>
               T.sleep(30.seconds) *> searchByBrand(query)
+          case Left(_) if r.code == StatusCode.NotFound =>
+            logger.warn(s"jdsports-search/404") *>
+              F.pure(Nil)
           case Left(_) if r.code.isClientError =>
             logger.error(s"jdsports-search/${r.code}-error") *>
               F.pure(Nil)

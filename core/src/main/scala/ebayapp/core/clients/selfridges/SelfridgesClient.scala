@@ -91,11 +91,13 @@ final private class LiveSelfridgesClient[F[_]](
         r.body match {
           case Right(res) =>
             F.pure(res)
+          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+            logger.warn(s"selfdridges-$endpoint/exhausted input") *>
+              T.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
           case Left(DeserializationException(_, error)) =>
             logger.error(s"selfdridges-$endpoint response parsing error: ${error.getMessage}") *>
               F.pure(defaultResponse)
           case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
-            //TODO: revert back to critical
             logger.error(s"selfridges-$endpoint/$s-critical") *>
               F.pure(defaultResponse)
           case Left(HttpError(_, status)) if status.isClientError =>
