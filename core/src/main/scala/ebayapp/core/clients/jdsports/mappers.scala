@@ -20,7 +20,11 @@ object mappers {
       image: String,
       category: String
   ) {
-    val fullName: String = s"$colour-$name".replaceAll(" ", "-").replaceAll("-+", "-").toLowerCase
+    val fullName: String = s"$colour-$name"
+      .replaceAll(" ", "-")
+      .replaceAll("-+", "-")
+      .replaceAll("/", "")
+      .toLowerCase
   }
 
   type JdsportsItemMapper[D <: ItemDetails] = ItemMapper[JdsportsItem, D]
