@@ -66,7 +66,7 @@ object mappers {
         None,
         None,
         Some(jdi.image),
-        s"NEW",
+        "NEW",
         Instant.now,
         "JDSPORTS",
         Map()
