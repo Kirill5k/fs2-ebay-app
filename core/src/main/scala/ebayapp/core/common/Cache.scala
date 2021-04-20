@@ -13,6 +13,7 @@ trait Cache[F[_], K, V] {
   def get(key: K): F[Option[V]]
   def put(key: K, value: V): F[Unit]
   def contains(key: K): F[Boolean]
+  def evalIfNew(key: K)(fa: => F[Unit]): F[Unit]
 }
 
 final private class RefbasedCache[F[_]: Monad, K, V](
@@ -27,6 +28,9 @@ final private class RefbasedCache[F[_]: Monad, K, V](
 
   override def contains(key: K): F[Boolean] =
     state.get.map(_.contains(key))
+
+  override def evalIfNew(key: K)(fa: => F[Unit]): F[Unit] =
+    contains(key).flatMap(if (_) ().pure[F] else fa)
 }
 
 object Cache {

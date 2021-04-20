@@ -51,5 +51,26 @@ class CacheSpec extends CatsSpec {
 
       result.unsafeToFuture().map(_ mustBe false)
     }
+
+    "eval expression if the key is new" in {
+      val result = for {
+        cache <- Cache.make[IO, String, String](60.seconds, 1.second)
+        _     <- cache.evalIfNew("foo")(cache.put("foo", "bar2"))
+        res   <- cache.get("foo")
+      } yield res
+
+      result.unsafeToFuture().map(_ mustBe Some("bar2"))
+    }
+
+    "not eval expression if the key is already there" in {
+      val result = for {
+        cache <- Cache.make[IO, String, String](60.seconds, 1.second)
+        _     <- cache.put("foo", "bar")
+        _     <- cache.evalIfNew("foo")(cache.put("foo", "bar2"))
+        res   <- cache.get("foo")
+      } yield res
+
+      result.unsafeToFuture().map(_ mustBe Some("bar"))
+    }
   }
 }
