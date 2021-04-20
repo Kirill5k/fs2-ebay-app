@@ -45,18 +45,17 @@ final class CexApiClient[F[_]](
         findSellPrice(SearchQuery(name), categories).map(sp => item.copy(sellPrice = sp))
     }
 
-  private def findSellPrice(query: SearchQuery, categories: Option[List[Int]]): F[Option[SellPrice]] =
-    resellPriceCache.get(query.base64).flatMap {
-      case Some(rp) => rp.pure[F]
-      case None =>
-        val categoryIds = categories.map(_.mkString("[", ",", "]"))
-        search(uri"${config.baseUri}/v3/boxes?q=${query.value}&categoryIds=$categoryIds")
-          .map(getMinResellPrice)
-          .flatTap { rp =>
-            if (rp.isEmpty) logger.warn(s"""cex-price-match "${query.value}" returned 0 results""")
-            else resellPriceCache.put(query.base64, rp)
-          }
+  private def findSellPrice(query: SearchQuery, categories: Option[List[Int]]): F[Option[SellPrice]] = {
+    resellPriceCache.evalPutIfNew(query.base64) {
+      val categoryIds = categories.map(_.mkString("[", ",", "]"))
+      search(uri"${config.baseUri}/v3/boxes?q=${query.value}&categoryIds=$categoryIds")
+        .map(getMinResellPrice)
+        .flatTap { rp =>
+          if (rp.isEmpty) logger.warn(s"""cex-price-match "${query.value}" returned 0 results""")
+          else ().pure[F]
+        }
     }
+  }
 
   private def getMinResellPrice(searchResponse: CexSearchResponse): Option[SellPrice] =
     searchResponse.response.data

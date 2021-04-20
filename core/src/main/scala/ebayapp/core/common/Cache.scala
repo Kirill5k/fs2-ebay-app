@@ -14,6 +14,7 @@ trait Cache[F[_], K, V] {
   def put(key: K, value: V): F[Unit]
   def contains(key: K): F[Boolean]
   def evalIfNew(key: K)(fa: => F[Unit]): F[Unit]
+  def evalPutIfNew(key: K)(fa: => F[V]): F[V]
 }
 
 final private class RefbasedCache[F[_]: Monad, K, V](
@@ -31,6 +32,12 @@ final private class RefbasedCache[F[_]: Monad, K, V](
 
   override def evalIfNew(key: K)(fa: => F[Unit]): F[Unit] =
     contains(key).flatMap(if (_) ().pure[F] else fa)
+
+  override def evalPutIfNew(key: K)(fa: => F[V]): F[V] =
+    get(key).flatMap {
+      case Some(v) => v.pure[F]
+      case None    => fa.flatTap(v => put(key, v))
+    }
 }
 
 object Cache {
@@ -41,14 +48,15 @@ object Cache {
   ): F[Cache[F, K, V]] = {
 
     def checkExpirations(state: Ref[F, Map[K, (V, Instant)]]): F[Unit] = {
-      val process = state.update(_.filter {
-        case (_, (_, exp)) => exp.plusNanos(expiresIn.toNanos).isAfter(Instant.now)
+      val process = state.update(_.filter { case (_, (_, exp)) =>
+        exp.plusNanos(expiresIn.toNanos).isAfter(Instant.now)
       })
 
       Temporal[F].sleep(checkOnEvery) >> process >> checkExpirations(state)
     }
 
-    Ref.of[F, Map[K, (V, Instant)]](Map())
+    Ref
+      .of[F, Map[K, (V, Instant)]](Map())
       .flatTap(s => checkExpirations(s).start.void)
       .map(s => new RefbasedCache[F, K, V](s))
   }

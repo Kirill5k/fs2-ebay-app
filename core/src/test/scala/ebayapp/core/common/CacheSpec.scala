@@ -52,25 +52,49 @@ class CacheSpec extends CatsSpec {
       result.unsafeToFuture().map(_ mustBe false)
     }
 
-    "eval expression if the key is new" in {
-      val result = for {
-        cache <- Cache.make[IO, String, String](60.seconds, 1.second)
-        _     <- cache.evalIfNew("foo")(cache.put("foo", "bar2"))
-        res   <- cache.get("foo")
-      } yield res
+    "evalIfNew" should {
+      "eval computation if the key is new" in {
+        val result = for {
+          cache <- Cache.make[IO, String, String](60.seconds, 1.second)
+          _     <- cache.evalIfNew("foo")(cache.put("foo", "bar2"))
+          res   <- cache.get("foo")
+        } yield res
 
-      result.unsafeToFuture().map(_ mustBe Some("bar2"))
+        result.unsafeToFuture().map(_ mustBe Some("bar2"))
+      }
+
+      "not eval computation if the key already exists" in {
+        val result = for {
+          cache <- Cache.make[IO, String, String](60.seconds, 1.second)
+          _     <- cache.put("foo", "bar")
+          _     <- cache.evalIfNew("foo")(IO.raiseError(new RuntimeException("uh oh")))
+          res   <- cache.get("foo")
+        } yield res
+
+        result.unsafeToFuture().map(_ mustBe Some("bar"))
+      }
     }
 
-    "not eval expression if the key is already there" in {
-      val result = for {
-        cache <- Cache.make[IO, String, String](60.seconds, 1.second)
-        _     <- cache.put("foo", "bar")
-        _     <- cache.evalIfNew("foo")(cache.put("foo", "bar2"))
-        res   <- cache.get("foo")
-      } yield res
+    "evalPutIfNew" should {
+      "eval computation and add it to the cache when key is new" in {
+        val result = for {
+          cache <- Cache.make[IO, String, String](60.seconds, 1.second)
+          newValue   <- cache.evalPutIfNew("foo")(IO("foo" + "bar"))
+          cachedValue <- cache.get("foo")
+        } yield (newValue, cachedValue)
 
-      result.unsafeToFuture().map(_ mustBe Some("bar"))
+        result.unsafeToFuture().map(_ must be (("foobar", Some("foobar"))))
+      }
+
+      "return existing value when key is not new" in {
+        val result = for {
+          cache <- Cache.make[IO, String, String](60.seconds, 1.second)
+          _ <- cache.put("foo", "bar")
+          newValue   <- cache.evalPutIfNew("foo")(IO.raiseError(new RuntimeException("uh oh")))
+        } yield newValue
+
+        result.unsafeToFuture().map(_ mustBe "bar")
+      }
     }
   }
 }
