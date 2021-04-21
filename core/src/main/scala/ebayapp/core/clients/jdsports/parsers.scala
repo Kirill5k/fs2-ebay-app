@@ -68,7 +68,7 @@ private[jdsports] object parsers {
         .replaceAll("\n|\t", "")
         .replaceAll("(?<!https):", "\":")
         .replaceAll(" +", " ")
-        .replaceAll("(?<=(\\d,|true,|false,|\",|\\{)) ", " \"")
+        .replaceAll("(?<=(\\d,|null,|true,|false,|\",|\\{)) ", " \"")
 
       decode[JdProductDetails](rawProduct.slice(0, rawProduct.length - 1))
         .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}\n$rawProduct\n$rawHtml"))
