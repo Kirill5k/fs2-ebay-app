@@ -1,12 +1,14 @@
 package ebayapp.core.repositories
 
 import java.time.Instant
-import cats.effect.{Async}
+import cats.effect.Async
 import cats.implicits._
+import io.circe.generic.auto._
 import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.client.MongoClientF
+import mongo4cats.circe._
 import mongo4cats.database.MongoCollectionF
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.conversions.Bson
@@ -92,7 +94,7 @@ object ResellableItemRepository {
   ): F[VideoGameRepository[F]] =
     for {
       db   <- mongoClient.getDatabase("ebay-app")
-      coll <- db.getCollection[ResellableItemEntity.VideoGame]("videoGames", ResellableItemEntity.videoGameCodec)
+      coll <- db.getCollectionWithCirceCodecs[ResellableItemEntity.VideoGame]("videoGames")
     } yield new ResellableItemMongoRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame](
       coll,
       ResellableItemEntityMapper.videoGameEntityMapper

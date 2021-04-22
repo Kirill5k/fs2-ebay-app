@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    lazy val mongo4cats = "0.2.1"
+    lazy val mongo4cats = "0.2.4"
     lazy val pureConfig = "0.14.1"
     lazy val circe      = "0.13.0"
     lazy val sttp       = "3.3.0-RC2"
@@ -16,7 +16,10 @@ object Dependencies {
   }
 
   object Libraries {
-    lazy val mongo4cats = "io.github.kirill5k" %% "mongo4cats-core" % Versions.mongo4cats
+    object mongo4cats {
+      lazy val core  = "io.github.kirill5k" %% "mongo4cats-core"  % Versions.mongo4cats
+      lazy val circe = "io.github.kirill5k" %% "mongo4cats-circe" % Versions.mongo4cats
+    }
 
     object pureconfig {
       lazy val core = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfig
@@ -65,7 +68,8 @@ object Dependencies {
   }
 
   lazy val core = Seq(
-    Libraries.mongo4cats,
+    Libraries.mongo4cats.core,
+    Libraries.mongo4cats.circe,
     Libraries.pureconfig.core
   ) ++
     Libraries.circe.all ++

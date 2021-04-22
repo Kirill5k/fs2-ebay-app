@@ -36,7 +36,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
           } yield exists
 
-          result.unsafeRunSync() mustBe true
+          result.map(_ mustBe true)
         }
       }
 
@@ -47,7 +47,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
           } yield exists
 
-          result.unsafeRunSync() mustBe false
+          result.map(_ mustBe false)
         }
       }
     }
@@ -65,7 +65,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             res  <- repo.search(SearchQuery("mario"))
           } yield res
 
-          result.unsafeRunSync() mustBe (List(videoGames.last))
+          result.map(_ mustBe List(videoGames.last))
         }
       }
     }
@@ -80,7 +80,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.findAll()
           } yield all
 
-          result.unsafeRunSync() mustBe (videoGames.reverse)
+          result.map(_ mustBe videoGames.reverse)
         }
       }
 
@@ -92,7 +92,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.findAll(from = Some(Instant.now))
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(2)))
+          result.map(_ mustBe (List(videoGames(2))))
         }
       }
 
@@ -106,7 +106,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all <- repo.findAll(from = from, to = to)
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(1)))
+          result.map(_ mustBe (List(videoGames(1))))
         }
       }
 
@@ -118,7 +118,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.findAll(to = Some(Instant.now.minusSeconds(100)))
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(0)))
+          result.map(_ mustBe (List(videoGames(0))))
         }
       }
 
@@ -130,7 +130,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.findAll(limit = Some(1))
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(2)))
+          result.map(_ mustBe (List(videoGames(2))))
         }
       }
     }
@@ -145,7 +145,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.stream().compile.toList
           } yield all
 
-          result.unsafeRunSync() mustBe (videoGames.reverse)
+          result.map(_ mustBe (videoGames.reverse))
         }
       }
 
@@ -157,7 +157,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.stream(from = Some(Instant.now)).compile.toList
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(2)))
+          result.map(_ mustBe (List(videoGames(2))))
         }
       }
 
@@ -171,7 +171,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all <- repo.stream(from = from, to = to).compile.toList
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(1)))
+          result.map(_ mustBe (List(videoGames(1))))
         }
       }
 
@@ -183,7 +183,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.stream(to = Some(Instant.now.minusSeconds(100))).compile.toList
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(0)))
+          result.map(_ mustBe (List(videoGames(0))))
         }
       }
 
@@ -195,7 +195,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             all  <- repo.stream(limit = Some(1)).compile.toList
           } yield all
 
-          result.unsafeRunSync() mustBe (List(videoGames(2)))
+          result.map(_ mustBe (List(videoGames(2))))
         }
       }
     }
@@ -208,19 +208,17 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
             res  <- repo.save(ResellableItemBuilder.videoGame("Witcher 3"))
           } yield res
 
-          result.unsafeRunSync() mustBe (())
+          result.map(_ mustBe (()))
         }
       }
     }
   }
 
-  def withEmbeddedMongoClient[A](test: MongoClientF[IO] => A): A =
+  def withEmbeddedMongoClient[A](test: MongoClientF[IO] => IO[A]): A =
     withRunningEmbeddedMongo() {
       MongoClientF
         .fromConnectionString[IO]("mongodb://localhost:12345")
-        .use { client =>
-          IO(test(client))
-        }
+        .use(client => test(client))
         .unsafeRunSync()
     }
 }
