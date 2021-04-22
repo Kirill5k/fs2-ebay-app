@@ -37,7 +37,7 @@ class StockMonitorSpec extends CatsSpec {
       when(services.notification.stockUpdate[Generic](any[ResellableItem[Generic]], any[StockUpdate])).thenReturn(IO.unit)
 
       val result = for {
-        stockMonitor <- StockMonitor.make[IO](AppConfig.load, services)
+        stockMonitor <- StockMonitor.make[IO](AppConfig.loadDefault, services)
         _            <- stockMonitor.run().interruptAfter(2.seconds).compile.drain
       } yield ()
 

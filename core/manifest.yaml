@@ -30,10 +30,18 @@ spec:
       labels:
         app: "fs2-app-core"
     spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fs2-app-core-config
       containers:
         - name: "core"
           image: "us.gcr.io/fs2-app/core:latest"
           imagePullPolicy: Always
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/app/application.conf
+              subPath: application.conf
           ports:
             - containerPort: 8080
           env:

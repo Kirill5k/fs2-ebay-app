@@ -1,10 +1,13 @@
 package ebayapp.core.common
 
+import cats.effect.kernel.Sync
+import cats.implicits._
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 import pureconfig._
 import pureconfig.generic.auto._
 
+import java.io.File
 import scala.concurrent.duration.FiniteDuration
 
 object config {
@@ -111,8 +114,16 @@ object config {
 
   object AppConfig {
 
-    def load: AppConfig =
-      ConfigSource.default.loadOrThrow[AppConfig]
+    def load[F[_]](implicit F: Sync[F], logger: Logger[F]): F[AppConfig] =
+      F.blocking(AppConfig.loadFromMount)
+        .flatTap(_ => logger.info("loaded config from a configmap mount"))
+        .handleErrorWith { _ =>
+          logger.warn("error loading a config from a configmap mount, will try resources") *>
+            F.blocking(ConfigSource.default.loadOrThrow[AppConfig])
+        }
+
+    def loadDefault: AppConfig   = ConfigSource.default.loadOrThrow[AppConfig]
+    def loadFromMount: AppConfig = ConfigSource.file(new File("/opt/app/application.conf")).loadOrThrow[AppConfig]
   }
 
 }

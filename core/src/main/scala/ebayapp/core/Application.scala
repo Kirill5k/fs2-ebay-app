@@ -15,12 +15,11 @@ import scala.concurrent.ExecutionContext
 
 object Application extends IOApp {
 
-  val config = AppConfig.load
-
   override def run(args: List[String]): IO[ExitCode] =
     Logger.make[IO].flatMap { implicit logger =>
       for {
         _      <- logger.info("starting ebay-app")
+        config <- AppConfig.load[IO]
         _ <- Resources.make[IO](config).use { resources =>
           for {
             _            <- logger.info("created resources")
