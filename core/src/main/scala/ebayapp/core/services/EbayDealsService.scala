@@ -37,6 +37,7 @@ final class LiveEbayDealsService[F[_]: Logger: Temporal](
     ebayClient
       .latest[D](query, duration)
       .evalMap(cexClient.withUpdatedSellPrice)
+      .metered(250.millis)
       .handleErrorWith { error =>
         Stream.eval(Logger[F].warn(error)(s"error getting deals from ebay")).drain
       }

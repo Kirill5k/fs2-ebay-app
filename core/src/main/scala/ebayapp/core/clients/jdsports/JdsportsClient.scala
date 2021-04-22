@@ -39,7 +39,7 @@ final private class LiveJdsportsClient[F[_]](
     Stream
       .evalSeq(searchByBrand(query))
       .filter(_.sale)
-      .metered(100.millis)
+      .metered(1.second)
       .evalMap(ci => getProductStock(ci))
       .unNone
       .map { p =>
@@ -83,10 +83,10 @@ final private class LiveJdsportsClient[F[_]](
               F.pure(Nil)
           case Left(_) if r.code.isServerError =>
             logger.warn(s"jdsports-search/${r.code}-repeatable") *>
-              F.sleep(1.second) *> searchByBrand(query)
+              F.sleep(3.second) *> searchByBrand(query)
           case Left(error) =>
             logger.error(s"jdsports-search/error: $error") *>
-              F.sleep(1.second) *> searchByBrand(query)
+              F.sleep(3.second) *> searchByBrand(query)
         }
       }
 

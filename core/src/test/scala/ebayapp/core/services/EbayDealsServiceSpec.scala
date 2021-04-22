@@ -42,7 +42,7 @@ class EbayDealsServiceSpec extends CatsSpec {
 
       val result = for {
         service <- EbayDealsService.make(ebayClient, cexClient)
-        items   <- service.deals(dealsConfig).interruptAfter(3.seconds).compile.toList
+        items   <- service.deals(dealsConfig).interruptAfter(5.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>
