@@ -13,20 +13,11 @@ import org.http4s.{Request, Status, _}
 
 class VideoGameControllerSpec extends ControllerSpec {
 
-  val game1 = ResellableItemBuilder.videoGame(
-    "super mario 3",
-    datePosted = Instant.ofEpochMilli(1577836800000L)
-  )
-  val game2 = ResellableItemBuilder.videoGame(
-    "Battlefield 1",
-    datePosted = Instant.ofEpochMilli(1577836800000L),
-    sellPrice = None
-  )
-  val game3 = ResellableItemBuilder.videoGame(
-    "Battlefield 1",
-    datePosted = Instant.ofEpochMilli(1577836800000L),
-    sellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5)))
-  )
+  val postedTs = Instant.ofEpochMilli(1577836800000L)
+
+  val game1 = ResellableItemBuilder.videoGame("super mario 3", postedTs)
+  val game2 = ResellableItemBuilder.videoGame("Battlefield 1", postedTs, sellPrice = None)
+  val game3 = ResellableItemBuilder.videoGame("Battlefield 1", postedTs, sellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5))))
 
   "A VideoGameController" should {
 
@@ -39,7 +30,57 @@ class VideoGameControllerSpec extends ControllerSpec {
       val request  = Request[IO](uri = uri"/video-games", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      val expected = """[{"itemDetails":{"name":"super mario 3","platform":"XBOX ONE","releaseYear":"2019","genre":"Action"},"listingDetails":{"url":"https://www.ebay.co.uk/itm/super-mario-3","title":"super mario 3","category":"Games","shortDescription":"super mario 3 xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.","description":null,"image":"https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg","condition":"NEW","datePosted":"2020-01-01T00:00:00Z","seller":"EBAY:168.robinhood","properties":{"Game Name":"super mario 3","Release Year":"2019","Platform":"Microsoft Xbox One","Genre":"Action"}},"price":{"buy":32.99,"quantityAvailable":1,"sell":100,"credit":80}},{"itemDetails":{"name":"Battlefield 1","platform":"XBOX ONE","releaseYear":"2019","genre":"Action"},"listingDetails":{"url":"https://www.ebay.co.uk/itm/battlefield-1","title":"Battlefield 1","category":"Games","shortDescription":"Battlefield 1 xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.","description":null,"image":"https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg","condition":"NEW","datePosted":"2020-01-01T00:00:00Z","seller":"EBAY:168.robinhood","properties":{"Game Name":"Battlefield 1","Release Year":"2019","Platform":"Microsoft Xbox One","Genre":"Action"}},"price":{"buy":32.99,"quantityAvailable":1,"sell":null,"credit":null}}]"""
+      val expected =
+        """[{
+          |"itemDetails":{
+          |"name":"super mario 3",
+          |"platform":"XBOX ONE",
+          |"releaseYear":"2019","genre":"Action"
+          |},
+          |"listingDetails":{
+          |"url":"https://www.ebay.co.uk/itm/super-mario-3",
+          |"title":"super mario 3",
+          |"category":"Games",
+          |"shortDescription":"super mario 3 xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.",
+          |"description":null,
+          |"image":"https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg",
+          |"condition":"NEW",
+          |"datePosted":"2020-01-01T00:00:00Z",
+          |"seller":"EBAY:168.robinhood",
+          |"properties":{"Game Name":"super mario 3","Release Year":"2019","Platform":"Microsoft Xbox One","Genre":"Action"}
+          |},
+          |"price":{
+          |"buy":32.99,
+          |"quantityAvailable":1,
+          |"sell":100,
+          |"credit":80
+          |}
+          |},{
+          |"itemDetails":{
+          |"name":"Battlefield 1",
+          |"platform":"XBOX ONE",
+          |"releaseYear":"2019",
+          |"genre":"Action"
+          |},
+          |"listingDetails":{
+          |"url":"https://www.ebay.co.uk/itm/battlefield-1",
+          |"title":"Battlefield 1",
+          |"category":"Games",
+          |"shortDescription":"Battlefield 1 xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.",
+          |"description":null,
+          |"image":"https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg",
+          |"condition":"NEW",
+          |"datePosted":"2020-01-01T00:00:00Z",
+          |"seller":"EBAY:168.robinhood",
+          |"properties":{"Game Name":"Battlefield 1","Release Year":"2019","Platform":"Microsoft Xbox One","Genre":"Action"}
+          |},
+          |"price":{
+          |"buy":32.99,
+          |"quantityAvailable":1,
+          |"sell":null,
+          |"credit":null
+          |}
+          |}]""".stripMargin
       verifyJsonResponse(response, Status.Ok, Some(expected))
       verify(service).findAll(None, None, None)
     }
