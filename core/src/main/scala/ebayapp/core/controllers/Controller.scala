@@ -76,6 +76,7 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
       items.map { i =>
         ItemSummary(
           i.itemDetails.fullName,
+          i.listingDetails.title,
           i.listingDetails.url,
           i.buyPrice.rrp,
           i.sellPrice.map(_.credit)
@@ -89,6 +90,7 @@ object Controller {
 
   final case class ItemSummary(
       name: Option[String],
+      title: String,
       url: String,
       price: BigDecimal,
       exchange: Option[BigDecimal]

@@ -53,7 +53,13 @@ class VideoGameControllerSpec extends ControllerSpec {
       val request  = Request[IO](uri = uri"/video-games/summary", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      val expected = """{"total":3,"unrecognized":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","url":"https://www.ebay.co.uk/itm/battlefield-1","price":32.99,"exchange":null}]},"profitable":{"total":1,"items":[{"name":"super mario 3 XBOX ONE","url":"https://www.ebay.co.uk/itm/super-mario-3","price":32.99,"exchange":80}]},"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","url":"https://www.ebay.co.uk/itm/battlefield-1","price":32.99,"exchange":5}]}}"""
+      val expected =
+        """{
+          |"total":3,
+          |"unrecognized":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","price":32.99,"exchange":null}]},
+          |"profitable":{"total":1,"items":[{"name":"super mario 3 XBOX ONE","title":"super mario 3","url":"https://www.ebay.co.uk/itm/super-mario-3","price":32.99,"exchange":80}]},
+          |"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","price":32.99,"exchange":5}]}
+          |}""".stripMargin
       verifyJsonResponse(response, Status.Ok, Some(expected))
       verify(service).findAll(None, None, None)
     }
