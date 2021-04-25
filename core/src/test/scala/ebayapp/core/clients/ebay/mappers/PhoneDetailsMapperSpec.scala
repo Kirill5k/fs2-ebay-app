@@ -35,12 +35,12 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
       val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-      phoneDetails.make must be (Some("Samsung"))
-      phoneDetails.model must be (Some("Samsung Galaxy S10"))
-      phoneDetails.storageCapacity must be (Some("128GB"))
-      phoneDetails.network must be (Some("Unlocked"))
-      phoneDetails.colour must be (Some("Rose Gold"))
-      phoneDetails.condition must be (Some("USED"))
+      phoneDetails.make mustBe (Some("Samsung"))
+      phoneDetails.model mustBe (Some("Samsung Galaxy S10"))
+      phoneDetails.storageCapacity mustBe (Some("128GB"))
+      phoneDetails.network mustBe (Some("Unlocked"))
+      phoneDetails.colour mustBe (Some("Rose Gold"))
+      phoneDetails.condition mustBe (Some("USED"))
     }
 
     "leave network as unlocked if it unrecognized" in {
@@ -48,7 +48,7 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
       val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-      phoneDetails.network must be (Some("Unlocked"))
+      phoneDetails.network mustBe (Some("Unlocked"))
     }
 
     "replace colour Gray with Grey" in {
@@ -56,7 +56,7 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
       val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-      phoneDetails.colour must be (Some("Grey"))
+      phoneDetails.colour mustBe (Some("Grey"))
     }
 
     "leave storage capacity empty if it is in MB" in {
@@ -64,7 +64,7 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
       val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-      phoneDetails.storageCapacity must be (None)
+      phoneDetails.storageCapacity mustBe (None)
     }
 
     "map colour from Colour property if manufacture colour is missing" in {
@@ -72,7 +72,7 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
       val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-      phoneDetails.colour must be (Some("Blue"))
+      phoneDetails.colour mustBe (Some("Blue"))
     }
 
     val faultyDescriptions = List(
@@ -95,7 +95,7 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
         val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-        phoneDetails.condition must be (Some("Faulty"))
+        phoneDetails.condition mustBe (Some("Faulty"))
       }
     }
 
@@ -105,7 +105,7 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
         val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-        phoneDetails.condition must be (Some("Faulty"))
+        phoneDetails.condition mustBe (Some("Faulty"))
       }
     }
 
@@ -123,7 +123,7 @@ class PhoneDetailsMapperSpec extends AnyWordSpec with Matchers {
 
         val phoneDetails = PhoneDetailsMapper.from(listingDetails)
 
-        phoneDetails.condition must be (Some("Faulty"))
+        phoneDetails.condition mustBe (Some("Faulty"))
       }
     }
   }

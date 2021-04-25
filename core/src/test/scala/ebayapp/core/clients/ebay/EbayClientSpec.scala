@@ -41,14 +41,14 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), searchParamsCaptor)
         searchParamsCaptor.value must have size 5
-        searchParamsCaptor.values.map(_("q")) must be(List("xbox"))
-        searchParamsCaptor.value("fieldgroups") must be("EXTENDED")
-        searchParamsCaptor.value("limit") must be("200")
-        searchParamsCaptor.value("category_ids") must be("139973")
+        searchParamsCaptor.values.map(_("q")) mustBe(List("xbox"))
+        searchParamsCaptor.value("fieldgroups") mustBe("EXTENDED")
+        searchParamsCaptor.value("limit") mustBe("200")
+        searchParamsCaptor.value("category_ids") mustBe("139973")
         searchParamsCaptor.value("filter") must startWith(
           "conditionIds:%7B1000|1500|2000|2500|3000|4000|5000%7D,itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:%7BFIXED_PRICE%7D,itemStartDate:["
         )
-        items must be(List())
+        items mustBe Nil
       }
     }
 
@@ -68,7 +68,7 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient).switchAccount()
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient, never).getItem(any[String], any[String])
-        error must be(List())
+        error mustBe Nil
       }
     }
 
@@ -87,7 +87,7 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient, never).switchAccount()
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient, never).getItem(any[String], any[String])
-        error must be(List())
+        error mustBe Nil
       }
     }
 
@@ -105,7 +105,7 @@ class EbayClientSpec extends CatsSpec {
         verify(cache, never).put(any[String], any[Unit])
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient, never).getItem(any[String], any[String])
-        items must be(List())
+        items mustBe Nil
       }
     }
 
@@ -123,7 +123,7 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient, never).getItem(any[String], any[String])
-        items must be(List())
+        items mustBe Nil
       }
     }
 
@@ -141,7 +141,7 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient, never).getItem(any[String], any[String])
-        items must be(List())
+        items mustBe Nil
       }
     }
 
@@ -178,7 +178,7 @@ class EbayClientSpec extends CatsSpec {
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
-        items must be(List())
+        items mustBe Nil
       }
     }
 
@@ -194,7 +194,7 @@ class EbayClientSpec extends CatsSpec {
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
-        items must be(List())
+        items mustBe Nil
       }
     }
 
@@ -215,7 +215,7 @@ class EbayClientSpec extends CatsSpec {
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
-        items must be(List())
+        items mustBe Nil
       }
     }
 
@@ -235,7 +235,7 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient, times(2)).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient).getItem(eqTo(accessToken), any[String])
-        items.map(_.itemDetails) must be(List(Game(Some("call of duty modern warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))))
+        items.map(_.itemDetails) mustBe(List(Game(Some("call of duty modern warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))))
       }
     }
   }

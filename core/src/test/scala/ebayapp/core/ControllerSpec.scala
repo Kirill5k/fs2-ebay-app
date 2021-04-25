@@ -25,11 +25,11 @@ trait ControllerSpec extends AnyWordSpec with MockitoSugar with ArgumentMatchers
   ): Assertion = {
     val actualResp = actual.unsafeRunSync()
 
-    actualResp.status must be(expectedStatus)
+    actualResp.status mustBe expectedStatus
     expectedBody match {
       case Some(expected) =>
         val actual = actualResp.asJson.unsafeRunSync()
-        actual must be(parse(expected).getOrElse(throw new RuntimeException))
+        actual mustBe parse(expected).getOrElse(throw new RuntimeException)
       case None =>
         actualResp.body.compile.toVector.unsafeRunSync() mustBe empty
     }

@@ -64,7 +64,7 @@ class EbayDealsFinderSpec extends CatsSpec {
       result.unsafeToFuture().map { r =>
         verify(services.ebayDeals).deals(dealConfig)(mapper, params)
         verifyZeroInteractions(services.notification)
-        r must be(())
+        r mustBe ()
       }
     }
 

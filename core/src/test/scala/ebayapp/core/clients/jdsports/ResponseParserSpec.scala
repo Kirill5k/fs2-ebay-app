@@ -33,7 +33,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
             JdProduct(
               JdProductDetails(
                 "16022719",
-                "Emporio Armani EA7 Tape 2 T-Shirt",
+                "Men's Emporio Armani EA7 Tape 2 T-Shirt",
                 BigDecimal(20.00),
                 Some(BigDecimal(60.00)),
                 "Emporio Armani EA7",

@@ -83,7 +83,7 @@ class CacheSpec extends CatsSpec {
           cachedValue <- cache.get("foo")
         } yield (newValue, cachedValue)
 
-        result.unsafeToFuture().map(_ must be (("foobar", Some("foobar"))))
+        result.unsafeToFuture().map(_ mustBe (("foobar", Some("foobar"))))
       }
 
       "return existing value when key is not new" in {

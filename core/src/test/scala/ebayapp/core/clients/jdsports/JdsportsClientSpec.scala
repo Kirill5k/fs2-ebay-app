@@ -45,9 +45,7 @@ class JdsportsClientSpec extends SttpClientSpec {
           "https://www.jdsports.co.uk/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/"
         )
 
-        items.map(_.buyPrice).toSet mustBe Set(
-          BuyPrice(1, BigDecimal(20.0), Some(67))
-        )
+        items.map(_.buyPrice).toSet mustBe Set(BuyPrice(1, BigDecimal(20.0), Some(67)))
       }
     }
   }

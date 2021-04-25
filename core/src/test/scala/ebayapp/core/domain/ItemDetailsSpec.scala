@@ -10,12 +10,12 @@ class ItemDetailsSpec extends AsyncWordSpec with Matchers {
 
     "return search query string" in {
       val query = game.itemDetails.fullName
-      query must be (Some("super mario 3 SWITCH"))
+      query mustBe Some("super mario 3 SWITCH")
     }
 
     "return none is some of the parameters are missing" in {
       val query = game.itemDetails.copy(platform = None).fullName
-      query must be (None)
+      query mustBe None
     }
   }
 
@@ -23,13 +23,13 @@ class ItemDetailsSpec extends AsyncWordSpec with Matchers {
     "return search query string" in {
       val phone = ResellableItemBuilder.mobilePhone("apple", "iphone 6", "Space Grey")
       val query = phone.itemDetails.fullName
-      query must be (Some("apple iphone 6 16GB Space Grey Unlocked"))
+      query mustBe Some("apple iphone 6 16GB Space Grey Unlocked")
     }
 
     "return none is some of the parameters are missing" in {
       val phone = ResellableItemBuilder.mobilePhone("apple", "iphone 6", "Space Grey")
       val query = phone.itemDetails.copy(model = None).fullName
-      query must be (None)
+      query mustBe None
     }
   }
 }
