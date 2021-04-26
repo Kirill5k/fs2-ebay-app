@@ -2,9 +2,9 @@ package ebayapp.core.common
 
 import cats.Monad
 
-import java.time.Instant
 import cats.effect.{Ref, Temporal}
 import cats.effect.implicits._
+import cats.effect.kernel.Clock
 import cats.implicits._
 
 import scala.concurrent.duration.FiniteDuration
@@ -17,15 +17,17 @@ trait Cache[F[_], K, V] {
   def evalPutIfNew(key: K)(fa: => F[V]): F[V]
 }
 
-final private class RefbasedCache[F[_]: Monad, K, V](
-    private val state: Ref[F, Map[K, (V, Instant)]]
+final private class RefbasedCache[F[_]: Clock: Monad, K, V](
+    private val state: Ref[F, Map[K, (V, Long)]]
 ) extends Cache[F, K, V] {
 
   override def get(key: K): F[Option[V]] =
     state.get.map(_.get(key).map(_._1))
 
   override def put(key: K, value: V): F[Unit] =
-    state.update(s => s + (key -> (value -> Instant.now())))
+    Clock[F].realTime.flatMap { ts =>
+      state.update(s => s + (key -> (value -> ts.toMillis)))
+    }
 
   override def contains(key: K): F[Boolean] =
     state.get.map(_.contains(key))
@@ -47,16 +49,18 @@ object Cache {
       checkOnEvery: FiniteDuration
   ): F[Cache[F, K, V]] = {
 
-    def checkExpirations(state: Ref[F, Map[K, (V, Instant)]]): F[Unit] = {
-      val process = state.update(_.filter { case (_, (_, exp)) =>
-        exp.plusNanos(expiresIn.toNanos).isAfter(Instant.now)
-      })
+    def checkExpirations(state: Ref[F, Map[K, (V, Long)]]): F[Unit] = {
+      val process = Clock[F].realTime.flatMap { ts =>
+        state.update(_.filter { case (_, (_, exp)) =>
+          exp + expiresIn.toMillis > ts.toMillis
+        })
+      }
 
       Temporal[F].sleep(checkOnEvery) >> process >> checkExpirations(state)
     }
 
     Ref
-      .of[F, Map[K, (V, Instant)]](Map())
+      .of[F, Map[K, (V, Long)]](Map.empty[K, (V, Long)])
       .flatTap(s => checkExpirations(s).start.void)
       .map(s => new RefbasedCache[F, K, V](s))
   }
