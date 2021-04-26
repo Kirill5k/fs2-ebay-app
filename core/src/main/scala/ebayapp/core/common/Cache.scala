@@ -44,19 +44,19 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
 
 object Cache {
 
-  def make[F[_]: Temporal, K, V](
+  def make[F[_], K, V](
       expiresIn: FiniteDuration,
       checkOnEvery: FiniteDuration
-  ): F[Cache[F, K, V]] = {
+  )(implicit F: Temporal[F]): F[Cache[F, K, V]] = {
 
     def checkExpirations(state: Ref[F, Map[K, (V, Long)]]): F[Unit] = {
-      val process = Clock[F].realTime.flatMap { ts =>
+      val process = F.realTime.flatMap { ts =>
         state.update(_.filter { case (_, (_, exp)) =>
           exp + expiresIn.toMillis > ts.toMillis
         })
       }
 
-      Temporal[F].sleep(checkOnEvery) >> process >> checkExpirations(state)
+      F.sleep(checkOnEvery) >> process >> checkExpirations(state)
     }
 
     Ref
