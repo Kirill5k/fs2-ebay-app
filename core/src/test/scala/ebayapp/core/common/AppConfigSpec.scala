@@ -11,7 +11,7 @@ class AppConfigSpec extends CatsSpec {
 
       conf.server.host mustBe "0.0.0.0"
       conf.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
-      conf.ebay.deals.videoGames.searchQueries must be(List(SearchQuery("XBOX ONE"), SearchQuery("PS4")))
+      conf.ebay.deals.videoGames.searchQueries mustBe List(SearchQuery("XBOX ONE"), SearchQuery("PS4"))
     }
   }
 }

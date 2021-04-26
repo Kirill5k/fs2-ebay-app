@@ -20,7 +20,7 @@ class ResellableItemServiceSpec extends CatsSpec {
 
       isNewResult.unsafeToFuture().map { isNew =>
         verify(repository).existsByUrl(videoGame.listingDetails.url)
-        isNew must be (false)
+        isNew mustBe false
       }
     }
 
@@ -32,7 +32,7 @@ class ResellableItemServiceSpec extends CatsSpec {
 
       saveResult.unsafeToFuture().map { saved =>
         verify(repository).save(videoGame)
-        saved must be (())
+        saved mustBe ()
       }
     }
 
@@ -46,7 +46,7 @@ class ResellableItemServiceSpec extends CatsSpec {
 
       latestResult.unsafeToFuture().map { latest =>
         verify(repository).stream(Some(10), None, None)
-        latest must be (List(videoGame))
+        latest mustBe List(videoGame)
       }
     }
 
@@ -60,7 +60,7 @@ class ResellableItemServiceSpec extends CatsSpec {
 
       latestResult.unsafeToFuture().map { latest =>
         verify(repository).findAll(Some(10), None, None)
-        latest must be (List(videoGame))
+        latest mustBe List(videoGame)
       }
     }
 
@@ -75,7 +75,7 @@ class ResellableItemServiceSpec extends CatsSpec {
 
       latestResult.unsafeToFuture().map { latest =>
         verify(repository).search(SearchQuery("foo"), Some(10), None, None)
-        latest must be (List(videoGame))
+        latest mustBe List(videoGame)
       }
     }
   }

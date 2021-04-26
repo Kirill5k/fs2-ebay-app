@@ -71,5 +71,8 @@ object requests {
 
     def bodyContains(body: String): Boolean =
       req.body.toString.contains(body)
+
+    def hasParams(params: Map[String, String]): Boolean =
+      req.uri.params.toMap.toSet[(String, String)].subsetOf(params.toSet)
   }
 }

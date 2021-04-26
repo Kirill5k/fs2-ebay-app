@@ -36,15 +36,16 @@ class JdsportsClientSpec extends SttpClientSpec {
       val client = JdsportsClient.make[IO](config, testingBackend)
 
       client.flatMap(_.searchSale(query).compile.toList).unsafeToFuture().map { items =>
-        items must have size 2
         items.map(_.itemDetails) mustBe List(
-          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
-          Clothing("Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
+          Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
+          Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
+        )
+        items.map(_.listingDetails.url) mustBe List(
+          "https://www.jdsports.co.uk/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/",
+          "https://www.jdsports.co.uk/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/"
         )
 
-        items.map(_.buyPrice).toSet mustBe Set(
-          BuyPrice(1, BigDecimal(20.0), Some(67))
-        )
+        items.map(_.buyPrice).toSet mustBe Set(BuyPrice(1, BigDecimal(20.0), Some(67)))
       }
     }
   }

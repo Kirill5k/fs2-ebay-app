@@ -26,7 +26,7 @@ class NotificationServiceSpec extends CatsSpec {
 
         result.unsafeToFuture().map { r =>
           verify(client).sendMessageToAlertsChannel("""2021-01-01T00:10:00Z ERROR - very serious error""")
-          r must be (())
+          r mustBe ()
         }
       }
     }
@@ -41,7 +41,7 @@ class NotificationServiceSpec extends CatsSpec {
 
         result.unsafeToFuture().map { r =>
           verify(client).sendMessageToMainChannel("""NEW "super mario 3 SWITCH" - ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3""")
-          r must be (())
+          r mustBe ()
         }
       }
     }
@@ -57,7 +57,7 @@ class NotificationServiceSpec extends CatsSpec {
 
         result.unsafeToFuture().map { r =>
           verify(client).sendMessageToSecondaryChannel("""PRICE/DROP for macbook pro (£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro""")
-          r must be (())
+          r mustBe ()
         }
       }
 
@@ -76,7 +76,7 @@ class NotificationServiceSpec extends CatsSpec {
 
         result.unsafeToFuture().map { r =>
           verify(client, times(1)).sendMessageToSecondaryChannel("""STOCK/NEW for macbook pro (£1800.0, 1): New in stock http://cex.com/macbookpro""")
-          r must be (())
+          r mustBe ()
         }
       }
     }

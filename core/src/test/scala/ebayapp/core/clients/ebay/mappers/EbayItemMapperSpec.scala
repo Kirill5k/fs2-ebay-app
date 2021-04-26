@@ -1,5 +1,6 @@
 package ebayapp.core.clients.ebay.mappers
 
+import cats.implicits._
 import ebayapp.core.clients.ebay.browse.responses._
 import ebayapp.core.domain.ItemDetails
 import ebayapp.core.domain.search.{ListingDetails, BuyPrice}
@@ -19,20 +20,20 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "New",
     Some(ItemImage("https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg")),
     ItemSeller(Some("168.robinhood"), Some(100), Some(150)),
-    Some(List(
+    List(
       ItemProperty("Game Name", "Call of Duty: Modern Warfare"),
       ItemProperty("Release Year", "2019"),
       ItemProperty("Platform", "Microsoft Xbox One"),
       ItemProperty("Genre", "Action"),
-    )),
+    ).some,
     List("FIXED_PRICE"),
     "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
     None,
     None,
     None,
     None,
-    Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR")), ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal(2.99), "GBR")))),
-    Some(List(ItemAvailabilities(None, Some(5))))
+    List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR")), ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal(2.99), "GBR"))).some,
+    List(ItemAvailabilities(None, Some(5))).some
   )
 
   val mobilePhoneEbayItem = EbayItem(
@@ -46,21 +47,21 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "Used",
     Some(ItemImage("https://i.ebayimg.com/images/g/yOMAAOSw~5ReGEH2/s-l1600.jpg")),
     ItemSeller(Some("jb-liquidation3"), Some(100), Some(98)),
-    Some(List(
+    List(
       ItemProperty("Brand", "Samsung"),
       ItemProperty("Model", "Samsung Galaxy S10"),
       ItemProperty("Network", "Unlocked"),
       ItemProperty("Storage Capacity", "128 GB"),
       ItemProperty("Colour", "Blue")
-    )),
+    ).some,
     List("FIXED_PRICE", "BEST_OFFER"),
     "https://www.ebay.co.uk/itm/Samsung-Galaxy-S10-128gb-UNLOCKED-Prism-Blue-/114059888671",
     Some("Blue"),
     Some("Samsung"),
     None,
     None,
-    Some(List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR")))),
-    Some(List(ItemAvailabilities(Some(10), None)))
+    List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR"))).some,
+    List(ItemAvailabilities(Some(10), None)).some
   )
 
   "EbayItemMapper" should {
@@ -68,9 +69,9 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "transform to GameDetails" in {
       val game = EbayItemMapper.gameDetailsMapper.toDomain(videoGameEbayItem)
 
-      game.itemDetails must be(ItemDetails.Game(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
+      game.itemDetails mustBe(ItemDetails.Game(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
 
-      game.listingDetails must be(ListingDetails(
+      game.listingDetails mustBe ListingDetails(
         "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
         "Call of Duty Modern Warfare xbox one 2019",
         Some("Games"),
@@ -86,17 +87,17 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Platform" -> "Microsoft Xbox One",
           "Genre" -> "Action"
         )
-      ))
+      )
 
-      game.buyPrice must be(BuyPrice(5, BigDecimal(32.99)))
+      game.buyPrice mustBe BuyPrice(5, BigDecimal(32.99))
     }
 
     "transform to GameDetails even if no shipping options" in {
       val game = EbayItemMapper.gameDetailsMapper.toDomain(videoGameEbayItem.copy(shippingOptions = None))
 
-      game.itemDetails must be(ItemDetails.Game(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
+      game.itemDetails mustBe(ItemDetails.Game(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
 
-      game.listingDetails must be(ListingDetails(
+      game.listingDetails mustBe ListingDetails(
         "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
         "Call of Duty Modern Warfare xbox one 2019",
         Some("Games"),
@@ -112,24 +113,24 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Platform" -> "Microsoft Xbox One",
           "Genre" -> "Action"
         )
-      ))
+      )
 
-      game.buyPrice must be(BuyPrice(5, BigDecimal(30.0)))
+      game.buyPrice mustBe BuyPrice(5, BigDecimal(30.0))
     }
 
     "transform to PhoneDetails" in {
       val phone = EbayItemMapper.phoneDetailsMapper.toDomain(mobilePhoneEbayItem)
 
-      phone.itemDetails must be(ItemDetails.Phone(
+      phone.itemDetails mustBe ItemDetails.Phone(
         Some("Samsung"),
         Some("Samsung Galaxy S10"),
         Some("Blue"),
         Some("128GB"),
         Some("Unlocked"),
         Some("USED")
-      ))
+      )
 
-      phone.listingDetails must be (ListingDetails(
+      phone.listingDetails mustBe ListingDetails(
         "https://www.ebay.co.uk/itm/Samsung-Galaxy-S10-128gb-UNLOCKED-Prism-Blue-/114059888671",
         "Samsung Galaxy S10 128gb UNLOCKED Prism Blue",
         None,
@@ -146,9 +147,9 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Network" -> "Unlocked",
           "Colour" -> "Blue"
         )
-      ))
+      )
 
-      phone.buyPrice must be(BuyPrice(10, BigDecimal(429.99)))
+      phone.buyPrice mustBe BuyPrice(10, BigDecimal(429.99))
     }
   }
 }
