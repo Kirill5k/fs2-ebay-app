@@ -1,0 +1,69 @@
+package ebayapp.core.clients.nvidia
+
+import cats.Monad
+import cats.effect.Temporal
+import cats.implicits._
+import io.circe.generic.auto._
+import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
+import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse}
+import ebayapp.core.common.Logger
+import ebayapp.core.common.config.{NvidiaConfig, SearchCategory, SearchQuery}
+import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import fs2.Stream
+import sttp.client3.circe.asJson
+import sttp.client3._
+
+import scala.concurrent.duration._
+
+trait NvidiaClient[F[_]] {
+  def search[D <: ItemDetails: NvidiaItemMapper](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  ): Stream[F, ResellableItem[D]]
+}
+
+final private class LiveNvidiaClient[F[_]](
+    private val config: NvidiaConfig,
+    private val backend: SttpBackend[F, Any]
+)(implicit
+    logger: Logger[F],
+    timer: Temporal[F]
+) extends NvidiaClient[F] {
+
+  override def search[D <: ItemDetails](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  )(implicit mapper: NvidiaItemMapper[D]): Stream[F, ResellableItem[D]] =
+    Stream
+      .evalSeq(searchProducts(query, category))
+      .filterNot(_.isOutOfStock)
+      .map(mapper.toDomain)
+
+  private def searchProducts(q: SearchQuery, c: Option[SearchCategory]): F[List[NvidiaItem]] =
+    basicRequest
+      .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
+      .response(asJson[NvidiaSearchResponse])
+      .send(backend)
+      .flatMap { r =>
+        r.body match {
+          case Right(response) => response.searchedProducts.productDetails.pure[F]
+          case Left(DeserializationException(body, error)) =>
+            logger.error(s"nvidia-search/parsing-error: ${error.getMessage}, \n$body") *>
+              List.empty[NvidiaItem].pure[F]
+          case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
+            logger.error(s"nvidia-search/$status-error, \n$body") *>
+              timer.sleep(10.seconds) *> searchProducts(q, c)
+          case Left(error) =>
+            logger.error(s"nvidia-search/error: ${error.getMessage}\n$error") *>
+              timer.sleep(10.second) *> searchProducts(q, c)
+        }
+      }
+}
+
+object NvidiaClient {
+  def make[F[_]: Temporal: Logger](
+      config: NvidiaConfig,
+      backend: SttpBackend[F, Any]
+  ): F[NvidiaClient[F]] =
+    Monad[F].pure(new LiveNvidiaClient[F](config, backend))
+}
