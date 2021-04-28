@@ -27,7 +27,7 @@ object mappers {
           "NVIDIA",
           Map.empty[String, String]
         ),
-        BuyPrice(1, BigDecimal(item.productPrice.replaceAll("£|,", ""))),
+        BuyPrice(item.retailers.size, BigDecimal(item.productPrice.replaceAll("£|,", ""))),
         None
       )
   }
