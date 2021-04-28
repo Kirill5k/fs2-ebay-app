@@ -30,6 +30,14 @@ final private class LiveNvidiaClient[F[_]](
     timer: Temporal[F]
 ) extends NvidiaClient[F] {
 
+  private val defaultHeaders: Map[String, String] = Map(
+    "Connection"      -> "keep-alive",
+    "Accept"          -> "*/*",
+    "Accept-Encoding" -> "gzip, deflate, br",
+    "Cache-Control"   -> "no-store, max-age=0",
+    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
+  )
+
   override def search[D <: ItemDetails](
       query: SearchQuery,
       category: Option[SearchCategory]
@@ -43,6 +51,7 @@ final private class LiveNvidiaClient[F[_]](
     basicRequest
       .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
       .response(asJson[NvidiaSearchResponse])
+      .headers(defaultHeaders)
       .send(backend)
       .flatMap { r =>
         r.body match {
