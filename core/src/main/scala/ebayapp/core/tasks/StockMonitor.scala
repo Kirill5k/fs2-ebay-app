@@ -13,7 +13,6 @@ import ebayapp.core.clients.nvidia.mappers._
 import ebayapp.core.clients.selfridges.mappers._
 import ebayapp.core.common.config.AppConfig
 import ebayapp.core.domain.ItemDetails
-import ebayapp.core.domain.ItemDetails.Generic
 import ebayapp.core.services.{NotificationService, Services, StockService}
 import fs2.Stream
 
@@ -29,7 +28,7 @@ final class StockMonitor[F[_]: Concurrent](
 
   def run(): Stream[F, Unit] =
     Stream(
-      cexStockService.stockUpdates[Generic](config.cex.stockMonitor),
+      cexStockService.stockUpdates[ItemDetails.Generic](config.cex.stockMonitor),
       argosStockService.stockUpdates[ItemDetails.Generic](config.argos.stockMonitor),
       selfridgesStockService.stockUpdates[ItemDetails.Clothing](config.selfridges.stockMonitor),
       jdsportsStockService.stockUpdates[ItemDetails.Clothing](config.jdsports.stockMonitor),

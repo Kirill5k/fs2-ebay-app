@@ -11,7 +11,7 @@ object mappers {
 
   type CexItemMapper[D <: ItemDetails] = ItemMapper[CexItem, D]
 
-  implicit val genericItemMapper: CexItemMapper[ItemDetails.Generic] = new CexItemMapper[ItemDetails.Generic] {
+  implicit val cexGenericItemMapper: CexItemMapper[ItemDetails.Generic] = new CexItemMapper[ItemDetails.Generic] {
     override def toDomain(sr: CexItem): ResellableItem[ItemDetails.Generic] =
       ResellableItem[ItemDetails.Generic](
         ItemDetails.Generic(sr.boxName),
