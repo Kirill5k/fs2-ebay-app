@@ -5,6 +5,8 @@ import cats.effect.unsafe.IORuntime
 import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.mappers.JdsportsItem
+import ebayapp.core.clients.nvidia.responses
+import ebayapp.core.clients.nvidia.responses.NvidiaItem
 import ebayapp.core.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.core.common.Logger
 import ebayapp.core.domain.ItemDetails
@@ -27,5 +29,6 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
     val selfridgesSale: StockService[IO, SelfridgesItem]       = mock[StockService[IO, SelfridgesItem]]
     val argosStock: StockService[IO, ArgosItem]                = mock[StockService[IO, ArgosItem]]
     val jdsportsSale: StockService[IO, JdsportsItem]           = mock[StockService[IO, JdsportsItem]]
+    val nvidiaStock: StockService[IO, responses.NvidiaItem]    = mock[StockService[IO, NvidiaItem]]
   }
 }
