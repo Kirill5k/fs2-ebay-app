@@ -26,6 +26,8 @@ object config {
       Base64.getEncoder.encodeToString(value.replaceAll(" ", "").getBytes(StandardCharsets.UTF_8))
   }
 
+  final case class SearchCategory(value: String) extends AnyVal
+
   final case class EbayDealsConfig(
       searchFrequency: FiniteDuration,
       searchQueries: List[SearchQuery],
@@ -63,7 +65,8 @@ object config {
   final case class StockMonitorRequest(
       query: SearchQuery,
       monitorStockChange: Boolean,
-      monitorPriceChange: Boolean
+      monitorPriceChange: Boolean,
+      category: Option[SearchCategory] = None
   )
 
   final case class StockMonitorConfig(
@@ -93,6 +96,11 @@ object config {
       stockMonitor: StockMonitorConfig
   )
 
+  final case class NvidiaConfig(
+      baseUri: String,
+      stockMonitor: StockMonitorConfig
+  )
+
   final case class TelegramConfig(
       baseUri: String,
       botKey: String,
@@ -109,6 +117,7 @@ object config {
       selfridges: SelfridgesConfig,
       argos: ArgosConfig,
       jdsports: JdsportsConfig,
+      nvidia: NvidiaConfig,
       telegram: TelegramConfig
   )
 

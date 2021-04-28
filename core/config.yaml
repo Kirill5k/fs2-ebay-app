@@ -91,6 +91,16 @@ data:
       }
     }
 
+    nvidia {
+      base-uri: "https://api.nvidia.partners"
+      stock-monitor {
+        monitoring-frequency: 5m
+        monitoring-requests: [
+          {query: "geforce", monitor-stock-change: false, monitor-price-change: true, category: "GPU"}
+        ]
+      }
+    }
+
     telegram {
       base-uri: "https://api.telegram.org"
       bot-key: ${?TELEGRAM_BOT_API_KEY}
