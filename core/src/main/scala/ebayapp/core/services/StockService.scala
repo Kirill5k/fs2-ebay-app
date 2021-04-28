@@ -12,10 +12,13 @@ import ebayapp.core.clients.cex.mappers.CexItemMapper
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.JdsportsClient
 import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
+import ebayapp.core.clients.nvidia.NvidiaClient
+import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
+import ebayapp.core.clients.nvidia.responses.NvidiaItem
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{SearchQuery, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.common.config.{SearchCategory, SearchQuery, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.stock.ItemStockUpdates
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
@@ -132,6 +135,28 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
       .flatTap(i => Logger[F].info(s"""jdsports-search "${query.value}" returned ${i.size} results"""))
 }
 
+final private class NvidiaStockService[F[_]: Temporal: Logger](
+    private val client: NvidiaClient[F]
+) extends StockService[F, NvidiaItem] {
+
+  override def stockUpdates[D <: ItemDetails: NvidiaItemMapper](
+      config: StockMonitorConfig
+  ): Stream[F, ItemStockUpdates[D]] =
+    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req.query, req.category))
+
+  private def findItems[D <: ItemDetails: NvidiaItemMapper](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  ): F[Map[String, ResellableItem[D]]] =
+    client
+      .search[D](query, category)
+      .map(item => (item.itemDetails.fullName, item))
+      .collect { case (Some(name), item) => (name, item) }
+      .compile
+      .to(Map)
+      .flatTap(i => Logger[F].info(s"""nvidia-search "${query.value}" returned ${i.size} results"""))
+}
+
 object StockService {
 
   def argos[F[_]: Temporal: Logger](client: ArgosClient[F]): F[StockService[F, ArgosItem]] =
@@ -145,4 +170,7 @@ object StockService {
 
   def jdsports[F[_]: Temporal: Logger](client: JdsportsClient[F]): F[StockService[F, JdsportsItem]] =
     Monad[F].pure(new JdsportsSaleService[F](client))
+
+  def nvidia[F[_]: Temporal: Logger](client: NvidiaClient[F]): F[StockService[F, NvidiaItem]] =
+    Monad[F].pure(new NvidiaStockService[F](client))
 }

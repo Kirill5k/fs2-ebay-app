@@ -6,6 +6,7 @@ import ebayapp.core.clients.argos.ArgosClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.clients.jdsports.JdsportsClient
+import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.common.Logger
@@ -19,6 +20,7 @@ trait Clients[F[_]] {
   def selfridges: SelfridgesClient[F]
   def argos: ArgosClient[F]
   def jdsports: JdsportsClient[F]
+  def nvidia: NvidiaClient[F]
 }
 
 object Clients {
@@ -33,15 +35,17 @@ object Clients {
       TelegramClient.make[F](config.telegram, backend),
       SelfridgesClient.make[F](config.selfridges, backend),
       ArgosClient.make[F](config.argos, backend),
-      JdsportsClient.make[F](config.jdsports, backend)
-    ).mapN { (ec, cc, tc, sc, ac, jc) =>
+      JdsportsClient.make[F](config.jdsports, backend),
+      NvidiaClient.make[F](config.nvidia, backend)
+    ).mapN { (ec, cc, tc, sc, ac, jc, nc) =>
       new Clients[F] {
         def ebay: EbayClient[F]             = ec
         def cex: CexClient[F]               = cc
         def telegram: TelegramClient[F]     = tc
         def selfridges: SelfridgesClient[F] = sc
         def argos: ArgosClient[F]           = ac
-        def jdsports: JdsportsClient[F] = jc
+        def jdsports: JdsportsClient[F]     = jc
+        def nvidia: NvidiaClient[F]         = nc
       }
     }
 
