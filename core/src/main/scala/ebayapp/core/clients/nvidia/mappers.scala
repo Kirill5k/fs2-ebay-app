@@ -1,7 +1,7 @@
 package ebayapp.core.clients.nvidia
 
 import ebayapp.core.clients.ItemMapper
-import ebayapp.core.clients.nvidia.responses.{NvidiaItem, Product, ProductRetailer}
+import ebayapp.core.clients.nvidia.responses.{NvidiaItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 

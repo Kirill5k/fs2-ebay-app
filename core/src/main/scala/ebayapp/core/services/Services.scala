@@ -6,7 +6,7 @@ import ebayapp.core.clients.Clients
 import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.mappers.JdsportsItem
-import ebayapp.core.clients.nvidia.responses.Product
+import ebayapp.core.clients.nvidia.responses.NvidiaItem
 import ebayapp.core.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.core.common.Logger
 import ebayapp.core.domain.ItemDetails
@@ -20,7 +20,7 @@ trait Services[F[_]] {
   def selfridgesSale: StockService[F, SelfridgesItem]
   def argosStock: StockService[F, ArgosItem]
   def jdsportsSale: StockService[F, JdsportsItem]
-  def nvidiaStock: StockService[F, Product]
+  def nvidiaStock: StockService[F, NvidiaItem]
 }
 
 object Services {
@@ -47,7 +47,7 @@ object Services {
         def selfridgesSale: StockService[F, SelfridgesItem]       = ss
         def argosStock: StockService[F, ArgosItem]                = as
         def jdsportsSale: StockService[F, JdsportsItem]           = js
-        def nvidiaStock: StockService[F, Product]              = ns
+        def nvidiaStock: StockService[F, NvidiaItem]              = ns
       }
     )
 }

@@ -14,7 +14,7 @@ import ebayapp.core.clients.jdsports.JdsportsClient
 import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
-import ebayapp.core.clients.nvidia.responses.Product
+import ebayapp.core.clients.nvidia.responses.NvidiaItem
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.common.Logger
@@ -137,7 +137,7 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
 
 final private class NvidiaStockService[F[_]: Temporal: Logger](
     private val client: NvidiaClient[F]
-) extends StockService[F, Product] {
+) extends StockService[F, NvidiaItem] {
 
   override def stockUpdates[D <: ItemDetails: NvidiaItemMapper](
       config: StockMonitorConfig
@@ -171,6 +171,6 @@ object StockService {
   def jdsports[F[_]: Temporal: Logger](client: JdsportsClient[F]): F[StockService[F, JdsportsItem]] =
     Monad[F].pure(new JdsportsSaleService[F](client))
 
-  def nvidia[F[_]: Temporal: Logger](client: NvidiaClient[F]): F[StockService[F, Product]] =
+  def nvidia[F[_]: Temporal: Logger](client: NvidiaClient[F]): F[StockService[F, NvidiaItem]] =
     Monad[F].pure(new NvidiaStockService[F](client))
 }
