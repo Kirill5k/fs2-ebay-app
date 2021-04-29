@@ -1,7 +1,7 @@
 package ebayapp.core.clients.nvidia
 
 import ebayapp.core.clients.ItemMapper
-import ebayapp.core.clients.nvidia.responses.NvidiaItem
+import ebayapp.core.clients.nvidia.responses.{NvidiaItem, Product, ProductRetailer}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 
@@ -14,9 +14,9 @@ object mappers {
   implicit val nvidiaGenericItemMapper: NvidiaItemMapper[ItemDetails.Generic] = new NvidiaItemMapper[ItemDetails.Generic] {
     override def toDomain(item: NvidiaItem): ResellableItem[ItemDetails.Generic] =
       ResellableItem[ItemDetails.Generic](
-        ItemDetails.Generic(s"${item.productTitle} (${item.productID})"),
+        ItemDetails.Generic(item.name),
         ListingDetails(
-          item.retailers.map(r => r.directPurchaseLink.getOrElse(r.purchaseLink)).head,
+          item.retailer.directPurchaseLink.getOrElse(item.retailer.purchaseLink),
           item.productTitle,
           Some(item.category),
           None,
@@ -24,10 +24,10 @@ object mappers {
           Some(item.imageURL),
           "NEW",
           Instant.now(),
-          "NVIDIA",
+          s"NVIDIA/${item.retailer.retailerName}",
           Map.empty[String, String]
         ),
-        BuyPrice(item.retailers.size, BigDecimal(item.productPrice.replaceAll("£|,", ""))),
+        BuyPrice(item.retailer.stock, item.retailer.salePrice),
         None
       )
   }

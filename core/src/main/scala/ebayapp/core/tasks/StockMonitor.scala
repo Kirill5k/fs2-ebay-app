@@ -8,7 +8,7 @@ import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.clients.cex.mappers._
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.mappers.JdsportsItem
-import ebayapp.core.clients.nvidia.responses.NvidiaItem
+import ebayapp.core.clients.nvidia.responses.Product
 import ebayapp.core.clients.nvidia.mappers._
 import ebayapp.core.clients.selfridges.mappers._
 import ebayapp.core.common.config.AppConfig
@@ -23,7 +23,7 @@ final class StockMonitor[F[_]: Concurrent](
     private val argosStockService: StockService[F, ArgosItem],
     private val selfridgesStockService: StockService[F, SelfridgesItem],
     private val jdsportsStockService: StockService[F, JdsportsItem],
-    private val nvidiaStockService: StockService[F, NvidiaItem]
+    private val nvidiaStockService: StockService[F, Product]
 ) extends Task[F] {
 
   def run(): Stream[F, Unit] =

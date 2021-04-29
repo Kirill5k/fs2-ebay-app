@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.implicits._
 import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
-import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse}
+import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{NvidiaConfig, SearchCategory, SearchQuery}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
@@ -45,9 +45,12 @@ final private class LiveNvidiaClient[F[_]](
     Stream
       .evalSeq(searchProducts(query, category))
       .filterNot(_.isOutOfStock)
+      .flatMap { p =>
+        Stream.emits(p.retailers.map(r => NvidiaItem(p.productTitle, p.imageURL, p.category, r)))
+      }
       .map(mapper.toDomain)
 
-  private def searchProducts(q: SearchQuery, c: Option[SearchCategory]): F[List[NvidiaItem]] =
+  private def searchProducts(q: SearchQuery, c: Option[SearchCategory]): F[List[Product]] =
     basicRequest
       .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
       .response(asJson[NvidiaSearchResponse])
@@ -58,7 +61,7 @@ final private class LiveNvidiaClient[F[_]](
           case Right(response) => response.searchedProducts.productDetails.pure[F]
           case Left(DeserializationException(body, error)) =>
             logger.error(s"nvidia-search/parsing-error: ${error.getMessage}, \n$body") *>
-              List.empty[NvidiaItem].pure[F]
+              List.empty[Product].pure[F]
           case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
             logger.error(s"nvidia-search/$status-error, \n$body") *>
               timer.sleep(10.seconds) *> searchProducts(q, c)
