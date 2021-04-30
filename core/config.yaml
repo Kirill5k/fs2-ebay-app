@@ -85,8 +85,7 @@ data:
         monitoring-frequency: 4m
         monitoring-requests: [
           {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true},
-          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true},
-          {query: "Boss", monitor-stock-change: false, monitor-price-change: true}
+          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }
