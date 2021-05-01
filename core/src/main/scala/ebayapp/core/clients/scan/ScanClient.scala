@@ -59,8 +59,8 @@ final private class LiveScanClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
-          case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.error(s"scan-search/forbidden") *>
+          case Left(html) if r.code == StatusCode.Forbidden =>
+            logger.error(s"scan-search/forbidden\n$html") *>
               F.sleep(30.seconds) *> searchByCard(query, category)
           case Left(_) if r.code == StatusCode.NotFound =>
             logger.error(s"scan-search/404") *>
