@@ -35,7 +35,7 @@ final private class LiveScanClient[F[_]](
     "Accept-Encoding" -> "gzip, deflate, br",
     "Cache-Control"   -> "no-store, max-age=0",
     "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
-    "Referer"         -> "https://www.scana.co.uk/"
+    "Referer"         -> "https://www.scan.co.uk/"
   )
 
   override def search[D <: ItemDetails](

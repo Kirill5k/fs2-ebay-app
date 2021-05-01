@@ -101,7 +101,7 @@ data:
     }
 
     scan {
-      base-uri: "https://www.scan.co.uk"
+      base-uri: "https://fs2-proxy.herokuapp.com/scan"
       stock-monitor {
         monitoring-frequency: 5m
         monitoring-requests: [

@@ -10,7 +10,6 @@ import org.http4s._
 import org.typelevel.ci.CIString
 
 trait Controller[F[_]] extends Http4sDsl[F] {
-
   def routes: HttpRoutes[F]
 }
 
@@ -27,6 +26,8 @@ final case class RedirectController[F[_]: Concurrent](
         proxyCall(req.withUri(Uri.unsafeFromString(uris.selfridges + req.uri.toString().substring(11))))
       case req @ GET -> path if path.startsWithString("/jdsports") =>
         proxyCall(req.withUri(Uri.unsafeFromString(uris.jdsports + req.uri.toString().substring(9))))
+      case req @ GET -> path if path.startsWithString("/scan") =>
+        proxyCall(req.withUri(Uri.unsafeFromString(uris.scan + req.uri.toString().substring(5))))
     }
 
   private def proxyCall(req: Request[F]): F[Response[F]] =
