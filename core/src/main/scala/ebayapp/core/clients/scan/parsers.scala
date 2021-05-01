@@ -9,8 +9,8 @@ object parsers {
 
   final case class ScanItem(
       name: String,
-      url: String,
-      image: String,
+      productUrlPath: String,
+      imageUrl: String,
       price: Double
   )
 

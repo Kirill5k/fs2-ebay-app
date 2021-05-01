@@ -101,6 +101,11 @@ object config {
       stockMonitor: StockMonitorConfig
   )
 
+  final case class ScanConfig(
+      baseUri: String,
+      stockMonitor: StockMonitorConfig
+  )
+
   final case class TelegramConfig(
       baseUri: String,
       botKey: String,
@@ -118,6 +123,7 @@ object config {
       argos: ArgosConfig,
       jdsports: JdsportsConfig,
       nvidia: NvidiaConfig,
+      scan: ScanConfig,
       telegram: TelegramConfig
   )
 
