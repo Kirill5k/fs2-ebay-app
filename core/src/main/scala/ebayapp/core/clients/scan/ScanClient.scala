@@ -1,5 +1,6 @@
 package ebayapp.core.clients.scan
 
+import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.scan.mappers.ScanItemMapper
@@ -76,4 +77,12 @@ final private class LiveScanClient[F[_]](
         }
       }
   }
+}
+
+object ScanClient {
+  def make[F[_]: Temporal: Logger](
+      config: ScanConfig,
+      backend: SttpBackend[F, Any]
+  ): F[ScanClient[F]] =
+    Monad[F].pure(new LiveScanClient[F](config, backend))
 }
