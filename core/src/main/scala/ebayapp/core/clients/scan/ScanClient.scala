@@ -33,9 +33,12 @@ final private class LiveScanClient[F[_]](
     "Connection"      -> "keep-alive",
     "Accept"          -> "*/*",
     "Accept-Encoding" -> "gzip, deflate, br",
+    "Accept-Language" -> "en-GB,en-US;q=0.9,en;q=0.",
+    "Accept"          -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "Cache-Control"   -> "no-store, max-age=0",
     "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
-    "Referer"         -> "https://www.scan.co.uk/"
+    "Referer"         -> "https://www.scan.co.uk/search?q=radeon+rx/",
+    "Cookie"          -> "__cfduid=d724efef1efdd731a0efab53d84eed88c1619626366; S=cml7KVdW6P8tmZweCiTBNUMNx3uT4wA2FJVulViuMONtnN+gYhvYE4yRcMG9TYG8xVD8qHtEtz3adBDQJZhSSg==; US=NNURMAkV2WaTR01Ihle72BzfdZu6rGv4UBNFQGNEqhLSMul5Xr0IXiRMgMv2BpvEtnnk3OPRUSlnlU0LtKkrrDYz+0gnPAe8FVizYF/pYGAN97V1h6mYbZRtpdkCbhzaLrv2DuZhkpddEhjMyQwvd3h4+Y9elm2GnW/YV9Ao+bJevEGYlMSl7pnDVT6x8druzJE17ECrBYJWL8UJxDQcrOVtv4ZJeUd+PY+/XB4lw30Pxdu1UzPcFpGO+OotPix2h9oXIZsIr7fXTdLK7unuqCmpIFpDoy6wYhlekq1SAV/quIwqNxZNIoVHp0w8AmNo; DS=r3o955tebZl6Oe/qdlX/HmFPE5zs9OgqCyDnD6kJqISrIuVDU+G+jhWEkeot4i9Z4pkTxZgeUF0S3Jqq8uVSxQ==; R=+G2uYbvgZ5520B9rCrqgyJBbzdCxWlSetyTiKh/ScjAngPs+CD7uI3GpNG+3piRqCVPXrlwa+Yc22D++z5kgI0Hk1AI7TWtt8I/AU15Zi3RzmdzGdOfAlh3bIU5eX1ZSiYr9+6H86MY/ntLCUG23eA==; BVImplmain_site=0758; cf_clearance=870e1c00707e4a7635eb42b4d1f5f75201966a74-1619626724-0-150; cookpol=3; SID=XTt7G0yGt3+t5HGYcQ1Hog==; PL=oL/YgxH9hdxZmwCinZiL00Fj6Gw9Rf8GhMii/fpemXpsv3vEuhN/G8OeBgztdJ/07F7PgcEcOXfOEop04pf8OQ=="
   )
 
   override def search[D <: ItemDetails](
