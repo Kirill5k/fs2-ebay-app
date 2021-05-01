@@ -27,13 +27,13 @@ final case class RedirectController[F[_]: Concurrent](
       case req @ GET -> path if path.startsWithString("/jdsports") =>
         proxyCall(req.withUri(Uri.unsafeFromString(uris.jdsports + req.uri.toString().substring(9))))
       case req @ GET -> path if path.startsWithString("/scan") =>
-        proxyCall(req.withUri(Uri.unsafeFromString(uris.scan + req.uri.toString().substring(5))))
+        proxyCall(req.withUri(Uri.unsafeFromString(uris.scan + req.uri.toString().substring(5))), reloadOn403 = false)
     }
 
-  private def proxyCall(req: Request[F]): F[Response[F]] =
+  private def proxyCall(req: Request[F], reloadOn403: Boolean = true): F[Response[F]] =
     client
       .stream(req.removeHeader(CIString("host")))
-      .evalTap(res => if (res.status == Status.Forbidden) sigTerm.complete(Right(())).void else ().pure[F])
+      .evalTap(res => if (reloadOn403 && res.status == Status.Forbidden) sigTerm.complete(Right(())).void else ().pure[F])
       .compile
       .lastOrError
 }
