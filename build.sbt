@@ -23,7 +23,7 @@ lazy val docker = Seq(
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)
     val (before, after)  = stage1.splitAt(4)
-    val installBash      = Cmd("RUN", "apk update && apk upgrade && apk add bash")
+    val installBash      = Cmd("RUN", "apk update && apk upgrade && apk add bash && apk add curl")
     stage0 ++ before ++ List(installBash) ++ after
   }
 )
