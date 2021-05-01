@@ -7,6 +7,7 @@ import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.mappers.JdsportsItem
 import ebayapp.core.clients.nvidia.responses.NvidiaItem
+import ebayapp.core.clients.scan.parsers.ScanItem
 import ebayapp.core.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.core.common.config.{AppConfig, StockMonitorConfig}
 import ebayapp.core.domain.ItemDetails.{Clothing, Generic}
@@ -26,6 +27,8 @@ class StockMonitorSpec extends CatsSpec {
     "get stock updates from various outlets" in {
       val services = servicesMock
 
+      when(services.scanStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[ScanItem, Generic]]))
+        .thenReturn(Stream.empty)
       when(services.nvidiaStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[NvidiaItem, Generic]]))
         .thenReturn(Stream.empty)
       when(services.argosStock.stockUpdates[Generic](any[StockMonitorConfig])(any[ItemMapper[ArgosItem, Generic]]))
@@ -45,6 +48,7 @@ class StockMonitorSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { res =>
+        verify(services.scanStock).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[ScanItem, Generic]])
         verify(services.nvidiaStock).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[NvidiaItem, Generic]])
         verify(services.cexStock).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[CexItem, Generic]])
         verify(services.argosStock).stockUpdates(any[StockMonitorConfig])(any[ItemMapper[ArgosItem, Generic]])

@@ -7,6 +7,7 @@ import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.mappers.JdsportsItem
 import ebayapp.core.clients.nvidia.responses.NvidiaItem
+import ebayapp.core.clients.scan.parsers.ScanItem
 import ebayapp.core.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.core.common.Logger
 import ebayapp.core.domain.ItemDetails
@@ -21,6 +22,7 @@ trait Services[F[_]] {
   def argosStock: StockService[F, ArgosItem]
   def jdsportsSale: StockService[F, JdsportsItem]
   def nvidiaStock: StockService[F, NvidiaItem]
+  def scanStock: StockService[F, ScanItem]
 }
 
 object Services {
@@ -37,17 +39,19 @@ object Services {
       StockService.selfridges[F](clients.selfridges),
       StockService.argos[F](clients.argos),
       StockService.jdsports[F](clients.jdsports),
-      StockService.nvidia[F](clients.nvidia)
-    ).mapN((not, vs, es, cs, ss, as, js, ns) =>
+      StockService.nvidia[F](clients.nvidia),
+      StockService.scan[F](clients.scan)
+    ).mapN((not, vs, es, cs, selfridgesS, as, js, nvidiaS, scanS) =>
       new Services[F] {
         def notification: NotificationService[F]                  = not
         def videoGame: ResellableItemService[F, ItemDetails.Game] = vs
         def ebayDeals: EbayDealsService[F]                        = es
         def cexStock: StockService[F, CexItem]                    = cs
-        def selfridgesSale: StockService[F, SelfridgesItem]       = ss
+        def selfridgesSale: StockService[F, SelfridgesItem]       = selfridgesS
         def argosStock: StockService[F, ArgosItem]                = as
         def jdsportsSale: StockService[F, JdsportsItem]           = js
-        def nvidiaStock: StockService[F, NvidiaItem]              = ns
+        def nvidiaStock: StockService[F, NvidiaItem]              = nvidiaS
+        def scanStock: StockService[F, ScanItem]                  = scanS
       }
     )
 }

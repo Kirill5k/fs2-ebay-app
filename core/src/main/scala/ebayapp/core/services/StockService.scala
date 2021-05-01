@@ -15,6 +15,9 @@ import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
 import ebayapp.core.clients.nvidia.responses.NvidiaItem
+import ebayapp.core.clients.scan.ScanClient
+import ebayapp.core.clients.scan.mappers.ScanItemMapper
+import ebayapp.core.clients.scan.parsers.ScanItem
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.common.Logger
@@ -157,6 +160,28 @@ final private class NvidiaStockService[F[_]: Temporal: Logger](
       .flatTap(i => Logger[F].info(s"""nvidia-search "${query.value}" returned ${i.size} results"""))
 }
 
+final private class ScanStockService[F[_]: Temporal: Logger](
+    private val client: ScanClient[F]
+) extends StockService[F, ScanItem] {
+
+  override def stockUpdates[D <: ItemDetails: ScanItemMapper](
+      config: StockMonitorConfig
+  ): Stream[F, ItemStockUpdates[D]] =
+    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req.query, req.category))
+
+  private def findItems[D <: ItemDetails: ScanItemMapper](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  ): F[Map[String, ResellableItem[D]]] =
+    client
+      .search[D](query, category)
+      .map(item => (item.itemDetails.fullName, item))
+      .collect { case (Some(name), item) => (name, item) }
+      .compile
+      .to(Map)
+      .flatTap(i => Logger[F].info(s"""scan-search "${query.value}" returned ${i.size} results"""))
+}
+
 object StockService {
 
   def argos[F[_]: Temporal: Logger](client: ArgosClient[F]): F[StockService[F, ArgosItem]] =
@@ -173,4 +198,7 @@ object StockService {
 
   def nvidia[F[_]: Temporal: Logger](client: NvidiaClient[F]): F[StockService[F, NvidiaItem]] =
     Monad[F].pure(new NvidiaStockService[F](client))
+
+  def scan[F[_]: Temporal: Logger](client: ScanClient[F]): F[StockService[F, ScanItem]] =
+    Monad[F].pure(new ScanStockService[F](client))
 }

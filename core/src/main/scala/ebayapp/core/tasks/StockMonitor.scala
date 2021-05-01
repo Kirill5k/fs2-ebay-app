@@ -8,8 +8,10 @@ import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.clients.cex.mappers._
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.clients.jdsports.mappers.JdsportsItem
-import ebayapp.core.clients.nvidia.responses.{NvidiaItem}
+import ebayapp.core.clients.nvidia.responses.NvidiaItem
 import ebayapp.core.clients.nvidia.mappers._
+import ebayapp.core.clients.scan.parsers.ScanItem
+import ebayapp.core.clients.scan.mappers._
 import ebayapp.core.clients.selfridges.mappers._
 import ebayapp.core.common.config.AppConfig
 import ebayapp.core.domain.ItemDetails
@@ -23,7 +25,8 @@ final class StockMonitor[F[_]: Concurrent](
     private val argosStockService: StockService[F, ArgosItem],
     private val selfridgesStockService: StockService[F, SelfridgesItem],
     private val jdsportsStockService: StockService[F, JdsportsItem],
-    private val nvidiaStockService: StockService[F, NvidiaItem]
+    private val nvidiaStockService: StockService[F, NvidiaItem],
+    private val scanStockService: StockService[F, ScanItem]
 ) extends Task[F] {
 
   def run(): Stream[F, Unit] =
@@ -32,7 +35,8 @@ final class StockMonitor[F[_]: Concurrent](
       argosStockService.stockUpdates[ItemDetails.Generic](config.argos.stockMonitor),
       selfridgesStockService.stockUpdates[ItemDetails.Clothing](config.selfridges.stockMonitor),
       jdsportsStockService.stockUpdates[ItemDetails.Clothing](config.jdsports.stockMonitor),
-      nvidiaStockService.stockUpdates[ItemDetails.Generic](config.nvidia.stockMonitor)
+      nvidiaStockService.stockUpdates[ItemDetails.Generic](config.nvidia.stockMonitor),
+      scanStockService.stockUpdates[ItemDetails.Generic](config.scan.stockMonitor)
     ).parJoinUnbounded
       .evalMap(upd => upd.updates.traverse_(u => notificationService.stockUpdate(upd.item, u)))
 }
@@ -47,7 +51,8 @@ object StockMonitor {
         services.argosStock,
         services.selfridgesSale,
         services.jdsportsSale,
-        services.nvidiaStock
+        services.nvidiaStock,
+        services.scanStock
       )
     )
 }
