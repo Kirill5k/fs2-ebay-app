@@ -28,14 +28,16 @@ lazy val docker = Seq(
   }
 )
 
-lazy val root = (project in file("."))
+lazy val root = project
+  .in(file("."))
   .settings(noPublish)
   .settings(
     name := "fs2-ebay-app"
   )
   .aggregate(core, proxy)
 
-lazy val core = (project in file("core"))
+lazy val core = project
+  .in(file("core"))
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
   .settings(
@@ -45,7 +47,8 @@ lazy val core = (project in file("core"))
     libraryDependencies ++= Dependencies.core ++ Dependencies.test
   )
 
-lazy val proxy = (project in file("proxy"))
+lazy val proxy = project
+  .in(file("proxy"))
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
   .settings(
