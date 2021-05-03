@@ -8,8 +8,7 @@ object config {
   final case class RedirectionUrisConfig(
       cex: String,
       selfridges: String,
-      jdsports: String,
-      scan: String
+      jdsports: String
   )
 
   final case class ServerConfig(
