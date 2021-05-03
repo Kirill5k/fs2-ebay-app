@@ -21,7 +21,7 @@ import ebayapp.core.clients.scan.parsers.ScanItem
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{SearchCategory, SearchQuery, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.stock.ItemStockUpdates
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
@@ -43,16 +43,16 @@ final private class ArgosStockService[F[_]: Temporal: Logger](
   override def stockUpdates[D <: ItemDetails: ArgosItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
-    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req.query))
+    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
 
-  private def findItems[D <: ItemDetails: ArgosItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
+  private def findItems[D <: ItemDetails: ArgosItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
-      .findItem[D](query)
+      .findItem[D](req.query)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""argos-search "${query.value}" returned ${i.size} results"""))
+      .flatTap(i => Logger[F].info(s"""argos-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class CexStockService[F[_]: Temporal: Logger](
@@ -62,10 +62,10 @@ final private class CexStockService[F[_]: Temporal: Logger](
   override def stockUpdates[D <: ItemDetails: CexItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
-    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req.query))
+    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
 
-  private def findItems[D <: ItemDetails: CexItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
-    client.findItem[D](query).map { items =>
+  private def findItems[D <: ItemDetails: CexItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
+    client.findItem[D](req.query).map { items =>
       items.groupBy(_.itemDetails.fullName).collect { case (Some(name), group) =>
         (name, group.head)
       }
@@ -92,13 +92,13 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>
-        getUpdates[D](req, config.monitoringFrequency, findItems(req.query)).delayBy((index * 10).seconds)
+        getUpdates[D](req, config.monitoringFrequency, findItems(req)).delayBy((index * 10).seconds)
       }
       .parJoinUnbounded
 
-  private def findItems[D <: ItemDetails: SelfridgesItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
+  private def findItems[D <: ItemDetails: SelfridgesItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
-      .searchSale[D](query)
+      .searchSale[D](req.query)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .filter { case (name, item) =>
@@ -108,7 +108,7 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
       }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""selfridges-search "${query.value}" returned ${i.size} results"""))
+      .flatTap(i => Logger[F].info(s"""selfridges-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class JdsportsSaleService[F[_]: Temporal: Logger](
@@ -121,13 +121,13 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>
-        getUpdates[D](req, config.monitoringFrequency, findItems(req.query)).delayBy((index * 10).seconds)
+        getUpdates[D](req, config.monitoringFrequency, findItems(req)).delayBy((index * 10).seconds)
       }
       .parJoinUnbounded
 
-  private def findItems[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): F[Map[String, ResellableItem[D]]] =
+  private def findItems[D <: ItemDetails: JdsportsItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
-      .searchSale[D](query)
+      .searchSale[D](req.query)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .filter { case (_, item) =>
@@ -135,7 +135,7 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
       }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""jdsports-search "${query.value}" returned ${i.size} results"""))
+      .flatTap(i => Logger[F].info(s"""jdsports-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class NvidiaStockService[F[_]: Temporal: Logger](
@@ -145,19 +145,18 @@ final private class NvidiaStockService[F[_]: Temporal: Logger](
   override def stockUpdates[D <: ItemDetails: NvidiaItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
-    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req.query, req.category))
+    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
 
   private def findItems[D <: ItemDetails: NvidiaItemMapper](
-      query: SearchQuery,
-      category: Option[SearchCategory]
+      req: StockMonitorRequest
   ): F[Map[String, ResellableItem[D]]] =
     client
-      .search[D](query, category)
+      .search[D](req.query, req.category)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""nvidia-search "${query.value}" returned ${i.size} results"""))
+      .flatTap(i => Logger[F].info(s"""nvidia-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class ScanStockService[F[_]: Temporal: Logger](
@@ -167,19 +166,18 @@ final private class ScanStockService[F[_]: Temporal: Logger](
   override def stockUpdates[D <: ItemDetails: ScanItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
-    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req.query, req.category))
+    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
 
   private def findItems[D <: ItemDetails: ScanItemMapper](
-      query: SearchQuery,
-      category: Option[SearchCategory]
+      req: StockMonitorRequest
   ): F[Map[String, ResellableItem[D]]] =
     client
-      .search[D](query, category)
+      .search[D](req.query, req.category)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""scan-search "${query.value}" returned ${i.size} results"""))
+      .flatTap(i => Logger[F].info(s"""scan-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 object StockService {

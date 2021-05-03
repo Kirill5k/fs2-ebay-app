@@ -66,7 +66,8 @@ object config {
       query: SearchQuery,
       monitorStockChange: Boolean,
       monitorPriceChange: Boolean,
-      category: Option[SearchCategory] = None
+      category: Option[SearchCategory] = None,
+      minDiscount: Option[BigDecimal] = None
   )
 
   final case class StockMonitorConfig(
