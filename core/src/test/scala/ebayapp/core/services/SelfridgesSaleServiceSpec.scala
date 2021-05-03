@@ -4,7 +4,7 @@ import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.selfridges.mappers._
-import ebayapp.core.common.config.{SearchQuery, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.common.config.{SearchCategory, SearchQuery, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ItemDetails
 import ebayapp.core.domain.ResellableItemBuilder.clothing
 import fs2.Stream
@@ -30,7 +30,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       )
 
       val client = mock[SelfridgesClient[IO]]
-      when(client.search(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
+      when(client.search(any[SearchQuery], any[Option[SearchCategory]])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(unwantedItems))
 
@@ -52,7 +52,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       )
 
       val client = mock[SelfridgesClient[IO]]
-      when(client.search(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
+      when(client.search(any[SearchQuery], any[Option[SearchCategory]])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(items))
 

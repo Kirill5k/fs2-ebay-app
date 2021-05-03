@@ -35,7 +35,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.search[ItemDetails.Generic](query))
+      val result = cexClient.flatMap(_.search[ItemDetails.Generic](query).compile.toList)
 
       result
         .unsafeToFuture()

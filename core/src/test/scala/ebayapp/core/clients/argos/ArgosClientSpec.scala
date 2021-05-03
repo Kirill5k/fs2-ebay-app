@@ -29,7 +29,7 @@ class ArgosClientSpec extends SttpClientSpec {
 
       val client = ArgosClient.make[IO](config, backend)
 
-      val result = client.flatMap(_.findItem[ItemDetails.Generic](query).compile.toList)
+      val result = client.flatMap(_.search[ItemDetails.Generic](query).compile.toList)
 
       result.unsafeToFuture().map { items =>
         items must have size 1

@@ -2,10 +2,11 @@ package ebayapp.core.clients.cex
 
 import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.mappers.CexItemMapper
 import ebayapp.core.clients.cex.responses._
 import ebayapp.core.common.{Cache, Logger}
-import ebayapp.core.common.config.{CexConfig, SearchQuery}
+import ebayapp.core.common.config.{CexConfig, SearchCategory, SearchQuery}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.search._
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
@@ -13,16 +14,12 @@ import io.circe.generic.auto._
 import sttp.client3.circe.asJson
 import sttp.client3.{SttpBackend, _}
 import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
+import fs2.Stream
 
 import scala.concurrent.duration._
 
-trait CexClient[F[_]] {
+trait CexClient[F[_]] extends SearchClient[F, CexItem] {
   def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]]
-  def search[D <: ItemDetails](
-      query: SearchQuery
-  )(implicit
-      mapper: CexItemMapper[D]
-  ): F[List[ResellableItem[D]]]
 }
 
 final class CexApiClient[F[_]](
@@ -66,13 +63,18 @@ final class CexApiClient[F[_]](
       .minByOption(_.exchangePrice)
       .map(c => SellPrice(BigDecimal(c.cashPrice), BigDecimal(c.exchangePrice)))
 
-  override def search[D <: ItemDetails](query: SearchQuery)(implicit
+  override def search[D <: ItemDetails](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  )(implicit
       mapper: CexItemMapper[D]
-  ): F[List[ResellableItem[D]]] =
-    search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")
+  ): Stream[F, ResellableItem[D]] =
+    Stream
+      .eval(search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1"))
       .map(_.response.data.fold(List.empty[CexItem])(_.boxes))
-      .flatTap(res => logger.info(s"""cex-search "${query.value}" returned ${res.size} results"""))
-      .map(_.map(mapper.toDomain))
+      .flatMap { items =>
+        Stream.emits(items).map(mapper.toDomain)
+      }
 
   private def search(uri: Uri): F[CexSearchResponse] =
     basicRequest

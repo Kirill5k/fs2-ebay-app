@@ -47,7 +47,7 @@ final private class ArgosStockService[F[_]: Temporal: Logger](
 
   private def findItems[D <: ItemDetails: ArgosItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
-      .findItem[D](req.query)
+      .search[D](req.query)
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .compile
@@ -65,11 +65,13 @@ final private class CexStockService[F[_]: Temporal: Logger](
     stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
 
   private def findItems[D <: ItemDetails: CexItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
-    client.search[D](req.query).map { items =>
-      items.groupBy(_.itemDetails.fullName).collect { case (Some(name), group) =>
-        (name, group.head)
-      }
-    }
+    client
+      .search[D](req.query)
+      .map(item => (item.itemDetails.fullName, item))
+      .collect { case (Some(name), item) => (name, item) }
+      .compile
+      .to(Map)
+      .flatTap(i => Logger[F].info(s"""cex-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class SelfridgesSaleService[F[_]: Temporal: Logger](
