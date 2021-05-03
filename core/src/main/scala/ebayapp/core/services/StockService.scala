@@ -1,9 +1,9 @@
 package ebayapp.core.services
 
 import cats.Monad
-import cats.effect.Temporal
+import cats.effect.{Concurrent, Temporal}
 import cats.implicits._
-import ebayapp.core.clients.ItemMapper
+import ebayapp.core.clients.{ItemMapper, SearchClient}
 import ebayapp.core.clients.argos.ArgosClient
 import ebayapp.core.clients.argos.mappers.ArgosItemMapper
 import ebayapp.core.clients.argos.responses.ArgosItem
@@ -29,54 +29,62 @@ import fs2.Stream
 import scala.concurrent.duration._
 
 trait StockService[F[_], I] extends StockComparer[F] {
+  protected def client: SearchClient[F, I]
+
   def stockUpdates[D <: ItemDetails](
       config: StockMonitorConfig
   )(implicit
       mapper: ItemMapper[I, D]
   ): Stream[F, ItemStockUpdates[D]]
+
+  protected def itemFilter[D <: ItemDetails]: (String, ResellableItem[D]) => Boolean = (_, _) => true
+
+  protected def findItems[D <: ItemDetails](
+      req: StockMonitorRequest
+  )(implicit
+      mapper: ItemMapper[I, D],
+      logger: Logger[F],
+      concurrent: Concurrent[F]
+  ): F[Map[String, ResellableItem[D]]] =
+    client
+      .search[D](req.query)
+      .filter { item =>
+        req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min))
+      }
+      .map(item => (item.itemDetails.fullName, item))
+      .collect { case (Some(name), item) => (name, item) }
+      .filter { case (name, item) => itemFilter[D](name, item) }
+      .compile
+      .to(Map)
+      .flatTap(i => Logger[F].info(s"""$name-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class ArgosStockService[F[_]: Temporal: Logger](
-    private val client: ArgosClient[F]
+    override val client: ArgosClient[F]
 ) extends StockService[F, ArgosItem] {
+  override protected val name: String = "argos"
 
   override def stockUpdates[D <: ItemDetails: ArgosItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
     stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
-
-  private def findItems[D <: ItemDetails: ArgosItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
-    client
-      .search[D](req.query)
-      .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) => (name, item) }
-      .compile
-      .to(Map)
-      .flatTap(i => Logger[F].info(s"""argos-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class CexStockService[F[_]: Temporal: Logger](
-    private val client: CexClient[F]
+    override val client: CexClient[F]
 ) extends StockService[F, CexItem] {
+  override protected val name: String = "cex"
 
   override def stockUpdates[D <: ItemDetails: CexItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
     stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
-
-  private def findItems[D <: ItemDetails: CexItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
-    client
-      .search[D](req.query)
-      .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) => (name, item) }
-      .compile
-      .to(Map)
-      .flatTap(i => Logger[F].info(s"""cex-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class SelfridgesSaleService[F[_]: Temporal: Logger](
-    private val client: SelfridgesClient[F]
+    override val client: SelfridgesClient[F]
 ) extends StockService[F, SelfridgesItem] {
+  override protected val name: String = "selfridges"
 
   private val filters: String = List(
     "\\d+-\\d+ (year|month)",
@@ -89,6 +97,9 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
     "bralette"
   ).mkString("(?i).*(", "|", ").*")
 
+  override protected def itemFilter[D <: ItemDetails]: (String, ResellableItem[D]) => Boolean =
+    (name, item) => item.buyPrice.quantityAvailable > 0 && !name.matches(filters)
+
   override def stockUpdates[D <: ItemDetails: SelfridgesItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
@@ -96,26 +107,12 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
         getUpdates[D](req, config.monitoringFrequency, findItems(req)).delayBy((index * 10).seconds)
       }
       .parJoinUnbounded
-
-  private def findItems[D <: ItemDetails: SelfridgesItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
-    client
-      .search[D](req.query)
-      .filter { item =>
-        req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min))
-      }
-      .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) => (name, item) }
-      .filter { case (name, item) =>
-        item.buyPrice.quantityAvailable > 0 && !name.matches(filters)
-      }
-      .compile
-      .to(Map)
-      .flatTap(i => Logger[F].info(s"""selfridges-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class JdsportsSaleService[F[_]: Temporal: Logger](
-    private val client: JdsportsClient[F]
+    override val client: JdsportsClient[F]
 ) extends StockService[F, JdsportsItem] {
+  override protected val name: String = "jdsports"
 
   override def stockUpdates[D <: ItemDetails: JdsportsItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
     Stream
@@ -124,60 +121,28 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
         getUpdates[D](req, config.monitoringFrequency, findItems(req)).delayBy((index * 10).seconds)
       }
       .parJoinUnbounded
-
-  private def findItems[D <: ItemDetails: JdsportsItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
-    client
-      .search[D](req.query)
-      .filter { item =>
-        req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min))
-      }
-      .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) => (name, item) }
-      .compile
-      .to(Map)
-      .flatTap(i => Logger[F].info(s"""jdsports-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class NvidiaStockService[F[_]: Temporal: Logger](
-    private val client: NvidiaClient[F]
+    override val client: NvidiaClient[F]
 ) extends StockService[F, NvidiaItem] {
+  override protected val name: String = "nvidia"
 
   override def stockUpdates[D <: ItemDetails: NvidiaItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
     stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
-
-  private def findItems[D <: ItemDetails: NvidiaItemMapper](
-      req: StockMonitorRequest
-  ): F[Map[String, ResellableItem[D]]] =
-    client
-      .search[D](req.query, req.category)
-      .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) => (name, item) }
-      .compile
-      .to(Map)
-      .flatTap(i => Logger[F].info(s"""nvidia-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 final private class ScanStockService[F[_]: Temporal: Logger](
-    private val client: ScanClient[F]
+    override val client: ScanClient[F]
 ) extends StockService[F, ScanItem] {
+  override protected val name: String = "scan"
 
   override def stockUpdates[D <: ItemDetails: ScanItemMapper](
       config: StockMonitorConfig
   ): Stream[F, ItemStockUpdates[D]] =
     stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
-
-  private def findItems[D <: ItemDetails: ScanItemMapper](
-      req: StockMonitorRequest
-  ): F[Map[String, ResellableItem[D]]] =
-    client
-      .search[D](req.query, req.category)
-      .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) => (name, item) }
-      .compile
-      .to(Map)
-      .flatTap(i => Logger[F].info(s"""scan-search "${req.query.value}" returned ${i.size} results"""))
 }
 
 object StockService {

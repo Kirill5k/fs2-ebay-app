@@ -11,6 +11,7 @@ import fs2.Stream
 import scala.concurrent.duration.FiniteDuration
 
 abstract class StockComparer[F[_]: Temporal: Logger] {
+  protected def name: String
 
   protected def stockUpdatesStream[D <: ItemDetails](
       config: StockMonitorConfig,
@@ -34,7 +35,7 @@ abstract class StockComparer[F[_]: Temporal: Logger] {
       }
       .flatMap(r => Stream.emits(r) ++ Stream.sleep_(freq))
       .handleErrorWith { error =>
-        Stream.eval(Logger[F].error(error)(s"error obtaining stock updates")).drain ++
+        Stream.eval(Logger[F].error(error)(s"$name-stock/error - ${error.getMessage}")).drain ++
           getUpdates(req, freq, findItemsEffect)
       }
 
