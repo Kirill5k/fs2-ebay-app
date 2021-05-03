@@ -18,7 +18,7 @@ import scala.concurrent.duration._
 
 trait CexClient[F[_]] {
   def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]]
-  def findItem[D <: ItemDetails](query: SearchQuery)(implicit
+  def search[D <: ItemDetails](query: SearchQuery)(implicit
       mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]]
 }
@@ -45,7 +45,7 @@ final class CexApiClient[F[_]](
         findSellPrice(SearchQuery(name), categories).map(sp => item.copy(sellPrice = sp))
     }
 
-  private def findSellPrice(query: SearchQuery, categories: Option[List[Int]]): F[Option[SellPrice]] = {
+  private def findSellPrice(query: SearchQuery, categories: Option[List[Int]]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query.base64) {
       val categoryIds = categories.map(_.mkString("[", ",", "]"))
       search(uri"${config.baseUri}/v3/boxes?q=${query.value}&categoryIds=$categoryIds")
@@ -55,7 +55,6 @@ final class CexApiClient[F[_]](
           else ().pure[F]
         }
     }
-  }
 
   private def getMinResellPrice(searchResponse: CexSearchResponse): Option[SellPrice] =
     searchResponse.response.data
@@ -65,7 +64,7 @@ final class CexApiClient[F[_]](
       .minByOption(_.exchangePrice)
       .map(c => SellPrice(BigDecimal(c.cashPrice), BigDecimal(c.exchangePrice)))
 
-  override def findItem[D <: ItemDetails](query: SearchQuery)(implicit
+  override def search[D <: ItemDetails](query: SearchQuery)(implicit
       mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]] =
     search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1")
@@ -102,7 +101,6 @@ final class CexApiClient[F[_]](
 }
 
 object CexClient {
-
 
   def make[F[_]: Temporal: Logger](
       config: CexConfig,

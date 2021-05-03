@@ -1,12 +1,13 @@
 package ebayapp.core.clients.argos
 
 import cats.Monad
-import cats.effect.{Temporal}
+import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.Client
 import ebayapp.core.clients.argos.mappers.ArgosItemMapper
-import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
+import ebayapp.core.clients.argos.responses.{ArgosItem, ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{ArgosConfig, SearchQuery}
+import ebayapp.core.common.config.{ArgosConfig, SearchCategory, SearchQuery}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import io.circe.generic.auto._
 import sttp.client3._
@@ -15,11 +16,7 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-trait ArgosClient[F[_]] {
-  def findItem[D <: ItemDetails](query: SearchQuery)(implicit
-      mapper: ArgosItemMapper[D]
-  ): Stream[F, ResellableItem[D]]
-}
+trait ArgosClient[F[_]] extends Client[F, ArgosItem]
 
 final private class LiveArgosClient[F[_]](
     private val config: ArgosConfig,
@@ -29,7 +26,10 @@ final private class LiveArgosClient[F[_]](
     timer: Temporal[F]
 ) extends ArgosClient[F] {
 
-  override def findItem[D <: ItemDetails](query: SearchQuery)(implicit
+  override def search[D <: ItemDetails](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  )(implicit
       mapper: ArgosItemMapper[D]
   ): Stream[F, ResellableItem[D]] =
     Stream

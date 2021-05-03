@@ -18,7 +18,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration._
 
 trait SelfridgesClient[F[_]] {
-  def searchSale[D <: ItemDetails: SelfridgesItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]]
+  def search[D <: ItemDetails: SelfridgesItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]]
 }
 
 final private class LiveSelfridgesClient[F[_]](
@@ -39,7 +39,7 @@ final private class LiveSelfridgesClient[F[_]](
     "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
   )
 
-  override def searchSale[D <: ItemDetails](query: SearchQuery)(implicit mapper: SelfridgesItemMapper[D]): Stream[F, ResellableItem[D]] =
+  override def search[D <: ItemDetails](query: SearchQuery)(implicit mapper: SelfridgesItemMapper[D]): Stream[F, ResellableItem[D]] =
     Stream
       .unfoldLoopEval(1)(searchForItems(query))
       .flatMap(Stream.emits)

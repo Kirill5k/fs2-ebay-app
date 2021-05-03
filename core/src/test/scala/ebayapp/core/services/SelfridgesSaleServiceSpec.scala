@@ -30,7 +30,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       )
 
       val client = mock[SelfridgesClient[IO]]
-      when(client.searchSale(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
+      when(client.search(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(unwantedItems))
 
@@ -52,7 +52,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       )
 
       val client = mock[SelfridgesClient[IO]]
-      when(client.searchSale(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
+      when(client.search(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(items))
 

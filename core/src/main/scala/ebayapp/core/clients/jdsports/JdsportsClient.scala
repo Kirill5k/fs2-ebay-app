@@ -15,7 +15,7 @@ import sttp.model.StatusCode
 import scala.concurrent.duration._
 
 trait JdsportsClient[F[_]] {
-  def searchSale[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]]
+  def search[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]]
 }
 
 final private class LiveJdsportsClient[F[_]](
@@ -35,7 +35,7 @@ final private class LiveJdsportsClient[F[_]](
     "Referer"         -> "https://www.jdsports.co.uk/men/brand/"
   )
 
-  override def searchSale[D <: ItemDetails](query: SearchQuery)(implicit mapper: JdsportsItemMapper[D]): Stream[F, ResellableItem[D]] =
+  override def search[D <: ItemDetails](query: SearchQuery)(implicit mapper: JdsportsItemMapper[D]): Stream[F, ResellableItem[D]] =
     Stream
       .evalSeq(searchByBrand(query))
       .filter(_.sale)

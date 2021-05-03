@@ -35,7 +35,7 @@ class JdsportsClientSpec extends SttpClientSpec {
 
       val client = JdsportsClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.searchSale(query).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
         items.map(_.itemDetails) mustBe List(
           Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
           Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")

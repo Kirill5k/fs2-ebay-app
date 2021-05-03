@@ -65,7 +65,7 @@ final private class CexStockService[F[_]: Temporal: Logger](
     stockUpdatesStream(config, (req: StockMonitorRequest) => findItems[D](req))
 
   private def findItems[D <: ItemDetails: CexItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
-    client.findItem[D](req.query).map { items =>
+    client.search[D](req.query).map { items =>
       items.groupBy(_.itemDetails.fullName).collect { case (Some(name), group) =>
         (name, group.head)
       }
@@ -97,7 +97,7 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
 
   private def findItems[D <: ItemDetails: SelfridgesItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
-      .searchSale[D](req.query)
+      .search[D](req.query)
       .filter { item =>
         req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min))
       }
@@ -125,7 +125,7 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
 
   private def findItems[D <: ItemDetails: JdsportsItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
-      .searchSale[D](req.query)
+      .search[D](req.query)
       .filter { item =>
         req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min))
       }
