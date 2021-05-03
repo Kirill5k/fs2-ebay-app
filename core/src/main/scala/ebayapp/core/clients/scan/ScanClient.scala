@@ -3,6 +3,7 @@ package ebayapp.core.clients.scan
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.scan.mappers.ScanItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.Logger
@@ -14,12 +15,7 @@ import sttp.model.StatusCode
 
 import scala.concurrent.duration._
 
-trait ScanClient[F[_]] {
-  def search[D <: ItemDetails: ScanItemMapper](
-      query: SearchQuery,
-      category: Option[SearchCategory]
-  ): Stream[F, ResellableItem[D]]
-}
+trait ScanClient[F[_]] extends SearchClient[F, ScanItem]
 
 final private class LiveScanClient[F[_]](
     private val config: ScanConfig,

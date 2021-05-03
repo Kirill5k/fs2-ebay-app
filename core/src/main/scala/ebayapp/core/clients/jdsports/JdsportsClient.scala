@@ -3,10 +3,11 @@ package ebayapp.core.clients.jdsports
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{JdsportsConfig, SearchQuery}
+import ebayapp.core.common.config.{JdsportsConfig, SearchCategory, SearchQuery}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
 import sttp.client3.{SttpBackend, basicRequest, _}
@@ -14,9 +15,7 @@ import sttp.model.StatusCode
 
 import scala.concurrent.duration._
 
-trait JdsportsClient[F[_]] {
-  def search[D <: ItemDetails: JdsportsItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]]
-}
+trait JdsportsClient[F[_]] extends SearchClient[F, JdsportsItem]
 
 final private class LiveJdsportsClient[F[_]](
     private val config: JdsportsConfig,
@@ -35,7 +34,12 @@ final private class LiveJdsportsClient[F[_]](
     "Referer"         -> "https://www.jdsports.co.uk/men/brand/"
   )
 
-  override def search[D <: ItemDetails](query: SearchQuery)(implicit mapper: JdsportsItemMapper[D]): Stream[F, ResellableItem[D]] =
+  override def search[D <: ItemDetails](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  )(implicit
+      mapper: JdsportsItemMapper[D]
+  ): Stream[F, ResellableItem[D]] =
     Stream
       .evalSeq(searchByBrand(query))
       .filter(_.sale)

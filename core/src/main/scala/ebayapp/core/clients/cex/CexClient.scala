@@ -18,7 +18,9 @@ import scala.concurrent.duration._
 
 trait CexClient[F[_]] {
   def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]]
-  def search[D <: ItemDetails](query: SearchQuery)(implicit
+  def search[D <: ItemDetails](
+      query: SearchQuery
+  )(implicit
       mapper: CexItemMapper[D]
   ): F[List[ResellableItem[D]]]
 }

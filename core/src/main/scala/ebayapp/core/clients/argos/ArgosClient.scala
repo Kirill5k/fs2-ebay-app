@@ -3,7 +3,7 @@ package ebayapp.core.clients.argos
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.Client
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.argos.mappers.ArgosItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosItem, ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
@@ -16,7 +16,7 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-trait ArgosClient[F[_]] extends Client[F, ArgosItem]
+trait ArgosClient[F[_]] extends SearchClient[F, ArgosItem]
 
 final private class LiveArgosClient[F[_]](
     private val config: ArgosConfig,

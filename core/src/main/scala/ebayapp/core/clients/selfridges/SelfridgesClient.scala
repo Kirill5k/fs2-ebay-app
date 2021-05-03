@@ -3,10 +3,11 @@ package ebayapp.core.clients.selfridges
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.selfridges.SelfridgesClient._
 import ebayapp.core.clients.selfridges.mappers._
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{SearchQuery, SelfridgesConfig}
+import ebayapp.core.common.config.{SearchCategory, SearchQuery, SelfridgesConfig}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
 import io.circe.Decoder
@@ -17,9 +18,7 @@ import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration._
 
-trait SelfridgesClient[F[_]] {
-  def search[D <: ItemDetails: SelfridgesItemMapper](query: SearchQuery): Stream[F, ResellableItem[D]]
-}
+trait SelfridgesClient[F[_]] extends SearchClient[F, SelfridgesItem]
 
 final private class LiveSelfridgesClient[F[_]](
     private val config: SelfridgesConfig,
@@ -39,7 +38,12 @@ final private class LiveSelfridgesClient[F[_]](
     "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
   )
 
-  override def search[D <: ItemDetails](query: SearchQuery)(implicit mapper: SelfridgesItemMapper[D]): Stream[F, ResellableItem[D]] =
+  override def search[D <: ItemDetails](
+      query: SearchQuery,
+      category: Option[SearchCategory]
+  )(implicit
+      mapper: SelfridgesItemMapper[D]
+  ): Stream[F, ResellableItem[D]] =
     Stream
       .unfoldLoopEval(1)(searchForItems(query))
       .flatMap(Stream.emits)

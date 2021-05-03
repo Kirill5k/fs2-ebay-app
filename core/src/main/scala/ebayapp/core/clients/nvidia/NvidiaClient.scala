@@ -3,6 +3,7 @@ package ebayapp.core.clients.nvidia
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.SearchClient
 import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
@@ -15,12 +16,7 @@ import sttp.client3._
 
 import scala.concurrent.duration._
 
-trait NvidiaClient[F[_]] {
-  def search[D <: ItemDetails: NvidiaItemMapper](
-      query: SearchQuery,
-      category: Option[SearchCategory]
-  ): Stream[F, ResellableItem[D]]
-}
+trait NvidiaClient[F[_]] extends SearchClient[F, NvidiaItem]
 
 final private class LiveNvidiaClient[F[_]](
     private val config: NvidiaConfig,
