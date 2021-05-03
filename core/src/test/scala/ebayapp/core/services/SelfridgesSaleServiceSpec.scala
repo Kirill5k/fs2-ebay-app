@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 class SelfridgesSaleServiceSpec extends CatsSpec {
 
   val query  = SearchQuery("foo")
-  val config = StockMonitorConfig(1.second, List(StockMonitorRequest(SearchQuery("foo"), true, true)))
+  val config = StockMonitorConfig(1.second, List(StockMonitorRequest(SearchQuery("foo"), true, true, minDiscount = Some(50))))
 
   "A LiveSelfridgesSaleService" should {
 
@@ -41,6 +41,28 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       result.unsafeToFuture().map { updates =>
         updates must have size 1
         updates.head.item.itemDetails.name mustBe "T-shirt"
+      }
+    }
+
+    "return items with discount greater than min" in {
+      val items = List(
+        clothing("T-shirt rrp", discount = None),
+        clothing("T-shirt expensive", discount = Some(10)),
+        clothing("T-shirt cheap", discount = Some(96))
+      )
+
+      val client = mock[SelfridgesClient[IO]]
+      when(client.searchSale(any[SearchQuery])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
+        .thenReturn(Stream.empty)
+        .andThen(Stream.emits(items))
+
+      val result = StockService.selfridges[IO](client).flatMap {
+        _.stockUpdates[ItemDetails.Clothing](config).interruptAfter(1200.millis).compile.toList
+      }
+
+      result.unsafeToFuture().map { updates =>
+        updates must have size 1
+        updates.head.item.itemDetails.name mustBe "T-shirt cheap"
       }
     }
   }

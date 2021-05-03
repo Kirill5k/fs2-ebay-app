@@ -8,11 +8,11 @@ import java.time.Instant
 
 object ResellableItemBuilder {
 
-  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Int = 50): Clothe =
+  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Option[Int] = Some(50)): Clothe =
     ResellableItem(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
-      BuyPrice(quantity, BigDecimal(price), Some(discount)),
+      BuyPrice(quantity, BigDecimal(price), discount),
       None
     )
 

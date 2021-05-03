@@ -67,7 +67,7 @@ object config {
       monitorStockChange: Boolean,
       monitorPriceChange: Boolean,
       category: Option[SearchCategory] = None,
-      minDiscount: Option[BigDecimal] = None
+      minDiscount: Option[Int] = None
   )
 
   final case class StockMonitorConfig(

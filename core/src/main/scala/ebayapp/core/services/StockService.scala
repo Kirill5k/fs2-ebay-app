@@ -76,7 +76,6 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
     private val client: SelfridgesClient[F]
 ) extends StockService[F, SelfridgesItem] {
 
-  private val minDiscount: Int = 30
   private val filters: String = List(
     "\\d+-\\d+ (year|month)",
     "thong",
@@ -99,12 +98,13 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
   private def findItems[D <: ItemDetails: SelfridgesItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
       .searchSale[D](req.query)
+      .filter { item =>
+        req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min))
+      }
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .filter { case (name, item) =>
-        item.buyPrice.discount.exists(_ > minDiscount) &&
-          item.buyPrice.quantityAvailable > 0 &&
-          !name.matches(filters)
+        item.buyPrice.quantityAvailable > 0 && !name.matches(filters)
       }
       .compile
       .to(Map)
@@ -114,8 +114,6 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
 final private class JdsportsSaleService[F[_]: Temporal: Logger](
     private val client: JdsportsClient[F]
 ) extends StockService[F, JdsportsItem] {
-
-  private val minDiscount: Int = 49
 
   override def stockUpdates[D <: ItemDetails: JdsportsItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
     Stream
@@ -128,11 +126,11 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
   private def findItems[D <: ItemDetails: JdsportsItemMapper](req: StockMonitorRequest): F[Map[String, ResellableItem[D]]] =
     client
       .searchSale[D](req.query)
+      .filter { item =>
+        req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min))
+      }
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
-      .filter { case (_, item) =>
-        item.buyPrice.discount.exists(_ > minDiscount)
-      }
       .compile
       .to(Map)
       .flatTap(i => Logger[F].info(s"""jdsports-search "${req.query.value}" returned ${i.size} results"""))
