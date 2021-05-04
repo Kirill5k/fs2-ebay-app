@@ -84,7 +84,7 @@ data:
       stock-monitor {
         monitoring-frequency: 4m
         monitoring-requests: [
-          {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
+          {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
       }
     }
@@ -94,7 +94,7 @@ data:
       stock-monitor {
         monitoring-frequency: 5m
         monitoring-requests: [
-          {query: "geforce", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
+          {query: "", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
         ]
       }
     }
