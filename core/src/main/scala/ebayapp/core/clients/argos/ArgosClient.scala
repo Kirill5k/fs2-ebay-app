@@ -70,7 +70,7 @@ final private class LiveArgosClient[F[_]](
             logger.error(s"argos-search response parsing error: ${error.getMessage}, \n$body") *>
               none[SearchData].pure[F]
           case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.error(s"argos-search/$status-error, \n$body") *>
+            logger.error(s"argos-search/$status-error\n$body") *>
               none[SearchData].pure[F]
           case Left(error) =>
             logger.error(s"argos-search/error: ${error.getMessage}\n$error") *>
