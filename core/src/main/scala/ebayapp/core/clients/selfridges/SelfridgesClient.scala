@@ -35,7 +35,8 @@ final private class LiveSelfridgesClient[F[_]](
     "Content-Type"    -> "application/json; charset=utf-8",
     "Accept"          -> "application/json, text/javascript, */*; q=0.01",
     "Connection"      -> "keep-alive",
-    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
+    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
+    "api-key"         -> config.apiKey
   )
 
   override def search[D <: ItemDetails](
@@ -88,7 +89,6 @@ final private class LiveSelfridgesClient[F[_]](
     basicRequest
       .get(uri)
       .headers(defaultHeaders)
-      .header("api-key", config.apiKey)
       .response(asJson[A])
       .send(backend)
       .flatMap { r =>

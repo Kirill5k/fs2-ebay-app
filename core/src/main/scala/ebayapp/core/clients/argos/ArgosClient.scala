@@ -26,6 +26,17 @@ final private class LiveArgosClient[F[_]](
     timer: Temporal[F]
 ) extends ArgosClient[F] {
 
+  private val defaultHeaders = Map(
+    "Cache-Control"   -> "no-store, max-age=0",
+    "Accept-Encoding" -> "gzip, deflate, br",
+    "Accept-Language" -> "en-GB,en-US;q=0.9,en;q=0.8",
+    "Content-Type"    -> "application/json; charset=utf-8",
+    "Accept"          -> "application/json, text/javascript, */*; q=0.01",
+    "Connection"      -> "keep-alive",
+    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
+    "X-Reroute-To"    -> config.baseUri
+  )
+
   override def search[D <: ItemDetails](
       query: SearchQuery,
       category: Option[SearchCategory]
