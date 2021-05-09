@@ -21,9 +21,7 @@ data:
       stock-monitor {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {query: "iphone 12 pro max 128gb", monitor-stock-change: false, monitor-price-change: true}
           {query: "iphone 12 pro max 256gb", monitor-stock-change: false, monitor-price-change: true}
-          {query: "macbook m1", monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }
