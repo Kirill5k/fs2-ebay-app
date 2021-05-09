@@ -26,6 +26,17 @@ final private class LiveArgosClient[F[_]](
     timer: Temporal[F]
 ) extends ArgosClient[F] {
 
+  private val defaultHeaders = Map(
+    "Cache-Control"   -> "no-store, max-age=0",
+    "Accept-Encoding" -> "gzip, deflate, br",
+    "Accept-Language" -> "en-GB,en-US;q=0.9,en;q=0.8",
+    "Content-Type"    -> "application/json; charset=utf-8",
+    "Accept"          -> "application/json, text/javascript, */*; q=0.01",
+    "Connection"      -> "keep-alive",
+    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
+    "X-Reroute-To"    -> "https://www.argos.co.uk"
+  )
+
   override def search[D <: ItemDetails](
       query: SearchQuery,
       category: Option[SearchCategory]
@@ -49,6 +60,7 @@ final private class LiveArgosClient[F[_]](
       .get(
         uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true"
       )
+      .headers(defaultHeaders)
       .response(asJson[ArgosSearchResponse])
       .send(backend)
       .flatMap { r =>
@@ -58,7 +70,7 @@ final private class LiveArgosClient[F[_]](
             logger.error(s"argos-search response parsing error: ${error.getMessage}, \n$body") *>
               none[SearchData].pure[F]
           case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.error(s"argos-search/$status-error, \n$body") *>
+            logger.error(s"argos-search/$status-error\n$body") *>
               none[SearchData].pure[F]
           case Left(error) =>
             logger.error(s"argos-search/error: ${error.getMessage}\n$error") *>
