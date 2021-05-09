@@ -3,11 +3,9 @@ kind: Service
 metadata:
   name: "fs2-app-core"
 spec:
-  type: NodePort
   ports:
     - targetPort: 8080
       port: 8080
-      nodePort: 30000
   selector:
     app: "fs2-app-core"
 ---
@@ -15,7 +13,6 @@ apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
   name: "fs2-app-core"
-  namespace: "default"
   labels:
     app: "fs2-app-core"
 spec:

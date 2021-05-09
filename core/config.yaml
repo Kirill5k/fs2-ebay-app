@@ -70,7 +70,7 @@ data:
     }
 
     argos {
-      base-uri: "https://fs2-proxy.herokuapp.com"
+      base-uri: "https://www.argos.co.uk"
       stock-monitor {
         monitoring-frequency: 10m
         monitoring-requests: [
