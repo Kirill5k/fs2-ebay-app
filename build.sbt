@@ -14,11 +14,12 @@ lazy val noPublish = Seq(
 lazy val docker = Seq(
   packageName := moduleName.value,
   version := version.value,
+  dockerUsername := Some("kirill5k"),
+  dockerRepository := sys.env.get("DOCKER_REPO_URI"),
   maintainer := "immotional@aol.com",
   dockerBaseImage := "adoptopenjdk/openjdk16-openj9:x86_64-alpine-jre-16_36_openj9-0.25.0",
   dockerUpdateLatest := true,
   makeBatScripts := List(),
-  dockerRepository := Some("us.gcr.io"),
   dockerCommands := {
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)

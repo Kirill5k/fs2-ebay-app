@@ -6,7 +6,7 @@ jobs:
   build-image:
     runs-on: ubuntu-latest
     env:
-      DOCKER_REPO_URI: "us.gcr.io"
+      DOCKER_REPO_URI: "registry.cloud.okteto.net"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
