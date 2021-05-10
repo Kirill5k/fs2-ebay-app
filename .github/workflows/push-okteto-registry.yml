@@ -1,4 +1,4 @@
-name: Build and push container images to ECR
+name: Publish to OKTETO container registry
 on: [workflow_dispatch]
 
 jobs:

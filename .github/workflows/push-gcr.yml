@@ -1,4 +1,4 @@
-name: Build and push container images to ECR
+name: Publish to GCR
 on: [workflow_dispatch]
 
 jobs:
