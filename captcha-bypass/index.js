@@ -48,7 +48,8 @@ const chromeOptions = {
     });
 
     await page.goto('https://www.scan.co.uk', {waitUntil: 'networkidle2', timeout: 0});
-    await page.waitForSelector('.logo', { visible: true, timeout: 0 });
+    await page.waitForNavigation({timeout: 30}).catch(() => {});
+    await page.waitForSelector('.logo', {visible: true, timeout: 30}).catch(() => {});
     await page.title().then(t => console.log(t));
     await browser.close();
 })()
