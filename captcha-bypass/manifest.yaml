@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: captcha-bypass
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.cloud.okteto.net/kirill5k/fs2-app-captcha-bypass:latest
+          name: captcha-bypass
+          resources: {}
+      restartPolicy: Never
+status: {}
