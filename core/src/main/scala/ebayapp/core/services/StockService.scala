@@ -47,7 +47,7 @@ trait StockService[F[_], I] extends StockComparer[F] {
       concurrent: Concurrent[F]
   ): F[Map[String, ResellableItem[D]]] =
     client
-      .search[D](req.query)
+      .search[D](req.query, req.category)
       .filter(item => req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
@@ -55,6 +55,7 @@ trait StockService[F[_], I] extends StockComparer[F] {
       .compile
       .to(Map)
       .flatTap(i => logger.info(s"""$name-search "${req.query.value}" returned ${i.size} results"""))
+
 }
 
 final private class ArgosStockService[F[_]: Temporal: Logger](
