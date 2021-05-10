@@ -44,7 +44,7 @@ lazy val core = project
   .settings(
     name := "fs2-ebay-app-core",
     moduleName := "fs2-ebay-app-core",
-    Docker / packageName := "fs2-app-core",
+    Docker / packageName := "fs2-app-core", // fs2-app/core
     libraryDependencies ++= Dependencies.core ++ Dependencies.test
   )
 
@@ -55,6 +55,6 @@ lazy val proxy = project
   .settings(
     name := "fs2-ebay-app-proxy",
     moduleName := "fs2-ebay-app-proxy",
-    Docker / packageName := "fs2-app-proxy",
+    Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
     libraryDependencies ++= Dependencies.proxy ++ Dependencies.test
   )
