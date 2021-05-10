@@ -10,4 +10,3 @@ spec:
           name: captcha-bypass
           resources: {}
       restartPolicy: Never
-status: {}
