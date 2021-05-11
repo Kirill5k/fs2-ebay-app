@@ -6,7 +6,7 @@ puppeteer.use(stealthPlugin());
 const unwantedResources = ['stylesheet', 'font', 'image'];
 
 const chromeOptions = {
-    args: ['--no-sandbox'],
+    args: ['--no-sandbox', '--enable-automation'],
     headless: true,
     defaultViewport: null,
     slowMo: 10
@@ -47,9 +47,12 @@ const chromeOptions = {
         Object.defineProperty(navigator, 'languages', {get: () => ['en-GB', 'en']});
     });
 
-    await page.goto('https://www.scan.co.uk', {waitUntil: 'networkidle2', timeout: 0});
-    await page.waitForNavigation({timeout: 30}).catch(() => {});
-    await page.waitForSelector('.logo', {visible: true, timeout: 30}).catch(() => {});
+    await page.goto('https://www.scan.co.uk');
+    await Promise.all([
+        page.waitForNavigation({timeout: 30}).catch(() => {}),
+        page.waitForSelector('.logo', {visible: true, timeout: 30}).catch(() => {})
+    ]);
+    await page.content().then(c => console.log(c));
     await page.title().then(t => console.log(t));
     await browser.close();
 })()
