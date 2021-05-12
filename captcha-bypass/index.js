@@ -52,7 +52,6 @@ const chromeOptions = {
         page.waitForNavigation({timeout: 30}).catch(() => {}),
         page.waitForSelector('.logo', {visible: true, timeout: 30}).catch(() => {})
     ]);
-    await page.content().then(c => console.log(c));
     await page.title().then(t => console.log(t));
     await browser.close();
 })()
