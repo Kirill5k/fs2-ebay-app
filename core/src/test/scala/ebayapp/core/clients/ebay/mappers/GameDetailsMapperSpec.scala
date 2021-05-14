@@ -254,6 +254,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",
         "Call of Duty Infinite Warfare \\ £54.99",
         "5 PS3 Games Call of Duty Infinite Warfare VR PSVR",
+        "Call of Duty Infinite Warfare xone",
         "Call of Duty Infinite Warfare xbox one series x s",
         "Call of Duty Infinite Warfare xbox one x series x/s",
         "Call of Duty Infinite Warfare game for kids",
@@ -307,6 +308,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare includes mega awesome pack with goodies",
         "Call of Duty: Infinite Warfare - vr compatible psvr required",
         "Call of Duty: Infinite Warfare includes 5 bonus levels",
+        "Call of Duty: Infinite Warfare includes battlemode",
         "Call of Duty: Infinite Warfare with terminator bonus content",
         "Call of Duty: Infinite Warfare - super fast and superfree UK post",
         "Call of Duty: Infinite Warfare - Fast and Free shipping complete with manual and book",
@@ -342,6 +344,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     "do special replacements" in {
       val titles = Map(
         "the last of us part 2" -> "last of us Part II",
+        "resident evil 8" -> "Resident Evil Village",
+        "resident evil village 8" -> "resident evil village",
         "XBOX ONE GAME F1 2018 HEADLINE EDITION" -> "F1 2018",
         "FIFA 21 NEXT LEVEL" -> "FIFA 21",
         "Resident Evil 7 Biohazard" -> "Resident Evil 7",

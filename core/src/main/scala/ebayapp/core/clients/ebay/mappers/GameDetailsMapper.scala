@@ -8,7 +8,7 @@ private[mappers] object GameDetailsMapper {
 
   private val CONSOLE_REGEX_PATTERN =
     "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
-      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|\\bms\\b) )?\\bx( )?b(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
+      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|\\bms\\b) )?\\bx( )?(b)?(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
       "(( )?game(s)?)?( (promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( +20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
@@ -31,7 +31,7 @@ private[mappers] object GameDetailsMapper {
     "(dbl|double|dual|triple|twin|expansion|comb|mega).{0,10}(pass|pack|pk)",
     "new in (wrapper|wrapping|cellophane|packaging|box)( still wrapped)?",
     "Now Released(?s).*$", "Release date(?s).*$",
-    "includes free(?s).*$", "includes.{0,20}pack(?s).*$", "amazon.{0,20}exclusive(?s).*$",
+    "includes( free(?s).*$|.{0,20}pack(?s).*$| \\w+)", "amazon.{0,20}exclusive(?s).*$",
     "(royal mail )?(1st|2nd|first) class.*$",
     "(?<=\\w+ )((all|fully) )?(boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$",
@@ -47,13 +47,14 @@ private[mappers] object GameDetailsMapper {
     "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "\\d games in (one|1)",
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal)(?s).*",
     "(?<=FIFA) (soccer|football)", "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling", "(?<=(FIFA|NHL|Madden|MotoGP) )20(?=\\d\\d)",
-    "(?<=F1)\\s+(Formula (one|1)?)( racing)?", "(?<=20\\d\\d).*formula(?s).*",
+    "(?<=F1)\\s+(Formula( )?(one|1)?)( racing)?", "(?<=20\\d\\d).*formula(?s).*",
     "(?<=Fifa 21.*) (NXT LVL|Next level)", "(?<=PGA Tour.*) golf.*",
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
     "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)",
     "bandicoot( CTR)? (?=team racing)", "(?<=resident evil (vii|7)).*biohazard",
     "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))",
     "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
+    "(?<=resident evil village) (8|VIII)",
     // removes year from some titles
     "(?<=(need for speed|minecraft|\\bLEGO\\b|Tomb Raider|call of duty|gran turismo|assassins creed|tom clanc).*)20\\d\\d(?s).*"
   ).mkString("(?i)", "|", "")
@@ -179,6 +180,8 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)\\bll\\b", "II")
       .replaceAll("(?i)\\blll\\b", "III")
       .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (2|II)(?s).*", "WWII")
+      .replaceAll("(?i)(resident evil 8)", "Resident Evil Village")
+      .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(Read Dead Redemption)", "Red Dead Redemption")
       .replaceAll("(?i)(W2K)", "WWE 2k")
@@ -239,6 +242,7 @@ private[mappers] object GameDetailsMapper {
   implicit class StringOps(private val str: String) extends AnyVal {
     def withoutSpecialChars: String =
       str
+        .replaceAll("&#\\d+;", "")
         .replaceAll("100%$", "")
         .replaceAll("(?i)(\\bAND\\b|\\bA\\b(?!\\.)|\\bTHE\\b)", "")
         .replaceAll("£\\d+(\\.\\d+)?", "")
