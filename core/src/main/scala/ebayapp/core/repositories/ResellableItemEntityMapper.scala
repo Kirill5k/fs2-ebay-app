@@ -5,7 +5,7 @@ import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import ebayapp.core.repositories.entities.ItemPrice
 import cats.implicits._
-import org.mongodb.scala.bson.ObjectId
+import org.bson.types.ObjectId
 
 private[repositories] trait ResellableItemEntityMapper[I <: ResellableItem[_], E <: ResellableItemEntity] {
   def toEntity(item: I): E

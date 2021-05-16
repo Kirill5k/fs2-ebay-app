@@ -10,9 +10,9 @@ import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.client.MongoClientF
 import mongo4cats.circe._
 import mongo4cats.database.MongoCollectionF
-import org.mongodb.scala.Document
-import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.{Filters, Sorts}
+import org.bson.conversions.Bson
+import org.bson.Document
+import com.mongodb.client.model.{Filters, Sorts}
 import fs2._
 
 trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItemEntity] {
@@ -81,7 +81,7 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
     val toFilter   = to.map(d => Filters.lt("listingDetails.datePosted", d))
     val filters    = List(fromFilter, toFilter).flatten
     if (filters.nonEmpty) Filters.and(filters: _*)
-    else Document()
+    else new Document()
   }
 }
 

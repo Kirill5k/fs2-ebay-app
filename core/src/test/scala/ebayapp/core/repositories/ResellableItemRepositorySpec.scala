@@ -7,7 +7,7 @@ import ebayapp.core.common.Logger
 import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import mongo4cats.client.MongoClientF
-import org.mongodb.scala.Document
+import org.bson.Document
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -59,7 +59,8 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
           val result = for {
             db   <- client.getDatabase("ebay-app")
             coll <- db.getCollection("videoGames")
-            _    <- coll.createIndex[IO](Document("itemDetails.name" -> "text", "itemDetails.platform" -> "text"))
+            _    <- coll.createIndex[IO](new Document("itemDetails.name", "text"))
+            _    <- coll.createIndex[IO](new Document("itemDetails.platform", "text"))
             repo <- ResellableItemRepository.videoGamesMongo[IO](client)
             _    <- repo.saveAll(videoGames)
             res  <- repo.search(SearchQuery("mario"))
