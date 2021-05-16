@@ -59,8 +59,7 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
           val result = for {
             db   <- client.getDatabase("ebay-app")
             coll <- db.getCollection("videoGames")
-            _    <- coll.createIndex[IO](new Document("itemDetails.name", "text"))
-            _    <- coll.createIndex[IO](new Document("itemDetails.platform", "text"))
+            _    <- coll.createIndex[IO](Document.parse("""{"itemDetails.name":"text","itemDetails.platform":"text"}"""))
             repo <- ResellableItemRepository.videoGamesMongo[IO](client)
             _    <- repo.saveAll(videoGames)
             res  <- repo.search(SearchQuery("mario"))

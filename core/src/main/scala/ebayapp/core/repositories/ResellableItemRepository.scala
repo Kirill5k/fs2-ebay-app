@@ -15,6 +15,8 @@ import org.bson.Document
 import com.mongodb.client.model.{Filters, Sorts}
 import fs2._
 
+import java.util.Date
+
 trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItemEntity] {
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: I): F[Unit]
@@ -77,8 +79,8 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
       .map(entityMapper.toDomain)
 
   private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Bson = {
-    val fromFilter = from.map(d => Filters.gte("listingDetails.datePosted", d))
-    val toFilter   = to.map(d => Filters.lt("listingDetails.datePosted", d))
+    val fromFilter = from.map(d => Filters.gte("listingDetails.datePosted", new Date(d.toEpochMilli)))
+    val toFilter   = to.map(d => Filters.lt("listingDetails.datePosted", new Date(d.toEpochMilli)))
     val filters    = List(fromFilter, toFilter).flatten
     if (filters.nonEmpty) Filters.and(filters: _*)
     else new Document()
