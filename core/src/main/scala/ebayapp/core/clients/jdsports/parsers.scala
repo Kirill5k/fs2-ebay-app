@@ -65,7 +65,7 @@ private[jdsports] object parsers {
         .head
         .trim
         .replaceAll("undefined", "null")
-        .replaceAll("\n|\t", "")
+        .replaceAll("\n|\t|&#\\d+;", "")
         .replaceAll("(?<!https):", "\":")
         .replaceAll(" +", " ")
         .replaceAll("(?<=(\\d,|null,|true,|false,|\",|\\{)) ", " \"")
