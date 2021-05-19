@@ -21,7 +21,7 @@ private[repositories] trait ResellableItemEntityMapper[I <: ResellableItem[_], E
 }
 
 private[repositories] object ResellableItemEntityMapper {
-  val videoGameEntityMapper = new ResellableItemEntityMapper[ResellableItem.VideoGame, ResellableItemEntity.VideoGame] {
+  implicit val videoGameEntityMapper = new ResellableItemEntityMapper[ResellableItem.VideoGame, ResellableItemEntity.VideoGame] {
     override def toEntity(vg: ResellableItem.VideoGame): ResellableItemEntity.VideoGame =
       ResellableItemEntity.VideoGame(new ObjectId(), vg.itemDetails, vg.listingDetails, mapPrice(vg.buyPrice, vg.sellPrice))
 

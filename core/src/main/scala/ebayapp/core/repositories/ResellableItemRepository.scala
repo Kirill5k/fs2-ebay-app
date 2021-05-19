@@ -25,9 +25,13 @@ trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItem
 }
 
 final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E <: ResellableItemEntity](
-    private val mongoCollection: MongoCollectionF[E],
-    private val entityMapper: ResellableItemEntityMapper[I, E]
+    private val mongoCollection: MongoCollectionF[E]
+)(implicit
+    val entityMapper: ResellableItemEntityMapper[I, E]
 ) extends ResellableItemRepository[F, I, E] {
+
+  private val emptyDocument        = new Document()
+  private val sortByDateDescending = Sorts.descending("listingDetails.datePosted")
 
   def existsByUrl(listingUrl: String): F[Boolean] =
     mongoCollection.count[F](Filters.eq("listingDetails.url", listingUrl)).map(_ > 0)
@@ -44,8 +48,7 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
       from: Option[Instant] = None,
       to: Option[Instant] = None
   ): F[List[I]] =
-    mongoCollection
-      .find
+    mongoCollection.find
       .filter(postedDateRangeSelector(from, to))
       .filter(Filters.text(query.value))
       .limit(limit.getOrElse(0))
@@ -58,7 +61,7 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
       to: Option[Instant] = None
   ): F[List[I]] =
     mongoCollection.find
-      .sort(Sorts.descending("listingDetails.datePosted"))
+      .sort(sortByDateDescending)
       .filter(postedDateRangeSelector(from, to))
       .limit(limit.getOrElse(0))
       .all[F]
@@ -70,7 +73,7 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
       to: Option[Instant] = None
   ): Stream[F, I] =
     mongoCollection.find
-      .sort(Sorts.descending("listingDetails.datePosted"))
+      .sort(sortByDateDescending)
       .filter(postedDateRangeSelector(from, to))
       .limit(limit.getOrElse(0))
       .stream[F]
@@ -81,7 +84,7 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
     val toFilter   = to.map(d => Filters.lt("listingDetails.datePosted", d))
     val filters    = List(fromFilter, toFilter).flatten
     if (filters.nonEmpty) Filters.and(filters: _*)
-    else new Document()
+    else emptyDocument
   }
 }
 
@@ -95,8 +98,5 @@ object ResellableItemRepository {
     for {
       db   <- mongoClient.getDatabase("ebay-app")
       coll <- db.getCollectionWithCirceCodecs[ResellableItemEntity.VideoGame]("videoGames")
-    } yield new ResellableItemMongoRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame](
-      coll,
-      ResellableItemEntityMapper.videoGameEntityMapper
-    )
+    } yield new ResellableItemMongoRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame](coll)
 }
