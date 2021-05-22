@@ -43,7 +43,7 @@ data:
           search-frequency: 60s
           search-queries: ["PS4", "PS5", "XBOX SERIES", "XBOX ONE", "SWITCH"]
           max-listing-duration: 20m
-          min-margin-percentage: 10
+          min-margin-percentage: 25
           max-expected-quantity: 10
         }
       }
