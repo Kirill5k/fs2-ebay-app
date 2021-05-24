@@ -20,7 +20,7 @@ private[ebay] object responses {
       price: Option[ItemPrice],
       seller: ItemSeller,
       itemGroupType: Option[String],
-      buyingOptions: List[String],
+      buyingOptions: Set[String],
       shortDescription: Option[String] // This field is returned by the search method only when fieldgroups = EXTENDED.
   )
 
@@ -41,7 +41,7 @@ private[ebay] object responses {
       image: Option[ItemImage],
       seller: ItemSeller,
       localizedAspects: Option[List[ItemProperty]],
-      buyingOptions: List[String],
+      buyingOptions: Set[String],
       itemWebUrl: String,
       color: Option[String],
       brand: Option[String],
@@ -49,10 +49,10 @@ private[ebay] object responses {
       itemEndDate: Option[Instant],
       shippingOptions: Option[List[ItemShippingOption]],
       estimatedAvailabilities: Option[List[ItemAvailabilities]]
-  ) extends EbayBrowseResponse
+  )
 
-  final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) extends EbayBrowseResponse
+  final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]])
 
   final case class EbayError(errorId: Long, domain: String, category: String, message: String)
-  final case class EbayErrorResponse(errors: List[EbayError]) extends EbayBrowseResponse
+  final case class EbayErrorResponse(errors: List[EbayError])
 }

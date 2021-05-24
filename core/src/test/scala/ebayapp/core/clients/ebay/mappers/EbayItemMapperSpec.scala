@@ -26,7 +26,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
       ItemProperty("Platform", "Microsoft Xbox One"),
       ItemProperty("Genre", "Action"),
     ).some,
-    List("FIXED_PRICE"),
+    Set("FIXED_PRICE"),
     "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
     None,
     None,
@@ -54,7 +54,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
       ItemProperty("Storage Capacity", "128 GB"),
       ItemProperty("Colour", "Blue")
     ).some,
-    List("FIXED_PRICE", "BEST_OFFER"),
+    Set("FIXED_PRICE", "BEST_OFFER"),
     "https://www.ebay.co.uk/itm/Samsung-Galaxy-S10-128gb-UNLOCKED-Prism-Blue-/114059888671",
     Some("Blue"),
     Some("Samsung"),

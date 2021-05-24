@@ -266,7 +266,7 @@ class EbayClientSpec extends CatsSpec {
       Some(ItemPrice(BigDecimal.valueOf(30.00), "GBP")),
       ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore)),
       itemGroup,
-      buyingOptions,
+      buyingOptions.toSet,
       shortDescription
     )
 
@@ -292,7 +292,7 @@ class EbayClientSpec extends CatsSpec {
           ItemProperty("Genre", "Action")
         )
       ),
-      List("FIXED_PRICE"),
+      Set("FIXED_PRICE"),
       "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
       None,
       None,

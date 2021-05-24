@@ -65,10 +65,12 @@ object search {
 
       override val searchFilterTemplate: String = DEFAULT_SEARCH_FILTER + "buyingOptions:{FIXED_PRICE},itemStartDate:[%s]"
 
+      private val ACCEPTER_BUYING_OPTIONS = Set("FIXED_PRICE", "BEST_OFFER")
+
       override val filter: EbayItemSummary => Boolean = { item =>
         !LISTING_NAME_TRIGGER_WORDS.matches(item.title.replaceAll("[^a-zA-Z0-9 ]", "")) &&
           !LISTING_DESCRIPTION_TRIGGER_WORDS.matches(item.shortDescription.fold("")(_.replaceAll("[^a-zA-Z0-9 ]", ""))) &&
-          item.buyingOptions.exists(List("FIXED_PRICE", "BEST_OFFER").contains)
+          item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
       }
     }
   }
