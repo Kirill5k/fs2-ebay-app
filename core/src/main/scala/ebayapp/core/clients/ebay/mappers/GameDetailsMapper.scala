@@ -109,7 +109,7 @@ private[mappers] object GameDetailsMapper {
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
     "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^NEW", "^best", "^software", "^un( )?opened",
     "un( )?opened$", "rare$", "^rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
-    "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheapest( on ebay)?",
+    "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheap(est)?( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "(fully )?working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
   ).mkString("(?i)", "|", "")
 
@@ -208,6 +208,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(\\bLEGO Star Wars III\\b)", "LEGO Star Wars 3 ")
       .replaceAll("(?i)(\\bEpisodes From Liberty City\\b)", "Liberty")
       .replaceAll("(?i)(\\bIIII\\b)", "4")
+      .replaceAll("(?i)(nitro( )?fuelled)", "Nitro Fueled")
       .replaceAll("(?i)(\\bGW\\b)", "Garden Warfare ")
       .replaceAll("(?i)(\\bGW2\\b)", "Garden Warfare 2")
       .replaceAll("(?i)(Telltale(\\s+series)?(\\s+season)?)", "Telltale")
