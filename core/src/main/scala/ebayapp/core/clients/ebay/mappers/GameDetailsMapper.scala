@@ -52,6 +52,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
     "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)",
     "bandicoot( CTR)? (?=team racing)", "(?<=resident evil (vii|7)).*biohazard.*",
+    "(?<=Warhammer) (40k|40( )?000)", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))",
     "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))",
     "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
     "(?<=resident evil village) (8|VIII)",
@@ -78,7 +79,7 @@ private[mappers] object GameDetailsMapper {
     "\\d \\d players", "1 ONE", "flash sale", "Fun Kids Play( Console)?", "with all extras", "free gift",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
-    "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular Sleeve", "plays perfect", "100 trusted seller",
+    "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular (cover|Sleeve)", "plays perfect", "100 trusted seller",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "(last one )?in stock( now)?",
     "never( been)? (opened|played)", "(only )?played (once|twice)", "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
@@ -189,7 +190,6 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(Hello Neighbour)", "Hello Neighbor")
       .replaceAll("(?i)(witcher iii)", "witcher 3")
       .replaceAll("(?i)(wolfenstein 2)", "Wolfenstein II")
-      .replaceAll("(?i)(warhammer 40( )?000)", "Warhammer 40k")
       .replaceAll("(?i)(wafare|warefare)", "Warfare")
       .replaceAll("(?i)(as(s)?a(s)?(s)?in)", "Assassin")
       .replaceAll("(?i)(va(l)?(l)?hal(l)?a)", "Valhalla")
