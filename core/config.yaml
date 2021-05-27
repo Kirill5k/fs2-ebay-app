@@ -21,7 +21,10 @@ data:
       stock-monitor {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {query: "iphone 12 pro max 256gb", monitor-stock-change: false, monitor-price-change: true}
+          {query: "Apple iPad Pro 11 3rd gen wifi 128gb", monitor-stock-change: false, monitor-price-change: true}
+          {query: "Apple iPad Pro 11 3rd gen wifi 256gb", monitor-stock-change: false, monitor-price-change: true}
+          {query: "Apple iPad Pro 12.9 5th gen 128gb wifi", monitor-stock-change: false, monitor-price-change: true}
+          {query: "Apple iPad Pro 12.9 5th gen 256gb wifi", monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }
@@ -92,7 +95,7 @@ data:
       stock-monitor {
         monitoring-frequency: 5m
         monitoring-requests: [
-          {query: "", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
+          {query: "geforce", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
         ]
       }
     }
