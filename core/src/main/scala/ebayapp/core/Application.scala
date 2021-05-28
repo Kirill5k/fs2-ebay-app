@@ -8,7 +8,7 @@ import ebayapp.core.controllers.Controllers
 import ebayapp.core.repositories.Repositories
 import ebayapp.core.services.Services
 import ebayapp.core.tasks.Tasks
-import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.implicits._
 
 import scala.concurrent.ExecutionContext
