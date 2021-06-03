@@ -44,6 +44,7 @@ private[jdsports] object parsers {
         .last
         .replaceAll("\t|\n|\\s{2,10}", "")
         .replaceAll(",(?=])", "")
+        .replaceAll("(?<=\\[\\]),(?=})", "")
         .replaceAll("\\{", "\\{\"")
         .replaceAll("(?<!\\}),(?!\")", ",\"")
         .replaceAll(":", "\":")
