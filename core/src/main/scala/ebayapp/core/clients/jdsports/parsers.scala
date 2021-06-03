@@ -42,9 +42,10 @@ private[jdsports] object parsers {
         .head
         .split("items: ")
         .last
-        .replaceAll("\t|\n", "")
+        .replaceAll("\t|\n|\\s{2,10}", "")
+        .replaceAll(",(?=])", "")
         .replaceAll("\\{", "\\{\"")
-        .replaceAll("(?<!\\}),", ",\"")
+        .replaceAll("(?<!\\}),(?!\")", ",\"")
         .replaceAll(":", "\":")
 
       decode[List[JdCatalogItem]](rawDataObject.slice(0, rawDataObject.length - 2))
