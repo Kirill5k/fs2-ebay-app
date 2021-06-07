@@ -71,7 +71,7 @@ private[mappers] object GameDetailsMapper {
     // removes the word "BRAND NEW"
     "(sealed )?brand new( (condition|case|(factory )?sealed|still wrapped))?( in packaging)?( 20\\d\\d)?",
     // removes the word SEALED
-    "(new )?(still )?((factory) )?sealed( in packaging)?",
+    "(new )?(still )?((factory) )?sealed( in packaging)?", "(s|c)ellophane wrapped",
     "(official )?Strategy Combat( guide)?", "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football)", "football soccer( sim(ulator)?)?", "action stealth", "(car|motorcycles|rally) (Driving|Racing)",
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer", "Multi Player", "life simulation", "racing rally",
@@ -109,7 +109,7 @@ private[mappers] object GameDetailsMapper {
     "^(((brand )?NEW|BNIB|Factory) )?SEALED( in Packaging)?( )?",
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
     "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^NEW", "^best", "^software", "^un( )?opened",
-    "un( )?opened$", "rare$", "^rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
+    "un( )?opened$", "((super|very) )?rare$", "^((super|very) )?rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
     "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheap(est)?( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "(fully )?working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
   ).mkString("(?i)", "|", "")
@@ -117,7 +117,7 @@ private[mappers] object GameDetailsMapper {
   private val SEPARATORS = List(
     "(?<=Far)(?=Cry)", "(?<=Star)(?=Wars)", "(?<=Mario)(?=Kart)", "(?<=Pro)(?=Street)", "(?<=player)(?=unknown)", "(?<=south)(?=park)",
     "(?<=Super)(?=Heroes)", "(?<=Rock)(?=Band)", "(?<=My)(?=Sims)", "(?<=Nier)(?=Automata)", "(?<=Race)(?=driver grid)",
-    "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)", "(?<=WATCH)(?=DOGS)", "(?<=PES)(?=20\\d\\d)"
+    "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)", "(?<=WATCH)(?=DOGS)", "(?<=PES)(?=20\\d\\d)", "(?<=MICRO)(?=MACHINES)"
   ).mkString("(?i)", "|", "")
 
   private val PLATFORMS_MATCH_REGEX = List(
@@ -172,6 +172,7 @@ private[mappers] object GameDetailsMapper {
 
   private def sanitizeTitle(title: String): Option[String] =
     title.withoutSpecialChars
+      .replaceAll("(?i)(\\bFormula 1\\b)", "F1")
       .replaceAll(EDGE_WORDS_REPLACEMENTS, "")
       .replaceAll(LEVEL1_TITLE_WORDS_REPLACEMENTS, "")
       .replaceAll(LEVEL2_TITLE_WORDS_REPLACEMENTS, "")
