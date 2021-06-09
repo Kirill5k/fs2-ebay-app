@@ -66,6 +66,7 @@ private[jdsports] object parsers {
         .split("</script>")
         .head
         .trim
+        .replaceAll("H:\\d+ x W:\\d+ x D:\\d+\\w+", "")
         .replaceAll("undefined", "null")
         .replaceAll("\n|\t|&#\\d+;", "")
         .replaceAll("(?<!https):", "\":")
