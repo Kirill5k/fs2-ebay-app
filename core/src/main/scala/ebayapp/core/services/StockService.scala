@@ -93,7 +93,12 @@ final private class SelfridgesSaleService[F[_]: Temporal: Logger](
     "jersey brief",
     "swimsuit",
     "jock( )?strap",
-    "bralette"
+    "bralette",
+    "briefs",
+    "woman",
+    "jersey",
+    "leggings",
+    "\\bdress\\b"
   ).mkString("(?i).*(", "|", ").*")
 
   override protected def itemFilter[D <: ItemDetails]: (String, ResellableItem[D]) => Boolean =

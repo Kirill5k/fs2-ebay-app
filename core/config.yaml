@@ -62,9 +62,9 @@ data:
           {query: "emporio armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 34}
           {query: "kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 34}
           {query: "moncler", monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
-          {query: "tommy hilfiger", monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
-          {query: "calvin klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
-          {query: "polo ralph lauren", monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
+          {query: "tommy hilfiger", monitor-stock-change: false, monitor-price-change: true, min-discount: 60}
+          {query: "calvin klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 60}
+          {query: "polo ralph lauren", monitor-stock-change: false, monitor-price-change: true, min-discount: 60}
           {query: "gucci", monitor-stock-change: false, monitor-price-change: true, min-discount: 30}
         ]
       }
