@@ -59,7 +59,7 @@ data:
       stock-monitor {
         monitoring-frequency: 6m
         monitoring-requests: [
-          {query: "emporio armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 34}
+          {query: "emporio armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
           {query: "kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 34}
           {query: "moncler", monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
           {query: "tommy hilfiger", monitor-stock-change: false, monitor-price-change: true, min-discount: 60}

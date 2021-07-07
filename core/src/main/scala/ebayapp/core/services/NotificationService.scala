@@ -75,7 +75,8 @@ object NotificationService {
         val quantity = item.buyPrice.quantityAvailable
         val discount = item.buyPrice.discount.fold("")(d => s", $d% off")
         val url      = item.listingDetails.url
-        s"${update.header} for $name (£$price$discount, $quantity): ${update.message} $url"
+        val image    = item.listingDetails.image.getOrElse("")
+        s"${update.header} for $name (£$price$discount, $quantity): ${update.message} $url $image".trim
       }
   }
 
