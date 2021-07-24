@@ -324,6 +324,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare comes with both manuals",
         "Call of Duty: Infinite Warfare with both manuals",
         "Call of Duty: Infinite Warfare VideoGames",
+        "official & genuine Call of Duty: Infinite Warfare VideoGames",
         "genuine brand new sealed Call of Duty: Infinite Warfare The game",
         "brand new Call of Duty: Infinite Warfare For ages 18+",
         "Call of Duty            Infinite            Warfare            ",

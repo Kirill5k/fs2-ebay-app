@@ -59,12 +59,12 @@ data:
       stock-monitor {
         monitoring-frequency: 6m
         monitoring-requests: [
-          {query: "emporio armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
+          {query: "emporio armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
           {query: "moncler", monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
-          {query: "tommy hilfiger", monitor-stock-change: false, monitor-price-change: true, min-discount: 60}
-          {query: "calvin klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 60}
-          {query: "polo ralph lauren", monitor-stock-change: false, monitor-price-change: true, min-discount: 60}
+          {query: "tommy hilfiger", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "calvin klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "polo ralph lauren", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {query: "gucci", monitor-stock-change: false, monitor-price-change: true, min-discount: 30}
         ]
       }
@@ -85,8 +85,8 @@ data:
       stock-monitor {
         monitoring-frequency: 4m
         monitoring-requests: [
-          {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
         ]
       }
     }
