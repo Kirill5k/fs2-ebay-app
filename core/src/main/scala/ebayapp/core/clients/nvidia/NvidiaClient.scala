@@ -31,7 +31,8 @@ final private class LiveNvidiaClient[F[_]](
     "Accept"          -> "*/*",
     "Accept-Encoding" -> "gzip, deflate, br",
     "Cache-Control"   -> "no-store, max-age=0",
-    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
+    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
+    "X-Reroute-To"    -> "https://api.nvidia.partners"
   )
 
   override def search[D <: ItemDetails](

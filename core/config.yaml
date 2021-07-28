@@ -96,7 +96,7 @@ data:
       stock-monitor {
         monitoring-frequency: 5m
         monitoring-requests: [
-          {query: "geforce", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
+          //{query: "geforce", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
         ]
       }
     }
