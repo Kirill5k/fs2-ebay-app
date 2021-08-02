@@ -7,14 +7,16 @@ import ebayapp.core.common.Logger
 import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import mongo4cats.client.MongoClientF
+import mongo4cats.embedded.EmbeddedMongo
 import org.bson.Document
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.wordspec.AsyncWordSpec
 
 import java.time.Instant
 import java.time.temporal.ChronoField.MILLI_OF_SECOND
+import scala.concurrent.Future
 
-class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with EmbeddedMongo {
+class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
   implicit val rt: IORuntime      = IORuntime.global
   implicit val logger: Logger[IO] = MockLogger.make[IO]
@@ -214,11 +216,10 @@ class ResellableItemRepositorySpec extends AnyWordSpec with Matchers with Embedd
     }
   }
 
-  def withEmbeddedMongoClient[A](test: MongoClientF[IO] => IO[A]): A =
-    withRunningEmbeddedMongo() {
+  def withEmbeddedMongoClient[A](test: MongoClientF[IO] => IO[A]): Future[A] =
+    withRunningEmbeddedMongo("localhost", 12345) {
       MongoClientF
         .fromConnectionString[IO]("mongodb://localhost:12345")
         .use(client => test(client))
-        .unsafeRunSync()
-    }
+    }.unsafeToFuture()
 }

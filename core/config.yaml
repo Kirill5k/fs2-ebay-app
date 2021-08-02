@@ -21,10 +21,7 @@ data:
       stock-monitor {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {query: "Apple iPad Pro 11 3rd gen wifi 128gb", monitor-stock-change: false, monitor-price-change: true}
-          {query: "Apple iPad Pro 11 3rd gen wifi 256gb", monitor-stock-change: false, monitor-price-change: true}
           {query: "Apple iPad Pro 12.9 5th gen 128gb wifi", monitor-stock-change: false, monitor-price-change: true}
-          {query: "Apple iPad Pro 12.9 5th gen 256gb wifi", monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }

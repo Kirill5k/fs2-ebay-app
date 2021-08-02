@@ -9,10 +9,8 @@ import ebayapp.core.domain.ResellableItem
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.client.MongoClientF
 import mongo4cats.circe._
+import mongo4cats.database.operations.Filter
 import mongo4cats.database.MongoCollectionF
-import org.bson.conversions.Bson
-import org.bson.Document
-import com.mongodb.client.model.{Filters, Sorts}
 import fs2._
 
 trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItemEntity] {
@@ -30,11 +28,8 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
     val entityMapper: ResellableItemEntityMapper[I, E]
 ) extends ResellableItemRepository[F, I, E] {
 
-  private val emptyDocument        = new Document()
-  private val sortByDateDescending = Sorts.descending("listingDetails.datePosted")
-
   def existsByUrl(listingUrl: String): F[Boolean] =
-    mongoCollection.count[F](Filters.eq("listingDetails.url", listingUrl)).map(_ > 0)
+    mongoCollection.count[F](Filter.eq("listingDetails.url", listingUrl)).map(_ > 0)
 
   def save(item: I): F[Unit] =
     mongoCollection.insertOne[F](entityMapper.toEntity(item)).void
@@ -49,8 +44,7 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
       to: Option[Instant] = None
   ): F[List[I]] =
     mongoCollection.find
-      .filter(postedDateRangeSelector(from, to))
-      .filter(Filters.text(query.value))
+      .filter(postedDateRangeSelector(from, to) && Filter.text(query.value))
       .limit(limit.getOrElse(0))
       .all[F]
       .map(_.map(entityMapper.toDomain).toList)
@@ -61,7 +55,7 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
       to: Option[Instant] = None
   ): F[List[I]] =
     mongoCollection.find
-      .sort(sortByDateDescending)
+      .sortByDesc("listingDetails.datePosted")
       .filter(postedDateRangeSelector(from, to))
       .limit(limit.getOrElse(0))
       .all[F]
@@ -73,18 +67,16 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
       to: Option[Instant] = None
   ): Stream[F, I] =
     mongoCollection.find
-      .sort(sortByDateDescending)
+      .sortByDesc("listingDetails.datePosted")
       .filter(postedDateRangeSelector(from, to))
       .limit(limit.getOrElse(0))
       .stream[F]
       .map(entityMapper.toDomain)
 
-  private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Bson = {
-    val fromFilter = from.map(d => Filters.gte("listingDetails.datePosted", d))
-    val toFilter   = to.map(d => Filters.lt("listingDetails.datePosted", d))
-    val filters    = List(fromFilter, toFilter).flatten
-    if (filters.nonEmpty) Filters.and(filters: _*)
-    else emptyDocument
+  private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Filter = {
+    val fromFilter = from.map(d => Filter.gte("listingDetails.datePosted", d))
+    val toFilter   = to.map(d => Filter.lt("listingDetails.datePosted", d))
+    List(fromFilter, toFilter).flatten.foldLeft(Filter.empty)((acc, el) => acc && el)
   }
 }
 
@@ -95,8 +87,8 @@ object ResellableItemRepository {
   def videoGamesMongo[F[_]: Async](
       mongoClient: MongoClientF[F]
   ): F[VideoGameRepository[F]] =
-    for {
-      db   <- mongoClient.getDatabase("ebay-app")
-      coll <- db.getCollectionWithCirceCodecs[ResellableItemEntity.VideoGame]("videoGames")
-    } yield new ResellableItemMongoRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame](coll)
+    mongoClient
+      .getDatabase("ebay-app")
+      .flatMap(_.getCollectionWithCodec[ResellableItemEntity.VideoGame]("videoGames"))
+      .map(coll => new ResellableItemMongoRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame](coll))
 }
