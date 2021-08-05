@@ -11,8 +11,6 @@ import ebayapp.core.tasks.Tasks
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.implicits._
 
-import scala.concurrent.ExecutionContext
-
 object Application extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
@@ -30,7 +28,7 @@ object Application extends IOApp {
             controllers  <- Controllers.make(services) <* logger.info("created controllers")
             _            <- logger.info("initiating tasks") *> tasks.runAll.compile.drain.start
             _            <- logger.info("starting http server")
-            _ <- BlazeServerBuilder[IO](ExecutionContext.global)
+            _ <- BlazeServerBuilder[IO](runtime.compute)
               .bindHttp(config.server.port, config.server.host)
               .withHttpApp(controllers.routes.orNotFound)
               .serve

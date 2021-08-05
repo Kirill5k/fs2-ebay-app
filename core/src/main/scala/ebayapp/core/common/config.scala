@@ -21,6 +21,12 @@ object config {
       port: Int
   )
 
+  final case class ClientConfig(
+      proxyHost: Option[String],
+      proxyPort: Option[Int],
+      onlyProxyHosts: List[String]
+  )
+
   final case class SearchQuery(value: String) extends AnyVal {
     def base64: String =
       Base64.getEncoder.encodeToString(value.replaceAll(" ", "").getBytes(StandardCharsets.UTF_8))
@@ -117,6 +123,7 @@ object config {
 
   final case class AppConfig(
       server: ServerConfig,
+      client: ClientConfig,
       mongo: MongoConfig,
       cex: CexConfig,
       ebay: EbayConfig,
