@@ -11,7 +11,7 @@ data:
     client {
       proxy-host: ${?CLIENT_PROXY_HOST}
       proxy-port: ${?CLIENT_PROXY_PORT}
-      only-proxy-hosts: ["api.nvidia"]
+      only-proxy-hosts: ["api.nvidia.partners"]
     }
 
     mongo {
@@ -62,6 +62,7 @@ data:
       stock-monitor {
         monitoring-frequency: 6m
         monitoring-requests: [
+          {query: "stone-island", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "emporio armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
           {query: "moncler", monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
