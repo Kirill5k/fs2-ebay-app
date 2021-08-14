@@ -22,7 +22,7 @@ object Application extends IOApp {
           for {
             _            <- logger.info("created resources")
             clients      <- Clients.make(config, resources.httpClientBackend) <* logger.info("created clients")
-            repositories <- Repositories.make(resources.mongoClient) <* logger.info("created repositories")
+            repositories <- Repositories.make(resources.database) <* logger.info("created repositories")
             services     <- Services.make(clients, repositories) <* logger.info("created services")
             tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
             controllers  <- Controllers.make(services) <* logger.info("created controllers")

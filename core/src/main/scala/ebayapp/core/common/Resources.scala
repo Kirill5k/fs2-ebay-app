@@ -3,7 +3,8 @@ package ebayapp.core.common
 import cats.effect.{Async, Resource}
 import cats.implicits._
 import ebayapp.core.common.config.{AppConfig, ClientConfig, MongoConfig}
-import mongo4cats.client.MongoClientF
+import mongo4cats.client.MongoClient
+import mongo4cats.database.MongoDatabase
 import sttp.client3.{SttpBackend, SttpBackendOptions}
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 
@@ -11,13 +12,13 @@ import scala.concurrent.duration._
 
 trait Resources[F[_]] {
   def httpClientBackend: SttpBackend[F, Any]
-  def mongoClient: MongoClientF[F]
+  def database: MongoDatabase[F]
 }
 
 object Resources {
 
-  private def mongoClient[F[_]: Async](config: MongoConfig): Resource[F, MongoClientF[F]] =
-    MongoClientF.fromConnectionString[F](config.connectionUri)
+  private def mongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
+    MongoClient.fromConnectionString[F](config.connectionUri).evalMap(_.getDatabase("ebay-app"))
 
   private def httpClientBackend[F[_]: Async](config: ClientConfig): Resource[F, SttpBackend[F, Any]] = {
     val proxy = (config.proxyHost, config.proxyPort).mapN { (host, port) =>
@@ -31,11 +32,11 @@ object Resources {
   def make[F[_]: Async](config: AppConfig): Resource[F, Resources[F]] =
     (
       httpClientBackend[F](config.client),
-      mongoClient[F](config.mongo)
+      mongoDatabase[F](config.mongo)
     ).mapN { (http, mongo) =>
       new Resources[F] {
         def httpClientBackend: SttpBackend[F, Any] = http
-        def mongoClient: MongoClientF[F]           = mongo
+        def database: MongoDatabase[F]             = mongo
       }
     }
 }

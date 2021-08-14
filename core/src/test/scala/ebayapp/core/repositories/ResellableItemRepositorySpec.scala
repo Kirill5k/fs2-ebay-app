@@ -1,12 +1,13 @@
 package ebayapp.core.repositories
 
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
+import cats.effect.unsafe.implicits.global
 import ebayapp.core.MockLogger
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
-import mongo4cats.client.MongoClientF
+import mongo4cats.client.MongoClient
+import mongo4cats.database.MongoDatabase
 import mongo4cats.embedded.EmbeddedMongo
 import org.bson.Document
 import org.scalatest.matchers.must.Matchers
@@ -18,7 +19,6 @@ import scala.concurrent.Future
 
 class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
-  implicit val rt: IORuntime      = IORuntime.global
   implicit val logger: Logger[IO] = MockLogger.make[IO]
 
   val videoGames: List[ResellableItem.VideoGame] = List(
@@ -31,9 +31,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
 
     "existsByUrl" should {
       "return true if video game already exists by url" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo   <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo   <- ResellableItemRepository.videoGamesMongo[IO](db)
             _      <- repo.saveAll(videoGames)
             exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
           } yield exists
@@ -43,9 +43,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return false if does not exist" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo   <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo   <- ResellableItemRepository.videoGamesMongo[IO](db)
             exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
           } yield exists
 
@@ -57,12 +57,11 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
     "search" should {
 
       "find video games through search" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            db   <- client.getDatabase("ebay-app")
             coll <- db.getCollection("videoGames")
-            _    <- coll.createIndex[IO](Document.parse("""{"itemDetails.name":"text","itemDetails.platform":"text"}"""))
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            _    <- coll.createIndex(Document.parse("""{"itemDetails.name":"text","itemDetails.platform":"text"}"""))
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             res  <- repo.search(SearchQuery("mario"))
           } yield res
@@ -75,9 +74,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
     "findAll" should {
 
       "return all video games" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll()
           } yield all
@@ -87,9 +86,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games posted after provided date" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll(from = Some(Instant.now))
           } yield all
@@ -99,9 +98,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games posted between provided dates" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             from = Some(Instant.now().minusSeconds(100))
             to   = Some(Instant.now.plusSeconds(100))
@@ -113,9 +112,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games posted before provided date" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll(to = Some(Instant.now.minusSeconds(100)))
           } yield all
@@ -125,9 +124,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games with limit" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.findAll(limit = Some(1))
           } yield all
@@ -140,9 +139,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
     "stream" should {
 
       "return all video games" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.stream().compile.toList
           } yield all
@@ -152,9 +151,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games posted after provided date" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.stream(from = Some(Instant.now)).compile.toList
           } yield all
@@ -164,9 +163,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games posted between provided dates" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             from = Some(Instant.now().minusSeconds(100))
             to   = Some(Instant.now.plusSeconds(100))
@@ -178,9 +177,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games posted before provided date" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.stream(to = Some(Instant.now.minusSeconds(100))).compile.toList
           } yield all
@@ -190,9 +189,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
 
       "return all video games with limit" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
             all  <- repo.stream(limit = Some(1)).compile.toList
           } yield all
@@ -204,9 +203,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
 
     "save" should {
       "save video game in db" in {
-        withEmbeddedMongoClient { client =>
+        withEmbeddedMongoClient { db =>
           val result = for {
-            repo <- ResellableItemRepository.videoGamesMongo[IO](client)
+            repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             res  <- repo.save(ResellableItemBuilder.videoGame("Witcher 3"))
           } yield res
 
@@ -216,10 +215,11 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
     }
   }
 
-  def withEmbeddedMongoClient[A](test: MongoClientF[IO] => IO[A]): Future[A] =
+  def withEmbeddedMongoClient[A](test: MongoDatabase[IO] => IO[A]): Future[A] =
     withRunningEmbeddedMongo("localhost", 12345) {
-      MongoClientF
+      MongoClient
         .fromConnectionString[IO]("mongodb://localhost:12345")
-        .use(client => test(client))
+        .evalMap(_.getDatabase("ebay-app"))
+        .use(test)
     }.unsafeToFuture()
 }

@@ -1,7 +1,6 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import cats.implicits._
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.common.Error
