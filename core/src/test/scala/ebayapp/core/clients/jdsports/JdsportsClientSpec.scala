@@ -55,7 +55,7 @@ class JdsportsClientSpec extends SttpClientSpec {
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani/sale") && r.hasParams(Map("from" -> "0")) =>
+          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani") && r.hasParams(Map("from" -> "0")) =>
             Response.ok(json("tessuti/search-by-brand.html"))
           case _ => Response("n/a", StatusCode.NotFound)
         }
