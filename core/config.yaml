@@ -85,9 +85,9 @@ data:
     }
 
     jdsports {
-      base-uri: "https://www.jdsports.co.uk"
+      base-uri: "https://fs2-proxy.herokuapp.com/jdsports"
       stock-monitor {
-        monitoring-frequency: 6m
+        monitoring-frequency: 4m
         monitoring-requests: [
           {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
@@ -96,9 +96,9 @@ data:
     }
 
     tessuti {
-      base-uri: "https://www.tessuti.co.uk"
+      base-uri: "https://fs2-proxy.herokuapp.com"
       stock-monitor {
-        monitoring-frequency: 6m
+        monitoring-frequency: 4m
         monitoring-requests: [
           {query: "Emporio Armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "Boss", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}

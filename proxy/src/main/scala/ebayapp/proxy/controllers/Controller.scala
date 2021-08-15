@@ -39,10 +39,9 @@ final case class RedirectController[F[_]: Concurrent](
 
   private def proxyCall(req: Request[F], reloadOn403: Boolean = true): F[Response[F]] =
     client
-      .stream(req.removeHeader(CIString("host")))
-      .evalTap(res => if (reloadOn403 && res.status == Status.Forbidden) sigTerm.complete(Right(())).void else ().pure[F])
-      .compile
-      .lastOrError
+      .toHttpApp
+      .run(req.removeHeader(CIString("host")))
+      .flatTap(res => if (reloadOn403 && res.status == Status.Forbidden) sigTerm.complete(Right(())).void else ().pure[F])
 }
 
 final private class HealthController[F[_]: Concurrent] extends Controller[F] {

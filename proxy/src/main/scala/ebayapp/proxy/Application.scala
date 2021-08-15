@@ -11,6 +11,7 @@ import org.http4s.blaze.server.BlazeServerBuilder
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 object Application extends IOApp.Simple {
 
@@ -30,6 +31,8 @@ object Application extends IOApp.Simple {
           _ <- logger.info("starting http server")
           _ <- BlazeServerBuilder[IO](ExecutionContext.global)
             .bindHttp(config.server.port, config.server.host)
+            .withResponseHeaderTimeout(3.minutes)
+            .withIdleTimeout(1.hour)
             .withHttpApp(routes.orNotFound)
             .serve
             .interruptWhen(sigTerm)

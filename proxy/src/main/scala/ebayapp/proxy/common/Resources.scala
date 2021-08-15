@@ -6,6 +6,7 @@ import org.http4s.client.Client
 import org.http4s.blaze.client.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 trait Resources[F[_]] {
   def blazeClient: Client[F]
@@ -18,6 +19,8 @@ object Resources {
       .withBufferSize(1024 * 200)
       .withMaxWaitQueueLimit(256 * 10)
       .withMaxTotalConnections(256 * 10)
+      .withRequestTimeout(10.minutes)
+      .withResponseHeaderTimeout(10.minutes)
       .resource
 
   def make[F[_]: Async]: Resource[F, Resources[F]] =
