@@ -95,6 +95,19 @@ data:
       }
     }
 
+    tessutti {
+      base-uri: "https://fs2-proxy.herokuapp.com"
+      stock-monitor {
+        monitoring-frequency: 4m
+        monitoring-requests: [
+          {query: "Emporio Armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "Boss", monitor-stock-change: false, monitor-price-change: true, min-discount: 69}
+          {query: "Stone Island", monitor-stock-change: false, monitor-price-change: true, min-discount: 69}
+          {query: "Kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 69}
+        ]
+      }
+    }
+
     nvidia {
       base-uri: "https://api.nvidia.partners"
       stock-monitor {

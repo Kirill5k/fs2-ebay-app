@@ -129,6 +129,20 @@ final private class JdsportsSaleService[F[_]: Temporal: Logger](
       .parJoinUnbounded
 }
 
+final private class TessuttiSaleService[F[_]: Temporal: Logger](
+    override val client: JdsportsClient[F]
+) extends StockService[F, JdsportsItem] {
+  override protected val name: String = "tessutti"
+
+  override def stockUpdates[D <: ItemDetails: JdsportsItemMapper](config: StockMonitorConfig): Stream[F, ItemStockUpdates[D]] =
+    Stream
+      .emits(config.monitoringRequests.zipWithIndex)
+      .map { case (req, index) =>
+        getUpdates[D](req, config.monitoringFrequency, findItems(req)).delayBy((index * 10).seconds)
+      }
+      .parJoinUnbounded
+}
+
 final private class NvidiaStockService[F[_]: Temporal: Logger](
     override val client: NvidiaClient[F]
 ) extends StockService[F, NvidiaItem] {
@@ -164,6 +178,9 @@ object StockService {
 
   def jdsports[F[_]: Temporal: Logger](client: JdsportsClient[F]): F[StockService[F, JdsportsItem]] =
     Monad[F].pure(new JdsportsSaleService[F](client))
+
+  def tessutti[F[_]: Temporal: Logger](client: JdsportsClient[F]): F[StockService[F, JdsportsItem]] =
+    Monad[F].pure(new TessuttiSaleService[F](client))
 
   def nvidia[F[_]: Temporal: Logger](client: NvidiaClient[F]): F[StockService[F, NvidiaItem]] =
     Monad[F].pure(new NvidiaStockService[F](client))

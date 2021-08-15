@@ -21,6 +21,7 @@ trait Services[F[_]] {
   def selfridgesSale: StockService[F, SelfridgesItem]
   def argosStock: StockService[F, ArgosItem]
   def jdsportsSale: StockService[F, JdsportsItem]
+  def tessuttiSale: StockService[F, JdsportsItem]
   def nvidiaStock: StockService[F, NvidiaItem]
   def scanStock: StockService[F, ScanItem]
 }
@@ -39,9 +40,10 @@ object Services {
       StockService.selfridges[F](clients.selfridges),
       StockService.argos[F](clients.argos),
       StockService.jdsports[F](clients.jdsports),
+      StockService.tessutti[F](clients.tessutti),
       StockService.nvidia[F](clients.nvidia),
       StockService.scan[F](clients.scan)
-    ).mapN((not, vs, es, cs, selfridgesS, as, js, nvidiaS, scanS) =>
+    ).mapN((not, vs, es, cs, selfridgesS, as, js, ts, nvidiaS, scanS) =>
       new Services[F] {
         def notification: NotificationService[F]                  = not
         def videoGame: ResellableItemService[F, ItemDetails.Game] = vs
@@ -50,6 +52,7 @@ object Services {
         def selfridgesSale: StockService[F, SelfridgesItem]       = selfridgesS
         def argosStock: StockService[F, ArgosItem]                = as
         def jdsportsSale: StockService[F, JdsportsItem]           = js
+        def tessuttiSale: StockService[F, JdsportsItem]           = ts
         def nvidiaStock: StockService[F, NvidiaItem]              = nvidiaS
         def scanStock: StockService[F, ScanItem]                  = scanS
       }
