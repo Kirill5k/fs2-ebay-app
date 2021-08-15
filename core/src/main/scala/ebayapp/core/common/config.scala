@@ -93,22 +93,7 @@ object config {
       stockMonitor: StockMonitorConfig
   )
 
-  final case class ArgosConfig(
-      baseUri: String,
-      stockMonitor: StockMonitorConfig
-  )
-
-  final case class JdsportsConfig(
-      baseUri: String,
-      stockMonitor: StockMonitorConfig
-  )
-
-  final case class NvidiaConfig(
-      baseUri: String,
-      stockMonitor: StockMonitorConfig
-  )
-
-  final case class ScanConfig(
+  final case class GenericStoreConfig(
       baseUri: String,
       stockMonitor: StockMonitorConfig
   )
@@ -128,10 +113,10 @@ object config {
       cex: CexConfig,
       ebay: EbayConfig,
       selfridges: SelfridgesConfig,
-      argos: ArgosConfig,
-      jdsports: JdsportsConfig,
-      nvidia: NvidiaConfig,
-      scan: ScanConfig,
+      argos: GenericStoreConfig,
+      jdsports: GenericStoreConfig,
+      nvidia: GenericStoreConfig,
+      scan: GenericStoreConfig,
       telegram: TelegramConfig
   )
 

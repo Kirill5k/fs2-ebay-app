@@ -37,7 +37,7 @@ object Clients {
       TelegramClient.make[F](config.telegram, backend),
       SelfridgesClient.make[F](config.selfridges, backend),
       ArgosClient.make[F](config.argos, backend),
-      JdsportsClient.make[F](config.jdsports, backend),
+      JdsportsClient.jd[F](config.jdsports, backend),
       NvidiaClient.make[F](config.nvidia, backend),
       ScanClient.make[F](config.scan, backend)
     ).mapN { (ebayC, cc, tc, selfridgesC, ac, jc, nvidiaC, scanC) =>

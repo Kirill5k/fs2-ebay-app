@@ -2,7 +2,7 @@ package ebayapp.core.clients.argos
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{ArgosConfig, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchQuery, StockMonitorConfig}
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._
 import ebayapp.core.clients.argos.mappers._
@@ -14,7 +14,7 @@ class ArgosClientSpec extends SttpClientSpec {
 
   "An ArgosClient" should {
 
-    val config = ArgosConfig("http://argos.com", StockMonitorConfig(10.minutes, Nil))
+    val config = GenericStoreConfig("http://argos.com", StockMonitorConfig(10.minutes, Nil))
     val query = SearchQuery("PlayStation 5 Console")
 
     "return relevant deliverable or reservable items" in {

@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.argos.mappers.ArgosItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosItem, ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{ArgosConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import io.circe.generic.auto._
 import sttp.client3._
@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 trait ArgosClient[F[_]] extends SearchClient[F, ArgosItem]
 
 final private class LiveArgosClient[F[_]](
-    private val config: ArgosConfig,
+    private val config: GenericStoreConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
@@ -81,7 +81,7 @@ final private class LiveArgosClient[F[_]](
 
 object ArgosClient {
   def make[F[_]: Temporal: Logger](
-      config: ArgosConfig,
+      config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
   ): F[ArgosClient[F]] =
     Monad[F].pure(new LiveArgosClient[F](config, backend))

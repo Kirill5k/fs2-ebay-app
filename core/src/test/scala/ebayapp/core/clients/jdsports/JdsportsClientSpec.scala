@@ -3,7 +3,7 @@ package ebayapp.core.clients.jdsports
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.requests._
-import ebayapp.core.common.config.{JdsportsConfig, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchQuery, StockMonitorConfig}
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3.{Response, SttpBackend}
@@ -14,10 +14,7 @@ class JdsportsClientSpec extends SttpClientSpec {
 
   "A JdsportsClient" should {
 
-    val config = JdsportsConfig(
-      "http://jdsports.com/proxy",
-      StockMonitorConfig(10.second, Nil)
-    )
+    val config = GenericStoreConfig("http://jdsports.com/proxy", StockMonitorConfig(10.second, Nil))
 
     val query = SearchQuery("Emporio Armani EA7")
 
@@ -33,7 +30,7 @@ class JdsportsClientSpec extends SttpClientSpec {
           case r => throw new RuntimeException(r.uri.toString())
         }
 
-      val client = JdsportsClient.make[IO](config, testingBackend)
+      val client = JdsportsClient.jd[IO](config, testingBackend)
 
       client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
         items.map(_.itemDetails) mustBe List(

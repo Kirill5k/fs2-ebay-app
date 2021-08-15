@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{JdsportsConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
 import sttp.client3.{SttpBackend, basicRequest, _}
@@ -18,7 +18,8 @@ import scala.concurrent.duration._
 trait JdsportsClient[F[_]] extends SearchClient[F, JdsportsItem]
 
 final private class LiveJdsportsClient[F[_]](
-    private val config: JdsportsConfig,
+    private val config: GenericStoreConfig,
+    private val name: String,
     private val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
@@ -31,7 +32,8 @@ final private class LiveJdsportsClient[F[_]](
     "Accept-Encoding" -> "gzip, deflate, br",
     "Cache-Control"   -> "no-store, max-age=0",
     "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
-    "Referer"         -> "https://www.jdsports.co.uk/men/brand/"
+    "Referer"         -> s"https://www.$name.co.uk/men/",
+    "X-Reroute-To"    -> s"https://www.$name.co.uk"
   )
 
   override def search[D <: ItemDetails](
@@ -77,19 +79,19 @@ final private class LiveJdsportsClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.error(s"jdsports-search/forbidden") *>
+            logger.error(s"$name-search/forbidden") *>
               F.sleep(30.seconds) *> searchByBrand(query)
           case Left(_) if r.code == StatusCode.NotFound =>
-            logger.warn(s"jdsports-search/404") *>
+            logger.warn(s"$name-search/404") *>
               F.pure(Nil)
           case Left(_) if r.code.isClientError =>
-            logger.error(s"jdsports-search/${r.code}-error") *>
+            logger.error(s"$name-search/${r.code}-error") *>
               F.pure(Nil)
           case Left(_) if r.code.isServerError =>
-            logger.warn(s"jdsports-search/${r.code}-repeatable") *>
+            logger.warn(s"$name-search/${r.code}-repeatable") *>
               F.sleep(3.second) *> searchByBrand(query)
           case Left(error) =>
-            logger.error(s"jdsports-search/error: $error") *>
+            logger.error(s"$name-search/error: $error") *>
               F.sleep(3.second) *> searchByBrand(query)
         }
       }
@@ -104,25 +106,31 @@ final private class LiveJdsportsClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html))
           case Left(_) if r.code == StatusCode.NotFound =>
-            logger.warn(s"jdsports-get-stock/404") *>
+            logger.warn(s"$name-get-stock/404") *>
               F.pure(None)
           case Left(_) if r.code.isClientError =>
-            logger.error(s"jdsports-get-stock/${r.code}-error") *>
+            logger.error(s"$name-get-stock/${r.code}-error") *>
               F.pure(None)
           case Left(_) if r.code.isServerError =>
-            logger.warn(s"jdsports-get-stock/${r.code}-repeatable") *>
+            logger.warn(s"$name-get-stock/${r.code}-repeatable") *>
               F.sleep(1.second) *> getProductStock(ci)
           case Left(error) =>
-            logger.error(s"jdsports-get-stock: $error") *>
+            logger.error(s"$name-get-stock: $error") *>
               F.sleep(1.second) *> getProductStock(ci)
         }
       }
 }
 
 object JdsportsClient {
-  def make[F[_]: Temporal: Logger](
-      config: JdsportsConfig,
+  def jd[F[_]: Temporal: Logger](
+      config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
   ): F[JdsportsClient[F]] =
-    Monad[F].pure(new LiveJdsportsClient[F](config, backend))
+    Monad[F].pure(new LiveJdsportsClient[F](config, "jdsports", backend))
+
+  def tessutti[F[_]: Temporal: Logger](
+      config: GenericStoreConfig,
+      backend: SttpBackend[F, Any]
+  ): F[JdsportsClient[F]] =
+    Monad[F].pure(new LiveJdsportsClient[F](config, "tessutti", backend))
 }

@@ -3,7 +3,7 @@ package ebayapp.core.clients.scan
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.scan.mappers._
-import ebayapp.core.common.config.{ScanConfig, SearchCategory, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery, StockMonitorConfig}
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._
 
@@ -14,10 +14,7 @@ class ScanClientSpec extends SttpClientSpec {
 
   "A ScanClient" should {
 
-    val config = ScanConfig(
-      "http://scan.co.uk",
-      StockMonitorConfig(10.second, Nil)
-    )
+    val config = GenericStoreConfig("http://scan.co.uk", StockMonitorConfig(10.second, Nil))
 
     val query = SearchQuery("amd radeon rx 6900 xt pcie 40 graphics cards")
     val category = SearchCategory("gpu-amd-gaming")

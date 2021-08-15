@@ -8,7 +8,7 @@ import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{NvidiaConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2.Stream
 import sttp.client3.circe.asJson
@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 trait NvidiaClient[F[_]] extends SearchClient[F, NvidiaItem]
 
 final private class LiveNvidiaClient[F[_]](
-    private val config: NvidiaConfig,
+    private val config: GenericStoreConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
@@ -71,7 +71,7 @@ final private class LiveNvidiaClient[F[_]](
 
 object NvidiaClient {
   def make[F[_]: Temporal: Logger](
-      config: NvidiaConfig,
+      config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
   ): F[NvidiaClient[F]] =
     Monad[F].pure(new LiveNvidiaClient[F](config, backend))
