@@ -13,9 +13,7 @@ import scala.concurrent.duration._
 class JdsportsClientSpec extends SttpClientSpec {
 
   "A JdsportsClient" should {
-
     val config = GenericStoreConfig("http://jdsports.com/proxy", StockMonitorConfig(10.second, Nil))
-
     val query = SearchQuery("Emporio Armani EA7")
 
     "return items on sale" in {
@@ -31,6 +29,39 @@ class JdsportsClientSpec extends SttpClientSpec {
         }
 
       val client = JdsportsClient.jd[IO](config, testingBackend)
+
+      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
+        items.map(_.itemDetails) mustBe List(
+          Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
+          Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
+        )
+        items.map(_.listingDetails.url) mustBe List(
+          "https://www.jdsports.co.uk/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/",
+          "https://www.jdsports.co.uk/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/"
+        )
+
+        items.map(_.buyPrice).toSet mustBe Set(BuyPrice(1, BigDecimal(20.0), Some(67)))
+      }
+    }
+  }
+
+  "A TessutiClient" should {
+    val config = GenericStoreConfig("http://tessuti.com", StockMonitorConfig(10.second, Nil))
+    val query = SearchQuery("Emporio Armani")
+
+    "return items on sale" in {
+      val testingBackend: SttpBackend[IO, Any] = backendStub
+        .whenRequestMatchesPartial {
+          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani") =>
+            Response.ok(json("tessuti/search-by-brand.html"))
+          case r if r.isGoingTo("tessuti.com/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock") =>
+            Response.ok(json("tessuti/get-product-stock.html"))
+          case r if r.isGoingTo("tessuti.com/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock") =>
+            Response.ok(json("tessuti/get-product-stock-oos.html"))
+          case r => throw new RuntimeException(r.uri.toString())
+        }
+
+      val client = JdsportsClient.tessuti[IO](config, testingBackend)
 
       client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
         items.map(_.itemDetails) mustBe List(

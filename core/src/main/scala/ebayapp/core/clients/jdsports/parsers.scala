@@ -48,6 +48,7 @@ private[jdsports] object parsers {
         .replaceAll("\\{", "\\{\"")
         .replaceAll("(?<!\\}),(?!\")", ",\"")
         .replaceAll(":", "\":")
+        .replaceAll(": ", ":")
 
       decode[List[JdCatalogItem]](rawDataObject.slice(0, rawDataObject.length - 2))
         .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawDataObject"))
