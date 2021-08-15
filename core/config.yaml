@@ -85,9 +85,9 @@ data:
     }
 
     jdsports {
-      base-uri: "https://fs2-proxy.herokuapp.com/jdsports"
+      base-uri: "https://www.jdsports.co.uk"
       stock-monitor {
-        monitoring-frequency: 4m
+        monitoring-frequency: 6m
         monitoring-requests: [
           {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
@@ -96,15 +96,15 @@ data:
     }
 
     tessuti {
-      base-uri: "https://fs2-proxy.herokuapp.com"
+      base-uri: "https://www.tessuti.co.uk"
       stock-monitor {
-        monitoring-frequency: 4m
+        monitoring-frequency: 6m
         monitoring-requests: [
-          {query: "Emporio Armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "Boss", monitor-stock-change: false, monitor-price-change: true, min-discount: 69}
-          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 69}
-          {query: "Stone Island", monitor-stock-change: false, monitor-price-change: true, min-discount: 69}
-          {query: "Kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 69}
+          {query: "Emporio Armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {query: "Boss", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "Stone Island", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "Kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
         ]
       }
     }

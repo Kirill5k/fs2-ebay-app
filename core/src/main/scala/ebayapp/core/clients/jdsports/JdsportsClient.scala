@@ -73,7 +73,7 @@ final private class LiveJdsportsClient[F[_]](
       searchByBrand(query, step).map(items => (items, items.nonEmpty.guard[Option].as(step+1)))
     }.flatMap(Stream.emits)
 
-  private def searchByBrand(query: SearchQuery, step: Int, stepSize: Int = 40): F[List[JdCatalogItem]] =
+  private def searchByBrand(query: SearchQuery, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
     basicRequest
       .get(
         uri"${config.baseUri}/men/brand/${query.value.toLowerCase.replace(" ", "-")}/?max=$stepSize&from=${step * stepSize}&sort=price-low-high"
