@@ -25,7 +25,7 @@ final class StockMonitor[F[_]: Concurrent](
     private val argosStockService: StockService[F, ArgosItem],
     private val selfridgesStockService: StockService[F, SelfridgesItem],
     private val jdsportsStockService: StockService[F, JdsportsItem],
-    private val tessuttiStockService: StockService[F, JdsportsItem],
+    private val tessutiStockService: StockService[F, JdsportsItem],
     private val nvidiaStockService: StockService[F, NvidiaItem],
     private val scanStockService: StockService[F, ScanItem]
 ) extends Task[F] {
@@ -36,7 +36,7 @@ final class StockMonitor[F[_]: Concurrent](
       argosStockService.stockUpdates[ItemDetails.Generic](config.argos.stockMonitor),
       selfridgesStockService.stockUpdates[ItemDetails.Clothing](config.selfridges.stockMonitor),
       jdsportsStockService.stockUpdates[ItemDetails.Clothing](config.jdsports.stockMonitor),
-      tessuttiStockService.stockUpdates[ItemDetails.Clothing](config.tessutti.stockMonitor),
+      tessutiStockService.stockUpdates[ItemDetails.Clothing](config.tessuti.stockMonitor),
       nvidiaStockService.stockUpdates[ItemDetails.Generic](config.nvidia.stockMonitor),
       scanStockService.stockUpdates[ItemDetails.Generic](config.scan.stockMonitor)
     ).parJoinUnbounded
@@ -53,7 +53,7 @@ object StockMonitor {
         services.argosStock,
         services.selfridgesSale,
         services.jdsportsSale,
-        services.tessuttiSale,
+        services.tessutiSale,
         services.nvidiaStock,
         services.scanStock
       )

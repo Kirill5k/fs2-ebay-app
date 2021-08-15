@@ -21,7 +21,7 @@ trait Clients[F[_]] {
   def selfridges: SelfridgesClient[F]
   def argos: ArgosClient[F]
   def jdsports: JdsportsClient[F]
-  def tessutti: JdsportsClient[F]
+  def tessuti: JdsportsClient[F]
   def nvidia: NvidiaClient[F]
   def scan: ScanClient[F]
 }
@@ -39,7 +39,7 @@ object Clients {
       SelfridgesClient.make[F](config.selfridges, backend),
       ArgosClient.make[F](config.argos, backend),
       JdsportsClient.jd[F](config.jdsports, backend),
-      JdsportsClient.tessutti[F](config.tessutti, backend),
+      JdsportsClient.tessuti[F](config.tessuti, backend),
       NvidiaClient.make[F](config.nvidia, backend),
       ScanClient.make[F](config.scan, backend)
     ).mapN { (ebayC, cc, telc, selfridgesC, ac, jc, tesc, nvidiaC, scanC) =>
@@ -50,7 +50,7 @@ object Clients {
         def selfridges: SelfridgesClient[F] = selfridgesC
         def argos: ArgosClient[F]           = ac
         def jdsports: JdsportsClient[F]     = jc
-        def tessutti: JdsportsClient[F]     = tesc
+        def tessuti: JdsportsClient[F]     = tesc
         def nvidia: NvidiaClient[F]         = nvidiaC
         override def scan: ScanClient[F]    = scanC
       }

@@ -95,7 +95,7 @@ data:
       }
     }
 
-    tessutti {
+    tessuti {
       base-uri: "https://fs2-proxy.herokuapp.com"
       stock-monitor {
         monitoring-frequency: 4m

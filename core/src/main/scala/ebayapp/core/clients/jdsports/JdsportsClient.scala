@@ -128,9 +128,9 @@ object JdsportsClient {
   ): F[JdsportsClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "jdsports", backend))
 
-  def tessutti[F[_]: Temporal: Logger](
+  def tessuti[F[_]: Temporal: Logger](
       config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
   ): F[JdsportsClient[F]] =
-    Monad[F].pure(new LiveJdsportsClient[F](config, "tessutti", backend))
+    Monad[F].pure(new LiveJdsportsClient[F](config, "tessuti", backend))
 }

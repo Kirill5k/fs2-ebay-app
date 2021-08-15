@@ -29,7 +29,7 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
     val selfridgesSale: StockService[IO, SelfridgesItem]       = mock[StockService[IO, SelfridgesItem]]
     val argosStock: StockService[IO, ArgosItem]                = mock[StockService[IO, ArgosItem]]
     val jdsportsSale: StockService[IO, JdsportsItem]           = mock[StockService[IO, JdsportsItem]]
-    val tessuttiSale: StockService[IO, JdsportsItem]           = mock[StockService[IO, JdsportsItem]]
+    val tessutiSale: StockService[IO, JdsportsItem]           = mock[StockService[IO, JdsportsItem]]
     val nvidiaStock: StockService[IO, NvidiaItem]              = mock[StockService[IO, NvidiaItem]]
     val scanStock: StockService[IO, ScanItem]                  = mock[StockService[IO, ScanItem]]
   }

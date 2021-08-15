@@ -115,7 +115,7 @@ object config {
       selfridges: SelfridgesConfig,
       argos: GenericStoreConfig,
       jdsports: GenericStoreConfig,
-      tessutti: GenericStoreConfig,
+      tessuti: GenericStoreConfig,
       nvidia: GenericStoreConfig,
       scan: GenericStoreConfig,
       telegram: TelegramConfig
