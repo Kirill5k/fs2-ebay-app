@@ -71,7 +71,7 @@ final private class LiveJdsportsClient[F[_]](
 
   private def searchByBrand(query: SearchQuery): F[List[JdCatalogItem]] =
     basicRequest
-      .get(uri"${config.baseUri}/men/brand/${query.value.toLowerCase.replace(" ", "-")}/?max=408&sort=price-low-high")
+      .get(uri"${config.baseUri}/men/brand/${query.value.toLowerCase.replace(" ", "-")}/sale/?max=408&sort=price-low-high")
       .headers(defaultHeaders)
       .send(backend)
       .flatMap { r =>

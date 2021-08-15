@@ -20,7 +20,7 @@ class JdsportsClientSpec extends SttpClientSpec {
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") =>
+          case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7/sale") =>
             Response.ok(json("jdsports/search-by-brand.html"))
           case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock") =>
             Response.ok(json("jdsports/get-product-stock.html"))
@@ -53,7 +53,7 @@ class JdsportsClientSpec extends SttpClientSpec {
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani") =>
+          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani/sale") =>
             Response.ok(json("tessuti/search-by-brand.html"))
           case _ => Response("n/a", StatusCode.NotFound)
         }
