@@ -20,8 +20,10 @@ class JdsportsClientSpec extends SttpClientSpec {
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7/sale") =>
+          case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") && r.hasParams(Map("from" -> "0")) =>
             Response.ok(json("jdsports/search-by-brand.html"))
+          case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") =>
+            Response("n/a", StatusCode.NotFound)
           case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock") =>
             Response.ok(json("jdsports/get-product-stock.html"))
           case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock") =>
@@ -53,7 +55,7 @@ class JdsportsClientSpec extends SttpClientSpec {
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani/sale") =>
+          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani/sale") && r.hasParams(Map("from" -> "0")) =>
             Response.ok(json("tessuti/search-by-brand.html"))
           case _ => Response("n/a", StatusCode.NotFound)
         }

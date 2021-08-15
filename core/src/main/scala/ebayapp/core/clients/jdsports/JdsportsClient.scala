@@ -42,8 +42,7 @@ final private class LiveJdsportsClient[F[_]](
   )(implicit
       mapper: JdsportsItemMapper[D]
   ): Stream[F, ResellableItem[D]] =
-    Stream
-      .evalSeq(searchByBrand(query))
+    brands(query)
       .filter(_.sale)
       .metered(250.millis)
       .evalMap(ci => getProductStock(ci))
@@ -69,9 +68,16 @@ final private class LiveJdsportsClient[F[_]](
         Stream.eval(logger.error(e)(e.getMessage)).drain
       }
 
-  private def searchByBrand(query: SearchQuery): F[List[JdCatalogItem]] =
+  private def brands(query: SearchQuery): Stream[F, JdCatalogItem] =
+    Stream.unfoldLoopEval(0) { step =>
+      searchByBrand(query, step).map(items => (items, items.nonEmpty.guard[Option].as(step+1)))
+    }.flatMap(Stream.emits)
+
+  private def searchByBrand(query: SearchQuery, step: Int, stepSize: Int = 40): F[List[JdCatalogItem]] =
     basicRequest
-      .get(uri"${config.baseUri}/men/brand/${query.value.toLowerCase.replace(" ", "-")}/sale/?max=408&sort=price-low-high")
+      .get(
+        uri"${config.baseUri}/men/brand/${query.value.toLowerCase.replace(" ", "-")}/?max=$stepSize&from=${step * stepSize}&sort=price-low-high"
+      )
       .headers(defaultHeaders)
       .send(backend)
       .flatMap { r =>
@@ -80,7 +86,7 @@ final private class LiveJdsportsClient[F[_]](
             F.fromEither(ResponseParser.parseSearchResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
             logger.error(s"$name-search/forbidden") *>
-              F.sleep(30.seconds) *> searchByBrand(query)
+              F.sleep(30.seconds) *> searchByBrand(query, step)
           case Left(_) if r.code == StatusCode.NotFound =>
             logger.warn(s"$name-search/404") *>
               F.pure(Nil)
@@ -89,10 +95,10 @@ final private class LiveJdsportsClient[F[_]](
               F.pure(Nil)
           case Left(_) if r.code.isServerError =>
             logger.warn(s"$name-search/${r.code}-repeatable") *>
-              F.sleep(3.second) *> searchByBrand(query)
+              F.sleep(3.second) *> searchByBrand(query, step)
           case Left(error) =>
             logger.error(s"$name-search/error: $error") *>
-              F.sleep(3.second) *> searchByBrand(query)
+              F.sleep(3.second) *> searchByBrand(query, step)
         }
       }
 
