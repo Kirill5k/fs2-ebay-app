@@ -9,7 +9,7 @@ import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
-import ebayapp.core.domain.{ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.circe.asJson
 import sttp.client3._
@@ -25,12 +25,15 @@ final private class LiveNvidiaClient[F[_]](
 ) extends SearchClient[F] {
 
   private val defaultHeaders: Map[String, String] = Map(
-    "Connection"      -> "keep-alive",
-    "Accept"          -> "*/*",
-    "Accept-Encoding" -> "gzip, deflate, br",
-    "Cache-Control"   -> "no-store, max-age=0",
-    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
-    "X-Reroute-To"    -> "https://api.nvidia.partners"
+    "Access-Control-Allow-Origin" -> "*",
+    "Content-Type"                -> "application/json",
+    "Connection"                  -> "keep-alive",
+    "Accept"                      -> "*/*",
+    "Accept-Encoding"             -> "gzip, deflate, br",
+    "Cache-Control"               -> "no-store, max-age=0",
+    "User-Agent"                  -> "PostmanRuntime/7.28.3",
+    "X-Reroute-To"                -> "https://api.nvidia.partners",
+    "Cookie" -> "ak_bmsc=BE502843B587C9DA16D4A1C6448BABCB~000000000000000000000000000000~YAAQD+YYPh+tea56AQAAOCQvUAz9b8GZc1KmIastBUnrK9GRtE9+COuoh3rwvDKKlV0powuG0bT5zVx5h0RURKwGVMK3/ZNhxNRdqnlgrfFT89Ij3x5GRtAf1uqij5cvLIC+9NfTGz+LExcH3JmU/q7Pv5O58l1Sf1I0efrKR8tHe85pzre1G2oUf+LYP6UB4b8boydMECM22Lgfx4TTLnIAKliKb2gUiA0rFjp3YVPTr9qIXsTjPVXVNdxPpsnOUOzlReLah13U0LVnBV5u3Yzpp2LOtgJWkPAz1ZA03r8wUpqPtpODoix2Sky56f86QPC2v/bsoZO1VutENbIiiQ6JsI3sRZwDAKBRL2PadfcBLFB8xGxb2I4tQAlbSg=="
   ) ++ config.headers
 
   override def search(
