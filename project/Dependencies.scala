@@ -5,9 +5,9 @@ object Dependencies {
     lazy val mongo4cats = "0.3.0"
     lazy val pureConfig = "0.16.0"
     lazy val circe      = "0.14.1"
-    lazy val sttp       = "3.3.11"
-    lazy val http4s     = "1.0.0-M23"
-    lazy val logback    = "1.2.4"
+    lazy val sttp       = "3.3.13"
+    lazy val http4s     = "1.0.0-M24"
+    lazy val logback    = "1.2.5"
     lazy val log4cats   = "2.1.1"
 
     lazy val scalaTest = "3.2.9"
