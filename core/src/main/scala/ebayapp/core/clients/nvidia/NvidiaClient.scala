@@ -5,18 +5,16 @@ import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
 import io.circe.generic.auto._
-import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
+import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.{ResellableItem}
 import fs2.Stream
 import sttp.client3.circe.asJson
 import sttp.client3._
 
 import scala.concurrent.duration._
-
-trait NvidiaClient[F[_]] extends SearchClient[F, NvidiaItem]
 
 final private class LiveNvidiaClient[F[_]](
     private val config: GenericStoreConfig,
@@ -24,7 +22,7 @@ final private class LiveNvidiaClient[F[_]](
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
-) extends NvidiaClient[F] {
+) extends SearchClient[F] {
 
   private val defaultHeaders: Map[String, String] = Map(
     "Connection"      -> "keep-alive",
@@ -35,17 +33,17 @@ final private class LiveNvidiaClient[F[_]](
     "X-Reroute-To"    -> "https://api.nvidia.partners"
   )
 
-  override def search[D <: ItemDetails](
+  override def search(
       query: SearchQuery,
       category: Option[SearchCategory]
-  )(implicit mapper: NvidiaItemMapper[D]): Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem.Anything] =
     Stream
       .evalSeq(searchProducts(query, category))
       .filterNot(_.isOutOfStock)
       .flatMap { p =>
         Stream.emits(p.retailers.map(r => NvidiaItem(p.productTitle, p.imageURL, p.category, r)))
       }
-      .map(mapper.toDomain)
+      .map(nvidiaGenericItemMapper.toDomain)
 
   private def searchProducts(q: SearchQuery, c: Option[SearchCategory]): F[List[Product]] =
     basicRequest
@@ -73,6 +71,6 @@ object NvidiaClient {
   def make[F[_]: Temporal: Logger](
       config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
-  ): F[NvidiaClient[F]] =
+  ): F[SearchClient[F]] =
     Monad[F].pure(new LiveNvidiaClient[F](config, backend))
 }

@@ -53,4 +53,8 @@ object stock {
       item: ResellableItem[D],
       updates: List[StockUpdate]
   )
+
+  object ItemStockUpdates {
+    type Anything = ItemStockUpdates[_ <: ItemDetails]
+  }
 }

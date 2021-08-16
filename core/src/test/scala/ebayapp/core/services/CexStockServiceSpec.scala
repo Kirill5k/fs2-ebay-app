@@ -3,11 +3,10 @@ package ebayapp.core.services
 import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.clients.cex.mappers._
 import ebayapp.core.common.config.{SearchCategory, SearchQuery, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
-import ebayapp.core.domain.{ItemDetails, ResellableItemBuilder}
 import fs2.Stream
 
 import scala.concurrent.duration._
@@ -26,15 +25,20 @@ class CexStockServiceSpec extends CatsSpec {
     "monitor multiple requests concurrently" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(any[SearchQuery], any[Option[SearchCategory]])(any[CexItemMapper[ItemDetails.Generic]])).thenReturn(Stream.empty)
+      when(client.search(any[SearchQuery], any[Option[SearchCategory]])).thenReturn(Stream.empty)
 
       val service = StockService.cex[IO](client)
-      val result =
-        service.flatMap(_.stockUpdates(config.copy(monitoringRequests = List(req1, req2))).interruptAfter(1100.millis).compile.toList)
+      val result = service.flatMap { svc =>
+        svc
+          .stockUpdates(config.copy(monitoringRequests = List(req1, req2)))
+          .interruptAfter(1100.millis)
+          .compile
+          .toList
+      }
 
       result.unsafeToFuture().map { u =>
         verify(client, atLeast(2)).search(req1.query)
-        verify(client, atLeast(2)).search(req2.query)
+        verify(client, atLeast(1)).search(req2.query)
         u mustBe Nil
       }
     }

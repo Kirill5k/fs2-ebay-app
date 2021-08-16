@@ -1,14 +1,12 @@
 package ebayapp.core.clients
 
 import ebayapp.core.common.config.{SearchCategory, SearchQuery}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 
-trait SearchClient[F[_], I] {
-  def search[D <: ItemDetails](
+trait SearchClient[F[_]] {
+  def search(
       query: SearchQuery,
       category: Option[SearchCategory] = None
-  )(implicit
-      mapper: ItemMapper[I, D]
-  ): Stream[F, ResellableItem[D]]
+  ): Stream[F, ResellableItem.Anything]
 }

@@ -7,7 +7,7 @@ import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
 
-object mappers {
+private[cex] object mappers {
 
   type CexItemMapper[D <: ItemDetails] = ItemMapper[CexItem, D]
 

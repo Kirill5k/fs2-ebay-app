@@ -14,8 +14,8 @@ import scala.concurrent.duration._
 
 trait NotificationService[F[_]] {
   def alert(error: Error): F[Unit]
-  def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit]
-  def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit]
+  def cheapItem(item: ResellableItem.Anything): F[Unit]
+  def stockUpdate(item: ResellableItem.Anything, update: StockUpdate): F[Unit]
 }
 
 final class TelegramNotificationService[F[_]](
@@ -27,7 +27,7 @@ final class TelegramNotificationService[F[_]](
 ) extends NotificationService[F] {
   import NotificationService._
 
-  override def cheapItem[D <: ItemDetails](item: ResellableItem[D]): F[Unit] =
+  override def cheapItem(item: ResellableItem.Anything): F[Unit] =
     F.pure(item.cheapItemNotification).flatMap {
       case Some(message) =>
         logger.info(s"""sending "$message"""") *>
@@ -36,7 +36,7 @@ final class TelegramNotificationService[F[_]](
         logger.warn(s"not enough details for sending cheap item notification $item")
     }
 
-  override def stockUpdate[D <: ItemDetails](item: ResellableItem[D], update: StockUpdate): F[Unit] =
+  override def stockUpdate(item: ResellableItem.Anything, update: StockUpdate): F[Unit] =
     F.pure(item.stockUpdateNotification(update)).flatMap {
       case Some(message) =>
         sentMessages.evalIfNew(base64(message)) {

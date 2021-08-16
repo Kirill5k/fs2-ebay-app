@@ -5,8 +5,6 @@ import ebayapp.core.SttpClientSpec
 import ebayapp.core.common.config.{GenericStoreConfig, SearchQuery, StockMonitorConfig}
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._
-import ebayapp.core.clients.argos.mappers._
-import ebayapp.core.domain.ItemDetails
 
 import scala.concurrent.duration._
 
@@ -29,11 +27,11 @@ class ArgosClientSpec extends SttpClientSpec {
 
       val client = ArgosClient.make[IO](config, backend)
 
-      val result = client.flatMap(_.search[ItemDetails.Generic](query).compile.toList)
+      val result = client.flatMap(_.search(query).compile.toList)
 
       result.unsafeToFuture().map { items =>
         items must have size 1
-        items.head.itemDetails.name mustBe "Sony PlayStation 5 Digital Console"
+        items.head.itemDetails.fullName mustBe Some("Sony PlayStation 5 Digital Console")
       }
     }
   }

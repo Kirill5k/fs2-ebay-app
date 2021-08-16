@@ -4,18 +4,16 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, JdsportsItemMapper}
+import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, jdsportsClothingMapper}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.{SttpBackend, basicRequest, _}
 import sttp.model.StatusCode
 
 import scala.concurrent.duration._
-
-trait JdsportsClient[F[_]] extends SearchClient[F, JdsportsItem]
 
 final private class LiveJdsportsClient[F[_]](
     private val config: GenericStoreConfig,
@@ -24,7 +22,7 @@ final private class LiveJdsportsClient[F[_]](
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
-) extends JdsportsClient[F] {
+) extends SearchClient[F] {
 
   private val defaultHeaders: Map[String, String] = Map(
     "Connection"      -> "keep-alive",
@@ -36,12 +34,10 @@ final private class LiveJdsportsClient[F[_]](
     "X-Reroute-To"    -> s"https://www.$name.co.uk"
   )
 
-  override def search[D <: ItemDetails](
+  override def search(
       query: SearchQuery,
       category: Option[SearchCategory]
-  )(implicit
-      mapper: JdsportsItemMapper[D]
-  ): Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem.Anything] =
     brands(query)
       .filter(_.sale)
       .metered(250.millis)
@@ -63,7 +59,7 @@ final private class LiveJdsportsClient[F[_]](
         }
       }
       .flatMap(Stream.emits)
-      .map(mapper.toDomain)
+      .map(jdsportsClothingMapper.toDomain)
       .handleErrorWith { e =>
         Stream.eval(logger.error(e)(e.getMessage)).drain
       }
@@ -131,12 +127,12 @@ object JdsportsClient {
   def jd[F[_]: Temporal: Logger](
       config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
-  ): F[JdsportsClient[F]] =
+  ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "jdsports", backend))
 
   def tessuti[F[_]: Temporal: Logger](
       config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
-  ): F[JdsportsClient[F]] =
+  ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "tessuti", backend))
 }

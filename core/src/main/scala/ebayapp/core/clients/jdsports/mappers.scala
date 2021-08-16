@@ -7,7 +7,7 @@ import ebayapp.core.domain.{ItemDetails, ResellableItem}
 
 import java.time.Instant
 
-object mappers {
+private[jdsports] object mappers {
 
   final case class JdsportsItem(
       id: String,
@@ -29,7 +29,7 @@ object mappers {
 
   type JdsportsItemMapper[D <: ItemDetails] = ItemMapper[JdsportsItem, D]
 
-  implicit val clothingMapper: JdsportsItemMapper[ItemDetails.Clothing] = new JdsportsItemMapper[ItemDetails.Clothing] {
+  implicit val jdsportsClothingMapper: JdsportsItemMapper[ItemDetails.Clothing] = new JdsportsItemMapper[ItemDetails.Clothing] {
 
     override def toDomain(jdi: JdsportsItem): ResellableItem[ItemDetails.Clothing] =
       ResellableItem[ItemDetails.Clothing](

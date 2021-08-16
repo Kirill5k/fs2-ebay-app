@@ -7,7 +7,7 @@ import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 
 import java.time.Instant
 
-object mappers {
+private[scan] object mappers {
 
   type ScanItemMapper[D <: ItemDetails] = ItemMapper[ScanItem, D]
 

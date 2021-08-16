@@ -4,18 +4,16 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.scan.mappers.ScanItemMapper
+import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.{ResellableItem}
 import fs2.Stream
 import sttp.client3._
 import sttp.model.StatusCode
 
 import scala.concurrent.duration._
-
-trait ScanClient[F[_]] extends SearchClient[F, ScanItem]
 
 final private class LiveScanClient[F[_]](
     private val config: GenericStoreConfig,
@@ -23,7 +21,7 @@ final private class LiveScanClient[F[_]](
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
-) extends ScanClient[F] {
+) extends SearchClient[F] {
 
   private val defaultHeaders: Map[String, String] = Map(
     "Connection"      -> "keep-alive",
@@ -38,15 +36,13 @@ final private class LiveScanClient[F[_]](
     "Cookie" -> "DS=7UA2E7DW4nWCCWnSj+qXSXIYQrXEEhyyz0TtypCXft6u922fz2V0Qhcr8r1uQ+rfox/YR2xnFkZwFyWmf1dkyg==; S=iPpIiBa/N6Wv/v+5Ht06ObeHZ7Q9psRVSBQI14fQ1kgWuJ2AMavdRJGa4fFhxTGuXcdIb8E2+HtNBL2AFasxqg==; SID=XTt7G0yGt3+t5HGYcQ1Hog==; US=NNURMAkV2WaTR01Ihle72BzfdZu6rGv4UBNFQGNEqhJp+lwom4JA/bEqiCHPE2NimcDSyF5C44GRSBz9HX/mWTYz+0gnPAe8FVizYF/pYGAN97V1h6mYbZRtpdkCbhzaLrv2DuZhkpddEhjMyQwvd3h4+Y9elm2GnW/YV9Ao+bJevEGYlMSl7pnDVT6x8druzJE17ECrBYJWL8UJxDQcrOVtv4ZJeUd+PY+/XB4lw30Pxdu1UzPcFpGO+OotPix2f4YITq/MKd9granuMvUPGt24lGqsictSb0xGHXBG/Nj9rsiV525hWf0DFzzr829f; __cfduid=d683c6ad4693dbd39028eb7c1e1bb861f1619891621"
   )
 
-  override def search[D <: ItemDetails](
+  override def search(
       query: SearchQuery,
       category: Option[SearchCategory]
-  )(implicit
-      mapper: ScanItemMapper[D]
-  ): Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem.Anything] =
     Stream
       .evalSeq(searchByCard(query, category.get))
-      .map(mapper.toDomain)
+      .map(scanaGenericItemMapper.toDomain)
 
   private def searchByCard(query: SearchQuery, category: SearchCategory): F[List[ScanItem]] = {
     val cat  = category.value.toLowerCase.replaceAll(" ", "-")
@@ -83,6 +79,6 @@ object ScanClient {
   def make[F[_]: Temporal: Logger](
       config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
-  ): F[ScanClient[F]] =
+  ): F[SearchClient[F]] =
     Monad[F].pure(new LiveScanClient[F](config, backend))
 }

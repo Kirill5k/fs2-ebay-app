@@ -2,7 +2,6 @@ package ebayapp.core.clients.scan
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.clients.scan.mappers._
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery, StockMonitorConfig}
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._

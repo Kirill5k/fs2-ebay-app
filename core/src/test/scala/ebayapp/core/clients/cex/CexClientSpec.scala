@@ -2,7 +2,6 @@ package ebayapp.core.clients.cex
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.clients.cex.mappers._
 import ebayapp.core.common.config.{CexConfig, CexPriceFindConfig, SearchQuery, StockMonitorConfig}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.search._
@@ -35,7 +34,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.search[ItemDetails.Generic](query).compile.toList)
+      val result = cexClient.flatMap(_.search(query).compile.toList)
 
       result
         .unsafeToFuture()

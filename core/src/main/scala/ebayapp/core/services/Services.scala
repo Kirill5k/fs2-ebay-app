@@ -3,12 +3,6 @@ package ebayapp.core.services
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.Clients
-import ebayapp.core.clients.argos.responses.ArgosItem
-import ebayapp.core.clients.cex.responses.CexItem
-import ebayapp.core.clients.jdsports.mappers.JdsportsItem
-import ebayapp.core.clients.nvidia.responses.NvidiaItem
-import ebayapp.core.clients.scan.parsers.ScanItem
-import ebayapp.core.clients.selfridges.mappers.SelfridgesItem
 import ebayapp.core.common.Logger
 import ebayapp.core.domain.ItemDetails
 import ebayapp.core.repositories.Repositories
@@ -17,13 +11,13 @@ trait Services[F[_]] {
   def notification: NotificationService[F]
   def videoGame: ResellableItemService[F, ItemDetails.Game]
   def ebayDeals: EbayDealsService[F]
-  def cexStock: StockService[F, CexItem]
-  def selfridgesSale: StockService[F, SelfridgesItem]
-  def argosStock: StockService[F, ArgosItem]
-  def jdsportsSale: StockService[F, JdsportsItem]
-  def tessutiSale: StockService[F, JdsportsItem]
-  def nvidiaStock: StockService[F, NvidiaItem]
-  def scanStock: StockService[F, ScanItem]
+  def cexStock: StockService[F]
+  def selfridgesSale: StockService[F]
+  def argosStock: StockService[F]
+  def jdsportsSale: StockService[F]
+  def tessutiSale: StockService[F]
+  def nvidiaStock: StockService[F]
+  def scanStock: StockService[F]
 }
 
 object Services {
@@ -48,13 +42,13 @@ object Services {
         def notification: NotificationService[F]                  = not
         def videoGame: ResellableItemService[F, ItemDetails.Game] = vs
         def ebayDeals: EbayDealsService[F]                        = es
-        def cexStock: StockService[F, CexItem]                    = cs
-        def selfridgesSale: StockService[F, SelfridgesItem]       = selfridgesS
-        def argosStock: StockService[F, ArgosItem]                = as
-        def jdsportsSale: StockService[F, JdsportsItem]           = js
-        def tessutiSale: StockService[F, JdsportsItem]           = ts
-        def nvidiaStock: StockService[F, NvidiaItem]              = nvidiaS
-        def scanStock: StockService[F, ScanItem]                  = scanS
+        def cexStock: StockService[F]                             = cs
+        def selfridgesSale: StockService[F]                       = selfridgesS
+        def argosStock: StockService[F]                           = as
+        def jdsportsSale: StockService[F]                         = js
+        def tessutiSale: StockService[F]                          = ts
+        def nvidiaStock: StockService[F]                          = nvidiaS
+        def scanStock: StockService[F]                            = scanS
       }
     )
 }

@@ -2,10 +2,8 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.selfridges.SelfridgesClient
-import ebayapp.core.clients.selfridges.mappers._
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.config.{SearchCategory, SearchQuery, StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.ItemDetails
 import ebayapp.core.domain.ResellableItemBuilder.clothing
 import fs2.Stream
 
@@ -29,18 +27,18 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
         clothing("Logo-print swimsuit")
       )
 
-      val client = mock[SelfridgesClient[IO]]
-      when(client.search(any[SearchQuery], any[Option[SearchCategory]])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
+      val client = mock[SearchClient[IO]]
+      when(client.search(any[SearchQuery], any[Option[SearchCategory]]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(unwantedItems))
 
       val result = StockService.selfridges[IO](client).flatMap {
-        _.stockUpdates[ItemDetails.Clothing](config).interruptAfter(1200.millis).compile.toList
+        _.stockUpdates(config).interruptAfter(1200.millis).compile.toList
       }
 
       result.unsafeToFuture().map { updates =>
         updates must have size 1
-        updates.head.item.itemDetails.name mustBe "T-shirt"
+        updates.head.item.itemDetails.fullName mustBe Some("Foo-bar - T-shirt, size XXL")
       }
     }
 
@@ -51,18 +49,18 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
         clothing("T-shirt cheap", discount = Some(96))
       )
 
-      val client = mock[SelfridgesClient[IO]]
-      when(client.search(any[SearchQuery], any[Option[SearchCategory]])(any[SelfridgesItemMapper[ItemDetails.Clothing]]))
+      val client = mock[SearchClient[IO]]
+      when(client.search(any[SearchQuery], any[Option[SearchCategory]]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(items))
 
       val result = StockService.selfridges[IO](client).flatMap {
-        _.stockUpdates[ItemDetails.Clothing](config).interruptAfter(1200.millis).compile.toList
+        _.stockUpdates(config).interruptAfter(1200.millis).compile.toList
       }
 
       result.unsafeToFuture().map { updates =>
         updates must have size 1
-        updates.head.item.itemDetails.name mustBe "T-shirt cheap"
+        updates.head.item.itemDetails.fullName mustBe Some("Foo-bar - T-shirt cheap, size XXL")
       }
     }
   }

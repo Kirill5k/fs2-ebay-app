@@ -10,6 +10,8 @@ final case class ResellableItem[D <: ItemDetails](
 )
 
 object ResellableItem {
+  type Anything = ResellableItem[_ <: ItemDetails]
+
   type GenericItem = ResellableItem[ItemDetails.Generic]
   type VideoGame   = ResellableItem[ItemDetails.Game]
   type MobilePhone = ResellableItem[ItemDetails.Phone]

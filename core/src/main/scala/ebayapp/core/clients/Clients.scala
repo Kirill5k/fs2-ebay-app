@@ -18,12 +18,12 @@ trait Clients[F[_]] {
   def ebay: EbayClient[F]
   def cex: CexClient[F]
   def telegram: TelegramClient[F]
-  def selfridges: SelfridgesClient[F]
-  def argos: ArgosClient[F]
-  def jdsports: JdsportsClient[F]
-  def tessuti: JdsportsClient[F]
-  def nvidia: NvidiaClient[F]
-  def scan: ScanClient[F]
+  def selfridges: SearchClient[F]
+  def argos: SearchClient[F]
+  def jdsports: SearchClient[F]
+  def tessuti: SearchClient[F]
+  def nvidia: SearchClient[F]
+  def scan: SearchClient[F]
 }
 
 object Clients {
@@ -44,15 +44,15 @@ object Clients {
       ScanClient.make[F](config.scan, backend)
     ).mapN { (ebayC, cc, telc, selfridgesC, ac, jc, tesc, nvidiaC, scanC) =>
       new Clients[F] {
-        def ebay: EbayClient[F]             = ebayC
-        def cex: CexClient[F]               = cc
-        def telegram: TelegramClient[F]     = telc
-        def selfridges: SelfridgesClient[F] = selfridgesC
-        def argos: ArgosClient[F]           = ac
-        def jdsports: JdsportsClient[F]     = jc
-        def tessuti: JdsportsClient[F]     = tesc
-        def nvidia: NvidiaClient[F]         = nvidiaC
-        override def scan: ScanClient[F]    = scanC
+        def ebay: EbayClient[F]            = ebayC
+        def cex: CexClient[F]              = cc
+        def telegram: TelegramClient[F]    = telc
+        def selfridges: SearchClient[F]    = selfridgesC
+        def argos: SearchClient[F]         = ac
+        def jdsports: SearchClient[F]      = jc
+        def tessuti: SearchClient[F]       = tesc
+        def nvidia: SearchClient[F]        = nvidiaC
+        def scan: SearchClient[F] = scanC
       }
     }
 

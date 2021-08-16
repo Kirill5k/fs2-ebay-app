@@ -7,7 +7,7 @@ import ebayapp.core.domain.{ItemDetails, ResellableItem}
 
 import java.time.Instant
 
-object mappers {
+private[nvidia] object mappers {
 
   type NvidiaItemMapper[D <: ItemDetails] = ItemMapper[NvidiaItem, D]
 

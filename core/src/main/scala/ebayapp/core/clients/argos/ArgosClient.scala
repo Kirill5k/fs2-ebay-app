@@ -4,11 +4,11 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.argos.mappers.ArgosItemMapper
-import ebayapp.core.clients.argos.responses.{ArgosItem, ArgosSearchResponse, SearchData}
+import ebayapp.core.clients.argos.mappers.argosGenericItemMapper
+import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import io.circe.generic.auto._
 import sttp.client3._
 import sttp.client3.circe.asJson
@@ -16,15 +16,13 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-trait ArgosClient[F[_]] extends SearchClient[F, ArgosItem]
-
 final private class LiveArgosClient[F[_]](
     private val config: GenericStoreConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
-) extends ArgosClient[F] {
+) extends SearchClient[F] {
 
   private val defaultHeaders = Map(
     "Cache-Control"   -> "no-store, max-age=0",
@@ -37,12 +35,10 @@ final private class LiveArgosClient[F[_]](
     "X-Reroute-To"    -> "https://www.argos.co.uk"
   )
 
-  override def search[D <: ItemDetails](
+  override def search(
       query: SearchQuery,
       category: Option[SearchCategory]
-  )(implicit
-      mapper: ArgosItemMapper[D]
-  ): Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem.Anything] =
     Stream
       .unfoldLoopEval(1) { page =>
         search(query, page).map {
@@ -53,7 +49,7 @@ final private class LiveArgosClient[F[_]](
       .flatMap(Stream.emits)
       .filter(_.attributes.relevancyRank == 1)
       .filter(i => i.attributes.deliverable || i.attributes.reservable)
-      .map(mapper.toDomain)
+      .map(argosGenericItemMapper.toDomain)
 
   private def search(query: SearchQuery, page: Int): F[Option[SearchData]] =
     basicRequest
@@ -83,6 +79,6 @@ object ArgosClient {
   def make[F[_]: Temporal: Logger](
       config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
-  ): F[ArgosClient[F]] =
+  ): F[SearchClient[F]] =
     Monad[F].pure(new LiveArgosClient[F](config, backend))
 }

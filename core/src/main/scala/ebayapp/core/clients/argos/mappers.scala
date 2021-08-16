@@ -8,11 +8,11 @@ import ebayapp.core.domain.{ItemDetails, ResellableItem}
 
 import java.time.Instant
 
-object mappers {
+private[argos] object mappers {
 
   type ArgosItemMapper[D <: ItemDetails] = ItemMapper[ArgosItem, D]
 
-  implicit def argosGeneric: ArgosItemMapper[ItemDetails.Generic] = new ArgosItemMapper[ItemDetails.Generic] {
+  implicit val argosGenericItemMapper: ArgosItemMapper[ItemDetails.Generic] = new ArgosItemMapper[ItemDetails.Generic] {
 
     override def toDomain(data: ArgosItem): ResellableItem[ItemDetails.Generic] =
       ResellableItem[ItemDetails.Generic](

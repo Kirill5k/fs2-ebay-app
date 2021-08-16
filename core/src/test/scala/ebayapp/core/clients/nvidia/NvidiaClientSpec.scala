@@ -3,8 +3,6 @@ package ebayapp.core.clients.nvidia
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery, StockMonitorConfig}
-import ebayapp.core.clients.nvidia.mappers._
-import ebayapp.core.domain.ItemDetails
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._
 
@@ -30,7 +28,7 @@ class NvidiaClientSpec extends SttpClientSpec {
 
       val client = NvidiaClient.make[IO](config, testingBackend)
 
-      val result = client.flatMap(_.search[ItemDetails.Generic](query, Some(category)).compile.toList)
+      val result = client.flatMap(_.search(query, Some(category)).compile.toList)
 
       result.unsafeToFuture().map { res =>
         res must have size 99

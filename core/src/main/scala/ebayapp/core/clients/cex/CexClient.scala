@@ -3,7 +3,7 @@ package ebayapp.core.clients.cex
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.cex.mappers.CexItemMapper
+import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.{CexConfig, SearchCategory, SearchQuery}
@@ -18,7 +18,7 @@ import fs2.Stream
 
 import scala.concurrent.duration._
 
-trait CexClient[F[_]] extends SearchClient[F, CexItem] {
+trait CexClient[F[_]] extends SearchClient[F] {
   def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]]
 }
 
@@ -63,18 +63,15 @@ final class CexApiClient[F[_]](
       .minByOption(_.exchangePrice)
       .map(c => SellPrice(BigDecimal(c.cashPrice), BigDecimal(c.exchangePrice)))
 
-  override def search[D <: ItemDetails](
+  override def search(
       query: SearchQuery,
       category: Option[SearchCategory]
-  )(implicit
-      mapper: CexItemMapper[D]
-  ): Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem.Anything] =
     Stream
       .eval(search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1"))
       .map(_.response.data.fold(List.empty[CexItem])(_.boxes))
-      .flatMap { items =>
-        Stream.emits(items).map(mapper.toDomain)
-      }
+      .flatMap(Stream.emits)
+      .map(cexGenericItemMapper.toDomain)
 
   private def search(uri: Uri): F[CexSearchResponse] =
     basicRequest

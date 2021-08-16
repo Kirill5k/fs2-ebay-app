@@ -5,10 +5,10 @@ import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.selfridges.SelfridgesClient._
-import ebayapp.core.clients.selfridges.mappers._
+import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, selfridgesClothingMapper}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{SearchCategory, SearchQuery, SelfridgesConfig}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.Decoder
 import io.circe.generic.auto._
@@ -18,15 +18,13 @@ import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration._
 
-trait SelfridgesClient[F[_]] extends SearchClient[F, SelfridgesItem]
-
 final private class LiveSelfridgesClient[F[_]](
     private val config: SelfridgesConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
-) extends SelfridgesClient[F] {
+) extends SearchClient[F] {
 
   private val defaultHeaders = Map(
     "Cache-Control"   -> "no-store, max-age=0",
@@ -39,12 +37,10 @@ final private class LiveSelfridgesClient[F[_]](
     "api-key"         -> config.apiKey
   )
 
-  override def search[D <: ItemDetails](
+  override def search(
       query: SearchQuery,
       category: Option[SearchCategory]
-  )(implicit
-      mapper: SelfridgesItemMapper[D]
-  ): Stream[F, ResellableItem[D]] =
+  ): Stream[F, ResellableItem.Anything] =
     Stream
       .unfoldLoopEval(1)(searchForItems(query))
       .flatMap(Stream.emits)
@@ -55,7 +51,7 @@ final private class LiveSelfridgesClient[F[_]](
           .metered(1.second)
           .map { case (stock, price) => SelfridgesItem(item, stock, price) }
       }
-      .map(mapper.toDomain)
+      .map(selfridgesClothingMapper.toDomain)
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
@@ -165,6 +161,6 @@ object SelfridgesClient {
   def make[F[_]: Temporal: Logger](
       config: SelfridgesConfig,
       backend: SttpBackend[F, Any]
-  ): F[SelfridgesClient[F]] =
+  ): F[SearchClient[F]] =
     Monad[F].pure(new LiveSelfridgesClient[F](config, backend))
 }
