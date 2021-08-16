@@ -87,15 +87,10 @@ object config {
       stockMonitor: StockMonitorConfig
   )
 
-  final case class SelfridgesConfig(
-      baseUri: String,
-      apiKey: String,
-      stockMonitor: StockMonitorConfig
-  )
-
   final case class GenericStoreConfig(
       baseUri: String,
-      stockMonitor: StockMonitorConfig
+      stockMonitor: StockMonitorConfig,
+      headers: Map[String, String] = Map.empty[String, String]
   )
 
   final case class TelegramConfig(
@@ -112,7 +107,7 @@ object config {
       mongo: MongoConfig,
       cex: CexConfig,
       ebay: EbayConfig,
-      selfridges: SelfridgesConfig,
+      selfridges: GenericStoreConfig,
       argos: GenericStoreConfig,
       jdsports: GenericStoreConfig,
       tessuti: GenericStoreConfig,

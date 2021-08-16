@@ -5,9 +5,9 @@ import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.selfridges.SelfridgesClient._
-import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, selfridgesClothingMapper}
+import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{SearchCategory, SearchQuery, SelfridgesConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.Decoder
@@ -19,7 +19,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration._
 
 final private class LiveSelfridgesClient[F[_]](
-    private val config: SelfridgesConfig,
+    private val config: GenericStoreConfig,
     private val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
@@ -33,9 +33,8 @@ final private class LiveSelfridgesClient[F[_]](
     "Content-Type"    -> "application/json; charset=utf-8",
     "Accept"          -> "application/json, text/javascript, */*; q=0.01",
     "Connection"      -> "keep-alive",
-    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
-    "api-key"         -> config.apiKey
-  )
+    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
+  ) ++ config.headers
 
   override def search(
       query: SearchQuery,
@@ -159,7 +158,7 @@ object SelfridgesClient {
   )
 
   def make[F[_]: Temporal: Logger](
-      config: SelfridgesConfig,
+      config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveSelfridgesClient[F](config, backend))

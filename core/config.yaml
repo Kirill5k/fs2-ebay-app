@@ -57,8 +57,9 @@ data:
 
     selfridges {
       base-uri: "https://fs2-proxy.herokuapp.com/selfridges"
-      api-key: "key"
-      api-key: ${?SELFRIDGES_API_KEY}
+      headers: {
+        api-key: ${?SELFRIDGES_API_KEY}
+      }
       stock-monitor {
         monitoring-frequency: 6m
         monitoring-requests: [

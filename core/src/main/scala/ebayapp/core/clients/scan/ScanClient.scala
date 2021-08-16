@@ -34,7 +34,7 @@ final private class LiveScanClient[F[_]](
     "Referer"       -> "https://www.scan.co.uk/",
     "Host"          -> "www.scan.co.uk",
     "Cookie" -> "DS=7UA2E7DW4nWCCWnSj+qXSXIYQrXEEhyyz0TtypCXft6u922fz2V0Qhcr8r1uQ+rfox/YR2xnFkZwFyWmf1dkyg==; S=iPpIiBa/N6Wv/v+5Ht06ObeHZ7Q9psRVSBQI14fQ1kgWuJ2AMavdRJGa4fFhxTGuXcdIb8E2+HtNBL2AFasxqg==; SID=XTt7G0yGt3+t5HGYcQ1Hog==; US=NNURMAkV2WaTR01Ihle72BzfdZu6rGv4UBNFQGNEqhJp+lwom4JA/bEqiCHPE2NimcDSyF5C44GRSBz9HX/mWTYz+0gnPAe8FVizYF/pYGAN97V1h6mYbZRtpdkCbhzaLrv2DuZhkpddEhjMyQwvd3h4+Y9elm2GnW/YV9Ao+bJevEGYlMSl7pnDVT6x8druzJE17ECrBYJWL8UJxDQcrOVtv4ZJeUd+PY+/XB4lw30Pxdu1UzPcFpGO+OotPix2f4YITq/MKd9granuMvUPGt24lGqsictSb0xGHXBG/Nj9rsiV525hWf0DFzzr829f; __cfduid=d683c6ad4693dbd39028eb7c1e1bb861f1619891621"
-  )
+  ) ++ config.headers
 
   override def search(
       query: SearchQuery,
