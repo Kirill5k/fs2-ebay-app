@@ -58,6 +58,7 @@ final private class LiveArgosClient[F[_]](
       )
       .headers(defaultHeaders)
       .response(asJson[ArgosSearchResponse])
+      .readTimeout(3.minutes)
       .send(backend)
       .flatMap { r =>
         r.body match {
