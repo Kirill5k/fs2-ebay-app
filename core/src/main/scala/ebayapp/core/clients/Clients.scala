@@ -10,9 +10,8 @@ import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.scan.ScanClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.telegram.TelegramClient
-import ebayapp.core.common.Logger
+import ebayapp.core.common.{Logger, Resources}
 import ebayapp.core.common.config.AppConfig
-import sttp.client3.SttpBackend
 
 trait Clients[F[_]] {
   def ebay: EbayClient[F]
@@ -30,29 +29,29 @@ object Clients {
 
   def make[F[_]: Temporal: Logger](
       config: AppConfig,
-      backend: SttpBackend[F, Any]
+      resources: Resources[F]
   ): F[Clients[F]] =
     (
-      EbayClient.make[F](config.ebay, backend),
-      CexClient.make[F](config.cex, backend),
-      TelegramClient.make[F](config.telegram, backend),
-      SelfridgesClient.make[F](config.selfridges, backend),
-      ArgosClient.make[F](config.argos, backend),
-      JdsportsClient.jd[F](config.jdsports, backend),
-      JdsportsClient.tessuti[F](config.tessuti, backend),
-      NvidiaClient.make[F](config.nvidia, backend),
-      ScanClient.make[F](config.scan, backend)
+      EbayClient.make[F](config.ebay, resources.clientBackend(false)),
+      CexClient.make[F](config.cex, resources.clientBackend(false)),
+      TelegramClient.make[F](config.telegram, resources.clientBackend(false)),
+      SelfridgesClient.make[F](config.selfridges, resources.clientBackend(config.selfridges.proxied)),
+      ArgosClient.make[F](config.argos, resources.clientBackend(config.argos.proxied)),
+      JdsportsClient.jd[F](config.jdsports, resources.clientBackend(config.jdsports.proxied)),
+      JdsportsClient.tessuti[F](config.tessuti, resources.clientBackend(config.tessuti.proxied)),
+      NvidiaClient.make[F](config.nvidia, resources.clientBackend(config.nvidia.proxied)),
+      ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied))
     ).mapN { (ebayC, cc, telc, selfridgesC, ac, jc, tesc, nvidiaC, scanC) =>
       new Clients[F] {
-        def ebay: EbayClient[F]            = ebayC
-        def cex: CexClient[F]              = cc
-        def telegram: TelegramClient[F]    = telc
-        def selfridges: SearchClient[F]    = selfridgesC
-        def argos: SearchClient[F]         = ac
-        def jdsports: SearchClient[F]      = jc
-        def tessuti: SearchClient[F]       = tesc
-        def nvidia: SearchClient[F]        = nvidiaC
-        def scan: SearchClient[F] = scanC
+        def ebay: EbayClient[F]         = ebayC
+        def cex: CexClient[F]           = cc
+        def telegram: TelegramClient[F] = telc
+        def selfridges: SearchClient[F] = selfridgesC
+        def argos: SearchClient[F]      = ac
+        def jdsports: SearchClient[F]   = jc
+        def tessuti: SearchClient[F]    = tesc
+        def nvidia: SearchClient[F]     = nvidiaC
+        def scan: SearchClient[F]       = scanC
       }
     }
 

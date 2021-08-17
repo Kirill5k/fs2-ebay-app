@@ -13,6 +13,7 @@ class AppConfigSpec extends CatsSpec {
       conf.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
       conf.ebay.deals.videoGames.searchQueries mustBe List(SearchQuery("XBOX ONE"), SearchQuery("PS4"))
       conf.selfridges.headers mustBe Map("api-key" -> "key")
+      conf.nvidia.proxied mustBe true
     }
   }
 }

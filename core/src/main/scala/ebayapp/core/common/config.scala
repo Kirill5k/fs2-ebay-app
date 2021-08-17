@@ -21,10 +21,9 @@ object config {
       port: Int
   )
 
-  final case class ClientConfig(
-      proxyHost: Option[String],
-      proxyPort: Option[Int],
-      onlyProxyHosts: List[String]
+  final case class ClientProxyConfig(
+      host: Option[String],
+      port: Option[Int]
   )
 
   final case class SearchQuery(value: String) extends AnyVal {
@@ -90,7 +89,8 @@ object config {
   final case class GenericStoreConfig(
       baseUri: String,
       stockMonitor: StockMonitorConfig,
-      headers: Map[String, String] = Map.empty[String, String]
+      headers: Map[String, String] = Map.empty[String, String],
+      proxied: Boolean = false
   )
 
   final case class TelegramConfig(
@@ -103,7 +103,7 @@ object config {
 
   final case class AppConfig(
       server: ServerConfig,
-      client: ClientConfig,
+      clientProxy: ClientProxyConfig,
       mongo: MongoConfig,
       cex: CexConfig,
       ebay: EbayConfig,
