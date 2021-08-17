@@ -71,7 +71,7 @@ final private class LiveArgosClient[F[_]](
             logger.error(s"argos-search/$status-error\n$body") *>
               none[SearchData].pure[F]
           case Left(error) =>
-            logger.error(s"argos-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getMessage}\n$error") *>
+            logger.error(s"argos-search/${error.getCause.getClass.getName.toLowerCase}: ${error.getMessage}\n$error") *>
               timer.sleep(1.second) *> search(query, page)
         }
       }
