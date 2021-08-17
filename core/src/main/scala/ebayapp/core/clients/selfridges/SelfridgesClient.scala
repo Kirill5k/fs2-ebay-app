@@ -26,15 +26,7 @@ final private class LiveSelfridgesClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] {
 
-  private val defaultHeaders = Map(
-    "Cache-Control"   -> "no-store, max-age=0",
-    "Accept-Encoding" -> "gzip, deflate, br",
-    "Accept-Language" -> "en-GB,en-US;q=0.9,en;q=0.8",
-    "Content-Type"    -> "application/json; charset=utf-8",
-    "Accept"          -> "application/json, text/javascript, */*; q=0.01",
-    "Connection"      -> "keep-alive",
-    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0"
-  ) ++ config.headers
+  private val headers = defaultHeaders ++ config.headers
 
   override def search(
       query: SearchQuery,
@@ -83,7 +75,7 @@ final private class LiveSelfridgesClient[F[_]](
   private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
     basicRequest
       .get(uri)
-      .headers(defaultHeaders)
+      .headers(headers)
       .response(asJson[A])
       .send(backend)
       .flatMap { r =>

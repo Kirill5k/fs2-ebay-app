@@ -76,8 +76,7 @@ final class CexApiClient[F[_]](
   private def search(uri: Uri): F[CexSearchResponse] =
     basicRequest
       .get(uri)
-      .contentType(MediaType.ApplicationJson)
-      .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
+      .headers(defaultHeaders)
       .response(asJson[CexSearchResponse])
       .send(backend)
       .flatMap { r =>

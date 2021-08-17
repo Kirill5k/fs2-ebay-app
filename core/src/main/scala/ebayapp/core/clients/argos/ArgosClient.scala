@@ -24,18 +24,7 @@ final private class LiveArgosClient[F[_]](
     timer: Temporal[F]
 ) extends SearchClient[F] {
 
-  private val defaultHeaders = Map(
-    "Access-Control-Allow-Origin" -> "*",
-    "Content-Type"                -> "application/json",
-    "Connection"                  -> "keep-alive",
-    "Cache-Control"               -> "no-store, max-age=0",
-    "Accept"                      -> "*/*",
-    "Accept-Encoding"             -> "gzip, deflate, br",
-    "Accept-Language"             -> "en-GB,en-US;q=0.9,en;q=0.8",
-    "Accept"                      -> "application/json, text/javascript, */*; q=0.01",
-    "Connection"                  -> "keep-alive",
-    "User-Agent"                  -> "PostmanRuntime/7.28.3"
-  ) ++ config.headers
+  private val headers = defaultHeaders ++ config.headers
 
   override def search(
       query: SearchQuery,
@@ -58,7 +47,7 @@ final private class LiveArgosClient[F[_]](
       .get(
         uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true"
       )
-      .headers(defaultHeaders)
+      .headers(headers)
       .response(asJson[ArgosSearchResponse])
       .send(backend)
       .flatMap { r =>

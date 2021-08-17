@@ -24,15 +24,10 @@ final private class LiveJdsportsClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] {
 
-  private val defaultHeaders: Map[String, String] = Map(
-    "Connection"      -> "keep-alive",
-    "Accept"          -> "*/*",
-    "Accept-Encoding" -> "gzip, deflate, br",
-    "Cache-Control"   -> "no-store, max-age=0",
-    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
+  private val headers: Map[String, String] = Map(
     "Referer"         -> s"https://www.$name.co.uk/men/",
     "X-Reroute-To"    -> s"https://www.$name.co.uk"
-  ) ++ config.headers
+  ) ++ defaultHeaders ++ config.headers
 
   override def search(
       query: SearchQuery,
@@ -74,7 +69,7 @@ final private class LiveJdsportsClient[F[_]](
       .get(
         uri"${config.baseUri}/men/brand/${query.value.toLowerCase.replace(" ", "-")}/?max=$stepSize&from=${step * stepSize}&sort=price-low-high"
       )
-      .headers(defaultHeaders)
+      .headers(headers)
       .send(backend)
       .flatMap { r =>
         r.body match {
@@ -101,7 +96,7 @@ final private class LiveJdsportsClient[F[_]](
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     basicRequest
       .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock")
-      .headers(defaultHeaders)
+      .headers(headers)
       .send(backend)
       .flatMap { r =>
         r.body match {
