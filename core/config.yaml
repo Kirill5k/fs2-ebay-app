@@ -83,6 +83,9 @@ data:
           //{query: "PlayStation 5 Console", monitor-stock-change: false, monitor-price-change: true}
         ]
       }
+      headers {
+        Cookie: "ak_bmsc=BE502843B587C9DA16D4A1C6448BABCB~000000000000000000000000000000~YAAQD+YYPh+tea56AQAAOCQvUAz9b8GZc1KmIastBUnrK9GRtE9+COuoh3rwvDKKlV0powuG0bT5zVx5h0RURKwGVMK3/ZNhxNRdqnlgrfFT89Ij3x5GRtAf1uqij5cvLIC+9NfTGz+LExcH3JmU/q7Pv5O58l1Sf1I0efrKR8tHe85pzre1G2oUf+LYP6UB4b8boydMECM22Lgfx4TTLnIAKliKb2gUiA0rFjp3YVPTr9qIXsTjPVXVNdxPpsnOUOzlReLah13U0LVnBV5u3Yzpp2LOtgJWkPAz1ZA03r8wUpqPtpODoix2Sky56f86QPC2v/bsoZO1VutENbIiiQ6JsI3sRZwDAKBRL2PadfcBLFB8xGxb2I4tQAlbSg=="
+      }
     }
 
     jdsports {
@@ -117,6 +120,9 @@ data:
         monitoring-requests: [
           {query: "geforce", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
         ]
+      }
+      headers {
+        Cookie: "ak_bmsc=BE502843B587C9DA16D4A1C6448BABCB~000000000000000000000000000000~YAAQD+YYPh+tea56AQAAOCQvUAz9b8GZc1KmIastBUnrK9GRtE9+COuoh3rwvDKKlV0powuG0bT5zVx5h0RURKwGVMK3/ZNhxNRdqnlgrfFT89Ij3x5GRtAf1uqij5cvLIC+9NfTGz+LExcH3JmU/q7Pv5O58l1Sf1I0efrKR8tHe85pzre1G2oUf+LYP6UB4b8boydMECM22Lgfx4TTLnIAKliKb2gUiA0rFjp3YVPTr9qIXsTjPVXVNdxPpsnOUOzlReLah13U0LVnBV5u3Yzpp2LOtgJWkPAz1ZA03r8wUpqPtpODoix2Sky56f86QPC2v/bsoZO1VutENbIiiQ6JsI3sRZwDAKBRL2PadfcBLFB8xGxb2I4tQAlbSg=="
       }
     }
 

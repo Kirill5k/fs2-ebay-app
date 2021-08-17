@@ -25,14 +25,16 @@ final private class LiveArgosClient[F[_]](
 ) extends SearchClient[F] {
 
   private val defaultHeaders = Map(
-    "Cache-Control"   -> "no-store, max-age=0",
-    "Accept-Encoding" -> "gzip, deflate, br",
-    "Accept-Language" -> "en-GB,en-US;q=0.9,en;q=0.8",
-    "Content-Type"    -> "application/json; charset=utf-8",
-    "Accept"          -> "application/json, text/javascript, */*; q=0.01",
-    "Connection"      -> "keep-alive",
-    "User-Agent"      -> "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0",
-    "X-Reroute-To"    -> "https://www.argos.co.uk"
+    "Access-Control-Allow-Origin" -> "*",
+    "Content-Type"                -> "application/json",
+    "Connection"                  -> "keep-alive",
+    "Cache-Control"               -> "no-store, max-age=0",
+    "Accept"                      -> "*/*",
+    "Accept-Encoding"             -> "gzip, deflate, br",
+    "Accept-Language"             -> "en-GB,en-US;q=0.9,en;q=0.8",
+    "Accept"                      -> "application/json, text/javascript, */*; q=0.01",
+    "Connection"                  -> "keep-alive",
+    "User-Agent"                  -> "PostmanRuntime/7.28.3"
   ) ++ config.headers
 
   override def search(
@@ -58,7 +60,7 @@ final private class LiveArgosClient[F[_]](
       )
       .headers(defaultHeaders)
       .response(asJson[ArgosSearchResponse])
-      .readTimeout(3.minutes)
+      .readTimeout(2.minutes)
       .send(backend)
       .flatMap { r =>
         r.body match {

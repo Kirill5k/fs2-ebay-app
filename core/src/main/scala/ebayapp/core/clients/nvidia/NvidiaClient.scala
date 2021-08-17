@@ -32,8 +32,7 @@ final private class LiveNvidiaClient[F[_]](
     "Accept-Encoding"             -> "gzip, deflate, br",
     "Cache-Control"               -> "no-store, max-age=0",
     "User-Agent"                  -> "PostmanRuntime/7.28.3",
-    "X-Reroute-To"                -> "https://api.nvidia.partners",
-    "Cookie" -> "ak_bmsc=BE502843B587C9DA16D4A1C6448BABCB~000000000000000000000000000000~YAAQD+YYPh+tea56AQAAOCQvUAz9b8GZc1KmIastBUnrK9GRtE9+COuoh3rwvDKKlV0powuG0bT5zVx5h0RURKwGVMK3/ZNhxNRdqnlgrfFT89Ij3x5GRtAf1uqij5cvLIC+9NfTGz+LExcH3JmU/q7Pv5O58l1Sf1I0efrKR8tHe85pzre1G2oUf+LYP6UB4b8boydMECM22Lgfx4TTLnIAKliKb2gUiA0rFjp3YVPTr9qIXsTjPVXVNdxPpsnOUOzlReLah13U0LVnBV5u3Yzpp2LOtgJWkPAz1ZA03r8wUpqPtpODoix2Sky56f86QPC2v/bsoZO1VutENbIiiQ6JsI3sRZwDAKBRL2PadfcBLFB8xGxb2I4tQAlbSg=="
+    "X-Reroute-To"                -> "https://api.nvidia.partners"
   ) ++ config.headers
 
   override def search(
@@ -53,7 +52,7 @@ final private class LiveNvidiaClient[F[_]](
       .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
       .response(asJson[NvidiaSearchResponse])
       .headers(defaultHeaders)
-      .readTimeout(3.minutes)
+      .readTimeout(1.minutes)
       .send(backend)
       .flatMap { r =>
         r.body match {
