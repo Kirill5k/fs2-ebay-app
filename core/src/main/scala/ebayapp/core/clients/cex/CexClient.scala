@@ -5,16 +5,16 @@ import cats.implicits._
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
-import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.{CexConfig, SearchCategory, SearchQuery}
 import ebayapp.core.common.errors.AppError
+import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.domain.search._
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import fs2.Stream
 import io.circe.generic.auto._
 import sttp.client3.circe.asJson
 import sttp.client3.{SttpBackend, _}
-import sttp.model.{HeaderNames, MediaType, StatusCode, Uri}
-import fs2.Stream
+import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration._
 
