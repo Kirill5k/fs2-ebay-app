@@ -25,12 +25,13 @@ trait CexClient[F[_]] extends SearchClient[F] {
 final class CexApiClient[F[_]](
     private val config: CexConfig,
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
-    private val backend: SttpBackend[F, Any]
+    override val backend: SttpBackend[F, Any]
 )(implicit
     T: Temporal[F],
     logger: Logger[F]
 ) extends CexClient[F] {
 
+  override protected val name: String = "cex"
   private val categoriesMap: Map[String, List[Int]] = Map(
     "Games" -> List(1000, 1147, 1003, 1141, 1064, 1146)
   )
@@ -74,30 +75,30 @@ final class CexApiClient[F[_]](
       .map(cexGenericItemMapper.toDomain)
 
   private def search(uri: Uri): F[CexSearchResponse] =
-    basicRequest
-      .get(uri)
-      .headers(defaultHeaders)
-      .response(asJson[CexSearchResponse])
-      .send(backend)
-      .flatMap { r =>
-        r.body match {
-          case Right(response) =>
-            response.pure[F]
-          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
-            logger.warn(s"cex-search/exhausted input") *>
-              T.sleep(1.second) *> search(uri)
-          case Left(DeserializationException(body, error)) =>
-            logger.warn(s"cex-search/json-error: ${error.getMessage}\n$body") *>
-              AppError.Json(s"cex-search/json-error: ${error.getMessage}").raiseError[F, CexSearchResponse]
-          case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.error(s"cex-search/403-critical") *> T.sleep(5.seconds) *> search(uri)
-          case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"cex-search/429-retry") *> T.sleep(5.seconds) *> search(uri)
-          case Left(error) =>
-            logger.warn(s"cex-search/${r.code}-error\n$error") *>
-              T.sleep(5.second) *> search(uri)
-        }
+    dispatch {
+      basicRequest
+        .get(uri)
+        .headers(defaultHeaders)
+        .response(asJson[CexSearchResponse])
+    }.flatMap { r =>
+      r.body match {
+        case Right(response) =>
+          response.pure[F]
+        case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+          logger.warn(s"$name-search/exhausted input") *>
+            T.sleep(1.second) *> search(uri)
+        case Left(DeserializationException(body, error)) =>
+          logger.warn(s"$name-search/json-error: ${error.getMessage}\n$body") *>
+            AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError[F, CexSearchResponse]
+        case Left(HttpError(_, StatusCode.Forbidden)) =>
+          logger.error(s"$name-search/403-critical") *> T.sleep(5.seconds) *> search(uri)
+        case Left(HttpError(_, StatusCode.TooManyRequests)) =>
+          logger.warn(s"$name-search/429-retry") *> T.sleep(5.seconds) *> search(uri)
+        case Left(error) =>
+          logger.warn(s"$name-search/${r.code}-error\n$error") *>
+            T.sleep(5.second) *> search(uri)
       }
+    }
 }
 
 object CexClient {

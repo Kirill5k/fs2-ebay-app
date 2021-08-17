@@ -18,11 +18,13 @@ import scala.concurrent.duration._
 
 final private class LiveNvidiaClient[F[_]](
     private val config: GenericStoreConfig,
-    private val backend: SttpBackend[F, Any]
+    override val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
 ) extends SearchClient[F] {
+
+  override protected val name: String = "nvidia"
 
   private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
@@ -39,30 +41,26 @@ final private class LiveNvidiaClient[F[_]](
       .map(nvidiaGenericItemMapper.toDomain)
 
   private def searchProducts(q: SearchQuery, c: Option[SearchCategory]): F[List[Product]] =
-    basicRequest
-      .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
-      .response(asJson[NvidiaSearchResponse])
-      .headers(headers)
-      .send(backend)
-      .flatMap { r =>
-        r.body match {
-          case Right(response) =>
-            response.searchedProducts.productDetails.pure[F]
-          case Left(DeserializationException(body, error)) =>
-            logger.error(s"nvidia-search/parsing-error: ${error.getMessage}, \n$body") *>
-              List.empty[Product].pure[F]
-          case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.error(s"nvidia-search/$status-error, \n$body") *>
-              timer.sleep(10.seconds) *> searchProducts(q, c)
-          case Left(error) =>
-            logger.error(s"nvidia-search/error: ${error.getMessage}\n$error") *>
-              timer.sleep(10.second) *> searchProducts(q, c)
-        }
+    dispatch {
+      basicRequest
+        .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
+        .response(asJson[NvidiaSearchResponse])
+        .headers(headers)
+    }.flatMap { r =>
+      r.body match {
+        case Right(response) =>
+          response.searchedProducts.productDetails.pure[F]
+        case Left(DeserializationException(body, error)) =>
+          logger.error(s"$name-search/parsing-error: ${error.getMessage}, \n$body") *>
+            List.empty[Product].pure[F]
+        case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
+          logger.error(s"$name-search/$status-error, \n$body") *>
+            timer.sleep(10.seconds) *> searchProducts(q, c)
+        case Left(error) =>
+          logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
+            timer.sleep(10.second) *> searchProducts(q, c)
       }
-      .handleErrorWith { error =>
-        logger.error(s"nvidia-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getCause.getMessage}\n$error") *>
-          timer.sleep(10.second) *> searchProducts(q, c)
-      }
+    }
 }
 
 object NvidiaClient {

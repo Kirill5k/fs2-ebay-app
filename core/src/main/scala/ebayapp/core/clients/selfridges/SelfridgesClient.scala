@@ -20,11 +20,13 @@ import scala.concurrent.duration._
 
 final private class LiveSelfridgesClient[F[_]](
     private val config: GenericStoreConfig,
-    private val backend: SttpBackend[F, Any]
+    override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
 ) extends SearchClient[F] {
+
+  override protected val name: String = "selfridges"
 
   private val headers = defaultHeaders ++ config.headers
 
@@ -73,35 +75,35 @@ final private class LiveSelfridgesClient[F[_]](
     ).map(res => res.stocks.getOrElse(Nil))
 
   private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
-    basicRequest
-      .get(uri)
-      .headers(headers)
-      .response(asJson[A])
-      .send(backend)
-      .flatMap { r =>
-        r.body match {
-          case Right(res) =>
-            F.pure(res)
-          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
-            logger.warn(s"selfdridges-$endpoint/exhausted input") *>
-              F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
-          case Left(DeserializationException(_, error)) =>
-            logger.error(s"selfdridges-$endpoint response parsing error: ${error.getMessage}") *>
-              F.pure(defaultResponse)
-          case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
-            logger.error(s"selfridges-$endpoint/$s-critical") *>
-              F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
-          case Left(HttpError(_, status)) if status.isClientError =>
-            logger.error(s"selfridges-$endpoint/$status-error") *>
-              F.pure(defaultResponse)
-          case Left(HttpError(_, status)) if status.isServerError =>
-            logger.warn(s"selfridges-$endpoint/$status-repeatable") *>
-              F.sleep(5.second) *> sendRequest(uri, endpoint, defaultResponse)
-          case Left(error) =>
-            logger.error(s"selfridges-$endpoint/error: ${error.getMessage}") *>
-              F.sleep(5.second) *> sendRequest(uri, endpoint, defaultResponse)
-        }
+    dispatch {
+      basicRequest
+        .get(uri)
+        .headers(headers)
+        .response(asJson[A])
+    }.flatMap { r =>
+      r.body match {
+        case Right(res) =>
+          F.pure(res)
+        case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+          logger.warn(s"$name-$endpoint/exhausted input") *>
+            F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
+        case Left(DeserializationException(_, error)) =>
+          logger.error(s"$name-$endpoint response parsing error: ${error.getMessage}") *>
+            F.pure(defaultResponse)
+        case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
+          logger.error(s"$name-$endpoint/$s-critical") *>
+            F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
+        case Left(HttpError(_, status)) if status.isClientError =>
+          logger.error(s"$name-$endpoint/$status-error") *>
+            F.pure(defaultResponse)
+        case Left(HttpError(_, status)) if status.isServerError =>
+          logger.warn(s"$name-$endpoint/$status-repeatable") *>
+            F.sleep(5.second) *> sendRequest(uri, endpoint, defaultResponse)
+        case Left(error) =>
+          logger.error(s"$name-$endpoint/error: ${error.getMessage}") *>
+            F.sleep(5.second) *> sendRequest(uri, endpoint, defaultResponse)
       }
+    }
 }
 
 object SelfridgesClient {

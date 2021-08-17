@@ -18,12 +18,13 @@ import scala.concurrent.duration._
 
 final private class LiveArgosClient[F[_]](
     private val config: GenericStoreConfig,
-    private val backend: SttpBackend[F, Any]
+    override val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
 ) extends SearchClient[F] {
 
+  override val name = "argos"
   private val headers = defaultHeaders ++ config.headers
 
   override def search(
@@ -54,18 +55,18 @@ final private class LiveArgosClient[F[_]](
         r.body match {
           case Right(response) => response.data.some.pure[F]
           case Left(DeserializationException(body, error)) =>
-            logger.error(s"argos-search response parsing error: ${error.getMessage}, \n$body") *>
+            logger.error(s"$name-search response parsing error: ${error.getMessage}, \n$body") *>
               none[SearchData].pure[F]
           case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.error(s"argos-search/$status-error\n$body") *>
+            logger.error(s"$name-search/$status-error\n$body") *>
               none[SearchData].pure[F]
           case Left(error) =>
-            logger.error(s"argos-search/error: ${error.getMessage}\n$error") *>
+            logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
               timer.sleep(1.second) *> search(query, page)
         }
       }
       .handleErrorWith { error =>
-        logger.error(s"argos-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getCause.getMessage}\n$error") *>
+        logger.error(s"$name-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getCause.getMessage}\n$error") *>
           timer.sleep(10.second) *> search(query, page)
       }
 }
