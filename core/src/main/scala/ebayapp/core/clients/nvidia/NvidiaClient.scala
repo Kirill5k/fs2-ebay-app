@@ -52,7 +52,6 @@ final private class LiveNvidiaClient[F[_]](
       .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
       .response(asJson[NvidiaSearchResponse])
       .headers(defaultHeaders)
-      .readTimeout(1.minutes)
       .send(backend)
       .flatMap { r =>
         r.body match {
