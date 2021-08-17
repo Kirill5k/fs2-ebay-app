@@ -36,7 +36,7 @@ final private class LiveScanClient[F[_]](
       .map(scanaGenericItemMapper.toDomain)
 
   private def searchByCard(query: SearchQuery, category: SearchCategory): F[List[ScanItem]] = {
-    dispatch {
+    dispatch() {
       val cat  = category.value.toLowerCase.replaceAll(" ", "-")
       val card = query.value.toLowerCase.replaceAll(" ", "-")
       basicRequest

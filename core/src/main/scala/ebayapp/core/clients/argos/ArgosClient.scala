@@ -44,7 +44,7 @@ final private class LiveArgosClient[F[_]](
       .map(argosGenericItemMapper.toDomain)
 
   private def search(query: SearchQuery, page: Int): F[Option[SearchData]] =
-    dispatch {
+    dispatch() {
       basicRequest
         .get(
           uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true"

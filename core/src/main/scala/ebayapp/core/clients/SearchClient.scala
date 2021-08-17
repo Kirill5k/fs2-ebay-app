@@ -32,11 +32,12 @@ trait SearchClient[F[_]] {
     "User-Agent"                  -> "PostmanRuntime/7.28.3"
   )
 
-  protected def dispatch[T](request: Request[T, Any])(implicit F: Temporal[F], logger: Logger[F]): F[Response[T]] =
+  protected def dispatch[T](attempt: Int = 0)(request: Request[T, Any])(implicit F: Temporal[F], logger: Logger[F]): F[Response[T]] =
     backend
       .send(request)
       .handleErrorWith { error =>
-        logger.error(s"$name-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getCause.getMessage}\n$error") *>
-          F.sleep(10.seconds) *> dispatch(request)
+        val message = s"$name-search/${error.getCause.getClass.getSimpleName.toLowerCase}-$attempt: ${error.getCause.getMessage}\n$error"
+        (if (attempt > 5) logger.error(message) else logger.warn(message)) *>
+          F.sleep(10.seconds) *> dispatch(attempt + 1)(request)
       }
 }

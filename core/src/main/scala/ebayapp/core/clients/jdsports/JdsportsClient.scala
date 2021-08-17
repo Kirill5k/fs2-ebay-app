@@ -67,7 +67,7 @@ final private class LiveJdsportsClient[F[_]](
       .flatMap(Stream.emits)
 
   private def searchByBrand(query: SearchQuery, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
-    dispatch {
+    dispatch() {
       val brand = query.value.toLowerCase.replace(" ", "-")
       basicRequest
         .get(uri"${config.baseUri}/men/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
@@ -95,7 +95,7 @@ final private class LiveJdsportsClient[F[_]](
     }
 
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
-    dispatch {
+    dispatch() {
       basicRequest
         .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock")
         .headers(headers)
