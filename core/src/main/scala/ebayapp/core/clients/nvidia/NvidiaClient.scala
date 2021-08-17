@@ -69,7 +69,7 @@ final private class LiveNvidiaClient[F[_]](
         }
       }
       .handleErrorWith { error =>
-        logger.error(s"nvidia-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getMessage}\n$error") *>
+        logger.error(s"nvidia-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getCause.getMessage}\n$error") *>
           timer.sleep(10.second) *> searchProducts(q, c)
       }
 }
