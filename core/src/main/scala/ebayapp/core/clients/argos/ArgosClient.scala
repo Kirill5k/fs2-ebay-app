@@ -24,7 +24,7 @@ final private class LiveArgosClient[F[_]](
     timer: Temporal[F]
 ) extends SearchClient[F] {
 
-  override val name = "argos"
+  override val name   = "argos"
   private val headers = defaultHeaders ++ config.headers
 
   override def search(
@@ -44,31 +44,27 @@ final private class LiveArgosClient[F[_]](
       .map(argosGenericItemMapper.toDomain)
 
   private def search(query: SearchQuery, page: Int): F[Option[SearchData]] =
-    basicRequest
-      .get(
-        uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true"
-      )
-      .headers(headers)
-      .response(asJson[ArgosSearchResponse])
-      .send(backend)
-      .flatMap { r =>
-        r.body match {
-          case Right(response) => response.data.some.pure[F]
-          case Left(DeserializationException(body, error)) =>
-            logger.error(s"$name-search response parsing error: ${error.getMessage}, \n$body") *>
-              none[SearchData].pure[F]
-          case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.error(s"$name-search/$status-error\n$body") *>
-              none[SearchData].pure[F]
-          case Left(error) =>
-            logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
-              timer.sleep(1.second) *> search(query, page)
-        }
+    dispatch {
+      basicRequest
+        .get(
+          uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true"
+        )
+        .headers(headers)
+        .response(asJson[ArgosSearchResponse])
+    }.flatMap { r =>
+      r.body match {
+        case Right(response) => response.data.some.pure[F]
+        case Left(DeserializationException(body, error)) =>
+          logger.error(s"$name-search response parsing error: ${error.getMessage}, \n$body") *>
+            none[SearchData].pure[F]
+        case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
+          logger.error(s"$name-search/$status-error\n$body") *>
+            none[SearchData].pure[F]
+        case Left(error) =>
+          logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
+            timer.sleep(1.second) *> search(query, page)
       }
-      .handleErrorWith { error =>
-        logger.error(s"$name-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getCause.getMessage}\n$error") *>
-          timer.sleep(10.second) *> search(query, page)
-      }
+    }
 }
 
 object ArgosClient {
