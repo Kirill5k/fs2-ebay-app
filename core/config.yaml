@@ -9,7 +9,9 @@ data:
     }
 
     client-proxy {
+      host: "140.227.66.105"
       host: ${?CLIENT_PROXY_HOST}
+      port: 58888
       port: ${?CLIENT_PROXY_PORT}
     }
 
@@ -77,10 +79,11 @@ data:
 
     argos {
       base-uri: "https://www.argos.co.uk"
+      proxied: true
       stock-monitor {
         monitoring-frequency: 10m
         monitoring-requests: [
-          //{query: "PlayStation 5 Console", monitor-stock-change: false, monitor-price-change: true}
+          {query: "PlayStation 5 Console", monitor-stock-change: false, monitor-price-change: true}
         ]
       }
       headers {
@@ -115,6 +118,7 @@ data:
 
     nvidia {
       base-uri: "https://api.nvidia.partners"
+      proxied: true
       stock-monitor {
         monitoring-frequency: 5m
         monitoring-requests: [
