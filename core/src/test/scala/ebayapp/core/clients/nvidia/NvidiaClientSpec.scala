@@ -3,7 +3,7 @@ package ebayapp.core.clients.nvidia
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery, StockMonitorConfig}
-import sttp.client3.{Response, SttpBackend}
+import sttp.client3._
 import ebayapp.core.requests._
 
 import scala.concurrent.duration._

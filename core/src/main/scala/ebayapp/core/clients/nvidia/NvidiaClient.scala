@@ -55,7 +55,8 @@ final private class LiveNvidiaClient[F[_]](
       .send(backend)
       .flatMap { r =>
         r.body match {
-          case Right(response) => response.searchedProducts.productDetails.pure[F]
+          case Right(response) =>
+            response.searchedProducts.productDetails.pure[F]
           case Left(DeserializationException(body, error)) =>
             logger.error(s"nvidia-search/parsing-error: ${error.getMessage}, \n$body") *>
               List.empty[Product].pure[F]
@@ -63,9 +64,13 @@ final private class LiveNvidiaClient[F[_]](
             logger.error(s"nvidia-search/$status-error, \n$body") *>
               timer.sleep(10.seconds) *> searchProducts(q, c)
           case Left(error) =>
-            logger.error(s"nvidia-search/${error.getCause.getClass.getName.toLowerCase}: ${error.getMessage}\n$error") *>
+            logger.error(s"nvidia-search/error: ${error.getMessage}\n$error") *>
               timer.sleep(10.second) *> searchProducts(q, c)
         }
+      }
+      .handleErrorWith { error =>
+        logger.error(s"nvidia-search/${error.getCause.getClass.getSimpleName.toLowerCase}: ${error.getMessage}\n$error") *>
+          timer.sleep(10.second) *> searchProducts(q, c)
       }
 }
 
