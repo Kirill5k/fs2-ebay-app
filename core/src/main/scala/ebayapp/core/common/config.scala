@@ -123,7 +123,7 @@ object config {
         .flatTap(_ => logger.info("loaded config from a configmap mount"))
         .handleErrorWith { _ =>
           logger.warn("error loading a config from a configmap mount, will try resources") *>
-            F.blocking(ConfigSource.default.loadOrThrow[AppConfig])
+            F.blocking(AppConfig.loadDefault)
         }
 
     def loadDefault: AppConfig   = ConfigSource.default.loadOrThrow[AppConfig]
