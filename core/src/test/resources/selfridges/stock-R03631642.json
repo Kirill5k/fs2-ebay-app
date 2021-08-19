@@ -4,31 +4,31 @@
       "key": "SizeCode",
       "SKUID": "39479119",
       "value": "S",
-      "Stock Quantity Available to Purchase": "0"
+      "Stock Quantity Available to Purchase": "1"
     },
     {
       "key": "SizeCode",
       "SKUID": "39479127",
       "value": "M",
-      "Stock Quantity Available to Purchase": "0"
+      "Stock Quantity Available to Purchase": "1"
     },
     {
       "key": "SizeCode",
       "SKUID": "39479135",
       "value": "L",
-      "Stock Quantity Available to Purchase": "0"
+      "Stock Quantity Available to Purchase": "1"
     },
     {
       "key": "SizeCode",
       "SKUID": "39479143",
       "value": "XL",
-      "Stock Quantity Available to Purchase": "0"
+      "Stock Quantity Available to Purchase": "1"
     },
     {
       "key": "SizeCode",
       "SKUID": "39479151",
       "value": "XXL",
-      "Stock Quantity Available to Purchase": "0"
+      "Stock Quantity Available to Purchase": "1"
     }
   ]
 }

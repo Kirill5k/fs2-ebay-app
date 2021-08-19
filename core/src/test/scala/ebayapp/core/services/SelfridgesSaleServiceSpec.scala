@@ -16,32 +16,6 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
 
   "A LiveSelfridgesSaleService" should {
 
-    "exclude unwanted items" in {
-      val unwantedItems = List(
-        clothing("T-shirt"),
-        clothing("Jersey t-shirt bra"),
-        clothing("Stretch-mesh thong"),
-        clothing("Jersey plunge bra"),
-        clothing("Cotton shirt 2-14 years"),
-        clothing("Bikini briefs"),
-        clothing("Logo-print swimsuit")
-      )
-
-      val client = mock[SearchClient[IO]]
-      when(client.search(any[SearchQuery], any[Option[SearchCategory]]))
-        .thenReturn(Stream.empty)
-        .andThen(Stream.emits(unwantedItems))
-
-      val result = StockService.selfridges[IO](client).flatMap {
-        _.stockUpdates(config).interruptAfter(1200.millis).compile.toList
-      }
-
-      result.unsafeToFuture().map { updates =>
-        updates must have size 1
-        updates.head.item.itemDetails.fullName mustBe Some("Foo-bar - T-shirt, size XXL")
-      }
-    }
-
     "return items with discount greater than min" in {
       val items = List(
         clothing("T-shirt rrp", discount = None),

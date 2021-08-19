@@ -16,8 +16,6 @@ trait StockService[F[_]] extends StockComparer[F] {
 
   def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates.Anything]
 
-  protected def itemFilter: (String, ResellableItem.Anything) => Boolean = (_, _) => true
-
   protected def findItems(
       req: StockMonitorRequest
   )(implicit
@@ -29,41 +27,10 @@ trait StockService[F[_]] extends StockComparer[F] {
       .filter(item => req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
-      .filter { case (name, item) => itemFilter(name, item) }
       .compile
       .to(Map)
       .flatTap(i => logger.info(s"""$name-search "${req.query.value}" returned ${i.size} results"""))
 
-}
-
-final private class SelfridgesSaleService[F[_]: Temporal: Logger](
-    override val client: SearchClient[F],
-    override val name: String = "selfridges"
-) extends StockService[F] {
-
-  private val filters: String = List(
-    "\\d+-\\d+ (year|month)",
-    "thong",
-    "\\bBRA\\b",
-    "bikini",
-    "jersey brief",
-    "swimsuit",
-    "jock( )?strap",
-    "bralette",
-    "briefs",
-    "woman",
-    "jersey",
-    "leggings",
-    "\\bdress\\b",
-    "skirt",
-    "blouse"
-  ).mkString("(?i).*(", "|", ").*")
-
-  override protected def itemFilter: (String, ResellableItem.Anything) => Boolean =
-    (name, item) => item.buyPrice.quantityAvailable > 0 && !name.matches(filters)
-
-  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates.Anything] =
-    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems(req))
 }
 
 final private class SimpleStockService[F[_]: Temporal: Logger](
@@ -84,7 +51,7 @@ object StockService {
     Monad[F].pure(new SimpleStockService[F](client, "argos"))
 
   def selfridges[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SelfridgesSaleService[F](client, "selfridges"))
+    Monad[F].pure(new SimpleStockService[F](client, "selfridges"))
 
   def jdsports[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
     Monad[F].pure(new SimpleStockService[F](client, "jdsports"))

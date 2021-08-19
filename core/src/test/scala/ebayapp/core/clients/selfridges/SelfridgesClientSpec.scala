@@ -58,9 +58,9 @@ class SelfridgesClientSpec extends SttpClientSpec {
         item.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XS")
 
         items.map(_.buyPrice).distinct mustBe List(
-          BuyPrice(0, BigDecimal(20.0), Some(86)),
-          BuyPrice(0, BigDecimal(10.0), Some(90)),
-          BuyPrice(0, BigDecimal(50.0), Some(60)),
+          BuyPrice(1, BigDecimal(20.0), Some(86)),
+          BuyPrice(1, BigDecimal(10.0), Some(90)),
+          BuyPrice(1, BigDecimal(50.0), Some(60)),
         )
       }
     }

@@ -30,6 +30,23 @@ final private class LiveSelfridgesClient[F[_]](
 
   private val headers = defaultHeaders ++ config.headers
 
+  private val filters: String = List(
+    "\\d+-\\d+ (year|month)",
+    "thong",
+    "\\bBRA\\b",
+    "bikini",
+    "jersey brief",
+    "swimsuit",
+    "jock( )?strap",
+    "bralette",
+    "briefs",
+    "woman",
+    "leggings",
+    "\\bdress\\b",
+    "skirt",
+    "blouse"
+  ).mkString("(?i).*(", "|", ").*")
+
   override def search(
       query: SearchQuery,
       category: Option[SearchCategory]
@@ -37,6 +54,7 @@ final private class LiveSelfridgesClient[F[_]](
     Stream
       .unfoldLoopEval(1)(searchForItems(query))
       .flatMap(Stream.emits)
+      .filter(!_.name.matches(filters))
       .filter(_.price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined))
       .flatMap { item =>
         Stream
@@ -45,6 +63,7 @@ final private class LiveSelfridgesClient[F[_]](
           .map { case (stock, price) => SelfridgesItem(item, stock, price) }
       }
       .map(selfridgesClothingMapper.toDomain)
+      .filter(_.buyPrice.quantityAvailable > 0)
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
