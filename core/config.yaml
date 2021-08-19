@@ -9,10 +9,8 @@ data:
     }
 
     client-proxy {
-      host: "140.227.66.105"
-      host: ${?CLIENT_PROXY_HOST}
-      port: 58888
-      port: ${?CLIENT_PROXY_PORT}
+      host: "140.227.53.164"
+      port: 6000
     }
 
     mongo {
@@ -111,7 +109,7 @@ data:
           {query: "Boss", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {query: "Stone Island", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "Kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "Kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
         ]
       }
     }
