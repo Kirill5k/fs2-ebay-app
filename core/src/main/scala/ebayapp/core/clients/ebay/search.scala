@@ -1,17 +1,36 @@
 package ebayapp.core.clients.ebay
 
 import ebayapp.core.clients.ebay.browse.responses.EbayItemSummary
-import ebayapp.core.domain.ItemDetails
+import ebayapp.core.common.errors.AppError
+import ebayapp.core.domain.{ItemKind}
 
-object search {
-  sealed trait EbaySearchParams[D <: ItemDetails] {
-    def categoryId: Int
-    def searchFilterTemplate: String
+import java.time.Instant
+
+private[ebay] object search {
+  trait EbaySearchParams {
+    protected def categoryId: Int
+    protected def searchFilterTemplate: String
+
     def filter: EbayItemSummary => Boolean
+
+    def requestArgs(from: Instant, query: String): Map[String, String] =
+      Map(
+        "fieldgroups"  -> "EXTENDED",
+        "category_ids" -> categoryId.toString,
+        "filter"       -> searchFilterTemplate.format(from).replaceAll("\\{", "%7B").replaceAll("}", "%7D"),
+        "limit"        -> "200",
+        "q"            -> query
+      )
   }
 
   object EbaySearchParams {
-    implicit val videoGameSearchParams = new EbaySearchParams[ItemDetails.Game] {
+    def get(kind: ItemKind): Either[Throwable, EbaySearchParams] =
+      kind match {
+        case ItemKind.VideoGame   => Right(videoGameSearchParams)
+        case kind                 => Left(AppError.Critical(s"unable to find search params for $kind in EbayClient"))
+      }
+
+    implicit val videoGameSearchParams = new EbaySearchParams {
 
       private val DEFAULT_SEARCH_FILTER = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
         "itemLocationCountry:GB," +

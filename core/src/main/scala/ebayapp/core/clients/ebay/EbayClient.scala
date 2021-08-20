@@ -23,8 +23,7 @@ trait EbayClient[F[_]] {
   def search[D <: ItemDetails](
       criteria: SearchCriteria
   )(implicit
-      mapper: EbayItemMapper[D],
-      params: EbaySearchParams[D]
+      mapper: EbayItemMapper[D]
   ): Stream[F, ResellableItem[D]]
 }
 
@@ -41,24 +40,19 @@ final private[ebay] class LiveEbayClient[F[_]](
   def search[D <: ItemDetails](
       criteria: SearchCriteria
   )(implicit
-      mapper: EbayItemMapper[D],
-      params: EbaySearchParams[D]
+      mapper: EbayItemMapper[D]
   ): Stream[F, ResellableItem[D]] = {
-    val time   = Instant.now.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)
-    val filter = params.searchFilterTemplate.format(time).replaceAll("\\{", "%7B").replaceAll("}", "%7D")
-    val searchParams = Map(
-      "fieldgroups"  -> "EXTENDED",
-      "category_ids" -> params.categoryId.toString,
-      "filter"       -> filter,
-      "limit"        -> "200",
-      "q"            -> criteria.query
-    )
+    val time = Instant.now.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)
 
-    Stream
-      .evalSeq(searchForItems(searchParams, params.filter))
-      .evalTap(item => itemIdsCache.put(item.itemId, ()))
-      .map(mapper.toDomain)
-      .handleErrorWith(switchAccountIfItHasExpired)
+    for {
+      kind   <- Stream.fromEither[F](criteria.itemKind.toRight(AppError.Critical("item kind is required in ebay-client")))
+      params <- Stream.fromEither[F](EbaySearchParams.get(kind))
+      items <- Stream
+        .evalSeq(searchForItems(params.requestArgs(time, criteria.query), params.filter))
+        .evalTap(item => itemIdsCache.put(item.itemId, ()))
+        .map(mapper.toDomain)
+        .handleErrorWith(switchAccountIfItHasExpired)
+    } yield items
   }
 
   private def searchForItems(searchParams: Map[String, String], itemsFilter: EbayItemSummary => Boolean): F[List[EbayItem]] =
@@ -85,12 +79,13 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
-      Stream
-        .eval(logger.warn(s"auth error from ebay client ($message). switching account"))
-        .evalTap(_ => authClient.switchAccount())
-        .drain
-    case error: AppError =>
-      Stream.eval(logger.warn(s"api client error while getting items from ebay: ${error.message}")).drain
+      Stream.eval(logger.warn(s"auth error from ebay client ($message). switching account")).drain ++
+        Stream.eval(authClient.switchAccount()).drain
+    case AppError.Http(status, message) =>
+      Stream.eval(logger.warn(s"$status api client error while getting items from ebay: $message")).drain
+    case error: AppError.Critical =>
+      Stream.eval(logger.critical(s"critical error while trying to get items from ebay: ${error.message}")).drain ++
+        Stream.raiseError[F](error)
     case error =>
       Stream.eval(logger.error(error)(s"unexpected error while getting items from ebay: ${error.getMessage}")).drain
   }

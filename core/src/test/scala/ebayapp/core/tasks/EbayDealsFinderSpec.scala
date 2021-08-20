@@ -4,7 +4,6 @@ import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
-import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.config.{EbayDealsConfig, SearchCriteria}
 import ebayapp.core.domain.ItemDetails.Game
 import ebayapp.core.domain.search.BuyPrice
@@ -18,14 +17,13 @@ class EbayDealsFinderSpec extends CatsSpec {
   val dealConfig    = EbayDealsConfig(2.seconds, searchQueries, 34, 10)
 
   implicit val mapper: EbayItemMapper[Game]   = EbayItemMapper.gameDetailsMapper
-  implicit val params: EbaySearchParams[Game] = EbaySearchParams.videoGameSearchParams
 
   "A VideoGamesEbayDealsFinder" should {
 
     "send notification for cheap items" in {
       val game     = ResellableItemBuilder.videoGame("Super Mario 3", buyPrice = BuyPrice(1, BigDecimal(5)))
       val services = servicesMock
-      when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper), eqTo(params)))
+      when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper)))
         .thenReturn(fs2.Stream.evalSeq(IO.pure(List(game))))
 
       when(services.videoGame.save(any[ResellableItem.VideoGame])).thenReturn(IO.unit)
@@ -38,7 +36,7 @@ class EbayDealsFinderSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals).deals(dealConfig)(mapper, params)
+        verify(services.ebayDeals).deals(dealConfig)(mapper)
         verify(services.videoGame).isNew(game)
         verify(services.videoGame).save(game)
         verify(services.notification).cheapItem(game)
@@ -50,7 +48,7 @@ class EbayDealsFinderSpec extends CatsSpec {
       val game     = ResellableItemBuilder.videoGame("Super Mario 3", buyPrice = BuyPrice(15, BigDecimal(5)))
       val services = servicesMock
 
-      when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper), eqTo(params)))
+      when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper)))
         .thenReturn(fs2.Stream.evalSeq(IO.pure(List(game))))
 
       when(services.videoGame.save(game)).thenReturn(IO.unit)
@@ -62,7 +60,7 @@ class EbayDealsFinderSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals).deals(dealConfig)(mapper, params)
+        verify(services.ebayDeals).deals(dealConfig)(mapper)
         verifyZeroInteractions(services.notification)
         r mustBe ()
       }

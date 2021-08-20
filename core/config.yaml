@@ -48,7 +48,13 @@ data:
       deals {
         video-games {
           search-frequency: 60s
-          search-criteria: [{query: "PS4"}, {query: "PS5"}, {query: "XBOX SERIES"}, {query: "XBOX ONE"}, {query: "SWITCH"}]
+          search-criteria: [
+            {query: "PS4", item-kind: "video-game"},
+            {query: "PS5", item-kind: "video-game"},
+            {query: "XBOX SERIES", item-kind: "video-game"},
+            {query: "XBOX ONE", item-kind: "video-game"},
+            {query: "SWITCH", item-kind: "video-game"}
+          ]
           min-margin-percentage: 25
           max-expected-quantity: 10
         }

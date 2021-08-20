@@ -6,7 +6,6 @@ import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
-import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.config.{EbayDealsConfig, SearchCriteria}
 import ebayapp.core.domain.ItemDetails.Game
 import ebayapp.core.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
@@ -20,7 +19,6 @@ class EbayDealsServiceSpec extends CatsSpec {
   val videoGame2 = ResellableItemBuilder.videoGame("Battlefield 1", sellPrice = None)
 
   implicit val mapper: EbayItemMapper[Game]   = EbayItemMapper.gameDetailsMapper
-  implicit val params: EbaySearchParams[Game] = EbaySearchParams.videoGameSearchParams
 
   "An EbayDealsSearchService" should {
 
@@ -28,11 +26,11 @@ class EbayDealsServiceSpec extends CatsSpec {
       val dealsConfig             = EbayDealsConfig(2.seconds, List(SearchCriteria("q1"), SearchCriteria("q2")), 5, 10)
       val (ebayClient, cexClient) = mockDependecies
 
-      when(ebayClient.search[Game](eqTo(SearchCriteria("q1")))(eqTo(mapper), eqTo(params)))
+      when(ebayClient.search[Game](eqTo(SearchCriteria("q1")))(eqTo(mapper)))
         .thenReturn(Stream.evalSeq(IO.pure(List(videoGame, videoGame2))))
         .andThen(Stream.empty)
 
-      when(ebayClient.search[Game](eqTo(SearchCriteria("q2")))(eqTo(mapper), eqTo(params)))
+      when(ebayClient.search[Game](eqTo(SearchCriteria("q2")))(eqTo(mapper)))
         .thenReturn(Stream.empty)
 
       doReturn(IO.pure(videoGame))
@@ -57,7 +55,7 @@ class EbayDealsServiceSpec extends CatsSpec {
       val dealsConfig             = EbayDealsConfig(2.seconds, List(SearchCriteria("q1")), 5, 10)
       val (ebayClient, cexClient) = mockDependecies
 
-      when(ebayClient.search[Game](any[SearchCriteria])(eqTo(mapper), eqTo(params)))
+      when(ebayClient.search[Game](any[SearchCriteria])(eqTo(mapper)))
         .thenReturn(Stream.eval(IO.raiseError(new RuntimeException())))
         .andThen((Stream.evalSeq(IO.pure(List(videoGame)))))
 

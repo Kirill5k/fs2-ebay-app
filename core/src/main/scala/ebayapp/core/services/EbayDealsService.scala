@@ -5,7 +5,6 @@ import cats.effect.Temporal
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
-import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayDealsConfig, SearchCriteria}
 import ebayapp.core.common.stream._
@@ -15,7 +14,7 @@ import fs2._
 import scala.concurrent.duration._
 
 trait EbayDealsService[F[_]] {
-  def deals[D <: ItemDetails: EbayItemMapper: EbaySearchParams](config: EbayDealsConfig): Stream[F, ResellableItem[D]]
+  def deals[D <: ItemDetails: EbayItemMapper](config: EbayDealsConfig): Stream[F, ResellableItem[D]]
 }
 
 final class LiveEbayDealsService[F[_]: Logger: Temporal](
@@ -23,14 +22,14 @@ final class LiveEbayDealsService[F[_]: Logger: Temporal](
     private val cexClient: CexClient[F]
 ) extends EbayDealsService[F] {
 
-  override def deals[D <: ItemDetails: EbayItemMapper: EbaySearchParams](config: EbayDealsConfig): Stream[F, ResellableItem[D]] =
+  override def deals[D <: ItemDetails: EbayItemMapper](config: EbayDealsConfig): Stream[F, ResellableItem[D]] =
     Stream
       .emits(config.searchCriteria)
       .map(c => find(c))
       .parJoinUnbounded
       .repeatEvery(config.searchFrequency)
 
-  private def find[D <: ItemDetails: EbayItemMapper: EbaySearchParams](
+  private def find[D <: ItemDetails: EbayItemMapper](
       criteria: SearchCriteria
   ): Stream[F, ResellableItem[D]] =
     ebayClient

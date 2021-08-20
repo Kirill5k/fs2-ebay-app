@@ -3,13 +3,12 @@ package ebayapp.core.tasks
 import cats.Monad
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
-import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.config.EbayDealsConfig
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.services.{EbayDealsService, NotificationService, ResellableItemService, Services}
 import fs2.Stream
 
-final class EbayDealsFinder[F[_]: Monad, D <: ItemDetails: EbayItemMapper: EbaySearchParams](
+final class EbayDealsFinder[F[_]: Monad, D <: ItemDetails: EbayItemMapper](
     private val dealsConfig: EbayDealsConfig,
     private val ebayDealsService: EbayDealsService[F],
     private val resellableItemService: ResellableItemService[F, D],
@@ -47,8 +46,7 @@ object EbayDealsFinder {
         services.notification
       )(
         Monad[F],
-        EbayItemMapper.gameDetailsMapper,
-        EbaySearchParams.videoGameSearchParams
+        EbayItemMapper.gameDetailsMapper
       )
     }
 }
