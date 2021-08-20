@@ -14,9 +14,9 @@ import scala.concurrent.duration._
 
 class EbayAuthClientSpec extends SttpClientSpec {
 
-  val deals       = EbayDealsConfigs(EbayDealsConfig(60.seconds, Nil, 20.minutes, 34, 10))
+  val deals       = EbayDealsConfigs(EbayDealsConfig(60.seconds, Nil, 34, 10))
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92), deals)
+  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes), deals)
 
   "EbayAuthClient" should {
 

@@ -33,7 +33,7 @@ object Resources {
       .getOrElse(Resource.pure(None))
 
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
-    MongoClient.fromConnectionString[F](config.connectionUri).evalMap(_.getDatabase("ebay-app"))
+    MongoClient.fromConnectionString[F](config.connectionUri).evalMap(_.getDatabase(config.dbName))
 
   def make[F[_]: Async](config: AppConfig): Resource[F, Resources[F]] =
     (

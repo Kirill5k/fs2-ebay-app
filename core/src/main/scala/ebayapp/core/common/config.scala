@@ -35,7 +35,6 @@ object config {
   final case class EbayDealsConfig(
       searchFrequency: FiniteDuration,
       searchCriteria: List[SearchCriteria],
-      maxListingDuration: FiniteDuration,
       minMarginPercentage: Int,
       maxExpectedQuantity: Int
   )
@@ -51,7 +50,8 @@ object config {
 
   final case class EbaySearchConfig(
       minFeedbackScore: Int,
-      minFeedbackPercentage: Int
+      minFeedbackPercentage: Int,
+      maxListingDuration: FiniteDuration,
   )
 
   final case class EbayConfig(

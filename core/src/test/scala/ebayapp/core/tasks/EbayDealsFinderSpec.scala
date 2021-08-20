@@ -15,7 +15,7 @@ import scala.concurrent.duration._
 class EbayDealsFinderSpec extends CatsSpec {
 
   val searchQueries = List(SearchCriteria("q1"), SearchCriteria("q2"))
-  val dealConfig    = EbayDealsConfig(2.seconds, searchQueries, 20.minutes, 34, 10)
+  val dealConfig    = EbayDealsConfig(2.seconds, searchQueries, 34, 10)
 
   implicit val mapper: EbayItemMapper[Game]   = EbayItemMapper.gameDetailsMapper
   implicit val params: EbaySearchParams[Game] = EbaySearchParams.videoGameSearchParams

@@ -20,9 +20,8 @@ import java.time.temporal.ChronoField.MILLI_OF_SECOND
 import scala.concurrent.duration._
 
 trait EbayClient[F[_]] {
-  def latest[D <: ItemDetails](
-      criteria: SearchCriteria,
-      duration: FiniteDuration
+  def search[D <: ItemDetails](
+      criteria: SearchCriteria
   )(implicit
       mapper: EbayItemMapper[D],
       params: EbaySearchParams[D]
@@ -39,14 +38,13 @@ final private[ebay] class LiveEbayClient[F[_]](
     val logger: Logger[F]
 ) extends EbayClient[F] {
 
-  def latest[D <: ItemDetails](
-      criteria: SearchCriteria,
-      duration: FiniteDuration
+  def search[D <: ItemDetails](
+      criteria: SearchCriteria
   )(implicit
       mapper: EbayItemMapper[D],
       params: EbaySearchParams[D]
   ): Stream[F, ResellableItem[D]] = {
-    val time   = Instant.now.minusMillis(duration.toMillis).`with`(MILLI_OF_SECOND, 0)
+    val time   = Instant.now.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)
     val filter = params.searchFilterTemplate.format(time).replaceAll("\\{", "%7B").replaceAll("}", "%7D")
     val searchParams = Map(
       "fieldgroups"  -> "EXTENDED",
