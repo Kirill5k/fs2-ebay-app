@@ -4,7 +4,6 @@ package ebayapp.core.services
 import java.time.Instant
 import cats.Monad
 import cats.implicits._
-import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.domain.ResellableItem.VideoGame
 import ebayapp.core.repositories.ResellableItemRepository.VideoGameRepository
@@ -15,7 +14,7 @@ trait ResellableItemService[F[_], D <: ItemDetails] {
   def findAll(limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
   def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): Stream[F, ResellableItem[D]]
   def isNew(item: ResellableItem[D]): F[Boolean]
-  def findBy(query: SearchQuery, limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
+  def findBy(query: String, limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
 }
 
 final class VideoGameService[F[_]: Monad](
@@ -35,7 +34,7 @@ final class VideoGameService[F[_]: Monad](
     repository.findAll(limit, from, to)
 
   override def findBy(
-      query: SearchQuery,
+      query: String,
       limit: Option[Int],
       from: Option[Instant],
       to: Option[Instant]

@@ -3,7 +3,7 @@ package ebayapp.core.services
 import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.common.config.{SearchCategory, SearchQuery, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.common.config.{SearchCriteria, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
@@ -13,8 +13,8 @@ import scala.concurrent.duration._
 
 class CexStockServiceSpec extends CatsSpec {
 
-  val req1   = StockMonitorRequest(SearchQuery("macbook"), true, true)
-  val req2   = StockMonitorRequest(SearchQuery("iphone"), true, true)
+  val req1   = StockMonitorRequest(SearchCriteria("macbook"), true, true)
+  val req2   = StockMonitorRequest(SearchCriteria("iphone"), true, true)
   val config = StockMonitorConfig(1.seconds, List(req1))
 
   val mb1 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0)
@@ -25,7 +25,7 @@ class CexStockServiceSpec extends CatsSpec {
     "monitor multiple requests concurrently" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(any[SearchQuery], any[Option[SearchCategory]])).thenReturn(Stream.empty)
+      when(client.search(any[SearchCriteria])).thenReturn(Stream.empty)
 
       val service = StockService.cex[IO](client)
       val result = service.flatMap { svc =>
@@ -37,8 +37,8 @@ class CexStockServiceSpec extends CatsSpec {
       }
 
       result.unsafeToFuture().map { u =>
-        verify(client, atLeast(2)).search(req1.query)
-        verify(client, atLeast(1)).search(req2.query)
+        verify(client, atLeast(2)).search(req1.searchCriteria)
+        verify(client, atLeast(1)).search(req2.searchCriteria)
         u mustBe Nil
       }
     }
@@ -46,7 +46,7 @@ class CexStockServiceSpec extends CatsSpec {
     "return new in stock update if cache previously had some items" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.empty)
         .andThen(Stream.emit(mb1))
 
@@ -61,7 +61,7 @@ class CexStockServiceSpec extends CatsSpec {
     "return stock increase update if quantity increase" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(1, 1950.0))))
         .andThen(Stream.emit(mb1))
 
@@ -76,7 +76,7 @@ class CexStockServiceSpec extends CatsSpec {
     "return stock decrease update if quantity decreased" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
         .andThen(Stream.emit(mb1))
 
@@ -91,7 +91,7 @@ class CexStockServiceSpec extends CatsSpec {
     "not return anything if stock monitor is disabled" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
         .andThen(Stream.emit(mb1))
 
@@ -110,7 +110,7 @@ class CexStockServiceSpec extends CatsSpec {
 
     "return price increase update if price increase" in {
       val client = mock[CexClient[IO]]
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 950.0))))
         .andThen(Stream.emit(mb1))
 
@@ -124,7 +124,7 @@ class CexStockServiceSpec extends CatsSpec {
 
     "return price drop update if price decrease" in {
       val client = mock[CexClient[IO]]
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
         .andThen(Stream.emit(mb1))
 
@@ -138,7 +138,7 @@ class CexStockServiceSpec extends CatsSpec {
 
     "return multiple price drop updates" in {
       val client = mock[CexClient[IO]]
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 4950.0))))
         .andThen(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 3950.0))))
         .andThen(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
@@ -154,7 +154,7 @@ class CexStockServiceSpec extends CatsSpec {
 
     "non return anything if monitor is disabled for price" in {
       val client = mock[CexClient[IO]]
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
         .andThen(Stream.emit(mb1))
 
@@ -174,7 +174,7 @@ class CexStockServiceSpec extends CatsSpec {
     "return updates for multiple items" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(req1.query))
+      when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emits(List(mb1.copy(buyPrice = BuyPrice(3, 3000.0)), mb2.copy(buyPrice = BuyPrice(3, 3000.0)))))
         .andThen(Stream.emits(List(mb1, mb2)))
 

@@ -27,7 +27,7 @@ data:
       stock-monitor {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {query: "Apple iPad Pro 12.9 5th gen 128gb wifi", monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "Apple iPad Pro 12.9 5th gen 128gb wifi"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }
@@ -47,7 +47,7 @@ data:
       deals {
         video-games {
           search-frequency: 60s
-          search-queries: ["PS4", "PS5", "XBOX SERIES", "XBOX ONE", "SWITCH"]
+          search-criteria: [{query: "PS4"}, {query: "PS5"}, {query: "XBOX SERIES"}, {query: "XBOX ONE"}, {query: "SWITCH"}]
           max-listing-duration: 20m
           min-margin-percentage: 25
           max-expected-quantity: 10
@@ -63,14 +63,14 @@ data:
       stock-monitor {
         monitoring-frequency: 6m
         monitoring-requests: [
-          {query: "stone-island", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {query: "emporio armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {query: "kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
-          {query: "moncler", monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
-          {query: "tommy hilfiger", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "calvin klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "polo ralph lauren", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "gucci", monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "stone-island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
+          {search-criteria: {query: "moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
+          {search-criteria: {query: "tommy hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {query: "calvin klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {query: "gucci"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
       }
     }
@@ -81,7 +81,7 @@ data:
       stock-monitor {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {query: "PlayStation 5 Console", monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "PlayStation 5 Console"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
       headers {
@@ -94,8 +94,8 @@ data:
       stock-monitor {
         monitoring-frequency: 4m
         monitoring-requests: [
-          {query: "Emporio Armani EA7", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
         ]
       }
     }
@@ -105,11 +105,11 @@ data:
       stock-monitor {
         monitoring-frequency: 4m
         monitoring-requests: [
-          {query: "Emporio Armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {query: "Boss", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "Stone Island", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {query: "Kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
         ]
       }
     }
@@ -120,7 +120,7 @@ data:
       stock-monitor {
         monitoring-frequency: 5m
         monitoring-requests: [
-          {query: "geforce", monitor-stock-change: true, monitor-price-change: true, category: "GPU"}
+          {search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true}
         ]
       }
       headers {
@@ -133,11 +133,11 @@ data:
       stock-monitor {
         monitoring-frequency: 5m
         monitoring-requests: [
-          //{category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3080-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
-          //{category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3070-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
-          //{category: "gpu-amd-gaming", query: "amd-radeon-rx-5700-xt-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
-          //{category: "gpu-amd-gaming", query: "amd-radeon-rx-6700-xt-pcie-40-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
-          //{category: "gpu-amd-gaming", query: "amd-radeon-rx-6900-xt-pcie-40-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3080-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3070-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "gpu-amd-gaming", query: "amd-radeon-rx-5700-xt-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "gpu-amd-gaming", query: "amd-radeon-rx-6700-xt-pcie-40-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "gpu-amd-gaming", query: "amd-radeon-rx-6900-xt-pcie-40-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }

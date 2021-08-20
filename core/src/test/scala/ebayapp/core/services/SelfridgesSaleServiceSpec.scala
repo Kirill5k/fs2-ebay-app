@@ -3,7 +3,7 @@ package ebayapp.core.services
 import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.common.config.{SearchCategory, SearchQuery, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.common.config.{SearchCriteria, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.clothing
 import fs2.Stream
 
@@ -11,8 +11,8 @@ import scala.concurrent.duration._
 
 class SelfridgesSaleServiceSpec extends CatsSpec {
 
-  val query  = SearchQuery("foo")
-  val config = StockMonitorConfig(1.second, List(StockMonitorRequest(SearchQuery("foo"), true, true, minDiscount = Some(50))))
+  val criteria = SearchCriteria("foo")
+  val config   = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true, minDiscount = Some(50))))
 
   "A LiveSelfridgesSaleService" should {
 
@@ -24,7 +24,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
       )
 
       val client = mock[SearchClient[IO]]
-      when(client.search(any[SearchQuery], any[Option[SearchCategory]]))
+      when(client.search(any[SearchCriteria]))
         .thenReturn(Stream.empty)
         .andThen(Stream.emits(items))
 

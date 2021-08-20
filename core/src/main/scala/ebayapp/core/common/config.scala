@@ -2,8 +2,7 @@ package ebayapp.core.common
 
 import cats.effect.kernel.Sync
 import cats.implicits._
-import java.nio.charset.StandardCharsets
-import java.util.Base64
+import ebayapp.core.domain.ItemKind
 import pureconfig._
 import pureconfig.generic.auto._
 
@@ -13,7 +12,8 @@ import scala.concurrent.duration.FiniteDuration
 object config {
 
   final case class MongoConfig(
-      connectionUri: String
+      connectionUri: String,
+      dbName: String
   )
 
   final case class ServerConfig(
@@ -26,16 +26,15 @@ object config {
       port: Option[Int]
   )
 
-  final case class SearchQuery(value: String) extends AnyVal {
-    def base64: String =
-      Base64.getEncoder.encodeToString(value.replaceAll(" ", "").getBytes(StandardCharsets.UTF_8))
-  }
-
-  final case class SearchCategory(value: String) extends AnyVal
+  final case class SearchCriteria(
+      query: String,
+      category: Option[String] = None,
+      itemKind: Option[ItemKind] = None
+  )
 
   final case class EbayDealsConfig(
       searchFrequency: FiniteDuration,
-      searchQueries: List[SearchQuery],
+      searchCriteria: List[SearchCriteria],
       maxListingDuration: FiniteDuration,
       minMarginPercentage: Int,
       maxExpectedQuantity: Int
@@ -68,10 +67,9 @@ object config {
   )
 
   final case class StockMonitorRequest(
-      query: SearchQuery,
+      searchCriteria: SearchCriteria,
       monitorStockChange: Boolean,
       monitorPriceChange: Boolean,
-      category: Option[SearchCategory] = None,
       minDiscount: Option[Int] = None
   )
 

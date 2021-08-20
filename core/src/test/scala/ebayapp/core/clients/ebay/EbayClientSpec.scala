@@ -8,7 +8,7 @@ import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses._
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper._
 import ebayapp.core.common.Cache
-import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbayDealsConfig, EbayDealsConfigs, EbaySearchConfig, SearchQuery}
+import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbayDealsConfig, EbayDealsConfigs, EbaySearchConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.ItemDetails
 import ebayapp.core.domain.ItemDetails.Game
@@ -20,7 +20,7 @@ import scala.concurrent.duration._
 class EbayClientSpec extends CatsSpec {
 
   val accessToken = "access-token"
-  val searchQuery = SearchQuery("xbox")
+  val criteria    = SearchCriteria("xbox")
 
   val deals       = EbayDealsConfigs(EbayDealsConfig(60.seconds, Nil, 20.minutes, 34, 10))
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
@@ -35,16 +35,16 @@ class EbayClientSpec extends CatsSpec {
 
       when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.pure(List()))
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), searchParamsCaptor)
         searchParamsCaptor.value must have size 5
-        searchParamsCaptor.values.map(_("q")) mustBe(List("xbox"))
-        searchParamsCaptor.value("fieldgroups") mustBe("EXTENDED")
-        searchParamsCaptor.value("limit") mustBe("200")
-        searchParamsCaptor.value("category_ids") mustBe("139973")
+        searchParamsCaptor.values.map(_("q")) mustBe (List("xbox"))
+        searchParamsCaptor.value("fieldgroups") mustBe "EXTENDED"
+        searchParamsCaptor.value("limit") mustBe "200"
+        searchParamsCaptor.value("category_ids") mustBe "139973"
         searchParamsCaptor.value("filter") must startWith(
           "conditionIds:%7B1000|1500|2000|2500|3000|4000|5000%7D,itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:%7BFIXED_PRICE%7D,itemStartDate:["
         )
@@ -60,7 +60,7 @@ class EbayClientSpec extends CatsSpec {
       when(authClient.switchAccount()).thenReturn(IO.unit)
       when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.raiseError(AppError.Auth("Too many requests")))
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { error =>
         verify(cache, never).put(any[String], any[Unit])
@@ -79,7 +79,7 @@ class EbayClientSpec extends CatsSpec {
       when(browseClient.search(any[String], anyMap[String, String]))
         .thenReturn(IO.raiseError(AppError.Http(400, "Bad request")))
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { error =>
         verify(cache, never).put(any[String], any[Unit])
@@ -98,7 +98,7 @@ class EbayClientSpec extends CatsSpec {
       when(cache.contains(any[String])).thenReturn(IO.pure(true))
       when(browseClient.search(any[String], anyMap[String, String])).thenReturn(ebayItemSummaries("item-1").pure[IO])
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache).contains("item-1")
@@ -116,7 +116,7 @@ class EbayClientSpec extends CatsSpec {
       when(browseClient.search(any[String], anyMap[String, String]))
         .thenReturn(List(ebayItemSummary("1", feedbackPercentage = 90), ebayItemSummary("1", feedbackScore = 4)).pure[IO])
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
@@ -134,7 +134,7 @@ class EbayClientSpec extends CatsSpec {
       when(browseClient.search(any[String], anyMap[String, String]))
         .thenReturn(List(ebayItemSummary("1", itemGroup = Some("USER_DEFINED"))).pure[IO])
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
@@ -174,7 +174,7 @@ class EbayClientSpec extends CatsSpec {
 
       doReturn(response).when(browseClient).search(any[String], anyMap[String, String])
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
@@ -190,7 +190,7 @@ class EbayClientSpec extends CatsSpec {
         .when(browseClient)
         .search(any[String], anyMap[String, String])
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
@@ -211,7 +211,7 @@ class EbayClientSpec extends CatsSpec {
         .when(browseClient)
         .search(any[String], anyMap[String, String])
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache, never).put(any[String], any[Unit])
@@ -228,14 +228,14 @@ class EbayClientSpec extends CatsSpec {
       when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.pure(ebayItemSummaries("item-1")))
       when(browseClient.getItem(accessToken, "item-1")).thenReturn(IO.pure(Some(ebayItem.copy(itemId = "item-1"))))
 
-      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](searchQuery, 15.minutes)
+      val itemsResponse = videoGameSearchClient.latest[ItemDetails.Game](criteria, 15.minutes)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
         verify(cache).put("item-1", ())
         verify(authClient, times(2)).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient).getItem(eqTo(accessToken), any[String])
-        items.map(_.itemDetails) mustBe(List(Game(Some("call of duty modern warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))))
+        items.map(_.itemDetails) mustBe (List(Game(Some("call of duty modern warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))))
       }
     }
   }

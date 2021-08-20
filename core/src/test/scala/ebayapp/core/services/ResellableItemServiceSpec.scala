@@ -3,7 +3,6 @@ package ebayapp.core.services
 import java.time.Instant
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import ebayapp.core.repositories.ResellableItemRepository.VideoGameRepository
 
@@ -66,15 +65,15 @@ class ResellableItemServiceSpec extends CatsSpec {
 
     "get latest items from db by query" in {
       val repository = mock[VideoGameRepository[IO]]
-      when(repository.search(any[SearchQuery], any[Option[Int]], any[Option[Instant]], any[Option[Instant]]))
+      when(repository.search(any[String], any[Option[Int]], any[Option[Instant]], any[Option[Instant]]))
         .thenReturn(IO.pure(List(videoGame)))
 
       val latestResult = ResellableItemService
         .videoGame(repository)
-        .flatMap(_.findBy(SearchQuery("foo"), Some(10), None, None))
+        .flatMap(_.findBy("foo", Some(10), None, None))
 
       latestResult.unsafeToFuture().map { latest =>
-        verify(repository).search(SearchQuery("foo"), Some(10), None, None)
+        verify(repository).search("foo", Some(10), None, None)
         latest mustBe List(videoGame)
       }
     }

@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.argos.mappers.argosGenericItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
 import ebayapp.core.domain.ResellableItem
 import io.circe.generic.auto._
 import sttp.client3._
@@ -27,13 +27,10 @@ final private class LiveArgosClient[F[_]](
   override val name   = "argos"
   private val headers = defaultHeaders ++ config.headers
 
-  override def search(
-      query: SearchQuery,
-      category: Option[SearchCategory]
-  ): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
     Stream
       .unfoldLoopEval(1) { page =>
-        search(query, page).map {
+        search(criteria.query, page).map {
           case Some(res) => (res.response.data, res.response.meta.nextPage)
           case None      => (Nil, None)
         }
@@ -43,11 +40,11 @@ final private class LiveArgosClient[F[_]](
       .filter(i => i.attributes.deliverable || i.attributes.reservable)
       .map(argosGenericItemMapper.toDomain)
 
-  private def search(query: SearchQuery, page: Int): F[Option[SearchData]] =
+  private def search(query: String, page: Int): F[Option[SearchData]] =
     dispatch() {
       basicRequest
         .get(
-          uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query.value};searchType=null?returnMeta=true"
+          uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query};searchType=null?returnMeta=true"
         )
         .headers(headers)
         .response(asJson[ArgosSearchResponse])

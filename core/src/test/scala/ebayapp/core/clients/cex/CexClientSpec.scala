@@ -2,7 +2,7 @@ package ebayapp.core.clients.cex
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{CexConfig, CexPriceFindConfig, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{CexConfig, CexPriceFindConfig, SearchCriteria, StockMonitorConfig}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.search._
 import ebayapp.core.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
@@ -24,7 +24,7 @@ class CexClientSpec extends SttpClientSpec {
     )
 
     "find items" in {
-      val query = SearchQuery("macbook pro 16,1")
+      val criteria = SearchCriteria("macbook pro 16,1")
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "macbook pro 16,1", "inStock" -> "1", "inStockOnline" -> "1")) =>
@@ -34,7 +34,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.search(query).compile.toList)
+      val result = cexClient.flatMap(_.search(criteria).compile.toList)
 
       result
         .unsafeToFuture()

@@ -8,7 +8,7 @@ import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.circe.asJson
@@ -29,21 +29,20 @@ final private class LiveNvidiaClient[F[_]](
   private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
   override def search(
-      query: SearchQuery,
-      category: Option[SearchCategory]
+      criteria: SearchCriteria
   ): Stream[F, ResellableItem.Anything] =
     Stream
-      .evalSeq(searchProducts(query, category))
+      .evalSeq(searchProducts(criteria))
       .filterNot(_.isOutOfStock)
       .flatMap { p =>
         Stream.emits(p.retailers.map(r => NvidiaItem(p.productTitle, p.imageURL, p.category, r)))
       }
       .map(nvidiaGenericItemMapper.toDomain)
 
-  private def searchProducts(q: SearchQuery, c: Option[SearchCategory]): F[List[Product]] =
+  private def searchProducts(c: SearchCriteria): F[List[Product]] =
     dispatch() {
       basicRequest
-        .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${q.value}&category=${c.map(_.value)}")
+        .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
         .response(asJson[NvidiaSearchResponse])
         .headers(headers)
     }.flatMap { r =>
@@ -55,10 +54,10 @@ final private class LiveNvidiaClient[F[_]](
             List.empty[Product].pure[F]
         case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
           logger.error(s"$name-search/$status-error, \n$body") *>
-            timer.sleep(10.seconds) *> searchProducts(q, c)
+            timer.sleep(10.seconds) *> searchProducts(c)
         case Left(error) =>
           logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
-            timer.sleep(10.second) *> searchProducts(q, c)
+            timer.sleep(10.second) *> searchProducts(c)
       }
     }
 }

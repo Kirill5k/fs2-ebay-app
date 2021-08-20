@@ -2,7 +2,7 @@ package ebayapp.core.clients.selfridges
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{GenericStoreConfig, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria, StockMonitorConfig}
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3
@@ -21,7 +21,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
       Map("api-key" -> "foo-bar")
     )
 
-    val query = SearchQuery("EA7 Armani")
+    val criteria = SearchCriteria("EA7 Armani")
 
     "return stream of clothing items that are on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
@@ -51,7 +51,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
         items must have size 16
         val item = items.head
 
@@ -75,7 +75,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
+      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map(_ mustBe Nil)
     }
 
     "return empty stream when failed to deserialize response" in {
@@ -88,7 +88,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map(_ mustBe Nil)
+      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map(_ mustBe Nil)
     }
   }
 

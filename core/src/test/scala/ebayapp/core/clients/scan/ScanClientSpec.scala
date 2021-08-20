@@ -2,7 +2,7 @@ package ebayapp.core.clients.scan
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria, StockMonitorConfig}
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._
 
@@ -15,8 +15,7 @@ class ScanClientSpec extends SttpClientSpec {
 
     val config = GenericStoreConfig("http://scan.co.uk", StockMonitorConfig(10.second, Nil))
 
-    val query = SearchQuery("amd radeon rx 6900 xt pcie 40 graphics cards")
-    val category = SearchCategory("gpu-amd-gaming")
+    val criteria = SearchCriteria("amd radeon rx 6900 xt pcie 40 graphics cards", Some("gpu-amd-gaming"))
 
     "return available graphic cards" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
@@ -28,7 +27,7 @@ class ScanClientSpec extends SttpClientSpec {
 
       val client = ScanClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(query, Some(category)).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
         items must have size 2
       }
     }

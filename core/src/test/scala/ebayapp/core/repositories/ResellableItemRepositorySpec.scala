@@ -4,7 +4,6 @@ import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import ebayapp.core.MockLogger
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
@@ -63,7 +62,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
             _    <- coll.createIndex(Document.parse("""{"itemDetails.name":"text","itemDetails.platform":"text"}"""))
             repo <- ResellableItemRepository.videoGamesMongo[IO](db)
             _    <- repo.saveAll(videoGames)
-            res  <- repo.search(SearchQuery("mario"))
+            res  <- repo.search("mario")
           } yield res
 
           result.map(_ mustBe List(videoGames.last))

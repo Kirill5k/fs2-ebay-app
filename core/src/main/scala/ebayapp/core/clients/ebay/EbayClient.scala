@@ -8,7 +8,7 @@ import ebayapp.core.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.Cache
-import ebayapp.core.common.config.{EbayConfig, SearchQuery}
+import ebayapp.core.common.config.{EbayConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.common.Logger
@@ -21,7 +21,7 @@ import scala.concurrent.duration._
 
 trait EbayClient[F[_]] {
   def latest[D <: ItemDetails](
-      query: SearchQuery,
+      criteria: SearchCriteria,
       duration: FiniteDuration
   )(implicit
       mapper: EbayItemMapper[D],
@@ -40,7 +40,7 @@ final private[ebay] class LiveEbayClient[F[_]](
 ) extends EbayClient[F] {
 
   def latest[D <: ItemDetails](
-      query: SearchQuery,
+      criteria: SearchCriteria,
       duration: FiniteDuration
   )(implicit
       mapper: EbayItemMapper[D],
@@ -53,7 +53,7 @@ final private[ebay] class LiveEbayClient[F[_]](
       "category_ids" -> params.categoryId.toString,
       "filter"       -> filter,
       "limit"        -> "200",
-      "q"            -> query.value
+      "q"            -> criteria.query
     )
 
     Stream
@@ -87,7 +87,8 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   private def switchAccountIfItHasExpired[D <: ItemDetails]: PartialFunction[Throwable, Stream[F, ResellableItem[D]]] = {
     case AppError.Auth(message) =>
-      Stream.eval(logger.warn(s"auth error from ebay client ($message). switching account"))
+      Stream
+        .eval(logger.warn(s"auth error from ebay client ($message). switching account"))
         .evalTap(_ => authClient.switchAccount())
         .drain
     case error: AppError =>

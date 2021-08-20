@@ -2,7 +2,7 @@ package ebayapp.core.clients.nvidia
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria, StockMonitorConfig}
 import sttp.client3._
 import ebayapp.core.requests._
 
@@ -14,8 +14,7 @@ class NvidiaClientSpec extends SttpClientSpec {
 
     val config = GenericStoreConfig("http://nvidia.com", StockMonitorConfig(10.second, Nil))
 
-    val query    = SearchQuery("geforce")
-    val category = SearchCategory("GPU")
+    val criteria = SearchCriteria("geforce", Some("GPU"))
 
     "return items that are in stock" in {
       val requestParams = Map("page" -> "1", "limit" -> "512", "locale" -> "en-gb", "search" -> "geforce", "category" -> "GPU")
@@ -28,7 +27,7 @@ class NvidiaClientSpec extends SttpClientSpec {
 
       val client = NvidiaClient.make[IO](config, testingBackend)
 
-      val result = client.flatMap(_.search(query, Some(category)).compile.toList)
+      val result = client.flatMap(_.search(criteria).compile.toList)
 
       result.unsafeToFuture().map { res =>
         res must have size 99

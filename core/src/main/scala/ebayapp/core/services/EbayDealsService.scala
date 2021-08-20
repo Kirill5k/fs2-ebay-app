@@ -7,7 +7,7 @@ import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{EbayDealsConfig, SearchQuery}
+import ebayapp.core.common.config.{EbayDealsConfig, SearchCriteria}
 import ebayapp.core.common.stream._
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import fs2._
@@ -25,17 +25,17 @@ final class LiveEbayDealsService[F[_]: Logger: Temporal](
 
   override def deals[D <: ItemDetails: EbayItemMapper: EbaySearchParams](config: EbayDealsConfig): Stream[F, ResellableItem[D]] =
     Stream
-      .emits(config.searchQueries)
-      .map(query => find(query, config.maxListingDuration))
+      .emits(config.searchCriteria)
+      .map(criteria => find(criteria, config.maxListingDuration))
       .parJoinUnbounded
       .repeatEvery(config.searchFrequency)
 
   private def find[D <: ItemDetails: EbayItemMapper: EbaySearchParams](
-      query: SearchQuery,
+      criteria: SearchCriteria,
       duration: FiniteDuration
   ): Stream[F, ResellableItem[D]] =
     ebayClient
-      .latest[D](query, duration)
+      .latest[D](criteria, duration)
       .evalMap(cexClient.withUpdatedSellPrice)
       .metered(250.millis)
       .handleErrorWith { error =>

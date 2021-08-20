@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.selfridges.SelfridgesClient._
 import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.Decoder
@@ -47,12 +47,9 @@ final private class LiveSelfridgesClient[F[_]](
     "blouse"
   ).mkString("(?i).*(", "|", ").*")
 
-  override def search(
-      query: SearchQuery,
-      category: Option[SearchCategory]
-  ): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
     Stream
-      .unfoldLoopEval(1)(searchForItems(query))
+      .unfoldLoopEval(1)(searchForItems(criteria))
       .flatMap(Stream.emits)
       .filter(!_.name.matches(filters))
       .filter(_.price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined))
@@ -72,9 +69,9 @@ final private class LiveSelfridgesClient[F[_]](
         stock.map(s => (s, pricesBySkuid.get(s.SKUID).flatMap(_.headOption)))
       }
 
-  private def searchForItems(query: SearchQuery)(page: Int): F[(List[CatalogItem], Option[Int])] =
+  private def searchForItems(criteria: SearchCriteria)(page: Int): F[(List[CatalogItem], Option[Int])] =
     sendRequest[SelfridgesSearchResponse](
-      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${query.value.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
+      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${criteria.query.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
       "products-by-ids",
       SelfridgesSearchResponse(0, None, Nil)
     ).map(res => (res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))

@@ -1,14 +1,14 @@
 package ebayapp.core.domain
 
 import ebayapp.core.domain.ItemDetails.{Game, Phone}
-import ebayapp.core.domain.ResellableItem.{GenericItem, MobilePhone, VideoGame, Clothe}
+import ebayapp.core.domain.ResellableItem.{GenericItem, MobilePhone, VideoGame, Clothing}
 import ebayapp.core.domain.search.{SellPrice, _}
 
 import java.time.Instant
 
 object ResellableItemBuilder {
 
-  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Option[Int] = Some(50)): Clothe =
+  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Option[Int] = Some(50)): Clothing =
     ResellableItem(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),

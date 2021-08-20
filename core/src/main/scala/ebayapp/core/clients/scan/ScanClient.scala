@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3._
@@ -27,18 +27,19 @@ final private class LiveScanClient[F[_]](
 
   private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
-  override def search(
-      query: SearchQuery,
-      category: Option[SearchCategory]
-  ): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
     Stream
-      .evalSeq(searchByCard(query, category.get))
-      .map(scanaGenericItemMapper.toDomain)
+      .eval(F.fromOption(criteria.category, new IllegalArgumentException("Category is required")))
+      .flatMap { cat =>
+        Stream
+          .evalSeq(searchByCard(criteria.query, cat))
+          .map(scanaGenericItemMapper.toDomain)
+      }
 
-  private def searchByCard(query: SearchQuery, category: SearchCategory): F[List[ScanItem]] = {
+  private def searchByCard(query: String, category: String): F[List[ScanItem]] = {
     dispatch() {
-      val cat  = category.value.toLowerCase.replaceAll(" ", "-")
-      val card = query.value.toLowerCase.replaceAll(" ", "-")
+      val cat  = category.toLowerCase.replaceAll(" ", "-")
+      val card = query.toLowerCase.replaceAll(" ", "-")
       basicRequest
         .get(uri"${config.baseUri}/shop/gaming/$cat/$card")
         .headers(headers)

@@ -2,7 +2,7 @@ package ebayapp.core.clients.argos
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{GenericStoreConfig, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria, StockMonitorConfig}
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._
 
@@ -12,8 +12,8 @@ class ArgosClientSpec extends SttpClientSpec {
 
   "An ArgosClient" should {
 
-    val config = GenericStoreConfig("http://argos.com", StockMonitorConfig(10.minutes, Nil))
-    val query = SearchQuery("PlayStation 5 Console")
+    val config   = GenericStoreConfig("http://argos.com", StockMonitorConfig(10.minutes, Nil))
+    val criteria = SearchCriteria("PlayStation 5 Console")
 
     "return relevant deliverable or reservable items" in {
       val backend: SttpBackend[IO, Any] = backendStub
@@ -27,7 +27,7 @@ class ArgosClientSpec extends SttpClientSpec {
 
       val client = ArgosClient.make[IO](config, backend)
 
-      val result = client.flatMap(_.search(query).compile.toList)
+      val result = client.flatMap(_.search(criteria).compile.toList)
 
       result.unsafeToFuture().map { items =>
         items must have size 1

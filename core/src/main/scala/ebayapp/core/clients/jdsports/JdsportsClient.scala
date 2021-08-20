@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.{SttpBackend, basicRequest, _}
@@ -29,11 +29,8 @@ final private class LiveJdsportsClient[F[_]](
     "X-Reroute-To" -> s"https://www.$name.co.uk"
   ) ++ defaultHeaders ++ config.headers
 
-  override def search(
-      query: SearchQuery,
-      category: Option[SearchCategory]
-  ): Stream[F, ResellableItem.Anything] =
-    brands(query)
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
+    brands(criteria.query)
       .filter(_.sale)
       .metered(250.millis)
       .evalMap(ci => getProductStock(ci))
@@ -59,16 +56,16 @@ final private class LiveJdsportsClient[F[_]](
         Stream.eval(logger.error(e)(e.getMessage)).drain
       }
 
-  private def brands(query: SearchQuery): Stream[F, JdCatalogItem] =
+  private def brands(query: String): Stream[F, JdCatalogItem] =
     Stream
       .unfoldLoopEval(0) { step =>
         searchByBrand(query, step).map(items => (items, items.nonEmpty.guard[Option].as(step + 1)))
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(query: SearchQuery, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
+  private def searchByBrand(query: String, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
     dispatch() {
-      val brand = query.value.toLowerCase.replace(" ", "-")
+      val brand = query.toLowerCase.replace(" ", "-")
       basicRequest
         .get(uri"${config.baseUri}/men/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
         .headers(headers)

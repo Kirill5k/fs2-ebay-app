@@ -3,7 +3,7 @@ package ebayapp.core.clients
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{SearchCategory, SearchQuery}
+import ebayapp.core.common.config.SearchCriteria
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.{Request, Response, SttpBackend}
@@ -11,10 +11,7 @@ import sttp.client3.{Request, Response, SttpBackend}
 import scala.concurrent.duration._
 
 trait SearchClient[F[_]] {
-  def search(
-      query: SearchQuery,
-      category: Option[SearchCategory] = None
-  ): Stream[F, ResellableItem.Anything]
+  def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything]
 
   protected val name: String
   protected val backend: SttpBackend[F, Any]

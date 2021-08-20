@@ -5,7 +5,7 @@ import ebayapp.core.CatsSpec
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.core.clients.ebay.search.EbaySearchParams
-import ebayapp.core.common.config.{EbayDealsConfig, SearchQuery}
+import ebayapp.core.common.config.{EbayDealsConfig, SearchCriteria}
 import ebayapp.core.domain.ItemDetails.Game
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 
 class EbayDealsFinderSpec extends CatsSpec {
 
-  val searchQueries = List(SearchQuery("q1"), SearchQuery("q2"))
+  val searchQueries = List(SearchCriteria("q1"), SearchCriteria("q2"))
   val dealConfig    = EbayDealsConfig(2.seconds, searchQueries, 20.minutes, 34, 10)
 
   implicit val mapper: EbayItemMapper[Game]   = EbayItemMapper.gameDetailsMapper

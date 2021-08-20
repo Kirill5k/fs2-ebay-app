@@ -16,20 +16,18 @@ trait StockService[F[_]] extends StockComparer[F] {
 
   def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates.Anything]
 
-  protected def findItems(
-      req: StockMonitorRequest
-  )(implicit
+  protected def findItems(req: StockMonitorRequest)(implicit
       logger: Logger[F],
       concurrent: Concurrent[F]
   ): F[Map[String, ResellableItem.Anything]] =
     client
-      .search(req.query, req.category)
+      .search(req.searchCriteria)
       .filter(item => req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => logger.info(s"""$name-search "${req.query.value}" returned ${i.size} results"""))
+      .flatTap(i => logger.info(s"""$name-search "${req.searchCriteria.query}" returned ${i.size} results"""))
 
 }
 

@@ -3,7 +3,7 @@ package ebayapp.core.clients.jdsports
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.requests._
-import ebayapp.core.common.config.{GenericStoreConfig, SearchQuery, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria, StockMonitorConfig}
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3.{Response, SttpBackend}
@@ -15,9 +15,10 @@ class JdsportsClientSpec extends SttpClientSpec {
 
   "A JdsportsClient" should {
     val config = GenericStoreConfig("http://jdsports.com/proxy", StockMonitorConfig(10.second, Nil))
-    val query  = SearchQuery("Emporio Armani EA7")
 
     "return items on sale" in {
+      val criteria = SearchCriteria("Emporio Armani EA7")
+
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") && r.hasParams(Map("from" -> "0")) =>
@@ -33,7 +34,7 @@ class JdsportsClientSpec extends SttpClientSpec {
 
       val client = JdsportsClient.jd[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
         items.map(_.itemDetails) mustBe List(
           Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
           Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
@@ -49,8 +50,8 @@ class JdsportsClientSpec extends SttpClientSpec {
   }
 
   "A TessutiClient" should {
-    val config = GenericStoreConfig("http://tessuti.com", StockMonitorConfig(10.second, Nil))
-    val query  = SearchQuery("Emporio Armani")
+    val config   = GenericStoreConfig("http://tessuti.com", StockMonitorConfig(10.second, Nil))
+    val criteria = SearchCriteria("Emporio Armani")
 
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
@@ -62,7 +63,7 @@ class JdsportsClientSpec extends SttpClientSpec {
 
       val client = JdsportsClient.tessuti[IO](config, testingBackend)
 
-      client.flatMap(_.search(query).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
         items mustBe Nil
       }
     }

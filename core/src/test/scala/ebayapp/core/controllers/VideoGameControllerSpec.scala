@@ -3,7 +3,6 @@ package ebayapp.core.controllers
 import java.time.Instant
 import cats.effect.IO
 import ebayapp.core.ControllerSpec
-import ebayapp.core.common.config.SearchQuery
 import ebayapp.core.domain.ResellableItem.VideoGame
 import ebayapp.core.domain.{ItemDetails, ResellableItemBuilder}
 import ebayapp.core.domain.search.SellPrice
@@ -133,7 +132,7 @@ class VideoGameControllerSpec extends ControllerSpec {
 
     "parse search query params" in {
       val service = mock[ResellableItemService[IO, ItemDetails.Game]]
-      when(service.findBy(any[SearchQuery], any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(IO.pure(Nil))
+      when(service.findBy(any[String], any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(IO.pure(Nil))
 
       val controller = new VideoGameController[IO](service)
 
@@ -141,7 +140,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val response = controller.routes.orNotFound.run(request)
 
       verifyJsonResponse(response, Status.Ok, Some("""[]"""))
-      verify(service).findBy(SearchQuery("foo-bar"), Some(100), None, None)
+      verify(service).findBy("foo-bar", Some(100), None, None)
     }
 
     "return error" in {

@@ -5,7 +5,7 @@ import cats.implicits._
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
-import ebayapp.core.common.config.{CexConfig, SearchCategory, SearchQuery}
+import ebayapp.core.common.config.{CexConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.domain.search._
@@ -42,16 +42,16 @@ final class CexApiClient[F[_]](
         logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
       case Some(name) =>
         val categories = item.listingDetails.category.flatMap(categoriesMap.get)
-        findSellPrice(SearchQuery(name), categories).map(sp => item.copy(sellPrice = sp))
+        findSellPrice(name, categories).map(sp => item.copy(sellPrice = sp))
     }
 
-  private def findSellPrice(query: SearchQuery, categories: Option[List[Int]]): F[Option[SellPrice]] =
-    resellPriceCache.evalPutIfNew(query.base64) {
+  private def findSellPrice(query: String, categories: Option[List[Int]]): F[Option[SellPrice]] =
+    resellPriceCache.evalPutIfNew(query) {
       val categoryIds = categories.map(_.mkString("[", ",", "]"))
-      search(uri"${config.baseUri}/v3/boxes?q=${query.value}&categoryIds=$categoryIds")
+      search(uri"${config.baseUri}/v3/boxes?q=$query&categoryIds=$categoryIds")
         .map(getMinResellPrice)
         .flatTap { rp =>
-          if (rp.isEmpty) logger.warn(s"""cex-price-match "${query.value}" returned 0 results""")
+          if (rp.isEmpty) logger.warn(s"""cex-price-match "$query" returned 0 results""")
           else ().pure[F]
         }
     }
@@ -64,12 +64,9 @@ final class CexApiClient[F[_]](
       .minByOption(_.exchangePrice)
       .map(c => SellPrice(BigDecimal(c.cashPrice), BigDecimal(c.exchangePrice)))
 
-  override def search(
-      query: SearchQuery,
-      category: Option[SearchCategory]
-  ): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
     Stream
-      .eval(search(uri"${config.baseUri}/v3/boxes?q=${query.value}&inStock=1&inStockOnline=1"))
+      .eval(search(uri"${config.baseUri}/v3/boxes?q=${criteria.query}&inStock=1&inStockOnline=1"))
       .map(_.response.data.fold(List.empty[CexItem])(_.boxes))
       .flatMap(Stream.emits)
       .map(cexGenericItemMapper.toDomain)

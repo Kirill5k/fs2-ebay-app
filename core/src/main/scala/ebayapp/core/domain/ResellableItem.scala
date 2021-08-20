@@ -2,6 +2,14 @@ package ebayapp.core.domain
 
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
 
+sealed trait ItemKind
+object ItemKind {
+  case object Generic     extends ItemKind
+  case object VideoGame   extends ItemKind
+  case object MobilePhone extends ItemKind
+  case object Clothing    extends ItemKind
+}
+
 final case class ResellableItem[D <: ItemDetails](
     itemDetails: D,
     listingDetails: ListingDetails,
@@ -15,5 +23,5 @@ object ResellableItem {
   type GenericItem = ResellableItem[ItemDetails.Generic]
   type VideoGame   = ResellableItem[ItemDetails.Game]
   type MobilePhone = ResellableItem[ItemDetails.Phone]
-  type Clothe      = ResellableItem[ItemDetails.Clothing]
+  type Clothing    = ResellableItem[ItemDetails.Clothing]
 }
