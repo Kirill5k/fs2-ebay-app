@@ -9,7 +9,7 @@ data:
     }
 
     client-proxy {
-      host: "140.227.53.164"
+      host: "140.227.53.208"
       port: 6000
     }
 
@@ -70,7 +70,7 @@ data:
           {query: "tommy hilfiger", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {query: "calvin klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {query: "polo ralph lauren", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "gucci", monitor-stock-change: false, monitor-price-change: true, min-discount: 30}
+          {query: "gucci", monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
       }
     }
@@ -108,7 +108,7 @@ data:
           {query: "Emporio Armani", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "Boss", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {query: "Calvin Klein", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {query: "Stone Island", monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {query: "Stone Island", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {query: "Kenzo", monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
         ]
       }
