@@ -4,11 +4,19 @@ import ebayapp.core.clients.ItemMapper
 
 import java.time.Instant
 import ebayapp.core.clients.ebay.browse.responses.EbayItem
+import ebayapp.core.common.errors.AppError.Critical
 import ebayapp.core.domain
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 
 object EbayItemMapper {
+
+  def get(kind: ItemKind): Either[Throwable, EbayItemMapper[_ <: ItemDetails]] =
+    kind match {
+      case ItemKind.VideoGame   => Right(gameDetailsMapper)
+      case ItemKind.MobilePhone => Right(phoneDetailsMapper)
+      case kind                 => Left(Critical(s"unexpected item kind $kind in EbayClient"))
+    }
 
   type EbayItemMapper[D <: ItemDetails] = ItemMapper[EbayItem, D]
 

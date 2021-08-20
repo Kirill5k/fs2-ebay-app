@@ -26,16 +26,15 @@ final class LiveEbayDealsService[F[_]: Logger: Temporal](
   override def deals[D <: ItemDetails: EbayItemMapper: EbaySearchParams](config: EbayDealsConfig): Stream[F, ResellableItem[D]] =
     Stream
       .emits(config.searchCriteria)
-      .map(criteria => find(criteria, config.maxListingDuration))
+      .map(c => find(c))
       .parJoinUnbounded
       .repeatEvery(config.searchFrequency)
 
   private def find[D <: ItemDetails: EbayItemMapper: EbaySearchParams](
-      criteria: SearchCriteria,
-      duration: FiniteDuration
+      criteria: SearchCriteria
   ): Stream[F, ResellableItem[D]] =
     ebayClient
-      .latest[D](criteria, duration)
+      .search[D](criteria)
       .evalMap(cexClient.withUpdatedSellPrice)
       .metered(250.millis)
       .handleErrorWith { error =>
