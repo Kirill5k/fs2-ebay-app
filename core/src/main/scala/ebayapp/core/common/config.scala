@@ -5,6 +5,7 @@ import cats.implicits._
 import ebayapp.core.domain.ItemKind
 import pureconfig._
 import pureconfig.generic.auto._
+import pureconfig.generic.semiauto._
 
 import java.io.File
 import scala.concurrent.duration.FiniteDuration
@@ -115,6 +116,7 @@ object config {
   )
 
   object AppConfig {
+    implicit val itemKindConverted: ConfigReader[ItemKind] = deriveEnumerationReader[ItemKind]
 
     def load[F[_]](implicit F: Sync[F], logger: Logger[F]): F[AppConfig] =
       F.blocking(AppConfig.loadFromMount)
