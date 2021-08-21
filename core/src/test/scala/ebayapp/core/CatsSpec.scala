@@ -3,7 +3,7 @@ package ebayapp.core
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import ebayapp.core.common.Logger
-import ebayapp.core.services.{EbayDealsService, NotificationService, ResellableItemService, Services, StockService}
+import ebayapp.core.services.{DealsService, NotificationService, ResellableItemService, Services, StockService}
 import org.mockito.ArgumentMatchersSugar
 import org.mockito.scalatest.AsyncMockitoSugar
 import org.scalatest.matchers.must.Matchers
@@ -17,7 +17,7 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
   def servicesMock: Services[IO] = new Services[IO] {
     val notification: NotificationService[IO]     = mock[NotificationService[IO]]
     val resellableItem: ResellableItemService[IO] = mock[ResellableItemService[IO]]
-    val ebayDeals: EbayDealsService[IO]           = mock[EbayDealsService[IO]]
+    val ebayDeals: DealsService[IO]           = mock[DealsService[IO]]
     val cexStock: StockService[IO]                = mock[StockService[IO]]
     val selfridgesSale: StockService[IO]          = mock[StockService[IO]]
     val argosStock: StockService[IO]              = mock[StockService[IO]]

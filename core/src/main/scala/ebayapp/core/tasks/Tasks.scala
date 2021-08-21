@@ -32,7 +32,7 @@ object Tasks {
   def make[F[_]: Temporal: Logger](config: AppConfig, services: Services[F]): F[Tasks[F]] =
     List(
       ErrorsNotifier.make[F](services),
-      EbayDealsFinder.videoGames[F](config.ebay.deals.videoGames, services),
+      DealsFinder.make[F](config.ebay.dealsFinder, services),
       StockMonitor.make[F](config, services)
     ).sequence.map(tasks => new Tasks[F](tasks))
 }

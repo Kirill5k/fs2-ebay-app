@@ -7,7 +7,7 @@ import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses._
 import ebayapp.core.common.Cache
-import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbayDealsConfig, EbayDealsConfigs, EbaySearchConfig, SearchCriteria}
+import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, EbayCredentials, EbaySearchConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.captor.ArgCaptor
@@ -20,9 +20,8 @@ class EbayClientSpec extends CatsSpec {
   val accessToken = "access-token"
   val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame))
 
-  val deals       = EbayDealsConfigs(EbayDealsConfig(60.seconds, Nil, 34, 10))
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes), deals)
+  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes), DealsFinderConfig(60.seconds, Nil))
 
   "An EbayClient" should {
 
@@ -191,8 +190,8 @@ class EbayClientSpec extends CatsSpec {
       val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
-      when(browseClient.search(any[String], anyMap[String, String])).thenReturn(List(ebayItemSummary(buyingOptions = List("AUCTION"))).pure[IO])
-
+      when(browseClient.search(any[String], anyMap[String, String]))
+        .thenReturn(List(ebayItemSummary(buyingOptions = List("AUCTION"))).pure[IO])
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
@@ -239,7 +238,9 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient, times(2)).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient).getItem(eqTo(accessToken), any[String])
-        items.map(_.itemDetails) mustBe (List(ItemDetails.VideoGame(Some("call of duty modern warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))))
+        items.map(_.itemDetails) mustBe (List(
+          ItemDetails.VideoGame(Some("call of duty modern warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))
+        ))
       }
     }
 

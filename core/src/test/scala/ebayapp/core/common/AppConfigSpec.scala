@@ -1,8 +1,10 @@
 package ebayapp.core.common
 
-import config.{AppConfig, SearchCriteria}
+import config.{AppConfig, DealsFinderConfig, DealsFinderRequest, SearchCriteria}
 import ebayapp.core.CatsSpec
-import ebayapp.core.domain.ItemKind
+import ebayapp.core.domain.ItemKind.VideoGame
+
+import scala.concurrent.duration._
 
 class AppConfigSpec extends CatsSpec {
   "An AppConfig" should {
@@ -13,7 +15,7 @@ class AppConfigSpec extends CatsSpec {
       conf.mongo.dbName mustBe "ebay-app"
       conf.server.host mustBe "0.0.0.0"
       conf.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
-      conf.ebay.deals.videoGames.searchCriteria.head mustBe SearchCriteria("XBOX ONE", itemKind = Some(ItemKind.VideoGame))
+      conf.ebay.dealsFinder mustBe DealsFinderConfig(60.seconds, List(DealsFinderRequest(SearchCriteria("PS4", itemKind = Some(VideoGame)), 25, Some(10))))
       conf.selfridges.headers mustBe Map("api-key" -> "key")
       conf.nvidia.proxied mustBe true
     }

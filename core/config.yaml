@@ -45,19 +45,16 @@ data:
         min-feedback-percentage: 92
         max-listing-duration: 20m
       }
-      deals {
-        video-games {
-          search-frequency: 60s
-          search-criteria: [
-            {query: "PS4", item-kind: "video-game"},
-            {query: "PS5", item-kind: "video-game"},
-            {query: "XBOX SERIES", item-kind: "video-game"},
-            {query: "XBOX ONE", item-kind: "video-game"},
-            {query: "SWITCH", item-kind: "video-game"}
-          ]
-          min-margin-percentage: 25
-          max-expected-quantity: 10
-        }
+
+      deals-finder {
+        search-frequency: 60s
+        search-requests: [
+          {search-criteria: {query: "PS4", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "PS5", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "XBOX SERIES", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "XBOX ONE", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "SWITCH", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
+        ]
       }
     }
 

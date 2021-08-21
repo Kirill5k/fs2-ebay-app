@@ -33,17 +33,6 @@ object config {
       itemKind: Option[ItemKind] = None
   )
 
-  final case class EbayDealsConfig(
-      searchFrequency: FiniteDuration,
-      searchCriteria: List[SearchCriteria],
-      minMarginPercentage: Int,
-      maxExpectedQuantity: Int
-  )
-
-  final case class EbayDealsConfigs(
-      videoGames: EbayDealsConfig
-  )
-
   final case class EbayCredentials(
       clientId: String,
       clientSecret: String
@@ -52,14 +41,25 @@ object config {
   final case class EbaySearchConfig(
       minFeedbackScore: Int,
       minFeedbackPercentage: Int,
-      maxListingDuration: FiniteDuration,
+      maxListingDuration: FiniteDuration
   )
 
   final case class EbayConfig(
       baseUri: String,
       credentials: List[EbayCredentials],
       search: EbaySearchConfig,
-      deals: EbayDealsConfigs
+      dealsFinder: DealsFinderConfig
+  )
+
+  final case class DealsFinderConfig(
+      searchFrequency: FiniteDuration,
+      searchRequests: List[DealsFinderRequest]
+  )
+
+  final case class DealsFinderRequest(
+      searchCriteria: SearchCriteria,
+      minMargin: Int,
+      maxQuantity: Option[Int] = None
   )
 
   final case class CexPriceFindConfig(

@@ -9,7 +9,7 @@ import ebayapp.core.repositories.Repositories
 trait Services[F[_]] {
   def notification: NotificationService[F]
   def resellableItem: ResellableItemService[F]
-  def ebayDeals: EbayDealsService[F]
+  def ebayDeals: DealsService[F]
   def cexStock: StockService[F]
   def selfridgesSale: StockService[F]
   def argosStock: StockService[F]
@@ -28,7 +28,7 @@ object Services {
     (
       NotificationService.telegram[F](clients.telegram),
       ResellableItemService.make[F](repositories.resellableItems),
-      EbayDealsService.make[F](clients.ebay, clients.cex),
+      DealsService.ebay[F](clients.ebay, clients.cex, repositories.resellableItems),
       StockService.cex[F](clients.cex),
       StockService.selfridges[F](clients.selfridges),
       StockService.argos[F](clients.argos),
@@ -40,7 +40,7 @@ object Services {
       new Services[F] {
         def notification: NotificationService[F]     = not
         def resellableItem: ResellableItemService[F] = rs
-        def ebayDeals: EbayDealsService[F]           = es
+        def ebayDeals: DealsService[F]               = es
         def cexStock: StockService[F]                = cs
         def selfridgesSale: StockService[F]          = selfridgesS
         def argosStock: StockService[F]              = as
