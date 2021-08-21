@@ -79,13 +79,11 @@ final class ResellableItemMongoRepository[F[_]: Async](
 
 object ResellableItemRepository {
 
-  def mongo[F[_]: Async](
-      database: MongoDatabase[F]
-  ): F[ResellableItemRepository[F]] =
+  def mongo[F[_]: Async](database: MongoDatabase[F]): F[ResellableItemRepository[F]] =
     for {
       collNames <- database.collectionNames
       collName    = "items"
-      collOptions = CreateCollectionOptions().capped(true).sizeInBytes(268_435_456L)
+      collOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
       _    <- if (collNames.toSet.contains(collName)) ().pure[F] else database.createCollection(collName, collOptions)
       coll <- database.getCollectionWithCodec[ResellableItemEntity](collName)
     } yield new ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])

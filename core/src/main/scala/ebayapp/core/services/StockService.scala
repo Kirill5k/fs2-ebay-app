@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.Monad
-import cats.effect.{Concurrent, Temporal}
+import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.CexClient
@@ -11,15 +11,42 @@ import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.stock.ItemStockUpdates
 import fs2.Stream
 
+import scala.concurrent.duration._
+
 trait StockService[F[_]] extends StockComparer[F] {
-  protected def client: SearchClient[F]
-
   def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates]
+}
 
-  protected def findItems(req: StockMonitorRequest)(implicit
-      logger: Logger[F],
-      concurrent: Concurrent[F]
-  ): F[Map[String, ResellableItem]] =
+final private class SimpleStockService[F[_]: Temporal: Logger](
+    private val client: SearchClient[F],
+    private val name: String
+) extends StockService[F] {
+
+  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates] =
+    Stream
+      .emits(config.monitoringRequests.zipWithIndex)
+      .map { case (req, index) =>
+        getUpdates(req, config.monitoringFrequency).delayBy((index * 10).seconds)
+      }
+      .parJoinUnbounded
+
+  private def getUpdates(
+      req: StockMonitorRequest,
+      freq: FiniteDuration
+  ): Stream[F, ItemStockUpdates] =
+    Stream
+      .unfoldLoopEval[F, Option[Map[String, ResellableItem]], List[ItemStockUpdates]](None) { prevOpt =>
+        findItems(req).map { curr =>
+          (prevOpt.fold(List.empty[ItemStockUpdates])(prev => compareItems(prev, curr, req)), Some(curr.some))
+        }
+      }
+      .flatMap(r => Stream.emits(r) ++ Stream.sleep_(freq))
+      .handleErrorWith { error =>
+        Stream.eval(Logger[F].error(error)(s"$name-stock/error - ${error.getMessage}")).drain ++
+          getUpdates(req, freq)
+      }
+
+  private def findItems(req: StockMonitorRequest): F[Map[String, ResellableItem]] =
     client
       .search(req.searchCriteria)
       .filter(item => req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
@@ -27,17 +54,7 @@ trait StockService[F[_]] extends StockComparer[F] {
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => logger.info(s"""$name-search "${req.searchCriteria.query}" returned ${i.size} results"""))
-
-}
-
-final private class SimpleStockService[F[_]: Temporal: Logger](
-    override val client: SearchClient[F],
-    override val name: String
-) extends StockService[F] {
-
-  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates] =
-    stockUpdatesStream(config, (req: StockMonitorRequest) => findItems(req))
+      .flatTap(i => Logger[F].info(s"""$name-search "${req.searchCriteria.query}" returned ${i.size} results"""))
 }
 
 object StockService {

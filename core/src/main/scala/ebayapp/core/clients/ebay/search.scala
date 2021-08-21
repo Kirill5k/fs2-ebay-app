@@ -73,7 +73,7 @@ private[ebay] object search {
         "fifa(?s).* (\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa(?s)",
         "borderlands(?s).* (artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
-        "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "XBOX( )?360"
+        "\\bPS( vita|P|1|2)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       private val LISTING_DESCRIPTION_TRIGGER_WORDS = List(
