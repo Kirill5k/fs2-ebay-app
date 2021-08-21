@@ -3,8 +3,8 @@ package ebayapp.core.services
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.functor._
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.common.stream._
@@ -18,8 +18,8 @@ trait DealsService[F[_]] {
   def newDeals(config: DealsFinderConfig): Stream[F, ResellableItem]
 }
 
-private final class EbayDealsService[F[_]: Logger: Temporal](
-    private val ebayClient: EbayClient[F],
+final private class LiveDealsService[F[_]: Logger: Temporal](
+    private val searchClient: SearchClient[F],
     private val cexClient: CexClient[F],
     private val repository: ResellableItemRepository[F],
     private val name: String
@@ -38,7 +38,7 @@ private final class EbayDealsService[F[_]: Logger: Temporal](
     Stream
       .emits(config.searchRequests)
       .map { req =>
-        ebayClient
+        searchClient
           .search(req.searchCriteria)
           .evalFilter(isNew)
           .evalMap(cexClient.withUpdatedSellPrice)
@@ -57,9 +57,9 @@ private final class EbayDealsService[F[_]: Logger: Temporal](
 object DealsService {
 
   def ebay[F[_]: Temporal: Logger](
-      ebayClient: EbayClient[F],
+      ebayClient: SearchClient[F],
       cexClient: CexClient[F],
       repository: ResellableItemRepository[F]
   ): F[DealsService[F]] =
-    Monad[F].pure(new EbayDealsService[F](ebayClient, cexClient, repository, "ebay"))
+    Monad[F].pure(new LiveDealsService[F](ebayClient, cexClient, repository, "ebay"))
 }

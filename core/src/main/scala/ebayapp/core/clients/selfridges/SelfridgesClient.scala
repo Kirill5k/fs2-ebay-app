@@ -3,8 +3,8 @@ package ebayapp.core.clients.selfridges
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
+import ebayapp.core.clients.{SearchClient, SttpClient}
+import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, selfridgesClothingMapper}
 import ebayapp.core.clients.selfridges.responses._
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
@@ -24,7 +24,7 @@ final private class LiveSelfridgesClient[F[_]](
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] {
+) extends SearchClient[F] with SttpClient[F] {
 
   override protected val name: String = "selfridges"
 

@@ -14,7 +14,7 @@ import ebayapp.core.common.{Logger, Resources}
 import ebayapp.core.common.config.AppConfig
 
 trait Clients[F[_]] {
-  def ebay: EbayClient[F]
+  def ebay: SearchClient[F]
   def cex: CexClient[F]
   def telegram: TelegramClient[F]
   def selfridges: SearchClient[F]
@@ -43,7 +43,7 @@ object Clients {
       ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied))
     ).mapN { (ebayC, cc, telc, selfridgesC, ac, jc, tesc, nvidiaC, scanC) =>
       new Clients[F] {
-        def ebay: EbayClient[F]         = ebayC
+        def ebay: SearchClient[F]       = ebayC
         def cex: CexClient[F]           = cc
         def telegram: TelegramClient[F] = telc
         def selfridges: SearchClient[F] = selfridgesC

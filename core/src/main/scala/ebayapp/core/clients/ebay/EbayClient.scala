@@ -2,6 +2,7 @@ package ebayapp.core.clients.ebay
 
 import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
@@ -10,7 +11,7 @@ import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.Cache
 import ebayapp.core.common.config.{EbayConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
-import ebayapp.core.domain.{ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import ebayapp.core.common.Logger
 import fs2._
 import sttp.client3.SttpBackend
@@ -18,10 +19,6 @@ import sttp.client3.SttpBackend
 import java.time.Instant
 import java.time.temporal.ChronoField.MILLI_OF_SECOND
 import scala.concurrent.duration._
-
-trait EbayClient[F[_]] {
-  def search(criteria: SearchCriteria): Stream[F, ResellableItem]
-}
 
 final private[ebay] class LiveEbayClient[F[_]](
     private val config: EbayConfig,
@@ -31,7 +28,7 @@ final private[ebay] class LiveEbayClient[F[_]](
 )(implicit
     val F: Temporal[F],
     val logger: Logger[F]
-) extends EbayClient[F] {
+) extends SearchClient[F] {
 
   def search(criteria: SearchCriteria): Stream[F, ResellableItem] = {
     val time = Instant.now.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)
@@ -89,7 +86,7 @@ object EbayClient {
   def make[F[_]: Temporal: Logger](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
-  ): F[EbayClient[F]] = {
+  ): F[SearchClient[F]] = {
     val auth   = EbayAuthClient.make[F](config, backend)
     val browse = EbayBrowseClient.make[F](config, backend)
     val cache  = Cache.make[F, String, Unit](2.hours, 5.minutes)

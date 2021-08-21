@@ -3,8 +3,8 @@ package ebayapp.core.clients.jdsports
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
+import ebayapp.core.clients.{SearchClient, SttpClient}
+import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, jdsportsClothingMapper}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
@@ -22,7 +22,7 @@ final private class LiveJdsportsClient[F[_]](
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] {
+) extends SearchClient[F] with SttpClient[F] {
 
   private val headers: Map[String, String] = Map(
     "Referer"      -> s"https://www.$name.co.uk/men/",

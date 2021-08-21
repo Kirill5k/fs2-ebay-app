@@ -2,14 +2,14 @@ package ebayapp.core.clients.cex
 
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.SearchClient
+import ebayapp.core.clients.{SearchClient, SttpClient}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
 import ebayapp.core.common.config.{CexConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.domain.search._
-import ebayapp.core.domain.{ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.generic.auto._
 import sttp.client3.circe.asJson
@@ -18,7 +18,7 @@ import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration._
 
-trait CexClient[F[_]] extends SearchClient[F] {
+trait CexClient[F[_]] extends SearchClient[F] with SttpClient[F] {
   def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem]
 }
 

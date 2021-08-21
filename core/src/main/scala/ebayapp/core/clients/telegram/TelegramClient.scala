@@ -2,6 +2,7 @@ package ebayapp.core.clients.telegram
 
 import cats.effect.Temporal
 import cats.implicits._
+import ebayapp.core.clients.SttpClient
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.Logger
@@ -10,7 +11,7 @@ import sttp.model.StatusCode
 
 import scala.concurrent.duration._
 
-trait TelegramClient[F[_]] {
+trait TelegramClient[F[_]] extends SttpClient[F] {
   def sendMessageToMainChannel(message: String): F[Unit]
   def sendMessageToSecondaryChannel(message: String): F[Unit]
   def sendMessageToAlertsChannel(message: String): F[Unit]
@@ -18,11 +19,13 @@ trait TelegramClient[F[_]] {
 
 final private class LiveTelegramClient[F[_]](
     private val config: TelegramConfig,
-    private val backend: SttpBackend[F, Any]
+    override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
 ) extends TelegramClient[F] {
+
+  protected override val name: String = "telegram"
 
   def sendMessageToMainChannel(message: String): F[Unit] =
     sendMessage(config.mainChannelId, message)
@@ -34,9 +37,10 @@ final private class LiveTelegramClient[F[_]](
     sendMessage(config.alertsChannelId, message)
 
   private def sendMessage(channelId: String, message: String): F[Unit] =
-    basicRequest
-      .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=$channelId&text=$message")
-      .send(backend)
+    dispatch() {
+      basicRequest
+        .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=$channelId&text=$message")
+    }
       .flatMap { r =>
         r.body match {
           case Right(_) =>
