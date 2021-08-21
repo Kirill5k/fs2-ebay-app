@@ -49,7 +49,7 @@ final class ResellableItemMongoRepository[F[_]: Async](
       filters: Filters
   ): F[List[ResellableItem]] =
     mongoCollection.find
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.text(query) && Filter.eq("kind", filters.kind.value))
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.text(query) && Filter.eq("kind", filters.kind))
       .limit(filters.limit.getOrElse(0))
       .all
       .map(_.map(entityMapper.toDomain).toList)
@@ -57,7 +57,7 @@ final class ResellableItemMongoRepository[F[_]: Async](
   def findAll(filters: Filters): F[List[ResellableItem]] =
     mongoCollection.find
       .sortByDesc("listingDetails.datePosted")
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind.value))
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind))
       .limit(filters.limit.getOrElse(0))
       .all
       .map(_.map(entityMapper.toDomain).toList)
@@ -65,7 +65,7 @@ final class ResellableItemMongoRepository[F[_]: Async](
   def stream(filters: Filters): Stream[F, ResellableItem] =
     mongoCollection.find
       .sortByDesc("listingDetails.datePosted")
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind.value))
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind))
       .limit(filters.limit.getOrElse(0))
       .stream
       .map(entityMapper.toDomain)
@@ -88,5 +88,5 @@ object ResellableItemRepository {
       collOptions = CreateCollectionOptions().capped(true).sizeInBytes(268_435_456L)
       _    <- if (collNames.toSet.contains(collName)) ().pure[F] else database.createCollection(collName, collOptions)
       coll <- database.getCollectionWithCodec[ResellableItemEntity](collName)
-    } yield new ResellableItemMongoRepository[F](coll)
+    } yield new ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])
 }
