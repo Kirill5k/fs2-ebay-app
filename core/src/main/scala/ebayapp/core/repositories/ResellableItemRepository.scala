@@ -83,7 +83,10 @@ object ResellableItemRepository {
       database: MongoDatabase[F]
   ): F[ResellableItemRepository[F]] =
     for {
-      _    <- database.createCollection("items", CreateCollectionOptions().capped(true).sizeInBytes(268_435_456L))
-      coll <- database.getCollectionWithCodec[ResellableItemEntity]("items")
+      collNames <- database.collectionNames
+      collName    = "items"
+      collOptions = CreateCollectionOptions().capped(true).sizeInBytes(268_435_456L)
+      _    <- if (collNames.toSet.contains(collName)) ().pure[F] else database.createCollection(collName, collOptions)
+      coll <- database.getCollectionWithCodec[ResellableItemEntity](collName)
     } yield new ResellableItemMongoRepository[F](coll)
 }
