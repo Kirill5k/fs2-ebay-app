@@ -11,7 +11,7 @@ import sttp.client3.{Request, Response, SttpBackend}
 import scala.concurrent.duration._
 
 trait SearchClient[F[_]] {
-  def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything]
+  def search(criteria: SearchCriteria): Stream[F, ResellableItem]
 
   protected val name: String
   protected val backend: SttpBackend[F, Any]

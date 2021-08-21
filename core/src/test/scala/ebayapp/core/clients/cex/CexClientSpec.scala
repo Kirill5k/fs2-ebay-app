@@ -40,7 +40,7 @@ class CexClientSpec extends SttpClientSpec {
         .unsafeToFuture()
         .map(res =>
           res mustBe List(
-            ResellableItem(
+            ResellableItem.generic(
               ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A"),
               ListingDetails(
                 "https://uk.webuy.com/product-detail/?id=SLAPAPPMP16101SA",
@@ -57,7 +57,7 @@ class CexClientSpec extends SttpClientSpec {
               BuyPrice(2, 1950.0),
               Some(SellPrice(BigDecimal(1131.0), BigDecimal(1365.0)))
             ),
-            ResellableItem(
+            ResellableItem.generic(
               ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B"),
               ListingDetails(
                 "https://uk.webuy.com/product-detail/?id=SLAPAPPMP16101SB",
@@ -74,7 +74,7 @@ class CexClientSpec extends SttpClientSpec {
               BuyPrice(1, 1800.0),
               Some(SellPrice(BigDecimal(1044.0), BigDecimal(1260.0)))
             ),
-            ResellableItem(
+            ResellableItem.generic(
               ItemDetails.Generic("Apple MacBook Pro 16,1/i9-9880H/16GB/1TB SSD/5500M 4GB/16\"/Space Grey/A"),
               ListingDetails(
                 "https://uk.webuy.com/product-detail/?id=SLAPAPPMP16146SGA",

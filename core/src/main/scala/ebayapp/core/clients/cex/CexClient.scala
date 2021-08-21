@@ -9,7 +9,7 @@ import ebayapp.core.common.config.{CexConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.domain.search._
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.{ResellableItem}
 import fs2.Stream
 import io.circe.generic.auto._
 import sttp.client3.circe.asJson
@@ -19,7 +19,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration._
 
 trait CexClient[F[_]] extends SearchClient[F] {
-  def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]]
+  def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem]
 }
 
 final class CexApiClient[F[_]](
@@ -36,7 +36,7 @@ final class CexApiClient[F[_]](
     "Games" -> List(1000, 1147, 1003, 1141, 1064, 1146)
   )
 
-  override def withUpdatedSellPrice[D <: ItemDetails](item: ResellableItem[D]): F[ResellableItem[D]] =
+  override def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem] =
     item.itemDetails.fullName match {
       case None =>
         logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
@@ -64,7 +64,7 @@ final class CexApiClient[F[_]](
       .minByOption(_.exchangePrice)
       .map(c => SellPrice(BigDecimal(c.cashPrice), BigDecimal(c.exchangePrice)))
 
-  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .eval(search(uri"${config.baseUri}/v3/boxes?q=${criteria.query}&inStock=1&inStockOnline=1"))
       .map(_.response.data.fold(List.empty[CexItem])(_.boxes))

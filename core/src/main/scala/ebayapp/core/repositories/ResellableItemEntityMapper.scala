@@ -1,15 +1,15 @@
 package ebayapp.core.repositories
 
 import ebayapp.core.domain.search.{BuyPrice, SellPrice}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import ebayapp.core.repositories.entities.ItemPrice
 import cats.implicits._
-import org.bson.types.ObjectId
+import mongo4cats.bson.ObjectId
 
-private[repositories] trait ResellableItemEntityMapper[I <: ResellableItem[_], E <: ResellableItemEntity] {
-  def toEntity(item: I): E
-  def toDomain(entity: E): I
+private[repositories] trait ResellableItemEntityMapper {
+  def toEntity(item: ResellableItem): ResellableItemEntity
+  def toDomain(entity: ResellableItemEntity): ResellableItem
 
   protected def mapPrice(price: BuyPrice, resellPrice: Option[SellPrice]): ItemPrice =
     ItemPrice(
@@ -21,12 +21,14 @@ private[repositories] trait ResellableItemEntityMapper[I <: ResellableItem[_], E
 }
 
 private[repositories] object ResellableItemEntityMapper {
-  implicit val videoGameEntityMapper = new ResellableItemEntityMapper[ResellableItem.VideoGame, ResellableItemEntity.VideoGame] {
-    override def toEntity(vg: ResellableItem.VideoGame): ResellableItemEntity.VideoGame =
-      ResellableItemEntity.VideoGame(new ObjectId(), vg.itemDetails, vg.listingDetails, mapPrice(vg.buyPrice, vg.sellPrice))
 
-    override def toDomain(entity: ResellableItemEntity.VideoGame): ResellableItem.VideoGame =
-      ResellableItem[ItemDetails.Game](
+  implicit val videoGameEntityMapper = new ResellableItemEntityMapper {
+    override def toEntity(item: ResellableItem): ResellableItemEntity =
+      ResellableItemEntity(ObjectId(), item.kind, item.itemDetails, item.listingDetails, mapPrice(item.buyPrice, item.sellPrice))
+
+    override def toDomain(entity: ResellableItemEntity): ResellableItem =
+      ResellableItem(
+        entity.kind,
         entity.itemDetails,
         entity.listingDetails,
         BuyPrice(entity.price.quantityAvailable, BigDecimal(entity.price.buy)),

@@ -1,21 +1,21 @@
 package ebayapp.core.services
 
-import java.time.Instant
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
-import ebayapp.core.repositories.ResellableItemRepository.VideoGameRepository
+import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemBuilder}
+import ebayapp.core.repositories.{Filters, ResellableItemRepository}
 
 class ResellableItemServiceSpec extends CatsSpec {
 
   val videoGame = ResellableItemBuilder.videoGame("super mario 3")
+  val searchFilters = Filters(ItemKind.VideoGame, Some(100), None, None)
 
   "A VideoGameService" should {
     "check if item is new" in {
-      val repository = mock[VideoGameRepository[IO]]
+      val repository = mock[ResellableItemRepository[IO]]
       when(repository.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
-      val isNewResult = ResellableItemService.videoGame(repository).flatMap(_.isNew(videoGame))
+      val isNewResult = ResellableItemService.make(repository).flatMap(_.isNew(videoGame))
 
       isNewResult.unsafeToFuture().map { isNew =>
         verify(repository).existsByUrl(videoGame.listingDetails.url)
@@ -24,10 +24,10 @@ class ResellableItemServiceSpec extends CatsSpec {
     }
 
     "store item in db" in {
-      val repository = mock[VideoGameRepository[IO]]
-      when(repository.save(any[ResellableItem.VideoGame])).thenReturn(IO.unit)
+      val repository = mock[ResellableItemRepository[IO]]
+      when(repository.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      val saveResult = ResellableItemService.videoGame(repository).flatMap(_.save(videoGame))
+      val saveResult = ResellableItemService.make(repository).flatMap(_.save(videoGame))
 
       saveResult.unsafeToFuture().map { saved =>
         verify(repository).save(videoGame)
@@ -36,44 +36,37 @@ class ResellableItemServiceSpec extends CatsSpec {
     }
 
     "stream latest items from db" in {
-      val repository = mock[VideoGameRepository[IO]]
-      when(repository.stream(any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(fs2.Stream.evalSeq(IO.pure(List(videoGame))))
+      val repository = mock[ResellableItemRepository[IO]]
+      when(repository.stream(any[Filters])).thenReturn(fs2.Stream.evalSeq(IO.pure(List(videoGame))))
 
-      val latestResult = ResellableItemService
-        .videoGame(repository)
-        .flatMap(_.stream(Some(10), None, None).compile.toList)
+      val latestResult = ResellableItemService.make(repository).flatMap(_.stream(searchFilters).compile.toList)
 
       latestResult.unsafeToFuture().map { latest =>
-        verify(repository).stream(Some(10), None, None)
+        verify(repository).stream(searchFilters)
         latest mustBe List(videoGame)
       }
     }
 
     "get latest items from db" in {
-      val repository = mock[VideoGameRepository[IO]]
-      when(repository.findAll(any[Option[Int]], any[Option[Instant]], any[Option[Instant]])).thenReturn(IO.pure(List(videoGame)))
+      val repository = mock[ResellableItemRepository[IO]]
+      when(repository.findAll(any[Filters])).thenReturn(IO.pure(List(videoGame)))
 
-      val latestResult = ResellableItemService
-        .videoGame(repository)
-        .flatMap(_.findAll(Some(10), None, None))
+      val latestResult = ResellableItemService.make(repository).flatMap(_.findAll(searchFilters))
 
       latestResult.unsafeToFuture().map { latest =>
-        verify(repository).findAll(Some(10), None, None)
+        verify(repository).findAll(searchFilters)
         latest mustBe List(videoGame)
       }
     }
 
     "get latest items from db by query" in {
-      val repository = mock[VideoGameRepository[IO]]
-      when(repository.search(any[String], any[Option[Int]], any[Option[Instant]], any[Option[Instant]]))
-        .thenReturn(IO.pure(List(videoGame)))
+      val repository = mock[ResellableItemRepository[IO]]
+      when(repository.search(any[String], any[Filters])).thenReturn(IO.pure(List(videoGame)))
 
-      val latestResult = ResellableItemService
-        .videoGame(repository)
-        .flatMap(_.findBy("foo", Some(10), None, None))
+      val latestResult = ResellableItemService.make(repository).flatMap(_.findBy("foo", searchFilters))
 
       latestResult.unsafeToFuture().map { latest =>
-        verify(repository).search("foo", Some(10), None, None)
+        verify(repository).search("foo", searchFilters)
         latest mustBe List(videoGame)
       }
     }

@@ -30,7 +30,7 @@ final private class LiveNvidiaClient[F[_]](
 
   override def search(
       criteria: SearchCriteria
-  ): Stream[F, ResellableItem.Anything] =
+  ): Stream[F, ResellableItem] =
     Stream
       .evalSeq(searchProducts(criteria))
       .filterNot(_.isOutOfStock)

@@ -1,7 +1,7 @@
 package ebayapp.core.clients
 
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.{ResellableItem}
 
-trait ItemMapper[I, D <: ItemDetails] {
-  def toDomain(clientItem: I): ResellableItem[D]
+private[clients] trait ItemMapper[I] {
+  def toDomain(clientItem: I): ResellableItem
 }

@@ -7,7 +7,6 @@ sealed trait ItemDetails {
 }
 
 object ItemDetails {
-
   final case class Generic(
       name: String
   ) extends ItemDetails {
@@ -34,7 +33,7 @@ object ItemDetails {
       List(make, model, storageCapacity, colour, network).sequence.map(_.mkString(" "))
   }
 
-  final case class Game(
+  final case class VideoGame(
       name: Option[String],
       platform: Option[String],
       releaseYear: Option[String],

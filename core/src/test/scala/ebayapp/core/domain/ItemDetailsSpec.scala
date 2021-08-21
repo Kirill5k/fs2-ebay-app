@@ -14,7 +14,7 @@ class ItemDetailsSpec extends AsyncWordSpec with Matchers {
     }
 
     "return none is some of the parameters are missing" in {
-      val query = game.itemDetails.copy(platform = None).fullName
+      val query = game.itemDetails.asInstanceOf[ItemDetails.VideoGame].copy(platform = None).fullName
       query mustBe None
     }
   }
@@ -28,7 +28,7 @@ class ItemDetailsSpec extends AsyncWordSpec with Matchers {
 
     "return none is some of the parameters are missing" in {
       val phone = ResellableItemBuilder.mobilePhone("apple", "iphone 6", "Space Grey")
-      val query = phone.itemDetails.copy(model = None).fullName
+      val query = phone.itemDetails.asInstanceOf[ItemDetails.Phone].copy(model = None).fullName
       query mustBe None
     }
   }

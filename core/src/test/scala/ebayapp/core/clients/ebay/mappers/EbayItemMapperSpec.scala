@@ -69,7 +69,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "transform to GameDetails" in {
       val game = EbayItemMapper.gameDetailsMapper.toDomain(videoGameEbayItem)
 
-      game.itemDetails mustBe(ItemDetails.Game(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
+      game.itemDetails mustBe(ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
 
       game.listingDetails mustBe ListingDetails(
         "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
@@ -95,7 +95,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "transform to GameDetails even if no shipping options" in {
       val game = EbayItemMapper.gameDetailsMapper.toDomain(videoGameEbayItem.copy(shippingOptions = None))
 
-      game.itemDetails mustBe(ItemDetails.Game(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
+      game.itemDetails mustBe(ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
 
       game.listingDetails mustBe ListingDetails(
         "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",

@@ -1,7 +1,7 @@
 package ebayapp.core.clients.selfridges
 
 import ebayapp.core.clients.ItemMapper
-import ebayapp.core.clients.selfridges.SelfridgesClient.{CatalogItem, ItemPrice, ItemStock}
+import ebayapp.core.clients.selfridges.responses.{CatalogItem, ItemPrice, ItemStock}
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
@@ -16,12 +16,12 @@ private[selfridges] object mappers {
       price: Option[ItemPrice]
   )
 
-  type SelfridgesItemMapper[D <: ItemDetails] = ItemMapper[SelfridgesItem, D]
+  type SelfridgesItemMapper = ItemMapper[SelfridgesItem]
 
-  implicit val selfridgesClothingMapper: SelfridgesItemMapper[ItemDetails.Clothing] = new SelfridgesItemMapper[ItemDetails.Clothing] {
+  implicit val selfridgesClothingMapper: SelfridgesItemMapper = new SelfridgesItemMapper {
 
-    override def toDomain(si: SelfridgesItem): ResellableItem[ItemDetails.Clothing] =
-      ResellableItem[ItemDetails.Clothing](
+    override def toDomain(si: SelfridgesItem): ResellableItem =
+      ResellableItem.clothing(
         itemDetails(si.item, si.stock),
         listingDetails(si.item),
         buyPrice(si.item, si.stock, si.price),

@@ -6,35 +6,34 @@ import java.time.Instant
 import ebayapp.core.clients.ebay.browse.responses.EbayItem
 import ebayapp.core.common.errors.AppError.Critical
 import ebayapp.core.domain
-import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
+import ebayapp.core.domain.{ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 
-object EbayItemMapper {
+private[ebay] object EbayItemMapper {
+  type EbayItemMapper = ItemMapper[EbayItem]
 
-  def get(kind: ItemKind): Either[Throwable, EbayItemMapper[_ <: ItemDetails]] =
+  def get(kind: ItemKind): Either[Throwable, EbayItemMapper] =
     kind match {
       case ItemKind.VideoGame   => Right(gameDetailsMapper)
       case ItemKind.MobilePhone => Right(phoneDetailsMapper)
       case kind                 => Left(Critical(s"unexpected item kind $kind in EbayClient"))
     }
 
-  type EbayItemMapper[D <: ItemDetails] = ItemMapper[EbayItem, D]
-
   private val categories: Map[Int, String] = Map(
     139973 -> "Games"
   )
 
-  implicit val phoneDetailsMapper = new EbayItemMapper[ItemDetails.Phone] {
-    override def toDomain(ebayItem: EbayItem): ResellableItem[ItemDetails.Phone] = {
+  val phoneDetailsMapper = new EbayItemMapper {
+    override def toDomain(ebayItem: EbayItem): ResellableItem = {
       val listing = listingDetails(ebayItem)
-      domain.ResellableItem(PhoneDetailsMapper.from(listing), listing, price(ebayItem), None)
+      domain.ResellableItem.mobilePhone(PhoneDetailsMapper.from(listing), listing, price(ebayItem), None)
     }
   }
 
-  implicit val gameDetailsMapper = new EbayItemMapper[ItemDetails.Game] {
-    override def toDomain(ebayItem: EbayItem): ResellableItem[ItemDetails.Game] = {
+  val gameDetailsMapper = new EbayItemMapper {
+    override def toDomain(ebayItem: EbayItem): ResellableItem = {
       val listing = listingDetails(ebayItem)
-      domain.ResellableItem(GameDetailsMapper.from(listing), listing, price(ebayItem), None)
+      domain.ResellableItem.videoGame(GameDetailsMapper.from(listing), listing, price(ebayItem), None)
     }
   }
 

@@ -4,12 +4,11 @@ import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.Logger
-import ebayapp.core.domain.ItemDetails
 import ebayapp.core.repositories.Repositories
 
 trait Services[F[_]] {
   def notification: NotificationService[F]
-  def videoGame: ResellableItemService[F, ItemDetails.Game]
+  def resellableItem: ResellableItemService[F]
   def ebayDeals: EbayDealsService[F]
   def cexStock: StockService[F]
   def selfridgesSale: StockService[F]
@@ -28,7 +27,7 @@ object Services {
   ): F[Services[F]] =
     (
       NotificationService.telegram[F](clients.telegram),
-      ResellableItemService.videoGame[F](repositories.videoGames),
+      ResellableItemService.make[F](repositories.resellableItems),
       EbayDealsService.make[F](clients.ebay, clients.cex),
       StockService.cex[F](clients.cex),
       StockService.selfridges[F](clients.selfridges),
@@ -37,18 +36,18 @@ object Services {
       StockService.tessuti[F](clients.tessuti),
       StockService.nvidia[F](clients.nvidia),
       StockService.scan[F](clients.scan)
-    ).mapN((not, vs, es, cs, selfridgesS, as, js, ts, nvidiaS, scanS) =>
+    ).mapN((not, rs, es, cs, selfridgesS, as, js, ts, nvidiaS, scanS) =>
       new Services[F] {
-        def notification: NotificationService[F]                  = not
-        def videoGame: ResellableItemService[F, ItemDetails.Game] = vs
-        def ebayDeals: EbayDealsService[F]                        = es
-        def cexStock: StockService[F]                             = cs
-        def selfridgesSale: StockService[F]                       = selfridgesS
-        def argosStock: StockService[F]                           = as
-        def jdsportsSale: StockService[F]                         = js
-        def tessutiSale: StockService[F]                          = ts
-        def nvidiaStock: StockService[F]                          = nvidiaS
-        def scanStock: StockService[F]                            = scanS
+        def notification: NotificationService[F]     = not
+        def resellableItem: ResellableItemService[F] = rs
+        def ebayDeals: EbayDealsService[F]           = es
+        def cexStock: StockService[F]                = cs
+        def selfridgesSale: StockService[F]          = selfridgesS
+        def argosStock: StockService[F]              = as
+        def jdsportsSale: StockService[F]            = js
+        def tessutiSale: StockService[F]             = ts
+        def nvidiaStock: StockService[F]             = nvidiaS
+        def scanStock: StockService[F]               = scanS
       }
     )
 }

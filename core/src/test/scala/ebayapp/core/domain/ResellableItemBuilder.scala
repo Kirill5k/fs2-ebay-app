@@ -1,23 +1,22 @@
 package ebayapp.core.domain
 
-import ebayapp.core.domain.ItemDetails.{Game, Phone}
-import ebayapp.core.domain.ResellableItem.{GenericItem, MobilePhone, VideoGame, Clothing}
+import ebayapp.core.domain.ItemDetails.{VideoGame, Phone}
 import ebayapp.core.domain.search.{SellPrice, _}
 
 import java.time.Instant
 
 object ResellableItemBuilder {
 
-  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Option[Int] = Some(50)): Clothing =
-    ResellableItem(
+  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Option[Int] = Some(50)): ResellableItem =
+    ResellableItem.clothing(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
       BuyPrice(quantity, BigDecimal(price), discount),
       None
     )
 
-  def generic(name: String, quantity: Int = 1, price: Double = 1800.0, discount: Option[Int] = None): GenericItem =
-    ResellableItem(
+  def generic(name: String, quantity: Int = 1, price: Double = 1800.0, discount: Option[Int] = None): ResellableItem =
+    ResellableItem.generic(
       ItemDetails.Generic(name),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
       BuyPrice(quantity, BigDecimal(price), discount),
@@ -30,9 +29,9 @@ object ResellableItemBuilder {
       platform: Option[String] = Some("XBOX ONE"),
       buyPrice: BuyPrice = BuyPrice(1, BigDecimal(32.99)),
       sellPrice: Option[SellPrice] = Some(SellPrice(BigDecimal(100), BigDecimal(80)))
-  ): VideoGame =
-    ResellableItem(
-      Game(Some(name), platform, Some("2019"), Some("Action")),
+  ): ResellableItem =
+    ResellableItem.videoGame(
+      VideoGame(Some(name), platform, Some("2019"), Some("Action")),
       ListingDetails(
         s"https://www.ebay.co.uk/itm/$name".toLowerCase.replaceAll(" ", "-"),
         name,
@@ -62,8 +61,8 @@ object ResellableItemBuilder {
       colour: String,
       storage: String = "16GB",
       datePosted: Instant = Instant.now()
-  ): MobilePhone =
-    ResellableItem(
+  ): ResellableItem =
+    ResellableItem.mobilePhone(
       Phone(Some(make), Some(model), Some(colour), Some(storage), Some("Unlocked"), Some("USED")),
       ListingDetails(
         s"https://www.ebay.co.uk/itm/$make-$model-$colour".toLowerCase.replaceAll(" ", "-"),

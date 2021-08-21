@@ -5,7 +5,7 @@ import cats.implicits._
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.{ResellableItem}
 import fs2.Stream
 
 import scala.concurrent.duration._
@@ -15,8 +15,8 @@ abstract class StockComparer[F[_]: Temporal: Logger] {
 
   protected def stockUpdatesStream(
       config: StockMonitorConfig,
-      findItemsEffect: StockMonitorRequest => F[Map[String, ResellableItem.Anything]]
-  ): Stream[F, ItemStockUpdates.Anything] =
+      findItemsEffect: StockMonitorRequest => F[Map[String, ResellableItem]]
+  ): Stream[F, ItemStockUpdates] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>
@@ -27,12 +27,12 @@ abstract class StockComparer[F[_]: Temporal: Logger] {
   protected def getUpdates(
       req: StockMonitorRequest,
       freq: FiniteDuration,
-      findItemsEffect: => F[Map[String, ResellableItem.Anything]]
-  ): Stream[F, ItemStockUpdates.Anything] =
+      findItemsEffect: => F[Map[String, ResellableItem]]
+  ): Stream[F, ItemStockUpdates] =
     Stream
-      .unfoldLoopEval[F, Option[Map[String, ResellableItem.Anything]], List[ItemStockUpdates.Anything]](None) { prevOpt =>
+      .unfoldLoopEval[F, Option[Map[String, ResellableItem]], List[ItemStockUpdates]](None) { prevOpt =>
         findItemsEffect.map { curr =>
-          (prevOpt.fold(List.empty[ItemStockUpdates.Anything])(prev => compareItems(prev, curr, req)), Some(curr.some))
+          (prevOpt.fold(List.empty[ItemStockUpdates])(prev => compareItems(prev, curr, req)), Some(curr.some))
         }
       }
       .flatMap(r => Stream.emits(r) ++ Stream.sleep_(freq))
@@ -41,11 +41,11 @@ abstract class StockComparer[F[_]: Temporal: Logger] {
           getUpdates(req, freq, findItemsEffect)
       }
 
-  private def compareItems[D <: ItemDetails](
-      prev: Map[String, ResellableItem.Anything],
-      curr: Map[String, ResellableItem.Anything],
+  private def compareItems(
+      prev: Map[String, ResellableItem],
+      curr: Map[String, ResellableItem],
       req: StockMonitorRequest
-  ): List[ItemStockUpdates.Anything] =
+  ): List[ItemStockUpdates] =
     curr
       .map { case (name, currItem) =>
         val updates = prev.get(name) match {

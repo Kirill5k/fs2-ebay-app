@@ -2,10 +2,7 @@ package ebayapp.core.tasks
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.ebay.mappers.EbayItemMapper
-import ebayapp.core.clients.ebay.mappers.EbayItemMapper.EbayItemMapper
 import ebayapp.core.common.config.{EbayDealsConfig, SearchCriteria}
-import ebayapp.core.domain.ItemDetails.Game
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 
@@ -16,19 +13,17 @@ class EbayDealsFinderSpec extends CatsSpec {
   val searchQueries = List(SearchCriteria("q1"), SearchCriteria("q2"))
   val dealConfig    = EbayDealsConfig(2.seconds, searchQueries, 34, 10)
 
-  implicit val mapper: EbayItemMapper[Game]   = EbayItemMapper.gameDetailsMapper
-
   "A VideoGamesEbayDealsFinder" should {
 
     "send notification for cheap items" in {
       val game     = ResellableItemBuilder.videoGame("Super Mario 3", buyPrice = BuyPrice(1, BigDecimal(5)))
       val services = servicesMock
-      when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper)))
+      when(services.ebayDeals.deals(eqTo(dealConfig)))
         .thenReturn(fs2.Stream.evalSeq(IO.pure(List(game))))
 
-      when(services.videoGame.save(any[ResellableItem.VideoGame])).thenReturn(IO.unit)
-      when(services.videoGame.isNew(any[ResellableItem.VideoGame])).thenReturn(IO.pure(true))
-      when(services.notification.cheapItem(any[ResellableItem.VideoGame])).thenReturn(IO.unit)
+      when(services.resellableItem.save(any[ResellableItem])).thenReturn(IO.unit)
+      when(services.resellableItem.isNew(any[ResellableItem])).thenReturn(IO.pure(true))
+      when(services.notification.cheapItem(any[ResellableItem])).thenReturn(IO.unit)
 
       val result = for {
         task <- EbayDealsFinder.videoGames(dealConfig, services)
@@ -36,9 +31,9 @@ class EbayDealsFinderSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals).deals(dealConfig)(mapper)
-        verify(services.videoGame).isNew(game)
-        verify(services.videoGame).save(game)
+        verify(services.ebayDeals).deals(dealConfig)
+        verify(services.resellableItem).isNew(game)
+        verify(services.resellableItem).save(game)
         verify(services.notification).cheapItem(game)
         r mustBe ()
       }
@@ -48,11 +43,11 @@ class EbayDealsFinderSpec extends CatsSpec {
       val game     = ResellableItemBuilder.videoGame("Super Mario 3", buyPrice = BuyPrice(15, BigDecimal(5)))
       val services = servicesMock
 
-      when(services.ebayDeals.deals(eqTo(dealConfig))(eqTo(mapper)))
+      when(services.ebayDeals.deals(eqTo(dealConfig)))
         .thenReturn(fs2.Stream.evalSeq(IO.pure(List(game))))
 
-      when(services.videoGame.save(game)).thenReturn(IO.unit)
-      when(services.videoGame.isNew(game)).thenReturn(IO.pure(true))
+      when(services.resellableItem.save(game)).thenReturn(IO.unit)
+      when(services.resellableItem.isNew(game)).thenReturn(IO.pure(true))
 
       val result = for {
         task <- EbayDealsFinder.videoGames(dealConfig, services)
@@ -60,7 +55,7 @@ class EbayDealsFinderSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals).deals(dealConfig)(mapper)
+        verify(services.ebayDeals).deals(dealConfig)
         verifyZeroInteractions(services.notification)
         r mustBe ()
       }

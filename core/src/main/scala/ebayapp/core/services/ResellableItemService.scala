@@ -1,49 +1,41 @@
 package ebayapp.core.services
 
-
-import java.time.Instant
 import cats.Monad
 import cats.implicits._
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
-import ebayapp.core.domain.ResellableItem.VideoGame
-import ebayapp.core.repositories.ResellableItemRepository.VideoGameRepository
+import ebayapp.core.domain.ResellableItem
+import ebayapp.core.repositories.{Filters, ResellableItemRepository}
 import fs2.Stream
 
-trait ResellableItemService[F[_], D <: ItemDetails] {
-  def save(item: ResellableItem[D]): F[Unit]
-  def findAll(limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
-  def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): Stream[F, ResellableItem[D]]
-  def isNew(item: ResellableItem[D]): F[Boolean]
-  def findBy(query: String, limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[ResellableItem[D]]]
+trait ResellableItemService[F[_]] {
+  def save(item: ResellableItem): F[Unit]
+  def findAll(filters: Filters): F[List[ResellableItem]]
+  def stream(filters: Filters): Stream[F, ResellableItem]
+  def isNew(item: ResellableItem): F[Boolean]
+  def findBy(query: String, filters: Filters): F[List[ResellableItem]]
 }
 
-final class VideoGameService[F[_]: Monad](
-    private val repository: VideoGameRepository[F]
-) extends ResellableItemService[F, ItemDetails.Game] {
+final class LiveResellableItemService[F[_]: Monad](
+    private val repository: ResellableItemRepository[F]
+) extends ResellableItemService[F] {
 
-  override def save(item: VideoGame): F[Unit] =
+  override def save(item: ResellableItem): F[Unit] =
     repository.save(item)
 
-  override def stream(limit: Option[Int], from: Option[Instant], to: Option[Instant]): Stream[F, VideoGame] =
-    repository.stream(limit, from, to)
+  override def stream(filters: Filters): Stream[F, ResellableItem] =
+    repository.stream(filters)
 
-  override def isNew(item: VideoGame): F[Boolean] =
+  override def isNew(item: ResellableItem): F[Boolean] =
     repository.existsByUrl(item.listingDetails.url).map(!_)
 
-  override def findAll(limit: Option[Int], from: Option[Instant], to: Option[Instant]): F[List[VideoGame]] =
-    repository.findAll(limit, from, to)
+  override def findAll(filters: Filters): F[List[ResellableItem]] =
+    repository.findAll(filters)
 
-  override def findBy(
-      query: String,
-      limit: Option[Int],
-      from: Option[Instant],
-      to: Option[Instant]
-  ): F[List[ResellableItem[ItemDetails.Game]]] =
-    repository.search(query, limit, from, to)
+  override def findBy(query: String, filters: Filters): F[List[ResellableItem]] =
+    repository.search(query, filters)
 }
 
 object ResellableItemService {
 
-  def videoGame[F[_]: Monad](repository: VideoGameRepository[F]): F[ResellableItemService[F, ItemDetails.Game]] =
-    Monad[F].pure(new VideoGameService[F](repository))
+  def make[F[_]: Monad](repository: ResellableItemRepository[F]): F[ResellableItemService[F]] =
+    Monad[F].pure(new LiveResellableItemService[F](repository))
 }

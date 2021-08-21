@@ -27,7 +27,7 @@ final private class LiveScanClient[F[_]](
 
   private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
-  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .eval(F.fromOption(criteria.category, new IllegalArgumentException("Category is required")))
       .flatMap { cat =>

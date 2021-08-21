@@ -29,7 +29,7 @@ final private class LiveJdsportsClient[F[_]](
     "X-Reroute-To" -> s"https://www.$name.co.uk"
   ) ++ defaultHeaders ++ config.headers
 
-  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     brands(criteria.query)
       .filter(_.sale)
       .metered(250.millis)

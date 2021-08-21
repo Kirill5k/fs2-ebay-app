@@ -49,12 +49,8 @@ object stock {
     }
   }
 
-  final case class ItemStockUpdates[D <: ItemDetails](
-      item: ResellableItem[D],
+  final case class ItemStockUpdates(
+      item: ResellableItem,
       updates: List[StockUpdate]
   )
-
-  object ItemStockUpdates {
-    type Anything = ItemStockUpdates[_ <: ItemDetails]
-  }
 }

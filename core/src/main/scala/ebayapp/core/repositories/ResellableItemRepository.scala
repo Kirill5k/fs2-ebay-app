@@ -3,72 +3,70 @@ package ebayapp.core.repositories
 import java.time.Instant
 import cats.effect.Async
 import cats.implicits._
-import io.circe.generic.auto._
-import ebayapp.core.domain.ResellableItem
+import io.circe.generic.extras.auto._
+import ebayapp.core.common.json.genDevConfig
+import ebayapp.core.domain.{ItemKind, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.circe._
 import mongo4cats.collection.operations.Filter
 import mongo4cats.collection.MongoCollection
 import fs2._
-import mongo4cats.database.MongoDatabase
+import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
 
-trait ResellableItemRepository[F[_], I <: ResellableItem[_], E <: ResellableItemEntity] {
+final case class Filters(
+    kind: ItemKind,
+    limit: Option[Int] = None,
+    from: Option[Instant] = None,
+    to: Option[Instant] = None
+)
+
+trait ResellableItemRepository[F[_]] {
   def existsByUrl(listingUrl: String): F[Boolean]
-  def save(item: I): F[Unit]
-  def saveAll(items: Seq[I]): F[Unit]
-  def search(query: String, limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): F[List[I]]
-  def findAll(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): F[List[I]]
-  def stream(limit: Option[Int] = None, from: Option[Instant] = None, to: Option[Instant] = None): Stream[F, I]
+  def save(item: ResellableItem): F[Unit]
+  def saveAll(items: Seq[ResellableItem]): F[Unit]
+  def search(query: String, filters: Filters): F[List[ResellableItem]]
+  def findAll(filters: Filters): F[List[ResellableItem]]
+  def stream(filters: Filters): Stream[F, ResellableItem]
 }
 
-final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E <: ResellableItemEntity](
-    private val mongoCollection: MongoCollection[F, E]
+final class ResellableItemMongoRepository[F[_]: Async](
+    private val mongoCollection: MongoCollection[F, ResellableItemEntity]
 )(implicit
-    val entityMapper: ResellableItemEntityMapper[I, E]
-) extends ResellableItemRepository[F, I, E] {
+    val entityMapper: ResellableItemEntityMapper
+) extends ResellableItemRepository[F] {
 
   def existsByUrl(listingUrl: String): F[Boolean] =
     mongoCollection.count(Filter.eq("listingDetails.url", listingUrl)).map(_ > 0)
 
-  def save(item: I): F[Unit] =
+  def save(item: ResellableItem): F[Unit] =
     mongoCollection.insertOne(entityMapper.toEntity(item)).void
 
-  def saveAll(items: Seq[I]): F[Unit] =
+  def saveAll(items: Seq[ResellableItem]): F[Unit] =
     mongoCollection.insertMany(items.map(entityMapper.toEntity)).void
 
   def search(
       query: String,
-      limit: Option[Int] = None,
-      from: Option[Instant] = None,
-      to: Option[Instant] = None
-  ): F[List[I]] =
+      filters: Filters
+  ): F[List[ResellableItem]] =
     mongoCollection.find
-      .filter(postedDateRangeSelector(from, to) && Filter.text(query))
-      .limit(limit.getOrElse(0))
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.text(query) && Filter.eq("kind", filters.kind.value))
+      .limit(filters.limit.getOrElse(0))
       .all
       .map(_.map(entityMapper.toDomain).toList)
 
-  def findAll(
-      limit: Option[Int] = None,
-      from: Option[Instant] = None,
-      to: Option[Instant] = None
-  ): F[List[I]] =
+  def findAll(filters: Filters): F[List[ResellableItem]] =
     mongoCollection.find
       .sortByDesc("listingDetails.datePosted")
-      .filter(postedDateRangeSelector(from, to))
-      .limit(limit.getOrElse(0))
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind.value))
+      .limit(filters.limit.getOrElse(0))
       .all
       .map(_.map(entityMapper.toDomain).toList)
 
-  def stream(
-      limit: Option[Int] = None,
-      from: Option[Instant] = None,
-      to: Option[Instant] = None
-  ): Stream[F, I] =
+  def stream(filters: Filters): Stream[F, ResellableItem] =
     mongoCollection.find
       .sortByDesc("listingDetails.datePosted")
-      .filter(postedDateRangeSelector(from, to))
-      .limit(limit.getOrElse(0))
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind.value))
+      .limit(filters.limit.getOrElse(0))
       .stream
       .map(entityMapper.toDomain)
 
@@ -81,12 +79,11 @@ final class ResellableItemMongoRepository[F[_]: Async, I <: ResellableItem[_], E
 
 object ResellableItemRepository {
 
-  type VideoGameRepository[F[_]] = ResellableItemRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame]
-
-  def videoGamesMongo[F[_]: Async](
+  def mongo[F[_]: Async](
       database: MongoDatabase[F]
-  ): F[VideoGameRepository[F]] =
-    database
-      .getCollectionWithCodec[ResellableItemEntity.VideoGame]("videoGames")
-      .map(coll => new ResellableItemMongoRepository[F, ResellableItem.VideoGame, ResellableItemEntity.VideoGame](coll))
+  ): F[ResellableItemRepository[F]] =
+    for {
+      _    <- database.createCollection("items", CreateCollectionOptions().capped(true).sizeInBytes(268_435_456L))
+      coll <- database.getCollectionWithCodec[ResellableItemEntity]("items")
+    } yield new ResellableItemMongoRepository[F](coll)
 }

@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.domain.stock.StockUpdate
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.{ResellableItem}
 import ebayapp.core.common.{Cache, Error, Logger}
 
 import java.nio.charset.StandardCharsets
@@ -14,8 +14,8 @@ import scala.concurrent.duration._
 
 trait NotificationService[F[_]] {
   def alert(error: Error): F[Unit]
-  def cheapItem(item: ResellableItem.Anything): F[Unit]
-  def stockUpdate(item: ResellableItem.Anything, update: StockUpdate): F[Unit]
+  def cheapItem(item: ResellableItem): F[Unit]
+  def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit]
 }
 
 final class TelegramNotificationService[F[_]](
@@ -27,7 +27,7 @@ final class TelegramNotificationService[F[_]](
 ) extends NotificationService[F] {
   import NotificationService._
 
-  override def cheapItem(item: ResellableItem.Anything): F[Unit] =
+  override def cheapItem(item: ResellableItem): F[Unit] =
     F.pure(item.cheapItemNotification).flatMap {
       case Some(message) =>
         logger.info(s"""sending "$message"""") *>
@@ -36,7 +36,7 @@ final class TelegramNotificationService[F[_]](
         logger.warn(s"not enough details for sending cheap item notification $item")
     }
 
-  override def stockUpdate(item: ResellableItem.Anything, update: StockUpdate): F[Unit] =
+  override def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit] =
     F.pure(item.stockUpdateNotification(update)).flatMap {
       case Some(message) =>
         sentMessages.evalIfNew(base64(message)) {
@@ -58,7 +58,7 @@ final class TelegramNotificationService[F[_]](
 }
 
 object NotificationService {
-  implicit class ResellableItemOps[D <: ItemDetails](private val item: ResellableItem[D]) extends AnyVal {
+  implicit class ResellableItemOps(private val item: ResellableItem) extends AnyVal {
     def cheapItemNotification: Option[String] =
       for {
         itemSummary <- item.itemDetails.fullName

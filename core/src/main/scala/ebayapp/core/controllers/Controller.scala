@@ -1,13 +1,14 @@
 package ebayapp.core.controllers
 
-import cats.MonadError
+import cats.{Monad, MonadError}
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import cats.effect._
 import cats.implicits._
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import ebayapp.core.services.ResellableItemService
 import ebayapp.core.common.{JsonCodecs, Logger}
+import ebayapp.core.controllers.views._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.circe._
@@ -17,7 +18,6 @@ import org.http4s.{HttpRoutes, MessageFailure, ParseFailure, QueryParamDecoder, 
 import scala.util.Try
 
 trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
-  import Controller._
 
   implicit val instantQueryParamDecoder: QueryParamDecoder[Instant] =
     QueryParamDecoder[String].emap { dateString =>
@@ -50,8 +50,8 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
           InternalServerError(ErrorResponse(error.getMessage).asJson)
     }
 
-  protected def resellableItemsSummaryResponse[D <: ItemDetails](items: List[ResellableItem[D]]): ResellableItemsSummaryResponse = {
-    val (worp, prof, rest) = items.foldLeft((List.empty[ResellableItem[D]], List.empty[ResellableItem[D]], List.empty[ResellableItem[D]])) {
+  protected def resellableItemsSummaryResponse(items: List[ResellableItem]): ResellableItemsSummaryResponse = {
+    val (worp, prof, rest) = items.foldLeft((List.empty[ResellableItem], List.empty[ResellableItem], List.empty[ResellableItem])) {
       case ((withoutResell, profitable, rest), item) =>
         if (item.sellPrice.isEmpty) (item :: withoutResell, profitable, rest)
         else if (item.sellPrice.exists(rp => rp.cash > item.buyPrice.rrp)) (withoutResell, item :: profitable, rest)
@@ -66,7 +66,7 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
     )
   }
 
-  private def toItemsSummary[D <: ItemDetails](items: List[ResellableItem[D]]): ItemsSummary =
+  private def toItemsSummary(items: List[ResellableItem]): ItemsSummary =
     ItemsSummary(
       items.size,
       items.map { i =>
@@ -82,34 +82,13 @@ trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
 }
 
 object Controller {
-  final case class ErrorResponse(message: String)
-
-  final case class ItemSummary(
-      name: Option[String],
-      title: String,
-      url: String,
-      price: BigDecimal,
-      exchange: Option[BigDecimal]
-  )
-
-  final case class ItemsSummary(
-      total: Int,
-      items: List[ItemSummary]
-  )
-
-  final case class ResellableItemsSummaryResponse(
-      total: Int,
-      unrecognized: ItemsSummary,
-      profitable: ItemsSummary,
-      rest: ItemsSummary
-  )
 
   def home[F[_]: Sync]: F[Controller[F]] =
-    Sync[F].pure(new HomeController[F])
+    Monad[F].pure(new HomeController[F])
 
-  def videoGame[F[_]: Sync: Logger](service: ResellableItemService[F, ItemDetails.Game]): F[Controller[F]] =
-    Sync[F].pure(new VideoGameController[F](service))
+  def videoGame[F[_]: Sync: Logger](service: ResellableItemService[F]): F[Controller[F]] =
+    Monad[F].pure(new VideoGameController[F](service))
 
   def health[F[_]: Sync]: F[Controller[F]] =
-    Sync[F].pure(new HealthController[F])
+    Monad[F].pure(new HealthController[F])
 }

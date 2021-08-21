@@ -1,6 +1,6 @@
 package ebayapp.core.repositories
 
-import ebayapp.core.domain.ItemDetails
+import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.core.domain.search.ListingDetails
 import org.bson.types.ObjectId
 
@@ -13,15 +13,11 @@ private[repositories] object entities {
       credit: Option[String]
   )
 
-  sealed trait ResellableItemEntity
-
-  object ResellableItemEntity {
-
-    final case class VideoGame(
-        _id: ObjectId,
-        itemDetails: ItemDetails.Game,
-        listingDetails: ListingDetails,
-        price: ItemPrice
-    ) extends ResellableItemEntity
-  }
+  final case class ResellableItemEntity(
+      _id: ObjectId,
+      kind: ItemKind,
+      itemDetails: ItemDetails,
+      listingDetails: ListingDetails,
+      price: ItemPrice
+  )
 }

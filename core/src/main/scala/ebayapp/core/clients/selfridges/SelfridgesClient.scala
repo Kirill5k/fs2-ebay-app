@@ -4,8 +4,8 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.selfridges.SelfridgesClient._
 import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
+import ebayapp.core.clients.selfridges.responses._
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
 import ebayapp.core.domain.ResellableItem
@@ -47,7 +47,7 @@ final private class LiveSelfridgesClient[F[_]](
     "blouse"
   ).mkString("(?i).*(", "|", ").*")
 
-  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .unfoldLoopEval(1)(searchForItems(criteria))
       .flatMap(Stream.emits)
@@ -123,49 +123,6 @@ final private class LiveSelfridgesClient[F[_]](
 }
 
 object SelfridgesClient {
-
-  final case class ItemPrice(
-      SKUID: String,
-      `Current Retail Price`: BigDecimal,
-      `Was Retail Price`: Option[BigDecimal],
-      `Was Was Retail Price`: Option[BigDecimal]
-  )
-
-  final case class SelfridgesItemPriceResponse(
-      prices: Option[List[ItemPrice]]
-  )
-
-  final case class ItemStock(
-      SKUID: String,
-      value: Option[String],
-      `Stock Quantity Available to Purchase`: Int
-  )
-
-  final case class SelfridgesItemStockResponse(
-      stocks: Option[List[ItemStock]]
-  )
-
-  final case class CatalogItemPrice(
-      lowestPrice: BigDecimal,
-      lowestWasPrice: Option[BigDecimal],
-      lowestWasWasPrice: Option[BigDecimal],
-      currency: String
-  )
-
-  final case class CatalogItem(
-      partNumber: String,
-      seoKey: String,
-      imageName: String,
-      name: String,
-      brandName: String,
-      price: List[CatalogItemPrice]
-  )
-
-  final case class SelfridgesSearchResponse(
-      noOfPages: Int,
-      pageNumber: Option[Int],
-      catalogEntryNavView: List[CatalogItem]
-  )
 
   def make[F[_]: Temporal: Logger](
       config: GenericStoreConfig,

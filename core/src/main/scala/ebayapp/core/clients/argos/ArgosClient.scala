@@ -27,7 +27,7 @@ final private class LiveArgosClient[F[_]](
   override val name   = "argos"
   private val headers = defaultHeaders ++ config.headers
 
-  override def search(criteria: SearchCriteria): Stream[F, ResellableItem.Anything] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .unfoldLoopEval(1) { page =>
         search(criteria.query, page).map {

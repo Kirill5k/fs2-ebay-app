@@ -9,11 +9,11 @@ import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
 
 private[cex] object mappers {
 
-  type CexItemMapper[D <: ItemDetails] = ItemMapper[CexItem, D]
+  type CexItemMapper = ItemMapper[CexItem]
 
-  implicit val cexGenericItemMapper: CexItemMapper[ItemDetails.Generic] = new CexItemMapper[ItemDetails.Generic] {
-    override def toDomain(sr: CexItem): ResellableItem[ItemDetails.Generic] =
-      ResellableItem[ItemDetails.Generic](
+  val cexGenericItemMapper: CexItemMapper = new CexItemMapper {
+    override def toDomain(sr: CexItem): ResellableItem =
+      ResellableItem.generic(
         ItemDetails.Generic(sr.boxName),
         listingDetails(sr),
         price(sr),

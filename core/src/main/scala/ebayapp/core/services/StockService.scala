@@ -14,12 +14,12 @@ import fs2.Stream
 trait StockService[F[_]] extends StockComparer[F] {
   protected def client: SearchClient[F]
 
-  def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates.Anything]
+  def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates]
 
   protected def findItems(req: StockMonitorRequest)(implicit
       logger: Logger[F],
       concurrent: Concurrent[F]
-  ): F[Map[String, ResellableItem.Anything]] =
+  ): F[Map[String, ResellableItem]] =
     client
       .search(req.searchCriteria)
       .filter(item => req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
@@ -36,7 +36,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
     override val name: String
 ) extends StockService[F] {
 
-  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates.Anything] =
+  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates] =
     stockUpdatesStream(config, (req: StockMonitorRequest) => findItems(req))
 }
 

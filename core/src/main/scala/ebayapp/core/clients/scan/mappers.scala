@@ -9,11 +9,11 @@ import java.time.Instant
 
 private[scan] object mappers {
 
-  type ScanItemMapper[D <: ItemDetails] = ItemMapper[ScanItem, D]
+  type ScanItemMapper = ItemMapper[ScanItem]
 
-  implicit val scanaGenericItemMapper: ScanItemMapper[ItemDetails.Generic] = new ScanItemMapper[ItemDetails.Generic] {
-    override def toDomain(item: ScanItem): ResellableItem[ItemDetails.Generic] =
-      ResellableItem[ItemDetails.Generic](
+  val scanaGenericItemMapper: ScanItemMapper = new ScanItemMapper {
+    override def toDomain(item: ScanItem): ResellableItem =
+      ResellableItem.generic(
         ItemDetails.Generic(item.name),
         ListingDetails(
           s"https://scan.co.uk${item.productUrlPath}",

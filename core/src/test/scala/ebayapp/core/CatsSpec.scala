@@ -3,7 +3,6 @@ package ebayapp.core
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import ebayapp.core.common.Logger
-import ebayapp.core.domain.ItemDetails
 import ebayapp.core.services.{EbayDealsService, NotificationService, ResellableItemService, Services, StockService}
 import org.mockito.ArgumentMatchersSugar
 import org.mockito.scalatest.AsyncMockitoSugar
@@ -16,15 +15,15 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
   implicit val logger: Logger[IO] = MockLogger.make[IO]
 
   def servicesMock: Services[IO] = new Services[IO] {
-    val notification: NotificationService[IO]                  = mock[NotificationService[IO]]
-    val videoGame: ResellableItemService[IO, ItemDetails.Game] = mock[ResellableItemService[IO, ItemDetails.Game]]
-    val ebayDeals: EbayDealsService[IO]                        = mock[EbayDealsService[IO]]
-    val cexStock: StockService[IO]                             = mock[StockService[IO]]
-    val selfridgesSale: StockService[IO]                       = mock[StockService[IO]]
-    val argosStock: StockService[IO]                           = mock[StockService[IO]]
-    val jdsportsSale: StockService[IO]                         = mock[StockService[IO]]
-    val tessutiSale: StockService[IO]                          = mock[StockService[IO]]
-    val nvidiaStock: StockService[IO]                          = mock[StockService[IO]]
-    val scanStock: StockService[IO]                            = mock[StockService[IO]]
+    val notification: NotificationService[IO]     = mock[NotificationService[IO]]
+    val resellableItem: ResellableItemService[IO] = mock[ResellableItemService[IO]]
+    val ebayDeals: EbayDealsService[IO]           = mock[EbayDealsService[IO]]
+    val cexStock: StockService[IO]                = mock[StockService[IO]]
+    val selfridgesSale: StockService[IO]          = mock[StockService[IO]]
+    val argosStock: StockService[IO]              = mock[StockService[IO]]
+    val jdsportsSale: StockService[IO]            = mock[StockService[IO]]
+    val tessutiSale: StockService[IO]             = mock[StockService[IO]]
+    val nvidiaStock: StockService[IO]             = mock[StockService[IO]]
+    val scanStock: StockService[IO]               = mock[StockService[IO]]
   }
 }

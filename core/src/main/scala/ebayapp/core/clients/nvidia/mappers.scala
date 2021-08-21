@@ -9,11 +9,11 @@ import java.time.Instant
 
 private[nvidia] object mappers {
 
-  type NvidiaItemMapper[D <: ItemDetails] = ItemMapper[NvidiaItem, D]
+  type NvidiaItemMapper = ItemMapper[NvidiaItem]
 
-  implicit val nvidiaGenericItemMapper: NvidiaItemMapper[ItemDetails.Generic] = new NvidiaItemMapper[ItemDetails.Generic] {
-    override def toDomain(item: NvidiaItem): ResellableItem[ItemDetails.Generic] =
-      ResellableItem[ItemDetails.Generic](
+  val nvidiaGenericItemMapper: NvidiaItemMapper = new NvidiaItemMapper {
+    override def toDomain(item: NvidiaItem): ResellableItem =
+      ResellableItem.generic(
         ItemDetails.Generic(item.name),
         ListingDetails(
           item.retailer.directPurchaseLink.getOrElse(item.retailer.purchaseLink),

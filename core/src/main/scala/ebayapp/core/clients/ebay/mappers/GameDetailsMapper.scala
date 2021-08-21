@@ -1,7 +1,7 @@
 package ebayapp.core.clients.ebay.mappers
 
 import cats.implicits._
-import ebayapp.core.domain.ItemDetails.Game
+import ebayapp.core.domain.ItemDetails.VideoGame
 import ebayapp.core.domain.search.ListingDetails
 
 private[mappers] object GameDetailsMapper {
@@ -162,8 +162,8 @@ private[mappers] object GameDetailsMapper {
     "WII"              -> "WII"
   )
 
-  def from(listingDetails: ListingDetails): Game =
-    Game(
+  def from(listingDetails: ListingDetails): VideoGame =
+    VideoGame(
       name = sanitizeTitle(listingDetails.title),
       platform = mapPlatform(listingDetails),
       genre = mapGenre(listingDetails),

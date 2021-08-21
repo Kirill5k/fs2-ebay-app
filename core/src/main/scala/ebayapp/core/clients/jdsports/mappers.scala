@@ -27,17 +27,11 @@ private[jdsports] object mappers {
       .toLowerCase
   }
 
-  type JdsportsItemMapper[D <: ItemDetails] = ItemMapper[JdsportsItem, D]
+  type JdsportsItemMapper = ItemMapper[JdsportsItem]
 
-  implicit val jdsportsClothingMapper: JdsportsItemMapper[ItemDetails.Clothing] = new JdsportsItemMapper[ItemDetails.Clothing] {
-
-    override def toDomain(jdi: JdsportsItem): ResellableItem[ItemDetails.Clothing] =
-      ResellableItem[ItemDetails.Clothing](
-        itemDetails(jdi),
-        listingDetails(jdi),
-        buyPrice(jdi),
-        None
-      )
+  val jdsportsClothingMapper: JdsportsItemMapper = new JdsportsItemMapper {
+    override def toDomain(jdi: JdsportsItem): ResellableItem =
+      ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None)
 
     private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing =
       Clothing(
@@ -50,12 +44,7 @@ private[jdsports] object mappers {
       val current  = jdi.currentPrice
       val rrp = jdi.previousPrice
       val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
-
-      BuyPrice(
-        1,
-        current,
-        discount
-      )
+      BuyPrice(1, current, discount)
     }
 
     private def listingDetails(jdi: JdsportsItem): ListingDetails =
