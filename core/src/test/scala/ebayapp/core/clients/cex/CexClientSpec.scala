@@ -106,7 +106,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
       result.unsafeToFuture().map { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
@@ -117,14 +117,14 @@ class CexClientSpec extends SttpClientSpec {
       val item = ResellableItemBuilder.videoGame("UFC 3 2020", sellPrice = None, platform = Some("PLAYSTATION4"))
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "UFC 3 2020 PLAYSTATION4", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+          case r if isQueryRequest(r, Map("q" -> "UFC 3 2020 PLAYSTATION4", "categoryIds" -> "[1003,1141]")) =>
             Response.ok(json("cex/search-game-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-ps4-ps5"))(item))
 
       result.unsafeToFuture().map { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(0.8), BigDecimal(1.4)))
@@ -135,14 +135,14 @@ class CexClientSpec extends SttpClientSpec {
       val item = ResellableItemBuilder.videoGame("Need for speed", sellPrice = None, platform = Some("PLAYSTATION4"))
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "Need for speed PLAYSTATION4", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+          case r if isQueryRequest(r, Map("q" -> "Need for speed PLAYSTATION4", "categoryIds" -> "[782]")) =>
             Response.ok(json("cex/search-game-cannotbuy-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-360"))(item))
 
       result.unsafeToFuture().map { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(6.0), BigDecimal(9.0)))
@@ -159,8 +159,8 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = for {
         cexClient <- CexClient.make[IO](config, testingBackend)
-        _         <- cexClient.withUpdatedSellPrice(item)
-        rp        <- cexClient.withUpdatedSellPrice(item)
+        _         <- cexClient.withUpdatedSellPrice(None)(item)
+        rp        <- cexClient.withUpdatedSellPrice(None)(item)
       } yield rp
 
       result.unsafeToFuture().map { updatedItem =>
@@ -177,7 +177,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
       result.unsafeToFuture().map { updatedItem =>
         updatedItem.sellPrice mustBe None
@@ -194,9 +194,9 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = for {
         cexClient <- CexClient.make[IO](config, testingBackend)
-        _         <- cexClient.withUpdatedSellPrice(item)
+        _         <- cexClient.withUpdatedSellPrice(None)(item)
         _         <- IO.sleep(4.seconds)
-        rp        <- cexClient.withUpdatedSellPrice(item)
+        rp        <- cexClient.withUpdatedSellPrice(None)(item)
       } yield rp
 
       result.unsafeToFuture().map { res =>
@@ -208,14 +208,14 @@ class CexClientSpec extends SttpClientSpec {
       val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None, platform = Some("SWITCH"))
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+          case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH", "categoryIds" -> "[1064]")) =>
             Response.ok(json("cex/search-noresults-response.json"))
           case _ => throw new RuntimeException()
         }
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-switch"))(item))
 
       result.unsafeToFuture().map { updatedItem =>
         updatedItem.sellPrice mustBe None
@@ -226,14 +226,14 @@ class CexClientSpec extends SttpClientSpec {
       val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None, platform = Some("SWITCH"))
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH", "categoryIds" -> "[1000,1147,1003,1141,1064,1146]")) =>
+          case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH", "categoryIds" -> "[1000,1146,1147]")) =>
             Response.ok(json("cex/search-unexpected-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-one-series-x"))(item))
 
       result.attempt.unsafeToFuture().map { price =>
         price mustBe Left(AppError.Json("cex-search/json-error: C[A]: DownField(boxes),DownField(data),DownField(response)"))
@@ -251,7 +251,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
       result.unsafeToFuture().map { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
@@ -269,7 +269,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val cexClient = CexClient.make[IO](config, testingBackend)
 
-      val result = cexClient.flatMap(_.withUpdatedSellPrice(item))
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
       result.unsafeToFuture().map { item =>
         item.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))

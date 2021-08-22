@@ -49,11 +49,13 @@ data:
       deals-finder {
         search-frequency: 60s
         search-requests: [
-          {search-criteria: {query: "PS4", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "PS5", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "XBOX SERIES", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "XBOX ONE", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "SWITCH", item-kind: "video-game"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "XBOX 360", item-kind: "video-game", category: "games-xbox-360"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "PS3", item-kind: "video-game", category: "games-ps3"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "XBOX SERIES", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "SWITCH", item-kind: "video-game", category: "games-switch"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "XBOX ONE", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "PS4", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
+          {search-criteria: {query: "PS5", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
         ]
       }
     }

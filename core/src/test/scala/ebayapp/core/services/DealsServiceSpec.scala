@@ -17,8 +17,8 @@ class DealsServiceSpec extends CatsSpec {
   val game1 = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
   val game2 = ResellableItemBuilder.videoGame("Battlefield 1", sellPrice = None)
 
-  val request1 = DealsFinderRequest(SearchCriteria("q1"), 34, Some(10))
-  val request2 = DealsFinderRequest(SearchCriteria("q2"), 100, Some(10))
+  val request1 = DealsFinderRequest(SearchCriteria("q1", Some("cat1")), 34, Some(10))
+  val request2 = DealsFinderRequest(SearchCriteria("q2", Some("cat2")), 100, Some(10))
 
   "An DealsSearchService" should {
 
@@ -30,9 +30,9 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
-        .withUpdatedSellPrice(any[ResellableItem])
+        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
         service <- DealsService.ebay(searchClient, cexClient, repo)
@@ -41,8 +41,8 @@ class DealsServiceSpec extends CatsSpec {
 
       result.unsafeToFuture().map { items =>
         verify(searchClient).search(request1.searchCriteria)
-        verify(cexClient).withUpdatedSellPrice(game1)
-        verify(cexClient).withUpdatedSellPrice(game2)
+        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
+        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
         verify(repo, times(2)).save(any[ResellableItem])
@@ -80,9 +80,9 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
-        .withUpdatedSellPrice(any[ResellableItem])
+        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
         service <- DealsService.ebay(searchClient, cexClient, repo)
@@ -93,7 +93,7 @@ class DealsServiceSpec extends CatsSpec {
         verify(searchClient).search(request1.searchCriteria)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
-        verify(cexClient, times(2)).withUpdatedSellPrice(any[ResellableItem])
+        verify(cexClient, times(2)).withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
         verify(repo, times(2)).save(any[ResellableItem])
         items.map(_.itemDetails) mustBe Nil
       }
@@ -106,9 +106,9 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((i: ResellableItem) => IO.pure(i))
+      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i))
         .when(cexClient)
-        .withUpdatedSellPrice(any[ResellableItem])
+        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
         service <- DealsService.ebay(searchClient, cexClient, repo)
@@ -117,8 +117,8 @@ class DealsServiceSpec extends CatsSpec {
 
       result.unsafeToFuture().map { items =>
         verify(searchClient).search(request1.searchCriteria)
-        verify(cexClient).withUpdatedSellPrice(game1)
-        verify(cexClient).withUpdatedSellPrice(game2)
+        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
+        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
         verify(repo).save(game1)
@@ -134,9 +134,9 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
+      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
         .when(cexClient)
-        .withUpdatedSellPrice(any[ResellableItem])
+        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
         service <- DealsService.ebay(searchClient, cexClient, repo)
@@ -145,8 +145,8 @@ class DealsServiceSpec extends CatsSpec {
 
       result.unsafeToFuture().map { items =>
         verify(searchClient).search(request1.searchCriteria)
-        verify(cexClient).withUpdatedSellPrice(game1)
-        verify(cexClient).withUpdatedSellPrice(game2)
+        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
+        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
         verify(repo, times(2)).save(any[ResellableItem])

@@ -2,7 +2,7 @@ package ebayapp.core.clients.cex
 
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, HttpClient}
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
 import ebayapp.core.common.config.{CexConfig, SearchCriteria}
@@ -19,7 +19,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration._
 
 trait CexClient[F[_]] extends SearchClient[F] with HttpClient[F] {
-  def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem]
+  def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem]
 }
 
 final class CexApiClient[F[_]](
@@ -32,16 +32,21 @@ final class CexApiClient[F[_]](
 ) extends CexClient[F] {
 
   override protected val name: String = "cex"
+
   private val categoriesMap: Map[String, List[Int]] = Map(
-    "Games" -> List(1000, 1147, 1003, 1141, 1064, 1146)
+    "games-ps3"               -> List(808),
+    "games-xbox-360"          -> List(782),
+    "games-xbox-one-series-x" -> List(1000, 1146, 1147),
+    "games-ps4-ps5"           -> List(1003, 1141),
+    "games-switch"            -> List(1064)
   )
 
-  override def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem] =
+  override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] =
     item.itemDetails.fullName match {
       case None =>
         logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
       case Some(name) =>
-        val categories = item.listingDetails.category.flatMap(categoriesMap.get)
+        val categories = category.flatMap(categoriesMap.get)
         findSellPrice(name, categories).map(sp => item.copy(sellPrice = sp))
     }
 

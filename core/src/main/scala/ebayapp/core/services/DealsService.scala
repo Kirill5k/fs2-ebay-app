@@ -41,7 +41,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
         searchClient
           .search(req.searchCriteria)
           .evalFilter(isNew)
-          .evalMap(cexClient.withUpdatedSellPrice)
+          .evalMap(cexClient.withUpdatedSellPrice(req.searchCriteria.category))
           .evalTap(repository.save)
           .filter(hasRequiredStock(req))
           .filter(isProfitableToResell(req))
