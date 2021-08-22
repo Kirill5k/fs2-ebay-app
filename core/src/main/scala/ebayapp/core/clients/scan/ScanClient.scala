@@ -3,7 +3,7 @@ package ebayapp.core.clients.scan
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, SttpClient}
+import ebayapp.core.clients.{SearchClient, HttpClient}
 import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.Logger
@@ -21,7 +21,7 @@ final private class LiveScanClient[F[_]](
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with SttpClient[F] {
+) extends SearchClient[F] with HttpClient[F] {
 
   override protected val name: String = "scan"
 

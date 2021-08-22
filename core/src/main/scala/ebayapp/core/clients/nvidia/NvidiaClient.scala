@@ -3,7 +3,7 @@ package ebayapp.core.clients.nvidia
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, SttpClient}
+import ebayapp.core.clients.{SearchClient, HttpClient}
 import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
@@ -22,7 +22,7 @@ final private class LiveNvidiaClient[F[_]](
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
-) extends SearchClient[F] with SttpClient[F] {
+) extends SearchClient[F] with HttpClient[F] {
 
   override protected val name: String = "nvidia"
 

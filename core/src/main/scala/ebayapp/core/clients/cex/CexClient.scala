@@ -2,7 +2,7 @@ package ebayapp.core.clients.cex
 
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, SttpClient}
+import ebayapp.core.clients.{SearchClient, HttpClient}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
 import ebayapp.core.common.config.{CexConfig, SearchCriteria}
@@ -18,7 +18,7 @@ import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration._
 
-trait CexClient[F[_]] extends SearchClient[F] with SttpClient[F] {
+trait CexClient[F[_]] extends SearchClient[F] with HttpClient[F] {
   def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem]
 }
 

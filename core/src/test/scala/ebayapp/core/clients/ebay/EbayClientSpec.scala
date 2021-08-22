@@ -6,7 +6,6 @@ import ebayapp.core.CatsSpec
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses._
-import ebayapp.core.common.Cache
 import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, EbayCredentials, EbaySearchConfig, SearchCriteria}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
@@ -26,9 +25,9 @@ class EbayClientSpec extends CatsSpec {
   "An EbayClient" should {
 
     "search for video games" in {
-      val searchParamsCaptor                = ArgCaptor[Map[String, String]]
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val searchParamsCaptor         = ArgCaptor[Map[String, String]]
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.pure(List()))
@@ -51,8 +50,8 @@ class EbayClientSpec extends CatsSpec {
     }
 
     "switch ebay account on autherror" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(authClient.switchAccount()).thenReturn(IO.unit)
@@ -61,7 +60,6 @@ class EbayClientSpec extends CatsSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { error =>
-        verify(cache, never).put(any[String], any[Unit])
         verify(authClient).accessToken
         verify(authClient).switchAccount()
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
@@ -71,8 +69,8 @@ class EbayClientSpec extends CatsSpec {
     }
 
     "return empty on http error" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], anyMap[String, String]))
@@ -81,7 +79,6 @@ class EbayClientSpec extends CatsSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { error =>
-        verify(cache, never).put(any[String], any[Unit])
         verify(authClient).accessToken
         verify(authClient, never).switchAccount()
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
@@ -90,28 +87,9 @@ class EbayClientSpec extends CatsSpec {
       }
     }
 
-    "filter out items that are not new" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
-
-      when(authClient.accessToken).thenReturn(IO.pure(accessToken))
-      when(cache.contains(any[String])).thenReturn(IO.pure(true))
-      when(browseClient.search(any[String], anyMap[String, String])).thenReturn(ebayItemSummaries("item-1").pure[IO])
-
-      val itemsResponse = videoGameSearchClient.search(criteria)
-
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        verify(cache).contains("item-1")
-        verify(cache, never).put(any[String], any[Unit])
-        verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
-        verify(browseClient, never).getItem(any[String], any[String])
-        items mustBe Nil
-      }
-    }
-
     "filter out items with bad feedback" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], anyMap[String, String]))
@@ -120,7 +98,6 @@ class EbayClientSpec extends CatsSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        verify(cache, never).put(any[String], any[Unit])
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient, never).getItem(any[String], any[String])
@@ -129,8 +106,8 @@ class EbayClientSpec extends CatsSpec {
     }
 
     "filter out items are part of a group" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], anyMap[String, String]))
@@ -139,7 +116,6 @@ class EbayClientSpec extends CatsSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        verify(cache, never).put(any[String], any[Unit])
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient, never).getItem(any[String], any[String])
@@ -148,8 +124,8 @@ class EbayClientSpec extends CatsSpec {
     }
 
     "filter out items with bad names" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       val response = List(
         ebayItemSummary("1", name = "fallout 4 disc only"),
@@ -180,14 +156,13 @@ class EbayClientSpec extends CatsSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        verify(cache, never).put(any[String], any[Unit])
         items mustBe Nil
       }
     }
 
     "filter out items that are not buy it now" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], anyMap[String, String]))
@@ -196,14 +171,13 @@ class EbayClientSpec extends CatsSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        verify(cache, never).put(any[String], any[Unit])
         items mustBe Nil
       }
     }
 
     "filter out items with bad description" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       val response = List(
         ebayItemSummary(shortDescription = Some("this is a shared account")),
@@ -216,25 +190,21 @@ class EbayClientSpec extends CatsSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        verify(cache, never).put(any[String], any[Unit])
         items mustBe Nil
       }
     }
 
     "get item details for each item id" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
-      when(cache.contains(any[String])).thenReturn(IO.pure(false))
-      when(cache.put(any[String], any[Unit])).thenReturn(IO.unit)
       when(browseClient.search(any[String], anyMap[String, String])).thenReturn(IO.pure(ebayItemSummaries("item-1")))
       when(browseClient.getItem(accessToken, "item-1")).thenReturn(IO.pure(Some(ebayItem.copy(itemId = "item-1"))))
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        verify(cache).put("item-1", ())
         verify(authClient, times(2)).accessToken
         verify(browseClient).search(eqTo(accessToken), anyMap[String, String])
         verify(browseClient).getItem(eqTo(accessToken), any[String])
@@ -245,23 +215,21 @@ class EbayClientSpec extends CatsSpec {
     }
 
     "return error when there is not item-kind passes" in {
-      val (authClient, browseClient, cache) = mocks
-      val videoGameSearchClient             = new LiveEbayClient[IO](config, authClient, browseClient, cache)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       val itemsResponse = videoGameSearchClient.search(criteria.copy(itemKind = None))
 
       itemsResponse.compile.drain.attempt.unsafeToFuture().map { err =>
-        verifyZeroInteractions(authClient, browseClient, cache)
         err mustBe Left(AppError.Critical("item kind is required in ebay-client"))
       }
     }
   }
 
-  def mocks: (EbayAuthClient[IO], EbayBrowseClient[IO], Cache[IO, String, Unit]) = {
+  def mocks: (EbayAuthClient[IO], EbayBrowseClient[IO]) = {
     val authClient   = mock[EbayAuthClient[IO]]
     val browseClient = mock[EbayBrowseClient[IO]]
-    val cache        = mock[Cache[IO, String, Unit]]
-    (authClient, browseClient, cache)
+    (authClient, browseClient)
   }
 
   def ebayItemSummaries(ids: String*): List[EbayItemSummary] =

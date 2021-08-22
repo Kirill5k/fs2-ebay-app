@@ -2,7 +2,7 @@ package ebayapp.core.clients.telegram
 
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.SttpClient
+import ebayapp.core.clients.HttpClient
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.Logger
@@ -11,7 +11,7 @@ import sttp.model.StatusCode
 
 import scala.concurrent.duration._
 
-trait TelegramClient[F[_]] extends SttpClient[F] {
+trait TelegramClient[F[_]] extends HttpClient[F] {
   def sendMessageToMainChannel(message: String): F[Unit]
   def sendMessageToSecondaryChannel(message: String): F[Unit]
   def sendMessageToAlertsChannel(message: String): F[Unit]

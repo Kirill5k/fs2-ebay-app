@@ -3,7 +3,7 @@ package ebayapp.core.clients.argos
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, SttpClient}
+import ebayapp.core.clients.{SearchClient, HttpClient}
 import ebayapp.core.clients.argos.mappers.argosGenericItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
@@ -22,7 +22,7 @@ final private class LiveArgosClient[F[_]](
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
-) extends SearchClient[F] with SttpClient[F] {
+) extends SearchClient[F] with HttpClient[F] {
 
   override val name   = "argos"
   private val headers = defaultHeaders ++ config.headers

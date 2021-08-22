@@ -1,8 +1,10 @@
 package ebayapp.core.clients.ebay.browse
 
-import cats.MonadError
-import cats.implicits._
-import ebayapp.core.common.Logger
+import cats.effect.Temporal
+import cats.syntax.apply._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.EbayConfig
 import io.circe.generic.auto._
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
@@ -11,6 +13,8 @@ import sttp.client3._
 import sttp.client3.circe._
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
+import scala.concurrent.duration._
+
 private[ebay] trait EbayBrowseClient[F[_]] {
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]]
   def getItem(accessToken: String, itemId: String): F[Option[EbayItem]]
@@ -18,11 +22,14 @@ private[ebay] trait EbayBrowseClient[F[_]] {
 
 final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig,
-    private val backend: SttpBackend[F, Any]
+    private val backend: SttpBackend[F, Any],
+    private val itemsCache: Cache[F, String, EbayItem]
 )(implicit
-    F: MonadError[F, Throwable],
+    F: Temporal[F],
     logger: Logger[F]
 ) extends EbayBrowseClient[F] {
+
+  private val expiredStatuses = Set(StatusCode.TooManyRequests, StatusCode.Forbidden, StatusCode.Unauthorized)
 
   private val defaultHeaders: Map[String, String] = Map(
     "X-EBAY-C-MARKETPLACE-ID" -> "EBAY_GB",
@@ -39,45 +46,59 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
       .response(asJson[EbayBrowseResult])
       .send(backend)
       .flatMap { r =>
-        r.code match {
-          case status if status.isSuccess =>
-            F.fromEither(r.body.map(_.itemSummaries.getOrElse(List())))
-          case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
+        r.body match {
+          case Right(value) =>
+            F.pure(value.itemSummaries.getOrElse(Nil))
+          case Left(DeserializationException(body, error)) =>
+            logger.error(s"ebay-browse-search/parsing-error: ${error.getMessage}, \n$body") *>
+              F.pure(Nil)
+          case Left(HttpError(_, status)) if expiredStatuses.contains(status) =>
             F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
-          case status =>
-            logger.warn(s"error sending search request to ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
-              F.raiseError(AppError.Http(status.code, s"error sending request to ebay search api: $status"))
+          case Left(error) =>
+            logger.error(s"ebay-browse-search/${r.code.code}: ${error.getMessage}\n$error") *>
+              F.sleep(5.seconds) *> search(accessToken, queryParams)
         }
       }
 
   def getItem(accessToken: String, itemId: String): F[Option[EbayItem]] =
+    itemsCache.get(itemId).flatMap {
+      case None => findItem(accessToken, itemId)
+      case Some(item) => F.pure(Some(item))
+    }
+
+  private def findItem(accessToken: String, itemId: String): F[Option[EbayItem]] =
     basicRequest
       .headers(defaultHeaders)
       .auth
       .bearer(accessToken)
       .get(uri"${config.baseUri}/buy/browse/v1/item/$itemId")
       .response(asJson[EbayItem])
-      .send(backend)
+      .send[F, Any](backend)
       .flatMap { r =>
-        r.code match {
-          case status if status.isSuccess =>
-            F.fromEither(r.body.map(_.some))
-          case StatusCode.NotFound =>
-            F.pure(None)
-          case StatusCode.TooManyRequests | StatusCode.Forbidden | StatusCode.Unauthorized =>
+        r.body match {
+          case Right(item) =>
+            itemsCache.put(itemId, item).as(Some(item))
+          case Left(DeserializationException(body, error)) =>
+            logger.error(s"ebay-browse-get-item/parsing-error: ${error.getMessage}, \n$body") *>
+              F.pure(None)
+          case Left(HttpError(_, StatusCode.NotFound)) =>
+              F.pure(None)
+          case Left(HttpError(_, status)) if expiredStatuses.contains(status) =>
             F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
-          case status =>
-            logger.warn(s"error getting item from ebay: $status\n${r.body.fold(_.toString, _.toString)}") *>
-              F.raiseError(AppError.Http(status.code, s"error getting item from ebay search api: $status"))
+          case Left(error) =>
+            logger.error(s"ebay-browse-get-item/${r.code.code}: ${error.getMessage}\n$error") *>
+              F.sleep(5.seconds) *> findItem(accessToken, itemId)
         }
       }
 }
 
 private[ebay] object EbayBrowseClient {
 
-  def make[F[_]: Logger](
+  def make[F[_]: Logger: Temporal](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
-  )(implicit F: MonadError[F, Throwable]): F[EbayBrowseClient[F]] =
-    F.pure(new LiveEbayBrowseClient[F](config, backend))
+  ): F[EbayBrowseClient[F]] =
+    Cache
+      .make[F, String, EbayItem](2.hours, 5.minutes)
+      .map(cache => new LiveEbayBrowseClient[F](config, backend, cache))
 }

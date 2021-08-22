@@ -8,7 +8,7 @@ import sttp.client3.{Request, Response, SttpBackend}
 
 import scala.concurrent.duration._
 
-trait SttpClient[F[_]] {
+trait HttpClient[F[_]] {
   protected val name: String
   protected val backend: SttpBackend[F, Any]
 
