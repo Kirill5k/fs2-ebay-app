@@ -8,7 +8,7 @@ private[mappers] object GameDetailsMapper {
 
   private val CONSOLE_REGEX_PATTERN =
     "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
-      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|\\bms\\b) )?\\bx( )?(b)?(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
+      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|\\bms\\b) )?\\bx( )?(b)?(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?( series( (X|S)?( )?(X|S)?)?)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
       "(( )?game(s)?)?( (promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( +20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
@@ -77,7 +77,7 @@ private[mappers] object GameDetailsMapper {
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer", "Multi Player", "life simulation", "racing rally",
     "\\bpegi( \\d+)?\\b(?s).*$", "((\\d+|ten)th|(20|ten))( year(s)?)? (anniversary|celebration)", "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b",
     "\\d \\d players", "1 ONE", "flash sale", "Fun Kids Play( Console)?", "with all extras", "free gift",
-    "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)\\b",
+    "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)(X|S)?\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular (cover|Sleeve)", "plays perfect", "100 trusted seller",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
@@ -124,7 +124,7 @@ private[mappers] object GameDetailsMapper {
     "PS[1-5]", "PLAYSTATION(\\s+)?([1-5](?!\\d+)|one)", "PSVR",
     "NINTENDO SWITCH", "SWITCH",
     "\\bWII( )?U\\b", "\\bWII\\b",
-    "SERIES \\bX\\b",
+    "SERIES \\b(X|S)( )?(X|S)?\\b",
     "X( )?B(OX)?(\\s+)?((X )?SERIES|X|ONE|\\d+)",
     "X360", "XBOX"
   ).mkString("(?i)", "|", "").r

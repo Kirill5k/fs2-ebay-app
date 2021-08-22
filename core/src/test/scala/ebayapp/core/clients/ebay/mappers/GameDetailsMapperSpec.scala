@@ -54,6 +54,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "XB360"                     -> "XBOX 360",
         "XBOX 360"                  -> "XBOX 360",
         "X BOX ONE"                 -> "XBOX ONE",
+        "XBOX ONE, SERIES X|S"      -> "XBOX ONE",
+        " (XBOX ONE, SERIES X|S)"   -> "XBOX ONE",
         "SERIES X"                  -> "XBOX",
         "X BOX X SERIES"            -> "XBOX",
         "XBOX SERIES X"             -> "XBOX",
@@ -254,9 +256,11 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",
         "Call of Duty Infinite Warfare \\ £54.99",
         "5 PS3 Games Call of Duty Infinite Warfare VR PSVR",
+        "Call of Duty Infinite Warfare XBOX ONE, SERIES X|S",
         "Call of Duty Infinite Warfare xone",
         "Call of Duty Infinite Warfare xbox one series x s",
         "Call of Duty Infinite Warfare xbox one x series x/s",
+        "Call of Duty Infinite Warfare (XBOX ONE, SERIES X|S) VERY GOOD CONDITION",
         "Call of Duty Infinite Warfare game for kids",
         "Call of Duty Infinite Warfare also works on ps4",
         "Call of Duty Infinite Warfare also plays on ps4",
@@ -344,13 +348,14 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
     "do special replacements" in {
       val titles = Map(
-        "the last of us part 2" -> "last of us Part II",
-        "resident evil 8" -> "Resident Evil Village",
-        "resident evil village 8" -> "resident evil village",
-        "XBOX ONE GAME F1 2018 HEADLINE EDITION" -> "F1 2018",
-        "FIFA 21 NEXT LEVEL" -> "FIFA 21",
-        "Resident Evil 7 Biohazard" -> "Resident Evil 7",
-        "pga tour 2k21 golf fun" -> "pga tour 2k21",
+        "FIFA 18 (XBOX ONE, SERIES X|S) VERY GOOD CONDITION" -> "FIFA 18",
+        "the last of us part 2"                              -> "last of us Part II",
+        "resident evil 8"                                    -> "Resident Evil Village",
+        "resident evil village 8"                            -> "resident evil village",
+        "XBOX ONE GAME F1 2018 HEADLINE EDITION"             -> "F1 2018",
+        "FIFA 21 NEXT LEVEL"                                 -> "FIFA 21",
+        "Resident Evil 7 Biohazard"                          -> "Resident Evil 7",
+        "pga tour 2k21 golf fun"                             -> "pga tour 2k21"
       )
 
       forAll(titles) { case (title, expected) =>
