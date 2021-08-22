@@ -1,6 +1,6 @@
 package ebayapp.core
 
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{IO, IOApp}
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.{Logger, Resources}
 import ebayapp.core.common.config.AppConfig
@@ -8,14 +8,10 @@ import ebayapp.core.controllers.Controllers
 import ebayapp.core.repositories.Repositories
 import ebayapp.core.services.Services
 import ebayapp.core.tasks.Tasks
-import org.http4s.blaze.server.BlazeServerBuilder
-import org.http4s.implicits._
 
-import scala.concurrent.duration._
+object Application extends IOApp.Simple {
 
-object Application extends IOApp {
-
-  override def run(args: List[String]): IO[ExitCode] =
+  override val run: IO[Unit] =
     Logger.make[IO].flatMap { implicit logger =>
       for {
         _      <- logger.info("starting ebay-app")
@@ -28,19 +24,15 @@ object Application extends IOApp {
             services     <- Services.make(clients, repositories) <* logger.info("created services")
             tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
             controllers  <- Controllers.make(services) <* logger.info("created controllers")
-            _            <- logger.info("initiating tasks") *> tasks.runAll.compile.drain.start
             _            <- logger.info("starting http server")
-            _ <- BlazeServerBuilder[IO](runtime.compute)
-              .bindHttp(config.server.port, config.server.host)
-              .withResponseHeaderTimeout(3.minutes)
-              .withIdleTimeout(1.hour)
-              .withHttpApp(controllers.routes.orNotFound)
-              .serve
+            _ <- Server
+              .build[IO](config.server, controllers.routes, runtime.compute)
+              .concurrently(tasks.runAll)
               .interruptWhen(logger.awaitSigTerm)
               .compile
               .drain
           } yield ()
         }
-      } yield ExitCode.Success
+      } yield ()
     }
 }
