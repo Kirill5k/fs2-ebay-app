@@ -26,7 +26,7 @@ final class StockMonitor[F[_]: Concurrent](
       argosStockService.stockUpdates(config.argos.stockMonitor),
       selfridgesStockService.stockUpdates(config.selfridges.stockMonitor),
       jdsportsStockService.stockUpdates(config.jdsports.stockMonitor),
-      scottsStockService.stockUpdates(config.tessuti.stockMonitor),
+      scottsStockService.stockUpdates(config.scotts.stockMonitor),
       tessutiStockService.stockUpdates(config.tessuti.stockMonitor),
       nvidiaStockService.stockUpdates(config.nvidia.stockMonitor),
       scanStockService.stockUpdates(config.scan.stockMonitor)

@@ -24,10 +24,7 @@ final private class LiveJdsportsClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
-  private val headers: Map[String, String] = Map(
-    "Referer"      -> s"https://www.$name.co.uk/men/",
-    "X-Reroute-To" -> s"https://www.$name.co.uk"
-  ) ++ defaultHeaders ++ config.headers
+  private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     brands(criteria.query)

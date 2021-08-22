@@ -71,8 +71,8 @@ object StockService {
   def jdsports[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
     Monad[F].pure(new SimpleStockService[F](client, "jdsports"))
 
-    def scotts[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-      Monad[F].pure(new SimpleStockService[F](client, "scotts"))
+  def scotts[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
+    Monad[F].pure(new SimpleStockService[F](client, "scotts"))
 
   def tessuti[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
     Monad[F].pure(new SimpleStockService[F](client, "tessuti"))
