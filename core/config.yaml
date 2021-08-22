@@ -112,11 +112,13 @@ data:
       stock-monitor {
         monitoring-frequency: 4m
         monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {search-criteria: {query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
+          {search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
+          {search-criteria: {query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
         ]
       }
     }
