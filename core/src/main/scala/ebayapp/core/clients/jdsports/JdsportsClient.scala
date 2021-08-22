@@ -130,5 +130,5 @@ object JdsportsClient {
       config: GenericStoreConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveJdsportsClient[F](config, "scottsmenswear", backend))
+    Monad[F].pure(new LiveJdsportsClient[F](config, "scotts", backend))
 }
