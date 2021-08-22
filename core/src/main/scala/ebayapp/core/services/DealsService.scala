@@ -36,8 +36,8 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
 
   override def newDeals(config: DealsFinderConfig): Stream[F, ResellableItem] =
     Stream
-      .emits(config.searchRequests)
-      .map { req =>
+      .emits(config.searchRequests.zipWithIndex)
+      .map { case (req, i) =>
         searchClient
           .search(req.searchCriteria)
           .evalFilter(isNew)
@@ -49,6 +49,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
           .handleErrorWith { error =>
             Stream.eval(Logger[F].error(error)(s"$name-deals/error - ${error.getMessage}")).drain
           }
+          .delayBy(config.delayBetweenRequests * i.toLong)
       }
       .parJoinUnbounded
       .repeatEvery(config.searchFrequency)

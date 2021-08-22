@@ -57,6 +57,7 @@ data:
           {search-criteria: {query: "PS4", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
           {search-criteria: {query: "PS5", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
         ]
+        delay-between-requests: 10s
       }
     }
 

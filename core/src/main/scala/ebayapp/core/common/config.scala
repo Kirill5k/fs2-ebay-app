@@ -8,7 +8,7 @@ import pureconfig.generic.auto._
 import pureconfig.generic.semiauto._
 
 import java.io.File
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 object config {
 
@@ -53,7 +53,8 @@ object config {
 
   final case class DealsFinderConfig(
       searchFrequency: FiniteDuration,
-      searchRequests: List[DealsFinderRequest]
+      searchRequests: List[DealsFinderRequest],
+      delayBetweenRequests: FiniteDuration = Duration.Zero
   )
 
   final case class DealsFinderRequest(
