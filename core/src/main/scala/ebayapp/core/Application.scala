@@ -24,9 +24,8 @@ object Application extends IOApp.Simple {
             services     <- Services.make(clients, repositories) <* logger.info("created services")
             tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
             controllers  <- Controllers.make(services) <* logger.info("created controllers")
-            _            <- logger.info("starting http server")
-            _ <- Server
-              .build[IO](config.server, controllers.routes, runtime.compute)
+            _ <- logger.info("starting http server") *> Server
+              .serve[IO](config.server, controllers.routes, runtime.compute)
               .concurrently(tasks.runAll)
               .interruptWhen(logger.awaitSigTerm)
               .compile

@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 
 object Server {
 
-  def build[F[_]: Async](config: ServerConfig, routes: HttpRoutes[F], ec: ExecutionContext): Stream[F, Unit] =
+  def serve[F[_]: Async](config: ServerConfig, routes: HttpRoutes[F], ec: ExecutionContext): Stream[F, Unit] =
     BlazeServerBuilder[F](ec)
       .bindHttp(config.port, config.host)
       .withResponseHeaderTimeout(3.minutes)
