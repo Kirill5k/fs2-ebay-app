@@ -107,6 +107,17 @@ data:
       }
     }
 
+    scotts {
+      base-uri: "https://fs2-proxy.herokuapp.com"
+      stock-monitor {
+        monitoring-frequency: 4m
+        monitoring-requests: [
+          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+        ]
+      }
+    }
+
     tessuti {
       base-uri: "https://fs2-proxy.herokuapp.com"
       stock-monitor {

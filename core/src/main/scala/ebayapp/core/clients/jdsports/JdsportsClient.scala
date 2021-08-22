@@ -3,8 +3,8 @@ package ebayapp.core.clients.jdsports
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, HttpClient}
-import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, jdsportsClothingMapper}
+import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
@@ -128,4 +128,10 @@ object JdsportsClient {
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "tessuti", backend))
+
+  def scotts[F[_]: Temporal: Logger](
+      config: GenericStoreConfig,
+      backend: SttpBackend[F, Any]
+  ): F[SearchClient[F]] =
+    Monad[F].pure(new LiveJdsportsClient[F](config, "scottsmenswear", backend))
 }

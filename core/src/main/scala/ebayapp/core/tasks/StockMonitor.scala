@@ -14,6 +14,7 @@ final class StockMonitor[F[_]: Concurrent](
     private val argosStockService: StockService[F],
     private val selfridgesStockService: StockService[F],
     private val jdsportsStockService: StockService[F],
+    private val scottsStockService: StockService[F],
     private val tessutiStockService: StockService[F],
     private val nvidiaStockService: StockService[F],
     private val scanStockService: StockService[F]
@@ -25,6 +26,7 @@ final class StockMonitor[F[_]: Concurrent](
       argosStockService.stockUpdates(config.argos.stockMonitor),
       selfridgesStockService.stockUpdates(config.selfridges.stockMonitor),
       jdsportsStockService.stockUpdates(config.jdsports.stockMonitor),
+      scottsStockService.stockUpdates(config.tessuti.stockMonitor),
       tessutiStockService.stockUpdates(config.tessuti.stockMonitor),
       nvidiaStockService.stockUpdates(config.nvidia.stockMonitor),
       scanStockService.stockUpdates(config.scan.stockMonitor)
@@ -42,6 +44,7 @@ object StockMonitor {
         services.argosStock,
         services.selfridgesSale,
         services.jdsportsSale,
+        services.scottsSale,
         services.tessutiSale,
         services.nvidiaStock,
         services.scanStock

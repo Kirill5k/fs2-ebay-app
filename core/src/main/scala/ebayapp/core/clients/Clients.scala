@@ -20,6 +20,7 @@ trait Clients[F[_]] {
   def selfridges: SearchClient[F]
   def argos: SearchClient[F]
   def jdsports: SearchClient[F]
+  def scotts: SearchClient[F]
   def tessuti: SearchClient[F]
   def nvidia: SearchClient[F]
   def scan: SearchClient[F]
@@ -38,18 +39,20 @@ object Clients {
       SelfridgesClient.make[F](config.selfridges, resources.clientBackend(config.selfridges.proxied)),
       ArgosClient.make[F](config.argos, resources.clientBackend(config.argos.proxied)),
       JdsportsClient.jd[F](config.jdsports, resources.clientBackend(config.jdsports.proxied)),
+      JdsportsClient.scotts[F](config.scotts, resources.clientBackend(config.scotts.proxied)),
       JdsportsClient.tessuti[F](config.tessuti, resources.clientBackend(config.tessuti.proxied)),
       NvidiaClient.make[F](config.nvidia, resources.clientBackend(config.nvidia.proxied)),
       ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied))
-    ).mapN { (ebayC, cc, telc, selfridgesC, ac, jc, tesc, nvidiaC, scanC) =>
+    ).mapN { (ebayC, cc, telc, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC) =>
       new Clients[F] {
         def ebay: SearchClient[F]       = ebayC
         def cex: CexClient[F]           = cc
         def telegram: TelegramClient[F] = telc
         def selfridges: SearchClient[F] = selfridgesC
-        def argos: SearchClient[F]      = ac
-        def jdsports: SearchClient[F]   = jc
-        def tessuti: SearchClient[F]    = tesc
+        def argos: SearchClient[F]      = argosC
+        def jdsports: SearchClient[F]   = jdC
+        def scotts: SearchClient[F]     = scottsC
+        def tessuti: SearchClient[F]    = tessutiC
         def nvidia: SearchClient[F]     = nvidiaC
         def scan: SearchClient[F]       = scanC
       }

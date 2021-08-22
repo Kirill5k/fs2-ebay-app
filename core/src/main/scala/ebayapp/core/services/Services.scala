@@ -14,6 +14,7 @@ trait Services[F[_]] {
   def selfridgesSale: StockService[F]
   def argosStock: StockService[F]
   def jdsportsSale: StockService[F]
+  def scottsSale: StockService[F]
   def tessutiSale: StockService[F]
   def nvidiaStock: StockService[F]
   def scanStock: StockService[F]
@@ -33,10 +34,11 @@ object Services {
       StockService.selfridges[F](clients.selfridges),
       StockService.argos[F](clients.argos),
       StockService.jdsports[F](clients.jdsports),
+      StockService.scotts[F](clients.scotts),
       StockService.tessuti[F](clients.tessuti),
       StockService.nvidia[F](clients.nvidia),
       StockService.scan[F](clients.scan)
-    ).mapN((not, rs, es, cs, selfridgesS, as, js, ts, nvidiaS, scanS) =>
+    ).mapN((not, rs, es, cs, selfridgesS, as, jdS, scottsS, tessutiS, nvidiaS, scanS) =>
       new Services[F] {
         def notification: NotificationService[F]     = not
         def resellableItem: ResellableItemService[F] = rs
@@ -44,8 +46,9 @@ object Services {
         def cexStock: StockService[F]                = cs
         def selfridgesSale: StockService[F]          = selfridgesS
         def argosStock: StockService[F]              = as
-        def jdsportsSale: StockService[F]            = js
-        def tessutiSale: StockService[F]             = ts
+        def jdsportsSale: StockService[F]            = jdS
+        def scottsSale: StockService[F]              = scottsS
+        def tessutiSale: StockService[F]             = tessutiS
         def nvidiaStock: StockService[F]             = nvidiaS
         def scanStock: StockService[F]               = scanS
       }

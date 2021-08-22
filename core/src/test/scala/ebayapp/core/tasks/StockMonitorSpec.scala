@@ -25,6 +25,7 @@ class StockMonitorSpec extends CatsSpec {
       when(services.cexStock.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.emit(updateGeneric))
       when(services.selfridgesSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.emit(updateClothing))
       when(services.jdsportsSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
+      when(services.scottsSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
       when(services.tessutiSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
       when(services.notification.stockUpdate(any[ResellableItem], any[StockUpdate])).thenReturn(IO.unit)
       when(services.notification.stockUpdate(any[ResellableItem], any[StockUpdate])).thenReturn(IO.unit)
