@@ -68,6 +68,7 @@ data:
       stock-monitor {
         monitoring-frequency: 6m
         monitoring-requests: [
+          {search-criteria: {query: "michael-michael-kors"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {query: "stone-island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
