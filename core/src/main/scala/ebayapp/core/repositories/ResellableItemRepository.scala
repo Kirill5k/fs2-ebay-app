@@ -3,8 +3,7 @@ package ebayapp.core.repositories
 import java.time.Instant
 import cats.effect.Async
 import cats.implicits._
-import io.circe.generic.extras.auto._
-import ebayapp.core.common.json.genDevConfig
+import io.circe.generic.auto._
 import ebayapp.core.domain.{ItemKind, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.circe._

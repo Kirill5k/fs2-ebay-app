@@ -1,6 +1,11 @@
 package ebayapp.core.domain
 
-import cats.implicits._
+import cats.syntax.functor._
+import cats.syntax.traverse._
+import cats.syntax.apply._
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.auto._
+import io.circe.syntax._
 
 sealed trait ItemDetails {
   def fullName: Option[String]
@@ -43,4 +48,18 @@ object ItemDetails {
       (name, platform).mapN((n, p) => s"$n $p")
   }
 
+  implicit val encodeItemDetails: Encoder[ItemDetails] = Encoder.instance {
+    case details: Generic   => details.asJson
+    case details: Phone     => details.asJson
+    case details: VideoGame => details.asJson
+    case details: Clothing  => details.asJson
+  }
+
+  implicit val decodeItemDetails: Decoder[ItemDetails] =
+    List[Decoder[ItemDetails]](
+      Decoder[Clothing].widen,
+      Decoder[VideoGame].widen,
+      Decoder[Phone].widen,
+      Decoder[Generic].widen
+    ).reduceLeft(_ or _)
 }

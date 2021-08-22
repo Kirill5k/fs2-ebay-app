@@ -7,7 +7,7 @@ import ebayapp.core.controllers.views.ResellableItemResponse
 import ebayapp.core.domain.ItemKind
 import ebayapp.core.repositories.Filters
 import ebayapp.core.services.ResellableItemService
-import io.circe.generic.extras.auto._
+import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec._

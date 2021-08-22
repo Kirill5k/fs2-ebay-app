@@ -37,8 +37,8 @@ class VideoGameControllerSpec extends ControllerSpec {
           |"itemDetails":{
           |"name":"super mario 3",
           |"platform":"XBOX ONE",
-          |"releaseYear":"2019","genre":"Action",
-          |"_kind": "VideoGame"
+          |"releaseYear":"2019",
+          |"genre":"Action"
           |},
           |"listingDetails":{
           |"url":"https://www.ebay.co.uk/itm/super-mario-3",
@@ -64,8 +64,7 @@ class VideoGameControllerSpec extends ControllerSpec {
           |"name":"Battlefield 1",
           |"platform":"XBOX ONE",
           |"releaseYear":"2019",
-          |"genre":"Action",
-          |"_kind": "VideoGame"
+          |"genre":"Action"
           |},
           |"listingDetails":{
           |"url":"https://www.ebay.co.uk/itm/battlefield-1",
