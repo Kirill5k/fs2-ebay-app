@@ -122,8 +122,8 @@ object config {
     def load[F[_]](implicit F: Sync[F], logger: Logger[F]): F[AppConfig] =
       F.blocking(AppConfig.loadFromMount)
         .flatTap(_ => logger.info("loaded config from a configmap mount"))
-        .handleErrorWith { _ =>
-          logger.warn("error loading a config from a configmap mount, will try resources") *>
+        .handleErrorWith { e =>
+          logger.warn(e)("error loading a config from a configmap mount, will try resources") *>
             F.blocking(AppConfig.loadDefault)
         }
 
