@@ -30,7 +30,7 @@ final private class LiveJdsportsClient[F[_]](
     brands(criteria.query)
       .filter(_.sale)
       .metered(250.millis)
-      .evalMap(ci => getProductStock(ci))
+      .evalMap(getProductStock)
       .unNone
       .map { p =>
         p.availableSizes.map { size =>
@@ -43,7 +43,8 @@ final private class LiveJdsportsClient[F[_]](
             p.details.Colour,
             size,
             p.details.PrimaryImage,
-            p.details.Category
+            p.details.Category,
+            config.headers.get("X-Reroute-To")
           )
         }
       }

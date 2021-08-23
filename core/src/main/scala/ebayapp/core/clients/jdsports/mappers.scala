@@ -9,6 +9,8 @@ import java.time.Instant
 
 private[jdsports] object mappers {
 
+  private val defaultUrl = "https://www.jdsports.co.uk"
+
   final case class JdsportsItem(
       id: String,
       name: String,
@@ -18,7 +20,8 @@ private[jdsports] object mappers {
       colour: String,
       size: String,
       image: String,
-      category: String
+      category: String,
+      storeUrl: Option[String],
   ) {
     val fullName: String = s"$colour-$name"
       .replaceAll(" ", "-")
@@ -49,7 +52,7 @@ private[jdsports] object mappers {
 
     private def listingDetails(jdi: JdsportsItem): ListingDetails =
       ListingDetails(
-        s"https://www.jdsports.co.uk/product/${jdi.fullName}/${jdi.id}/",
+        s"${jdi.storeUrl.getOrElse(defaultUrl)}/product/${jdi.fullName}/${jdi.id}/",
         s"${jdi.name} (${jdi.colour} / ${jdi.size})",
         Some(jdi.category),
         None,
