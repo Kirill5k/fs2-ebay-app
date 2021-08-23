@@ -11,7 +11,11 @@ final class DealsFinder[F[_]: Concurrent](
 ) extends Task[F] {
 
   def run(): Stream[F, Unit] =
-    Stream.emits(dealsServices).map(_.newDeals).parJoinUnbounded.evalMap(notificationService.cheapItem)
+    Stream
+      .emits(dealsServices)
+      .map(_.newDeals)
+      .parJoinUnbounded
+      .evalMap(notificationService.cheapItem)
 }
 
 object DealsFinder {

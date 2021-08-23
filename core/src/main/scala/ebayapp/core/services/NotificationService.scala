@@ -40,7 +40,7 @@ final class TelegramNotificationService[F[_]](
     F.pure(item.stockUpdateNotification(update)).flatMap {
       case Some(message) =>
         sentMessages.evalIfNew(base64(message)) {
-          logger.info(s"""sending "$message"""") *>
+          logger.info(s"""sending "$message" from ${item.listingDetails.seller}""") *>
             telegramClient.sendMessageToSecondaryChannel(message) *>
             sentMessages.put(base64(message), ())
         }

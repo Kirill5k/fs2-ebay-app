@@ -20,6 +20,7 @@ private[jdsports] object mappers {
       image: String,
       category: String,
       storeUrl: String,
+      storeName: String
   ) {
     val fullName: String = s"$colour-$name"
       .replaceAll(" ", "-")
@@ -58,7 +59,7 @@ private[jdsports] object mappers {
         Some(jdi.image),
         "NEW",
         Instant.now,
-        "JDSPORTS",
+        jdi.storeName.toUpperCase,
         Map()
       )
   }

@@ -44,7 +44,8 @@ final private class LiveJdsportsClient[F[_]](
             size,
             p.details.PrimaryImage,
             p.details.Category,
-            config.headers.getOrElse("X-Reroute-To", config.baseUri)
+            config.headers.getOrElse("X-Reroute-To", config.baseUri),
+            name
           )
         }
       }
