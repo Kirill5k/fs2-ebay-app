@@ -18,13 +18,6 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
     val notification: NotificationService[IO]     = mock[NotificationService[IO]]
     val resellableItem: ResellableItemService[IO] = mock[ResellableItemService[IO]]
     val ebayDeals: DealsService[IO]               = mock[DealsService[IO]]
-    val cexStock: StockService[IO]                = mock[StockService[IO]]
-    val selfridgesSale: StockService[IO]          = mock[StockService[IO]]
-    val argosStock: StockService[IO]              = mock[StockService[IO]]
-    val jdsportsSale: StockService[IO]            = mock[StockService[IO]]
-    val scottsSale: StockService[IO]              = mock[StockService[IO]]
-    val tessutiSale: StockService[IO]             = mock[StockService[IO]]
-    val nvidiaStock: StockService[IO]             = mock[StockService[IO]]
-    val scanStock: StockService[IO]               = mock[StockService[IO]]
+    val stock: List[StockService[IO]]             = List(mock[StockService[IO]], mock[StockService[IO]], mock[StockService[IO]])
   }
 }

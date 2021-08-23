@@ -2,9 +2,8 @@ package ebayapp.core.tasks
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.common.config.{AppConfig, StockMonitorConfig}
-import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
+import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import fs2.Stream
 
 import scala.concurrent.duration._
@@ -13,38 +12,25 @@ class StockMonitorSpec extends CatsSpec {
 
   "A StockMonitor" should {
 
-    val updateGeneric  = ItemStockUpdates(ResellableItemBuilder.generic("Generic 1"), List(StockUpdate.New, StockUpdate.OutOfStock))
     val updateClothing = ItemStockUpdates(ResellableItemBuilder.clothing("Clothing 2"), List(StockUpdate.New))
 
     "get stock updates from various outlets" in {
       val services = servicesMock
 
-      when(services.scanStock.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
-      when(services.nvidiaStock.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
-      when(services.argosStock.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.sleep[IO](2.hours).drain)
-      when(services.cexStock.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.emit(updateGeneric))
-      when(services.selfridgesSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.emit(updateClothing))
-      when(services.jdsportsSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
-      when(services.scottsSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
-      when(services.tessutiSale.stockUpdates(any[StockMonitorConfig])).thenReturn(Stream.empty)
-      when(services.notification.stockUpdate(any[ResellableItem], any[StockUpdate])).thenReturn(IO.unit)
+      when(services.stock.head.stockUpdates).thenReturn(Stream.empty)
+      when(services.stock.drop(1).head.stockUpdates).thenReturn(Stream.sleep[IO](2.hours).drain)
+      when(services.stock.drop(2).head.stockUpdates).thenReturn(Stream.emit(updateClothing))
       when(services.notification.stockUpdate(any[ResellableItem], any[StockUpdate])).thenReturn(IO.unit)
 
       val result = for {
-        stockMonitor <- StockMonitor.make[IO](AppConfig.loadDefault, services)
+        stockMonitor <- StockMonitor.make[IO](services)
         _            <- stockMonitor.run().interruptAfter(2.seconds).compile.drain
       } yield ()
 
       result.unsafeToFuture().map { res =>
-        verify(services.scanStock).stockUpdates(any[StockMonitorConfig])
-        verify(services.nvidiaStock).stockUpdates(any[StockMonitorConfig])
-        verify(services.cexStock).stockUpdates(any[StockMonitorConfig])
-        verify(services.argosStock).stockUpdates(any[StockMonitorConfig])
-        verify(services.selfridgesSale).stockUpdates(any[StockMonitorConfig])
-        verify(services.jdsportsSale).stockUpdates(any[StockMonitorConfig])
-        verify(services.tessutiSale).stockUpdates(any[StockMonitorConfig])
-        verify(services.notification).stockUpdate(updateGeneric.item, updateGeneric.updates.head)
-        verify(services.notification).stockUpdate(updateGeneric.item, updateGeneric.updates.last)
+        verify(services.stock.head).stockUpdates
+        verify(services.stock.drop(1).head).stockUpdates
+        verify(services.stock.drop(2).head).stockUpdates
         verify(services.notification).stockUpdate(updateClothing.item, updateClothing.updates.last)
         res mustBe ()
       }

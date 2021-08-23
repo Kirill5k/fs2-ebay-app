@@ -15,10 +15,11 @@ import fs2._
 import scala.concurrent.duration._
 
 trait DealsService[F[_]] {
-  def newDeals(config: DealsFinderConfig): Stream[F, ResellableItem]
+  def newDeals: Stream[F, ResellableItem]
 }
 
 final private class LiveDealsService[F[_]: Logger: Temporal](
+    private val config: DealsFinderConfig,
     private val searchClient: SearchClient[F],
     private val cexClient: CexClient[F],
     private val repository: ResellableItemRepository[F],
@@ -34,7 +35,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
   private def isProfitableToResell(req: DealsFinderRequest): ResellableItem => Boolean =
     item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.rrp - 100) > req.minMargin)
 
-  override def newDeals(config: DealsFinderConfig): Stream[F, ResellableItem] =
+  override def newDeals: Stream[F, ResellableItem] =
     Stream
       .emits(config.searchRequests.zipWithIndex)
       .map { case (req, i) =>
@@ -58,9 +59,10 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
 object DealsService {
 
   def ebay[F[_]: Temporal: Logger](
+      config: DealsFinderConfig,
       ebayClient: SearchClient[F],
       cexClient: CexClient[F],
       repository: ResellableItemRepository[F]
   ): F[DealsService[F]] =
-    Monad[F].pure(new LiveDealsService[F](ebayClient, cexClient, repository, "ebay"))
+    Monad[F].pure(new LiveDealsService[F](config, ebayClient, cexClient, repository, "ebay"))
 }

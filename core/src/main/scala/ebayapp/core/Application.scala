@@ -21,8 +21,8 @@ object Application extends IOApp.Simple {
             _            <- logger.info("created resources")
             clients      <- Clients.make(config, resources) <* logger.info("created clients")
             repositories <- Repositories.make(resources.database) <* logger.info("created repositories")
-            services     <- Services.make(clients, repositories) <* logger.info("created services")
-            tasks        <- Tasks.make(config, services) <* logger.info("created tasks")
+            services     <- Services.make(config, clients, repositories) <* logger.info("created services")
+            tasks        <- Tasks.make(services) <* logger.info("created tasks")
             controllers  <- Controllers.make(services) <* logger.info("created controllers")
             _ <- logger.info("starting http server") *> Server
               .serve[IO](config.server, controllers.routes, runtime.compute)

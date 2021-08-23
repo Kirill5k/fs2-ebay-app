@@ -35,8 +35,8 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(searchClient, cexClient, repo)
-        items   <- service.newDeals(DealsFinderConfig(2.seconds, List(request1))).interruptAfter(1.seconds).compile.toList
+        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>
@@ -58,8 +58,8 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
       val result = for {
-        service <- DealsService.ebay(searchClient, cexClient, repo)
-        items   <- service.newDeals(DealsFinderConfig(2.seconds, List(request1))).interruptAfter(1.seconds).compile.toList
+        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>
@@ -85,8 +85,8 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(searchClient, cexClient, repo)
-        items   <- service.newDeals(DealsFinderConfig(2.seconds, List(request1))).interruptAfter(1.seconds).compile.toList
+        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>
@@ -111,8 +111,8 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(searchClient, cexClient, repo)
-        items   <- service.newDeals(DealsFinderConfig(2.seconds, List(request1))).interruptAfter(1.seconds).compile.toList
+        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>
@@ -139,8 +139,8 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(searchClient, cexClient, repo)
-        items   <- service.newDeals(DealsFinderConfig(2.seconds, List(request1))).interruptAfter(1.seconds).compile.toList
+        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>
@@ -160,8 +160,8 @@ class DealsServiceSpec extends CatsSpec {
       when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.empty)
 
       val result = for {
-        service <- DealsService.ebay(searchClient, cexClient, repo)
-        items   <- service.newDeals(DealsFinderConfig(2.seconds, List(request1, request2))).interruptAfter(5.seconds).compile.toList
+        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1, request2)), searchClient, cexClient, repo)
+        items   <- service.newDeals.interruptAfter(5.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>
@@ -182,8 +182,8 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
       val result = for {
-        service <- DealsService.ebay(searchClient, cexClient, repo)
-        items   <- service.newDeals(DealsFinderConfig(2.seconds, List(request1))).interruptAfter(3.seconds).compile.toList
+        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        items   <- service.newDeals.interruptAfter(3.seconds).compile.toList
       } yield items
 
       result.unsafeToFuture().map { items =>

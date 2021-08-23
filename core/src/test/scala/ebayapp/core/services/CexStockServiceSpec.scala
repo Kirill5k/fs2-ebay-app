@@ -2,7 +2,7 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder
@@ -28,14 +28,14 @@ class CexStockServiceSpec extends CatsSpec {
 
       when(client.search(any[SearchCriteria])).thenReturn(Stream.empty)
 
-      val service = StockService.cex[IO](client)
-      val result = service.flatMap { svc =>
-        svc
-          .stockUpdates(config.copy(monitoringRequests = List(req1, req2)))
-          .interruptAfter(1100.millis)
-          .compile
-          .toList
-      }
+      val result = StockService
+        .make[IO](Retailer.Cex, config.copy(monitoringRequests = List(req1, req2)), client)
+        .flatMap { svc =>
+          svc.stockUpdates
+            .interruptAfter(1100.millis)
+            .compile
+            .toList
+        }
 
       result.unsafeToFuture().map { u =>
         verify(client, atLeast(2)).search(req1.searchCriteria)
@@ -51,8 +51,9 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.empty)
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(2200.millis).compile.toList)
+      val result = StockService
+        .make[IO](Retailer.Cex, config, client)
+        .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.New)))
@@ -66,8 +67,9 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(1, 1950.0))))
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(2200.millis).compile.toList)
+      val result = StockService
+        .make[IO](Retailer.Cex, config, client)
+        .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.StockIncrease(1, 2))))
@@ -81,8 +83,9 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(2200.millis).compile.toList)
+      val result = StockService
+        .make[IO](Retailer.Cex, config, client)
+        .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.StockDecrease(3, 2))))
@@ -96,13 +99,14 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result = service.flatMap {
-        _.stockUpdates(config.copy(monitoringRequests = List(req1.copy(monitorStockChange = false))))
-          .interruptAfter(2.second)
-          .compile
-          .toList
-      }
+      val result = StockService
+        .make[IO](Retailer.Cex, config.copy(monitoringRequests = List(req1.copy(monitorStockChange = false))), client)
+        .flatMap {
+          _.stockUpdates
+            .interruptAfter(2.second)
+            .compile
+            .toList
+        }
 
       result.unsafeToFuture().map { u =>
         u mustBe Nil
@@ -115,8 +119,9 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 950.0))))
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(2200.millis).compile.toList)
+      val result = StockService
+        .make[IO](Retailer.Cex, config, client)
+        .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.PriceRaise(BigDecimal(950.0), BigDecimal(1950.0)))))
@@ -129,8 +134,9 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(2200.millis).compile.toList)
+      val result = StockService
+        .make[IO](Retailer.Cex, config, client)
+        .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.unsafeToFuture().map { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.PriceDrop(BigDecimal(2950.0), BigDecimal(1950.0)))))
@@ -145,8 +151,9 @@ class CexStockServiceSpec extends CatsSpec {
         .andThen(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(6200.millis).compile.toList)
+      val result = StockService
+        .make[IO](Retailer.Cex, config, client)
+        .flatMap(_.stockUpdates.interruptAfter(6200.millis).compile.toList)
 
       result.unsafeToFuture().map { u =>
         u must have size 3
@@ -159,13 +166,18 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
         .andThen(Stream.emit(mb1))
 
-      val service = StockService.cex[IO](client)
-      val result = service.flatMap {
-        _.stockUpdates(config.copy(monitoringRequests = List(req1.copy(monitorPriceChange = false, monitorStockChange = false))))
-          .interruptAfter(2200.millis)
-          .compile
-          .toList
-      }
+      val result = StockService
+        .make[IO](
+          Retailer.Cex,
+          config.copy(monitoringRequests = List(req1.copy(monitorPriceChange = false, monitorStockChange = false))),
+          client
+        )
+        .flatMap {
+          _.stockUpdates
+            .interruptAfter(2200.millis)
+            .compile
+            .toList
+        }
 
       result.unsafeToFuture().map { u =>
         u mustBe Nil
@@ -179,8 +191,9 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emits(List(mb1.copy(buyPrice = BuyPrice(3, 3000.0)), mb2.copy(buyPrice = BuyPrice(3, 3000.0)))))
         .andThen(Stream.emits(List(mb1, mb2)))
 
-      val service = StockService.cex[IO](client)
-      val result  = service.flatMap(_.stockUpdates(config).interruptAfter(2200.millis).compile.toList)
+      val result = StockService
+        .make[IO](Retailer.Cex, config, client)
+        .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.unsafeToFuture().map { u =>
         u must have size 2

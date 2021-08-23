@@ -3,8 +3,7 @@ package ebayapp.core.services
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.SearchClient
-import ebayapp.core.clients.cex.CexClient
+import ebayapp.core.clients.{Retailer, SearchClient}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItem
@@ -14,15 +13,16 @@ import fs2.Stream
 import scala.concurrent.duration._
 
 trait StockService[F[_]] extends StockComparer[F] {
-  def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates]
+  def stockUpdates: Stream[F, ItemStockUpdates]
 }
 
 final private class SimpleStockService[F[_]: Temporal: Logger](
-    private val client: SearchClient[F],
-    private val name: String
+    private val retailer: Retailer,
+    private val config: StockMonitorConfig,
+    private val client: SearchClient[F]
 ) extends StockService[F] {
 
-  override def stockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates] =
+  override def stockUpdates: Stream[F, ItemStockUpdates] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>
@@ -42,7 +42,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
       }
       .flatMap(r => Stream.emits(r) ++ Stream.sleep_(freq))
       .handleErrorWith { error =>
-        Stream.eval(Logger[F].error(error)(s"$name-stock/error - ${error.getMessage}")).drain ++
+        Stream.eval(Logger[F].error(error)(s"${retailer.name}-stock/error - ${error.getMessage}")).drain ++
           getUpdates(req, freq)
       }
 
@@ -54,32 +54,15 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""$name-search "${req.searchCriteria.query}" returned ${i.size} results"""))
+      .flatTap(i => Logger[F].info(s"""${retailer.name}-search "${req.searchCriteria.query}" returned ${i.size} results"""))
 }
 
 object StockService {
 
-  def cex[F[_]: Temporal: Logger](client: CexClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "cex"))
-
-  def argos[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "argos"))
-
-  def selfridges[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "selfridges"))
-
-  def jdsports[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "jdsports"))
-
-  def scotts[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "scotts"))
-
-  def tessuti[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "tessuti"))
-
-  def nvidia[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "nvidia"))
-
-  def scan[F[_]: Temporal: Logger](client: SearchClient[F]): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](client, "scan"))
+  def make[F[_]: Temporal: Logger](
+      retailer: Retailer,
+      config: StockMonitorConfig,
+      client: SearchClient[F]
+  ): F[StockService[F]] =
+    Monad[F].pure(new SimpleStockService[F](retailer, config, client))
 }

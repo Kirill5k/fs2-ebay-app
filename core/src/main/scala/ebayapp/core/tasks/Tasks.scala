@@ -3,7 +3,6 @@ package ebayapp.core.tasks
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.AppConfig
 import ebayapp.core.services.Services
 import fs2.Stream
 
@@ -29,10 +28,10 @@ final class Tasks[F[_]: Temporal: Logger](
 
 object Tasks {
 
-  def make[F[_]: Temporal: Logger](config: AppConfig, services: Services[F]): F[Tasks[F]] =
+  def make[F[_]: Temporal: Logger](services: Services[F]): F[Tasks[F]] =
     List(
       ErrorsNotifier.make[F](services),
-      DealsFinder.make[F](config.ebay.dealsFinder, services),
-      StockMonitor.make[F](config, services)
+      DealsFinder.make[F](services),
+      StockMonitor.make[F](services)
     ).sequence.map(tasks => new Tasks[F](tasks))
 }

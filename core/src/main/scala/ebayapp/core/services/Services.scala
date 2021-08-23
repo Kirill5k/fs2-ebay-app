@@ -4,53 +4,34 @@ import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.{Clients, Retailer}
 import ebayapp.core.common.Logger
+import ebayapp.core.common.config.AppConfig
 import ebayapp.core.repositories.Repositories
 
 trait Services[F[_]] {
   def notification: NotificationService[F]
   def resellableItem: ResellableItemService[F]
   def ebayDeals: DealsService[F]
-  def cexStock: StockService[F]
-  def selfridgesSale: StockService[F]
-  def argosStock: StockService[F]
-  def jdsportsSale: StockService[F]
-  def scottsSale: StockService[F]
-  def tessutiSale: StockService[F]
-  def nvidiaStock: StockService[F]
-  def scanStock: StockService[F]
+  def stock: List[StockService[F]]
 }
 
 object Services {
 
   def make[F[_]: Temporal: Logger](
+      config: AppConfig,
       clients: Clients[F],
       repositories: Repositories[F]
   ): F[Services[F]] =
     (
       NotificationService.telegram[F](clients.telegram),
       ResellableItemService.make[F](repositories.resellableItems),
-      DealsService.ebay[F](clients.get(Retailer.Ebay), clients.cex, repositories.resellableItems),
-      StockService.cex[F](clients.cex),
-      StockService.selfridges[F](clients.get(Retailer.Selfridges)),
-      StockService.argos[F](clients.get(Retailer.Argos)),
-      StockService.jdsports[F](clients.get(Retailer.Jdsports)),
-      StockService.scotts[F](clients.get(Retailer.Scotts)),
-      StockService.tessuti[F](clients.get(Retailer.Tessuti)),
-      StockService.nvidia[F](clients.get(Retailer.Nvidia)),
-      StockService.scan[F](clients.get(Retailer.Scan))
-    ).mapN((not, rs, es, cs, selfridgesS, as, jdS, scottsS, tessutiS, nvidiaS, scanS) =>
+      DealsService.ebay[F](config.ebay.dealsFinder, clients.get(Retailer.Ebay), clients.cex, repositories.resellableItems),
+      config.stockMonitor.toList.traverse { case (r, c) => StockService.make(r, c, clients.get(r)) }
+    ).mapN((not, rs, es, ss) =>
       new Services[F] {
         def notification: NotificationService[F]     = not
         def resellableItem: ResellableItemService[F] = rs
         def ebayDeals: DealsService[F]               = es
-        def cexStock: StockService[F]                = cs
-        def selfridgesSale: StockService[F]          = selfridgesS
-        def argosStock: StockService[F]              = as
-        def jdsportsSale: StockService[F]            = jdS
-        def scottsSale: StockService[F]              = scottsS
-        def tessutiSale: StockService[F]             = tessutiS
-        def nvidiaStock: StockService[F]             = nvidiaS
-        def scanStock: StockService[F]               = scanS
+        def stock: List[StockService[F]]             = ss
       }
     )
 }
