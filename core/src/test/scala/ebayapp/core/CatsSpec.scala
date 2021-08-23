@@ -17,7 +17,7 @@ trait CatsSpec extends AsyncWordSpec with Matchers with AsyncMockitoSugar with A
   def servicesMock: Services[IO] = new Services[IO] {
     val notification: NotificationService[IO]     = mock[NotificationService[IO]]
     val resellableItem: ResellableItemService[IO] = mock[ResellableItemService[IO]]
-    val ebayDeals: DealsService[IO]               = mock[DealsService[IO]]
     val stock: List[StockService[IO]]             = List(mock[StockService[IO]], mock[StockService[IO]], mock[StockService[IO]])
+    val deals: List[DealsService[IO]]             = List(mock[DealsService[IO]])
   }
 }

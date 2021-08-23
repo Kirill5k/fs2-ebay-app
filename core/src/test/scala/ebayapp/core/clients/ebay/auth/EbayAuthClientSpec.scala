@@ -5,7 +5,7 @@ import cats.effect.kernel.Ref
 import cats.implicits._
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.EbayAuthToken
-import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, EbayCredentials, EbaySearchConfig}
+import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model._
@@ -15,7 +15,7 @@ import scala.concurrent.duration._
 class EbayAuthClientSpec extends SttpClientSpec {
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes), DealsFinderConfig(60.seconds, Nil))
+  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
 
   "EbayAuthClient" should {
 

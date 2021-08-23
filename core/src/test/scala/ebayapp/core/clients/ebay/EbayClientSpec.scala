@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses._
-import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, EbayCredentials, EbaySearchConfig}
+import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.captor.ArgCaptor
@@ -21,7 +21,7 @@ class EbayClientSpec extends CatsSpec {
   val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame))
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes), DealsFinderConfig(60.seconds, Nil))
+  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
 
   "An EbayClient" should {
 

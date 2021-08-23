@@ -4,7 +4,7 @@ import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.requests._
-import ebayapp.core.common.config.{GenericStoreConfig}
+import ebayapp.core.common.config.GenericStoreConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3.{Response, SttpBackend}
@@ -39,8 +39,8 @@ class JdsportsClientSpec extends SttpClientSpec {
           Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
         )
         items.map(_.listingDetails.url) mustBe List(
-          "https://www.jdsports.co.uk/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/",
-          "https://www.jdsports.co.uk/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/"
+          "http://jdsports.com/proxy/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/",
+          "http://jdsports.com/proxy/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/"
         )
 
         items.map(_.buyPrice).toSet mustBe Set(BuyPrice(1, BigDecimal(20.0), Some(67)))

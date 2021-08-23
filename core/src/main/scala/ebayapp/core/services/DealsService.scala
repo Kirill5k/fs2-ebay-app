@@ -3,7 +3,7 @@ package ebayapp.core.services
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.functor._
-import ebayapp.core.clients.SearchClient
+import ebayapp.core.clients.{Retailer, SearchClient}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
@@ -19,11 +19,11 @@ trait DealsService[F[_]] {
 }
 
 final private class LiveDealsService[F[_]: Logger: Temporal](
+    private val retailer: Retailer,
     private val config: DealsFinderConfig,
     private val searchClient: SearchClient[F],
     private val cexClient: CexClient[F],
-    private val repository: ResellableItemRepository[F],
-    private val name: String
+    private val repository: ResellableItemRepository[F]
 ) extends DealsService[F] {
 
   private def isNew(item: ResellableItem): F[Boolean] =
@@ -48,7 +48,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
           .filter(isProfitableToResell(req))
           .metered(250.millis)
           .handleErrorWith { error =>
-            Stream.eval(Logger[F].error(error)(s"$name-deals/error - ${error.getMessage}")).drain
+            Stream.eval(Logger[F].error(error)(s"${retailer.name}-deals/error - ${error.getMessage}")).drain
           }
           .delayBy(config.delayBetweenRequests * i.toLong)
       }
@@ -58,11 +58,12 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
 
 object DealsService {
 
-  def ebay[F[_]: Temporal: Logger](
+  def make[F[_]: Temporal: Logger](
+      retailer: Retailer,
       config: DealsFinderConfig,
-      ebayClient: SearchClient[F],
+      searchClient: SearchClient[F],
       cexClient: CexClient[F],
       repository: ResellableItemRepository[F]
   ): F[DealsService[F]] =
-    Monad[F].pure(new LiveDealsService[F](config, ebayClient, cexClient, repository, "ebay"))
+    Monad[F].pure(new LiveDealsService[F](retailer, config, searchClient, cexClient, repository))
 }

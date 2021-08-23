@@ -44,8 +44,7 @@ object config {
   final case class EbayConfig(
       baseUri: String,
       credentials: List[EbayCredentials],
-      search: EbaySearchConfig,
-      dealsFinder: DealsFinderConfig
+      search: EbaySearchConfig
   )
 
   final case class DealsFinderConfig(

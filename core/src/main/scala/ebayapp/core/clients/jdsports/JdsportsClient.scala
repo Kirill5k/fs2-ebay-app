@@ -4,7 +4,7 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
-import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, jdsportsClothingMapper}
+import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericStoreConfig
@@ -44,15 +44,13 @@ final private class LiveJdsportsClient[F[_]](
             size,
             p.details.PrimaryImage,
             p.details.Category,
-            config.headers.get("X-Reroute-To")
+            config.headers.getOrElse("X-Reroute-To", config.baseUri)
           )
         }
       }
       .flatMap(Stream.emits)
       .map(jdsportsClothingMapper.toDomain)
-      .handleErrorWith { e =>
-        Stream.eval(logger.error(e)(e.getMessage)).drain
-      }
+      .handleErrorWith(e => Stream.eval(logger.error(e)(e.getMessage)).drain)
 
   private def brands(query: String): Stream[F, JdCatalogItem] =
     Stream
@@ -72,22 +70,17 @@ final private class LiveJdsportsClient[F[_]](
         case Right(html) =>
           F.fromEither(ResponseParser.parseSearchResponse(html))
         case Left(_) if r.code == StatusCode.Forbidden =>
-          logger.error(s"$name-search/forbidden") *>
-            F.sleep(30.seconds) *> searchByBrand(query, step)
+          logger.error(s"$name-search/forbidden") *> F.sleep(30.seconds) *> searchByBrand(query, step)
         case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
-          logger.warn(s"$name-search/404") *>
-            F.pure(Nil)
+          logger.warn(s"$name-search/404") *> F.pure(Nil)
         case Left(_) if r.code == StatusCode.NotFound =>
-            F.pure(Nil)
+          F.pure(Nil)
         case Left(_) if r.code.isClientError =>
-          logger.error(s"$name-search/${r.code}-error") *>
-            F.pure(Nil)
+          logger.error(s"$name-search/${r.code}-error") *> F.pure(Nil)
         case Left(_) if r.code.isServerError =>
-          logger.warn(s"$name-search/${r.code}-repeatable") *>
-            F.sleep(3.second) *> searchByBrand(query, step)
+          logger.warn(s"$name-search/${r.code}-repeatable") *> F.sleep(3.second) *> searchByBrand(query, step)
         case Left(error) =>
-          logger.error(s"$name-search/error: $error") *>
-            F.sleep(3.second) *> searchByBrand(query, step)
+          logger.error(s"$name-search/error: $error") *> F.sleep(3.second) *> searchByBrand(query, step)
       }
     }
 
@@ -101,17 +94,13 @@ final private class LiveJdsportsClient[F[_]](
         case Right(html) =>
           F.fromEither(ResponseParser.parseProductStockResponse(html))
         case Left(_) if r.code == StatusCode.NotFound =>
-          logger.warn(s"$name-get-stock/404") *>
-            F.pure(None)
+          logger.warn(s"$name-get-stock/404") *> F.pure(None)
         case Left(_) if r.code.isClientError =>
-          logger.error(s"$name-get-stock/${r.code}-error") *>
-            F.pure(None)
+          logger.error(s"$name-get-stock/${r.code}-error") *> F.pure(None)
         case Left(_) if r.code.isServerError =>
-          logger.warn(s"$name-get-stock/${r.code}-repeatable") *>
-            F.sleep(1.second) *> getProductStock(ci)
+          logger.warn(s"$name-get-stock/${r.code}-repeatable") *> F.sleep(1.second) *> getProductStock(ci)
         case Left(error) =>
-          logger.error(s"$name-get-stock: $error") *>
-            F.sleep(1.second) *> getProductStock(ci)
+          logger.error(s"$name-get-stock: $error") *> F.sleep(1.second) *> getProductStock(ci)
       }
     }
 }

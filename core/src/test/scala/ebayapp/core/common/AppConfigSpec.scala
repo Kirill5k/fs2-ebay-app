@@ -1,11 +1,8 @@
 package ebayapp.core.common
 
-import config.{AppConfig, DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.{Retailer, SearchCriteria}
-import ebayapp.core.domain.ItemKind.VideoGame
-
-import scala.concurrent.duration._
+import ebayapp.core.clients.Retailer
+import ebayapp.core.common.config.AppConfig
 
 class AppConfigSpec extends CatsSpec {
   "An AppConfig" should {
@@ -16,8 +13,6 @@ class AppConfigSpec extends CatsSpec {
       conf.mongo.dbName mustBe "ebay-app"
       conf.server.host mustBe "0.0.0.0"
       conf.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
-      val ebayDeals = List(DealsFinderRequest(SearchCriteria("PS4", itemKind = Some(VideoGame)), 25, Some(10)))
-      conf.ebay.dealsFinder mustBe DealsFinderConfig(60.seconds, ebayDeals, 10.seconds)
       conf.selfridges.headers mustBe Map("api-key" -> "key")
       conf.nvidia.proxied mustBe true
 

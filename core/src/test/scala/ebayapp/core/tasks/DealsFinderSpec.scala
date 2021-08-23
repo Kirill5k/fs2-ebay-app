@@ -13,7 +13,7 @@ class DealsFinderSpec extends CatsSpec {
       val game     = ResellableItemBuilder.videoGame("Super Mario 3", buyPrice = BuyPrice(1, BigDecimal(5)))
       val services = servicesMock
 
-      when(services.ebayDeals.newDeals).thenReturn(fs2.Stream.emit(game))
+      when(services.deals.head.newDeals).thenReturn(fs2.Stream.emit(game))
       when(services.notification.cheapItem(any[ResellableItem])).thenReturn(IO.unit)
 
       val result = for {
@@ -22,7 +22,7 @@ class DealsFinderSpec extends CatsSpec {
       } yield ()
 
       result.unsafeToFuture().map { r =>
-        verify(services.ebayDeals).newDeals
+        verify(services.deals.head).newDeals
         verify(services.notification).cheapItem(game)
         r mustBe ()
       }

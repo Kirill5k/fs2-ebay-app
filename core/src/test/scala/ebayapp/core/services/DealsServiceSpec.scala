@@ -2,7 +2,7 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.{SearchClient, SearchCriteria}
+import ebayapp.core.clients.{Retailer, SearchClient, SearchCriteria}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.domain.search.{BuyPrice, SellPrice}
@@ -35,7 +35,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -58,7 +58,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
       val result = for {
-        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -85,7 +85,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -111,7 +111,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -139,7 +139,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -160,7 +160,7 @@ class DealsServiceSpec extends CatsSpec {
       when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.empty)
 
       val result = for {
-        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1, request2)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1, request2)), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(5.seconds).compile.toList
       } yield items
 
@@ -182,7 +182,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
       val result = for {
-        service <- DealsService.ebay(DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(3.seconds).compile.toList
       } yield items
 
@@ -197,8 +197,8 @@ class DealsServiceSpec extends CatsSpec {
 
   def mockDependecies: (SearchClient[IO], CexClient[IO], ResellableItemRepository[IO]) = {
     val searchClient = mock[SearchClient[IO]]
-    val cexClient  = mock[CexClient[IO]]
-    val repository = mock[ResellableItemRepository[IO]]
+    val cexClient    = mock[CexClient[IO]]
+    val repository   = mock[ResellableItemRepository[IO]]
     (searchClient, cexClient, repository)
   }
 }
