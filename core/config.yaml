@@ -24,6 +24,12 @@ data:
         cache-expiration: 24h
         cache-validation-period: 1h
       }
+      stock-monitor {
+        monitoring-frequency: 10m
+        monitoring-requests: [
+          {search-criteria: {query: "Apple iPad Pro 12.9 5th gen 128gb wifi"}, monitor-stock-change: false, monitor-price-change: true}
+        ]
+      }
     }
 
     ebay {
