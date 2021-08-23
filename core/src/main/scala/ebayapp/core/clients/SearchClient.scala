@@ -1,5 +1,6 @@
 package ebayapp.core.clients
 
+import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemKind, ResellableItem}
 import fs2.Stream
 
@@ -20,6 +21,11 @@ object Retailer {
   case object Tessuti    extends Retailer("tessuti")
   case object Nvidia     extends Retailer("nvidia")
   case object Scan       extends Retailer("scan")
+
+  val all = List(Cex, Ebay, Selfridges, Argos, Scotts, Jdsports, Tessuti, Nvidia, Scan)
+
+  def fromUnsafe(name: String): Retailer =
+    all.find(_.name == name).getOrElse(throw AppError.Critical(s"unrecognized retailer $name"))
 }
 
 trait SearchClient[F[_]] {

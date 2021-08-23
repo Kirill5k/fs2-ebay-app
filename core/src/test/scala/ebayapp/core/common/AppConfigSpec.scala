@@ -2,7 +2,7 @@ package ebayapp.core.common
 
 import config.{AppConfig, DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.domain.ItemKind.VideoGame
 
 import scala.concurrent.duration._
@@ -20,6 +20,8 @@ class AppConfigSpec extends CatsSpec {
       conf.ebay.dealsFinder mustBe DealsFinderConfig(60.seconds, ebayDeals, 10.seconds)
       conf.selfridges.headers mustBe Map("api-key" -> "key")
       conf.nvidia.proxied mustBe true
+
+      conf.stockMonitor must contain key Retailer.Nvidia
     }
   }
 }

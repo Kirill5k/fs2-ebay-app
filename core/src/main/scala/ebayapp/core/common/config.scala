@@ -4,7 +4,9 @@ import cats.effect.kernel.Sync
 import cats.implicits._
 import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.domain.ItemKind
+import pureconfig.ConfigConvert.catchReadError
 import pureconfig._
+import pureconfig.configurable.genericMapReader
 import pureconfig.generic.auto._
 import pureconfig.generic.semiauto._
 
@@ -109,12 +111,13 @@ object config {
       scotts: GenericStoreConfig,
       nvidia: GenericStoreConfig,
       scan: GenericStoreConfig,
-      telegram: TelegramConfig
+      telegram: TelegramConfig,
+      stockMonitor: Map[Retailer, StockMonitorConfig]
   )
 
   object AppConfig {
     implicit val itemKindConverted: ConfigReader[ItemKind] = deriveEnumerationReader[ItemKind]
-    implicit val retailerConverted: ConfigReader[Retailer] = deriveEnumerationReader[Retailer]
+    implicit val stockMonitorMapReader = genericMapReader[Retailer, StockMonitorConfig](catchReadError(Retailer.fromUnsafe))
 
     def load[F[_]](implicit F: Sync[F], logger: Logger[F]): F[AppConfig] =
       F.blocking(AppConfig.loadFromMount)
