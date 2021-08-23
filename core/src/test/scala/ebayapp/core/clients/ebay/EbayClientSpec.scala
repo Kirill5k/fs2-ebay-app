@@ -3,10 +3,11 @@ package ebayapp.core.clients.ebay
 import cats.effect.IO
 import cats.implicits._
 import ebayapp.core.CatsSpec
+import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses._
-import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, EbayCredentials, EbaySearchConfig, SearchCriteria}
+import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, EbayCredentials, EbaySearchConfig}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.captor.ArgCaptor

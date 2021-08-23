@@ -3,11 +3,11 @@ package ebayapp.core.clients.selfridges
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, HttpClient}
+import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, selfridgesClothingMapper}
 import ebayapp.core.clients.selfridges.responses._
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
+import ebayapp.core.common.config.GenericStoreConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.Decoder

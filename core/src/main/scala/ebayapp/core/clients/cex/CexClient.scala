@@ -2,10 +2,10 @@ package ebayapp.core.clients.cex
 
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
-import ebayapp.core.common.config.{CexConfig, SearchCriteria}
+import ebayapp.core.common.config.CexConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.domain.search._

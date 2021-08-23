@@ -3,11 +3,11 @@ package ebayapp.core.clients.argos
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, HttpClient}
+import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.argos.mappers.argosGenericItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
+import ebayapp.core.common.config.GenericStoreConfig
 import ebayapp.core.domain.ResellableItem
 import io.circe.generic.auto._
 import sttp.client3._

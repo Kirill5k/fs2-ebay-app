@@ -2,8 +2,9 @@ package ebayapp.core.clients.jdsports
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
+import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.requests._
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig, StockMonitorConfig}
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3.{Response, SttpBackend}

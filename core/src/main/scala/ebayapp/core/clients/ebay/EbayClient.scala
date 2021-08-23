@@ -2,13 +2,13 @@ package ebayapp.core.clients.ebay
 
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.SearchClient
+import ebayapp.core.clients.{SearchClient, SearchCriteria}
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.search.EbaySearchParams
-import ebayapp.core.common.config.{EbayConfig, SearchCriteria}
+import ebayapp.core.common.config.EbayConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.common.Logger

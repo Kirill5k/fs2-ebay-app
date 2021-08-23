@@ -14,16 +14,10 @@ import ebayapp.core.common.{Logger, Resources}
 import ebayapp.core.common.config.AppConfig
 
 trait Clients[F[_]] {
-  def ebay: SearchClient[F]
   def cex: CexClient[F]
   def telegram: TelegramClient[F]
-  def selfridges: SearchClient[F]
-  def argos: SearchClient[F]
-  def jdsports: SearchClient[F]
-  def scotts: SearchClient[F]
-  def tessuti: SearchClient[F]
-  def nvidia: SearchClient[F]
-  def scan: SearchClient[F]
+
+  def get(shop: Retailer): SearchClient[F]
 }
 
 object Clients {
@@ -33,9 +27,9 @@ object Clients {
       resources: Resources[F]
   ): F[Clients[F]] =
     (
-      EbayClient.make[F](config.ebay, resources.clientBackend(false)),
       CexClient.make[F](config.cex, resources.clientBackend(false)),
       TelegramClient.make[F](config.telegram, resources.clientBackend(false)),
+      EbayClient.make[F](config.ebay, resources.clientBackend(false)),
       SelfridgesClient.make[F](config.selfridges, resources.clientBackend(config.selfridges.proxied)),
       ArgosClient.make[F](config.argos, resources.clientBackend(config.argos.proxied)),
       JdsportsClient.jd[F](config.jdsports, resources.clientBackend(config.jdsports.proxied)),
@@ -43,18 +37,22 @@ object Clients {
       JdsportsClient.tessuti[F](config.tessuti, resources.clientBackend(config.tessuti.proxied)),
       NvidiaClient.make[F](config.nvidia, resources.clientBackend(config.nvidia.proxied)),
       ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied))
-    ).mapN { (ebayC, cc, telc, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC) =>
+    ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC) =>
       new Clients[F] {
-        def ebay: SearchClient[F]       = ebayC
-        def cex: CexClient[F]           = cc
-        def telegram: TelegramClient[F] = telc
-        def selfridges: SearchClient[F] = selfridgesC
-        def argos: SearchClient[F]      = argosC
-        def jdsports: SearchClient[F]   = jdC
-        def scotts: SearchClient[F]     = scottsC
-        def tessuti: SearchClient[F]    = tessutiC
-        def nvidia: SearchClient[F]     = nvidiaC
-        def scan: SearchClient[F]       = scanC
+        def cex: CexClient[F]           = cexC
+        def telegram: TelegramClient[F] = telC
+        def get(shop: Retailer): SearchClient[F] =
+          shop match {
+            case Retailer.Cex        => cexC
+            case Retailer.Ebay       => ebayC
+            case Retailer.Selfridges => selfridgesC
+            case Retailer.Argos      => argosC
+            case Retailer.Scotts     => scottsC
+            case Retailer.Jdsports   => jdC
+            case Retailer.Tessuti    => tessutiC
+            case Retailer.Nvidia     => nvidiaC
+            case Retailer.Scan       => scanC
+          }
       }
     }
 

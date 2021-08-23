@@ -3,11 +3,11 @@ package ebayapp.core.clients.jdsports
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
+import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import ebayapp.core.clients.jdsports.mappers.{JdsportsItem, jdsportsClothingMapper}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
+import ebayapp.core.common.config.GenericStoreConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.{SttpBackend, basicRequest, _}

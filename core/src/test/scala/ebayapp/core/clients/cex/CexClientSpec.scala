@@ -2,7 +2,8 @@ package ebayapp.core.clients.cex
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{CexConfig, CexPriceFindConfig, SearchCriteria, StockMonitorConfig}
+import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.common.config.{CexConfig, CexPriceFindConfig, StockMonitorConfig}
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.search._
 import ebayapp.core.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}

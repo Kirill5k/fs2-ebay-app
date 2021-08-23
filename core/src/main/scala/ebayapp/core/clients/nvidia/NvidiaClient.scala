@@ -3,12 +3,12 @@ package ebayapp.core.clients.nvidia
 import cats.Monad
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.{SearchClient, HttpClient}
+import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria}
+import ebayapp.core.common.config.GenericStoreConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.circe.asJson
@@ -28,9 +28,7 @@ final private class LiveNvidiaClient[F[_]](
 
   private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
-  override def search(
-      criteria: SearchCriteria
-  ): Stream[F, ResellableItem] =
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .evalSeq(searchProducts(criteria))
       .filterNot(_.isOutOfStock)

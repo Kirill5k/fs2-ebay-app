@@ -2,9 +2,9 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.SearchClient
+import ebayapp.core.clients.{SearchClient, SearchCriteria}
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest, SearchCriteria}
+import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.domain.search.{BuyPrice, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import ebayapp.core.repositories.ResellableItemRepository

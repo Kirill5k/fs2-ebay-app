@@ -2,7 +2,8 @@ package ebayapp.core.clients.selfridges
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
-import ebayapp.core.common.config.{GenericStoreConfig, SearchCriteria, StockMonitorConfig}
+import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.common.config.{GenericStoreConfig, StockMonitorConfig}
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3

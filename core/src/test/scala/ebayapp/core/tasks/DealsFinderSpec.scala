@@ -2,7 +2,8 @@ package ebayapp.core.tasks
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest, SearchCriteria}
+import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 

@@ -2,7 +2,7 @@ package ebayapp.core.services
 
 import cats.effect.Temporal
 import cats.implicits._
-import ebayapp.core.clients.Clients
+import ebayapp.core.clients.{Clients, Retailer}
 import ebayapp.core.common.Logger
 import ebayapp.core.repositories.Repositories
 
@@ -29,15 +29,15 @@ object Services {
     (
       NotificationService.telegram[F](clients.telegram),
       ResellableItemService.make[F](repositories.resellableItems),
-      DealsService.ebay[F](clients.ebay, clients.cex, repositories.resellableItems),
+      DealsService.ebay[F](clients.get(Retailer.Ebay), clients.cex, repositories.resellableItems),
       StockService.cex[F](clients.cex),
-      StockService.selfridges[F](clients.selfridges),
-      StockService.argos[F](clients.argos),
-      StockService.jdsports[F](clients.jdsports),
-      StockService.scotts[F](clients.scotts),
-      StockService.tessuti[F](clients.tessuti),
-      StockService.nvidia[F](clients.nvidia),
-      StockService.scan[F](clients.scan)
+      StockService.selfridges[F](clients.get(Retailer.Selfridges)),
+      StockService.argos[F](clients.get(Retailer.Argos)),
+      StockService.jdsports[F](clients.get(Retailer.Jdsports)),
+      StockService.scotts[F](clients.get(Retailer.Scotts)),
+      StockService.tessuti[F](clients.get(Retailer.Tessuti)),
+      StockService.nvidia[F](clients.get(Retailer.Nvidia)),
+      StockService.scan[F](clients.get(Retailer.Scan))
     ).mapN((not, rs, es, cs, selfridgesS, as, jdS, scottsS, tessutiS, nvidiaS, scanS) =>
       new Services[F] {
         def notification: NotificationService[F]     = not

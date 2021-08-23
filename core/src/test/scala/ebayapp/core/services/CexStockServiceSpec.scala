@@ -2,8 +2,9 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
+import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.common.config.{SearchCriteria, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}

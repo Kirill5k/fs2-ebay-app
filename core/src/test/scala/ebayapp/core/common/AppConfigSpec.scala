@@ -1,7 +1,8 @@
 package ebayapp.core.common
 
-import config.{AppConfig, DealsFinderConfig, DealsFinderRequest, SearchCriteria}
+import config.{AppConfig, DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.CatsSpec
+import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.domain.ItemKind.VideoGame
 
 import scala.concurrent.duration._

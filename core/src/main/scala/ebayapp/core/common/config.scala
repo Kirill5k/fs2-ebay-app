@@ -2,6 +2,7 @@ package ebayapp.core.common
 
 import cats.effect.kernel.Sync
 import cats.implicits._
+import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.domain.ItemKind
 import pureconfig._
 import pureconfig.generic.auto._
@@ -25,12 +26,6 @@ object config {
   final case class ClientProxyConfig(
       host: Option[String],
       port: Option[Int]
-  )
-
-  final case class SearchCriteria(
-      query: String,
-      category: Option[String] = None,
-      itemKind: Option[ItemKind] = None
   )
 
   final case class EbayCredentials(
@@ -119,6 +114,7 @@ object config {
 
   object AppConfig {
     implicit val itemKindConverted: ConfigReader[ItemKind] = deriveEnumerationReader[ItemKind]
+    implicit val retailerConverted: ConfigReader[Retailer] = deriveEnumerationReader[Retailer]
 
     def load[F[_]](implicit F: Sync[F], logger: Logger[F]): F[AppConfig] =
       F.blocking(AppConfig.loadFromMount)
