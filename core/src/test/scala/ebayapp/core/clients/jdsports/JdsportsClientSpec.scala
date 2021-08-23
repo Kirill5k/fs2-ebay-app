@@ -4,18 +4,16 @@ import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.requests._
-import ebayapp.core.common.config.{GenericStoreConfig, StockMonitorConfig}
+import ebayapp.core.common.config.{GenericStoreConfig}
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
-import scala.concurrent.duration._
-
 class JdsportsClientSpec extends SttpClientSpec {
 
   "A JdsportsClient" should {
-    val config = GenericStoreConfig("http://jdsports.com/proxy", StockMonitorConfig(10.second, Nil))
+    val config = GenericStoreConfig("http://jdsports.com/proxy")
 
     "return items on sale" in {
       val criteria = SearchCriteria("Emporio Armani EA7")
@@ -51,7 +49,7 @@ class JdsportsClientSpec extends SttpClientSpec {
   }
 
   "A TessutiClient" should {
-    val config   = GenericStoreConfig("http://tessuti.com", StockMonitorConfig(10.second, Nil))
+    val config   = GenericStoreConfig("http://tessuti.com")
     val criteria = SearchCriteria("Emporio Armani")
 
     "return items on sale" in {

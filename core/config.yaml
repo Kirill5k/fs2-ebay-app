@@ -20,15 +20,9 @@ data:
 
     cex {
       base-uri: "https://fs2-proxy.herokuapp.com/cex"
-      price-find {
-        cache-expiration: 24h
-        cache-validation-period: 1h
-      }
-      stock-monitor {
-        monitoring-frequency: 10m
-        monitoring-requests: [
-          {search-criteria: {query: "Apple iPad Pro 12.9 5th gen 128gb wifi"}, monitor-stock-change: false, monitor-price-change: true}
-        ]
+      cache {
+        expiration: 24h
+        validation-period: 1h
       }
     }
 
@@ -64,45 +58,15 @@ data:
       headers: {
         api-key: ${?SELFRIDGES_API_KEY}
       }
-      stock-monitor {
-        monitoring-frequency: 6m
-        monitoring-requests: [
-          {search-criteria: {query: "michael-michael-kors"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-          {search-criteria: {query: "stone-island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 51}
-          {search-criteria: {query: "moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
-          {search-criteria: {query: "tommy hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {search-criteria: {query: "calvin klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-          {search-criteria: {query: "gucci"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-        ]
-      }
     }
 
     argos {
       base-uri: "https://www.argos.co.uk"
       proxied: true
-      stock-monitor {
-        monitoring-frequency: 10m
-        monitoring-requests: [
-          {search-criteria: {query: "PlayStation 5 Console"}, monitor-stock-change: false, monitor-price-change: true}
-        ]
-      }
-      headers {
-        Cookie: "ak_bmsc=BE502843B587C9DA16D4A1C6448BABCB~000000000000000000000000000000~YAAQD+YYPh+tea56AQAAOCQvUAz9b8GZc1KmIastBUnrK9GRtE9+COuoh3rwvDKKlV0powuG0bT5zVx5h0RURKwGVMK3/ZNhxNRdqnlgrfFT89Ij3x5GRtAf1uqij5cvLIC+9NfTGz+LExcH3JmU/q7Pv5O58l1Sf1I0efrKR8tHe85pzre1G2oUf+LYP6UB4b8boydMECM22Lgfx4TTLnIAKliKb2gUiA0rFjp3YVPTr9qIXsTjPVXVNdxPpsnOUOzlReLah13U0LVnBV5u3Yzpp2LOtgJWkPAz1ZA03r8wUpqPtpODoix2Sky56f86QPC2v/bsoZO1VutENbIiiQ6JsI3sRZwDAKBRL2PadfcBLFB8xGxb2I4tQAlbSg=="
-      }
     }
 
     jdsports {
       base-uri: "https://fs2-proxy.herokuapp.com/jdsports"
-      stock-monitor {
-        monitoring-frequency: 4m
-        monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
-        ]
-      }
       headers {
         "Referer": "https://www.jdsports.co.uk/men",
         "X-Reroute-To": "https://www.jdsports.co.uk"
@@ -111,13 +75,6 @@ data:
 
     scotts {
       base-uri: "https://fs2-proxy.herokuapp.com"
-      stock-monitor {
-        monitoring-frequency: 4m
-        monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-        ]
-      }
       headers {
         "Referer": "https://www.scottsmenswear.com/men",
         "X-Reroute-To": "https://www.scottsmenswear.com"
@@ -126,18 +83,6 @@ data:
 
     tessuti {
       base-uri: "https://fs2-proxy.herokuapp.com"
-      stock-monitor {
-        monitoring-frequency: 4m
-        monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-          {search-criteria: {query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-          {search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-          {search-criteria: {query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-        ]
-      }
       headers {
         "Referer": "https://www.tessuti.co.uk/men",
         "X-Reroute-To": "https://www.tessuti.co.uk"
@@ -147,29 +92,10 @@ data:
     nvidia {
       base-uri: "https://api.nvidia.partners"
       proxied: true
-      stock-monitor {
-        monitoring-frequency: 5m
-        monitoring-requests: [
-          {search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true}
-        ]
-      }
-      headers {
-        Cookie: "ak_bmsc=BE502843B587C9DA16D4A1C6448BABCB~000000000000000000000000000000~YAAQD+YYPh+tea56AQAAOCQvUAz9b8GZc1KmIastBUnrK9GRtE9+COuoh3rwvDKKlV0powuG0bT5zVx5h0RURKwGVMK3/ZNhxNRdqnlgrfFT89Ij3x5GRtAf1uqij5cvLIC+9NfTGz+LExcH3JmU/q7Pv5O58l1Sf1I0efrKR8tHe85pzre1G2oUf+LYP6UB4b8boydMECM22Lgfx4TTLnIAKliKb2gUiA0rFjp3YVPTr9qIXsTjPVXVNdxPpsnOUOzlReLah13U0LVnBV5u3Yzpp2LOtgJWkPAz1ZA03r8wUpqPtpODoix2Sky56f86QPC2v/bsoZO1VutENbIiiQ6JsI3sRZwDAKBRL2PadfcBLFB8xGxb2I4tQAlbSg=="
-      }
     }
 
     scan {
       base-uri: "https://www.scan.co.uk"
-      stock-monitor {
-        monitoring-frequency: 5m
-        monitoring-requests: [
-          //{search-criteria: {category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3080-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3070-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "gpu-amd-gaming", query: "amd-radeon-rx-5700-xt-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "gpu-amd-gaming", query: "amd-radeon-rx-6700-xt-pcie-40-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "gpu-amd-gaming", query: "amd-radeon-rx-6900-xt-pcie-40-graphics-cards"}, monitor-stock-change: false, monitor-price-change: true}
-        ]
-      }
     }
 
     telegram {

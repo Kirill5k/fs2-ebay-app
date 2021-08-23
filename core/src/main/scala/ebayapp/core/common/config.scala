@@ -60,11 +60,6 @@ object config {
       maxQuantity: Option[Int] = None
   )
 
-  final case class CexPriceFindConfig(
-      cacheExpiration: FiniteDuration,
-      cacheValidationPeriod: FiniteDuration
-  )
-
   final case class StockMonitorRequest(
       searchCriteria: SearchCriteria,
       monitorStockChange: Boolean,
@@ -77,15 +72,18 @@ object config {
       monitoringRequests: List[StockMonitorRequest]
   )
 
+  final case class CacheConfig(
+      expiration: FiniteDuration,
+      validationPeriod: FiniteDuration
+  )
+
   final case class CexConfig(
       baseUri: String,
-      priceFind: CexPriceFindConfig,
-      stockMonitor: StockMonitorConfig
+      cache: CacheConfig
   )
 
   final case class GenericStoreConfig(
       baseUri: String,
-      stockMonitor: StockMonitorConfig,
       headers: Map[String, String] = Map.empty[String, String],
       proxied: Boolean = false
   )

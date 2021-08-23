@@ -3,17 +3,15 @@ package ebayapp.core.clients.nvidia
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
-import ebayapp.core.common.config.{GenericStoreConfig, StockMonitorConfig}
+import ebayapp.core.common.config.GenericStoreConfig
 import sttp.client3._
 import ebayapp.core.requests._
-
-import scala.concurrent.duration._
 
 class NvidiaClientSpec extends SttpClientSpec {
 
   "A NvidiaClient" should {
 
-    val config = GenericStoreConfig("http://nvidia.com", StockMonitorConfig(10.second, Nil))
+    val config = GenericStoreConfig("http://nvidia.com")
 
     val criteria = SearchCriteria("geforce", Some("GPU"))
 

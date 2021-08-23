@@ -3,24 +3,18 @@ package ebayapp.core.clients.selfridges
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
-import ebayapp.core.common.config.{GenericStoreConfig, StockMonitorConfig}
+import ebayapp.core.common.config.GenericStoreConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.{Method, StatusCode}
 
-import scala.concurrent.duration._
-
 class SelfridgesClientSpec extends SttpClientSpec {
 
   "A SelfridgesClient" should {
 
-    val config = GenericStoreConfig(
-      "http://selfridges.com",
-      StockMonitorConfig(10.second, Nil),
-      Map("api-key" -> "foo-bar")
-    )
+    val config = GenericStoreConfig("http://selfridges.com", Map("api-key" -> "foo-bar"))
 
     val criteria = SearchCriteria("EA7 Armani")
 

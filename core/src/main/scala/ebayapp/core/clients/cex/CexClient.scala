@@ -110,6 +110,6 @@ object CexClient {
       backend: SttpBackend[F, Any]
   ): F[CexClient[F]] =
     Cache
-      .make[F, String, Option[SellPrice]](config.priceFind.cacheExpiration, config.priceFind.cacheValidationPeriod)
+      .make[F, String, Option[SellPrice]](config.cache.expiration, config.cache.validationPeriod)
       .map(cache => new CexApiClient[F](config, cache, backend))
 }
