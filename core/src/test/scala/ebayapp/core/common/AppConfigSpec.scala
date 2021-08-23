@@ -22,6 +22,7 @@ class AppConfigSpec extends CatsSpec {
       conf.nvidia.proxied mustBe true
 
       conf.stockMonitor must contain key Retailer.Nvidia
+      conf.dealsFinder must contain key Retailer.Ebay
     }
   }
 }

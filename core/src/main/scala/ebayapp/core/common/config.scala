@@ -110,12 +110,14 @@ object config {
       nvidia: GenericStoreConfig,
       scan: GenericStoreConfig,
       telegram: TelegramConfig,
-      stockMonitor: Map[Retailer, StockMonitorConfig]
+      stockMonitor: Map[Retailer, StockMonitorConfig],
+      dealsFinder: Map[Retailer, DealsFinderConfig]
   )
 
   object AppConfig {
     implicit val itemKindConverted: ConfigReader[ItemKind] = deriveEnumerationReader[ItemKind]
     implicit val stockMonitorMapReader = genericMapReader[Retailer, StockMonitorConfig](catchReadError(Retailer.fromUnsafe))
+    implicit val dealsFinderMapReader  = genericMapReader[Retailer, DealsFinderConfig](catchReadError(Retailer.fromUnsafe))
 
     def load[F[_]](implicit F: Sync[F], logger: Logger[F]): F[AppConfig] =
       F.blocking(AppConfig.loadFromMount)
