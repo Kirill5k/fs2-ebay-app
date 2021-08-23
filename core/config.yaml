@@ -177,11 +177,11 @@ data:
       ebay {
         search-frequency: 60s
         search-requests: [
-          {search-criteria: {query: "PS4", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "XBOX ONE", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 40, max-quantity: 10}
-          {search-criteria: {query: "PS5", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "XBOX SERIES", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 40, max-quantity: 10}
-          {search-criteria: {query: "SWITCH", item-kind: "video-game", category: "games-switch"}, min-margin: 40, max-quantity: 10}
+          {search-criteria: {query: "PS4", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 45, max-quantity: 10}
+          {search-criteria: {query: "XBOX ONE", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 45, max-quantity: 10}
+          {search-criteria: {query: "PS5", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 45, max-quantity: 10}
+          {search-criteria: {query: "XBOX SERIES", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 45, max-quantity: 10}
+          {search-criteria: {query: "SWITCH", item-kind: "video-game", category: "games-switch"}, min-margin: 45, max-quantity: 10}
         ]
         delay-between-requests: 5s
       }

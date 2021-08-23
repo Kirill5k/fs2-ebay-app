@@ -73,7 +73,7 @@ final private class LiveJdsportsClient[F[_]](
         case Left(_) if r.code == StatusCode.Forbidden =>
           logger.error(s"$name-search/forbidden") *> F.sleep(30.seconds) *> searchByBrand(query, step)
         case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
-          logger.warn(s"$name-search/404") *> F.pure(Nil)
+          logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
         case Left(_) if r.code == StatusCode.NotFound =>
           F.pure(Nil)
         case Left(_) if r.code.isClientError =>
