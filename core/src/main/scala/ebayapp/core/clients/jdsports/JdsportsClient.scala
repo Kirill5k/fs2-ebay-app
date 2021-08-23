@@ -2,7 +2,10 @@ package ebayapp.core.clients.jdsports
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.apply._
+import cats.syntax.alternative._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
@@ -27,7 +30,7 @@ final private class LiveJdsportsClient[F[_]](
   private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
-    brands(criteria.query)
+    brands(criteria)
       .filter(_.sale)
       .metered(250.millis)
       .evalMap(getProductStock)
@@ -53,25 +56,26 @@ final private class LiveJdsportsClient[F[_]](
       .map(jdsportsClothingMapper.toDomain)
       .handleErrorWith(e => Stream.eval(logger.error(e)(e.getMessage)).drain)
 
-  private def brands(query: String): Stream[F, JdCatalogItem] =
+  private def brands(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
     Stream
       .unfoldLoopEval(0) { step =>
-        searchByBrand(query, step).map(items => (items, items.nonEmpty.guard[Option].as(step + 1)))
+        searchByBrand(criteria, step).map(items => (items, items.nonEmpty.guard[Option].as(step + 1)))
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(query: String, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
     dispatch() {
-      val brand = query.toLowerCase.replace(" ", "-")
+      val base = config.baseUri + criteria.category.fold("")(c => s"/$c")
+      val brand = criteria.query.toLowerCase.replace(" ", "-")
       basicRequest
-        .get(uri"${config.baseUri}/men/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
+        .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
         .headers(headers)
     }.flatMap { r =>
       r.body match {
         case Right(html) =>
           F.fromEither(ResponseParser.parseSearchResponse(html))
         case Left(_) if r.code == StatusCode.Forbidden =>
-          logger.error(s"$name-search/forbidden") *> F.sleep(30.seconds) *> searchByBrand(query, step)
+          logger.error(s"$name-search/forbidden") *> F.sleep(30.seconds) *> searchByBrand(criteria, step)
         case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
           logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
         case Left(_) if r.code == StatusCode.NotFound =>
@@ -79,9 +83,9 @@ final private class LiveJdsportsClient[F[_]](
         case Left(_) if r.code.isClientError =>
           logger.error(s"$name-search/${r.code}-error") *> F.pure(Nil)
         case Left(_) if r.code.isServerError =>
-          logger.warn(s"$name-search/${r.code}-repeatable") *> F.sleep(3.second) *> searchByBrand(query, step)
+          logger.warn(s"$name-search/${r.code}-repeatable") *> F.sleep(3.second) *> searchByBrand(criteria, step)
         case Left(error) =>
-          logger.error(s"$name-search/error: $error") *> F.sleep(3.second) *> searchByBrand(query, step)
+          logger.error(s"$name-search/error: $error") *> F.sleep(3.second) *> searchByBrand(criteria, step)
       }
     }
 

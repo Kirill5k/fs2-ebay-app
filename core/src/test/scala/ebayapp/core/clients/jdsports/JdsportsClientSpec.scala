@@ -16,7 +16,7 @@ class JdsportsClientSpec extends SttpClientSpec {
     val config = GenericStoreConfig("http://jdsports.com/proxy")
 
     "return items on sale" in {
-      val criteria = SearchCriteria("Emporio Armani EA7")
+      val criteria = SearchCriteria("Emporio Armani EA7", category = Some("men"))
 
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
@@ -50,7 +50,7 @@ class JdsportsClientSpec extends SttpClientSpec {
 
   "A TessutiClient" should {
     val config   = GenericStoreConfig("http://tessuti.com")
-    val criteria = SearchCriteria("Emporio Armani")
+    val criteria = SearchCriteria("Emporio Armani", category = Some("men"))
 
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub

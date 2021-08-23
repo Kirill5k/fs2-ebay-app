@@ -39,18 +39,6 @@ data:
         min-feedback-percentage: 92
         max-listing-duration: 20m
       }
-
-      deals-finder {
-        search-frequency: 60s
-        search-requests: [
-          {search-criteria: {query: "PS4", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "XBOX ONE", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 40, max-quantity: 10}
-          {search-criteria: {query: "PS5", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 25, max-quantity: 10}
-          {search-criteria: {query: "XBOX SERIES", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 40, max-quantity: 10}
-          {search-criteria: {query: "SWITCH", item-kind: "video-game", category: "games-switch"}, min-margin: 40, max-quantity: 10}
-        ]
-        delay-between-requests: 5s
-      }
     }
 
     selfridges {
@@ -131,13 +119,13 @@ data:
       tessuti {
         monitoring-frequency: 4m
         monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-          {search-criteria: {query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-          {search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-          {search-criteria: {query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
+          {search-criteria: {category: "men", query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
+          {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
+          {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
         ]
       }
 
@@ -152,8 +140,8 @@ data:
       jdsports {
         monitoring-frequency: 4m
         monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
         ]
       }
 
