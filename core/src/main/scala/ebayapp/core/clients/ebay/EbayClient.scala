@@ -1,7 +1,9 @@
 package ebayapp.core.clients.ebay
 
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.apply._
 import ebayapp.core.clients.{SearchClient, SearchCriteria}
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient

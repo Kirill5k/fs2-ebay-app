@@ -1,8 +1,8 @@
 package ebayapp.core.clients.ebay.auth
 
 import cats.effect.IO
-import cats.effect.kernel.Ref
-import cats.implicits._
+import cats.effect.Ref
+import cats.syntax.apply._
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.EbayAuthToken
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}

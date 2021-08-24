@@ -3,7 +3,9 @@ package ebayapp.proxy.controllers
 import cats.Monad
 import cats.effect.Deferred
 import cats.effect.kernel.Concurrent
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.applicative._
 import ebayapp.proxy.common.config.RedirectionUrisConfig
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl

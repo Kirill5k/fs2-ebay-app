@@ -4,7 +4,9 @@ import cats.{Monad, MonadError}
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import cats.effect._
-import cats.implicits._
+import cats.syntax.either._
+import cats.syntax.applicativeError._
+import cats.syntax.apply._
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.services.ResellableItemService
 import ebayapp.core.common.{JsonCodecs, Logger}

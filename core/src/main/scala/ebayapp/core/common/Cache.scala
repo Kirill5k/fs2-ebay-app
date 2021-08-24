@@ -4,8 +4,10 @@ import cats.Monad
 
 import cats.effect.{Ref, Temporal}
 import cats.effect.implicits._
-import cats.effect.kernel.Clock
-import cats.implicits._
+import cats.effect.Clock
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.applicative._
 
 import scala.concurrent.duration.FiniteDuration
 

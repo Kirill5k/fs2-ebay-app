@@ -1,7 +1,10 @@
 package ebayapp.core.clients.telegram
 
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.applicativeError._
+import cats.syntax.apply._
+import cats.syntax.applicative._
 import ebayapp.core.clients.HttpClient
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.errors.AppError

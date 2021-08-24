@@ -1,7 +1,7 @@
 package ebayapp.core.tasks
 
 import cats.Monad
-import cats.effect.kernel.Concurrent
+import cats.effect.Concurrent
 import ebayapp.core.services.{DealsService, NotificationService, Services}
 import fs2.Stream
 

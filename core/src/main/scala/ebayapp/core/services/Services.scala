@@ -1,7 +1,8 @@
 package ebayapp.core.services
 
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.traverse._
+import cats.syntax.apply._
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.AppConfig

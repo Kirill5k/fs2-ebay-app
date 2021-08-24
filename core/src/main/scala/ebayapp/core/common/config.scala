@@ -1,7 +1,9 @@
 package ebayapp.core.common
 
-import cats.effect.kernel.Sync
-import cats.implicits._
+import cats.effect.Sync
+import cats.syntax.flatMap._
+import cats.syntax.applicativeError._
+import cats.syntax.apply._
 import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.domain.ItemKind
 import pureconfig.ConfigConvert.catchReadError

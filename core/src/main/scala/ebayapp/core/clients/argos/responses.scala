@@ -1,8 +1,9 @@
 package ebayapp.core.clients.argos
 
-import cats.implicits._
+import cats.syntax.alternative._
+import cats.syntax.functor._
 
- object responses {
+object responses {
 
   final case class DataAttributes(
       relevancyRank: Int,

@@ -1,7 +1,8 @@
 package ebayapp.core.tasks
 
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.functor._
+import cats.syntax.traverse._
 import ebayapp.core.common.Logger
 import ebayapp.core.services.Services
 import fs2.Stream

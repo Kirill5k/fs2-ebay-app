@@ -2,7 +2,7 @@ package ebayapp.proxy
 
 import cats.effect.kernel.Deferred
 import cats.effect.{IO, IOApp}
-import cats.implicits._
+import cats.syntax.semigroupk._
 import ebayapp.proxy.common.Resources
 import ebayapp.proxy.common.config.AppConfig
 import ebayapp.proxy.controllers.Controller

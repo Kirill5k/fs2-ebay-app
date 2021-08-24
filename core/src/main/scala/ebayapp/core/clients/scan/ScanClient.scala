@@ -2,12 +2,13 @@ package ebayapp.core.clients.scan
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.apply._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{GenericStoreConfig}
+import ebayapp.core.common.config.GenericStoreConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3._
@@ -36,7 +37,7 @@ final private class LiveScanClient[F[_]](
           .map(scanaGenericItemMapper.toDomain)
       }
 
-  private def searchByCard(query: String, category: String): F[List[ScanItem]] = {
+  private def searchByCard(query: String, category: String): F[List[ScanItem]] =
     dispatch() {
       val cat  = category.toLowerCase.replaceAll(" ", "-")
       val card = query.toLowerCase.replaceAll(" ", "-")
@@ -48,14 +49,11 @@ final private class LiveScanClient[F[_]](
         case Right(html) =>
           F.fromEither(ResponseParser.parseSearchResponse(html))
         case Left(html) if r.code == StatusCode.Forbidden =>
-          logger.error(s"$name-search/forbidden\n$html") *>
-            F.sleep(30.seconds) *> searchByCard(query, category)
+          logger.error(s"$name-search/forbidden\n$html") *> F.sleep(30.seconds) *> searchByCard(query, category)
         case Left(_) if r.code == StatusCode.NotFound =>
-          logger.error(s"$name-search/404") *>
-            F.pure(Nil)
+          logger.error(s"$name-search/404") *> F.pure(Nil)
         case Left(_) if r.code.isClientError =>
-          logger.error(s"$name-search/${r.code}-error") *>
-            F.pure(Nil)
+          logger.error(s"$name-search/${r.code}-error") *> F.pure(Nil)
         case Left(_) if r.code.isServerError =>
           logger.warn(s"$name-search/${r.code}-repeatable") *>
             F.sleep(3.second) *> searchByCard(query, category)
@@ -64,7 +62,6 @@ final private class LiveScanClient[F[_]](
             F.sleep(3.second) *> searchByCard(query, category)
       }
     }
-  }
 }
 
 object ScanClient {

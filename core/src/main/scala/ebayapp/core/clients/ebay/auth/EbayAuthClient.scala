@@ -1,7 +1,11 @@
 package ebayapp.core.clients.ebay.auth
 
 import cats.effect.{Ref, Temporal}
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.option._
+import cats.syntax.apply._
+import cats.syntax.applicative._
 import ebayapp.core.common.Logger
 import io.circe.generic.auto._
 import EbayAuthClient.EbayAuthToken

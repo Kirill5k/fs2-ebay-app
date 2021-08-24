@@ -1,7 +1,7 @@
 package ebayapp.core.repositories
 
 import cats.effect.kernel.Async
-import cats.implicits._
+import cats.syntax.functor._
 import mongo4cats.database.MongoDatabase
 
 trait Repositories[F[_]] {

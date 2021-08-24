@@ -2,7 +2,11 @@ package ebayapp.core.clients.argos
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.applicative._
+import cats.syntax.option._
+import cats.syntax.apply._
+import cats.syntax.functor._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.argos.mappers.argosGenericItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}

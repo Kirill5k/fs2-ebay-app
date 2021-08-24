@@ -2,7 +2,9 @@ package ebayapp.core.repositories
 
 import java.time.Instant
 import cats.effect.Async
-import cats.implicits._
+import cats.syntax.functor._
+import cats.syntax.flatMap._
+import cats.syntax.applicative._
 import io.circe.generic.auto._
 import ebayapp.core.domain.{ItemKind, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity

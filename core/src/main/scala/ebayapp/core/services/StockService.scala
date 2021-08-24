@@ -2,7 +2,9 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.option._
 import ebayapp.core.clients.{Retailer, SearchClient}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}

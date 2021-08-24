@@ -1,7 +1,11 @@
 package ebayapp.core.clients.cex
 
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.functor._
+import cats.syntax.applicativeError._
+import cats.syntax.flatMap._
+import cats.syntax.apply._
+import cats.syntax.applicative._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._

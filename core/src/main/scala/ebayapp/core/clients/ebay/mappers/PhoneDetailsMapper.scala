@@ -1,6 +1,5 @@
 package ebayapp.core.clients.ebay.mappers
 
-import cats.implicits._
 import ebayapp.core.domain.ItemDetails.Phone
 import ebayapp.core.domain.search.ListingDetails
 
@@ -63,7 +62,7 @@ private[mappers] object PhoneDetailsMapper {
   }
 
   private def mapCondition(listingDetails: ListingDetails): Option[String] = {
-    val originalCondition = listingDetails.condition.some
+    val originalCondition = Some(listingDetails.condition)
     originalCondition.filter(_ == "New")
       .orElse(conditionFromTitle(listingDetails))
       .orElse(conditionFromDescription(listingDetails))

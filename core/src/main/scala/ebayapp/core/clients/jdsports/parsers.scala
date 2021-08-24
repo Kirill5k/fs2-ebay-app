@@ -1,6 +1,6 @@
 package ebayapp.core.clients.jdsports
 
-import cats.implicits._
+import cats.syntax.either._
 import ebayapp.core.common.errors.AppError
 import io.circe.generic.auto._
 import io.circe.parser._

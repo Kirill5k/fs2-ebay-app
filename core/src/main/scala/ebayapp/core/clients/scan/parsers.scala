@@ -1,7 +1,7 @@
 package ebayapp.core.clients.scan
 
+import cats.syntax.either._
 import ebayapp.core.common.errors.AppError
-import cats.implicits._
 
 import scala.util.Try
 

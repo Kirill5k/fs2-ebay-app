@@ -1,7 +1,7 @@
 package ebayapp.core.clients
 
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.apply._
 import ebayapp.core.clients.argos.ArgosClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient

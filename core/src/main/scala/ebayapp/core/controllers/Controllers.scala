@@ -2,7 +2,8 @@ package ebayapp.core.controllers
 
 import cats.Monad
 import cats.effect.Sync
-import cats.implicits._
+import cats.syntax.semigroupk._
+import cats.syntax.apply._
 import ebayapp.core.services.Services
 import ebayapp.core.common.Logger
 import org.http4s.HttpRoutes

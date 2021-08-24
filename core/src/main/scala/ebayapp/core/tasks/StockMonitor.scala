@@ -2,7 +2,7 @@ package ebayapp.core.tasks
 
 import cats.Monad
 import cats.effect.Concurrent
-import cats.implicits._
+import cats.syntax.foldable._
 import ebayapp.core.services.{NotificationService, Services, StockService}
 import fs2.Stream
 

@@ -1,6 +1,6 @@
 package ebayapp.core.clients.ebay.mappers
 
-import cats.implicits._
+import cats.syntax.option._
 import ebayapp.core.clients.ebay.browse.responses._
 import ebayapp.core.domain.ItemDetails
 import ebayapp.core.domain.search.{ListingDetails, BuyPrice}

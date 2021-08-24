@@ -1,6 +1,6 @@
 package ebayapp.core.clients.scan
 
-import cats.implicits._
+import cats.syntax.either._
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.errors.AppError
 import org.scalatest.matchers.must.Matchers

@@ -2,10 +2,12 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.apply._
 import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.domain.stock.StockUpdate
-import ebayapp.core.domain.{ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import ebayapp.core.common.{Cache, Error, Logger}
 
 import java.nio.charset.StandardCharsets

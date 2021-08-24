@@ -1,7 +1,7 @@
 package ebayapp.core.controllers
 
 import cats.MonadError
-import cats.implicits._
+import cats.syntax.flatMap._
 import ebayapp.core.common.Logger
 import ebayapp.core.controllers.views.ResellableItemResponse
 import ebayapp.core.domain.ItemKind

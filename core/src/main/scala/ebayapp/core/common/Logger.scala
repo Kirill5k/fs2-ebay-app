@@ -3,7 +3,7 @@ package ebayapp.core.common
 import cats.Monad
 import cats.effect.std.Queue
 import cats.effect.{Async, Deferred}
-import cats.implicits._
+import cats.syntax.apply._
 import ebayapp.core.common.errors.AppError
 import fs2.Stream
 import org.typelevel.log4cats.slf4j.Slf4jLogger

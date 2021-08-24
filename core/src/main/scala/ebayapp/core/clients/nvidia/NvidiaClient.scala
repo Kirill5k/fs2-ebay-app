@@ -2,7 +2,10 @@ package ebayapp.core.clients.nvidia
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.implicits._
+import cats.syntax.flatMap._
+import cats.syntax.functorFilter._
+import cats.syntax.apply._
+import cats.syntax.applicative._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper

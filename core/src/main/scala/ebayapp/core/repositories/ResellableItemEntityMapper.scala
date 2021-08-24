@@ -1,10 +1,10 @@
 package ebayapp.core.repositories
 
+import cats.syntax.apply._
 import ebayapp.core.domain.search.{BuyPrice, SellPrice}
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import ebayapp.core.repositories.entities.ItemPrice
-import cats.implicits._
 import mongo4cats.bson.ObjectId
 
 private[repositories] trait ResellableItemEntityMapper {

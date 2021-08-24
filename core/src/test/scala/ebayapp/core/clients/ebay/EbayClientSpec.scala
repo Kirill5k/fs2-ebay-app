@@ -1,7 +1,8 @@
 package ebayapp.core.clients.ebay
 
 import cats.effect.IO
-import cats.implicits._
+import cats.syntax.applicative._
+import cats.syntax.option._
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
