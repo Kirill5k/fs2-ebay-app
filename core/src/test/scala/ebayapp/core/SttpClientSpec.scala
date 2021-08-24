@@ -6,8 +6,6 @@ import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.testing.SttpBackendStub
 import sttp.model.{Header, HeaderNames, MediaType, Method}
 
-import scala.io.Source
-
 trait SttpClientSpec extends CatsSpec {
 
   def backendStub: SttpBackendStub[IO, Any] =
@@ -37,7 +35,7 @@ trait SttpClientSpec extends CatsSpec {
       req.headers.contains(Header(HeaderNames.Accept, MediaType.ApplicationJson.toString())) &&
       req.headers.contains(Header(HeaderNames.ContentType, contentType.toString()))
 
-  def json(path: String): String = Source.fromResource(path).getLines().toList.mkString
+  def json(path: String): String = FileReader.fromResources(path)
 }
 
 object requests {

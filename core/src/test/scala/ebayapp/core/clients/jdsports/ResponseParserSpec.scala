@@ -1,11 +1,11 @@
 package ebayapp.core.clients.jdsports
 
 import cats.syntax.either._
+import cats.syntax.option._
+import ebayapp.core.FileReader
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, JdProductDetails, ResponseParser}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-
-import scala.io.Source
 
 class ResponseParserSpec extends AnyWordSpec with Matchers {
 
@@ -50,5 +50,5 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
     }
   }
 
-  def html(path: String): String = Source.fromResource(path).getLines().toList.mkString
+  def html(path: String): String = FileReader.fromResources(path)
 }

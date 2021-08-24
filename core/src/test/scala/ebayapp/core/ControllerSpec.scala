@@ -11,8 +11,6 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.http4s.circe._
 
-import scala.io.Source
-
 trait ControllerSpec extends AnyWordSpec with MockitoSugar with ArgumentMatchersSugar with Matchers {
 
   implicit val rt: IORuntime      = IORuntime.global
@@ -34,7 +32,4 @@ trait ControllerSpec extends AnyWordSpec with MockitoSugar with ArgumentMatchers
         actualResp.body.compile.toVector.unsafeRunSync() mustBe empty
     }
   }
-
-  def readFileFromResources(path: String): String =
-    Source.fromResource(path).getLines().toList.mkString
 }

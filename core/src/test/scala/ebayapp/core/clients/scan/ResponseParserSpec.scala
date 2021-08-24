@@ -1,12 +1,11 @@
 package ebayapp.core.clients.scan
 
 import cats.syntax.either._
+import ebayapp.core.FileReader
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.errors.AppError
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-
-import scala.io.Source
 
 class ResponseParserSpec extends AnyWordSpec with Matchers {
 
@@ -15,7 +14,8 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
     "parseSearchResponse" should {
 
       "return list of items that are in stock" in {
-        val result = ResponseParser.parseSearchResponse(html("scan/search-by-card.html"))
+        val html = FileReader.fromResources("scan/search-by-card.html")
+        val result = ResponseParser.parseSearchResponse(html)
 
         result mustBe List(
           ScanItem(
@@ -34,6 +34,4 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       }
     }
   }
-
-  def html(path: String): String = Source.fromResource(path).getLines().toList.mkString
 }
