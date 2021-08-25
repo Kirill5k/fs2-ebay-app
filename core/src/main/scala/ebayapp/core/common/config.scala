@@ -70,7 +70,8 @@ object config {
 
   final case class StockMonitorConfig(
       monitoringFrequency: FiniteDuration,
-      monitoringRequests: List[StockMonitorRequest]
+      monitoringRequests: List[StockMonitorRequest],
+      delayBetweenRequests: FiniteDuration = Duration.Zero
   )
 
   final case class CacheConfig(

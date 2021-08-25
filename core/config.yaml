@@ -117,12 +117,15 @@ data:
       }
 
       tessuti {
+        delay-between-requests: 10s
         monitoring-frequency: 4m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {category: "men", query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "calvin-klein-jeans"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {category: "men", query: "polo-ralph-lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
           {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
@@ -130,6 +133,7 @@ data:
       }
 
       scotts {
+        delay-between-requests: 10s
         monitoring-frequency: 4m
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
@@ -138,6 +142,7 @@ data:
       }
 
       jdsports {
+        delay-between-requests: 10s
         monitoring-frequency: 4m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
@@ -146,6 +151,7 @@ data:
       }
 
       selfridges {
+        delay-between-requests: 10s
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "michael-michael-kors"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
