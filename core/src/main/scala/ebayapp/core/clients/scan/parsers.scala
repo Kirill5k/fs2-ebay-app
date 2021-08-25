@@ -24,9 +24,10 @@ object parsers {
     def parseSearchResponse(rawHtml: String): Either[AppError, List[ScanItem]] =
       Try {
         rawHtml
-          .split("class=\"masterCategory\"")
+          .split("<ul class=\"productColumns")
           .drop(1)
-          .head
+          .filterNot(_.startsWith(" related"))
+          .mkString
           .split("""li class="product"""")
           .tail
           .filter(_.contains("Item in stock"))

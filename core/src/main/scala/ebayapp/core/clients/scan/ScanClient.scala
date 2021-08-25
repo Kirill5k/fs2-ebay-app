@@ -42,7 +42,7 @@ final private class LiveScanClient[F[_]](
       val cat  = category.toLowerCase.replaceAll(" ", "-")
       val card = query.toLowerCase.replaceAll(" ", "-")
       basicRequest
-        .get(uri"${config.baseUri}/shop/gaming/$cat/$card")
+        .get(uri"${config.baseUri}/shop/gaming/$cat/$card#filter=1&inStock=1")
         .headers(headers)
     }.flatMap { r =>
       r.body match {

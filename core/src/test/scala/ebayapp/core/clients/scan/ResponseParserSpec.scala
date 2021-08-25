@@ -17,20 +17,13 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
         val html = FileReader.fromResources("scan/search-by-card.html")
         val result = ResponseParser.parseSearchResponse(html)
 
-        result mustBe List(
+        result.map(_.head) mustBe
           ScanItem(
-            "PowerColor Radeon RX 6900 XT Red Devil 16GB GDDR6 Ray-Tracing Graphics Card, RDNA2, 5120 Streams, 2015MHz, 2250MHz Boost",
-            "/products/powercolor-radeon-rx-6900-xt-red-devil-16gb-gddr6-ray-tracing-graphics-card-rdna2-5120-streams-2015m",
-            "https://www.scan.co.uk/images/products/to/3260121.jpg",
-            1679.0
-          ),
-          ScanItem(
-            "ASRock Radeon RX 6900 XT Phantom Gaming OC 16GB GDDR6 Ray-Tracing Card, RDNA2, 5120 Streams, 1925MHz GPU, 2340MHz Boost",
-            "/products/asrock-radeon-rx-6900-xt-phantom-gaming-oc-16gb-gddr6-ray-tracing-card-rdna2-5120-streams-1925mhz-gp",
-            "https://www.scan.co.uk/images/products/to/3279954.jpg",
-            1714.0
-          )
-        ).asRight[AppError]
+            "ZOTAC NVIDIA GeForce RTX 3090 24GB GAMING Trinity OC Ampere Graphics Card w/ AMD Ryzen 7 5800X CPU, 1710MHz Boost",
+            "/products/zotac-nvidia-geforce-rtx-3090-24gb-gaming-trinity-oc-ampere-graphics-card-w-amd-ryzen-7-5800x-cpu-17",
+            "https://www.scan.co.uk/images/products/to/3339312.jpg",
+            2218.0
+          ).asRight[AppError]
       }
     }
   }

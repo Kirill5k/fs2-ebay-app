@@ -14,12 +14,12 @@ class ScanClientSpec extends SttpClientSpec {
 
     val config = GenericStoreConfig("http://scan.co.uk")
 
-    val criteria = SearchCriteria("amd radeon rx 6900 xt pcie 40 graphics cards", Some("gpu-amd-gaming"))
+    val criteria = SearchCriteria("all", Some("gpu-nvidia-gaming"))
 
     "return available graphic cards" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGoingTo("scan.co.uk/shop/gaming/gpu-amd-gaming/amd-radeon-rx-6900-xt-pcie-40-graphics-cards") =>
+          case r if r.isGoingTo("scan.co.uk/shop/gaming/gpu-nvidia-gaming/all") =>
             Response.ok(json("scan/search-by-card.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }
@@ -27,7 +27,7 @@ class ScanClientSpec extends SttpClientSpec {
       val client = ScanClient.make[IO](config, testingBackend)
 
       client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
-        items must have size 2
+        items must have size 12
       }
     }
   }
