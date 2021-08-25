@@ -28,7 +28,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { case (req, index) =>
-        getUpdates(req, config.monitoringFrequency).delayBy((index * 10).seconds)
+        getUpdates(req, config.monitoringFrequency).delayBy(config.delayBetweenRequests * index.toLong)
       }
       .parJoinUnbounded
 
