@@ -19,10 +19,12 @@ trait Controller[F[_]] extends Http4sDsl[F] {
 final case class RedirectController[F[_]: Concurrent](
     private val uris: RedirectionUrisConfig,
     private val client: Client[F],
-    private val sigTerm: Deferred[F, Either[Throwable, Unit]]
+    private val sigTerm: Deferred[F, Unit]
 ) extends Controller[F] {
 
-  private val XRerouteToHeader = CIString("X-Reroute-To")
+  private val HostHeader         = CIString("host")
+  private val XRerouteToHeader   = CIString("X-Reroute-To")
+  private val XReloadOn403Header = CIString("X-Reload-On-403")
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
@@ -34,16 +36,21 @@ final case class RedirectController[F[_]: Concurrent](
         proxyCall(req.withUri(Uri.unsafeFromString(uris.jdsports + req.uri.toString().substring(9))))
       case req @ GET -> _ =>
         req.headers.get(XRerouteToHeader) match {
-          case Some(value) => proxyCall(req.withUri(Uri.unsafeFromString(value.head.value + req.uri.toString())), reloadOn403 = false)
-          case None        => BadRequest(s"missing $XRerouteToHeader header")
+          case Some(value) =>
+            proxyCall(req.withUri(Uri.unsafeFromString(value.head.value + req.uri.toString())), reloadOn403 = false)
+              .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.headers.get(XReloadOn403Header).isDefined))
+          case None =>
+            BadRequest(s"missing $XRerouteToHeader header")
         }
     }
 
   private def proxyCall(req: Request[F], reloadOn403: Boolean = true): F[Response[F]] =
-    client
-      .toHttpApp
-      .run(req.removeHeader(CIString("host")))
-      .flatTap(res => if (reloadOn403 && res.status == Status.Forbidden) sigTerm.complete(Right(())).void else ().pure[F])
+    client.toHttpApp
+      .run(req.removeHeader(HostHeader).removeHeader(XReloadOn403Header).removeHeader(XRerouteToHeader))
+      .flatTap(res => terminateIfTrue(reloadOn403 && res.status == Status.Forbidden))
+
+  private def terminateIfTrue(cond: Boolean): F[Unit] =
+    if (cond) sigTerm.complete(()).void else ().pure[F]
 }
 
 final private class HealthController[F[_]: Concurrent] extends Controller[F] {
@@ -58,7 +65,7 @@ object Controller {
   def redirect[F[_]: Concurrent](
       uris: RedirectionUrisConfig,
       client: Client[F],
-      sigTerm: Deferred[F, Either[Throwable, Unit]]
+      sigTerm: Deferred[F, Unit]
   ): F[Controller[F]] =
     Monad[F].pure(new RedirectController[F](uris, client, sigTerm))
 

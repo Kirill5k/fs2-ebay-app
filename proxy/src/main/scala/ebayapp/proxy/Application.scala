@@ -23,7 +23,7 @@ object Application extends IOApp.Simple {
       Resources.make[IO].use { resources =>
         for {
           _                  <- logger.info("created resources")
-          sigTerm            <- Deferred[IO, Either[Throwable, Unit]]
+          sigTerm            <- Deferred[IO, Unit]
           redirectController <- Controller.redirect[IO](config.uris, resources.blazeClient, sigTerm)
           healthController   <- Controller.health[IO]
           routes = redirectController.routes <+> healthController.routes
@@ -34,7 +34,7 @@ object Application extends IOApp.Simple {
             .withIdleTimeout(1.hour)
             .withHttpApp(routes.orNotFound)
             .serve
-            .interruptWhen(sigTerm)
+            .interruptWhen(sigTerm.get.attempt)
             .compile
             .drain
         } yield ()
