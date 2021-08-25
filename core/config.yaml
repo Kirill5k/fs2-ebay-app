@@ -19,10 +19,13 @@ data:
     }
 
     cex {
-      base-uri: "https://fs2-proxy.herokuapp.com/cex"
+      base-uri: "https://fs2-proxy.herokuapp.com"
       cache {
         expiration: 24h
         validation-period: 1h
+      }
+      headers {
+        "X-Reroute-To": "https://wss2.cex.uk.webuy.io"
       }
     }
 
@@ -42,10 +45,11 @@ data:
     }
 
     selfridges {
-      base-uri: "https://fs2-proxy.herokuapp.com/selfridges"
+      base-uri: "https://fs2-proxy.herokuapp.com"
       headers: {
         api-key: ${?SELFRIDGES_API_KEY}
         "X-Reload-On-403": "true"
+        "X-Reroute-To": "https://www.selfridges.com"
       }
     }
 
@@ -55,7 +59,7 @@ data:
     }
 
     jdsports {
-      base-uri: "https://fs2-proxy.herokuapp.com/jdsports"
+      base-uri: "https://fs2-proxy.herokuapp.com"
       headers {
         "Referer": "https://www.jdsports.co.uk/men",
         "X-Reroute-To": "https://www.jdsports.co.uk"
@@ -88,6 +92,7 @@ data:
 
     scan {
       base-uri: "https://www.scan.co.uk"
+      proxied: true
     }
 
     telegram {
@@ -167,6 +172,18 @@ data:
           {search-criteria: {query: "calvin klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
           {search-criteria: {query: "gucci"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+        ]
+      }
+
+      scan {
+        monitoring-frequency: 5m
+        monitoring-requests: [
+          {category: "gpu-nvidia-gaming", query: "all", monitor-stock-change: false, monitor-price-change: true}
+          //{category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3070-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
+          //{category: "gpu-nvidia-gaming", query: "nvidia-geforce-rtx-3060-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
+          //{category: "gpu-amd-gaming", query: "amd-radeon-rx-5700-xt-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
+          //{category: "gpu-amd-gaming", query: "amd-radeon-rx-6700-xt-pcie-40-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
+          //{category: "gpu-amd-gaming", query: "amd-radeon-rx-6900-xt-pcie-40-graphics-cards", monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }

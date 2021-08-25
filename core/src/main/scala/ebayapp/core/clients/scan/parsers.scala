@@ -24,12 +24,12 @@ object parsers {
     def parseSearchResponse(rawHtml: String): Either[AppError, List[ScanItem]] =
       Try {
         rawHtml
-          .split("productColumns")
+          .split("class=\"masterCategory\"")
           .drop(1)
           .head
           .split("""li class="product"""")
           .tail
-          .filterNot(_.contains("buyButtonNoPrice"))
+          .filter(_.contains("Item in stock"))
           .map { rawItem =>
             ScanItem(
               nameRegex.findFirstIn(rawItem).get,
