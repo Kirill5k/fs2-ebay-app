@@ -5,7 +5,7 @@ import cats.syntax.flatMap._
 import cats.syntax.applicativeError._
 import cats.syntax.apply._
 import cats.syntax.applicative._
-import ebayapp.core.clients.HttpClient
+import ebayapp.core.clients.{HttpClient, MessengerClient, Notification}
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.Logger
@@ -14,30 +14,22 @@ import sttp.model.StatusCode
 
 import scala.concurrent.duration._
 
-trait TelegramClient[F[_]] extends HttpClient[F] {
-  def sendMessageToMainChannel(message: String): F[Unit]
-  def sendMessageToSecondaryChannel(message: String): F[Unit]
-  def sendMessageToAlertsChannel(message: String): F[Unit]
-}
-
 final private class LiveTelegramClient[F[_]](
     private val config: TelegramConfig,
     override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
-) extends TelegramClient[F] {
+) extends MessengerClient[F] with HttpClient[F] {
 
-  protected override val name: String = "telegram"
+  override protected val name: String = "telegram"
 
-  def sendMessageToMainChannel(message: String): F[Unit] =
-    sendMessage(config.mainChannelId, message)
-
-  def sendMessageToSecondaryChannel(message: String): F[Unit] =
-    sendMessage(config.secondaryChannelId, message)
-
-  override def sendMessageToAlertsChannel(message: String): F[Unit] =
-    sendMessage(config.alertsChannelId, message)
+  def send(notification: Notification): F[Unit] =
+    notification match {
+      case Notification.Alert(message) => sendMessage(config.alertsChannelId, message)
+      case Notification.Deal(message)  => sendMessage(config.mainChannelId, message)
+      case Notification.Stock(message) => sendMessage(config.secondaryChannelId, message)
+    }
 
   private def sendMessage(channelId: String, message: String): F[Unit] =
     dispatch() {
@@ -62,6 +54,6 @@ object TelegramClient {
   def make[F[_]: Logger](
       config: TelegramConfig,
       backend: SttpBackend[F, Any]
-  )(implicit F: Temporal[F]): F[TelegramClient[F]] =
+  )(implicit F: Temporal[F]): F[MessengerClient[F]] =
     F.pure(new LiveTelegramClient[F](config, backend))
 }

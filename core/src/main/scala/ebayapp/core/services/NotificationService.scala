@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.apply._
-import ebayapp.core.clients.telegram.TelegramClient
+import ebayapp.core.clients.{MessengerClient, Notification}
 import ebayapp.core.domain.stock.StockUpdate
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.common.{Cache, Error, Logger}
@@ -21,7 +21,7 @@ trait NotificationService[F[_]] {
 }
 
 final class TelegramNotificationService[F[_]](
-    private val telegramClient: TelegramClient[F],
+    private val messengerClient: MessengerClient[F],
     private val sentMessages: Cache[F, String, Unit]
 )(implicit
     F: Monad[F],
@@ -31,20 +31,20 @@ final class TelegramNotificationService[F[_]](
 
   override def cheapItem(item: ResellableItem): F[Unit] =
     F.pure(item.cheapItemNotification).flatMap {
-      case Some(message) =>
-        logger.info(s"""sending "$message"""") *>
-          telegramClient.sendMessageToMainChannel(message)
+      case Some(notification) =>
+        logger.info(s"""sending "$notification"""") *>
+          messengerClient.send(notification)
       case None =>
         logger.warn(s"not enough details for sending cheap item notification $item")
     }
 
   override def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit] =
     F.pure(item.stockUpdateNotification(update)).flatMap {
-      case Some(message) =>
-        sentMessages.evalIfNew(base64(message)) {
-          logger.info(s"""sending "$message" from ${item.listingDetails.seller}""") *>
-            telegramClient.sendMessageToSecondaryChannel(message) *>
-            sentMessages.put(base64(message), ())
+      case Some(notification) =>
+        sentMessages.evalIfNew(base64(notification.message)) {
+          logger.info(s"""sending "$notification" from ${item.listingDetails.seller}""") *>
+            messengerClient.send(notification) *>
+            sentMessages.put(base64(notification.message), ())
         }
       case None =>
         logger.warn(s"not enough details for stock update notification $update")
@@ -52,7 +52,7 @@ final class TelegramNotificationService[F[_]](
 
   override def alert(error: Error): F[Unit] = {
     val alert = s"${error.time.toString} ERROR - ${error.message}"
-    telegramClient.sendMessageToAlertsChannel(alert)
+    messengerClient.send(Notification.Alert(alert))
   }
 
   private def base64(message: String): String =
@@ -61,7 +61,7 @@ final class TelegramNotificationService[F[_]](
 
 object NotificationService {
   implicit class ResellableItemOps(private val item: ResellableItem) extends AnyVal {
-    def cheapItemNotification: Option[String] =
+    def cheapItemNotification: Option[Notification] =
       for {
         itemSummary <- item.itemDetails.fullName
         sell        <- item.sellPrice
@@ -69,20 +69,23 @@ object NotificationService {
         buy              = item.buyPrice.rrp
         profitPercentage = sell.credit * 100 / buy - 100
         url              = item.listingDetails.url
-      } yield s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: ${quantity}) $url"""
+        msg =
+          s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: $quantity) $url"""
+      } yield Notification.Deal(msg)
 
-    def stockUpdateNotification(update: StockUpdate): Option[String] =
+    def stockUpdateNotification(update: StockUpdate): Option[Notification] =
       item.itemDetails.fullName.map { name =>
         val price    = item.buyPrice.rrp
         val quantity = item.buyPrice.quantityAvailable
         val discount = item.buyPrice.discount.fold("")(d => s", $d% off")
         val url      = item.listingDetails.url
         val image    = item.listingDetails.image.fold("")(i => s"\n$i")
-        s"${update.header} for $name (£$price$discount, $quantity): ${update.message} $url $image".trim
+        val msg      = s"${update.header} for $name (£$price$discount, $quantity): ${update.message} $url $image".trim
+        Notification.Stock(msg)
       }
   }
 
-  def telegram[F[_]: Temporal: Logger](client: TelegramClient[F]): F[NotificationService[F]] =
+  def make[F[_]: Temporal: Logger](client: MessengerClient[F]): F[NotificationService[F]] =
     Cache
       .make[F, String, Unit](1.hour, 5.minutes)
       .map(cache => new TelegramNotificationService[F](client, cache))

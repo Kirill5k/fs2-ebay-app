@@ -15,7 +15,7 @@ import ebayapp.core.common.config.AppConfig
 
 trait Clients[F[_]] {
   def cex: CexClient[F]
-  def telegram: TelegramClient[F]
+  def messenger: MessengerClient[F]
 
   def get(shop: Retailer): SearchClient[F]
 }
@@ -39,8 +39,8 @@ object Clients {
       ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied))
     ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC) =>
       new Clients[F] {
-        def cex: CexClient[F]           = cexC
-        def telegram: TelegramClient[F] = telC
+        def cex: CexClient[F]            = cexC
+        def messenger: MessengerClient[F] = telC
         def get(shop: Retailer): SearchClient[F] =
           shop match {
             case Retailer.Cex        => cexC

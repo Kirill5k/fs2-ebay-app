@@ -2,6 +2,7 @@ package ebayapp.core.clients.telegram
 
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
+import ebayapp.core.clients.Notification
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.errors.AppError
 import sttp.client3.{Response, SttpBackend}
@@ -27,7 +28,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val telegramClient = TelegramClient.make(config, testingBackend)
 
-      val result = telegramClient.flatMap(_.sendMessageToMainChannel(message))
+      val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
 
       result.unsafeToFuture().map(_ mustBe ())
     }
@@ -42,7 +43,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val telegramClient = TelegramClient.make(config, testingBackend)
 
-      val result = telegramClient.flatMap(_.sendMessageToSecondaryChannel(message))
+      val result = telegramClient.flatMap(_.send(Notification.Stock(message)))
 
       result.unsafeToFuture().map(_ mustBe ())
     }
@@ -57,22 +58,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val telegramClient = TelegramClient.make(config, testingBackend)
 
-      val result = telegramClient.flatMap(_.sendMessageToAlertsChannel(message))
-
-      result.unsafeToFuture().map(_ mustBe ())
-    }
-
-    "send message to the channel" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
-        .whenRequestMatchesPartial {
-          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> message)) =>
-            Response.ok("success")
-          case _ => throw new RuntimeException()
-        }
-
-      val telegramClient = TelegramClient.make[IO](config, testingBackend)
-
-      val result = telegramClient.flatMap(_.sendMessageToMainChannel(message))
+      val result = telegramClient.flatMap(_.send(Notification.Alert(message)))
 
       result.unsafeToFuture().map(_ mustBe ())
     }
@@ -86,7 +72,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val telegramClient = TelegramClient.make(config, testingBackend)
 
-      val result = telegramClient.flatMap(_.sendMessageToSecondaryChannel(message))
+      val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
 
       result.unsafeToFuture().map(_ mustBe ())
     }
@@ -101,7 +87,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val telegramClient = TelegramClient.make(config, testingBackend)
 
-      val result = telegramClient.flatMap(_.sendMessageToMainChannel(message))
+      val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
 
       result.attempt.unsafeToFuture().map(_ mustBe (Left(AppError.Http(400, "error sending message to telegram channel m1: 400"))))
     }

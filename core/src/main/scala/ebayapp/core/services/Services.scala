@@ -23,7 +23,7 @@ object Services {
       repo: Repositories[F]
   ): F[Services[F]] =
     (
-      NotificationService.telegram[F](clients.telegram),
+      NotificationService.make[F](clients.messenger),
       ResellableItemService.make[F](repo.resellableItems),
       config.stockMonitor.toList.traverse { case (r, c) => StockService.make(r, c, clients.get(r)) },
       config.dealsFinder.toList.traverse { case (r, c) => DealsService.make(r, c, clients.get(r), clients.cex, repo.resellableItems) }
