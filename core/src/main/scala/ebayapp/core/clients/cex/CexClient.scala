@@ -9,7 +9,7 @@ import cats.syntax.applicative._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses._
-import ebayapp.core.common.config.CexConfig
+import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.domain.search._
@@ -27,7 +27,7 @@ trait CexClient[F[_]] extends SearchClient[F] with HttpClient[F] {
 }
 
 final class CexApiClient[F[_]](
-    private val config: CexConfig,
+    private val config: GenericRetailerConfig,
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
     override val backend: SttpBackend[F, Any]
 )(implicit
@@ -36,6 +36,8 @@ final class CexApiClient[F[_]](
 ) extends CexClient[F] {
 
   override protected val name: String = "cex"
+
+  private val headers = defaultHeaders ++ config.headers
 
   private val categoriesMap: Map[String, List[Int]] = Map(
     "games-ps3"               -> List(808),
@@ -84,7 +86,7 @@ final class CexApiClient[F[_]](
     dispatch() {
       basicRequest
         .get(uri)
-        .headers(defaultHeaders)
+        .headers(headers)
         .response(asJson[CexSearchResponse])
     }.flatMap { r =>
       r.body match {
@@ -110,10 +112,11 @@ final class CexApiClient[F[_]](
 object CexClient {
 
   def make[F[_]: Temporal: Logger](
-      config: CexConfig,
+      config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[CexClient[F]] =
-    Cache
-      .make[F, String, Option[SellPrice]](config.cache.expiration, config.cache.validationPeriod)
+    Temporal[F]
+      .fromOption(config.cache, AppError.Critical("missing cache settings for cex client"))
+      .flatMap(c => Cache.make[F, String, Option[SellPrice]](c.expiration, c.validationPeriod))
       .map(cache => new CexApiClient[F](config, cache, backend))
 }

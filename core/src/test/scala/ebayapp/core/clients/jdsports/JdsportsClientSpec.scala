@@ -4,7 +4,7 @@ import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.requests._
-import ebayapp.core.common.config.GenericStoreConfig
+import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3.{Response, SttpBackend}
@@ -13,7 +13,7 @@ import sttp.model.StatusCode
 class JdsportsClientSpec extends SttpClientSpec {
 
   "A JdsportsClient" should {
-    val config = GenericStoreConfig("http://jdsports.com/proxy")
+    val config = GenericRetailerConfig("http://jdsports.com/proxy")
 
     "return items on sale" in {
       val criteria = SearchCriteria("Emporio Armani EA7", category = Some("men"))
@@ -49,7 +49,7 @@ class JdsportsClientSpec extends SttpClientSpec {
   }
 
   "A TessutiClient" should {
-    val config   = GenericStoreConfig("http://tessuti.com")
+    val config   = GenericRetailerConfig("http://tessuti.com")
     val criteria = SearchCriteria("Emporio Armani", category = Some("men"))
 
     "return items on sale" in {

@@ -26,6 +26,7 @@ data:
       }
       headers {
         "X-Reroute-To": "https://wss2.cex.uk.webuy.io"
+        "X-Reload-On-403": "true"
       }
     }
 
@@ -47,7 +48,7 @@ data:
     selfridges {
       base-uri: "https://fs2-proxy.herokuapp.com"
       headers: {
-        api-key: ${?SELFRIDGES_API_KEY}
+        "api-key": ${?SELFRIDGES_API_KEY}
         "X-Reload-On-403": "true"
         "X-Reroute-To": "https://www.selfridges.com"
       }

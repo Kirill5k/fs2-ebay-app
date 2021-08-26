@@ -41,10 +41,9 @@ final class TelegramNotificationService[F[_]](
   override def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit] =
     F.pure(item.stockUpdateNotification(update)).flatMap {
       case Some(notification) =>
-        sentMessages.evalIfNew(base64(notification.message)) {
+        sentMessages.evalPutIfNew(base64(notification.message)) {
           logger.info(s"""sending "$notification" from ${item.listingDetails.seller}""") *>
-            messengerClient.send(notification) *>
-            sentMessages.put(base64(notification.message), ())
+            messengerClient.send(notification)
         }
       case None =>
         logger.warn(s"not enough details for stock update notification $update")

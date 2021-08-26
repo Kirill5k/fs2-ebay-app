@@ -3,7 +3,7 @@ package ebayapp.core.clients.nvidia
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
-import ebayapp.core.common.config.GenericStoreConfig
+import ebayapp.core.common.config.GenericRetailerConfig
 import sttp.client3._
 import ebayapp.core.requests._
 
@@ -11,7 +11,7 @@ class NvidiaClientSpec extends SttpClientSpec {
 
   "A NvidiaClient" should {
 
-    val config = GenericStoreConfig("http://nvidia.com")
+    val config = GenericRetailerConfig("http://nvidia.com")
 
     val criteria = SearchCriteria("geforce", Some("GPU"))
 

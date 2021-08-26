@@ -10,7 +10,7 @@ import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.GenericStoreConfig
+import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.{SttpBackend, basicRequest, _}
@@ -19,9 +19,9 @@ import sttp.model.StatusCode
 import scala.concurrent.duration._
 
 final private class LiveJdsportsClient[F[_]](
-    private val config: GenericStoreConfig,
-    override val name: String,
-    override val backend: SttpBackend[F, Any]
+                                              private val config: GenericRetailerConfig,
+                                              override val name: String,
+                                              override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
@@ -112,20 +112,20 @@ final private class LiveJdsportsClient[F[_]](
 
 object JdsportsClient {
   def jd[F[_]: Temporal: Logger](
-      config: GenericStoreConfig,
-      backend: SttpBackend[F, Any]
+                                  config: GenericRetailerConfig,
+                                  backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "jdsports", backend))
 
   def tessuti[F[_]: Temporal: Logger](
-      config: GenericStoreConfig,
-      backend: SttpBackend[F, Any]
+                                       config: GenericRetailerConfig,
+                                       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "tessuti", backend))
 
   def scotts[F[_]: Temporal: Logger](
-      config: GenericStoreConfig,
-      backend: SttpBackend[F, Any]
+                                      config: GenericRetailerConfig,
+                                      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "scotts", backend))
 }

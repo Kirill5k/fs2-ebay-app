@@ -8,7 +8,7 @@ import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.GenericStoreConfig
+import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3._
@@ -17,8 +17,8 @@ import sttp.model.StatusCode
 import scala.concurrent.duration._
 
 final private class LiveScanClient[F[_]](
-    private val config: GenericStoreConfig,
-    override val backend: SttpBackend[F, Any]
+                                          private val config: GenericRetailerConfig,
+                                          override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
@@ -66,8 +66,8 @@ final private class LiveScanClient[F[_]](
 
 object ScanClient {
   def make[F[_]: Temporal: Logger](
-      config: GenericStoreConfig,
-      backend: SttpBackend[F, Any]
+                                    config: GenericRetailerConfig,
+                                    backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveScanClient[F](config, backend))
 }

@@ -3,7 +3,7 @@ package ebayapp.core.clients.scan
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
-import ebayapp.core.common.config.{GenericStoreConfig}
+import ebayapp.core.common.config.{GenericRetailerConfig}
 import sttp.client3.{Response, SttpBackend}
 import ebayapp.core.requests._
 
@@ -12,7 +12,7 @@ class ScanClientSpec extends SttpClientSpec {
 
   "A ScanClient" should {
 
-    val config = GenericStoreConfig("http://scan.co.uk")
+    val config = GenericRetailerConfig("http://scan.co.uk")
 
     val criteria = SearchCriteria("all", Some("gpu-nvidia-gaming"))
 

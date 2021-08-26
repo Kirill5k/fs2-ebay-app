@@ -11,7 +11,7 @@ import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.argos.mappers.argosGenericItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.GenericStoreConfig
+import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import io.circe.generic.auto._
 import sttp.client3._
@@ -21,8 +21,8 @@ import fs2.Stream
 import scala.concurrent.duration._
 
 final private class LiveArgosClient[F[_]](
-    private val config: GenericStoreConfig,
-    override val backend: SttpBackend[F, Any]
+                                           private val config: GenericRetailerConfig,
+                                           override val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
@@ -70,8 +70,8 @@ final private class LiveArgosClient[F[_]](
 
 object ArgosClient {
   def make[F[_]: Temporal: Logger](
-      config: GenericStoreConfig,
-      backend: SttpBackend[F, Any]
+                                    config: GenericRetailerConfig,
+                                    backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveArgosClient[F](config, backend))
 }

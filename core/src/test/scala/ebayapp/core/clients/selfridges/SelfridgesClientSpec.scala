@@ -3,7 +3,7 @@ package ebayapp.core.clients.selfridges
 import cats.effect.IO
 import ebayapp.core.SttpClientSpec
 import ebayapp.core.clients.SearchCriteria
-import ebayapp.core.common.config.GenericStoreConfig
+import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
 import sttp.client3
@@ -14,7 +14,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
   "A SelfridgesClient" should {
 
-    val config = GenericStoreConfig("http://selfridges.com", Map("api-key" -> "foo-bar"))
+    val config = GenericRetailerConfig("http://selfridges.com", Map("api-key" -> "foo-bar"))
 
     val criteria = SearchCriteria("EA7 Armani")
 

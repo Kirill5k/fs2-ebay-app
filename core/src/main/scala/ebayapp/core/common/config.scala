@@ -79,15 +79,11 @@ object config {
       validationPeriod: FiniteDuration
   )
 
-  final case class CexConfig(
-      baseUri: String,
-      cache: CacheConfig
-  )
-
-  final case class GenericStoreConfig(
+  final case class GenericRetailerConfig(
       baseUri: String,
       headers: Map[String, String] = Map.empty[String, String],
-      proxied: Boolean = false
+      proxied: Boolean = false,
+      cache: Option[CacheConfig] = None
   )
 
   final case class TelegramConfig(
@@ -102,16 +98,16 @@ object config {
       server: ServerConfig,
       clientProxy: ClientProxyConfig,
       mongo: MongoConfig,
-      cex: CexConfig,
       ebay: EbayConfig,
-      selfridges: GenericStoreConfig,
-      argos: GenericStoreConfig,
-      jdsports: GenericStoreConfig,
-      tessuti: GenericStoreConfig,
-      scotts: GenericStoreConfig,
-      nvidia: GenericStoreConfig,
-      scan: GenericStoreConfig,
       telegram: TelegramConfig,
+      selfridges: GenericRetailerConfig,
+      argos: GenericRetailerConfig,
+      jdsports: GenericRetailerConfig,
+      tessuti: GenericRetailerConfig,
+      scotts: GenericRetailerConfig,
+      nvidia: GenericRetailerConfig,
+      scan: GenericRetailerConfig,
+      cex: GenericRetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]
   )
