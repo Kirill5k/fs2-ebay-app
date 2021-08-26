@@ -1,8 +1,8 @@
 package ebayapp.core.clients.nvidia
 
-object responses {
+private[nvidia] object responses {
 
-  final case class NvidiaItem(
+  private[nvidia] final case class NvidiaItem(
       productTitle: String,
       imageURL: String,
       category: String,
@@ -11,7 +11,7 @@ object responses {
     val name: String = s"$productTitle (${retailer.partnerId}/${retailer.storeId})"
   }
 
-  final case class ProductRetailer(
+  private[nvidia] final case class ProductRetailer(
       productId: Long,
       productTitle: String,
       salePrice: BigDecimal,
@@ -23,7 +23,7 @@ object responses {
       storeId: String
   )
 
-  final case class Product(
+  private[nvidia] final case class Product(
       productTitle: String,
       productID: Long,
       imageURL: String,
@@ -35,7 +35,7 @@ object responses {
     val isOutOfStock: Boolean = prdStatus == "out_of_stock"
   }
 
-  final case class SearchedProducts(productDetails: List[Product])
+  private[nvidia] final case class SearchedProducts(productDetails: List[Product])
 
-  final case class NvidiaSearchResponse(searchedProducts: SearchedProducts)
+  private[nvidia] final case class NvidiaSearchResponse(searchedProducts: SearchedProducts)
 }

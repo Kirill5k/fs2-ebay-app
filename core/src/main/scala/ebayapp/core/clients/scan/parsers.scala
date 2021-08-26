@@ -5,16 +5,16 @@ import ebayapp.core.common.errors.AppError
 
 import scala.util.Try
 
-object parsers {
+private[scan] object parsers {
 
-  final case class ScanItem(
+  private[scan] final case class ScanItem(
       name: String,
       productUrlPath: String,
       imageUrl: String,
       price: Double
   )
 
-  object ResponseParser {
+  private[scan] object ResponseParser {
 
     val nameRegex  = "(?<=data-description=\")([^\"]+)".r
     val urlRegex   = "(?<=href=\")([^\"]+)".r

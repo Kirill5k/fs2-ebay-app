@@ -11,7 +11,7 @@ private[nvidia] object mappers {
 
   type NvidiaItemMapper = ItemMapper[NvidiaItem]
 
-  val nvidiaGenericItemMapper: NvidiaItemMapper = new NvidiaItemMapper {
+  private[nvidia] val nvidiaGenericItemMapper: NvidiaItemMapper = new NvidiaItemMapper {
     override def toDomain(item: NvidiaItem): ResellableItem =
       ResellableItem.generic(
         ItemDetails.Generic(item.name),

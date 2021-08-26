@@ -3,7 +3,7 @@ package ebayapp.core.clients.argos
 import cats.syntax.alternative._
 import cats.syntax.functor._
 
-object responses {
+private[argos] object responses {
 
   final case class DataAttributes(
       relevancyRank: Int,
