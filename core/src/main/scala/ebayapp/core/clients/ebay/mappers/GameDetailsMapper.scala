@@ -16,7 +16,7 @@ private[mappers] object GameDetailsMapper {
     "(gold )?((greatest|playstation|ps) )?\\bhits\\b( (series|range|edition))?",
     "nintendo selects",
     s"(?<=.{10})$CONSOLE_REGEX_PATTERN(?s).*",
-    "\\bday\\b (one|1|zero|0)( (edition|\\be(d)?(i)?(t)?(i)?\\b))?(?s).*$",
+    "(console )?\\bday\\b (one|1|zero|0)( (edition|\\be(d)?(i)?(t)?(i)?\\b))?(?s).*$",
     //remove edition and preceding word
     "(\\bHD\\b|steel case|n(e)?xt l(e)?v(e)?l|headline|\\bel\\b \\w+|standar|nuketown|wild run|Lenticular Sleeve|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th|ten year)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|((super|digital) )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
     "(?<=.{5})((new|pristine|\\binc\\b) )?(super|cheap( )?)?(free|fast|quick)?( )?(super( )?)?(prompt|free|fast|quick|(next|same|1|one) day|tracked|recorded|speedy|worldwide|bargain|\\bsc\\b|\\bfc\\b).{0,20}(dispatch|ship(ping)?|post(age)?|delivery|p( )?p).*$",
@@ -107,7 +107,7 @@ private[mappers] object GameDetailsMapper {
     "^genuine ",
     "^bnwt ", "^(brand|condition) new ",
     "^\\w+ condition ",
-    "^(((brand )?NEW|BNIB|Factory) )?SEALED( in Packaging)?( )?",
+    "^(((brand )?NEW|BNIB|Factory) )?(UN)?SEALED( in Packaging)?( )?",
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
     "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^NEW", "^best", "^software", "^un( )?opened",
     "un( )?opened$", "((super|very) )?rare$", "^((super|very) )?rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
