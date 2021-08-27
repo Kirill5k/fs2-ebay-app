@@ -24,7 +24,7 @@ object Application extends IOApp.Simple {
         for {
           _                  <- logger.info("created resources")
           sigTerm            <- Deferred[IO, Unit]
-          redirectController <- Controller.redirect[IO](config.uris, resources.blazeClient, sigTerm)
+          redirectController <- Controller.redirect[IO](resources.blazeClient, sigTerm)
           healthController   <- Controller.health[IO]
           routes = redirectController.routes <+> healthController.routes
           _ <- logger.info("starting http server")

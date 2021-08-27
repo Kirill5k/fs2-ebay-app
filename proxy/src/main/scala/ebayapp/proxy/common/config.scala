@@ -5,20 +5,13 @@ import pureconfig.generic.auto._
 
 object config {
 
-  final case class RedirectionUrisConfig(
-      cex: String,
-      selfridges: String,
-      jdsports: String
-  )
-
   final case class ServerConfig(
       host: String,
       port: Int
   )
 
   final case class AppConfig(
-      server: ServerConfig,
-      uris: RedirectionUrisConfig
+      server: ServerConfig
   )
 
   object AppConfig {
