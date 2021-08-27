@@ -19,7 +19,7 @@ data:
     }
 
     cex {
-      base-uri: "https://fs2-proxy.herokuapp.com/cex"
+      base-uri: "https://fs2-proxy.herokuapp.com"
       cache {
         expiration: 24h
         validation-period: 1h
