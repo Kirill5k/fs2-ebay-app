@@ -7,7 +7,9 @@ import fs2.Stream
 final case class SearchCriteria(
     query: String,
     category: Option[String] = None,
-    itemKind: Option[ItemKind] = None
+    itemKind: Option[ItemKind] = None,
+    minPrice: Option[BigDecimal] = None,
+    maxPrice: Option[BigDecimal] = None
 )
 
 sealed abstract class Retailer(val name: String)

@@ -14,8 +14,7 @@ object Application extends IOApp.Simple {
   override val run: IO[Unit] =
     Logger.make[IO].flatMap { implicit logger =>
       for {
-        _      <- logger.info("starting ebay-app")
-        config <- AppConfig.load[IO]
+        config <- logger.info("loading a config") *> AppConfig.load[IO]
         _ <- Resources.make[IO](config).use { resources =>
           for {
             _            <- logger.info("created resources")
