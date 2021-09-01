@@ -32,9 +32,9 @@ trait HttpClient[F[_]] {
       .send(request)
       .handleErrorWith { error =>
         val cause      = Option(error.getCause)
-        val errorClass = cause.fold(error.getClass)(_.getClass)
+        val errorClass = cause.fold(error.getClass.getSimpleName)(_.getClass.getSimpleName)
         val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
-        val message    = s"$name-client/${errorClass.getSimpleName.toLowerCase}-$attempt: ${errorMsg}\n$error"
+        val message    = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
         (if (attempt > 5) logger.error(message) else logger.warn(message)) *>
           F.sleep(delayBetweenFailures) *> dispatch(attempt + 1)(request)
       }
