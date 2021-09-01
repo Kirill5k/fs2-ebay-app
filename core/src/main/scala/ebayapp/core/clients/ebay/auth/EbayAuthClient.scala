@@ -9,6 +9,7 @@ import cats.syntax.applicative._
 import ebayapp.core.common.Logger
 import io.circe.generic.auto._
 import EbayAuthClient.EbayAuthToken
+import ebayapp.core.clients.HttpClient
 import responses.{EbayAuthErrorResponse, EbayAuthSuccessResponse}
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials}
 import sttp.client3._
@@ -18,7 +19,7 @@ import sttp.model.{HeaderNames, MediaType, StatusCode}
 import java.time.Instant
 import scala.concurrent.duration._
 
-private[ebay] trait EbayAuthClient[F[_]] {
+private[ebay] trait EbayAuthClient[F[_]] extends HttpClient[F] {
   def accessToken: F[String]
   def switchAccount(): F[Unit]
 }
@@ -27,11 +28,14 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
     private val config: EbayConfig,
     private val authToken: Ref[F, Option[EbayAuthToken]],
     private val credentials: Ref[F, List[EbayCredentials]],
-    private val backend: SttpBackend[F, Any]
+    override protected val backend: SttpBackend[F, Any]
 )(implicit
     val logger: Logger[F],
     val T: Temporal[F]
 ) extends EbayAuthClient[F] {
+
+  override protected val name: String                         = "ebay-auth"
+  override protected val delayBetweenFailures: FiniteDuration = 1.second
 
   def accessToken: F[String] =
     authToken.get
@@ -48,34 +52,34 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
 
   private def authenticate(): F[EbayAuthToken] =
     credentials.get.map(_.head).flatMap { creds =>
-      basicRequest
-        .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
-        .contentType(MediaType.ApplicationXWwwFormUrlencoded)
-        .auth
-        .basic(creds.clientId.trim, creds.clientSecret.trim)
-        .post(uri"${config.baseUri}/identity/v1/oauth2/token")
-        .body(Map("scope" -> "https://api.ebay.com/oauth/api_scope", "grant_type" -> "client_credentials"))
-        .response(asJsonEither[EbayAuthErrorResponse, EbayAuthSuccessResponse])
-        .send(backend)
-        .flatMap { r =>
-          r.body match {
-            case Right(token) =>
-              EbayAuthToken(token.access_token, token.expires_in).pure[F]
-            case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-              logger.warn(s"reached api calls limit (cid - ${creds.clientId})") *>
-                switchAccount() *> authenticate()
-            case Left(HttpError(error, StatusCode.Unauthorized)) =>
-              logger.warn(s"unauthorized: ${error.error_description} (cid - ${creds.clientId})") *>
-                switchAccount() *> authenticate()
-            case Left(HttpError(error, status)) =>
-              logger.error(s"http error authenticating with ebay ${status.code}: ${error.error_description} (cid - ${creds.clientId})") *>
-                T.sleep(1.second) *> authenticate()
-            case Left(error) =>
-              logger.error(s"unexpected error authenticating with ebay: ${error.getMessage}") *>
-                T.sleep(1.second) *> authenticate()
+      dispatch() {
+        basicRequest
+          .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
+          .contentType(MediaType.ApplicationXWwwFormUrlencoded)
+          .auth
+          .basic(creds.clientId.trim, creds.clientSecret.trim)
+          .post(uri"${config.baseUri}/identity/v1/oauth2/token")
+          .body(Map("scope" -> "https://api.ebay.com/oauth/api_scope", "grant_type" -> "client_credentials"))
+          .response(asJsonEither[EbayAuthErrorResponse, EbayAuthSuccessResponse])
+      }.flatMap { r =>
+        r.body match {
+          case Right(token) =>
+            EbayAuthToken(token.access_token, token.expires_in).pure[F]
+          case Left(HttpError(_, StatusCode.TooManyRequests)) =>
+            logger.warn(s"reached api calls limit (cid - ${creds.clientId})") *>
+              switchAccount() *> authenticate()
+          case Left(HttpError(error, StatusCode.Unauthorized)) =>
+            logger.warn(s"unauthorized: ${error.error_description} (cid - ${creds.clientId})") *>
+              switchAccount() *> authenticate()
+          case Left(HttpError(error, status)) =>
+            logger.error(s"http error authenticating with ebay ${status.code}: ${error.error_description} (cid - ${creds.clientId})") *>
+              T.sleep(1.second) *> authenticate()
+          case Left(error) =>
+            logger.error(s"unexpected error authenticating with ebay: ${error.getMessage}") *>
+              T.sleep(1.second) *> authenticate()
 
-          }
         }
+      }
     }
 }
 

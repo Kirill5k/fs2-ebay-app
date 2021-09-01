@@ -12,6 +12,8 @@ trait HttpClient[F[_]] {
   protected val name: String
   protected val backend: SttpBackend[F, Any]
 
+  protected val delayBetweenFailures: FiniteDuration = 10.seconds
+
   protected val defaultHeaders = Map(
     "Access-Control-Allow-Origin" -> "*",
     "Content-Type"                -> "application/json",
@@ -29,8 +31,11 @@ trait HttpClient[F[_]] {
     backend
       .send(request)
       .handleErrorWith { error =>
-        val message = s"$name-client/${error.getCause.getClass.getSimpleName.toLowerCase}-$attempt: ${error.getCause.getMessage}\n$error"
+        val cause      = Option(error.getCause)
+        val errorClass = cause.fold(error.getClass)(_.getClass)
+        val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
+        val message    = s"$name-client/${errorClass.getSimpleName.toLowerCase}-$attempt: ${errorMsg}\n$error"
         (if (attempt > 5) logger.error(message) else logger.warn(message)) *>
-          F.sleep(10.seconds) *> dispatch(attempt + 1)(request)
+          F.sleep(delayBetweenFailures) *> dispatch(attempt + 1)(request)
       }
 }
