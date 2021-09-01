@@ -35,7 +35,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 
   private val expiredStatuses = Set(StatusCode.TooManyRequests, StatusCode.Forbidden, StatusCode.Unauthorized)
 
-  private val defaultHeaders: Map[String, String] = Map(
+  private val headers: Map[String, String] = Map(
     "X-EBAY-C-MARKETPLACE-ID" -> "EBAY_GB",
     HeaderNames.Accept        -> MediaType.ApplicationJson.toString(),
     HeaderNames.ContentType   -> MediaType.ApplicationJson.toString()
@@ -44,7 +44,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]] =
     dispatch() {
       basicRequest
-        .headers(defaultHeaders)
+        .headers(headers)
         .auth
         .bearer(accessToken)
         .get(uri"${config.baseUri}/buy/browse/v1/item_summary/search?$queryParams")
