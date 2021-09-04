@@ -82,7 +82,7 @@ object ResellableItemRepository {
 
   def mongo[F[_]: Async](database: MongoDatabase[F]): F[ResellableItemRepository[F]] =
     for {
-      collNames <- database.collectionNames
+      collNames <- database.listCollectionNames
       collName    = "items"
       collOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
       _    <- if (collNames.toSet.contains(collName)) ().pure[F] else database.createCollection(collName, collOptions)
