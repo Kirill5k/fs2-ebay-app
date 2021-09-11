@@ -34,7 +34,7 @@ private[mappers] object GameDetailsMapper {
     "Now Released(?s).*$", "Release date(?s).*$",
     "includes( free(?s).*$|.{0,20}pack(?s).*$| \\w+)", "amazon.{0,20}exclusive(?s).*$",
     "(royal mail )?(1st|2nd|first) class.*$",
-    "(?<=\\w+ )((all|fully) )?(boxed|complete) (\\bin\\b|with|case)(?s).*$",
+    "(?<=\\w+ )((all|fully) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$",
     "(\\bW\\b|with| inc(ludes)?|contain|bonus|plus).{0,20}(guide|dlc|pass|level|content|bonus|pack)(?s).*$",
     "(supplied|comes)? (with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
@@ -109,7 +109,7 @@ private[mappers] object GameDetailsMapper {
     "^\\w+ condition ",
     "^(((brand )?NEW|BNIB|Factory) )?(UN)?SEALED( in Packaging)?( )?",
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN",
-    "Standart$", "^SALE", "((condition|brand) )?new$", "^BOXED", "^NEW", "^best", "^software", "^un( )?opened",
+    "Standart$", "^SALE", "((condition|brand) )?new$", "^(UN)?BOXED", "^NEW", "^best", "^software", "^un( )?opened",
     "un( )?opened$", "((super|very) )?rare$", "^((super|very) )?rare", "official$", "^bargain", "bargain$", "(near )?mint$", "\\bfor\\b$",
     "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheap(est)?( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "(fully )?working$", "immaculate$", "instructions$", "superb$", "marvel$", "^mint"
