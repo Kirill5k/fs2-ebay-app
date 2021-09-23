@@ -111,7 +111,7 @@ data:
       cex {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "Apple iPad Pro 12.9 5th gen 128gb wifi"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "iphone 12 mini unlocked"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
@@ -137,8 +137,8 @@ data:
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "calvin-klein-jeans"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-          {search-criteria: {category: "men", query: "polo-ralph-lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
-          {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {category: "men", query: "polo-ralph-lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
           {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
@@ -149,8 +149,8 @@ data:
         delay-between-requests: 10s
         monitoring-frequency: 4m
         monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
       }
 
