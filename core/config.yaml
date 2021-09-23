@@ -9,8 +9,8 @@ data:
     }
 
     client-proxy {
-      host: "69.197.181.202"
-      port: 3128
+      host: "140.227.211.47"
+      port: 8080
     }
 
     mongo {
