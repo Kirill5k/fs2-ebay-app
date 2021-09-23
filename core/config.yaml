@@ -9,7 +9,7 @@ data:
     }
 
     client-proxy {
-      host: "200.68.128.249"
+      host: "69.197.181.202"
       port: 3128
     }
 
