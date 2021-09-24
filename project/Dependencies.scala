@@ -6,12 +6,12 @@ object Dependencies {
     lazy val pureConfig = "0.16.0"
     lazy val circe      = "0.14.1"
     lazy val sttp       = "3.3.14"
-    lazy val http4s     = "1.0.0-M25"
+    lazy val http4s     = "1.0.0-M27"
     lazy val logback    = "1.2.6"
     lazy val log4cats   = "2.1.1"
 
-    lazy val scalaTest = "3.2.9"
-    lazy val mockito   = "1.16.39"
+    lazy val scalaTest = "3.2.10"
+    lazy val mockito   = "1.16.42"
   }
 
   object Libraries {
