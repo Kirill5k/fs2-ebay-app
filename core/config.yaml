@@ -160,6 +160,7 @@ data:
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
+          {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 64}
         ]
       }
 
