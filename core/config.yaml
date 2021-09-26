@@ -151,6 +151,9 @@ data:
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "tommy-hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {query: "emporio-armani-loungewear"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
       }
 
