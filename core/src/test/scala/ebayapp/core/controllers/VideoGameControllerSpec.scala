@@ -9,6 +9,8 @@ import ebayapp.core.repositories.Filters
 import ebayapp.core.services.ResellableItemService
 import org.http4s.implicits._
 import org.http4s.{Request, Status, _}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 
 class VideoGameControllerSpec extends ControllerSpec {
 

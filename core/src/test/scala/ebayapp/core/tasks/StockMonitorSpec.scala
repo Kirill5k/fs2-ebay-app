@@ -5,6 +5,8 @@ import ebayapp.core.CatsSpec
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import fs2.Stream
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 
 import scala.concurrent.duration._
 

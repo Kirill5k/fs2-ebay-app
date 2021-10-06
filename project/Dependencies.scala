@@ -2,16 +2,16 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    lazy val mongo4cats = "0.4.0"
-    lazy val pureConfig = "0.16.0"
-    lazy val circe      = "0.14.1"
-    lazy val sttp       = "3.3.14"
-    lazy val http4s     = "1.0.0-M27"
-    lazy val logback    = "1.2.6"
-    lazy val log4cats   = "2.1.1"
+    val mongo4cats = "0.4.0"
+    val pureConfig = "0.16.0"
+    val circe      = "0.14.1"
+    val sttp       = "3.3.15"
+    val http4s     = "1.0.0-M27"
+    val logback    = "1.2.6"
+    val log4cats   = "2.1.1"
 
     lazy val scalaTest = "3.2.10"
-    lazy val mockito   = "1.16.42"
+    val mockito        = "3.2.10.0"
   }
 
   object Libraries {
@@ -33,9 +33,9 @@ object Dependencies {
     }
 
     object circe {
-      lazy val core          = "io.circe" %% "circe-core"           % Versions.circe
-      lazy val generic       = "io.circe" %% "circe-generic"        % Versions.circe
-      lazy val parser        = "io.circe" %% "circe-parser"         % Versions.circe
+      lazy val core    = "io.circe" %% "circe-core"    % Versions.circe
+      lazy val generic = "io.circe" %% "circe-generic" % Versions.circe
+      lazy val parser  = "io.circe" %% "circe-parser"  % Versions.circe
 
       lazy val all = Seq(core, generic, parser)
     }
@@ -59,9 +59,8 @@ object Dependencies {
       lazy val all = Seq(core, dsl, server, blazeServer, circe)
     }
 
-    lazy val scalaTest        = "org.scalatest" %% "scalatest"               % Versions.scalaTest
-    lazy val mockitoCore      = "org.mockito"   %% "mockito-scala"           % Versions.mockito
-    lazy val mockitoScalatest = "org.mockito"   %% "mockito-scala-scalatest" % Versions.mockito
+    lazy val scalaTest = "org.scalatest"     %% "scalatest"   % Versions.scalaTest
+    lazy val mockito   = "org.scalatestplus" %% "mockito-3-4" % Versions.mockito
   }
 
   lazy val core = Seq(
@@ -74,19 +73,16 @@ object Dependencies {
     Libraries.logging.all ++
     Libraries.sttp.all
 
-  lazy val proxy = {
-    Seq(
-      Libraries.http4s.blazeClient,
-      Libraries.pureconfig.core
-    ) ++
-      Libraries.http4s.all ++
-      Libraries.logging.all
-  }
+  lazy val proxy = Seq(
+    Libraries.http4s.blazeClient,
+    Libraries.pureconfig.core
+  ) ++
+    Libraries.http4s.all ++
+    Libraries.logging.all
 
   lazy val test = Seq(
     Libraries.scalaTest           % Test,
-    Libraries.mockitoCore         % Test,
-    Libraries.mockitoScalatest    % Test,
+    Libraries.mockito             % Test,
     Libraries.mongo4cats.embedded % Test
   )
 }

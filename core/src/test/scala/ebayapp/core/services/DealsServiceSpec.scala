@@ -9,6 +9,8 @@ import ebayapp.core.domain.search.{BuyPrice, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import ebayapp.core.repositories.ResellableItemRepository
 import fs2.Stream
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{doAnswer, times, verify, verifyNoInteractions, verifyNoMoreInteractions, when}
 
 import scala.concurrent.duration._
 
@@ -30,7 +32,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
@@ -67,7 +69,7 @@ class DealsServiceSpec extends CatsSpec {
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
         verifyNoMoreInteractions(repo)
-        verifyZeroInteractions(cexClient)
+        verifyNoInteractions(cexClient)
         items mustBe Nil
       }
     }
@@ -80,7 +82,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
@@ -106,7 +108,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1)))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
@@ -134,7 +136,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
 
-      doAnswer((_: Option[String], i: ResellableItem) => IO.pure(i.copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
@@ -167,7 +169,7 @@ class DealsServiceSpec extends CatsSpec {
       result.unsafeToFuture().map { items =>
         verify(searchClient, times(3)).search(request1.searchCriteria)
         verify(searchClient, times(3)).search(request2.searchCriteria)
-        verifyZeroInteractions(cexClient, repo)
+        verifyNoInteractions(cexClient, repo)
         items.map(_.itemDetails) mustBe Nil
       }
     }
@@ -177,7 +179,7 @@ class DealsServiceSpec extends CatsSpec {
 
       when(searchClient.search(any[SearchCriteria]))
         .thenReturn(Stream.raiseError[IO](new RuntimeException("foo")))
-        .andThen(Stream.emit(game1))
+        .thenReturn(Stream.emit(game1))
 
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
@@ -189,7 +191,7 @@ class DealsServiceSpec extends CatsSpec {
       result.unsafeToFuture().map { items =>
         verify(searchClient, times(2)).search(request1.searchCriteria)
         verify(repo).existsByUrl(game1.listingDetails.url)
-        verifyZeroInteractions(cexClient)
+        verifyNoInteractions(cexClient)
         items mustBe Nil
       }
     }

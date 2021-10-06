@@ -5,6 +5,8 @@ import cats.effect.{IO, Temporal}
 import ebayapp.core.CatsSpec
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Error, Logger}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 
 import scala.concurrent.duration._
 

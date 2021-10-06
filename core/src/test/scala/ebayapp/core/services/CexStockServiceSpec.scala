@@ -9,6 +9,8 @@ import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.Stream
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when, atLeast => atLeastTimes}
 
 import scala.concurrent.duration._
 
@@ -38,8 +40,8 @@ class CexStockServiceSpec extends CatsSpec {
         }
 
       result.unsafeToFuture().map { u =>
-        verify(client, atLeast(2)).search(req1.searchCriteria)
-        verify(client, atLeast(1)).search(req2.searchCriteria)
+        verify(client, atLeastTimes(2)).search(req1.searchCriteria)
+        verify(client, atLeastTimes(1)).search(req2.searchCriteria)
         u mustBe Nil
       }
     }
@@ -49,7 +51,7 @@ class CexStockServiceSpec extends CatsSpec {
 
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.empty)
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)
@@ -65,7 +67,7 @@ class CexStockServiceSpec extends CatsSpec {
 
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(1, 1950.0))))
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)
@@ -81,7 +83,7 @@ class CexStockServiceSpec extends CatsSpec {
 
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)
@@ -97,7 +99,7 @@ class CexStockServiceSpec extends CatsSpec {
 
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](Retailer.Cex, config.copy(monitoringRequests = List(req1.copy(monitorStockChange = false))), client)
@@ -117,7 +119,7 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 950.0))))
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)
@@ -132,7 +134,7 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)
@@ -147,9 +149,9 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 4950.0))))
-        .andThen(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 3950.0))))
-        .andThen(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 3950.0))))
+        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)
@@ -164,7 +166,7 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
-        .andThen(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1))
 
       val result = StockService
         .make[IO](
@@ -189,7 +191,7 @@ class CexStockServiceSpec extends CatsSpec {
 
       when(client.search(req1.searchCriteria))
         .thenReturn(Stream.emits(List(mb1.copy(buyPrice = BuyPrice(3, 3000.0)), mb2.copy(buyPrice = BuyPrice(3, 3000.0)))))
-        .andThen(Stream.emits(List(mb1, mb2)))
+        .thenReturn(Stream.emits(List(mb1, mb2)))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)

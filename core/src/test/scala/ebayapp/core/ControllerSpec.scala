@@ -5,13 +5,13 @@ import cats.effect.unsafe.IORuntime
 import ebayapp.core.common.Logger
 import io.circe.parser._
 import org.http4s.{Response, Status}
-import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.http4s.circe._
+import org.scalatestplus.mockito.MockitoSugar
 
-trait ControllerSpec extends AnyWordSpec with MockitoSugar with ArgumentMatchersSugar with Matchers {
+trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers {
 
   implicit val rt: IORuntime      = IORuntime.global
   implicit val logger: Logger[IO]   = MockLogger.make[IO]
