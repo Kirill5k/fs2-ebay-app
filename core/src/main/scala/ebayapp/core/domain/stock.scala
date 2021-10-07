@@ -10,11 +10,11 @@ object stock {
   }
 
   object StockUpdate {
-    final case object New extends StockUpdate {
+    case object New extends StockUpdate {
       override def header: String  = "STOCK/NEW"
       override def message: String = "New in stock"
     }
-    final case object OutOfStock extends StockUpdate {
+    case object OutOfStock extends StockUpdate {
       override def header: String  = "STOCK/OOS"
       override def message: String = "Out of stock"
     }

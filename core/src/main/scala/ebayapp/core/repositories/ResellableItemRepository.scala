@@ -32,48 +32,52 @@ trait ResellableItemRepository[F[_]] {
 
 final class ResellableItemMongoRepository[F[_]: Async](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
-)(implicit
-    val entityMapper: ResellableItemEntityMapper
 ) extends ResellableItemRepository[F] {
 
+  private object Field {
+    val Kind = "kind"
+    val DatePosted = "listingDetails.datePosted"
+    val Url = "listingDetails.url"
+  }
+
   def existsByUrl(listingUrl: String): F[Boolean] =
-    mongoCollection.count(Filter.eq("listingDetails.url", listingUrl)).map(_ > 0)
+    mongoCollection.count(Filter.eq(Field.Url, listingUrl)).map(_ > 0)
 
   def save(item: ResellableItem): F[Unit] =
-    mongoCollection.insertOne(entityMapper.toEntity(item)).void
+    mongoCollection.insertOne(ResellableItemEntityMapper.get.toEntity(item)).void
 
   def saveAll(items: Seq[ResellableItem]): F[Unit] =
-    mongoCollection.insertMany(items.map(entityMapper.toEntity)).void
+    mongoCollection.insertMany(items.map(ResellableItemEntityMapper.get.toEntity)).void
 
   def search(
       query: String,
       filters: Filters
   ): F[List[ResellableItem]] =
     mongoCollection.find
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.text(query) && Filter.eq("kind", filters.kind))
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.text(query) && Filter.eq(Field.Kind, filters.kind))
       .limit(filters.limit.getOrElse(0))
       .all
-      .map(_.map(entityMapper.toDomain).toList)
+      .map(_.map(ResellableItemEntityMapper.get.toDomain).toList)
 
   def findAll(filters: Filters): F[List[ResellableItem]] =
     mongoCollection.find
-      .sortByDesc("listingDetails.datePosted")
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind))
+      .sortByDesc(Field.DatePosted)
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
       .limit(filters.limit.getOrElse(0))
       .all
-      .map(_.map(entityMapper.toDomain).toList)
+      .map(_.map(ResellableItemEntityMapper.get.toDomain).toList)
 
   def stream(filters: Filters): Stream[F, ResellableItem] =
     mongoCollection.find
-      .sortByDesc("listingDetails.datePosted")
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq("kind", filters.kind))
+      .sortByDesc(Field.DatePosted)
+      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
       .limit(filters.limit.getOrElse(0))
       .stream
-      .map(entityMapper.toDomain)
+      .map(ResellableItemEntityMapper.get.toDomain)
 
   private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Filter = {
-    val fromFilter = from.map(d => Filter.gte("listingDetails.datePosted", d))
-    val toFilter   = to.map(d => Filter.lt("listingDetails.datePosted", d))
+    val fromFilter = from.map(d => Filter.gte(Field.DatePosted, d))
+    val toFilter   = to.map(d => Filter.lt(Field.DatePosted, d))
     List(fromFilter, toFilter).flatten.foldLeft(Filter.empty)((acc, el) => acc && el)
   }
 }

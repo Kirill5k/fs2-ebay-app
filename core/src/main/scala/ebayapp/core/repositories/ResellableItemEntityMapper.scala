@@ -22,7 +22,7 @@ private[repositories] trait ResellableItemEntityMapper {
 
 private[repositories] object ResellableItemEntityMapper {
 
-  implicit val videoGameEntityMapper = new ResellableItemEntityMapper {
+  val get: ResellableItemEntityMapper = new ResellableItemEntityMapper {
     override def toEntity(item: ResellableItem): ResellableItemEntity =
       ResellableItemEntity(ObjectId(), item.kind, item.itemDetails, item.listingDetails, mapPrice(item.buyPrice, item.sellPrice))
 

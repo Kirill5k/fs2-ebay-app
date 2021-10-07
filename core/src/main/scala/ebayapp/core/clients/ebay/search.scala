@@ -30,8 +30,7 @@ private[ebay] object search {
         case kind                 => Left(AppError.Critical(s"unable to find search params for $kind in EbayClient"))
       }
 
-    implicit val videoGameSearchParams = new EbaySearchParams {
-
+    private val videoGameSearchParams = new EbaySearchParams {
       private val DEFAULT_SEARCH_FILTER = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
         "itemLocationCountry:GB," +
         "deliveryCountry:GB," +
