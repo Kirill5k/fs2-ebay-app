@@ -11,7 +11,7 @@ object Dependencies {
     val log4cats   = "2.1.1"
 
     val scalaTest = "3.2.10"
-    val mockito        = "3.2.10.0"
+    val mockito   = "3.2.10.0"
   }
 
   object Libraries {
