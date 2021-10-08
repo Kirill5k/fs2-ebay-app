@@ -29,7 +29,7 @@ object Resources {
 
   private def mkProxyClientBackend[F[_]: Async](config: ClientProxyConfig): Resource[F, Option[SttpBackend[F, Any]]] =
     (config.host, config.port)
-      .mapN((host, port) => SttpBackendOptions.Proxy(host, port, SttpBackendOptions.ProxyType.Http))
+      .mapN[Proxy]((host, port) => SttpBackendOptions.Proxy(host, port, SttpBackendOptions.ProxyType.Http))
       .map(p => mkHttpClientBackend(p.some).map(_.some))
       .getOrElse(Resource.pure(None))
 
