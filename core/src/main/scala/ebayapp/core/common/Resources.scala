@@ -27,11 +27,14 @@ object Resources {
   private def mkHttpClientBackend[F[_]: Async](proxy: Option[Proxy]): Resource[F, SttpBackend[F, Any]] =
     Resource.make(AsyncHttpClientCatsBackend[F](SttpBackendOptions(connectionTimeout = 3.minutes, proxy = proxy)))(_.close())
 
-  private def mkProxyClientBackend[F[_]: Async](config: ClientProxyConfig): Resource[F, Option[SttpBackend[F, Any]]] =
-    (config.host, config.port)
-      .mapN[Proxy]((host, port) => SttpBackendOptions.Proxy(host, port, SttpBackendOptions.ProxyType.Http))
+  private def mkProxyClientBackend[F[_]: Async](config: ClientProxyConfig): Resource[F, Option[SttpBackend[F, Any]]] = {
+    val proxy: Option[Proxy] = (config.host, config.port)
+      .mapN((host, port) => SttpBackendOptions.Proxy(host, port, SttpBackendOptions.ProxyType.Http))
+
+    proxy
       .map(p => mkHttpClientBackend(p.some).map(_.some))
       .getOrElse(Resource.pure(None))
+  }
 
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
     MongoClient.fromConnectionString[F](config.connectionUri).evalMap(_.getDatabase(config.dbName))
