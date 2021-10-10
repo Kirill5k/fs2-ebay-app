@@ -5,10 +5,11 @@ import io.circe.{Decoder, Encoder}
 
 sealed abstract class ItemKind(val value: String)
 object ItemKind {
-  case object Generic     extends ItemKind("generic")
-  case object VideoGame   extends ItemKind("video-game")
-  case object MobilePhone extends ItemKind("mobile-phone")
-  case object Clothing    extends ItemKind("clothing")
+  case object Generic       extends ItemKind("generic")
+  case object VideoGame     extends ItemKind("video-game")
+  case object MobilePhone   extends ItemKind("mobile-phone")
+  case object Clothing      extends ItemKind("clothing")
+  case object SmartLighting extends ItemKind("smart-lighting")
 
   val all = List(Generic, VideoGame, MobilePhone, Clothing)
 

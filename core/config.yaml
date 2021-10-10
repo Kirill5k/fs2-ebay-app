@@ -191,6 +191,13 @@ data:
           //{search-criteria: {category: "gpu-nvidia-gaming", query: "all"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
+    
+      ebay {
+        monitoring-frequency: 10m
+        monitoring-requests: [
+          {search-criteria: {item-kind: "smart-lighting", query: "nanoleaf shapes"}, monitor-stock-change: false, monitor-price-change: true}
+        ]
+      }
     }
 
     deals-finder {

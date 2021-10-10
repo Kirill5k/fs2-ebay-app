@@ -2,7 +2,7 @@ package ebayapp.core.clients.ebay
 
 import ebayapp.core.clients.ebay.browse.responses.EbayItemSummary
 import ebayapp.core.common.errors.AppError
-import ebayapp.core.domain.{ItemKind}
+import ebayapp.core.domain.ItemKind
 
 import java.time.Instant
 
@@ -26,9 +26,29 @@ private[ebay] object search {
   object EbaySearchParams {
     def get(kind: ItemKind): Either[Throwable, EbaySearchParams] =
       kind match {
-        case ItemKind.VideoGame   => Right(videoGameSearchParams)
-        case kind                 => Left(AppError.Critical(s"unable to find search params for $kind in EbayClient"))
+        case ItemKind.VideoGame     => Right(videoGameSearchParams)
+        case ItemKind.SmartLighting => Right(smartLightingSearchParams)
+        case kind                   => Left(AppError.Critical(s"unable to find search params for $kind in EbayClient"))
       }
+
+    private val smartLightingSearchParams = new EbaySearchParams {
+      private val DEFAULT_SEARCH_FILTER = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
+        "itemLocationCountry:GB," +
+        "deliveryCountry:GB," +
+        "price:[0..200]," +
+        "priceCurrency:GBP," +
+        "itemLocationCountry:GB,"
+
+      override val searchFilterTemplate: String = DEFAULT_SEARCH_FILTER + "buyingOptions:{FIXED_PRICE},itemStartDate:[%s]"
+
+      override val categoryId: Int = 11700
+
+      private val ACCEPTER_BUYING_OPTIONS = Set("FIXED_PRICE", "BEST_OFFER")
+
+      override def filter: EbayItemSummary => Boolean = { item =>
+        item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
+      }
+    }
 
     private val videoGameSearchParams = new EbaySearchParams {
       private val DEFAULT_SEARCH_FILTER = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
@@ -87,8 +107,8 @@ private[ebay] object search {
 
       override val filter: EbayItemSummary => Boolean = { item =>
         !LISTING_NAME_TRIGGER_WORDS.matches(item.title.replaceAll("[^a-zA-Z0-9 ]", "")) &&
-          !LISTING_DESCRIPTION_TRIGGER_WORDS.matches(item.shortDescription.fold("")(_.replaceAll("[^a-zA-Z0-9 ]", ""))) &&
-          item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
+        !LISTING_DESCRIPTION_TRIGGER_WORDS.matches(item.shortDescription.fold("")(_.replaceAll("[^a-zA-Z0-9 ]", ""))) &&
+        item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
       }
     }
   }

@@ -5,8 +5,7 @@ import ebayapp.core.clients.ItemMapper
 import java.time.Instant
 import ebayapp.core.clients.ebay.browse.responses.EbayItem
 import ebayapp.core.common.errors.AppError.Critical
-import ebayapp.core.domain
-import ebayapp.core.domain.{ItemKind, ResellableItem}
+import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 
 private[ebay] object EbayItemMapper {
@@ -16,7 +15,7 @@ private[ebay] object EbayItemMapper {
     kind match {
       case ItemKind.VideoGame   => Right(gameDetailsMapper)
       case ItemKind.MobilePhone => Right(phoneDetailsMapper)
-      case kind                 => Left(Critical(s"unexpected item kind $kind in EbayClient"))
+      case _                    => Right(genericDetailsMapper)
     }
 
   private val categories: Map[Int, String] = Map(
@@ -26,15 +25,20 @@ private[ebay] object EbayItemMapper {
   val phoneDetailsMapper = new EbayItemMapper {
     override def toDomain(ebayItem: EbayItem): ResellableItem = {
       val listing = listingDetails(ebayItem)
-      domain.ResellableItem.mobilePhone(PhoneDetailsMapper.from(listing), listing, price(ebayItem), None)
+      ResellableItem.mobilePhone(PhoneDetailsMapper.from(listing), listing, price(ebayItem), None)
     }
   }
 
   val gameDetailsMapper = new EbayItemMapper {
     override def toDomain(ebayItem: EbayItem): ResellableItem = {
       val listing = listingDetails(ebayItem)
-      domain.ResellableItem.videoGame(GameDetailsMapper.from(listing), listing, price(ebayItem), None)
+      ResellableItem.videoGame(GameDetailsMapper.from(listing), listing, price(ebayItem), None)
     }
+  }
+
+  val genericDetailsMapper = new EbayItemMapper {
+    override def toDomain(ebayItem: EbayItem): ResellableItem =
+      ResellableItem.generic(ItemDetails.Generic(ebayItem.title), listingDetails(ebayItem), price(ebayItem), None)
   }
 
   private[mappers] def listingDetails(item: EbayItem): ListingDetails =
@@ -48,7 +52,7 @@ private[ebay] object EbayItemMapper {
       condition = item.condition.toUpperCase,
       datePosted = Instant.now,
       seller = item.seller.username.fold("EBAY")(s => s"EBAY:$s"),
-      properties = item.localizedAspects.getOrElse(List()).map(prop => prop.name -> prop.value).toMap
+      properties = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
     )
 
   private[mappers] def price(item: EbayItem): BuyPrice = {
