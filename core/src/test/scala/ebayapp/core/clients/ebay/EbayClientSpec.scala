@@ -13,7 +13,7 @@ import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{never, times, verify, when}
+import org.mockito.Mockito.{never, times, verify, verifyNoInteractions, when}
 
 import java.util.UUID
 import scala.concurrent.duration._
@@ -22,12 +22,24 @@ import scala.jdk.CollectionConverters._
 class EbayClientSpec extends CatsSpec {
 
   val accessToken = "access-token"
-  val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame))
+  val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame), category = Some("games-xbox"))
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
   val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
 
   "An EbayClient" should {
+
+    "return error when invalid category specified" in {
+      val (authClient, browseClient)                              = mocks
+      val videoGameSearchClient                                   = new LiveEbayClient[IO](config, authClient, browseClient)
+
+      val itemsResponse = videoGameSearchClient.search(criteria.copy(category = None))
+
+      itemsResponse.attempt.compile.last.unsafeToFuture().map { res =>
+        verifyNoInteractions(authClient, browseClient)
+        res mustBe Some(Left(AppError.Critical("category kind is required in ebay-client")))
+      }
+    }
 
     "search for video games" in {
       val searchParamsCaptor: ArgumentCaptor[Map[String, String]] = ArgumentCaptor.forClass(classOf[Map[String, String]])

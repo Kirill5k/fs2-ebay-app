@@ -1,21 +1,26 @@
 package ebayapp.core.clients.ebay.mappers
 
-import ebayapp.core.clients.ItemMapper
+import ebayapp.core.clients.{ItemMapper, SearchCriteria}
 
 import java.time.Instant
 import ebayapp.core.clients.ebay.browse.responses.EbayItem
-import ebayapp.core.common.errors.AppError.Critical
+import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 
 private[ebay] object EbayItemMapper {
   type EbayItemMapper = ItemMapper[EbayItem]
 
-  def get(kind: ItemKind): Either[Throwable, EbayItemMapper] =
+  def get(criteria: SearchCriteria): Either[Throwable, EbayItemMapper] =
+    criteria.itemKind
+      .map(EbayItemMapper.get)
+      .toRight(AppError.Critical("item kind is required in ebay-client"))
+
+  def get(kind: ItemKind): EbayItemMapper =
     kind match {
-      case ItemKind.VideoGame   => Right(gameDetailsMapper)
-      case ItemKind.MobilePhone => Right(phoneDetailsMapper)
-      case _                    => Right(genericDetailsMapper)
+      case ItemKind.VideoGame   => gameDetailsMapper
+      case ItemKind.MobilePhone => phoneDetailsMapper
+      case _                    => genericDetailsMapper
     }
 
   private val categories: Map[Int, String] = Map(

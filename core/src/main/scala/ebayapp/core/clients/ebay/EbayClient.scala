@@ -33,9 +33,8 @@ final private[ebay] class LiveEbayClient[F[_]](
     val time = Instant.now.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)
 
     for {
-      kind   <- Stream.fromEither[F](criteria.itemKind.toRight(AppError.Critical("item kind is required in ebay-client")))
-      params <- Stream.fromEither[F](EbaySearchParams.get(kind))
-      mapper <- Stream.fromEither[F](EbayItemMapper.get(kind))
+      mapper <- Stream.fromEither[F](EbayItemMapper.get(criteria))
+      params <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       items <- Stream
         .evalSeq(searchForItems(params.requestArgs(time, criteria.query), params.filter))
         .evalMap(getCompleteItem)

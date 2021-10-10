@@ -1,8 +1,8 @@
 package ebayapp.core.clients.ebay
 
+import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.clients.ebay.browse.responses.EbayItemSummary
 import ebayapp.core.common.errors.AppError
-import ebayapp.core.domain.ItemKind
 
 import java.time.Instant
 
@@ -24,11 +24,16 @@ private[ebay] object search {
   }
 
   object EbaySearchParams {
-    def get(kind: ItemKind): Either[Throwable, EbaySearchParams] =
-      kind match {
-        case ItemKind.VideoGame     => Right(videoGameSearchParams)
-        case ItemKind.SmartLighting => Right(smartLightingSearchParams)
-        case kind                   => Left(AppError.Critical(s"unable to find search params for $kind in EbayClient"))
+    def get(criteria: SearchCriteria): Either[Throwable, EbaySearchParams] =
+      criteria.category
+        .toRight(AppError.Critical("category kind is required in ebay-client"))
+        .flatMap(EbaySearchParams.get)
+
+    def get(category: String): Either[Throwable, EbaySearchParams] =
+      category match {
+        case "smart-lighting"            => Right(smartLightingSearchParams)
+        case c if c.startsWith("games-") => Right(videoGameSearchParams)
+        case c                           => Left(AppError.Critical(s"unable to find search params for category '$c' in EbayClient"))
       }
 
     private val smartLightingSearchParams = new EbaySearchParams {
