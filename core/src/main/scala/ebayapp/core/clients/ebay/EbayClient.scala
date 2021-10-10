@@ -29,10 +29,11 @@ final private[ebay] class LiveEbayClient[F[_]](
     val logger: Logger[F]
 ) extends SearchClient[F] {
 
-  def search(criteria: SearchCriteria): Stream[F, ResellableItem] = {
-    val time = Instant.now.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)
+  private def now: F[Instant] = F.realTime.map(_.toMillis).map(Instant.ofEpochMilli)
 
+  def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     for {
+      time   <- Stream.eval(now.map(_.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)))
       mapper <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       items <- Stream
@@ -42,7 +43,6 @@ final private[ebay] class LiveEbayClient[F[_]](
         .map(mapper.toDomain)
         .handleErrorWith(switchAccountIfItHasExpired)
     } yield items
-  }
 
   private def searchForItems(searchParams: Map[String, String], itemsFilter: EbayItemSummary => Boolean): F[List[EbayItemSummary]] =
     for {
