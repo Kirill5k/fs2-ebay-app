@@ -111,7 +111,7 @@ data:
       cex {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "iphone 12 mini unlocked"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "iphone 12 mini unlocked"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 

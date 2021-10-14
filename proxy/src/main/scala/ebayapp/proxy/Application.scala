@@ -28,7 +28,8 @@ object Application extends IOApp.Simple {
           healthController   <- Controller.health[IO]
           routes = redirectController.routes <+> healthController.routes
           _ <- logger.info("starting http server")
-          _ <- BlazeServerBuilder[IO](runtime.compute)
+          _ <- BlazeServerBuilder[IO]
+            .withExecutionContext(runtime.compute)
             .bindHttp(config.server.port, config.server.host)
             .withResponseHeaderTimeout(3.minutes)
             .withIdleTimeout(1.hour)
