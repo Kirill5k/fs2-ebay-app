@@ -9,8 +9,8 @@ private[repositories] object entities {
   final case class ItemPrice(
       buy: String,
       quantityAvailable: Int,
-      sell: Option[String],
-      credit: Option[String]
+      sell: Option[BigDecimal],
+      credit: Option[BigDecimal]
   )
 
   final case class ResellableItemEntity(

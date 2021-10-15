@@ -44,10 +44,10 @@ final class ResellableItemMongoRepository[F[_]: Async](
     mongoCollection.count(Filter.eq(Field.Url, listingUrl)).map(_ > 0)
 
   def save(item: ResellableItem): F[Unit] =
-    mongoCollection.insertOne(ResellableItemEntityMapper.get.toEntity(item)).void
+    mongoCollection.insertOne(ResellableItemEntityMapper.toEntity(item)).void
 
   def saveAll(items: Seq[ResellableItem]): F[Unit] =
-    mongoCollection.insertMany(items.map(ResellableItemEntityMapper.get.toEntity)).void
+    mongoCollection.insertMany(items.map(ResellableItemEntityMapper.toEntity)).void
 
   def search(
       query: String,
@@ -57,7 +57,7 @@ final class ResellableItemMongoRepository[F[_]: Async](
       .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.text(query) && Filter.eq(Field.Kind, filters.kind))
       .limit(filters.limit.getOrElse(0))
       .all
-      .map(_.map(ResellableItemEntityMapper.get.toDomain).toList)
+      .map(_.map(ResellableItemEntityMapper.toDomain).toList)
 
   def findAll(filters: Filters): F[List[ResellableItem]] =
     mongoCollection.find
@@ -65,7 +65,7 @@ final class ResellableItemMongoRepository[F[_]: Async](
       .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
       .limit(filters.limit.getOrElse(0))
       .all
-      .map(_.map(ResellableItemEntityMapper.get.toDomain).toList)
+      .map(_.map(ResellableItemEntityMapper.toDomain).toList)
 
   def stream(filters: Filters): Stream[F, ResellableItem] =
     mongoCollection.find
@@ -73,7 +73,7 @@ final class ResellableItemMongoRepository[F[_]: Async](
       .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
       .limit(filters.limit.getOrElse(0))
       .stream
-      .map(ResellableItemEntityMapper.get.toDomain)
+      .map(ResellableItemEntityMapper.toDomain)
 
   private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Filter = {
     val fromFilter = from.map(d => Filter.gte(Field.DatePosted, d))

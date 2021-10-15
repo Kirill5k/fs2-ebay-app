@@ -7,32 +7,28 @@ import ebayapp.core.repositories.entities.ResellableItemEntity
 import ebayapp.core.repositories.entities.ItemPrice
 import mongo4cats.bson.ObjectId
 
-private[repositories] trait ResellableItemEntityMapper {
-  def toEntity(item: ResellableItem): ResellableItemEntity
-  def toDomain(entity: ResellableItemEntity): ResellableItem
-
-  protected def mapPrice(price: BuyPrice, resellPrice: Option[SellPrice]): ItemPrice =
-    ItemPrice(
-      price.rrp.toString(),
-      price.quantityAvailable,
-      resellPrice.map(_.cash.toString()),
-      resellPrice.map(_.credit.toString())
-    )
-}
-
 private[repositories] object ResellableItemEntityMapper {
 
-  val get: ResellableItemEntityMapper = new ResellableItemEntityMapper {
-    override def toEntity(item: ResellableItem): ResellableItemEntity =
-      ResellableItemEntity(ObjectId(), item.kind, item.itemDetails, item.listingDetails, mapPrice(item.buyPrice, item.sellPrice))
-
-    override def toDomain(entity: ResellableItemEntity): ResellableItem =
-      ResellableItem(
-        entity.kind,
-        entity.itemDetails,
-        entity.listingDetails,
-        BuyPrice(entity.price.quantityAvailable, BigDecimal(entity.price.buy)),
-        (entity.price.sell, entity.price.credit).mapN((s, c) => SellPrice(BigDecimal(s), BigDecimal(c)))
+  def toEntity(item: ResellableItem): ResellableItemEntity =
+    ResellableItemEntity(
+      ObjectId(),
+      item.kind,
+      item.itemDetails,
+      item.listingDetails,
+      ItemPrice(
+        item.buyPrice.rrp.toString(),
+        item.buyPrice.quantityAvailable,
+        item.sellPrice.map(_.cash),
+        item.sellPrice.map(_.credit)
       )
-  }
+    )
+
+  def toDomain(entity: ResellableItemEntity): ResellableItem =
+    ResellableItem(
+      entity.kind,
+      entity.itemDetails,
+      entity.listingDetails,
+      BuyPrice(entity.price.quantityAvailable, BigDecimal(entity.price.buy)),
+      (entity.price.sell, entity.price.credit).mapN((s, c) => SellPrice(s, c))
+    )
 }
