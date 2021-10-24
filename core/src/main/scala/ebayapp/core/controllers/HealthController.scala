@@ -5,7 +5,7 @@ import io.circe.generic.auto._
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec._
 
-final case class AppStatus(value: true)
+final case class AppStatus(status: true)
 
 object AppStatus {
   val Up = AppStatus(true)

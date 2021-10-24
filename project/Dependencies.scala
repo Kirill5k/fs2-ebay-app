@@ -6,9 +6,10 @@ object Dependencies {
     val pureConfig = "0.17.0"
     val circe      = "0.14.1"
     val sttp       = "3.3.15"
-    val http4s     = "1.0.0-M29"
+    val http4s     = "0.23.6"
     val logback    = "1.2.6"
     val log4cats   = "2.1.1"
+    val tapir      = "0.19.0-M13"
 
     val scalaTest = "3.2.10"
     val mockito   = "3.2.10.0"
@@ -59,6 +60,14 @@ object Dependencies {
       val all = Seq(core, dsl, server, blazeServer, circe)
     }
 
+    object tapir {
+      val core   = "com.softwaremill.sttp.tapir" %% "tapir-core"          % Versions.tapir
+      val circe  = "com.softwaremill.sttp.tapir" %% "tapir-json-circe"    % Versions.tapir
+      val http4s = "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % Versions.tapir
+
+      val all = Seq(core, circe, http4s)
+    }
+
     val scalaTest = "org.scalatest"     %% "scalatest"   % Versions.scalaTest
     val mockito   = "org.scalatestplus" %% "mockito-3-4" % Versions.mockito
   }
@@ -71,7 +80,8 @@ object Dependencies {
     Libraries.circe.all ++
     Libraries.http4s.all ++
     Libraries.logging.all ++
-    Libraries.sttp.all
+    Libraries.sttp.all ++
+    Libraries.tapir.all
 
   lazy val proxy = Seq(
     Libraries.http4s.blazeClient,
