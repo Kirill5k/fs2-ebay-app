@@ -1,11 +1,11 @@
 package ebayapp.core.controllers
 
 import cats.Monad
-import cats.effect.Sync
-import cats.syntax.semigroupk._
+import cats.effect.Async
 import cats.syntax.apply._
-import ebayapp.core.services.Services
+import cats.syntax.semigroupk._
 import ebayapp.core.common.Logger
+import ebayapp.core.services.Services
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 
@@ -27,7 +27,7 @@ trait Controllers[F[_]] {
 
 object Controllers {
 
-  def make[F[_]: Sync: Logger](services: Services[F]): F[Controllers[F]] =
+  def make[F[_]: Async: Logger](services: Services[F]): F[Controllers[F]] =
     (
       Controller.home,
       Controller.videoGame(services.resellableItem),

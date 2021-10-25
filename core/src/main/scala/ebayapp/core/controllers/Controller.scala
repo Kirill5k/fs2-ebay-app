@@ -91,6 +91,6 @@ object Controller {
   def videoGame[F[_]: Sync: Logger](service: ResellableItemService[F]): F[Controller[F]] =
     Monad[F].pure(new VideoGameController[F](service))
 
-  def health[F[_]: Sync]: F[Controller[F]] =
+  def health[F[_]: Async]: F[Controller[F]] =
     Monad[F].pure(new HealthController[F])
 }

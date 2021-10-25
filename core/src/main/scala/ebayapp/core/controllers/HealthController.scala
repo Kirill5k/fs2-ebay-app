@@ -1,18 +1,33 @@
 package ebayapp.core.controllers
 
-import cats.Monad
+import cats.effect.Async
+import cats.syntax.either._
 import io.circe.generic.auto._
 import org.http4s.HttpRoutes
-import org.http4s.circe.CirceEntityCodec._
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.tapir._
+import sttp.tapir.generic.SchemaDerivation
+import sttp.tapir.json.circe.TapirJsonCirce
+import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 final case class AppStatus(status: true)
 
 object AppStatus {
-  val Up = AppStatus(true)
+  val Up: AppStatus = AppStatus(true)
 }
 
-private[controllers] class HealthController[F[_]: Monad] extends Controller[F] {
+private[controllers] class HealthController[F[_]: Async] extends Controller[F] with TapirJsonCirce with SchemaDerivation {
 
-  override def routes: HttpRoutes[F] =
-    HttpRoutes.of[F] { case GET -> Root / "health" / "status" => Ok(AppStatus.Up) }
+  implicit val statusSchema: Schema[AppStatus] = Schema.string
+
+  private val statusEndpoint: ServerEndpoint[Unit, Nothing, AppStatus, Fs2Streams[F] with WebSockets, F] =
+    infallibleEndpoint.get
+      .in("health" / "status")
+      .out(jsonBody[AppStatus])
+      .serverLogicPure(_ => AppStatus.Up.asRight[Nothing])
+
+  override def routes: HttpRoutes[F] = Http4sServerInterpreter[F]().toRoutes(statusEndpoint)
+
 }
