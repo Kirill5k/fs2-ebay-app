@@ -54,5 +54,5 @@ final private[controllers] class VideoGameController[F[_]: Async](
     }
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F]().toRoutes(List(getAllGames, getGamesSummaries))
+    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAllGames, getGamesSummaries))
 }

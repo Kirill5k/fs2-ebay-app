@@ -11,7 +11,9 @@ import sttp.model.StatusCode
 import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.generic.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
-import sttp.tapir.{oneOf, oneOfDefaultMapping, oneOfMapping, Codec, DecodeResult}
+import sttp.tapir.server.http4s.Http4sServerOptions
+import sttp.tapir.server.interceptor.ValuedEndpointOutput
+import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultMapping, oneOfMapping}
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.util.Try
@@ -27,6 +29,11 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
   }
 
   implicit val instantCodec: PlainCodec[Instant] = Codec.string.mapDecode(decodeInstant)(_.toString)
+
+  protected def serverOptions(implicit F: Sync[F]): Http4sServerOptions[F, F] = Http4sServerOptions
+    .customInterceptors[F, F]
+    .errorOutput(e => ValuedEndpointOutput(jsonBody[ErrorResponse], ErrorResponse.BadRequest(e)))
+    .options
 
   protected val errorResponse =
     oneOf[ErrorResponse](

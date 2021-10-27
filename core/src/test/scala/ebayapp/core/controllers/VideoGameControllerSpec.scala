@@ -10,7 +10,7 @@ import ebayapp.core.services.ResellableItemService
 import org.http4s.implicits._
 import org.http4s.{Request, Status, _}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{verify, verifyNoInteractions, when}
 
 class VideoGameControllerSpec extends ControllerSpec {
 
@@ -121,7 +121,13 @@ class VideoGameControllerSpec extends ControllerSpec {
       val response = controller.routes.orNotFound.run(request)
 
       verifyJsonResponse(response, Status.Ok, Some("""[]"""))
-      verify(service).findAll(searchFilters.copy(limit = Some(100), from = Some(Instant.parse("2020-01-01T00:00:00Z")), to = Some(Instant.parse("2020-01-01T00:00:01Z"))))
+      verify(service).findAll(
+        searchFilters.copy(
+          limit = Some(100),
+          from = Some(Instant.parse("2020-01-01T00:00:00Z")),
+          to = Some(Instant.parse("2020-01-01T00:00:01Z"))
+        )
+      )
     }
 
     "parse date query params" in {
@@ -134,7 +140,22 @@ class VideoGameControllerSpec extends ControllerSpec {
       val response = controller.routes.orNotFound.run(request)
 
       verifyJsonResponse(response, Status.Ok, Some("""[]"""))
-      verify(service).findAll(searchFilters.copy(from = Some(Instant.parse("2020-01-01T00:00:00Z")), to = Some(Instant.parse("2020-01-01T00:00:01Z"))))
+      verify(service).findAll(
+        searchFilters.copy(from = Some(Instant.parse("2020-01-01T00:00:00Z")), to = Some(Instant.parse("2020-01-01T00:00:01Z")))
+      )
+    }
+
+    "return error on date query param parsing failure" in {
+      val service = mock[ResellableItemService[IO]]
+      when(service.findAll(any[Filters])).thenReturn(IO.pure(Nil))
+
+      val controller = new VideoGameController[IO](service)
+
+      val request  = Request[IO](uri = uri"/video-games?from=foo", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      verifyJsonResponse(response, Status.BadRequest, Some("""{"BadRequest":{"message":"Invalid value for: query parameter from"}}"""))
+      verifyNoInteractions(service)
     }
 
     "parse search query params" in {
