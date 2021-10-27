@@ -1,44 +1,58 @@
 package ebayapp.core.controllers
 
-import cats.MonadError
-import cats.syntax.flatMap._
-import ebayapp.core.common.Logger
-import ebayapp.core.controllers.views.ResellableItemResponse
+import cats.effect.Async
+import cats.syntax.applicativeError._
+import cats.syntax.either._
+import cats.syntax.functor._
+import ebayapp.core.controllers.views.{ErrorResponse, ResellableItemResponse, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.ItemKind
 import ebayapp.core.repositories.Filters
 import ebayapp.core.services.ResellableItemService
 import io.circe.generic.auto._
-import io.circe.syntax._
 import org.http4s.HttpRoutes
-import org.http4s.circe.CirceEntityCodec._
+import sttp.tapir._
+import sttp.tapir.server.http4s.Http4sServerInterpreter
 
-final private[controllers] class VideoGameController[F[_]: Logger](
+import java.time.Instant
+
+final private[controllers] class VideoGameController[F[_]: Async](
     private val videoGameService: ResellableItemService[F]
-)(implicit F: MonadError[F, Throwable])
-    extends Controller[F] {
+) extends Controller[F] {
+
+  private val basePath = "video-games"
+
+  private val searchQueryParams =
+    query[Option[Int]]("limit")
+      .and(query[Option[String]]("query"))
+      .and(query[Option[Instant]]("from"))
+      .and(query[Option[Instant]]("to"))
+
+  private val getAllGames = endpoint.get
+    .in(basePath)
+    .in(searchQueryParams)
+    .errorOut(errorResponse)
+    .out(jsonBody[List[ResellableItemResponse]])
+    .serverLogic { case (limit, query, from, to) =>
+      val filters = Filters(ItemKind.VideoGame, limit, from, to)
+      query
+        .fold(videoGameService.findAll(filters))(q => videoGameService.findBy(q, filters))
+        .map(_.map(ResellableItemResponse.from).asRight[ErrorResponse])
+        .handleError(err => ErrorResponse.from(err).asLeft)
+    }
+
+  private val getGamesSummaries = endpoint.get
+    .in(basePath / "summary")
+    .in(searchQueryParams)
+    .errorOut(errorResponse)
+    .out(jsonBody[ResellableItemsSummaryResponse])
+    .serverLogic { case (limit, query, from, to) =>
+      val filters = Filters(ItemKind.VideoGame, limit, from, to)
+      query
+        .fold(videoGameService.findAll(filters))(q => videoGameService.findBy(q, filters))
+        .map(resellableItemsSummaryResponse(_).asRight[ErrorResponse])
+        .handleError(err => ErrorResponse.from(err).asLeft)
+    }
 
   override def routes: HttpRoutes[F] =
-    HttpRoutes.of[F] {
-      case GET -> Root / "video-games" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) +& SearchQueryParam(query) =>
-        withErrorHandling {
-          val filters = Filters(ItemKind.VideoGame, limit, from, to)
-          query
-            .fold(videoGameService.findAll(filters))(q => videoGameService.findBy(q, filters))
-            .flatMap(games => Ok(games.map(ResellableItemResponse.from).asJson))
-        }
-      case GET -> Root / "video-games" / "stream" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) =>
-        Ok {
-          videoGameService
-            .stream(Filters(ItemKind.VideoGame, limit, from, to))
-            .map(ResellableItemResponse.from)
-            .map(_.asJson)
-        }
-      case GET -> Root / "video-games" / "summary" :? LimitQueryParam(limit) +& FromQueryParam(from) +& ToQueryParam(to) +& SearchQueryParam(query) =>
-        withErrorHandling {
-          val filters = Filters(ItemKind.VideoGame, limit, from, to)
-          query
-            .fold(videoGameService.findAll(filters))(q => videoGameService.findBy(q, filters))
-            .flatMap(games => Ok(resellableItemsSummaryResponse(games).asJson))
-        }
-    }
+    Http4sServerInterpreter[F]().toRoutes(List(getAllGames, getGamesSummaries))
 }

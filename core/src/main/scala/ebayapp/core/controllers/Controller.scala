@@ -1,56 +1,40 @@
 package ebayapp.core.controllers
 
-import cats.{Monad, MonadError}
-
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
+import cats.Monad
 import cats.effect._
-import cats.syntax.either._
-import cats.syntax.applicativeError._
-import cats.syntax.apply._
+import ebayapp.core.controllers.views._
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.services.ResellableItemService
-import ebayapp.core.common.{JsonCodecs, Logger}
-import ebayapp.core.controllers.views._
 import io.circe.generic.auto._
-import io.circe.syntax._
-import org.http4s.circe._
-import org.http4s.dsl.Http4sDsl
-import org.http4s.{HttpRoutes, MessageFailure, ParseFailure, QueryParamDecoder, Response}
+import org.http4s.HttpRoutes
+import sttp.model.StatusCode
+import sttp.tapir.Codec.PlainCodec
+import sttp.tapir.generic.SchemaDerivation
+import sttp.tapir.json.circe.TapirJsonCirce
+import sttp.tapir.{oneOf, oneOfDefaultMapping, oneOfMapping, Codec, DecodeResult}
 
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.util.Try
 
-trait Controller[F[_]] extends Http4sDsl[F] with JsonCodecs {
+trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
 
-  implicit val instantQueryParamDecoder: QueryParamDecoder[Instant] =
-    QueryParamDecoder[String].emap { dateString =>
-      val localDate =
-        if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay().toInstant(ZoneOffset.UTC))
-        else if (dateString.length == 19) Try(LocalDateTime.parse(dateString)).map(_.toInstant(ZoneOffset.UTC))
-        else Try(Instant.parse(dateString))
-      localDate.toEither.leftMap(e => ParseFailure(s"Invalid date format: $dateString", e.getMessage))
-    }
+  private def decodeInstant(dateString: String): DecodeResult[Instant] = {
+    val localDate =
+      if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay().toInstant(ZoneOffset.UTC))
+      else if (dateString.length == 19) Try(LocalDateTime.parse(dateString)).map(_.toInstant(ZoneOffset.UTC))
+      else Try(Instant.parse(dateString))
+    localDate.fold(DecodeResult.Error(dateString, _), DecodeResult.Value.apply)
+  }
 
-  object SearchQueryParam extends OptionalQueryParamDecoderMatcher[String]("query")
-  object LimitQueryParam  extends OptionalQueryParamDecoderMatcher[Int]("limit")
-  object FromQueryParam   extends OptionalQueryParamDecoderMatcher[Instant]("from")
-  object ToQueryParam     extends OptionalQueryParamDecoderMatcher[Instant]("to")
+  implicit val instantCodec: PlainCodec[Instant] = Codec.string.mapDecode(decodeInstant)(_.toString)
+
+  protected val errorResponse =
+    oneOf[ErrorResponse](
+      oneOfMapping(StatusCode.InternalServerError, jsonBody[ErrorResponse.InternalError]),
+      oneOfDefaultMapping(jsonBody[ErrorResponse.BadRequest])
+    )
 
   def routes: HttpRoutes[F]
-
-  protected def withErrorHandling(
-      response: => F[Response[F]]
-  )(implicit
-      F: MonadError[F, Throwable],
-      logger: Logger[F]
-  ): F[Response[F]] =
-    response.handleErrorWith {
-      case error: MessageFailure =>
-        logger.error(error)(s"error parsing json}") *>
-          BadRequest(ErrorResponse(error.getMessage()).asJson)
-      case error =>
-        logger.error(error)(s"unexpected error") *>
-          InternalServerError(ErrorResponse(error.getMessage).asJson)
-    }
 
   protected def resellableItemsSummaryResponse(items: List[ResellableItem]): ResellableItemsSummaryResponse = {
     val (worp, prof, rest) = items.foldLeft((List.empty[ResellableItem], List.empty[ResellableItem], List.empty[ResellableItem])) {
@@ -88,7 +72,7 @@ object Controller {
   def home[F[_]: Sync]: F[Controller[F]] =
     Monad[F].pure(new HomeController[F])
 
-  def videoGame[F[_]: Sync: Logger](service: ResellableItemService[F]): F[Controller[F]] =
+  def videoGame[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
     Monad[F].pure(new VideoGameController[F](service))
 
   def health[F[_]: Async]: F[Controller[F]] =

@@ -7,8 +7,6 @@ import org.http4s.HttpRoutes
 import sttp.capabilities.WebSockets
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir._
-import sttp.tapir.generic.SchemaDerivation
-import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
@@ -18,7 +16,7 @@ object AppStatus {
   val Up: AppStatus = AppStatus(true)
 }
 
-private[controllers] class HealthController[F[_]: Async] extends Controller[F] with TapirJsonCirce with SchemaDerivation {
+private[controllers] class HealthController[F[_]: Async] extends Controller[F] {
 
   implicit val statusSchema: Schema[AppStatus] = Schema.string
 

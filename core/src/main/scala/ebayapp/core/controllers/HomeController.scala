@@ -1,9 +1,10 @@
 package ebayapp.core.controllers
 
-import cats.effect.{Sync}
+import cats.effect.Sync
+import org.http4s.dsl.Http4sDsl
 import org.http4s.{HttpRoutes, StaticFile}
 
-private[controllers] class HomeController[F[_]: Sync] extends Controller[F] {
+private[controllers] class HomeController[F[_]: Sync] extends Controller[F] with Http4sDsl[F] {
 
   private val expectedFiles = List(".txt", ".ico", ".svg", ".png", ".json", ".js", ".css", ".map", ".html", ".webm")
 

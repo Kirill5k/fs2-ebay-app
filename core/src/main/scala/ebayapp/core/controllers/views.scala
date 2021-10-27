@@ -5,7 +5,16 @@ import ebayapp.core.domain.search.ListingDetails
 
 object views {
 
-  final case class ErrorResponse(message: String)
+  sealed trait ErrorResponse {
+    def message: String
+  }
+
+  object ErrorResponse {
+    final case class InternalError(message: String) extends ErrorResponse
+    final case class BadRequest(message: String) extends ErrorResponse
+
+    def from(err: Throwable): ErrorResponse = InternalError(err.getMessage)
+  }
 
   final case class ItemSummary(
       name: Option[String],
