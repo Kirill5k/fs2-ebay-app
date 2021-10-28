@@ -154,7 +154,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val request  = Request[IO](uri = uri"/video-games?from=foo", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      verifyJsonResponse(response, Status.BadRequest, Some("""{"BadRequest":{"message":"Invalid value for: query parameter from"}}"""))
+      verifyJsonResponse(response, Status.BadRequest, Some("""{"message":"Invalid value for: query parameter from"}"""))
       verifyNoInteractions(service)
     }
 

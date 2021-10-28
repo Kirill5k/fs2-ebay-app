@@ -2,6 +2,9 @@ package ebayapp.core.controllers
 
 import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.ListingDetails
+import io.circe.Encoder
+import io.circe.syntax._
+import io.circe.generic.auto._
 
 object views {
 
@@ -14,6 +17,11 @@ object views {
     final case class BadRequest(message: String) extends ErrorResponse
 
     def from(err: Throwable): ErrorResponse = InternalError(err.getMessage)
+
+    implicit val encodeError: Encoder[ErrorResponse] = Encoder.instance {
+      case e: BadRequest => e.asJson
+      case e: InternalError => e.asJson
+    }
   }
 
   final case class ItemSummary(
