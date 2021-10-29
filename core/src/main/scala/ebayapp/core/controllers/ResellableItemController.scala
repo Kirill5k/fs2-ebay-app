@@ -15,11 +15,11 @@ import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import java.time.Instant
 
-final private[controllers] class VideoGameController[F[_]: Async](
-    private val videoGameService: ResellableItemService[F]
+final private[controllers] class ResellableItemController[F[_]: Async](
+    private val basePath: String,
+    private val itemKind: ItemKind,
+    private val itemService: ResellableItemService[F]
 ) extends Controller[F] {
-
-  private val basePath = "video-games"
 
   private val searchQueryParams =
     query[Option[Int]]("limit")
@@ -33,9 +33,9 @@ final private[controllers] class VideoGameController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemResponse]])
     .serverLogic { case (limit, query, from, to) =>
-      val filters = Filters(ItemKind.VideoGame, limit, from, to)
+      val filters = Filters(itemKind, limit, from, to)
       query
-        .fold(videoGameService.findAll(filters))(q => videoGameService.findBy(q, filters))
+        .fold(itemService.findAll(filters))(q => itemService.findBy(q, filters))
         .map(_.map(ResellableItemResponse.from).asRight[ErrorResponse])
         .handleError(err => ErrorResponse.from(err).asLeft)
     }
@@ -46,9 +46,9 @@ final private[controllers] class VideoGameController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
     .serverLogic { case (limit, query, from, to) =>
-      val filters = Filters(ItemKind.VideoGame, limit, from, to)
+      val filters = Filters(itemKind, limit, from, to)
       query
-        .fold(videoGameService.findAll(filters))(q => videoGameService.findBy(q, filters))
+        .fold(itemService.findAll(filters))(q => itemService.findBy(q, filters))
         .map(resellableItemsSummaryResponse(_).asRight[ErrorResponse])
         .handleError(err => ErrorResponse.from(err).asLeft)
     }

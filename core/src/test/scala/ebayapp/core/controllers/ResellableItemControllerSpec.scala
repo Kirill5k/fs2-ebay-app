@@ -12,7 +12,7 @@ import org.http4s.{Request, Status, _}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, verifyNoInteractions, when}
 
-class VideoGameControllerSpec extends ControllerSpec {
+class ResellableItemControllerSpec extends ControllerSpec {
 
   val postedTs = Instant.ofEpochMilli(1577836800000L)
 
@@ -28,7 +28,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.findAll(any[Filters])).thenReturn(IO.pure(List(game1, game2)))
 
-      val controller = new VideoGameController[IO](service)
+      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -95,7 +95,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.findAll(any[Filters])).thenReturn(IO.pure(List(game1, game2, game3)))
 
-      val controller = new VideoGameController[IO](service)
+      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games/summary", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -115,7 +115,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.findAll(any[Filters])).thenReturn(IO.pure(Nil))
 
-      val controller = new VideoGameController[IO](service)
+      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -134,7 +134,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.findAll(any[Filters])).thenReturn(IO.pure(Nil))
 
-      val controller = new VideoGameController[IO](service)
+      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?from=2020-01-01&to=2020-01-01T00:00:01", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -149,7 +149,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.findAll(any[Filters])).thenReturn(IO.pure(Nil))
 
-      val controller = new VideoGameController[IO](service)
+      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?from=foo", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -162,7 +162,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.findBy(any[String], any[Filters])).thenReturn(IO.pure(Nil))
 
-      val controller = new VideoGameController[IO](service)
+      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?limit=100&query=foo-bar", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -176,7 +176,7 @@ class VideoGameControllerSpec extends ControllerSpec {
       when(service.findAll(any[Filters]))
         .thenReturn(IO.raiseError(new RuntimeException("bad request")))
 
-      val controller = new VideoGameController[IO](service)
+      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)

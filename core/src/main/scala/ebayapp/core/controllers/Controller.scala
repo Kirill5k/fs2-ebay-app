@@ -3,7 +3,7 @@ package ebayapp.core.controllers
 import cats.Monad
 import cats.effect._
 import ebayapp.core.controllers.views._
-import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.{ItemKind, ResellableItem}
 import ebayapp.core.services.ResellableItemService
 import io.circe.generic.auto._
 import org.http4s.HttpRoutes
@@ -13,7 +13,7 @@ import sttp.tapir.generic.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.server.http4s.Http4sServerOptions
 import sttp.tapir.server.interceptor.ValuedEndpointOutput
-import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultMapping, oneOfMapping}
+import sttp.tapir.{oneOf, oneOfDefaultMapping, oneOfMapping, Codec, DecodeResult}
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.util.Try
@@ -80,7 +80,7 @@ object Controller {
     Monad[F].pure(new HomeController[F])
 
   def videoGame[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
-    Monad[F].pure(new VideoGameController[F](service))
+    Monad[F].pure(new ResellableItemController[F]("video-games", ItemKind.VideoGame, service))
 
   def health[F[_]: Async]: F[Controller[F]] =
     Monad[F].pure(new HealthController[F])
