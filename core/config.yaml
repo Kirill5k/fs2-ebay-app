@@ -111,7 +111,8 @@ data:
       cex {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "macbook pro 18,4"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "macbook pro 18,4"}, monitor-stock-change: true, monitor-price-change: true}
+          {search-criteria: {query: "macbook pro 18,3 m1"}, monitor-stock-change: true, monitor-price-change: true}
         ]
       }
 
