@@ -1,6 +1,6 @@
 package ebayapp.core.controllers
 
-import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
+import ebayapp.core.domain.{ItemDetails, ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.domain.search.ListingDetails
 import io.circe.Encoder
 import io.circe.syntax._
@@ -23,14 +23,6 @@ object views {
       case e: InternalError => e.asJson
     }
   }
-
-  final case class ItemSummary(
-      name: Option[String],
-      title: String,
-      url: String,
-      price: BigDecimal,
-      exchange: Option[BigDecimal]
-  )
 
   final case class ItemsSummary(
       total: Int,

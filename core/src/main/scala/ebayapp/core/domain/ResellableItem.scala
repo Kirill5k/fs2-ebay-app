@@ -5,10 +5,10 @@ import io.circe.{Decoder, Encoder}
 
 sealed abstract class ItemKind(val value: String)
 object ItemKind {
-  case object Generic       extends ItemKind("generic")
-  case object VideoGame     extends ItemKind("video-game")
-  case object MobilePhone   extends ItemKind("mobile-phone")
-  case object Clothing      extends ItemKind("clothing")
+  case object Generic     extends ItemKind("generic")
+  case object VideoGame   extends ItemKind("video-game")
+  case object MobilePhone extends ItemKind("mobile-phone")
+  case object Clothing    extends ItemKind("clothing")
 
   val all = List(Generic, VideoGame, MobilePhone, Clothing)
 
@@ -18,6 +18,14 @@ object ItemKind {
   implicit val decode: Decoder[ItemKind] = Decoder[String].emap(ItemKind.from)
   implicit val encode: Encoder[ItemKind] = Encoder[String].contramap(_.value)
 }
+
+final case class ItemSummary(
+    name: Option[String],
+    title: String,
+    url: String,
+    buyPrice: BigDecimal,
+    exchangePrice: Option[BigDecimal]
+)
 
 final case class ResellableItem(
     kind: ItemKind,

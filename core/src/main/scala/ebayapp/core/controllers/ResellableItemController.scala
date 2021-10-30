@@ -27,7 +27,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
       .and(query[Option[Instant]]("from"))
       .and(query[Option[Instant]]("to"))
 
-  private val getAllGames = endpoint.get
+  private val getAll = endpoint.get
     .in(basePath)
     .in(searchQueryParams)
     .errorOut(errorResponse)
@@ -40,7 +40,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
         .handleError(err => ErrorResponse.from(err).asLeft)
     }
 
-  private val getGamesSummaries = endpoint.get
+  private val getSummaries = endpoint.get
     .in(basePath / "summary")
     .in(searchQueryParams)
     .errorOut(errorResponse)
@@ -54,5 +54,5 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     }
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAllGames, getGamesSummaries))
+    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getSummaries))
 }

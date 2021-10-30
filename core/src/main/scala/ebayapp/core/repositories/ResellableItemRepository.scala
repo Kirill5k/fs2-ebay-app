@@ -6,13 +6,15 @@ import cats.syntax.functor._
 import cats.syntax.flatMap._
 import cats.syntax.applicative._
 import io.circe.generic.auto._
-import ebayapp.core.domain.{ItemKind, ResellableItem}
+import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
+import mongo4cats.bson.Document
 import mongo4cats.circe._
-import mongo4cats.collection.operations.Filter
+import mongo4cats.collection.operations.{Aggregate, Filter, Projection}
 import mongo4cats.collection.MongoCollection
-import fs2._
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
+
+import scala.jdk.CollectionConverters._
 
 final case class Filters(
     kind: ItemKind,
@@ -27,7 +29,7 @@ trait ResellableItemRepository[F[_]] {
   def saveAll(items: Seq[ResellableItem]): F[Unit]
   def search(query: String, filters: Filters): F[List[ResellableItem]]
   def findAll(filters: Filters): F[List[ResellableItem]]
-  def stream(filters: Filters): Stream[F, ResellableItem]
+  def summaries(filters: Filters): F[List[ItemSummary]]
 }
 
 final class ResellableItemMongoRepository[F[_]: Async](
@@ -35,10 +37,17 @@ final class ResellableItemMongoRepository[F[_]: Async](
 ) extends ResellableItemRepository[F] {
 
   private object Field {
-    val Kind = "kind"
+    val Kind       = "kind"
     val DatePosted = "listingDetails.datePosted"
-    val Url = "listingDetails.url"
+    val Url        = "listingDetails.url"
   }
+
+  private val videoGameSummaryProjection = Projection
+    .computed("url", "$listingDetails.url")
+    .computed("title", "$listingDetails.title")
+    .computed("name", Document("$concat" -> List("$itemDetails.name", " ", "$itemDetails.platform").asJava))
+    .computed("buyPrice", "$price.buy")
+    .computed("exchangePrice", "$price.credit")
 
   def existsByUrl(listingUrl: String): F[Boolean] =
     mongoCollection.count(Filter.eq(Field.Url, listingUrl)).map(_ > 0)
@@ -67,13 +76,15 @@ final class ResellableItemMongoRepository[F[_]: Async](
       .all
       .map(_.map(ResellableItemEntityMapper.toDomain).toList)
 
-  def stream(filters: Filters): Stream[F, ResellableItem] =
-    mongoCollection.find
-      .sortByDesc(Field.DatePosted)
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
-      .limit(filters.limit.getOrElse(0))
-      .stream
-      .map(ResellableItemEntityMapper.toDomain)
+  def summaries(filters: Filters): F[List[ItemSummary]] =
+    mongoCollection
+      .aggregateWithCodec[ItemSummary] {
+        Aggregate
+          .matchBy(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
+          .project(videoGameSummaryProjection)
+      }
+      .all
+      .map(_.toList)
 
   private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Filter = {
     val fromFilter = from.map(d => Filter.gte(Field.DatePosted, d))
