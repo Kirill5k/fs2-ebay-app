@@ -10,7 +10,7 @@ import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.bson.Document
 import mongo4cats.circe._
-import mongo4cats.collection.operations.{Aggregate, Filter, Projection}
+import mongo4cats.collection.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
 
@@ -20,19 +20,19 @@ final case class Filters(
     kind: ItemKind,
     limit: Option[Int] = None,
     from: Option[Instant] = None,
-    to: Option[Instant] = None
+    to: Option[Instant] = None,
+    query: Option[String] = None
 )
 
 trait ResellableItemRepository[F[_]] {
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: ResellableItem): F[Unit]
   def saveAll(items: Seq[ResellableItem]): F[Unit]
-  def search(query: String, filters: Filters): F[List[ResellableItem]]
-  def findAll(filters: Filters): F[List[ResellableItem]]
+  def search(filters: Filters): F[List[ResellableItem]]
   def summaries(filters: Filters): F[List[ItemSummary]]
 }
 
-final class ResellableItemMongoRepository[F[_]: Async](
+final private class ResellableItemMongoRepository[F[_]: Async](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
 ) extends ResellableItemRepository[F] {
 
@@ -58,20 +58,10 @@ final class ResellableItemMongoRepository[F[_]: Async](
   def saveAll(items: Seq[ResellableItem]): F[Unit] =
     mongoCollection.insertMany(items.map(ResellableItemEntityMapper.toEntity)).void
 
-  def search(
-      query: String,
-      filters: Filters
-  ): F[List[ResellableItem]] =
-    mongoCollection.find
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.text(query) && Filter.eq(Field.Kind, filters.kind))
-      .limit(filters.limit.getOrElse(0))
-      .all
-      .map(_.map(ResellableItemEntityMapper.toDomain).toList)
-
-  def findAll(filters: Filters): F[List[ResellableItem]] =
+  def search(filters: Filters): F[List[ResellableItem]] =
     mongoCollection.find
       .sortByDesc(Field.DatePosted)
-      .filter(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
+      .filter(searchFilter(filters))
       .limit(filters.limit.getOrElse(0))
       .all
       .map(_.map(ResellableItemEntityMapper.toDomain).toList)
@@ -80,7 +70,9 @@ final class ResellableItemMongoRepository[F[_]: Async](
     mongoCollection
       .aggregateWithCodec[ItemSummary] {
         Aggregate
-          .matchBy(postedDateRangeSelector(filters.from, filters.to) && Filter.eq(Field.Kind, filters.kind))
+          .sort(Sort.asc(Field.DatePosted))
+          .matchBy(searchFilter(filters))
+          .limit(filters.limit.getOrElse(0))
           .project(videoGameSummaryProjection)
       }
       .all
@@ -91,6 +83,11 @@ final class ResellableItemMongoRepository[F[_]: Async](
     val toFilter   = to.map(d => Filter.lt(Field.DatePosted, d))
     List(fromFilter, toFilter).flatten.foldLeft(Filter.empty)((acc, el) => acc && el)
   }
+
+  private def searchFilter(filters: Filters): Filter =
+    postedDateRangeSelector(filters.from, filters.to) &&
+      Filter.eq(Field.Kind, filters.kind) &&
+      filters.query.fold(Filter.empty)(Filter.text)
 }
 
 object ResellableItemRepository {

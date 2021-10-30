@@ -33,11 +33,9 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemResponse]])
     .serverLogic { case (limit, query, from, to) =>
-      val filters = Filters(itemKind, limit, from, to)
-      query
-        .fold(itemService.findAll(filters))(q => itemService.findBy(q, filters))
+      itemService.search(Filters(itemKind, limit, from, to, query))
         .map(_.map(ResellableItemResponse.from).asRight[ErrorResponse])
-        .handleError(err => ErrorResponse.from(err).asLeft)
+        .handleError(ErrorResponse.from(_).asLeft)
     }
 
   private val getSummaries = endpoint.get
@@ -46,11 +44,9 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
     .serverLogic { case (limit, query, from, to) =>
-      val filters = Filters(itemKind, limit, from, to)
-      query
-        .fold(itemService.findAll(filters))(q => itemService.findBy(q, filters))
+      itemService.search(Filters(itemKind, limit, from, to, query))
         .map(resellableItemsSummaryResponse(_).asRight[ErrorResponse])
-        .handleError(err => ErrorResponse.from(err).asLeft)
+        .handleError(ErrorResponse.from(_).asLeft)
     }
 
   override def routes: HttpRoutes[F] =

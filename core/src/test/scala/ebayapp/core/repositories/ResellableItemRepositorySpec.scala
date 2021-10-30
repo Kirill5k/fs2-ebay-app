@@ -64,22 +64,19 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
             coll <- db.getCollection("items")
             _    <- coll.createIndex(Document.parse("""{"itemDetails.name":"text","itemDetails.platform":"text"}"""))
             _    <- repo.saveAll(videoGames)
-            res  <- repo.search("mario", searchFilters)
+            res  <- repo.search(searchFilters.copy(query = Some("mario")))
           } yield res
 
           result.map(_ mustBe List(videoGames.last))
         }
       }
-    }
-
-    "findAll" should {
 
       "not return anything when kind is different" in {
         withEmbeddedMongoClient { db =>
           val result = for {
             repo <- ResellableItemRepository.mongo[IO](db)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(searchFilters.copy(kind = ItemKind.Generic))
+            all  <- repo.search(searchFilters.copy(kind = ItemKind.Generic))
           } yield all
 
           result.map(_ mustBe Nil)
@@ -91,7 +88,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
           val result = for {
             repo <- ResellableItemRepository.mongo[IO](db)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(searchFilters)
+            all  <- repo.search(searchFilters)
           } yield all
 
           result.map(_ mustBe videoGames.reverse)
@@ -103,7 +100,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
           val result = for {
             repo <- ResellableItemRepository.mongo[IO](db)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(searchFilters.copy(from = Some(Instant.now)))
+            all  <- repo.search(searchFilters.copy(from = Some(Instant.now)))
           } yield all
 
           result.map(_ mustBe List(videoGames.last))
@@ -117,7 +114,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
             _    <- repo.saveAll(videoGames)
             from = Some(Instant.now().minusSeconds(500))
             to   = Some(Instant.now.plusSeconds(500))
-            all <- repo.findAll(searchFilters.copy(from = from, to = to))
+            all <- repo.search(searchFilters.copy(from = from, to = to))
           } yield all
 
           result.map(_ mustBe List(videoGames(1)))
@@ -129,7 +126,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
           val result = for {
             repo <- ResellableItemRepository.mongo[IO](db)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(searchFilters.copy(to = Some(Instant.now.minusSeconds(500))))
+            all  <- repo.search(searchFilters.copy(to = Some(Instant.now.minusSeconds(500))))
           } yield all
 
           result.map(_ mustBe List(videoGames.head))
@@ -141,7 +138,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
           val result = for {
             repo <- ResellableItemRepository.mongo[IO](db)
             _    <- repo.saveAll(videoGames)
-            all  <- repo.findAll(searchFilters.copy(limit = Some(1)))
+            all  <- repo.search(searchFilters.copy(limit = Some(1)))
           } yield all
 
           result.map(_ mustBe List(videoGames(2)))

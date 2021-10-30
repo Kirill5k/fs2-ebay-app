@@ -23,24 +23,12 @@ class ResellableItemServiceSpec extends CatsSpec {
 
     "get latest items from db" in {
       val repository = mock[ResellableItemRepository[IO]]
-      when(repository.findAll(any[Filters])).thenReturn(IO.pure(List(videoGame)))
+      when(repository.search(any[Filters])).thenReturn(IO.pure(List(videoGame)))
 
-      val latestResult = ResellableItemService.make(repository).flatMap(_.findAll(searchFilters))
-
-      latestResult.unsafeToFuture().map { latest =>
-        verify(repository).findAll(searchFilters)
-        latest mustBe List(videoGame)
-      }
-    }
-
-    "get latest items from db by query" in {
-      val repository = mock[ResellableItemRepository[IO]]
-      when(repository.search(any[String], any[Filters])).thenReturn(IO.pure(List(videoGame)))
-
-      val latestResult = ResellableItemService.make(repository).flatMap(_.findBy("foo", searchFilters))
+      val latestResult = ResellableItemService.make(repository).flatMap(_.search(searchFilters))
 
       latestResult.unsafeToFuture().map { latest =>
-        verify(repository).search("foo", searchFilters)
+        verify(repository).search(searchFilters)
         latest mustBe List(videoGame)
       }
     }
