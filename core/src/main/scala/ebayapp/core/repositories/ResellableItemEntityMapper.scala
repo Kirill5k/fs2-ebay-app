@@ -16,7 +16,7 @@ private[repositories] object ResellableItemEntityMapper {
       item.itemDetails,
       item.listingDetails,
       ItemPrice(
-        item.buyPrice.rrp.toString(),
+        item.buyPrice.rrp,
         item.buyPrice.quantityAvailable,
         item.sellPrice.map(_.cash),
         item.sellPrice.map(_.credit)
@@ -28,7 +28,7 @@ private[repositories] object ResellableItemEntityMapper {
       entity.kind,
       entity.itemDetails,
       entity.listingDetails,
-      BuyPrice(entity.price.quantityAvailable, BigDecimal(entity.price.buy)),
+      BuyPrice(entity.price.quantityAvailable, entity.price.buy),
       (entity.price.sell, entity.price.credit).mapN((s, c) => SellPrice(s, c))
     )
 }

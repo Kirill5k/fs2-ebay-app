@@ -7,7 +7,7 @@ import org.bson.types.ObjectId
 private[repositories] object entities {
 
   final case class ItemPrice(
-      buy: String,
+      buy: BigDecimal,
       quantityAvailable: Int,
       sell: Option[BigDecimal],
       credit: Option[BigDecimal]
