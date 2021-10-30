@@ -70,8 +70,8 @@ final private class ResellableItemMongoRepository[F[_]: Async](
     mongoCollection
       .aggregateWithCodec[ItemSummary] {
         Aggregate
-          .sort(Sort.asc(Field.DatePosted))
           .matchBy(searchFilter(params))
+          .sort(Sort.asc(Field.DatePosted))
           .limit(params.limit.getOrElse(Int.MaxValue))
           .project(videoGameSummaryProjection)
       }
