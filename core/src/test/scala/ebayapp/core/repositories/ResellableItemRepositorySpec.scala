@@ -31,131 +31,111 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
   "A ResellableItemRepository" when {
 
     "existsByUrl" should {
-      "return true if video game already exists by url" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo   <- ResellableItemRepository.mongo[IO](db)
-            _      <- repo.saveAll(videoGames)
-            exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
-          } yield exists
+      "return true if video game already exists by url" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo   <- ResellableItemRepository.mongo[IO](db)
+          _      <- repo.saveAll(videoGames)
+          exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
+        } yield exists
 
-          result.map(_ mustBe true)
-        }
+        result.map(_ mustBe true)
       }
 
-      "return false if does not exist" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo   <- ResellableItemRepository.mongo[IO](db)
-            exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
-          } yield exists
+      "return false if does not exist" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo   <- ResellableItemRepository.mongo[IO](db)
+          exists <- repo.existsByUrl("https://www.ebay.co.uk/itm/super-mario-3")
+        } yield exists
 
-          result.map(_ mustBe false)
-        }
+        result.map(_ mustBe false)
       }
     }
 
     "search" should {
 
-      "find video games through search" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            coll <- db.getCollection("items")
-            _    <- coll.createIndex(Document.parse("""{"itemDetails.name":"text","itemDetails.platform":"text"}"""))
-            _    <- repo.saveAll(videoGames)
-            res  <- repo.search(searchFilters.copy(query = Some("mario")))
-          } yield res
+      "find video games through search" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          coll <- db.getCollection("items")
+          _    <- coll.createIndex(Document.parse("""{"itemDetails.name":"text","itemDetails.platform":"text"}"""))
+          _    <- repo.saveAll(videoGames)
+          res  <- repo.search(searchFilters.copy(query = Some("mario")))
+        } yield res
 
-          result.map(_ mustBe List(videoGames.last))
-        }
+        result.map(_ mustBe List(videoGames.last))
       }
 
-      "not return anything when kind is different" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            _    <- repo.saveAll(videoGames)
-            all  <- repo.search(searchFilters.copy(kind = ItemKind.Generic))
-          } yield all
+      "not return anything when kind is different" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          _    <- repo.saveAll(videoGames)
+          all  <- repo.search(searchFilters.copy(kind = ItemKind.Generic))
+        } yield all
 
-          result.map(_ mustBe Nil)
-        }
+        result.map(_ mustBe Nil)
       }
 
-      "return all video games" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            _    <- repo.saveAll(videoGames)
-            all  <- repo.search(searchFilters)
-          } yield all
+      "return all video games" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          _    <- repo.saveAll(videoGames)
+          all  <- repo.search(searchFilters)
+        } yield all
 
-          result.map(_ mustBe videoGames.reverse)
-        }
+        result.map(_ mustBe videoGames.reverse)
       }
 
-      "return all video games posted after provided date" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            _    <- repo.saveAll(videoGames)
-            all  <- repo.search(searchFilters.copy(from = Some(Instant.now)))
-          } yield all
+      "return all video games posted after provided date" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          _    <- repo.saveAll(videoGames)
+          all  <- repo.search(searchFilters.copy(from = Some(Instant.now)))
+        } yield all
 
-          result.map(_ mustBe List(videoGames.last))
-        }
+        result.map(_ mustBe List(videoGames.last))
       }
 
-      "return all video games posted between provided dates" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            _    <- repo.saveAll(videoGames)
-            from = Some(Instant.now().minusSeconds(500))
-            to   = Some(Instant.now.plusSeconds(500))
-            all <- repo.search(searchFilters.copy(from = from, to = to))
-          } yield all
+      "return all video games posted between provided dates" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          _    <- repo.saveAll(videoGames)
+          from = Some(Instant.now().minusSeconds(500))
+          to   = Some(Instant.now.plusSeconds(500))
+          all <- repo.search(searchFilters.copy(from = from, to = to))
+        } yield all
 
-          result.map(_ mustBe List(videoGames(1)))
-        }
+        result.map(_ mustBe List(videoGames(1)))
       }
 
-      "return all video games posted before provided date" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            _    <- repo.saveAll(videoGames)
-            all  <- repo.search(searchFilters.copy(to = Some(Instant.now.minusSeconds(500))))
-          } yield all
+      "return all video games posted before provided date" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          _    <- repo.saveAll(videoGames)
+          all  <- repo.search(searchFilters.copy(to = Some(Instant.now.minusSeconds(500))))
+        } yield all
 
-          result.map(_ mustBe List(videoGames.head))
-        }
+        result.map(_ mustBe List(videoGames.head))
       }
 
-      "return all video games with limit" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            _    <- repo.saveAll(videoGames)
-            all  <- repo.search(searchFilters.copy(limit = Some(1)))
-          } yield all
+      "return all video games with limit" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          _    <- repo.saveAll(videoGames)
+          all  <- repo.search(searchFilters.copy(limit = Some(1)))
+        } yield all
 
-          result.map(_ mustBe List(videoGames(2)))
-        }
+        result.map(_ mustBe List(videoGames(2)))
       }
     }
 
     "save" should {
-      "save video game in db" in {
-        withEmbeddedMongoClient { db =>
-          val result = for {
-            repo <- ResellableItemRepository.mongo[IO](db)
-            res  <- repo.save(ResellableItemBuilder.videoGame("Witcher 3"))
-          } yield res
+      "save video game in db" in withEmbeddedMongoClient { db =>
+        val result = for {
+          repo <- ResellableItemRepository.mongo[IO](db)
+          res  <- repo.save(ResellableItemBuilder.videoGame("Witcher 3"))
+        } yield res
 
-          result.map(_ mustBe (()))
-        }
+        result.map(_ mustBe (()))
       }
     }
   }
