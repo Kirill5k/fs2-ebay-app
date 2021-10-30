@@ -3,7 +3,7 @@ package ebayapp.core.controllers
 import cats.Monad
 import cats.effect._
 import ebayapp.core.controllers.views._
-import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
+import ebayapp.core.domain.ItemKind
 import ebayapp.core.services.ResellableItemService
 import io.circe.generic.auto._
 import org.http4s.HttpRoutes
@@ -42,36 +42,6 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
     )
 
   def routes: HttpRoutes[F]
-
-  protected def resellableItemsSummaryResponse(items: List[ResellableItem]): ResellableItemsSummaryResponse = {
-    val (worp, prof, rest) = items.foldLeft((List.empty[ResellableItem], List.empty[ResellableItem], List.empty[ResellableItem])) {
-      case ((withoutResell, profitable, rest), item) =>
-        if (item.sellPrice.isEmpty) (item :: withoutResell, profitable, rest)
-        else if (item.sellPrice.exists(rp => rp.cash > item.buyPrice.rrp)) (withoutResell, item :: profitable, rest)
-        else (withoutResell, profitable, item :: rest)
-    }
-
-    ResellableItemsSummaryResponse(
-      items.size,
-      toItemsSummary(worp.reverse),
-      toItemsSummary(prof.reverse),
-      toItemsSummary(rest.reverse)
-    )
-  }
-
-  private def toItemsSummary(items: List[ResellableItem]): ItemsSummary =
-    ItemsSummary(
-      items.size,
-      items.map { i =>
-        ItemSummary(
-          i.itemDetails.fullName,
-          i.listingDetails.title,
-          i.listingDetails.url,
-          i.buyPrice.rrp,
-          i.sellPrice.map(_.credit)
-        )
-      }
-    )
 }
 
 object Controller {

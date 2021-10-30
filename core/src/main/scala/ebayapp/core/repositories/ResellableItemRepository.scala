@@ -16,7 +16,7 @@ import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
 
 import scala.jdk.CollectionConverters._
 
-final case class Filters(
+final case class SearchParams(
     kind: ItemKind,
     limit: Option[Int] = None,
     from: Option[Instant] = None,
@@ -28,8 +28,8 @@ trait ResellableItemRepository[F[_]] {
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: ResellableItem): F[Unit]
   def saveAll(items: Seq[ResellableItem]): F[Unit]
-  def search(filters: Filters): F[List[ResellableItem]]
-  def summaries(filters: Filters): F[List[ItemSummary]]
+  def search(params: SearchParams): F[List[ResellableItem]]
+  def summaries(params: SearchParams): F[List[ItemSummary]]
 }
 
 final private class ResellableItemMongoRepository[F[_]: Async](
@@ -58,21 +58,21 @@ final private class ResellableItemMongoRepository[F[_]: Async](
   def saveAll(items: Seq[ResellableItem]): F[Unit] =
     mongoCollection.insertMany(items.map(ResellableItemEntityMapper.toEntity)).void
 
-  def search(filters: Filters): F[List[ResellableItem]] =
+  def search(params: SearchParams): F[List[ResellableItem]] =
     mongoCollection.find
       .sortByDesc(Field.DatePosted)
-      .filter(searchFilter(filters))
-      .limit(filters.limit.getOrElse(0))
+      .filter(searchFilter(params))
+      .limit(params.limit.getOrElse(0))
       .all
       .map(_.map(ResellableItemEntityMapper.toDomain).toList)
 
-  def summaries(filters: Filters): F[List[ItemSummary]] =
+  def summaries(params: SearchParams): F[List[ItemSummary]] =
     mongoCollection
       .aggregateWithCodec[ItemSummary] {
         Aggregate
           .sort(Sort.asc(Field.DatePosted))
-          .matchBy(searchFilter(filters))
-          .limit(filters.limit.getOrElse(0))
+          .matchBy(searchFilter(params))
+          .limit(params.limit.getOrElse(0))
           .project(videoGameSummaryProjection)
       }
       .all
@@ -84,7 +84,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
     List(fromFilter, toFilter).flatten.foldLeft(Filter.empty)((acc, el) => acc && el)
   }
 
-  private def searchFilter(filters: Filters): Filter =
+  private def searchFilter(filters: SearchParams): Filter =
     postedDateRangeSelector(filters.from, filters.to) &&
       Filter.eq(Field.Kind, filters.kind) &&
       filters.query.fold(Filter.empty)(Filter.text)

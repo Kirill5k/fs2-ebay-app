@@ -14,12 +14,12 @@ object views {
 
   object ErrorResponse {
     final case class InternalError(message: String) extends ErrorResponse
-    final case class BadRequest(message: String) extends ErrorResponse
+    final case class BadRequest(message: String)    extends ErrorResponse
 
     def from(err: Throwable): ErrorResponse = InternalError(err.getMessage)
 
     implicit val encodeError: Encoder[ErrorResponse] = Encoder.instance {
-      case e: BadRequest => e.asJson
+      case e: BadRequest    => e.asJson
       case e: InternalError => e.asJson
     }
   }
@@ -35,6 +35,24 @@ object views {
       profitable: ItemsSummary,
       rest: ItemsSummary
   )
+
+  object ResellableItemsSummaryResponse {
+    def from(summaries: List[ItemSummary]): ResellableItemsSummaryResponse = {
+      val (worp, prof, rest) = summaries.foldLeft((List.empty[ItemSummary], List.empty[ItemSummary], List.empty[ItemSummary])) {
+        case ((withoutResell, profitable, rest), item) =>
+          if (item.exchangePrice.isEmpty) (item :: withoutResell, profitable, rest)
+          else if (item.exchangePrice.exists(ep => ep > item.buyPrice)) (withoutResell, item :: profitable, rest)
+          else (withoutResell, profitable, item :: rest)
+      }
+
+      ResellableItemsSummaryResponse(
+        summaries.size,
+        ItemsSummary(worp.size, worp.reverse),
+        ItemsSummary(prof.size, prof.reverse),
+        ItemsSummary(rest.size, rest.reverse)
+      )
+    }
+  }
 
   final case class ItemPrice(
       buy: BigDecimal,

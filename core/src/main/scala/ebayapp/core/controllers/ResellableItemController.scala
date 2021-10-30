@@ -6,7 +6,7 @@ import cats.syntax.either._
 import cats.syntax.functor._
 import ebayapp.core.controllers.views.{ErrorResponse, ResellableItemResponse, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.ItemKind
-import ebayapp.core.repositories.Filters
+import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
 import io.circe.generic.auto._
 import org.http4s.HttpRoutes
@@ -33,7 +33,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemResponse]])
     .serverLogic { case (limit, query, from, to) =>
-      itemService.search(Filters(itemKind, limit, from, to, query))
+      itemService.search(SearchParams(itemKind, limit, from, to, query))
         .map(_.map(ResellableItemResponse.from).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
@@ -44,8 +44,8 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
     .serverLogic { case (limit, query, from, to) =>
-      itemService.search(Filters(itemKind, limit, from, to, query))
-        .map(resellableItemsSummaryResponse(_).asRight[ErrorResponse])
+      itemService.summaries(SearchParams(itemKind, limit, from, to, query))
+        .map(ResellableItemsSummaryResponse.from(_).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
 

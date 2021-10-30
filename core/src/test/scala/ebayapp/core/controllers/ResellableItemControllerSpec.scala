@@ -3,9 +3,9 @@ package ebayapp.core.controllers
 import java.time.Instant
 import cats.effect.IO
 import ebayapp.core.ControllerSpec
-import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemBuilder}
+import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
 import ebayapp.core.domain.search.SellPrice
-import ebayapp.core.repositories.Filters
+import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
 import org.http4s.implicits._
 import org.http4s.{Request, Status, _}
@@ -20,13 +20,19 @@ class ResellableItemControllerSpec extends ControllerSpec {
   val game2 = ResellableItemBuilder.videoGame("Battlefield 1", postedTs, sellPrice = None)
   val game3 = ResellableItemBuilder.videoGame("Battlefield 1", postedTs, sellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5))))
 
-  val searchFilters = Filters(ItemKind.VideoGame, None, None, None)
+  val summaries = List(
+    ItemSummary(game1.itemDetails.fullName, game1.listingDetails.title, game1.listingDetails.url, game1.buyPrice.rrp, game1.sellPrice.map(_.credit)),
+    ItemSummary(game2.itemDetails.fullName, game2.listingDetails.title, game2.listingDetails.url, game2.buyPrice.rrp, game2.sellPrice.map(_.credit)),
+    ItemSummary(game3.itemDetails.fullName, game3.listingDetails.title, game3.listingDetails.url, game3.buyPrice.rrp, game3.sellPrice.map(_.credit))
+  )
+
+  val searchFilters = SearchParams(ItemKind.VideoGame, None, None, None)
 
   "A VideoGameController" should {
 
     "return list of video games" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[Filters])).thenReturn(IO.pure(List(game1, game2)))
+      when(service.search(any[SearchParams])).thenReturn(IO.pure(List(game1, game2)))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -93,7 +99,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "return summary of video games" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[Filters])).thenReturn(IO.pure(List(game1, game2, game3)))
+      when(service.summaries(any[SearchParams])).thenReturn(IO.pure(summaries))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -108,12 +114,12 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":5}]}
           |}""".stripMargin
       verifyJsonResponse(response, Status.Ok, Some(expected))
-      verify(service).search(searchFilters)
+      verify(service).summaries(searchFilters)
     }
 
     "parse optional query params" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[Filters])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -132,7 +138,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "parse date query params" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[Filters])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -147,7 +153,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "return error on date query param parsing failure" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[Filters])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -160,7 +166,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "parse search query params" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[Filters])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -173,7 +179,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "return error" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[Filters]))
+      when(service.search(any[SearchParams]))
         .thenReturn(IO.raiseError(new RuntimeException("bad request")))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)

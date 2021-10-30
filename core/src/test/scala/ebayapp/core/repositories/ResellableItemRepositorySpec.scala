@@ -26,7 +26,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
     ResellableItemBuilder.videoGame("Super Mario 3", Instant.now().plusSeconds(1000).`with`(MILLI_OF_SECOND, 0), platform = None)
   )
 
-  val searchFilters = Filters(ItemKind.VideoGame, Some(100), None, None)
+  val searchFilters = SearchParams(ItemKind.VideoGame, Some(100), None, None)
 
   "A ResellableItemRepository" when {
 
