@@ -62,7 +62,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
     mongoCollection.find
       .sortByDesc(Field.DatePosted)
       .filter(searchFilter(params))
-      .limit(params.limit.getOrElse(0))
+      .limit(params.limit.getOrElse(Int.MaxValue))
       .all
       .map(_.map(ResellableItemEntityMapper.toDomain).toList)
 
@@ -72,7 +72,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
         Aggregate
           .sort(Sort.asc(Field.DatePosted))
           .matchBy(searchFilter(params))
-          .limit(params.limit.getOrElse(0))
+          .limit(params.limit.getOrElse(Int.MaxValue))
           .project(videoGameSummaryProjection)
       }
       .all
