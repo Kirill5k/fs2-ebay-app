@@ -14,8 +14,6 @@ import mongo4cats.collection.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
 
-import scala.jdk.CollectionConverters._
-
 final case class SearchParams(
     kind: ItemKind,
     limit: Option[Int] = None,
@@ -45,7 +43,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
   private val videoGameSummaryProjection = Projection
     .computed("url", "$listingDetails.url")
     .computed("title", "$listingDetails.title")
-    .computed("name", Document("$concat" -> List("$itemDetails.name", " ", "$itemDetails.platform").asJava))
+    .computed("name", Document("$concat" -> List("$itemDetails.name", " ", "$itemDetails.platform")))
     .computed("buyPrice", "$price.buy")
     .computed("exchangePrice", "$price.credit")
 
