@@ -20,10 +20,12 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
 
   implicit val logger: Logger[IO] = MockLogger.make[IO]
 
+  val timestamp = Instant.now().`with`(MILLI_OF_SECOND, 0)
+
   val videoGames: List[ResellableItem] = List(
-    ResellableItemBuilder.videoGame("GTA 5", Instant.now().minusSeconds(1000).`with`(MILLI_OF_SECOND, 0)),
-    ResellableItemBuilder.videoGame("Call of Duty WW2", Instant.now().`with`(MILLI_OF_SECOND, 0), sellPrice = None),
-    ResellableItemBuilder.videoGame("Super Mario 3", Instant.now().plusSeconds(1000).`with`(MILLI_OF_SECOND, 0), platform = None)
+    ResellableItemBuilder.videoGame("GTA 5", timestamp.minusSeconds(1000)),
+    ResellableItemBuilder.videoGame("Call of Duty WW2", timestamp, sellPrice = None),
+    ResellableItemBuilder.videoGame("Super Mario 3", timestamp.plusSeconds(1000), platform = None)
   )
 
   val searchFilters = SearchParams(ItemKind.VideoGame, Some(100), None, None)
