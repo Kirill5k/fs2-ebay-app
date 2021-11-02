@@ -196,7 +196,7 @@ data:
       ebay {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {item-kind: "generic", query: "nanoleaf shapes", category: "smart-lighting"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {item-kind: "generic", query: "nanoleaf shapes", category: "smart-lighting"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     }
