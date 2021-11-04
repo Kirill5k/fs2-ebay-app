@@ -86,7 +86,7 @@ private[ebay] object search {
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
         "arabic", "slovakian", "czech", "NTSC USA", "to be updated", "(ps\\d|xbox( one)?) digital",
         "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)",
-        "ark(?s).*(pvp|pve)", "Code(-| )?in(-| )?(a)?(-| )?Box",
+        "(pvp|pve)(?s).*ark", "ark(?s).*(pvp|pve)", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|recipe|fossil|dino|egg|gold)",
