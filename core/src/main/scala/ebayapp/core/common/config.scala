@@ -121,7 +121,7 @@ object config {
       F.blocking(AppConfig.loadFromMount)
         .flatTap(_ => logger.info("loaded config from a configmap mount"))
         .handleErrorWith { e =>
-          logger.warn(e)("error loading a config from a configmap mount, will try resources") *>
+          logger.warn(s"error loading a config from a configmap mount, will try resources: ${e.getMessage}") *>
             F.blocking(AppConfig.loadDefault)
         }
 
