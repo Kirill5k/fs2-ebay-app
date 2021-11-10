@@ -9,8 +9,7 @@ import ebayapp.core.domain.search.{BuyPrice, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import ebayapp.core.repositories.ResellableItemRepository
 import fs2.Stream
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{doAnswer, times, verify, verifyNoInteractions, verifyNoMoreInteractions, when}
+import org.mockito.Mockito.{doAnswer, times, verifyNoInteractions, verifyNoMoreInteractions}
 
 import scala.concurrent.duration._
 

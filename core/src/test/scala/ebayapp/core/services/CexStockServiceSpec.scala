@@ -9,8 +9,7 @@ import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.Stream
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when, atLeast => atLeastTimes}
+import org.mockito.Mockito.{atLeast => atLeastTimes}
 
 import scala.concurrent.duration._
 

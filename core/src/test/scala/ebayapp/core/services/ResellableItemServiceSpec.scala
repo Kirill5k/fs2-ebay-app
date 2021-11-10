@@ -4,8 +4,6 @@ import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItemBuilder}
 import ebayapp.core.repositories.{SearchParams, ResellableItemRepository}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
 
 class ResellableItemServiceSpec extends CatsSpec {
 

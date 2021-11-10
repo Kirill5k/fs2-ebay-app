@@ -8,7 +8,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
-trait CatsSpec extends AsyncWordSpec with Matchers with MockitoSugar {
+trait CatsSpec extends AsyncWordSpec with Matchers with MockitoSugar with MockitoMatchers {
 
   implicit val rt: IORuntime      = IORuntime.global
   implicit val logger: Logger[IO] = MockLogger.make[IO]

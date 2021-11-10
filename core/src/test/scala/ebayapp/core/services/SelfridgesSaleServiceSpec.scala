@@ -6,8 +6,6 @@ import ebayapp.core.clients.{Retailer, SearchClient, SearchCriteria}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.clothing
 import fs2.Stream
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{when}
 
 import scala.concurrent.duration._
 

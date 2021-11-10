@@ -11,7 +11,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.http4s.circe._
 import org.scalatestplus.mockito.MockitoSugar
 
-trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers {
+trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with MockitoMatchers {
 
   implicit val rt: IORuntime      = IORuntime.global
   implicit val logger: Logger[IO]   = MockLogger.make[IO]

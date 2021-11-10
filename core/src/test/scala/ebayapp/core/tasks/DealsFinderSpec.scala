@@ -4,8 +4,6 @@ import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
 
 class DealsFinderSpec extends CatsSpec {
 

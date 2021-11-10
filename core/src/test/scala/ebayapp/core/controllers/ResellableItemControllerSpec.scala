@@ -1,16 +1,16 @@
 package ebayapp.core.controllers
 
-import java.time.Instant
 import cats.effect.IO
 import ebayapp.core.ControllerSpec
-import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
 import ebayapp.core.domain.search.SellPrice
+import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
 import org.http4s.implicits._
 import org.http4s.{Request, Status, _}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, verifyNoInteractions, when}
+import org.mockito.Mockito.verifyNoInteractions
+
+import java.time.Instant
 
 class ResellableItemControllerSpec extends ControllerSpec {
 

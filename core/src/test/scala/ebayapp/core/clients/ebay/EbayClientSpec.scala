@@ -12,8 +12,7 @@ import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{never, times, verify, verifyNoInteractions, when}
+import org.mockito.Mockito.{never, times, verifyNoInteractions}
 
 import java.util.UUID
 import scala.concurrent.duration._
