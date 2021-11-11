@@ -8,7 +8,6 @@ import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
 import org.http4s.implicits._
 import org.http4s.{Request, Status, _}
-import org.mockito.Mockito.verifyNoInteractions
 
 import java.time.Instant
 
