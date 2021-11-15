@@ -136,6 +136,7 @@ data:
         delay-between-requests: 10s
         monitoring-frequency: 4m
         monitoring-requests: [
+          {search-criteria: {category: "men", query: "mallet"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
