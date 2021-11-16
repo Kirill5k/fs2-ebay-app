@@ -57,21 +57,27 @@ private[ebay] object EbayItemMapper {
       condition = item.condition.toUpperCase,
       datePosted = Instant.now,
       seller = item.seller.username.fold("EBAY")(s => s"EBAY:$s"),
-      properties = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
+      properties = {
+        val itemProps  = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
+        val priceProps = Map("Price" -> item.price.value.toString(), "Currency" -> item.price.currency, "Postage" -> postageCost(item).toString())
+        itemProps.concat(priceProps)
+      }
     )
 
   private[mappers] def price(item: EbayItem): BuyPrice = {
-    val postageCost = item.shippingOptions
-      .getOrElse(Nil)
-      .map(_.shippingCost)
-      .map(_.value)
-      .minOption
-
     val quantity = item.estimatedAvailabilities
       .getOrElse(Nil)
       .flatMap(av => av.estimatedAvailableQuantity.orElse(av.availabilityThreshold))
       .minOption
 
-    BuyPrice(quantity.getOrElse(1), item.price.value + postageCost.getOrElse(BigDecimal(0)))
+    BuyPrice(quantity.getOrElse(1), item.price.value + postageCost(item))
   }
+
+  private[mappers] def postageCost(item: EbayItem): BigDecimal =
+    item.shippingOptions
+      .getOrElse(Nil)
+      .map(_.shippingCost)
+      .map(_.value)
+      .minOption
+      .getOrElse(BigDecimal(0))
 }

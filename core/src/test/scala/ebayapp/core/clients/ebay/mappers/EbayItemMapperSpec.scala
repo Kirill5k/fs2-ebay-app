@@ -69,7 +69,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "transform to GameDetails" in {
       val game = EbayItemMapper.gameDetailsMapper.toDomain(videoGameEbayItem)
 
-      game.itemDetails mustBe(ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
+      game.itemDetails mustBe ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))
 
       game.listingDetails mustBe ListingDetails(
         "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
@@ -85,7 +85,10 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Game Name" -> "Call of Duty: Modern Warfare",
           "Release Year" -> "2019",
           "Platform" -> "Microsoft Xbox One",
-          "Genre" -> "Action"
+          "Genre" -> "Action",
+          "Postage" -> "2.99",
+          "Price" -> "30.0",
+          "Currency" -> "GBP"
         )
       )
 
@@ -111,7 +114,10 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Game Name" -> "Call of Duty: Modern Warfare",
           "Release Year" -> "2019",
           "Platform" -> "Microsoft Xbox One",
-          "Genre" -> "Action"
+          "Genre" -> "Action",
+          "Postage" -> "0",
+          "Price" -> "30.0",
+          "Currency" -> "GBP",
         )
       )
 
@@ -145,7 +151,10 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Model" -> "Samsung Galaxy S10",
           "Storage Capacity" -> "128 GB",
           "Network" -> "Unlocked",
-          "Colour" -> "Blue"
+          "Colour" -> "Blue",
+          "Postage" -> "4.99",
+          "Price" -> "425.0",
+          "Currency" -> "GBP",
         )
       )
 
