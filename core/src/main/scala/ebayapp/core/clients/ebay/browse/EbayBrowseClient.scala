@@ -73,7 +73,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
   private def findItem(accessToken: String, itemId: String): F[Option[EbayItem]] =
     dispatch() {
       basicRequest
-        .headers(defaultHeaders)
+        .headers(headers)
         .auth
         .bearer(accessToken)
         .get(uri"${config.baseUri}/buy/browse/v1/item/$itemId")
