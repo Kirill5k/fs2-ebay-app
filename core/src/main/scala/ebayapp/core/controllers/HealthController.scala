@@ -4,7 +4,6 @@ import cats.effect.Async
 import cats.syntax.either._
 import io.circe.generic.auto._
 import org.http4s.HttpRoutes
-import sttp.capabilities.WebSockets
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir._
 import sttp.tapir.server.ServerEndpoint
@@ -20,7 +19,7 @@ private[controllers] class HealthController[F[_]: Async] extends Controller[F] {
 
   implicit val statusSchema: Schema[AppStatus] = Schema.string
 
-  private val statusEndpoint: ServerEndpoint[Unit, Nothing, AppStatus, Fs2Streams[F] with WebSockets, F] =
+  private val statusEndpoint: ServerEndpoint[Fs2Streams[F], F] =
     infallibleEndpoint.get
       .in("health" / "status")
       .out(jsonBody[AppStatus])
