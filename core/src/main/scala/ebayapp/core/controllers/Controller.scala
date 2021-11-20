@@ -2,6 +2,8 @@ package ebayapp.core.controllers
 
 import cats.Monad
 import cats.effect._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
 import ebayapp.core.controllers.views._
 import ebayapp.core.domain.ItemKind
 import ebayapp.core.services.ResellableItemService
@@ -53,5 +55,5 @@ object Controller {
     Monad[F].pure(new ResellableItemController[F]("video-games", ItemKind.VideoGame, service))
 
   def health[F[_]: Async]: F[Controller[F]] =
-    Monad[F].pure(new HealthController[F])
+    Temporal[F].realTimeInstant.flatMap(ts => Ref.of(ts).map(ref => new HealthController[F](ref)))
 }
