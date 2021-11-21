@@ -21,7 +21,8 @@ class HealthControllerSpec extends ControllerSpec {
       val request  = Request[IO](uri = uri"/health/status", method = Method.GET, headers = Headers(Raw(CIString("foo"), "bar")))
       val response = controller.flatMap(_.routes.orNotFound.run(request))
 
-      val responseBody = s"""{"status":true,"startupTime":"$ts","requestMetadata":{"uri":"/health/status","headers":{"foo":"bar"}}}"""
+      val responseBody =
+        s"""{"startupTime":"$ts","requestMetadata":{"uri":"/health/status","headers":{"foo":"bar"},"serverAddress":null}}"""
       verifyJsonResponse(response, Status.Ok, Some(responseBody))
     }
   }
