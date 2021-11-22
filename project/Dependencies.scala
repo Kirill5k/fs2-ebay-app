@@ -2,10 +2,10 @@ import sbt._
 
 object Dependencies {
   object Versions {
-    val mongo4cats = "0.4.2"
-    val pureConfig = "0.17.0"
+    val mongo4cats = "0.4.3"
+    val pureConfig = "0.17.1"
     val circe      = "0.14.1"
-    val sttp       = "3.3.16"
+    val sttp       = "3.3.11"
     val http4s     = "0.23.6"
     val logback    = "1.2.7"
     val log4cats   = "2.1.1"
