@@ -13,15 +13,7 @@ trait Controllers[F[_]] {
   def videoGame: Controller[F]
   def health: Controller[F]
 
-  def routes(implicit M: Monad[F]): HttpRoutes[F] =
-    Router(
-      "api" -> videoGame.routes,
-      "" -> {
-        val homeRoutes   = home.routes
-        val healthRoutes = health.routes
-        homeRoutes <+> healthRoutes
-      }
-    )
+  def routes(implicit M: Monad[F]): HttpRoutes[F] = Router("api" -> videoGame.routes, "" -> (home.routes <+> health.routes))
 }
 
 object Controllers {
