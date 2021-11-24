@@ -17,9 +17,11 @@ trait Resources[F[_]] {
   def proxyClientBackend: Option[SttpBackend[F, Any]]
   def database: MongoDatabase[F]
 
-  def clientBackend(proxied: Boolean): SttpBackend[F, Any] =
-    if (!proxied) httpClientBackend
-    else proxyClientBackend.getOrElse(throw new IllegalStateException("proxy is not setup"))
+  def clientBackend(proxied: Option[Boolean]): SttpBackend[F, Any] =
+    proxied match {
+      case Some(true) => proxyClientBackend.getOrElse(throw new IllegalStateException("proxy is not setup"))
+      case _          => httpClientBackend
+    }
 }
 
 object Resources {

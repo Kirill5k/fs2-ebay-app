@@ -21,15 +21,15 @@ import fs2.Stream
 import scala.concurrent.duration._
 
 final private class LiveArgosClient[F[_]](
-                                           private val config: GenericRetailerConfig,
-                                           override val backend: SttpBackend[F, Any]
+    private val config: GenericRetailerConfig,
+    override val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
   override val name   = "argos"
-  private val headers = defaultHeaders ++ config.headers
+  private val headers = defaultHeaders ++ config.headers.getOrElse(Map.empty)
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
@@ -70,8 +70,8 @@ final private class LiveArgosClient[F[_]](
 
 object ArgosClient {
   def make[F[_]: Temporal: Logger](
-                                    config: GenericRetailerConfig,
-                                    backend: SttpBackend[F, Any]
+      config: GenericRetailerConfig,
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveArgosClient[F](config, backend))
 }

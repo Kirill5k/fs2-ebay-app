@@ -37,7 +37,7 @@ final class CexApiClient[F[_]](
 
   override protected val name: String = "cex"
 
-  private val headers = defaultHeaders ++ config.headers
+  private val headers = defaultHeaders ++ config.headers.getOrElse(Map.empty)
 
   private val categoriesMap: Map[String, List[Int]] = Map(
     "games-ps3"               -> List(808),

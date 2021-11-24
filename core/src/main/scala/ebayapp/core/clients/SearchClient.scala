@@ -3,6 +3,8 @@ package ebayapp.core.clients
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.domain.{ItemKind, ResellableItem}
 import fs2.Stream
+import pureconfig._
+import pureconfig.generic.derivation.default._
 
 final case class SearchCriteria(
     query: String,
@@ -10,7 +12,7 @@ final case class SearchCriteria(
     itemKind: Option[ItemKind] = None,
     minPrice: Option[BigDecimal] = None,
     maxPrice: Option[BigDecimal] = None
-)
+) derives ConfigReader
 
 sealed abstract class Retailer(val name: String)
 object Retailer {

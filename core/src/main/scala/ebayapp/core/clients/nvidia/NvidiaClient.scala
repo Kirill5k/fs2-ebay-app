@@ -7,7 +7,6 @@ import cats.syntax.functorFilter._
 import cats.syntax.apply._
 import cats.syntax.applicative._
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
-import io.circe.generic.auto._
 import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
@@ -20,8 +19,8 @@ import sttp.client3._
 import scala.concurrent.duration._
 
 final private class LiveNvidiaClient[F[_]](
-                                            private val config: GenericRetailerConfig,
-                                            override val backend: SttpBackend[F, Any]
+    private val config: GenericRetailerConfig,
+    override val backend: SttpBackend[F, Any]
 )(implicit
     logger: Logger[F],
     timer: Temporal[F]
@@ -29,7 +28,7 @@ final private class LiveNvidiaClient[F[_]](
 
   override protected val name: String = "nvidia"
 
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers
+  private val headers: Map[String, String] = defaultHeaders ++ config.headers.getOrElse(Map.empty)
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
@@ -65,8 +64,8 @@ final private class LiveNvidiaClient[F[_]](
 
 object NvidiaClient {
   def make[F[_]: Temporal: Logger](
-                                    config: GenericRetailerConfig,
-                                    backend: SttpBackend[F, Any]
+      config: GenericRetailerConfig,
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveNvidiaClient[F](config, backend))
 }

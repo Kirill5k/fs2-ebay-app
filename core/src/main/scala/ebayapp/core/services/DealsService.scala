@@ -50,7 +50,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
           .handleErrorWith { error =>
             Stream.eval(Logger[F].error(error)(s"${retailer.name}-deals/error - ${error.getMessage}")).drain
           }
-          .delayBy(config.delayBetweenRequests * i.toLong)
+          .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
       }
       .parJoinUnbounded
       .repeatEvery(config.searchFrequency)

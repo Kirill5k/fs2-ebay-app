@@ -2,18 +2,19 @@ package ebayapp.core.domain
 
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
 import io.circe.{Decoder, Encoder}
+import pureconfig.generic.derivation.EnumConfigReader
 
-sealed abstract class ItemKind(val value: String)
+enum ItemKind(val value: String) derives EnumConfigReader {
+  case Generic     extends ItemKind("generic")
+  case VideoGame   extends ItemKind("video-game")
+  case MobilePhone extends ItemKind("mobile-phone")
+  case Clothing    extends ItemKind("clothing")
+}
+
 object ItemKind {
-  case object Generic     extends ItemKind("generic")
-  case object VideoGame   extends ItemKind("video-game")
-  case object MobilePhone extends ItemKind("mobile-phone")
-  case object Clothing    extends ItemKind("clothing")
-
-  val all = List(Generic, VideoGame, MobilePhone, Clothing)
 
   def from(value: String): Either[String, ItemKind] =
-    all.find(_.value == value).toRight(s"unexpected item kind $value")
+    ItemKind.values.find(_.value == value).toRight(s"unexpected item kind $value")
 
   implicit val decode: Decoder[ItemKind] = Decoder[String].emap(ItemKind.from)
   implicit val encode: Encoder[ItemKind] = Encoder[String].contramap(_.value)

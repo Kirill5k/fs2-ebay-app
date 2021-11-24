@@ -7,7 +7,6 @@ import cats.syntax.functor._
 import ebayapp.core.clients.HttpClient
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.EbayConfig
-import io.circe.generic.auto._
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
 import ebayapp.core.common.errors.AppError
 import sttp.client3._

@@ -1,5 +1,7 @@
 package ebayapp.core.clients.nvidia
 
+import io.circe.*
+
 private[nvidia] object responses {
 
   private[nvidia] final case class NvidiaItem(
@@ -21,7 +23,7 @@ private[nvidia] object responses {
       stock: Int,
       partnerId: String,
       storeId: String
-  )
+  ) derives Codec.AsObject
 
   private[nvidia] final case class Product(
       productTitle: String,
@@ -31,11 +33,11 @@ private[nvidia] object responses {
       productPrice: String,
       category: String,
       retailers: List[ProductRetailer]
-  ) {
+  ) derives Codec.AsObject {
     val isOutOfStock: Boolean = prdStatus == "out_of_stock"
   }
 
-  private[nvidia] final case class SearchedProducts(productDetails: List[Product])
+  private[nvidia] final case class SearchedProducts(productDetails: List[Product]) derives Codec.AsObject
 
-  private[nvidia] final case class NvidiaSearchResponse(searchedProducts: SearchedProducts)
+  private[nvidia] final case class NvidiaSearchResponse(searchedProducts: SearchedProducts) derives Codec.AsObject
 }

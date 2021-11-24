@@ -27,9 +27,9 @@ object Clients {
       resources: Resources[F]
   ): F[Clients[F]] =
     (
-      CexClient.make[F](config.cex, resources.clientBackend(false)),
-      TelegramClient.make[F](config.telegram, resources.clientBackend(false)),
-      EbayClient.make[F](config.ebay, resources.clientBackend(false)),
+      CexClient.make[F](config.cex, resources.clientBackend(None)),
+      TelegramClient.make[F](config.telegram, resources.clientBackend(None)),
+      EbayClient.make[F](config.ebay, resources.clientBackend(None)),
       SelfridgesClient.make[F](config.selfridges, resources.clientBackend(config.selfridges.proxied)),
       ArgosClient.make[F](config.argos, resources.clientBackend(config.argos.proxied)),
       JdsportsClient.jd[F](config.jdsports, resources.clientBackend(config.jdsports.proxied)),
