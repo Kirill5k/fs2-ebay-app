@@ -1,13 +1,13 @@
 package ebayapp.core.controllers
 
 import cats.Monad
-import cats.effect._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import ebayapp.core.controllers.views._
+import cats.effect.*
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
+import ebayapp.core.controllers.views.*
 import ebayapp.core.domain.ItemKind
 import ebayapp.core.services.ResellableItemService
-import io.circe.generic.auto._
+import io.circe.generic.auto.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
 import sttp.tapir.Codec.PlainCodec

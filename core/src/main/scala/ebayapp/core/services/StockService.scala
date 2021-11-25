@@ -2,9 +2,9 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.option._
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
+import cats.syntax.option.*
 import ebayapp.core.clients.{Retailer, SearchClient}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
@@ -12,11 +12,10 @@ import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.stock.ItemStockUpdates
 import fs2.Stream
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
-trait StockService[F[_]] extends StockComparer[F] {
+trait StockService[F[_]] extends StockComparer[F]:
   def stockUpdates: Stream[F, ItemStockUpdates]
-}
 
 final private class SimpleStockService[F[_]: Temporal: Logger](
     private val retailer: Retailer,
@@ -60,7 +59,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
       .flatTap(i => Logger[F].info(s"""${retailer.name}-search "${req.searchCriteria.query}" returned ${i.size} results"""))
 }
 
-object StockService {
+object StockService:
 
   def make[F[_]: Temporal: Logger](
       retailer: Retailer,
@@ -68,4 +67,3 @@ object StockService {
       client: SearchClient[F]
   ): F[StockService[F]] =
     Monad[F].pure(new SimpleStockService[F](retailer, config, client))
-}

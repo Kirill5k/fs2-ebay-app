@@ -9,14 +9,13 @@ import ebayapp.core.repositories.Repositories
 import ebayapp.core.services.Services
 import ebayapp.core.tasks.Tasks
 
-object Application extends IOApp.Simple {
-
+object Application extends IOApp.Simple:
   override val run: IO[Unit] =
     Logger.make[IO].flatMap { implicit logger =>
-      for {
+      for
         config <- logger.info("loading a config") *> AppConfig.load[IO]
         _ <- Resources.make[IO](config).use { resources =>
-          for {
+          for
             _            <- logger.info("created resources")
             clients      <- Clients.make(config, resources) <* logger.info("created clients")
             repositories <- Repositories.make(resources.database) <* logger.info("created repositories")
@@ -29,8 +28,7 @@ object Application extends IOApp.Simple {
               .interruptWhen(logger.awaitSigTerm)
               .compile
               .drain
-          } yield ()
+          yield ()
         }
-      } yield ()
+      yield ()
     }
-}

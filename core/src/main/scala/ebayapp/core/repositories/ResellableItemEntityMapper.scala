@@ -1,6 +1,6 @@
 package ebayapp.core.repositories
 
-import cats.syntax.apply._
+import cats.syntax.apply.*
 import ebayapp.core.domain.search.{BuyPrice, SellPrice}
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.repositories.entities.ResellableItemEntity

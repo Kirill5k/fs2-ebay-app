@@ -1,14 +1,14 @@
 package ebayapp.core.common
 
 import cats.effect.Sync
-import cats.syntax.flatMap._
-import cats.syntax.applicativeError._
-import cats.syntax.apply._
+import cats.syntax.flatMap.*
+import cats.syntax.applicativeError.*
+import cats.syntax.apply.*
 import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.domain.ItemKind
 import pureconfig.ConfigConvert.catchReadError
-import pureconfig._
-import pureconfig.generic.derivation.default._
+import pureconfig.*
+import pureconfig.generic.derivation.default.*
 import pureconfig.configurable.genericMapReader
 
 import java.io.File

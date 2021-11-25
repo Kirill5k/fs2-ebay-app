@@ -2,8 +2,8 @@ package ebayapp.core.controllers
 
 import cats.Monad
 import cats.effect.Async
-import cats.syntax.apply._
-import cats.syntax.semigroupk._
+import cats.syntax.apply.*
+import cats.syntax.semigroupk.*
 import ebayapp.core.services.Services
 import org.http4s.HttpRoutes
 import org.http4s.server.Router

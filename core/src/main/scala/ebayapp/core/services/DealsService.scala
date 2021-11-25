@@ -2,21 +2,20 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.functor._
+import cats.syntax.functor.*
 import ebayapp.core.clients.{Retailer, SearchClient}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
-import ebayapp.core.common.stream._
+import ebayapp.core.common.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.repositories.ResellableItemRepository
-import fs2._
+import fs2.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
-trait DealsService[F[_]] {
+trait DealsService[F[_]]:
   def newDeals: Stream[F, ResellableItem]
-}
 
 final private class LiveDealsService[F[_]: Logger: Temporal](
     private val retailer: Retailer,

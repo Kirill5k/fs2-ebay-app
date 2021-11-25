@@ -1,11 +1,11 @@
 package ebayapp.core.domain
 
-import cats.syntax.functor._
-import cats.syntax.traverse._
-import cats.syntax.apply._
+import cats.syntax.functor.*
+import cats.syntax.traverse.*
+import cats.syntax.apply.*
 import io.circe.{Decoder, Encoder}
-import io.circe.generic.auto._
-import io.circe.syntax._
+import io.circe.generic.auto.*
+import io.circe.syntax.*
 
 sealed trait ItemDetails {
   def fullName: Option[String]

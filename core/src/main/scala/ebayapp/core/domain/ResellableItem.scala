@@ -1,7 +1,7 @@
 package ebayapp.core.domain
 
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
-import io.circe.{Decoder, Encoder}
+import io.circe.{Decoder, Encoder, Codec}
 import pureconfig.generic.derivation.EnumConfigReader
 
 enum ItemKind(val value: String) derives EnumConfigReader {
@@ -26,7 +26,7 @@ final case class ItemSummary(
     url: String,
     buyPrice: BigDecimal,
     exchangePrice: Option[BigDecimal]
-)
+) derives Codec.AsObject
 
 final case class ResellableItem(
     kind: ItemKind,
