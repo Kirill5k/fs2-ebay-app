@@ -2,14 +2,13 @@ package ebayapp.core.repositories
 
 import java.time.Instant
 import cats.effect.Async
-import cats.syntax.functor._
-import cats.syntax.flatMap._
-import cats.syntax.applicative._
-import io.circe.generic.auto._
+import cats.syntax.functor.*
+import cats.syntax.flatMap.*
+import cats.syntax.applicative.*
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.bson.Document
-import mongo4cats.circe._
+import mongo4cats.circe.*
 import mongo4cats.collection.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}

@@ -1,8 +1,8 @@
 package ebayapp.core.services
 
-import cats.syntax.alternative._
-import cats.syntax.functor._
-import cats.syntax.flatMap._
+import cats.syntax.alternative.*
+import cats.syntax.functor.*
+import cats.syntax.flatMap.*
 import ebayapp.core.common.config.StockMonitorRequest
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}

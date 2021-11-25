@@ -2,9 +2,9 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.apply._
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
+import cats.syntax.apply.*
 import ebayapp.core.clients.{MessengerClient, Notification}
 import ebayapp.core.domain.stock.StockUpdate
 import ebayapp.core.domain.ResellableItem
@@ -14,11 +14,10 @@ import java.nio.charset.StandardCharsets
 import java.util.Base64
 import scala.concurrent.duration._
 
-trait NotificationService[F[_]] {
+trait NotificationService[F[_]]:
   def alert(error: Error): F[Unit]
   def cheapItem(item: ResellableItem): F[Unit]
   def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit]
-}
 
 final class TelegramNotificationService[F[_]](
     private val messengerClient: MessengerClient[F],

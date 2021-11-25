@@ -3,11 +3,11 @@ package ebayapp.core.tasks
 import cats.Monad
 import cats.effect.Temporal
 import ebayapp.core.common.Logger
-import ebayapp.core.common.stream._
+import ebayapp.core.common.stream.*
 import ebayapp.core.services.{NotificationService, Services}
 import fs2.Stream
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final class ErrorsNotifier[F[_]: Logger: Temporal](
     private val notificationService: NotificationService[F]

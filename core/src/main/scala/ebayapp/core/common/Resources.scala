@@ -1,8 +1,8 @@
 package ebayapp.core.common
 
 import cats.effect.{Async, Resource}
-import cats.syntax.option._
-import cats.syntax.apply._
+import cats.syntax.option.*
+import cats.syntax.apply.*
 import ebayapp.core.common.config.{AppConfig, ClientProxyConfig, MongoConfig}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
@@ -10,16 +10,18 @@ import sttp.client3.SttpBackendOptions.Proxy
 import sttp.client3.{SttpBackend, SttpBackendOptions}
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 trait Resources[F[_]] {
   def httpClientBackend: SttpBackend[F, Any]
   def proxyClientBackend: Option[SttpBackend[F, Any]]
   def database: MongoDatabase[F]
 
-  def clientBackend(proxied: Boolean): SttpBackend[F, Any] =
-    if (!proxied) httpClientBackend
-    else proxyClientBackend.getOrElse(throw new IllegalStateException("proxy is not setup"))
+  def clientBackend(proxied: Option[Boolean]): SttpBackend[F, Any] =
+    proxied match {
+      case Some(true) => proxyClientBackend.getOrElse(throw new IllegalStateException("proxy is not setup"))
+      case _          => httpClientBackend
+    }
 }
 
 object Resources {

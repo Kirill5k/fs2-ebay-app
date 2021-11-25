@@ -13,12 +13,10 @@ import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.common.{Logger, Resources}
 import ebayapp.core.common.config.AppConfig
 
-trait Clients[F[_]] {
+trait Clients[F[_]]:
   def cex: CexClient[F]
   def messenger: MessengerClient[F]
-
   def get(shop: Retailer): SearchClient[F]
-}
 
 object Clients {
 
@@ -27,9 +25,9 @@ object Clients {
       resources: Resources[F]
   ): F[Clients[F]] =
     (
-      CexClient.make[F](config.cex, resources.clientBackend(false)),
-      TelegramClient.make[F](config.telegram, resources.clientBackend(false)),
-      EbayClient.make[F](config.ebay, resources.clientBackend(false)),
+      CexClient.make[F](config.cex, resources.clientBackend(None)),
+      TelegramClient.make[F](config.telegram, resources.clientBackend(None)),
+      EbayClient.make[F](config.ebay, resources.clientBackend(None)),
       SelfridgesClient.make[F](config.selfridges, resources.clientBackend(config.selfridges.proxied)),
       ArgosClient.make[F](config.argos, resources.clientBackend(config.argos.proxied)),
       JdsportsClient.jd[F](config.jdsports, resources.clientBackend(config.jdsports.proxied)),

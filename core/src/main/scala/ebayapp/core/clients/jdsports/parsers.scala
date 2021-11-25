@@ -1,9 +1,9 @@
 package ebayapp.core.clients.jdsports
 
-import cats.syntax.either._
+import cats.syntax.either.*
 import ebayapp.core.common.errors.AppError
-import io.circe.generic.auto._
-import io.circe.parser._
+import io.circe.Codec
+import io.circe.parser.*
 
 private[jdsports] object parsers {
 
@@ -12,14 +12,14 @@ private[jdsports] object parsers {
       colour: String,
       description: String,
       sale: Boolean
-  ) {
+  ) derives Codec.AsObject {
     val fullName: String = s"$colour-$description".replaceAll(" ", "-").replaceAll("-+", "-").toLowerCase
   }
 
   final case class JdProduct(
       details: JdProductDetails,
       availableSizes: List[String]
-  )
+  ) derives Codec.AsObject
 
   final case class JdProductDetails(
       Id: String,
@@ -30,7 +30,7 @@ private[jdsports] object parsers {
       Category: String,
       Colour: String,
       PrimaryImage: String
-  )
+  ) derives Codec.AsObject
 
   object ResponseParser {
 

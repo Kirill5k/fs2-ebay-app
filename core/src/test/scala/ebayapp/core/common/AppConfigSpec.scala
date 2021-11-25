@@ -13,8 +13,8 @@ class AppConfigSpec extends CatsSpec {
       conf.mongo.dbName mustBe "ebay-app"
       conf.server.host mustBe "0.0.0.0"
       conf.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
-      conf.selfridges.headers mustBe Map("api-key" -> "key")
-      conf.nvidia.proxied mustBe true
+      conf.selfridges.headers mustBe Some(Map("api-key" -> "key"))
+      conf.nvidia.proxied mustBe Some(true)
 
       conf.stockMonitor must contain key Retailer.Nvidia
       conf.dealsFinder must contain key Retailer.Ebay

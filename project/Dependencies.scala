@@ -23,7 +23,7 @@ object Dependencies {
     }
 
     object pureconfig {
-      val core = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfig
+      val core = "com.github.pureconfig" %% "pureconfig-core" % Versions.pureConfig
     }
 
     object logging {

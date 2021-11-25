@@ -1,13 +1,13 @@
 package ebayapp.core.tasks
 
 import cats.effect.Temporal
-import cats.syntax.functor._
-import cats.syntax.traverse._
+import cats.syntax.functor.*
+import cats.syntax.traverse.*
 import ebayapp.core.common.Logger
 import ebayapp.core.services.Services
 import fs2.Stream
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final class Tasks[F[_]: Temporal: Logger](
     val tasks: List[Task[F]]

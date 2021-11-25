@@ -1,20 +1,19 @@
 package ebayapp.core.clients.ebay.browse
 
 import cats.effect.Temporal
-import cats.syntax.apply._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.syntax.apply.*
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
 import ebayapp.core.clients.HttpClient
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.EbayConfig
-import io.circe.generic.auto._
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
 import ebayapp.core.common.errors.AppError
-import sttp.client3._
-import sttp.client3.circe._
+import sttp.client3.*
+import sttp.client3.circe.*
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 private[ebay] trait EbayBrowseClient[F[_]] extends HttpClient[F] {
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]]

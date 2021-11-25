@@ -1,19 +1,18 @@
 package ebayapp.core.services
 
 import cats.effect.Temporal
-import cats.syntax.traverse._
-import cats.syntax.apply._
+import cats.syntax.traverse.*
+import cats.syntax.apply.*
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.AppConfig
 import ebayapp.core.repositories.Repositories
 
-trait Services[F[_]] {
+trait Services[F[_]]:
   def notification: NotificationService[F]
   def resellableItem: ResellableItemService[F]
   def stock: List[StockService[F]]
   def deals: List[DealsService[F]]
-}
 
 object Services {
 

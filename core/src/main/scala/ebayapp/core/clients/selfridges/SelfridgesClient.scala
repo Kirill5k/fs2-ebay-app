@@ -2,27 +2,26 @@ package ebayapp.core.clients.selfridges
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.apply._
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
+import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
-import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, selfridgesClothingMapper}
-import ebayapp.core.clients.selfridges.responses._
+import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
+import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.Decoder
-import io.circe.generic.auto._
-import sttp.client3._
+import sttp.client3.*
 import sttp.client3.circe.asJson
 import sttp.model.{StatusCode, Uri}
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final private class LiveSelfridgesClient[F[_]](
-                                                private val config: GenericRetailerConfig,
-                                                override val backend: SttpBackend[F, Any]
+    private val config: GenericRetailerConfig,
+    override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
@@ -30,7 +29,7 @@ final private class LiveSelfridgesClient[F[_]](
 
   override protected val name: String = "selfridges"
 
-  private val headers = defaultHeaders ++ config.headers
+  private val headers = defaultHeaders ++ config.headers.getOrElse(Map.empty)
 
   private val filters: String = List(
     "\\d+-\\d+ (year|month)",
@@ -127,8 +126,8 @@ final private class LiveSelfridgesClient[F[_]](
 object SelfridgesClient {
 
   def make[F[_]: Temporal: Logger](
-                                    config: GenericRetailerConfig,
-                                    backend: SttpBackend[F, Any]
+      config: GenericRetailerConfig,
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveSelfridgesClient[F](config, backend))
 }

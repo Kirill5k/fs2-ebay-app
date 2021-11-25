@@ -2,19 +2,21 @@ package ebayapp.proxy
 
 import cats.effect.kernel.Deferred
 import cats.effect.{IO, IOApp}
-import cats.syntax.semigroupk._
+import cats.syntax.semigroupk.*
 import ebayapp.proxy.common.Resources
 import ebayapp.proxy.common.config.AppConfig
 import ebayapp.proxy.controllers.Controller
-import org.http4s.implicits._
+import org.http4s.implicits.*
 import org.http4s.blaze.server.BlazeServerBuilder
+import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.Logger
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 object Application extends IOApp.Simple {
 
-  implicit val logger = Slf4jLogger.getLogger[IO]
+  implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
   val config = AppConfig.load
 

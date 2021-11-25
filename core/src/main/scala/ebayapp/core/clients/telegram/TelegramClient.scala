@@ -1,15 +1,15 @@
 package ebayapp.core.clients.telegram
 
 import cats.effect.Temporal
-import cats.syntax.flatMap._
-import cats.syntax.applicativeError._
-import cats.syntax.apply._
-import cats.syntax.applicative._
+import cats.syntax.flatMap.*
+import cats.syntax.applicativeError.*
+import cats.syntax.apply.*
+import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, MessengerClient, Notification}
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.Logger
-import sttp.client3._
+import sttp.client3.*
 import sttp.model.StatusCode
 
 import scala.concurrent.duration._

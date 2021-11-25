@@ -1,16 +1,15 @@
 package ebayapp.core.controllers
 
 import cats.effect.Async
-import cats.syntax.applicativeError._
-import cats.syntax.either._
-import cats.syntax.functor._
+import cats.syntax.applicativeError.*
+import cats.syntax.either.*
+import cats.syntax.functor.*
 import ebayapp.core.controllers.views.{ErrorResponse, ResellableItemResponse, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.ItemKind
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
-import io.circe.generic.auto._
 import org.http4s.HttpRoutes
-import sttp.tapir._
+import sttp.tapir.*
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import java.time.Instant

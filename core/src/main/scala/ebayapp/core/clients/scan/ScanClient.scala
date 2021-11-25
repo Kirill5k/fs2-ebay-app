@@ -26,7 +26,7 @@ final private class LiveScanClient[F[_]](
 
   override protected val name: String = "scan"
 
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers
+  private val headers: Map[String, String] = defaultHeaders ++ config.headers.getOrElse(Map.empty)
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
