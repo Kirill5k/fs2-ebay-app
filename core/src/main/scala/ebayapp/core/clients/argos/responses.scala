@@ -1,7 +1,8 @@
 package ebayapp.core.clients.argos
 
-import cats.syntax.alternative._
-import cats.syntax.functor._
+import cats.syntax.alternative.*
+import cats.syntax.functor.*
+import io.circe.Codec
 
 private[argos] object responses {
 
@@ -12,26 +13,26 @@ private[argos] object responses {
       brand: String,
       deliverable: Boolean,
       reservable: Boolean
-  )
+  ) derives Codec.AsObject
 
   final case class ArgosItem(
       id: String,
       attributes: DataAttributes
-  )
+  ) derives Codec.AsObject
 
   final case class ResponseMeta(
       currentPage: Int,
       totalPages: Int
-  ) {
+  ) derives Codec.AsObject {
     val nextPage: Option[Int] = (currentPage < totalPages).guard[Option].as(currentPage + 1)
   }
 
   final case class SearchResponse(
       meta: ResponseMeta,
       data: List[ArgosItem]
-  )
+  ) derives Codec.AsObject
 
-  final case class SearchData(response: SearchResponse)
+  final case class SearchData(response: SearchResponse) derives Codec.AsObject
 
-  final case class ArgosSearchResponse(data: SearchData)
+  final case class ArgosSearchResponse(data: SearchData) derives Codec.AsObject
 }

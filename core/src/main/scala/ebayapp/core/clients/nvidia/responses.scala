@@ -1,6 +1,6 @@
 package ebayapp.core.clients.nvidia
 
-import io.circe.*
+import io.circe.Codec
 
 private[nvidia] object responses {
 

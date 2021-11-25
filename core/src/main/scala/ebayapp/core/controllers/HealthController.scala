@@ -1,17 +1,21 @@
 package ebayapp.core.controllers
 
 import cats.effect.{Async, Ref}
-import cats.syntax.functor._
-import io.circe.generic.auto._
+import cats.syntax.functor.*
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
-import sttp.tapir._
+import sttp.tapir.*
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.http4s.Http4sServerInterpreter
+import io.circe.Codec
 
 import java.time.Instant
 
-final case class Metadata(uri: String, headers: Map[String, String], serverAddress: Option[String])
+final case class Metadata(
+    uri: String,
+    headers: Map[String, String],
+    serverAddress: Option[String]
+) derives Codec.AsObject
 
 object Metadata {
   def from[F[_]](request: Request[F]): Metadata =
@@ -22,7 +26,7 @@ object Metadata {
     )
 }
 
-final case class AppStatus(startupTime: Instant, requestMetadata: Metadata)
+final case class AppStatus(startupTime: Instant, requestMetadata: Metadata) derives Codec.AsObject
 
 private[controllers] class HealthController[F[_]: Async](
     private val startupTime: Ref[F, Instant]

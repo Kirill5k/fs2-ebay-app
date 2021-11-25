@@ -2,10 +2,10 @@ package ebayapp.core.clients.jdsports
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.apply._
-import cats.syntax.alternative._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.syntax.apply.*
+import cats.syntax.alternative.*
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
@@ -13,15 +13,15 @@ import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
-import sttp.client3.{SttpBackend, basicRequest, _}
+import sttp.client3.*
 import sttp.model.StatusCode
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final private class LiveJdsportsClient[F[_]](
-                                              private val config: GenericRetailerConfig,
-                                              override val name: String,
-                                              override val backend: SttpBackend[F, Any]
+    private val config: GenericRetailerConfig,
+    override val name: String,
+    override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
@@ -65,7 +65,7 @@ final private class LiveJdsportsClient[F[_]](
 
   private def searchByBrand(criteria: SearchCriteria, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
     dispatch() {
-      val base = config.baseUri + criteria.category.fold("")(c => s"/$c")
+      val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
       val brand = criteria.query.toLowerCase.replace(" ", "-")
       basicRequest
         .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
@@ -112,20 +112,20 @@ final private class LiveJdsportsClient[F[_]](
 
 object JdsportsClient {
   def jd[F[_]: Temporal: Logger](
-                                  config: GenericRetailerConfig,
-                                  backend: SttpBackend[F, Any]
+      config: GenericRetailerConfig,
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "jdsports", backend))
 
   def tessuti[F[_]: Temporal: Logger](
-                                       config: GenericRetailerConfig,
-                                       backend: SttpBackend[F, Any]
+      config: GenericRetailerConfig,
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "tessuti", backend))
 
   def scotts[F[_]: Temporal: Logger](
-                                      config: GenericRetailerConfig,
-                                      backend: SttpBackend[F, Any]
+      config: GenericRetailerConfig,
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveJdsportsClient[F](config, "scotts", backend))
 }

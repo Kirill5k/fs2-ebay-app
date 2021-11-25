@@ -1,26 +1,25 @@
 package ebayapp.core.clients.cex
 
 import cats.effect.Temporal
-import cats.syntax.functor._
-import cats.syntax.applicativeError._
-import cats.syntax.flatMap._
-import cats.syntax.apply._
-import cats.syntax.applicative._
+import cats.syntax.functor.*
+import cats.syntax.applicativeError.*
+import cats.syntax.flatMap.*
+import cats.syntax.apply.*
+import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
-import ebayapp.core.clients.cex.responses._
+import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.errors.AppError
 import ebayapp.core.common.{Cache, Logger}
-import ebayapp.core.domain.search._
+import ebayapp.core.domain.search.*
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
-import io.circe.generic.auto._
 import sttp.client3.circe.asJson
-import sttp.client3.{SttpBackend, _}
+import sttp.client3.*
 import sttp.model.{StatusCode, Uri}
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 trait CexClient[F[_]] extends SearchClient[F] with HttpClient[F] {
   def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem]

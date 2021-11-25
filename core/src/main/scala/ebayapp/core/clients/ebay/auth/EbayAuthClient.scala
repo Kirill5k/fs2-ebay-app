@@ -1,23 +1,22 @@
 package ebayapp.core.clients.ebay.auth
 
 import cats.effect.{Ref, Temporal}
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.option._
-import cats.syntax.apply._
-import cats.syntax.applicative._
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
+import cats.syntax.option.*
+import cats.syntax.apply.*
+import cats.syntax.applicative.*
 import ebayapp.core.common.Logger
-import io.circe.generic.auto._
 import EbayAuthClient.EbayAuthToken
 import ebayapp.core.clients.HttpClient
 import responses.{EbayAuthErrorResponse, EbayAuthSuccessResponse}
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials}
-import sttp.client3._
-import sttp.client3.circe._
+import sttp.client3.*
+import sttp.client3.circe.*
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import java.time.Instant
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 private[ebay] trait EbayAuthClient[F[_]] extends HttpClient[F] {
   def accessToken: F[String]
