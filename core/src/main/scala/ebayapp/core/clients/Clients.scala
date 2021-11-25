@@ -13,12 +13,10 @@ import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.common.{Logger, Resources}
 import ebayapp.core.common.config.AppConfig
 
-trait Clients[F[_]] {
+trait Clients[F[_]]:
   def cex: CexClient[F]
   def messenger: MessengerClient[F]
-
   def get(shop: Retailer): SearchClient[F]
-}
 
 object Clients {
 
