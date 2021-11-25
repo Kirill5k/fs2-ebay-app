@@ -3,17 +3,17 @@ package ebayapp.proxy.controllers
 import cats.Monad
 import cats.effect.Deferred
 import cats.effect.kernel.Concurrent
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.applicative._
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
+import cats.syntax.applicative.*
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
-import org.http4s._
+import org.http4s.*
 import org.typelevel.ci.CIString
 
-trait Controller[F[_]] extends Http4sDsl[F] {
+trait Controller[F[_]] extends Http4sDsl[F]:
   def routes: HttpRoutes[F]
-}
+
 
 final case class RedirectController[F[_]: Concurrent](
     private val client: Client[F],
@@ -46,13 +46,10 @@ final case class RedirectController[F[_]: Concurrent](
     if (cond) sigTerm.complete(()).void else ().pure[F]
 }
 
-final private class HealthController[F[_]: Concurrent] extends Controller[F] {
-
+final private class HealthController[F[_]: Concurrent] extends Controller[F]:
   override def routes: HttpRoutes[F] =
-    HttpRoutes.of[F] { case GET -> Root / "health" / "status" =>
-      Ok("""{"status": true}""")
-    }
-}
+    HttpRoutes.of[F] { case GET -> Root / "health" / "status" => Ok("""{"status": true}""") }
+
 
 object Controller {
   def redirect[F[_]: Concurrent](

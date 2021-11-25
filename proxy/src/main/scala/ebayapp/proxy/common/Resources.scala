@@ -5,13 +5,12 @@ import cats.effect.kernel.Async
 import org.http4s.client.Client
 import org.http4s.blaze.client.BlazeClientBuilder
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
-trait Resources[F[_]] {
+trait Resources[F[_]]:
   def blazeClient: Client[F]
-}
 
-object Resources {
+object Resources:
 
   private def makeBlazeClient[F[_]: Async]: Resource[F, Client[F]] =
     BlazeClientBuilder[F]
@@ -28,4 +27,3 @@ object Resources {
         def blazeClient: Client[F] = client
       }
     }
-}

@@ -1,9 +1,9 @@
 package ebayapp.proxy.common
 
-import pureconfig._
-import pureconfig.generic.derivation.default._
+import pureconfig.*
+import pureconfig.generic.derivation.default.*
 
-object config {
+object config:
 
   final case class ServerConfig(
       host: String,
@@ -14,10 +14,5 @@ object config {
       server: ServerConfig
   ) derives ConfigReader
 
-  object AppConfig {
-
-    def load: AppConfig =
-      ConfigSource.default.loadOrThrow[AppConfig]
-  }
-
-}
+  object AppConfig:
+    def load: AppConfig = ConfigSource.default.loadOrThrow[AppConfig]
