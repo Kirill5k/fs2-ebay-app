@@ -29,7 +29,7 @@ final private class LiveSelfridgesClient[F[_]](
 
   override protected val name: String = "selfridges"
 
-  private val headers = defaultHeaders ++ config.headers.getOrElse(Map.empty)
+  private val headers = defaultHeaders ++ config.headers
 
   private val filters: String = List(
     "\\d+-\\d+ (year|month)",

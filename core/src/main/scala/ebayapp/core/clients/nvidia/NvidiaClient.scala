@@ -28,7 +28,7 @@ final private class LiveNvidiaClient[F[_]](
 
   override protected val name: String = "nvidia"
 
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers.getOrElse(Map.empty)
+  private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream

@@ -43,6 +43,7 @@ data:
         min-feedback-percentage: 92
         max-listing-duration: 20m
       }
+      headers: {}
     }
 
     selfridges {
@@ -57,6 +58,7 @@ data:
     argos {
       base-uri: "https://www.argos.co.uk"
       proxied: true
+      headers: {}
     }
 
     jdsports {
@@ -89,6 +91,7 @@ data:
     nvidia {
       base-uri: "https://api.nvidia.partners"
       proxied: true
+      headers: {}
     }
 
     scan {
@@ -105,6 +108,7 @@ data:
       main-channel-id: ${?TELEGRAM_CHANNEL_ID}
       secondary-channel-id: ${?TELEGRAM_SECONDARY_CHANNEL_ID}
       alerts-channel-id: ${?TELEGRAM_ALERTS_CHANNEL_ID}
+      headers: {}
     }
 
     stock-monitor {

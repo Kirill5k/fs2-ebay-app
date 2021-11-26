@@ -27,7 +27,7 @@ final private class LiveJdsportsClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers.getOrElse(Map.empty)
+  private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     brands(criteria)
@@ -47,7 +47,7 @@ final private class LiveJdsportsClient[F[_]](
             size,
             p.details.PrimaryImage,
             p.details.Category,
-            config.headers.flatMap(_.get("X-Reroute-To")).getOrElse(config.baseUri),
+            config.headers.getOrElse("X-Reroute-To", config.baseUri),
             name
           )
         }

@@ -11,13 +11,12 @@ import cats.syntax.applicative.*
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Cache[F[_], K, V] {
+trait Cache[F[_], K, V]:
   def get(key: K): F[Option[V]]
   def put(key: K, value: V): F[Unit]
   def contains(key: K): F[Boolean]
   def evalIfNew(key: K)(fa: => F[Unit]): F[Unit]
   def evalPutIfNew(key: K)(fa: => F[V]): F[V]
-}
 
 final private class RefbasedCache[F[_]: Clock: Monad, K, V](
     private val state: Ref[F, Map[K, (V, Long)]]
