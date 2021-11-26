@@ -14,7 +14,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
   "A SelfridgesClient" should {
 
-    val config = GenericRetailerConfig("http://selfridges.com", Some(Map("api-key" -> "foo-bar")))
+    val config = GenericRetailerConfig("http://selfridges.com", Map("api-key" -> "foo-bar"))
 
     val criteria = SearchCriteria("EA7 Armani")
 

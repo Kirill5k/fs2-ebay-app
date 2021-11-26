@@ -28,7 +28,7 @@ final private class LiveArgosClient[F[_]](
 ) extends SearchClient[F] with HttpClient[F] {
 
   override val name   = "argos"
-  private val headers = defaultHeaders ++ config.headers.getOrElse(Map.empty)
+  private val headers = defaultHeaders ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream

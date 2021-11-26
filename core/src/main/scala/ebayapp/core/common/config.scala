@@ -80,7 +80,7 @@ object config {
 
   final case class GenericRetailerConfig(
       baseUri: String,
-      headers: Option[Map[String, String]] = None,
+      headers: Map[String, String] = Map.empty,
       proxied: Option[Boolean] = None,
       cache: Option[CacheConfig] = None
   ) derives ConfigReader

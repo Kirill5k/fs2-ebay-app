@@ -17,14 +17,13 @@ final case class Metadata(
     serverAddress: Option[String]
 ) derives Codec.AsObject
 
-object Metadata {
+object Metadata:
   def from[F[_]](request: Request[F]): Metadata =
     Metadata(
       request.uri.renderString,
       request.headers.headers.map(h => (h.name.toString, h.value)).toMap,
       request.server.map(_.host.toString)
     )
-}
 
 final case class AppStatus(startupTime: Instant, requestMetadata: Metadata) derives Codec.AsObject
 
