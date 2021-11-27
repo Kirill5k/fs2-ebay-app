@@ -35,8 +35,7 @@ trait HttpClient[F[_]] {
         val errorClass = cause.fold(error.getClass.getSimpleName)(_.getClass.getSimpleName)
         val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
         val message    = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
-        F.ifA(F.pure(attempt > 10))(logger.error(message), logger.warn(message)) *>
-          F.sleep(delayBetweenFailures) *>
-          dispatch(attempt + 1)(request)
+        (if (attempt > 10) logger.error(message) else logger.warn(message)) *>
+          F.sleep(delayBetweenFailures) *> dispatch(attempt + 1)(request)
       }
 }
