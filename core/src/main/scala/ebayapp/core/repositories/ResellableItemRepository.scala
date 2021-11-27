@@ -87,14 +87,14 @@ final private class ResellableItemMongoRepository[F[_]: Async](
       filters.query.fold(Filter.empty)(Filter.text)
 }
 
-object ResellableItemRepository {
+object ResellableItemRepository:
+
+  private val collectionName    = "items"
+  private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
 
   def mongo[F[_]: Async](database: MongoDatabase[F]): F[ResellableItemRepository[F]] =
-    for {
+    for
       collNames <- database.listCollectionNames
-      collName    = "items"
-      collOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
-      _    <- if (collNames.toSet.contains(collName)) ().pure[F] else database.createCollection(collName, collOptions)
-      coll <- database.getCollectionWithCodec[ResellableItemEntity](collName)
-    } yield new ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])
-}
+      _    <- if (collNames.toSet.contains(collectionName)) ().pure[F] else database.createCollection(collectionName, collectionOptions)
+      coll <- database.getCollectionWithCodec[ResellableItemEntity](collectionName)
+    yield new ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])
