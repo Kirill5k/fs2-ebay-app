@@ -18,7 +18,7 @@ class DealsFinderSpec extends CatsSpec {
 
       val result = for {
         task <- DealsFinder.make(services)
-        _    <- task.run().compile.drain
+        _    <- task.run.compile.drain
       } yield ()
 
       result.unsafeToFuture().map { r =>

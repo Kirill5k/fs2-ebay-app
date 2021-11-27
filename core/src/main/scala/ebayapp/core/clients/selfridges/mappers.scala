@@ -18,7 +18,7 @@ private[selfridges] object mappers {
 
   type SelfridgesItemMapper = ItemMapper[SelfridgesItem]
 
-  implicit val selfridgesClothingMapper: SelfridgesItemMapper = new SelfridgesItemMapper {
+  inline def selfridgesClothingMapper: SelfridgesItemMapper = new SelfridgesItemMapper {
 
     override def toDomain(si: SelfridgesItem): ResellableItem =
       ResellableItem.clothing(
@@ -61,7 +61,7 @@ private[selfridges] object mappers {
         s"NEW",
         Instant.now,
         "SELFRIDGES",
-        Map()
+        Map.empty
       )
   }
 }

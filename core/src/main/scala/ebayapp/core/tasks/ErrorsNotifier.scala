@@ -13,7 +13,7 @@ final class ErrorsNotifier[F[_]: Logger: Temporal](
     private val notificationService: NotificationService[F]
 ) extends Task[F] {
 
-  def run(): Stream[F, Unit] =
+  def run: Stream[F, Unit] =
     Logger[F]
       .errors
       .throttle(30.seconds)

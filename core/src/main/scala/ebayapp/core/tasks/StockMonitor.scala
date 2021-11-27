@@ -11,7 +11,7 @@ final class StockMonitor[F[_]: Concurrent](
     private val stockServices: List[StockService[F]]
 ) extends Task[F] {
 
-  def run(): Stream[F, Unit] =
+  def run: Stream[F, Unit] =
     Stream
       .emits(stockServices.map(_.stockUpdates))
       .parJoinUnbounded

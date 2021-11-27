@@ -10,7 +10,7 @@ final class DealsFinder[F[_]: Concurrent](
     private val dealsServices: List[DealsService[F]]
 ) extends Task[F] {
 
-  def run(): Stream[F, Unit] =
+  def run: Stream[F, Unit] =
     Stream
       .emits(dealsServices)
       .map(_.newDeals)
@@ -18,8 +18,6 @@ final class DealsFinder[F[_]: Concurrent](
       .evalMap(notificationService.cheapItem)
 }
 
-object DealsFinder {
-
+object DealsFinder:
   def make[F[_]: Concurrent](services: Services[F]): F[Task[F]] =
     Monad[F].pure(new DealsFinder[F](services.notification, services.deals))
-}

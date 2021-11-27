@@ -18,7 +18,7 @@ class ErrorsNotifierSpec extends CatsSpec {
       val res = for {
         logger          <- Logger.make[IO]
         notifier        <- ErrorsNotifier.make[IO](services)(Temporal[IO], logger)
-        notifierProcess <- notifier.run().interruptAfter(1.seconds).compile.drain.start
+        notifierProcess <- notifier.run.interruptAfter(1.seconds).compile.drain.start
         _               <- logger.error("omg, error")
         _               <- logger.error("omg, error")
         _               <- notifierProcess.join
@@ -35,7 +35,7 @@ class ErrorsNotifierSpec extends CatsSpec {
       val res = for {
         logger          <- Logger.make[IO]
         notifier        <- ErrorsNotifier.make[IO](services)(Temporal[IO], logger)
-        notifierProcess <- notifier.run().interruptWhen(logger.awaitSigTerm).compile.drain.start
+        notifierProcess <- notifier.run.interruptWhen(logger.awaitSigTerm).compile.drain.start
         _               <- logger.critical("omg, critical error")
         error           <- notifierProcess.join.attempt
       } yield error

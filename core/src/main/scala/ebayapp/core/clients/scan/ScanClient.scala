@@ -17,8 +17,8 @@ import sttp.model.StatusCode
 import scala.concurrent.duration._
 
 final private class LiveScanClient[F[_]](
-                                          private val config: GenericRetailerConfig,
-                                          override val backend: SttpBackend[F, Any]
+    private val config: GenericRetailerConfig,
+    override val backend: SttpBackend[F, Any]
 )(implicit
     F: Temporal[F],
     logger: Logger[F]
@@ -66,8 +66,8 @@ final private class LiveScanClient[F[_]](
 
 object ScanClient {
   def make[F[_]: Temporal: Logger](
-                                    config: GenericRetailerConfig,
-                                    backend: SttpBackend[F, Any]
+      config: GenericRetailerConfig,
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveScanClient[F](config, backend))
 }

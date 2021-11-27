@@ -10,21 +10,20 @@ import fs2.Stream
 import scala.concurrent.duration.*
 
 final class Tasks[F[_]: Temporal: Logger](
-    val tasks: List[Task[F]]
+    private val tasks: List[Task[F]]
 ) {
   def runAll: Stream[F, Unit] =
     Stream
       .emits(tasks)
-      .map(_.run().resumeOnError(1.minute))
+      .map(_.run.resumeOnError(1.minute))
       .parJoinUnbounded
 
-  implicit final private class StreamOps[O](private val stream: Stream[F, O]) {
+  extension [O](stream: Stream[F, O])
     def resumeOnError(delay: FiniteDuration)(implicit logger: Logger[F]): Stream[F, O] =
       stream.handleErrorWith { error =>
         Stream.eval(logger.error(error)("error during task processing")).drain ++
           stream.delayBy[F](delay)
       }
-  }
 }
 
 object Tasks {

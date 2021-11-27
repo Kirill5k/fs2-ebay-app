@@ -243,7 +243,7 @@ private[mappers] object GameDetailsMapper {
       .map(_.mkString(" / "))
       .filter(_.nonEmpty)
 
-  implicit class StringOps(private val str: String) extends AnyVal {
+  extension (str: String)
     def withoutSpecialChars: String =
       str
         .replaceAll("&#\\d+;", "")
@@ -259,5 +259,4 @@ private[mappers] object GameDetailsMapper {
         .replaceAll("[\\\\()/,:-]", " ")
         .replaceAll(" +", " ")
         .trim
-  }
 }
