@@ -34,7 +34,7 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
     state.get.map(_.contains(key))
 
   override def evalIfNew(key: K)(fa: => F[Unit]): F[Unit] =
-    contains(key).flatMap(if (_) ().pure[F] else fa)
+    contains(key).flatMap(if _ then ().pure[F] else fa)
 
   override def evalPutIfNew(key: K)(fa: => F[V]): F[V] =
     get(key).flatMap {
