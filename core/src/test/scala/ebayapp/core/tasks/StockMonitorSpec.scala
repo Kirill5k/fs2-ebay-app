@@ -24,7 +24,7 @@ class StockMonitorSpec extends CatsSpec {
 
       val result = for {
         stockMonitor <- StockMonitor.make[IO](services)
-        _            <- stockMonitor.run().interruptAfter(2.seconds).compile.drain
+        _            <- stockMonitor.run.interruptAfter(2.seconds).compile.drain
       } yield ()
 
       result.unsafeToFuture().map { res =>
