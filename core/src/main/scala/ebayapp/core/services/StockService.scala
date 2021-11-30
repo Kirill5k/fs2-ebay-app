@@ -14,7 +14,7 @@ import fs2.Stream
 
 import scala.concurrent.duration.*
 
-trait StockService[F[_]] extends StockComparer[F]:
+trait StockService[F[_]]:
   def stockUpdates: Stream[F, ItemStockUpdates]
 
 final private class SimpleStockService[F[_]: Temporal: Logger](
@@ -39,7 +39,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
     Stream
       .unfoldLoopEval[F, Option[Map[String, ResellableItem]], List[ItemStockUpdates]](None) { prevOpt =>
         findItems(req).map { curr =>
-          (prevOpt.fold(List.empty[ItemStockUpdates])(prev => compareItems(prev, curr, req)), Some(curr.some))
+          (prevOpt.fold(List.empty[ItemStockUpdates])(prev => StockComparer.compareItems(prev, curr, req)), Some(curr.some))
         }
       }
       .flatMap(r => Stream.emits(r) ++ Stream.sleep_(freq))
