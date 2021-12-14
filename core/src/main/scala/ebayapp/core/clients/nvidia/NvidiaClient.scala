@@ -21,7 +21,7 @@ import scala.concurrent.duration._
 final private class LiveNvidiaClient[F[_]](
     private val config: GenericRetailerConfig,
     override val backend: SttpBackend[F, Any]
-)(implicit
+)(using
     logger: Logger[F],
     timer: Temporal[F]
 ) extends SearchClient[F] with HttpClient[F] {

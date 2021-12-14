@@ -24,7 +24,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     private val config: EbayConfig,
     private val authClient: EbayAuthClient[F],
     private val browseClient: EbayBrowseClient[F]
-)(implicit
+)(using
     val F: Temporal[F],
     val logger: Logger[F]
 ) extends SearchClient[F] {

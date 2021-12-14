@@ -48,7 +48,7 @@ object Cache {
   def make[F[_], K, V](
       expiresIn: FiniteDuration,
       checkOnEvery: FiniteDuration
-  )(implicit F: Temporal[F]): F[Cache[F, K, V]] = {
+  )(using F: Temporal[F]): F[Cache[F, K, V]] = {
 
     def checkExpirations(state: Ref[F, Map[K, (V, Long)]]): F[Unit] = {
       val process = F.realTime.flatMap { ts =>

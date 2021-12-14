@@ -22,7 +22,7 @@ final private class LiveJdsportsClient[F[_]](
     private val config: GenericRetailerConfig,
     override val name: String,
     override val backend: SttpBackend[F, Any]
-)(implicit
+)(using
     F: Temporal[F],
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {

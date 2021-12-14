@@ -1,5 +1,7 @@
 package ebayapp.proxy.common
 
+import cats.effect.Sync
+import cats.implicits.*
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 
@@ -15,4 +17,5 @@ object config:
   ) derives ConfigReader
 
   object AppConfig:
-    def load: AppConfig = ConfigSource.default.loadOrThrow[AppConfig]
+    def load[F[_]](using F: Sync[F]): F[AppConfig] =
+      F.blocking(ConfigSource.default.loadOrThrow[AppConfig])

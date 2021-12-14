@@ -18,7 +18,7 @@ import scala.concurrent.Future
 
 class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
-  implicit val logger: Logger[IO] = MockLogger.make[IO]
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   val timestamp = Instant.now().`with`(MILLI_OF_SECOND, 0)
 

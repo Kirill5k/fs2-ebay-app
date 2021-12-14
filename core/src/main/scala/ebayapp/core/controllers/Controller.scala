@@ -30,9 +30,9 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
     localDate.fold(DecodeResult.Error(dateString, _), DecodeResult.Value.apply)
   }
 
-  implicit val instantCodec: PlainCodec[Instant] = Codec.string.mapDecode(decodeInstant)(_.toString)
+  given instantCodec: PlainCodec[Instant] = Codec.string.mapDecode(decodeInstant)(_.toString)
 
-  protected def serverOptions(implicit F: Sync[F]): Http4sServerOptions[F, F] = Http4sServerOptions
+  protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F, F] = Http4sServerOptions
     .customInterceptors[F, F]
     .errorOutput(e => ValuedEndpointOutput(jsonBody[ErrorResponse], ErrorResponse.BadRequest(e)))
     .options
