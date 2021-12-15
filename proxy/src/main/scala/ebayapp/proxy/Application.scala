@@ -6,7 +6,6 @@ import cats.syntax.semigroupk.*
 import ebayapp.proxy.common.Resources
 import ebayapp.proxy.common.config.AppConfig
 import ebayapp.proxy.controllers.Controller
-import org.http4s.implicits.*
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger

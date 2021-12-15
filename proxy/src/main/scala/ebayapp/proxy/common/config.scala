@@ -1,7 +1,6 @@
 package ebayapp.proxy.common
 
 import cats.effect.Sync
-import cats.implicits.*
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 

@@ -14,7 +14,6 @@ import org.typelevel.ci.CIString
 trait Controller[F[_]] extends Http4sDsl[F]:
   def routes: HttpRoutes[F]
 
-
 final case class RedirectController[F[_]: Concurrent](
     private val client: Client[F],
     private val sigTerm: Deferred[F, Unit]
@@ -50,12 +49,8 @@ final private class HealthController[F[_]: Concurrent] extends Controller[F]:
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] { case GET -> Root / "health" / "status" => Ok("""{"status": true}""") }
 
-
 object Controller {
-  def redirect[F[_]: Concurrent](
-      client: Client[F],
-      sigTerm: Deferred[F, Unit]
-  ): F[Controller[F]] =
+  def redirect[F[_]: Concurrent](client: Client[F], sigTerm: Deferred[F, Unit]): F[Controller[F]] =
     Monad[F].pure(new RedirectController[F](client, sigTerm))
 
   def health[F[_]: Concurrent]: F[Controller[F]] =

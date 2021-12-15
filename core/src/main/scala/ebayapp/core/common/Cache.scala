@@ -3,7 +3,7 @@ package ebayapp.core.common
 import cats.Monad
 
 import cats.effect.{Ref, Temporal}
-import cats.effect.implicits.*
+import cats.effect.syntax.spawn.*
 import cats.effect.Clock
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
