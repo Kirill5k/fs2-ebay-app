@@ -31,7 +31,7 @@ private[controllers] class HealthController[F[_]: Async](
     private val startupTime: Ref[F, Instant]
 ) extends Controller[F] {
 
-  implicit val statusSchema: Schema[AppStatus] = Schema.string
+  given statusSchema: Schema[AppStatus] = Schema.string
 
   private val statusEndpoint: ServerEndpoint[Fs2Streams[F], F] =
     infallibleEndpoint.get

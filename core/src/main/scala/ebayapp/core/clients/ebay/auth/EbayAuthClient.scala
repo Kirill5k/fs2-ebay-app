@@ -28,7 +28,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
     private val authToken: Ref[F, Option[EbayAuthToken]],
     private val credentials: Ref[F, List[EbayCredentials]],
     override protected val backend: SttpBackend[F, Any]
-)(implicit
+)(using
     val logger: Logger[F],
     val T: Temporal[F]
 ) extends EbayAuthClient[F] {

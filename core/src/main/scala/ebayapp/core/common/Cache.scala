@@ -3,7 +3,7 @@ package ebayapp.core.common
 import cats.Monad
 
 import cats.effect.{Ref, Temporal}
-import cats.effect.implicits.*
+import cats.effect.syntax.spawn.*
 import cats.effect.Clock
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
@@ -48,7 +48,7 @@ object Cache {
   def make[F[_], K, V](
       expiresIn: FiniteDuration,
       checkOnEvery: FiniteDuration
-  )(implicit F: Temporal[F]): F[Cache[F, K, V]] = {
+  )(using F: Temporal[F]): F[Cache[F, K, V]] = {
 
     def checkExpirations(state: Ref[F, Map[K, (V, Long)]]): F[Unit] = {
       val process = F.realTime.flatMap { ts =>

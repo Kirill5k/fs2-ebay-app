@@ -22,7 +22,7 @@ trait NotificationService[F[_]]:
 final class TelegramNotificationService[F[_]](
     private val messengerClient: MessengerClient[F],
     private val sentMessages: Cache[F, String, Unit]
-)(implicit
+)(using
     F: Monad[F],
     logger: Logger[F]
 ) extends NotificationService[F] {
@@ -58,7 +58,7 @@ final class TelegramNotificationService[F[_]](
 }
 
 object NotificationService {
-  implicit class ResellableItemOps(private val item: ResellableItem) extends AnyVal {
+  extension (item: ResellableItem)
     def cheapItemNotification: Option[Notification] =
       for {
         itemSummary <- item.itemDetails.fullName
@@ -81,7 +81,6 @@ object NotificationService {
         val msg      = s"${update.header} for $name (£$price$discount, $quantity): ${update.message} $url $image".trim
         Notification.Stock(msg)
       }
-  }
 
   def make[F[_]: Temporal: Logger](client: MessengerClient[F]): F[NotificationService[F]] =
     Cache

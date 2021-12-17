@@ -18,7 +18,7 @@ object views {
 
     def from(err: Throwable): ErrorResponse = InternalError(err.getMessage)
 
-    implicit val encodeError: Encoder[ErrorResponse] = Encoder.instance {
+    given encodeError: Encoder[ErrorResponse] = Encoder.instance {
       case e: BadRequest    => e.asJson
       case e: InternalError => e.asJson
     }

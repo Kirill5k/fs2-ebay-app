@@ -79,7 +79,7 @@ final private class LiveLogger[F[_]: Monad](
 }
 
 object Logger {
-  def apply[F[_]](implicit ev: Logger[F]): Logger[F] = ev
+  def apply[F[_]](using ev: Logger[F]): Logger[F] = ev
 
   def make[F[_]: Async]: F[Logger[F]] =
     (Queue.unbounded[F, Error], Deferred[F, Either[Throwable, Unit]])

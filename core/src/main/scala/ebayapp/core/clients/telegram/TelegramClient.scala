@@ -17,7 +17,7 @@ import scala.concurrent.duration._
 final private class LiveTelegramClient[F[_]](
     private val config: TelegramConfig,
     override val backend: SttpBackend[F, Any]
-)(implicit
+)(using
     F: Temporal[F],
     logger: Logger[F]
 ) extends MessengerClient[F] with HttpClient[F] {
@@ -54,6 +54,6 @@ object TelegramClient {
   def make[F[_]: Logger](
       config: TelegramConfig,
       backend: SttpBackend[F, Any]
-  )(implicit F: Temporal[F]): F[MessengerClient[F]] =
+  )(using F: Temporal[F]): F[MessengerClient[F]] =
     F.pure(new LiveTelegramClient[F](config, backend))
 }

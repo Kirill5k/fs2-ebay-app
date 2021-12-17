@@ -29,7 +29,7 @@ final class CexApiClient[F[_]](
     private val config: GenericRetailerConfig,
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
     override val backend: SttpBackend[F, Any]
-)(implicit
+)(using
     T: Temporal[F],
     logger: Logger[F]
 ) extends CexClient[F] {

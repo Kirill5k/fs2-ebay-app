@@ -2,7 +2,6 @@ package ebayapp.core
 
 import cats.effect.Async
 import ebayapp.core.common.config.ServerConfig
-import org.http4s.implicits.*
 import org.http4s.HttpRoutes
 import org.http4s.blaze.server.BlazeServerBuilder
 import fs2.Stream

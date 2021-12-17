@@ -112,12 +112,12 @@ object config {
   ) derives ConfigReader
 
   object AppConfig {
-    implicit val stockMonitorMapReader: ConfigReader[Map[Retailer, StockMonitorConfig]] =
+    given stockMonitorMapReader: ConfigReader[Map[Retailer, StockMonitorConfig]] =
       genericMapReader[Retailer, StockMonitorConfig](catchReadError(Retailer.fromUnsafe))
-    implicit val dealsFinderMapReader: ConfigReader[Map[Retailer, DealsFinderConfig]] =
+    given dealsFinderMapReader: ConfigReader[Map[Retailer, DealsFinderConfig]] =
       genericMapReader[Retailer, DealsFinderConfig](catchReadError(Retailer.fromUnsafe))
 
-    def load[F[_]](implicit F: Sync[F], logger: Logger[F]): F[AppConfig] =
+    def load[F[_]](using F: Sync[F], logger: Logger[F]): F[AppConfig] =
       F.blocking(AppConfig.loadFromMount)
         .flatTap(_ => logger.info("loaded config from a configmap mount"))
         .handleErrorWith { e =>

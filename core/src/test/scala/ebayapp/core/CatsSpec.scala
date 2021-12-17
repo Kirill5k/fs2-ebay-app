@@ -10,8 +10,8 @@ import org.scalatestplus.mockito.MockitoSugar
 
 trait CatsSpec extends AsyncWordSpec with Matchers with MockitoSugar with MockitoMatchers {
 
-  implicit val rt: IORuntime      = IORuntime.global
-  implicit val logger: Logger[IO] = MockLogger.make[IO]
+  given rt: IORuntime      = IORuntime.global
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   def servicesMock: Services[IO] = new Services[IO] {
     val notification: NotificationService[IO]     = mock[NotificationService[IO]]

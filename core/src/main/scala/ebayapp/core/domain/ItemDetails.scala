@@ -48,14 +48,14 @@ object ItemDetails {
       (name, platform).mapN((n, p) => s"$n $p")
   }
 
-  implicit val encodeItemDetails: Encoder[ItemDetails] = Encoder.instance {
+  given encodeItemDetails: Encoder[ItemDetails] = Encoder.instance {
     case details: Generic   => details.asJson
     case details: Phone     => details.asJson
     case details: VideoGame => details.asJson
     case details: Clothing  => details.asJson
   }
 
-  implicit val decodeItemDetails: Decoder[ItemDetails] =
+  given decodeItemDetails: Decoder[ItemDetails] =
     List[Decoder[ItemDetails]](
       Decoder[Clothing].widen,
       Decoder[VideoGame].widen,

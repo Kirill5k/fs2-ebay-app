@@ -1,7 +1,7 @@
 package ebayapp.core.repositories
 
 import cats.effect.IO
-import cats.effect.unsafe.implicits.global
+import cats.effect.unsafe.IORuntime
 import ebayapp.core.MockLogger
 import ebayapp.core.common.Logger
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
@@ -18,7 +18,7 @@ import scala.concurrent.Future
 
 class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
-  implicit val logger: Logger[IO] = MockLogger.make[IO]
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   val timestamp = Instant.now().`with`(MILLI_OF_SECOND, 0)
 
@@ -168,5 +168,5 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
         .fromConnectionString[IO]("mongodb://localhost:12346")
         .evalMap(_.getDatabase("ebay-app"))
         .use(test)
-    }.unsafeToFuture()
+    }.unsafeToFuture()(IORuntime.global)
 }

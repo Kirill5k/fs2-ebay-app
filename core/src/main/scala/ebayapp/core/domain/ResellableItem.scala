@@ -16,8 +16,8 @@ object ItemKind {
   def from(value: String): Either[String, ItemKind] =
     ItemKind.values.find(_.value == value).toRight(s"unexpected item kind $value")
 
-  implicit val decode: Decoder[ItemKind] = Decoder[String].emap(ItemKind.from)
-  implicit val encode: Encoder[ItemKind] = Encoder[String].contramap(_.value)
+  inline given decode: Decoder[ItemKind] = Decoder[String].emap(ItemKind.from)
+  inline given encode: Encoder[ItemKind] = Encoder[String].contramap(_.value)
 }
 
 final case class ItemSummary(

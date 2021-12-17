@@ -6,8 +6,8 @@ import ebayapp.core.domain.search.SellPrice
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
-import org.http4s.implicits._
-import org.http4s.{Request, Status, _}
+import org.http4s.implicits.*
+import org.http4s.*
 
 import java.time.Instant
 

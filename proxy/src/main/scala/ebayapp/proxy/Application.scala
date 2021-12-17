@@ -6,7 +6,6 @@ import cats.syntax.semigroupk.*
 import ebayapp.proxy.common.Resources
 import ebayapp.proxy.common.config.AppConfig
 import ebayapp.proxy.controllers.Controller
-import org.http4s.implicits.*
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
@@ -14,17 +13,14 @@ import org.typelevel.log4cats.Logger
 
 import scala.concurrent.duration.*
 
-object Application extends IOApp.Simple {
-
-  implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
-
-  val config = AppConfig.load
-
+object Application extends IOApp.Simple:
+  given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
   override val run: IO[Unit] =
     logger.info("starting ebay-app-proxy") *>
       Resources.make[IO].use { resources =>
-        for {
+        for
           _                  <- logger.info("created resources")
+          config             <- AppConfig.load[IO] <* logger.info("loaded config")
           sigTerm            <- Deferred[IO, Unit]
           redirectController <- Controller.redirect[IO](resources.blazeClient, sigTerm)
           healthController   <- Controller.health[IO]
@@ -40,6 +36,5 @@ object Application extends IOApp.Simple {
             .interruptWhen(sigTerm.get.attempt)
             .compile
             .drain
-        } yield ()
+        yield ()
       }
-}

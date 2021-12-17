@@ -19,7 +19,7 @@ final class Tasks[F[_]: Temporal: Logger](
       .parJoinUnbounded
 
   extension [O](stream: Stream[F, O])
-    def resumeOnError(delay: FiniteDuration)(implicit logger: Logger[F]): Stream[F, O] =
+    def resumeOnError(delay: FiniteDuration)(using logger: Logger[F]): Stream[F, O] =
       stream.handleErrorWith { error =>
         Stream.eval(logger.error(error)("error during task processing")).drain ++
           stream.delayBy[F](delay)

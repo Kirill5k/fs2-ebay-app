@@ -3,8 +3,8 @@ package ebayapp.core.controllers
 import cats.effect.{IO, Ref}
 import ebayapp.core.ControllerSpec
 import org.http4s.Header.Raw
-import org.http4s.implicits._
-import org.http4s._
+import org.http4s.implicits.*
+import org.http4s.*
 import org.typelevel.ci.CIString
 
 import java.time.Instant

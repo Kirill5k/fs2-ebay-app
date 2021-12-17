@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 final private class LiveScanClient[F[_]](
     private val config: GenericRetailerConfig,
     override val backend: SttpBackend[F, Any]
-)(implicit
+)(using
     F: Temporal[F],
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {

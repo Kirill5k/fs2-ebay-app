@@ -22,7 +22,7 @@ import scala.concurrent.duration.*
 final private class LiveSelfridgesClient[F[_]](
     private val config: GenericRetailerConfig,
     override val backend: SttpBackend[F, Any]
-)(implicit
+)(using
     F: Temporal[F],
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {

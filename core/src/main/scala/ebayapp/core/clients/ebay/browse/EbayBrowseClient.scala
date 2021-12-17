@@ -24,7 +24,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig,
     override protected val backend: SttpBackend[F, Any],
     private val itemsCache: Cache[F, String, EbayItem]
-)(implicit
+)(using
     F: Temporal[F],
     logger: Logger[F]
 ) extends EbayBrowseClient[F] {

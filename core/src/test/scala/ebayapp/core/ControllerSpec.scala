@@ -13,8 +13,8 @@ import org.scalatestplus.mockito.MockitoSugar
 
 trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with MockitoMatchers {
 
-  implicit val rt: IORuntime      = IORuntime.global
-  implicit val logger: Logger[IO]   = MockLogger.make[IO]
+  given rt: IORuntime      = IORuntime.global
+  given logger: Logger[IO]   = MockLogger.make[IO]
 
   def verifyJsonResponse(
       actual: IO[Response[IO]],
