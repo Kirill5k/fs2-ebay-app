@@ -7,7 +7,7 @@ object Dependencies {
     val circe      = "0.14.1"
     val sttp       = "3.3.18"
     val http4s     = "0.23.7"
-    val logback    = "1.2.7"
+    val logback    = "1.2.9"
     val log4cats   = "2.1.1"
     val tapir      = "0.19.1"
 
