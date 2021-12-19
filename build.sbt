@@ -37,7 +37,7 @@ lazy val root = project
   .settings(
     name := "fs2-ebay-app"
   )
-  .aggregate(core, proxy)
+  .aggregate(core, proxy, monitor)
 
 lazy val core = project
   .in(file("core"))
