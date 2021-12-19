@@ -60,3 +60,14 @@ lazy val proxy = project
     Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
     libraryDependencies ++= Dependencies.proxy ++ Dependencies.test
   )
+
+lazy val monitor = project
+  .in(file("monitor"))
+  .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
+  .settings(docker)
+  .settings(
+    name                 := "fs2-ebay-app-monitor",
+    moduleName           := "fs2-ebay-app-monitor",
+    Docker / packageName := "fs2-app-monitor", // fs2-app/monitor
+    libraryDependencies ++= Dependencies.monitor ++ Dependencies.test
+  )

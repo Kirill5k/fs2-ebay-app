@@ -90,6 +90,17 @@ object Dependencies {
     Libraries.http4s.all ++
     Libraries.logging.all
 
+  lazy val monitor = Seq(
+    Libraries.mongo4cats.core,
+    Libraries.mongo4cats.circe,
+    Libraries.pureconfig.core
+  ) ++
+    Libraries.circe.all ++
+    Libraries.http4s.all ++
+    Libraries.logging.all ++
+    Libraries.sttp.all ++
+    Libraries.tapir.all
+
   lazy val test = Seq(
     Libraries.scalaTest           % Test,
     Libraries.mockito             % Test,
