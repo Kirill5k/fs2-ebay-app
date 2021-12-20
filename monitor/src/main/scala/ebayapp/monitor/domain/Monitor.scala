@@ -1,12 +1,11 @@
 package ebayapp.monitor.domain
 
 import java.util.UUID
-import java.net.URL
 import scala.concurrent.duration.FiniteDuration
 
 type Url = java.net.URL
 object Url {
-  def apply(host: String) = new URL(host)
+  def apply(host: String): Url = new java.net.URL(host)
 }
 
 final case class Monitor(
@@ -31,5 +30,6 @@ object Monitor {
 
   enum Notification {
     case Email(email: String)
+    case Telegram(channelId: String)
   }
 }
