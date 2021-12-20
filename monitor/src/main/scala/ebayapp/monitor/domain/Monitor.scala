@@ -4,10 +4,15 @@ import java.util.UUID
 import java.net.URL
 import scala.concurrent.duration.FiniteDuration
 
+type Url = java.net.URL
+object Url {
+  def apply(host: String) = new URL(host)
+}
+
 final case class Monitor(
     id: Monitor.Id,
     name: Monitor.Name,
-    url: URL,
+    url: Url,
     interval: FiniteDuration,
     timeout: FiniteDuration,
     notification: Monitor.Notification
