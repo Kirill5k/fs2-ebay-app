@@ -1,6 +1,7 @@
 package ebayapp.monitor.domain
 
 import java.util.UUID
+import java.time.Instant
 import scala.concurrent.duration.FiniteDuration
 
 type Url = java.net.URL
@@ -8,10 +9,15 @@ object Url {
   def apply(host: String): Url = new java.net.URL(host)
 }
 
+enum HttpMethod {
+  case GET, POST, PUT, DELETE, PATCH, HEAD
+}
+
 final case class Monitor(
     id: Monitor.Id,
     name: Monitor.Name,
     connection: Monitor.Connection,
+    active: Boolean,
     interval: FiniteDuration,
     timeout: FiniteDuration,
     notification: Monitor.Notification
@@ -37,7 +43,15 @@ object Monitor {
     case Http(url: Url, method: HttpMethod)
   }
 
-  enum HttpMethod {
-    case GET, POST, PUT, DELETE, PATCH, HEAD
+  enum Status {
+    case Up, Down
   }
 }
+
+final case class Event(
+    monitorId: Monitor.Id,
+    status: Monitor.Status,
+    responseTime: FiniteDuration,
+    time: Instant,
+    reason: String
+)
