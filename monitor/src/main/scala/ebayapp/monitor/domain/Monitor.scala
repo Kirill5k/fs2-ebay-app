@@ -19,7 +19,6 @@ final case class Monitor(
     connection: Monitor.Connection,
     active: Boolean,
     interval: FiniteDuration,
-    timeout: FiniteDuration,
     notification: Monitor.Notification
 )
 
@@ -40,7 +39,7 @@ object Monitor {
   }
 
   enum Connection {
-    case Http(url: Url, method: HttpMethod)
+    case Http(url: Url, method: HttpMethod, timeout: FiniteDuration)
   }
 
   enum Status {
