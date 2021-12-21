@@ -48,7 +48,7 @@ object Monitor {
   }
 }
 
-final case class Event(
+final case class MonitorEvent(
     monitorId: Monitor.Id,
     status: Monitor.Status,
     responseTime: FiniteDuration,
