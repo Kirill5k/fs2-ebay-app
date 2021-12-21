@@ -11,7 +11,7 @@ object Url {
 final case class Monitor(
     id: Monitor.Id,
     name: Monitor.Name,
-    url: Url,
+    connection: Monitor.Connection,
     interval: FiniteDuration,
     timeout: FiniteDuration,
     notification: Monitor.Notification
@@ -31,5 +31,13 @@ object Monitor {
   enum Notification {
     case Email(email: String)
     case Telegram(channelId: String)
+  }
+
+  enum Connection {
+    case Http(url: Url, method: HttpMethod)
+  }
+
+  enum HttpMethod {
+    case GET, POST, PUT, DELETE, PATCH, HEAD
   }
 }
