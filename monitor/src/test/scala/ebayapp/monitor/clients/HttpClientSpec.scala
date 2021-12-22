@@ -15,7 +15,7 @@ import scala.concurrent.duration.*
 
 class HttpClientSpec extends AsyncWordSpec with Matchers {
 
-  val id  = Monitor.Id.gen
+  val id  = Monitor.Id("ID")
   val url = Url("http://foo.bar")
 
   "A HttpClient" should {
