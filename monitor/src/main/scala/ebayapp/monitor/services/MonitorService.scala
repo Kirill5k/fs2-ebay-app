@@ -1,10 +1,16 @@
 package ebayapp.monitor.services
 
+import cats.effect.std.Queue
+import ebayapp.monitor.actions.ActionDispatcher
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
+import ebayapp.monitor.repositories.{MonitorRepository, MonitoringEventRepository}
 import fs2.Stream
 
 trait MonitorService[F[_]]:
   def create(monitor: CreateMonitor): F[Monitor]
   def find(id: Monitor.Id): F[Option[Monitor]]
-  def enqueue(monitor: Monitor): F[Unit]
-  def process: Stream[F, Unit]
+
+final private class LiveMonitorService[F[_]](
+    private val actionDispatcher: ActionDispatcher[F],
+    private val repository: MonitorRepository[F],
+)
