@@ -32,7 +32,7 @@ class MonitoringEventRepositorySpec extends AsyncWordSpec with Matchers with Emb
   def withEmbeddedMongoClient[A](test: MongoDatabase[IO] => IO[A]): Future[A] =
     withRunningEmbeddedMongo("localhost", 12146) {
       MongoClient
-        .fromConnectionString[IO]("mongodb://localhost:12246")
+        .fromConnectionString[IO]("mongodb://localhost:12146")
         .evalMap(_.getDatabase("ebay-app"))
         .use(test)
     }.unsafeToFuture()(IORuntime.global)
