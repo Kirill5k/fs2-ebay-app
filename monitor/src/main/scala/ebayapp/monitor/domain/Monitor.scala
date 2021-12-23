@@ -1,25 +1,18 @@
 package ebayapp.monitor.domain
 
-import io.circe.{Decoder, Encoder, Codec}
+import io.circe.{Decoder, Encoder}
 import mongo4cats.bson.ObjectId
 
 import java.util.UUID
 import java.time.Instant
 import scala.concurrent.duration.FiniteDuration
 
-type Url = java.net.URL
+opaque type Url = java.net.URL
 object Url:
   def apply(host: String): Url = new java.net.URL(host)
-  inline given decode: Decoder[Url] = Decoder[String].map(Url.apply)
-  inline given encode: Encoder[Url] = Encoder[String].contramap(_.toString)
 
 enum HttpMethod:
   case GET, POST, PUT, DELETE, PATCH, HEAD
-
-object HttpMethod:
-  inline given decode: Decoder[HttpMethod] = Decoder[String].map(HttpMethod.valueOf)
-  inline given encode: Encoder[HttpMethod] = Encoder[String].contramap(_.toString)
-
 
 final case class Monitor(
     id: Monitor.Id,

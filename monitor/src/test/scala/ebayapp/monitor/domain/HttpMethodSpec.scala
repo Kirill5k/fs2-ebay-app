@@ -2,6 +2,7 @@ package ebayapp.monitor.domain
 
 import io.circe.parser.decode
 import io.circe.syntax._
+import ebayapp.monitor.common.json.given
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
 

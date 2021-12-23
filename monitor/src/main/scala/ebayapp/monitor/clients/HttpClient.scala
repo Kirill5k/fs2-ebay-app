@@ -36,4 +36,4 @@ final private class LiveHttpClient[F[_]](
 
 object HttpClient:
   def make[F[_]: Async](backend: SttpBackend[F, Any]): F[HttpClient[F]] =
-    Monad[F].pure(new LiveHttpClient[F](backend))
+    Monad[F].pure(LiveHttpClient[F](backend))
