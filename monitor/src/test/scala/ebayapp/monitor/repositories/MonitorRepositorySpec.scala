@@ -9,32 +9,36 @@ import mongo4cats.database.MongoDatabase
 import mongo4cats.embedded.EmbeddedMongo
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.OptionValues
 
 import scala.concurrent.Future
 
-class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
+class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo with OptionValues {
 
   "A MonitorRepository" when {
 
     "getAllActive" should {
+      "return active monitors" in withEmbeddedMongoClient { db =>
+        val result = for
+          repo <- MonitorRepository.make(db)
+          mon  <- repo.save(Monitors.create())
+          mons <- repo.getAllActive
+        yield (mon, mons)
+
+        result.map { case (mon, mons) =>
+          mons mustBe List(mon)
+        }
+      }
+
       "return empty list when there are no active monitor" in withEmbeddedMongoClient { db =>
         val result = for
           repo <- MonitorRepository.make(db)
-          _    <- repo.save(Monitors.gen(active = false))
+          mon  <- repo.save(Monitors.create())
+          _    <- repo.pause(mon.id)
           mons <- repo.getAllActive
         yield mons
 
         result.map(_ mustBe Nil)
-      }
-
-      "return active monitors" in withEmbeddedMongoClient { db =>
-        val result = for
-          repo <- MonitorRepository.make(db)
-          _    <- repo.save(Monitors.gen())
-          mons <- repo.getAllActive
-        yield mons
-
-        result.map(_ mustBe List(Monitors.gen()))
       }
     }
 
@@ -42,43 +46,26 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
       "change status to inactive" in withEmbeddedMongoClient { db =>
         val result = for
           repo <- MonitorRepository.make(db)
-          _    <- repo.save(Monitors.gen())
-          _    <- repo.pause(Monitors.id)
-          mon  <- repo.find(Monitors.id)
+          mon  <- repo.save(Monitors.create())
+          _    <- repo.pause(mon.id)
+          mon  <- repo.find(mon.id)
         yield mon
 
-        result.map(_.active mustBe false)
-      }
-
-      "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
-        val result = for
-          repo <- MonitorRepository.make(db)
-          res  <- repo.pause(Monitors.id).attempt
-        yield res
-
-        result.map(_ mustBe Left(AppError.MonitorNotFound(Monitors.id)))
+        result.map(_.value.active mustBe false)
       }
     }
 
     "unpause" should {
       "change status to inactive" in withEmbeddedMongoClient { db =>
         val result = for
-          repo <- MonitorRepository.make(db)
-          _    <- repo.save(Monitors.gen(active = false))
-          _    <- repo.unpause(Monitors.id)
-          mon  <- repo.find(Monitors.id)
+          repo   <- MonitorRepository.make(db)
+          newMon <- repo.save(Monitors.create())
+          _      <- repo.pause(newMon.id)
+          _      <- repo.unpause(newMon.id)
+          mon    <- repo.find(newMon.id)
         yield mon
 
-        result.map(_.active mustBe true)
-      }
-
-      "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
-        val result = for
-          repo <- MonitorRepository.make(db)
-          res  <- repo.unpause(Monitors.id).attempt
-        yield res
-
-        result.map(_ mustBe Left(AppError.MonitorNotFound(Monitors.id)))
+        result.map(_.value.active mustBe true)
       }
     }
 
@@ -86,20 +73,12 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
       "remove monitor by id" in withEmbeddedMongoClient { db =>
         val result = for
           repo <- MonitorRepository.make(db)
-          _    <- repo.save(Monitors.gen())
-          res  <- repo.delete(Monitors.id)
+          mon  <- repo.save(Monitors.create())
+          _    <- repo.delete(mon.id)
+          res  <- repo.find(mon.id)
         yield res
 
-        result.map(_ mustBe ())
-      }
-
-      "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
-        val result = for
-          repo <- MonitorRepository.make(db)
-          res  <- repo.delete(Monitors.id).attempt
-        yield res
-
-        result.map(_ mustBe Left(AppError.MonitorNotFound(Monitors.id)))
+        result.map(_ mustBe None)
       }
     }
   }

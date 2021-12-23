@@ -26,17 +26,16 @@ final case class Monitor(
 object Monitor {
   opaque type Id = String
   object Id:
-    def apply(id: String): Id = id
+    def apply(id: String): Id   = id
     def apply(id: ObjectId): Id = id.toHexString
     extension (id: Id)
       def toObjectId: ObjectId = ObjectId(id)
-      def value: String = id
+      def value: String        = id
 
   opaque type Name = String
   object Name:
-    def apply(name: String): Name = name
-    extension (name: Name)
-      def value: String = name
+    def apply(name: String): Name            = name
+    extension (name: Name) def value: String = name
 
   enum Notification:
     case Email(email: String)
@@ -48,6 +47,13 @@ object Monitor {
   enum Status:
     case Up, Down
 }
+
+final case class CreateMonitor(
+    name: Monitor.Name,
+    connection: Monitor.Connection,
+    interval: FiniteDuration,
+    notification: Monitor.Notification
+)
 
 final case class MonitoringEvent(
     monitorId: Monitor.Id,

@@ -1,7 +1,7 @@
 package ebayapp.monitor.repositories
 
 import mongo4cats.bson.ObjectId
-import ebayapp.monitor.domain.Monitor
+import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -24,12 +24,12 @@ final private[repositories] case class MonitorEntity(
     )
 
 private[repositories] object MonitorEntity:
-  def from(monitor: Monitor): MonitorEntity =
+  def from(monitor: CreateMonitor): MonitorEntity =
     MonitorEntity(
-      monitor.id.toObjectId,
+      ObjectId(),
       monitor.name.value,
       monitor.connection,
-      monitor.active,
+      true,
       monitor.interval,
       monitor.notification
     )

@@ -1,8 +1,9 @@
 package ebayapp.monitor.domain
 
+import ebayapp.monitor.domain.Monitors.id
 import mongo4cats.bson.ObjectId
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 object Monitors {
 
@@ -18,4 +19,11 @@ object Monitors {
       interval: FiniteDuration = 10.minutes,
       notification: Monitor.Notification = emailNotification
   ): Monitor = Monitor(id, name, connection, active, 10.minutes, notification)
+
+  def create(
+      name: Monitor.Name = Monitor.Name("test"),
+      connection: Monitor.Connection = httpConnection,
+      interval: FiniteDuration = 10.minutes,
+      notification: Monitor.Notification = emailNotification
+  ): CreateMonitor = CreateMonitor(name, connection, 10.minutes, notification)
 }

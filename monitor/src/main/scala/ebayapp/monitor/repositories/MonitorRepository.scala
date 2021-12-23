@@ -6,9 +6,8 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import ebayapp.monitor.common.JsonCodecs
-import ebayapp.monitor.common.errors.AppError
 import ebayapp.monitor.common.json.given
-import ebayapp.monitor.domain.Monitor
+import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 import io.circe.generic.auto.*
 import mongo4cats.collection.operations.{Filter, Update}
 import mongo4cats.collection.MongoCollection
@@ -16,54 +15,36 @@ import mongo4cats.circe.*
 import mongo4cats.database.MongoDatabase
 
 trait MonitorRepository[F[_]]:
-  def save(monitor: Monitor): F[Unit]
-  def find(id: Monitor.Id): F[Monitor]
+  def save(monitor: CreateMonitor): F[Monitor]
+  def find(id: Monitor.Id): F[Option[Monitor]]
   def pause(id: Monitor.Id): F[Unit]
   def unpause(id: Monitor.Id): F[Unit]
   def delete(id: Monitor.Id): F[Unit]
   def getAllActive: F[List[Monitor]]
 
-final private class LiveMonitorRepository[F[_]](
+final private class LiveMonitorRepository[F[_]: Async](
     val collection: MongoCollection[F, MonitorEntity]
-)(using
-    F: Async[F]
-) extends MonitorRepository[F] {
+) extends MonitorRepository[F]:
+
+  def save(monitor: CreateMonitor): F[Monitor] =
+    val entity = MonitorEntity.from(monitor)
+    collection.insertOne(entity).as(entity.toDomain)
 
   def getAllActive: F[List[Monitor]] =
     collection.find(Filter.eq("active", true)).all.map(_.map(_.toDomain).toList)
 
-  def save(monitor: Monitor): F[Unit] =
-    collection.insertOne(MonitorEntity.from(monitor)).void
-
-  def find(id: Monitor.Id): F[Monitor] =
-    collection
-      .find(Filter.idEq(id.toObjectId))
-      .first
-      .flatMap {
-        case Some(entity) => entity.toDomain.pure[F]
-        case None         => AppError.MonitorNotFound(id).raiseError[F, Monitor]
-      }
+  def find(id: Monitor.Id): F[Option[Monitor]] =
+    collection.find(Filter.idEq(id.toObjectId)).first.map(_.map(_.toDomain))
 
   def delete(id: Monitor.Id): F[Unit] =
-    collection
-      .deleteOne(Filter.idEq(id.toObjectId))
-      .flatMap { result =>
-        if (result.getDeletedCount > 0) ().pure[F]
-        else AppError.MonitorNotFound(id).raiseError[F, Unit]
-      }
+    collection.deleteOne(Filter.idEq(id.toObjectId)).void
 
   def pause(id: Monitor.Id): F[Unit] = setActive(id, false)
 
   def unpause(id: Monitor.Id): F[Unit] = setActive(id, true)
 
   private def setActive(id: Monitor.Id, active: Boolean): F[Unit] =
-    collection
-      .updateOne(Filter.idEq(id.toObjectId), Update.set("active", active))
-      .flatMap { result =>
-        if (result.getMatchedCount > 0) ().pure[F]
-        else AppError.MonitorNotFound(id).raiseError[F, Unit]
-      }
-}
+    collection.updateOne(Filter.idEq(id.toObjectId), Update.set("active", active)).void
 
 object MonitorRepository:
   private val collectionName = "monitors"
