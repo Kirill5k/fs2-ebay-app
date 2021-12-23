@@ -17,5 +17,5 @@ object Monitors {
       active: Boolean = true,
       interval: FiniteDuration = 10.minutes,
       notification: Monitor.Notification = emailNotification
-  ) = Monitor(id, name, connection, active, 10.minutes, notification)
+  ): Monitor = Monitor(id, name, connection, active, 10.minutes, notification)
 }

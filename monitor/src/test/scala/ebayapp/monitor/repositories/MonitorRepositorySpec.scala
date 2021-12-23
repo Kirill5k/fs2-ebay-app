@@ -21,7 +21,7 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
         val result = for
           repo <- MonitorRepository.make(db)
           _    <- repo.save(Monitors.gen(active = false))
-          mons    <- repo.getAllActive
+          mons <- repo.getAllActive
         yield mons
 
         result.map(_ mustBe Nil)
@@ -31,7 +31,7 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
         val result = for
           repo <- MonitorRepository.make(db)
           _    <- repo.save(Monitors.gen())
-          mons    <- repo.getAllActive
+          mons <- repo.getAllActive
         yield mons
 
         result.map(_ mustBe List(Monitors.gen()))
