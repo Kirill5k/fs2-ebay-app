@@ -28,7 +28,7 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
 
 object MonitoringEventRepository:
   private val collectionName    = "monitoring-events"
-  private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
+  private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(134217728L)
 
   def make[F[_]: Async](database: MongoDatabase[F]): F[MonitoringEventRepository[F]] =
     for
