@@ -1,5 +1,6 @@
 package ebayapp.monitor.services
 
-trait MonitorService[F[_]] {
+import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 
-}
+trait MonitorService[F[_]]:
+  def create(monitor: CreateMonitor): F[Monitor]

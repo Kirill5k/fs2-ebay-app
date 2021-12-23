@@ -38,6 +38,7 @@ object Monitor {
     extension (name: Name) def value: String = name
 
   enum Notification:
+    case Logging
     case Email(email: String)
     case Telegram(channelId: String)
 
