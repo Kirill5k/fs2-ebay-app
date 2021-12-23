@@ -7,21 +7,21 @@ import cats.syntax.functor._
 import cats.syntax.applicativeError._
 import cats.effect.Async
 import java.time.Instant
-import ebayapp.monitor.domain.{Monitor, MonitorEvent}
+import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import sttp.client3.*
 import sttp.model.Method
 
 import scala.concurrent.duration.FiniteDuration
 
 trait HttpClient[F[_]]:
-  def status(id: Monitor.Id, connection: Monitor.Connection.Http): F[MonitorEvent]
+  def status(id: Monitor.Id, connection: Monitor.Connection.Http): F[MonitoringEvent]
 
 final private class LiveHttpClient[F[_]](
     val backend: SttpBackend[F, Any]
 )(using
     F: Async[F]
 ) extends HttpClient[F]:
-  def status(id: Monitor.Id, connection: Monitor.Connection.Http): F[MonitorEvent] =
+  def status(id: Monitor.Id, connection: Monitor.Connection.Http): F[MonitoringEvent] =
     for
       start <- F.realTime
       res <- basicRequest
@@ -32,7 +32,7 @@ final private class LiveHttpClient[F[_]](
         .timeoutTo(connection.timeout, F.pure((Monitor.Status.Down, s"Request timed-out after ${connection.timeout}")))
         .handleError(e => (Monitor.Status.Down, e.getMessage))
       end <- F.realTime
-    yield MonitorEvent(id, res._1, end - start, Instant.ofEpochMilli(start.toMillis), res._2)
+    yield MonitoringEvent(id, res._1, end - start, Instant.ofEpochMilli(start.toMillis), res._2)
 
 object HttpClient:
   def make[F[_]: Async](backend: SttpBackend[F, Any]): F[HttpClient[F]] =

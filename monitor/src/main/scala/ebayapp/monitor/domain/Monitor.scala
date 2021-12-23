@@ -49,7 +49,7 @@ object Monitor {
     case Up, Down
 }
 
-final case class MonitorEvent(
+final case class MonitoringEvent(
     monitorId: Monitor.Id,
     status: Monitor.Status,
     responseTime: FiniteDuration,
