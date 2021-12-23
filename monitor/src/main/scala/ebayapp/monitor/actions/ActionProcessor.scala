@@ -6,15 +6,15 @@ import cats.effect.std.Queue
 import fs2.Stream
 
 trait ActionProcessor[F[_]]:
-  def run: Stream[F, Unit]
+  def process: Stream[F, Unit]
 
 final private class LiveActionProcessor[F[_]: Temporal](
-    val actions: Queue[F, Action]
+    private val dispatcher: ActionDispatcher[F]
 ) extends ActionProcessor[F] {
 
-  def run: Stream[F, Unit] = Stream.fromQueueUnterminated(actions).drain
+  def process: Stream[F, Unit] = dispatcher.actions.drain
 }
 
 object ActionProcessor:
-  def make[F[_]: Temporal](actions: Queue[F, Action]): F[ActionProcessor[F]] =
-    Monad[F].pure(LiveActionProcessor(actions))
+  def make[F[_]: Temporal](dispatcher: ActionDispatcher[F]): F[ActionProcessor[F]] =
+    Monad[F].pure(LiveActionProcessor(dispatcher))
