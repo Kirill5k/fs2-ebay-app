@@ -5,8 +5,8 @@ import ebayapp.monitor.domain.Monitor
 
 import scala.concurrent.duration.FiniteDuration
 
-final case class MonitorEntity(
-    id: ObjectId,
+final private[repositories] case class MonitorEntity(
+    _id: ObjectId,
     name: String,
     connection: Monitor.Connection,
     active: Boolean,
@@ -15,7 +15,7 @@ final case class MonitorEntity(
 ):
   def toDomain: Monitor =
     Monitor(
-      Monitor.Id(id),
+      Monitor.Id(_id),
       Monitor.Name(name),
       connection,
       active,
@@ -23,7 +23,7 @@ final case class MonitorEntity(
       notification
     )
 
-object MonitorEntity:
+private[repositories] object MonitorEntity:
   def from(monitor: Monitor): MonitorEntity =
     MonitorEntity(
       monitor.id.toObjectId,

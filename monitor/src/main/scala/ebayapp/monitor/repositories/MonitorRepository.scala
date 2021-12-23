@@ -58,7 +58,7 @@ final private class LiveMonitorRepository[F[_]](
 
   private def setActive(id: Monitor.Id, active: Boolean): F[Unit] =
     collection
-      .updateOne(Filter.idEq(id.toObjectId), Update.set("active", false))
+      .updateOne(Filter.idEq(id.toObjectId), Update.set("active", active))
       .flatMap { result =>
         if (result.getMatchedCount > 0) ().pure[F]
         else AppError.MonitorNotFound(id).raiseError[F, Unit]
@@ -67,7 +67,7 @@ final private class LiveMonitorRepository[F[_]](
 
 object MonitorRepository:
   private val collectionName = "monitors"
-  def mongo[F[_]: Async](database: MongoDatabase[F]): F[MonitorRepository[F]] =
+  def make[F[_]: Async](database: MongoDatabase[F]): F[MonitorRepository[F]] =
     database
       .getCollectionWithCodec[MonitorEntity](collectionName)
       .map(coll => LiveMonitorRepository[F](coll))
