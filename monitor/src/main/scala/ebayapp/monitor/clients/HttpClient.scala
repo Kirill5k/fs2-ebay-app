@@ -2,9 +2,9 @@ package ebayapp.monitor.clients
 
 import cats.Monad
 import cats.effect.syntax.temporal.genTemporalOps_
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.applicativeError._
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
+import cats.syntax.applicativeError.*
 import cats.effect.Async
 import java.time.Instant
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
