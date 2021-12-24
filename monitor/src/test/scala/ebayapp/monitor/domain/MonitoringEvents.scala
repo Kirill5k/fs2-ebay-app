@@ -1,5 +1,6 @@
 package ebayapp.monitor.domain
 
+import ebayapp.monitor.domain.MonitoringEvents.ts
 import mongo4cats.bson.ObjectId
 
 import java.time.Instant
@@ -16,3 +17,16 @@ object MonitoringEvents:
       statusCheck: MonitoringEvent.StatusCheck = statusCheck,
       downTime: Option[Instant] = None
   ): MonitoringEvent = MonitoringEvent(Monitors.id, statusCheck, downTime)
+
+  def up(
+      monitorId: Monitor.Id = Monitors.id,
+      ts: Instant = ts,
+      reason: String = "OK"
+  ): MonitoringEvent = MonitoringEvent(Monitors.id, MonitoringEvent.StatusCheck(Monitor.Status.Up, 125.millis, ts, reason), None)
+
+  def down(
+      monitorId: Monitor.Id = Monitors.id,
+      ts: Instant = ts,
+      reason: String = "DOWN",
+      downTime: Option[Instant] = Some(ts)
+  ): MonitoringEvent = MonitoringEvent(Monitors.id, MonitoringEvent.StatusCheck(Monitor.Status.Down, 125.millis, ts, reason), downTime)
