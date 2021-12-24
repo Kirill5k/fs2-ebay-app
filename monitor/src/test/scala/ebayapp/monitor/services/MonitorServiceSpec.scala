@@ -32,7 +32,7 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
 
     "find monitor by id" in {
       val (dispatcher, repo) = mocks
-      when(repo.find(any[Monitor.Id])).thenReturn(IO.pure(Monitors.gen()))
+      when(repo.find(any[Monitor.Id])).thenReturn(IO.pure(Some(Monitors.gen())))
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
@@ -42,7 +42,7 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
       res.unsafeToFuture().map { mon =>
         verifyNoInteractions(dispatcher)
         verify(repo).find(Monitors.id)
-        mon mustBe Monitors.gen()
+        mon mustBe Some(Monitors.gen())
       }
     }
 
