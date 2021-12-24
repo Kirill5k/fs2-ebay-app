@@ -57,16 +57,15 @@ final private class LiveMonitoringEventService[F[_]](
       }
 
   private def checkStatus(monitor: Monitor): F[MonitoringEvent.StatusCheck] =
-    monitor.connection match {
+    monitor.connection match
       case http: Connection.Http => httpClient.status(http)
-    }
 
   private def compareStatus(
       current: MonitoringEvent.StatusCheck,
       previous: Option[MonitoringEvent.StatusCheck],
       downTime: Option[Instant]
   ): (Option[Instant], Option[Notification]) =
-    (current.status, previous.map(_.status)) match {
+    (current.status, previous.map(_.status)) match
       case (Monitor.Status.Down, None) =>
         (Some(current.time), None)
       case (Monitor.Status.Up, None) =>
@@ -79,6 +78,11 @@ final private class LiveMonitoringEventService[F[_]](
         (downTime, Some(Notification(Monitor.Status.Up, current.time, downTime, current.reason)))
       case (Monitor.Status.Down, Some(Monitor.Status.Up)) =>
         (Some(current.time), Some(Notification(Monitor.Status.Down, current.time, None, current.reason)))
-    }
 
-object MonitoringEventService {}
+object MonitoringEventService:
+  def make[F[_]: Concurrent](
+      dispatcher: ActionDispatcher[F],
+      repository: MonitoringEventRepository[F],
+      httpClient: HttpClient[F]
+  ): F[MonitoringEventService[F]] =
+    Queue.unbounded[F, PendingMonitor].map(q => LiveMonitoringEventService(q, dispatcher, repository, httpClient))
