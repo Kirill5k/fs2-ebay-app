@@ -6,7 +6,7 @@ import scala.concurrent.duration.FiniteDuration
 final case class MonitoringEvent(
     monitorId: Monitor.Id,
     statusCheck: MonitoringEvent.StatusCheck,
-    downTime: Option[FiniteDuration]
+    downTime: Option[Instant]
 )
 
 object MonitoringEvent {

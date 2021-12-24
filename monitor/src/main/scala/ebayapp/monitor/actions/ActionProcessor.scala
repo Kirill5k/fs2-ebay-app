@@ -23,8 +23,9 @@ final private class LiveActionProcessor[F[_]](
   def process: Stream[F, Unit] =
     dispatcher.actions
       .mapAsync(maxConcurrent) {
-        case Action.EnqueueNew(monitor)         => enqueueNew(monitor)
-        case Action.Enqueue(monitor, prevEvent) => enqueue(prevEvent)(monitor)
+        case Action.Notify(monitor, notification) => services.notification.notify(monitor, notification)
+        case Action.EnqueueNew(monitor)           => enqueueNew(monitor)
+        case Action.Enqueue(monitor, prevEvent)   => enqueue(prevEvent)(monitor)
         case Action.EnqueueAll =>
           for
             monitors <- services.monitor.getAllActive

@@ -3,7 +3,7 @@ package ebayapp.monitor.actions
 import cats.Monad
 import cats.effect.kernel.Concurrent
 import cats.effect.std.Queue
-import cats.syntax.functor._
+import cats.syntax.functor.*
 import fs2.Stream
 
 trait ActionDispatcher[F[_]]:

@@ -2,7 +2,7 @@ package ebayapp.monitor.services
 
 import cats.Monad
 import cats.effect.std.Queue
-import cats.syntax.flatMap._
+import cats.syntax.flatMap.*
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 import ebayapp.monitor.repositories.{MonitorRepository, MonitoringEventRepository}

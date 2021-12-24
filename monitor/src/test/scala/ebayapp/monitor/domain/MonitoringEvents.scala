@@ -14,5 +14,5 @@ object MonitoringEvents:
   def gen(
       monitorId: Monitor.Id = Monitors.id,
       statusCheck: MonitoringEvent.StatusCheck = statusCheck,
-      downTime: Option[FiniteDuration] = None
+      downTime: Option[Instant] = None
   ): MonitoringEvent = MonitoringEvent(Monitors.id, statusCheck, downTime)

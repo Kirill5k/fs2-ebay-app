@@ -1,7 +1,10 @@
 package ebayapp.monitor.domain
 
-final case class Notification ()
+import java.time.Instant
 
-object Notification {
-  final case class Message()
-}
+final case class Notification(
+    status: Monitor.Status,
+    time: Instant,
+    downTime: Option[Instant],
+    reason: String
+)
