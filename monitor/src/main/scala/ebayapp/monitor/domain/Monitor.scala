@@ -20,7 +20,7 @@ final case class Monitor(
     connection: Monitor.Connection,
     active: Boolean,
     interval: FiniteDuration,
-    notification: Monitor.Notification
+    notification: Monitor.Contact
 )
 
 object Monitor {
@@ -37,7 +37,7 @@ object Monitor {
     def apply(name: String): Name            = name
     extension (name: Name) def value: String = name
 
-  enum Notification:
+  enum Contact:
     case Logging
     case Email(email: String)
     case Telegram(channelId: String)
@@ -53,5 +53,5 @@ final case class CreateMonitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
     interval: FiniteDuration,
-    notification: Monitor.Notification
+    notificationContact: Monitor.Contact
 )

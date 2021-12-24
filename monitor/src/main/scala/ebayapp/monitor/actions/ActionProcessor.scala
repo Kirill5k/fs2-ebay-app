@@ -18,7 +18,6 @@ final private class LiveActionProcessor[F[_]](
 )(using
     F: Temporal[F]
 ) extends ActionProcessor[F] {
-
   private val maxConcurrent: Int = 1024
 
   def process: Stream[F, Unit] =

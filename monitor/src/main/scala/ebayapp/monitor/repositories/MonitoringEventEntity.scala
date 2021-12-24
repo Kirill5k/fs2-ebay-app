@@ -10,10 +10,10 @@ final private[repositories] case class MonitoringEventEntity(
     _id: ObjectId,
     monitorId: ObjectId,
     statusCheck: MonitoringEvent.StatusCheck,
-    lastUpStatusCheck: Option[MonitoringEvent.StatusCheck]
+    downTime: Option[FiniteDuration]
 ):
   def toDomain: MonitoringEvent =
-    MonitoringEvent(Monitor.Id(monitorId), statusCheck, lastUpStatusCheck)
+    MonitoringEvent(Monitor.Id(monitorId), statusCheck, downTime)
 
 private[repositories] object MonitoringEventEntity:
   def from(me: MonitoringEvent): MonitoringEventEntity =
@@ -21,5 +21,5 @@ private[repositories] object MonitoringEventEntity:
       ObjectId(),
       me.monitorId.toObjectId,
       me.statusCheck,
-      me.lastUpStatusCheck
+      me.downTime
     )
