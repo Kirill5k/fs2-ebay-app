@@ -1,13 +1,18 @@
 package ebayapp.core.clients.argos
 
 import cats.effect.IO
-import ebayapp.core.SttpClientSpec
+import cats.effect.unsafe.IORuntime
+import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
-import ebayapp.core.requests._
+import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
 
 class ArgosClientSpec extends SttpClientSpec {
+
+  given rt: IORuntime      = IORuntime.global
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   "An ArgosClient" should {
 

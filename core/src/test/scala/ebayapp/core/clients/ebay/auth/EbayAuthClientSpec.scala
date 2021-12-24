@@ -2,17 +2,23 @@ package ebayapp.core.clients.ebay.auth
 
 import cats.effect.IO
 import cats.effect.Ref
-import cats.syntax.apply._
-import ebayapp.core.SttpClientSpec
+import cats.effect.unsafe.IORuntime
+import cats.syntax.apply.*
+import ebayapp.core.MockLogger
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.EbayAuthToken
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
+import ebayapp.kernel.SttpClientSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
-import sttp.model._
+import sttp.model.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class EbayAuthClientSpec extends SttpClientSpec {
+
+  given rt: IORuntime      = IORuntime.global
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
   val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))

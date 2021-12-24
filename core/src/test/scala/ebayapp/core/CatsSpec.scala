@@ -4,6 +4,7 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import ebayapp.core.common.Logger
 import ebayapp.core.services.{DealsService, NotificationService, ResellableItemService, Services, StockService}
+import ebayapp.kernel.MockitoMatchers
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar

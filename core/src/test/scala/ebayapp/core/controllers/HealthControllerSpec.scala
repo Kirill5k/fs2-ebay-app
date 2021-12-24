@@ -1,7 +1,7 @@
 package ebayapp.core.controllers
 
 import cats.effect.{IO, Ref}
-import ebayapp.core.ControllerSpec
+import ebayapp.kernel.ControllerSpec
 import org.http4s.Header.Raw
 import org.http4s.implicits.*
 import org.http4s.*

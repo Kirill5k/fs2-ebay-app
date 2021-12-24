@@ -1,14 +1,17 @@
 package ebayapp.core.clients.scan
 
 import cats.effect.IO
-import ebayapp.core.SttpClientSpec
+import cats.effect.unsafe.implicits.global
+import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
-import ebayapp.core.common.config.{GenericRetailerConfig}
+import ebayapp.core.common.Logger
+import ebayapp.core.common.config.GenericRetailerConfig
 import sttp.client3.{Response, SttpBackend}
-import ebayapp.core.requests._
-
+import ebayapp.kernel.SttpClientSpec
 
 class ScanClientSpec extends SttpClientSpec {
+
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   "A ScanClient" should {
 

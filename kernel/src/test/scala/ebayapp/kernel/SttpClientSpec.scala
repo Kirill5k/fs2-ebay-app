@@ -1,12 +1,15 @@
-package ebayapp.core
+package ebayapp.kernel
 
 import cats.effect.IO
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
 import sttp.client3
+import sttp.client3.*
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.testing.SttpBackendStub
 import sttp.model.{Header, HeaderNames, MediaType, Method}
 
-trait SttpClientSpec extends CatsSpec {
+trait SttpClientSpec extends AsyncWordSpec with Matchers {
 
   def backendStub: SttpBackendStub[IO, Any] =
     AsyncHttpClientCatsBackend.stub[IO]
@@ -36,9 +39,6 @@ trait SttpClientSpec extends CatsSpec {
       req.headers.contains(Header(HeaderNames.ContentType, contentType.toString()))
 
   def json(path: String): String = FileReader.fromResources(path)
-}
-
-object requests {
 
   extension (req: client3.Request[_, _])
     def isPost: Boolean = req.method == Method.POST

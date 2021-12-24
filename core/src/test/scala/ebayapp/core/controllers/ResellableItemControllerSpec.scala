@@ -1,11 +1,11 @@
 package ebayapp.core.controllers
 
 import cats.effect.IO
-import ebayapp.core.ControllerSpec
 import ebayapp.core.domain.search.SellPrice
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
+import ebayapp.kernel.ControllerSpec
 import org.http4s.implicits.*
 import org.http4s.*
 

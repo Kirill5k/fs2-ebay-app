@@ -1,16 +1,20 @@
 package ebayapp.core.clients.ebay.browse
 
 import cats.effect.IO
-import ebayapp.core.SttpClientSpec
+import cats.effect.unsafe.implicits.global
+import ebayapp.core.MockLogger
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import ebayapp.core.common.errors.AppError
-import ebayapp.core.requests._
+import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class EbayBrowseClientSpec extends SttpClientSpec {
+
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   val accessToken       = "access-token"
   val itemId            = "item-id-1"

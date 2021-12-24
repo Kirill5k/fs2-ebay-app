@@ -1,9 +1,9 @@
 package ebayapp.core.clients.scan
 
-import cats.syntax.either._
-import ebayapp.core.FileReader
+import cats.syntax.either.*
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.FileReader
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

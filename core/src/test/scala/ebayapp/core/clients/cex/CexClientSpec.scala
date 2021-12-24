@@ -1,20 +1,25 @@
 package ebayapp.core.clients.cex
 
 import cats.effect.IO
-import ebayapp.core.SttpClientSpec
+import cats.effect.unsafe.IORuntime
+import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
 import ebayapp.core.common.errors.AppError
-import ebayapp.core.domain.search._
+import ebayapp.core.domain.search.*
 import ebayapp.core.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
-import ebayapp.core.requests._
+import ebayapp.kernel.SttpClientSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class CexClientSpec extends SttpClientSpec {
+
+  given rt: IORuntime      = IORuntime.global
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   "CexClient" should {
 

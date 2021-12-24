@@ -1,20 +1,18 @@
-package ebayapp.core
+package ebayapp.kernel
 
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import ebayapp.core.common.Logger
-import io.circe.parser._
+import io.circe.parser.parse
+import org.http4s.circe.*
 import org.http4s.{Response, Status}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.http4s.circe._
 import org.scalatestplus.mockito.MockitoSugar
 
 trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with MockitoMatchers {
 
-  given rt: IORuntime      = IORuntime.global
-  given logger: Logger[IO]   = MockLogger.make[IO]
+  given rt: IORuntime = IORuntime.global
 
   def verifyJsonResponse(
       actual: IO[Response[IO]],

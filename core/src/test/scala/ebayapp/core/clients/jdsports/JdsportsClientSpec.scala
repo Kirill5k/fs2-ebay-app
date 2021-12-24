@@ -1,16 +1,20 @@
 package ebayapp.core.clients.jdsports
 
 import cats.effect.IO
-import ebayapp.core.SttpClientSpec
+import cats.effect.unsafe.implicits.global
+import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
-import ebayapp.core.requests._
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.BuyPrice
+import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
 class JdsportsClientSpec extends SttpClientSpec {
+
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   "A JdsportsClient" should {
     val config = GenericRetailerConfig("http://jdsports.com/proxy")
