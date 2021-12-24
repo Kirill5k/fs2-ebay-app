@@ -1,15 +1,11 @@
 package ebayapp.proxy.common
 
 import cats.effect.Sync
+import ebayapp.kernel.config.ServerConfig
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 
 object config:
-
-  final case class ServerConfig(
-      host: String,
-      port: Int
-  ) derives ConfigReader
 
   final case class AppConfig(
       server: ServerConfig

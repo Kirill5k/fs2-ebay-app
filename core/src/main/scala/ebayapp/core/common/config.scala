@@ -6,6 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.domain.ItemKind
+import ebayapp.kernel.config.{MongoConfig, ServerConfig}
 import pureconfig.ConfigConvert.catchReadError
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
@@ -15,16 +16,6 @@ import java.io.File
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
 object config {
-
-  final case class MongoConfig(
-      connectionUri: String,
-      dbName: String
-  ) derives ConfigReader
-
-  final case class ServerConfig(
-      host: String,
-      port: Int
-  ) derives ConfigReader
 
   final case class ClientProxyConfig(
       host: Option[String],

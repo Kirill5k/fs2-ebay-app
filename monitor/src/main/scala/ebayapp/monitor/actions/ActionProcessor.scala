@@ -17,7 +17,7 @@ final private class LiveActionProcessor[F[_]](
     private val services: Services[F]
 )(using
     F: Temporal[F]
-) extends ActionProcessor[F] {
+) extends ActionProcessor[F]:
   private val maxConcurrent: Int = 1024
 
   def process: Stream[F, Unit] =
@@ -46,7 +46,6 @@ final private class LiveActionProcessor[F[_]](
 
   private def enqueue(prevEvent: MonitoringEvent)(monitor: Monitor): F[Unit] =
     services.monitoringEvent.enqueue(monitor, Some(prevEvent))
-}
 
 object ActionProcessor:
   def make[F[_]: Temporal](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =

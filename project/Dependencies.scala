@@ -84,11 +84,8 @@ object Dependencies {
     Libraries.tapir.all
 
   lazy val proxy = Seq(
-    Libraries.http4s.blazeClient,
-    Libraries.pureconfig.core
-  ) ++
-    Libraries.http4s.all ++
-    Libraries.logging.all
+    Libraries.http4s.blazeClient
+  )
 
   lazy val test = Seq(
     Libraries.scalaTest           % Test,

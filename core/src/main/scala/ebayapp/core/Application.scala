@@ -1,6 +1,7 @@
 package ebayapp.core
 
 import cats.effect.{IO, IOApp}
+import ebayapp.kernel.Server
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.{Logger, Resources}
 import ebayapp.core.common.config.AppConfig

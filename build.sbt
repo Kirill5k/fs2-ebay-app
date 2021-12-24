@@ -43,8 +43,8 @@ lazy val kernel = project
   .in(file("kernel"))
   .settings(noPublish)
   .settings(
-    name                 := "fs2-ebay-app-kernel",
-    moduleName           := "fs2-ebay-app-kernel",
+    name       := "fs2-ebay-app-kernel",
+    moduleName := "fs2-ebay-app-kernel",
     libraryDependencies ++= Dependencies.kernel ++ Dependencies.test
   )
 
@@ -56,18 +56,19 @@ lazy val core = project
   .settings(
     name                 := "fs2-ebay-app-core",
     moduleName           := "fs2-ebay-app-core",
-    Docker / packageName := "fs2-app-core", // fs2-app/core
+    Docker / packageName := "fs2-app-core" // fs2-app/core
   )
 
 lazy val proxy = project
   .in(file("proxy"))
+  .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
   .settings(
     name                 := "fs2-ebay-app-proxy",
     moduleName           := "fs2-ebay-app-proxy",
     Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
-    libraryDependencies ++= Dependencies.proxy ++ Dependencies.test
+    libraryDependencies ++= Dependencies.proxy
   )
 
 lazy val monitor = project
@@ -78,5 +79,5 @@ lazy val monitor = project
   .settings(
     name                 := "fs2-ebay-app-monitor",
     moduleName           := "fs2-ebay-app-monitor",
-    Docker / packageName := "fs2-app-monitor", // fs2-app/monitor
+    Docker / packageName := "fs2-app-monitor" // fs2-app/monitor
   )

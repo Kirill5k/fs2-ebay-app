@@ -3,7 +3,8 @@ package ebayapp.core.common
 import cats.effect.{Async, Resource}
 import cats.syntax.option.*
 import cats.syntax.apply.*
-import ebayapp.core.common.config.{AppConfig, ClientProxyConfig, MongoConfig}
+import ebayapp.kernel.config.MongoConfig
+import ebayapp.core.common.config.{AppConfig, ClientProxyConfig}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import sttp.client3.SttpBackendOptions.Proxy
