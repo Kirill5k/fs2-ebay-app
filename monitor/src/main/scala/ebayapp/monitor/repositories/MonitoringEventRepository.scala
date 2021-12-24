@@ -30,7 +30,7 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
     collection.find(monitorIdFilter(monitorId)).all.map(_.map(_.toDomain).toList)
 
   def findLatestBy(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
-    collection.find(monitorIdFilter(monitorId)).sortBy("time").first.map(_.map(_.toDomain))
+    collection.find(monitorIdFilter(monitorId)).sortByDesc("time").first.map(_.map(_.toDomain))
 
 object MonitoringEventRepository:
   private val collectionName    = "monitoring-events"

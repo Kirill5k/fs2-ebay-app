@@ -2,6 +2,7 @@ package ebayapp.monitor.repositories
 
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
+import cats.syntax.traverse.*
 import ebayapp.monitor.common.errors.AppError
 import ebayapp.monitor.domain.{MonitoringEvents, Monitors}
 import mongo4cats.client.MongoClient
@@ -10,22 +11,40 @@ import mongo4cats.embedded.EmbeddedMongo
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import scala.concurrent.Future
 
 class MonitoringEventRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
   "A MonitoringEventRepository" when {
 
+    val ts = Instant.now().truncatedTo(ChronoUnit.MILLIS)
+
+    val events = List(
+      MonitoringEvents.gen(time = ts.minusSeconds(10)),
+      MonitoringEvents.gen(time = ts.minusSeconds(20)),
+      MonitoringEvents.gen(time = ts.minusSeconds(30))
+    )
+
     "store events in db and retrieve them" in withEmbeddedMongoClient { db =>
       val result = for
-        repo <- MonitoringEventRepository.make(db)
-        _    <- repo.save(MonitoringEvents.gen())
-        _    <- repo.save(MonitoringEvents.gen())
-        _    <- repo.save(MonitoringEvents.gen())
+        repo   <- MonitoringEventRepository.make(db)
+        _      <- events.traverse(repo.save)
         events <- repo.findAllBy(Monitors.id)
       yield events
 
-      result.map(_ must have size 3)
+      result.map(_ mustBe events)
+    }
+
+    "return latest event from db" in withEmbeddedMongoClient { db =>
+      val result = for
+        repo  <- MonitoringEventRepository.make(db)
+        _     <- IO.parTraverseN(3)(events)(repo.save)
+        event <- repo.findLatestBy(Monitors.id)
+      yield event
+
+      result.map(_ mustBe events.headOption)
     }
   }
 
