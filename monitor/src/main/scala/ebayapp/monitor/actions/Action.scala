@@ -1,10 +1,11 @@
 package ebayapp.monitor.actions
 
-import ebayapp.monitor.domain.Monitor
+import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 
 import scala.concurrent.duration.FiniteDuration
 
 enum Action:
   case EnqueueAll
-  case Enqueue(monitor: Monitor, previousStatus: Option[Monitor.Status])
-  case Requeue(id: Monitor.Id, interval: FiniteDuration, previousStatus: Option[Monitor.Status])
+  case EnqueueNew(monitor: Monitor)
+  case Enqueue(monitor: Monitor, previousEvent: MonitoringEvent)
+  case Requeue(id: Monitor.Id, interval: FiniteDuration, previousEvent: MonitoringEvent)

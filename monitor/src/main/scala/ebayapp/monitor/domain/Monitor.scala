@@ -55,11 +55,3 @@ final case class CreateMonitor(
     interval: FiniteDuration,
     notification: Monitor.Notification
 )
-
-final case class MonitoringEvent(
-    monitorId: Monitor.Id,
-    status: Monitor.Status,
-    responseTime: FiniteDuration,
-    time: Instant,
-    reason: String
-)
