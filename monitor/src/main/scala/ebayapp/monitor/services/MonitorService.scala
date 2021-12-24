@@ -20,7 +20,7 @@ final private class LiveMonitorService[F[_]: Monad](
   def find(id: Monitor.Id): F[Option[Monitor]] = repository.find(id)
   def getAllActive: F[List[Monitor]]           = repository.getAllActive
   def create(monitor: CreateMonitor): F[Monitor] =
-    repository.save(monitor).flatTap(m => dispatcher.queue(Action.EnqueueNew(m)))
+    repository.save(monitor).flatTap(m => dispatcher.dispatch(Action.EnqueueNew(m)))
 
 object MonitorService:
   def make[F[_]: Monad](dispatcher: ActionDispatcher[F], repository: MonitorRepository[F]): F[MonitorService[F]] =
