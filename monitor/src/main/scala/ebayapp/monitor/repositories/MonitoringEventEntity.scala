@@ -9,21 +9,17 @@ import scala.concurrent.duration.FiniteDuration
 final private[repositories] case class MonitoringEventEntity(
     _id: ObjectId,
     monitorId: ObjectId,
-    status: Monitor.Status,
-    responseTime: FiniteDuration,
-    time: Instant,
-    reason: String
+    statusCheck: MonitoringEvent.StatusCheck,
+    lastUpStatusCheck: Option[MonitoringEvent.StatusCheck]
 ):
   def toDomain: MonitoringEvent =
-    MonitoringEvent(Monitor.Id(monitorId), status, responseTime, time, reason)
+    MonitoringEvent(Monitor.Id(monitorId), statusCheck, lastUpStatusCheck)
 
 private[repositories] object MonitoringEventEntity:
   def from(me: MonitoringEvent): MonitoringEventEntity =
     MonitoringEventEntity(
       ObjectId(),
       me.monitorId.toObjectId,
-      me.status,
-      me.responseTime,
-      me.time,
-      me.reason
+      me.statusCheck,
+      me.lastUpStatusCheck
     )

@@ -16,7 +16,6 @@ import scala.concurrent.duration.*
 
 class HttpClientSpec extends SttpClientSpec {
 
-  val id  = Monitor.Id("ID")
   val url = Url("http://foo.bar")
 
   "A HttpClient" should {
@@ -31,11 +30,10 @@ class HttpClientSpec extends SttpClientSpec {
 
       val result = for
         client <- HttpClient.make[IO](backend)
-        status <- client.status(id, Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds))
+        status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds))
       yield status
 
       result.unsafeToFuture().map { event =>
-        event.monitorId mustBe id
         event.status mustBe Monitor.Status.Up
         event.reason mustBe "200 OK"
       }
@@ -52,11 +50,10 @@ class HttpClientSpec extends SttpClientSpec {
 
       val result = for
         client <- HttpClient.make[IO](backend)
-        status <- client.status(id, Monitor.Connection.Http(url, HttpMethod.POST, 10.seconds))
+        status <- client.status(Monitor.Connection.Http(url, HttpMethod.POST, 10.seconds))
       yield status
 
       result.unsafeToFuture().map { event =>
-        event.monitorId mustBe id
         event.status mustBe Monitor.Status.Down
         event.reason mustBe "400 "
       }
@@ -69,11 +66,10 @@ class HttpClientSpec extends SttpClientSpec {
 
       val result = for
         client <- HttpClient.make[IO](backend)
-        status <- client.status(id, Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds))
+        status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds))
       yield status
 
       result.unsafeToFuture().map { event =>
-        event.monitorId mustBe id
         event.status mustBe Monitor.Status.Down
         event.reason mustBe "Internal server error"
       }
@@ -86,11 +82,10 @@ class HttpClientSpec extends SttpClientSpec {
 
       val result = for
         client <- HttpClient.make[IO](backend)
-        status <- client.status(id, Monitor.Connection.Http(url, HttpMethod.GET, 2.seconds))
+        status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 2.seconds))
       yield status
 
       result.unsafeToFuture().map { event =>
-        event.monitorId mustBe id
         event.status mustBe Monitor.Status.Down
         event.reason mustBe "Request timed-out after 2 seconds"
       }

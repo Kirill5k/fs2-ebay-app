@@ -5,8 +5,15 @@ import scala.concurrent.duration.FiniteDuration
 
 final case class MonitoringEvent(
     monitorId: Monitor.Id,
-    status: Monitor.Status,
-    responseTime: FiniteDuration,
-    time: Instant,
-    reason: String
+    statusCheck: MonitoringEvent.StatusCheck,
+    lastUpStatusCheck: Option[MonitoringEvent.StatusCheck]
 )
+
+object MonitoringEvent {
+  final case class StatusCheck(
+      status: Monitor.Status,
+      responseTime: FiniteDuration,
+      time: Instant,
+      reason: String
+  )
+}

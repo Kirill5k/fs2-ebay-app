@@ -22,9 +22,9 @@ class MonitoringEventRepositorySpec extends AsyncWordSpec with Matchers with Emb
     val ts = Instant.now().truncatedTo(ChronoUnit.MILLIS)
 
     val events = List(
-      MonitoringEvents.gen(time = ts.minusSeconds(10)),
-      MonitoringEvents.gen(time = ts.minusSeconds(20)),
-      MonitoringEvents.gen(time = ts.minusSeconds(30))
+      MonitoringEvents.gen(statusCheck = MonitoringEvents.statusCheck.copy(time = ts.minusSeconds(10))),
+      MonitoringEvents.gen(statusCheck = MonitoringEvents.statusCheck.copy(time = ts.minusSeconds(20))),
+      MonitoringEvents.gen(statusCheck = MonitoringEvents.statusCheck.copy(time = ts.minusSeconds(30)))
     )
 
     "store events in db and retrieve them" in withEmbeddedMongoClient { db =>

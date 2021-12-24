@@ -147,7 +147,7 @@ data:
           {search-criteria: {category: "men", query: "polo-ralph-lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-          {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
         ]
       }
