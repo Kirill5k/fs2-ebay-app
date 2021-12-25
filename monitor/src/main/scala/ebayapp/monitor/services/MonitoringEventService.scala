@@ -75,7 +75,7 @@ final private class LiveMonitoringEventService[F[_]](
       case (Monitor.Status.Up, Some(Monitor.Status.Up)) =>
         (None, None)
       case (Monitor.Status.Up, Some(Monitor.Status.Down)) =>
-        (downTime, Some(Notification(Monitor.Status.Up, current.time, downTime, current.reason)))
+        (None, Some(Notification(Monitor.Status.Up, current.time, downTime, current.reason)))
       case (Monitor.Status.Down, Some(Monitor.Status.Up)) =>
         (Some(current.time), Some(Notification(Monitor.Status.Down, current.time, None, current.reason)))
 
