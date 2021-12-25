@@ -1,4 +1,4 @@
-package ebayapp.core.controllers
+package ebayapp.kernel.controllers
 
 import cats.effect.{IO, Ref}
 import ebayapp.kernel.ControllerSpec

@@ -1,7 +1,8 @@
-package ebayapp.core.controllers
+package ebayapp.kernel.controllers
 
-import cats.effect.{Async, Ref}
+import cats.effect.{Async, Ref, Temporal}
 import cats.syntax.functor.*
+import cats.syntax.flatMap.*
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.*
@@ -41,5 +42,8 @@ private[controllers] class HealthController[F[_]: Async](
       .serverLogicSuccess(req => startupTime.get.map(t => AppStatus(t, Metadata.from[F](req.underlying.asInstanceOf[Request[F]]))))
 
   override def routes: HttpRoutes[F] = Http4sServerInterpreter[F]().toRoutes(statusEndpoint)
-
 }
+
+object HealthController:
+  def make[F[_]: Async]: F[Controller[F]] =
+    Temporal[F].realTimeInstant.flatMap(ts => Ref.of(ts).map(ref => new HealthController[F](ref)))

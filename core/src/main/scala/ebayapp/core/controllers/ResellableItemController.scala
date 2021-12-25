@@ -1,10 +1,13 @@
 package ebayapp.core.controllers
 
+import cats.Monad
 import cats.effect.Async
 import cats.syntax.applicativeError.*
 import cats.syntax.either.*
 import cats.syntax.functor.*
-import ebayapp.core.controllers.views.{ErrorResponse, ResellableItemResponse, ResellableItemsSummaryResponse}
+import ebayapp.kernel.controllers.Controller
+import ebayapp.kernel.controllers.views.ErrorResponse
+import ebayapp.core.controllers.views.{ResellableItemResponse, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.ItemKind
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
@@ -32,7 +35,8 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemResponse]])
     .serverLogic { case (limit, query, from, to) =>
-      itemService.search(SearchParams(itemKind, limit, from, to, query))
+      itemService
+        .search(SearchParams(itemKind, limit, from, to, query))
         .map(_.map(ResellableItemResponse.from).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
@@ -43,7 +47,8 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .errorOut(errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
     .serverLogic { case (limit, query, from, to) =>
-      itemService.summaries(SearchParams(itemKind, limit, from, to, query))
+      itemService
+        .summaries(SearchParams(itemKind, limit, from, to, query))
         .map(ResellableItemsSummaryResponse.from(_).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
@@ -51,3 +56,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
   override def routes: HttpRoutes[F] =
     Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getSummaries))
 }
+
+object ResellableItemController:
+  def videoGame[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
+    Monad[F].pure(new ResellableItemController[F]("video-games", ItemKind.VideoGame, service))

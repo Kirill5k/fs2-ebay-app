@@ -1,12 +1,11 @@
-package ebayapp.core.controllers
+package ebayapp.kernel.controllers
 
 import cats.Monad
 import cats.effect.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.controllers.views.*
-import ebayapp.core.domain.ItemKind
-import ebayapp.core.services.ResellableItemService
+import ebayapp.kernel.controllers.views.*
+import io.circe.Encoder
 import io.circe.generic.auto.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
@@ -44,16 +43,4 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
     )
 
   def routes: HttpRoutes[F]
-}
-
-object Controller {
-
-  def home[F[_]: Sync]: F[Controller[F]] =
-    Monad[F].pure(new HomeController[F])
-
-  def videoGame[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
-    Monad[F].pure(new ResellableItemController[F]("video-games", ItemKind.VideoGame, service))
-
-  def health[F[_]: Async]: F[Controller[F]] =
-    Temporal[F].realTimeInstant.flatMap(ts => Ref.of(ts).map(ref => new HealthController[F](ref)))
 }
