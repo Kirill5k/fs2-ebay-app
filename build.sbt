@@ -41,7 +41,6 @@ lazy val root = project
 
 lazy val kernel = project
   .in(file("kernel"))
-  .settings(noPublish)
   .settings(
     name       := "fs2-ebay-app-kernel",
     moduleName := "fs2-ebay-app-kernel",
