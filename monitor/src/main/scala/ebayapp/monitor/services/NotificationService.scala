@@ -26,7 +26,7 @@ final private class LiveNotificationService[F[_]](
     monitor.contact match
       case Contact.Logging      => logger.info(completeMsg)
       case email: Contact.Email => emailClient.send(email, s"Monitor is ${notification.statusString}: ${monitor.name}", completeMsg)
-      case _                    => ???
+      case contact              => F.raiseError(new IllegalArgumentException(s"Contact $contact is not yet supported"))
 
 object NotificationService:
   def make[F[_]: Logger: Concurrent](emailClient: EmailClient[F]): F[NotificationService[F]] =
