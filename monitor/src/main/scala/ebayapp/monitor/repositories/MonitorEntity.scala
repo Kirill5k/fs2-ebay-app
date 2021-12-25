@@ -11,7 +11,7 @@ final private[repositories] case class MonitorEntity(
     connection: Monitor.Connection,
     active: Boolean,
     interval: FiniteDuration,
-    notificationContact: Monitor.Contact
+    contact: Monitor.Contact
 ):
   def toDomain: Monitor =
     Monitor(
@@ -20,7 +20,7 @@ final private[repositories] case class MonitorEntity(
       connection,
       active,
       interval,
-      notificationContact
+      contact
     )
 
 private[repositories] object MonitorEntity:
@@ -31,5 +31,5 @@ private[repositories] object MonitorEntity:
       monitor.connection,
       true,
       monitor.interval,
-      monitor.notificationContact
+      monitor.contact
     )

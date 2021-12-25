@@ -20,7 +20,7 @@ final case class Monitor(
     connection: Monitor.Connection,
     active: Boolean,
     interval: FiniteDuration,
-    notification: Monitor.Contact
+    contact: Monitor.Contact
 )
 
 object Monitor {
@@ -45,6 +45,13 @@ object Monitor {
   enum Connection:
     case Http(url: Url, method: HttpMethod, timeout: FiniteDuration)
 
+  object Connection:
+    extension (conn: Connection)
+      def asString: String =
+        conn match {
+          case Connection.Http(url, method, timeout) => s"$url"
+        }
+
   enum Status:
     case Up, Down
 }
@@ -53,5 +60,5 @@ final case class CreateMonitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
     interval: FiniteDuration,
-    notificationContact: Monitor.Contact
+    contact: Monitor.Contact
 )

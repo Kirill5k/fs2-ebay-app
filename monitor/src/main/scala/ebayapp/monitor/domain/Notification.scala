@@ -7,4 +7,7 @@ final case class Notification(
     time: Instant,
     downTime: Option[Instant],
     reason: String
-)
+):
+  val isUp: Boolean        = Monitor.Status.Up == status
+  val statusString: String = status.toString.toUpperCase
+  val timeString: String   = time.toString.replace("T", " ")
