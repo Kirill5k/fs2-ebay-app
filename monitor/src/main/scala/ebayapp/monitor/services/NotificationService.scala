@@ -2,6 +2,7 @@ package ebayapp.monitor.services
 
 import cats.Monad
 import cats.effect.Concurrent
+import ebayapp.monitor.clients.EmailClient
 import ebayapp.monitor.domain.Monitor.Contact
 import ebayapp.monitor.domain.{Monitor, Notification}
 import org.typelevel.log4cats.Logger
@@ -10,7 +11,9 @@ import java.time.Duration
 trait NotificationService[F[_]]:
   def notify(monitor: Monitor, notification: Notification): F[Unit]
 
-final private class LiveNotificationService[F[_]]()(using
+final private class LiveNotificationService[F[_]](
+    private val emailClient: EmailClient[F]
+)(using
     F: Concurrent[F],
     logger: Logger[F]
 ) extends NotificationService[F]:
@@ -21,11 +24,10 @@ final private class LiveNotificationService[F[_]]()(using
     val msg4        = s"Event timestamp: ${notification.timeString}"
     val completeMsg = s"$msg1$msg2$msg3$msg4"
     monitor.contact match
-      case Contact.Logging =>
-        logger.info(completeMsg)
-      case Contact.Email(email)        => ???
-      case Contact.Telegram(channelId) => ???
+      case Contact.Logging      => logger.info(completeMsg)
+      case email: Contact.Email => emailClient.send(email, s"Monitor is ${notification.statusString}: ${monitor.name}", completeMsg)
+      case _                    => ???
 
 object NotificationService:
-  def make[F[_]: Logger: Concurrent]: F[NotificationService[F]] =
-    Monad[F].pure(LiveNotificationService[F]())
+  def make[F[_]: Logger: Concurrent](emailClient: EmailClient[F]): F[NotificationService[F]] =
+    Monad[F].pure(LiveNotificationService[F](emailClient))
