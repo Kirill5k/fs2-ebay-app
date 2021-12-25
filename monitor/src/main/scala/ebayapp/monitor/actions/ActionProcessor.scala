@@ -8,6 +8,7 @@ import cats.syntax.functor.*
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import ebayapp.monitor.services.Services
 import fs2.Stream
+import org.typelevel.log4cats.Logger
 
 trait ActionProcessor[F[_]]:
   def process: Stream[F, Unit]
@@ -16,7 +17,8 @@ final private class LiveActionProcessor[F[_]](
     private val dispatcher: ActionDispatcher[F],
     private val services: Services[F]
 )(using
-    F: Temporal[F]
+    F: Temporal[F],
+    logger: Logger[F]
 ) extends ActionProcessor[F]:
   private val maxConcurrent: Int = 1024
 
@@ -37,6 +39,7 @@ final private class LiveActionProcessor[F[_]](
             _       <- monitor.fold(F.unit)(enqueue(prevEvent))
           yield ()
       }
+      .handleErrorWith(e => Stream.eval(logger.error(e)("error during action processing")) ++ process)
 
   private def enqueueWithEventFetched(monitor: Monitor): F[Unit] =
     services.monitoringEvent
@@ -52,5 +55,5 @@ final private class LiveActionProcessor[F[_]](
       .enqueue(monitor, Some(prevEvent))
 
 object ActionProcessor:
-  def make[F[_]: Temporal](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
+  def make[F[_]: Temporal: Logger](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
     Monad[F].pure(LiveActionProcessor(dispatcher, services))

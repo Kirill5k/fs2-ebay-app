@@ -10,6 +10,7 @@ import ebayapp.monitor.domain.Monitor.Connection
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.MonitoringEventRepository
 import fs2.Stream
+import org.typelevel.log4cats.Logger
 import java.time.Instant
 
 import scala.concurrent.duration.*
@@ -32,7 +33,8 @@ final private class LiveMonitoringEventService[F[_]](
     private val repository: MonitoringEventRepository[F],
     private val httpClient: HttpClient[F]
 )(using
-    F: Concurrent[F]
+    F: Concurrent[F],
+    logger: Logger[F]
 ) extends MonitoringEventService[F]:
   private val maxConcurrent: Int = 1024
 
@@ -55,6 +57,7 @@ final private class LiveMonitoringEventService[F[_]](
           _ <- dispatcher.dispatch(Action.Requeue(pending.monitor.id, pending.monitor.interval, event))
         yield ()
       }
+      .handleErrorWith(e => Stream.eval(logger.error(e)("error during monitor processing")) ++ process)
 
   private def checkStatus(monitor: Monitor): F[MonitoringEvent.StatusCheck] =
     monitor.connection match
@@ -80,7 +83,7 @@ final private class LiveMonitoringEventService[F[_]](
         (Some(current.time), Some(Notification(Monitor.Status.Down, current.time, None, current.reason)))
 
 object MonitoringEventService:
-  def make[F[_]: Concurrent](
+  def make[F[_]: Concurrent: Logger](
       dispatcher: ActionDispatcher[F],
       repository: MonitoringEventRepository[F],
       httpClient: HttpClient[F]

@@ -11,12 +11,16 @@ import org.scalatest.Assertion
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import java.time.Instant
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
+import java.time.Instant
 import scala.concurrent.Future
 import scala.concurrent.duration.*
 
 class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with MockitoMatchers with MockitoSugar {
+
+  given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
   val downTime = Instant.parse("2011-01-01T00:00:00Z")
 
