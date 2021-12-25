@@ -3,9 +3,10 @@ package ebayapp.proxy
 import cats.effect.kernel.Deferred
 import cats.effect.{IO, IOApp}
 import cats.syntax.semigroupk.*
+import ebayapp.kernel.controllers.HealthController
 import ebayapp.proxy.common.Resources
 import ebayapp.proxy.common.config.AppConfig
-import ebayapp.proxy.controllers.Controller
+import ebayapp.proxy.controllers.{RedirectController}
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
@@ -22,8 +23,8 @@ object Application extends IOApp.Simple:
           _                  <- logger.info("created resources")
           config             <- AppConfig.load[IO] <* logger.info("loaded config")
           sigTerm            <- Deferred[IO, Unit]
-          redirectController <- Controller.redirect[IO](resources.blazeClient, sigTerm)
-          healthController   <- Controller.health[IO]
+          redirectController <- RedirectController.make[IO](resources.blazeClient, sigTerm)
+          healthController   <- HealthController.make[IO]
           routes = redirectController.routes <+> healthController.routes
           _ <- logger.info("starting http server")
           _ <- BlazeServerBuilder[IO]
