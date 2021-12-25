@@ -44,10 +44,12 @@ final private class LiveActionProcessor[F[_]](
       .flatMap(e => services.monitoringEvent.enqueue(monitor, e))
 
   private def enqueueNew(monitor: Monitor): F[Unit] =
-    services.monitoringEvent.enqueue(monitor, None)
+    services.monitoringEvent
+      .enqueue(monitor, None)
 
   private def enqueue(prevEvent: MonitoringEvent)(monitor: Monitor): F[Unit] =
-    services.monitoringEvent.enqueue(monitor, Some(prevEvent))
+    services.monitoringEvent
+      .enqueue(monitor, Some(prevEvent))
 
 object ActionProcessor:
   def make[F[_]: Temporal](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
