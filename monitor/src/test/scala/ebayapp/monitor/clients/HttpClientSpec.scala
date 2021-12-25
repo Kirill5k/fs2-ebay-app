@@ -35,7 +35,7 @@ class HttpClientSpec extends SttpClientSpec {
 
       result.unsafeToFuture().map { event =>
         event.status mustBe Monitor.Status.Up
-        event.reason mustBe "200 OK"
+        event.reason mustBe "HTTP 200 OK"
       }
     }
 
@@ -55,7 +55,7 @@ class HttpClientSpec extends SttpClientSpec {
 
       result.unsafeToFuture().map { event =>
         event.status mustBe Monitor.Status.Down
-        event.reason mustBe "400 "
+        event.reason mustBe "HTTP 400 "
       }
     }
 

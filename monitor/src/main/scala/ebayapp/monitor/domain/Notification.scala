@@ -10,4 +10,4 @@ final case class Notification(
 ):
   val isUp: Boolean        = Monitor.Status.Up == status
   val statusString: String = status.toString.toUpperCase
-  val timeString: String   = time.toString.replace("T", " ")
+  val timeString: String   = time.toString.replaceAll("T|Z", " ").trim
