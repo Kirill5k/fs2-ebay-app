@@ -17,7 +17,7 @@ trait HttpClient[F[_]]:
   def status(connection: Monitor.Connection.Http): F[MonitoringEvent.StatusCheck]
 
 final private class LiveHttpClient[F[_]](
-    val backend: SttpBackend[F, Any]
+    private val backend: SttpBackend[F, Any]
 )(using
     F: Async[F]
 ) extends HttpClient[F]:

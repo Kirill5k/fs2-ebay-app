@@ -1,8 +1,8 @@
 package ebayapp.monitor.services
 
 import cats.effect.Concurrent
-import cats.syntax.flatMap._
-import cats.syntax.functor._
+import cats.syntax.flatMap.*
+import cats.syntax.functor.*
 import ebayapp.monitor.actions.ActionDispatcher
 import ebayapp.monitor.clients.Clients
 import ebayapp.monitor.repositories.Repositories
