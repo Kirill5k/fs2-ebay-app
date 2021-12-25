@@ -137,7 +137,7 @@ data:
       }
 
       tessuti {
-        delay-between-requests: 10s
+        delay-between-requests: 25s
         monitoring-frequency: 4m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
@@ -153,7 +153,7 @@ data:
       }
 
       scotts {
-        delay-between-requests: 10s
+        delay-between-requests: 25s
         monitoring-frequency: 4m
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
