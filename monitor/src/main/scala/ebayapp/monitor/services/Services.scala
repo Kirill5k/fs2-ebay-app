@@ -7,11 +7,15 @@ import ebayapp.monitor.actions.ActionDispatcher
 import ebayapp.monitor.clients.Clients
 import ebayapp.monitor.repositories.Repositories
 import org.typelevel.log4cats.Logger
+import fs2.Stream
 
 trait Services[F[_]]:
   def monitor: MonitorService[F]
   def monitoringEvent: MonitoringEventService[F]
   def notification: NotificationService[F]
+
+  def process: Stream[F, Unit] =
+    monitoringEvent.process
 
 object Services:
   def make[F[_]: Concurrent: Logger](
