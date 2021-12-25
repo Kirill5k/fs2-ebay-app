@@ -44,25 +44,42 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
 
     "UP - None" should {
       "no downtime and no notification" in {
-        pending
+        val statusCheck   = MonitoringEvents.up().statusCheck
+        val previousEvent = None
+        val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, None)
+
+        runScenario(statusCheck, previousEvent, expectedEvent, None)
       }
     }
 
     "DOWN - DOWN" should {
       "keep downtime and no notification" in {
-        pending
+        val statusCheck   = MonitoringEvents.down().statusCheck
+        val previousEvent = Some(MonitoringEvents.down(downTime = Some(downTime)))
+        val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, Some(downTime))
+
+        runScenario(statusCheck, previousEvent, expectedEvent, None)
       }
     }
 
     "DOWN - UP" should {
       "record downtime and send notification" in {
-        pending
+        val statusCheck   = MonitoringEvents.down().statusCheck
+        val previousEvent = Some(MonitoringEvents.up())
+        val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, Some(statusCheck.time))
+        val notification  = Notification(Monitor.Status.Down, statusCheck.time, None, statusCheck.reason)
+
+        runScenario(statusCheck, previousEvent, expectedEvent, Some(notification))
       }
     }
 
     "DOWN - None" should {
       "record downtime and no notification" in {
-        pending
+        val statusCheck   = MonitoringEvents.down().statusCheck
+        val previousEvent = None
+        val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, Some(statusCheck.time))
+
+        runScenario(statusCheck, previousEvent, expectedEvent, None)
       }
     }
   }
