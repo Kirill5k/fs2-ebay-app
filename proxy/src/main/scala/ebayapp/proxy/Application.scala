@@ -25,7 +25,7 @@ object Application extends IOApp.Simple:
           sigTerm            <- Deferred[IO, Unit]
           redirectController <- RedirectController.make[IO](resources.blazeClient, sigTerm)
           healthController   <- HealthController.make[IO]
-          routes = redirectController.routes <+> healthController.routes
+          routes = healthController.routes <+> redirectController.routes
           _ <- logger.info("starting http server")
           _ <- BlazeServerBuilder[IO]
             .withExecutionContext(runtime.compute)
