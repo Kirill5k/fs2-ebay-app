@@ -29,15 +29,21 @@ final private class LiveActionProcessor[F[_]](
         case Action.EnqueueNew(monitor)           => services.monitoringEvent.enqueue(monitor, None)
         case Action.Enqueue(monitor, prevEvent)   => services.monitoringEvent.enqueue(monitor, Some(prevEvent))
         case Action.EnqueueAll =>
-          services.monitor.getAllActive.flatMap { monitors =>
-            F.parTraverseN(maxConcurrent)(monitors)(enqueueWithEventFetched)
-          }.void
+          Stream
+            .evalSeq(services.monitor.getAllActive)
+            .mapAsync(maxConcurrent)(enqueueWithEventFetched)
+            .compile
+            .drain
         case Action.Requeue(id, interval, prevEvent) =>
-          F.sleep(interval) >>
-            services.monitor.find(id).flatMap {
+          Stream
+            .eval(services.monitor.find(id))
+            .delayBy(interval)
+            .evalMap {
               case Some(monitor) => services.monitoringEvent.enqueue(monitor, Some(prevEvent))
               case None          => logger.warn(s"monitor $id does not exist")
             }
+            .compile
+            .drain
       }
       .handleErrorWith(e => Stream.eval(logger.error(e)("error during action processing")) ++ process)
 
