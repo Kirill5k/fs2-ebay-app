@@ -24,16 +24,14 @@ final private class LiveActionProcessor[F[_]](
 
   def process: Stream[F, Unit] =
     dispatcher.actions
-      .mapAsync(maxConcurrent) {
-        case Action.Notify(monitor, notification) => services.notification.notify(monitor, notification)
-        case Action.EnqueueNew(monitor)           => services.monitoringEvent.enqueue(monitor, None)
-        case Action.Enqueue(monitor, prevEvent)   => services.monitoringEvent.enqueue(monitor, Some(prevEvent))
+      .map {
+        case Action.Notify(monitor, notification) => Stream.eval(services.notification.notify(monitor, notification))
+        case Action.EnqueueNew(monitor)           => Stream.eval(services.monitoringEvent.enqueue(monitor, None))
+        case Action.Enqueue(monitor, prevEvent)   => Stream.eval(services.monitoringEvent.enqueue(monitor, Some(prevEvent)))
         case Action.EnqueueAll =>
           Stream
             .evalSeq(services.monitor.getAllActive)
             .mapAsync(maxConcurrent)(enqueueWithEventFetched)
-            .compile
-            .drain
         case Action.Requeue(id, interval, prevEvent) =>
           Stream
             .eval(services.monitor.find(id))
@@ -42,9 +40,8 @@ final private class LiveActionProcessor[F[_]](
               case Some(monitor) => services.monitoringEvent.enqueue(monitor, Some(prevEvent))
               case None          => logger.warn(s"monitor $id does not exist")
             }
-            .compile
-            .drain
       }
+      .parJoinUnbounded
       .handleErrorWith(e => Stream.eval(logger.error(e)("error during action processing")) ++ process)
 
   private def enqueueWithEventFetched(monitor: Monitor): F[Unit] =
