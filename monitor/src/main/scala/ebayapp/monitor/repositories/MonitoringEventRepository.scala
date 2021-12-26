@@ -7,7 +7,7 @@ import cats.syntax.functor.*
 import io.circe.generic.auto.*
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import ebayapp.monitor.common.json.given
-import mongo4cats.collection.operations.Filter
+import mongo4cats.collection.operations.{Filter, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
 import mongo4cats.circe.*
@@ -30,7 +30,7 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
     collection.find(monitorIdFilter(monitorId)).all.map(_.map(_.toDomain).toList)
 
   def findLatestBy(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
-    collection.find(monitorIdFilter(monitorId)).sortByDesc("time").first.map(_.map(_.toDomain))
+    collection.find(monitorIdFilter(monitorId)).sortByDesc("statusCheck.time").first.map(_.map(_.toDomain))
 
 object MonitoringEventRepository:
   private val collectionName    = "monitoring-events"

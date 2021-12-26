@@ -14,6 +14,7 @@ import org.scalatest.wordspec.AsyncWordSpec
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import scala.concurrent.Future
+import scala.concurrent.duration.*
 
 class MonitoringEventRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
@@ -41,6 +42,7 @@ class MonitoringEventRepositorySpec extends AsyncWordSpec with Matchers with Emb
       val result = for
         repo  <- MonitoringEventRepository.make(db)
         _     <- IO.parTraverseN(3)(events)(repo.save)
+        _     <- IO.sleep(100.millis)
         event <- repo.findLatestBy(Monitors.id)
       yield event
 
