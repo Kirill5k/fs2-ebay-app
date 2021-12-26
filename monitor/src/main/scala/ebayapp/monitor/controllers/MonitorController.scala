@@ -10,11 +10,12 @@ import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
 import ebayapp.monitor.common.JsonCodecs
-import ebayapp.monitor.controllers.views.{MonitorView, MonitoringEventView, CreateMonitorRequest, CreateMonitorResponse}
+import ebayapp.monitor.controllers.views.{CreateMonitorRequest, CreateMonitorResponse, MonitorView, MonitoringEventView}
 import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import org.bson.types.ObjectId
 import org.http4s.HttpRoutes
+import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.SchemaDerivation
 import sttp.tapir.server.http4s.Http4sServerInterpreter
@@ -65,7 +66,7 @@ final private class LiveMonitorController[F[_]](
     .in(basePath)
     .in(jsonBody[CreateMonitorRequest])
     .errorOut(errorResponse)
-    .out(jsonBody[CreateMonitorResponse])
+    .out(statusCode(StatusCode.Created).and(jsonBody[CreateMonitorResponse]))
     .serverLogic { create =>
       monitorService
         .create(create.toDomain)
