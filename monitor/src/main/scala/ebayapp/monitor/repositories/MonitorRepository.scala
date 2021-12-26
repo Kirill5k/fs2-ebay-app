@@ -24,7 +24,7 @@ trait MonitorRepository[F[_]]:
   def getAllActive: F[List[Monitor]]
 
 final private class LiveMonitorRepository[F[_]: Async](
-    val collection: MongoCollection[F, MonitorEntity]
+    private val collection: MongoCollection[F, MonitorEntity]
 ) extends MonitorRepository[F]:
 
   def save(monitor: CreateMonitor): F[Monitor] =

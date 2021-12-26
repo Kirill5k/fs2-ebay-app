@@ -3,7 +3,7 @@ package ebayapp.monitor.controllers
 import io.circe.Codec
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 
-object views {
+private[controllers] object views {
 
   final case class MonitorView() derives Codec.AsObject
 

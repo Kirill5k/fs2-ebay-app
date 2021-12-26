@@ -18,7 +18,7 @@ trait MonitoringEventRepository[F[_]]:
   def findLatestBy(monitorId: Monitor.Id): F[Option[MonitoringEvent]]
 
 final private class LiveMonitoringEventRepository[F[_]: Async](
-    val collection: MongoCollection[F, MonitoringEventEntity]
+    private val collection: MongoCollection[F, MonitoringEventEntity]
 ) extends MonitoringEventRepository[F]:
 
   private val monitorIdFilter = (id: Monitor.Id) => Filter.eq("monitorId", id.toObjectId)
