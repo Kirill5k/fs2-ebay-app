@@ -9,10 +9,25 @@ import scala.concurrent.duration.FiniteDuration
 
 private[controllers] object views extends JsonCodecs {
 
-  final case class MonitorView() derives Codec.AsObject
+  final case class MonitorView(
+      id: String,
+      name: String,
+      active: Boolean,
+      interval: FiniteDuration,
+      connection: Monitor.Connection,
+      contact: Monitor.Contact
+  ) derives Codec.AsObject
 
   object MonitorView:
-    def from(monitor: Monitor): MonitorView = MonitorView()
+    def from(monitor: Monitor): MonitorView =
+      MonitorView(
+        monitor.id.value,
+        monitor.name.value,
+        monitor.active,
+        monitor.interval,
+        monitor.connection,
+        monitor.contact
+      )
 
   final case class MonitoringEventView(
       monitorId: String,

@@ -11,7 +11,7 @@ import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
 import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.controllers.views.{MonitorView, MonitoringEventView}
-import ebayapp.monitor.domain.Monitor
+import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import org.bson.types.ObjectId
 import org.http4s.HttpRoutes
@@ -28,6 +28,8 @@ final private class LiveMonitorController[F[_]](
     F: Async[F]
 ) extends Controller[F] with JsonCodecs with SchemaDerivation:
 
+  given methodSchema: Schema[HttpMethod] = Schema.string
+  given urlSchema: Schema[Url]           = Schema.string
   given fdSchema: Schema[FiniteDuration] = Schema.string
 
   given idCodec: Codec.PlainCodec[Monitor.Id] = Codec.string.mapDecode { id =>

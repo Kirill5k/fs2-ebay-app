@@ -39,6 +39,7 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
   protected val errorResponse =
     oneOf[ErrorResponse](
       oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[ErrorResponse.UnprocessableEntity]),
+      oneOfVariant(StatusCode.NotFound, jsonBody[ErrorResponse.NotFound]),
       oneOfVariant(StatusCode.InternalServerError, jsonBody[ErrorResponse.InternalError]),
       oneOfDefaultVariant(jsonBody[ErrorResponse.BadRequest])
     )
