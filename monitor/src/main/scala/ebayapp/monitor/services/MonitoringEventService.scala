@@ -24,7 +24,8 @@ final private case class PendingMonitor(
   val downTime: Option[Instant]                          = previousEvent.flatMap(_.downTime)
 
 trait MonitoringEventService[F[_]]:
-  def findLatestEvent(monitorId: Monitor.Id): F[Option[MonitoringEvent]]
+  def find(monitorId: Monitor.Id): F[List[MonitoringEvent]]
+  def findLatest(monitorId: Monitor.Id): F[Option[MonitoringEvent]]
   def enqueue(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit]
   def process: Stream[F, Unit]
 
@@ -42,7 +43,10 @@ final private class LiveMonitoringEventService[F[_]](
   def enqueue(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit] =
     monitors.offer(PendingMonitor(monitor, previousEvent))
 
-  def findLatestEvent(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
+  def find(monitorId: Monitor.Id): F[List[MonitoringEvent]] =
+    repository.findAllBy(monitorId)
+  
+  def findLatest(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
     repository.findLatestBy(monitorId)
 
   def process: Stream[F, Unit] =

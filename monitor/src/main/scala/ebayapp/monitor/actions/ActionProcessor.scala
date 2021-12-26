@@ -46,7 +46,7 @@ final private class LiveActionProcessor[F[_]](
 
   private def enqueueWithEventFetched(monitor: Monitor): F[Unit] =
     services.monitoringEvent
-      .findLatestEvent(monitor.id)
+      .findLatest(monitor.id)
       .flatMap(e => services.monitoringEvent.enqueue(monitor, e))
 
 object ActionProcessor:

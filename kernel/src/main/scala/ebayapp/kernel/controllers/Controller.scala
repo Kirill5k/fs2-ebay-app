@@ -14,7 +14,7 @@ import sttp.tapir.generic.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.server.http4s.Http4sServerOptions
 import sttp.tapir.server.interceptor.ValuedEndpointOutput
-import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultVariant, oneOfVariant}
+import sttp.tapir.{oneOf, oneOfDefaultVariant, oneOfVariant, Codec, DecodeResult}
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.util.Try
@@ -38,6 +38,7 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
 
   protected val errorResponse =
     oneOf[ErrorResponse](
+      oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[ErrorResponse.UnprocessableEntity]),
       oneOfVariant(StatusCode.InternalServerError, jsonBody[ErrorResponse.InternalError]),
       oneOfDefaultVariant(jsonBody[ErrorResponse.BadRequest])
     )

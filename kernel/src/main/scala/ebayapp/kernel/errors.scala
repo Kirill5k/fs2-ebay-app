@@ -12,5 +12,6 @@ object errors {
     final case class Json(message: String)              extends AppError
     final case class Critical(message: String)          extends AppError
     final case class NotFound(message: String)          extends AppError
+    final case class Invalid(message: String)           extends AppError
   }
 }

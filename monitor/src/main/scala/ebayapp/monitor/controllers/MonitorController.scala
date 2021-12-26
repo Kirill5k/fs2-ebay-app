@@ -9,7 +9,7 @@ import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
-import ebayapp.monitor.controllers.views.MonitorView
+import ebayapp.monitor.controllers.views.{MonitorView, MonitoringEventView}
 import ebayapp.monitor.domain.Monitor
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import org.bson.types.ObjectId
@@ -26,8 +26,8 @@ final private class LiveMonitorController[F[_]](
 
   given idCodec: Codec.PlainCodec[Monitor.Id] = Codec.string.mapDecode { id =>
     Either
-      .cond(ObjectId.isValid(id), Monitor.Id(id), new IllegalArgumentException(s"Monitor id $id is invalid"))
-      .fold(e => DecodeResult.Error(id, e), DecodeResult.Value.apply)
+      .cond(ObjectId.isValid(id), Monitor.Id(id), AppError.Invalid(s"Monitor id $id is invalid"))
+      .fold(DecodeResult.Error(id, _), DecodeResult.Value.apply)
   }(_.value)
 
   private val basePath   = "monitors"
@@ -56,7 +56,19 @@ final private class LiveMonitorController[F[_]](
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
-  def routes: HttpRoutes[F] = ???
+  private val getEvents = endpoint.get
+    .in(eventsPath)
+    .errorOut(errorResponse)
+    .out(jsonBody[List[MonitoringEventView]])
+    .serverLogic { id =>
+      monitoringEventService
+        .find(id)
+        .map(_.map(MonitoringEventView.from).asRight[ErrorResponse])
+        .handleError(ErrorResponse.from(_).asLeft)
+    }
+
+  override def routes: HttpRoutes[F] =
+    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getById, getEvents))
 
 object MonitorController:
   def make[F[_]: Async](monitorService: MonitorService[F], monitoringEventService: MonitoringEventService[F]): F[Controller[F]] =
