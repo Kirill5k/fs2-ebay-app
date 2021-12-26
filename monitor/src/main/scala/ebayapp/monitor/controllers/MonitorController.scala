@@ -32,15 +32,12 @@ final private class LiveMonitorController[F[_]](
   given urlSchema: Schema[Url]           = Schema.string
   given fdSchema: Schema[FiniteDuration] = Schema.string
 
-  given idCodec: Codec.PlainCodec[Monitor.Id] = Codec.string.mapDecode { id =>
-    Either
-      .cond(ObjectId.isValid(id), Monitor.Id(id), AppError.Invalid(s"Monitor id $id is invalid"))
-      .fold(DecodeResult.Error(id, _), DecodeResult.Value.apply)
-  }(_.value)
-
   private val basePath   = "monitors"
-  private val idPath     = basePath / path[Monitor.Id]
+  private val idPath     = basePath / path[String]
   private val eventsPath = idPath / "events"
+
+  private def parseId(id: String): F[Monitor.Id] =
+    F.fromEither(Either.cond(ObjectId.isValid(id), Monitor.Id(id), AppError.Invalid(s"Monitor id $id is invalid")))
 
   private val getAll = endpoint.get
     .in(basePath)
@@ -57,8 +54,8 @@ final private class LiveMonitorController[F[_]](
     .errorOut(errorResponse)
     .out(jsonBody[MonitorView])
     .serverLogic { id =>
-      monitorService
-        .find(id)
+      parseId(id)
+        .flatMap(monitorService.find)
         .flatMap(monitor => F.fromOption(monitor, AppError.NotFound(s"Monitor with id $id does not exist")))
         .map(MonitorView.from(_).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
@@ -69,8 +66,8 @@ final private class LiveMonitorController[F[_]](
     .errorOut(errorResponse)
     .out(jsonBody[List[MonitoringEventView]])
     .serverLogic { id =>
-      monitoringEventService
-        .find(id)
+      parseId(id)
+        .flatMap(monitoringEventService.find)
         .map(_.map(MonitoringEventView.from).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }

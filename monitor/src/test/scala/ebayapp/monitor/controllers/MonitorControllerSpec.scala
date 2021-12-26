@@ -52,6 +52,18 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
     "GET /monitors/:id" should {
 
+      "return error when id invalid" in {
+        val (monSvc, meSvc) = mocks
+
+        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+
+        val request  = Request[IO](uri = Uri.fromString(s"/monitors/foo").value, method = Method.GET)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.UnprocessableEntity, Some(s"""{"message":"Monitor id foo is invalid"}"""))
+        verifyNoInteractions(monSvc, meSvc)
+      }
+
       "return error when monitor does not exist" in {
         val (monSvc, meSvc) = mocks
         when(monSvc.find(any[Monitor.Id])).thenReturn(IO.pure(None))
