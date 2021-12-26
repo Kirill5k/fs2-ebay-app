@@ -53,7 +53,7 @@ object Monitor {
         }
 
   enum Status:
-    case Up, Down
+    case Up, Down, Paused
 }
 
 final case class CreateMonitor(

@@ -26,18 +26,18 @@ final private class LiveActionProcessor[F[_]](
     dispatcher.actions
       .mapAsync(maxConcurrent) {
         case Action.Notify(monitor, notification) => services.notification.notify(monitor, notification)
-        case Action.EnqueueNew(monitor)           => enqueueNew(monitor)
-        case Action.Enqueue(monitor, prevEvent)   => enqueue(prevEvent)(monitor)
+        case Action.EnqueueNew(monitor)           => services.monitoringEvent.enqueue(monitor, None)
+        case Action.Enqueue(monitor, prevEvent)   => services.monitoringEvent.enqueue(monitor, Some(prevEvent))
         case Action.EnqueueAll =>
-          for
-            monitors <- services.monitor.getAllActive
-            _        <- F.parTraverseN(maxConcurrent)(monitors)(enqueueWithEventFetched)
-          yield ()
+          services.monitor.getAllActive.flatMap { monitors =>
+            F.parTraverseN(maxConcurrent)(monitors)(enqueueWithEventFetched)
+          }.void
         case Action.Requeue(id, interval, prevEvent) =>
-          for
-            monitor <- F.sleep(interval) >> services.monitor.find(id)
-            _       <- monitor.fold(F.unit)(enqueue(prevEvent))
-          yield ()
+          F.sleep(interval) >>
+            services.monitor.find(id).flatMap {
+              case Some(monitor) => services.monitoringEvent.enqueue(monitor, Some(prevEvent))
+              case None          => logger.warn(s"monitor $id does not exist")
+            }
       }
       .handleErrorWith(e => Stream.eval(logger.error(e)("error during action processing")) ++ process)
 
@@ -45,14 +45,6 @@ final private class LiveActionProcessor[F[_]](
     services.monitoringEvent
       .findLatestEvent(monitor.id)
       .flatMap(e => services.monitoringEvent.enqueue(monitor, e))
-
-  private def enqueueNew(monitor: Monitor): F[Unit] =
-    services.monitoringEvent
-      .enqueue(monitor, None)
-
-  private def enqueue(prevEvent: MonitoringEvent)(monitor: Monitor): F[Unit] =
-    services.monitoringEvent
-      .enqueue(monitor, Some(prevEvent))
 
 object ActionProcessor:
   def make[F[_]: Temporal: Logger](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =

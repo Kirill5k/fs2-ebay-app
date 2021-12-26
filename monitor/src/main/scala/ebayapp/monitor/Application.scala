@@ -26,7 +26,7 @@ object Application extends IOApp.Simple:
           repositories    <- Repositories.make(resources.database) <* logger.info("created repositories")
           services        <- Services.make(dispatcher, clients, repositories) <* logger.info("created services")
           actionProcessor <- ActionProcessor.make(dispatcher, services) <* logger.info("created action processor")
-          controllers     <- Controllers.make[IO] <* logger.info("created controllers")
+          controllers     <- Controllers.make[IO](services) <* logger.info("created controllers")
           _               <- logger.info("starting http server and processors")
           _ <- Stream(
             Server.serve[IO](config.server, controllers.routes, runtime.compute),

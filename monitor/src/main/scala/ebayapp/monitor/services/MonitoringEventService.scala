@@ -1,6 +1,6 @@
 package ebayapp.monitor.services
 
-import cats.effect.Concurrent
+import cats.effect.Temporal
 import cats.effect.std.Queue
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
@@ -11,14 +11,15 @@ import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.MonitoringEventRepository
 import fs2.Stream
 import org.typelevel.log4cats.Logger
-import java.time.Instant
 
+import java.time.Instant
 import scala.concurrent.duration.*
 
 final private case class PendingMonitor(
     monitor: Monitor,
     previousEvent: Option[MonitoringEvent]
 ):
+  val isActive: Boolean                                  = monitor.active
   val previousCheck: Option[MonitoringEvent.StatusCheck] = previousEvent.map(_.statusCheck)
   val downTime: Option[Instant]                          = previousEvent.flatMap(_.downTime)
 
@@ -33,7 +34,7 @@ final private class LiveMonitoringEventService[F[_]](
     private val repository: MonitoringEventRepository[F],
     private val httpClient: HttpClient[F]
 )(using
-    F: Concurrent[F],
+    F: Temporal[F],
     logger: Logger[F]
 ) extends MonitoringEventService[F]:
   private val maxConcurrent: Int = 1024
@@ -49,7 +50,7 @@ final private class LiveMonitoringEventService[F[_]](
       .fromQueueUnterminated(monitors)
       .mapAsync(maxConcurrent) { pending =>
         for
-          currentCheck <- checkStatus(pending.monitor)
+          currentCheck <- if (pending.isActive) checkStatus(pending.monitor) else pausedStatus
           (downTime, notification) = compareStatus(currentCheck, pending.previousCheck, pending.downTime)
           event                    = MonitoringEvent(pending.monitor.id, currentCheck, downTime)
           _ <- repository.save(event)
@@ -63,12 +64,21 @@ final private class LiveMonitoringEventService[F[_]](
     monitor.connection match
       case http: Connection.Http => httpClient.status(http)
 
+  private def pausedStatus: F[MonitoringEvent.StatusCheck] =
+    F.realTimeInstant.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
+
   private def compareStatus(
       current: MonitoringEvent.StatusCheck,
       previous: Option[MonitoringEvent.StatusCheck],
       downTime: Option[Instant]
   ): (Option[Instant], Option[Notification]) =
     (current.status, previous.map(_.status)) match
+      case (Monitor.Status.Up, Some(Monitor.Status.Paused)) =>
+        (None, None)
+      case (Monitor.Status.Down, Some(Monitor.Status.Paused)) =>
+        (Some(current.time), None)
+      case (Monitor.Status.Paused, _) =>
+        (None, None)
       case (Monitor.Status.Down, None) =>
         (Some(current.time), None)
       case (Monitor.Status.Up, None) =>
@@ -83,7 +93,7 @@ final private class LiveMonitoringEventService[F[_]](
         (Some(current.time), Some(Notification(Monitor.Status.Down, current.time, None, current.reason)))
 
 object MonitoringEventService:
-  def make[F[_]: Concurrent: Logger](
+  def make[F[_]: Temporal: Logger](
       dispatcher: ActionDispatcher[F],
       repository: MonitoringEventRepository[F],
       httpClient: HttpClient[F]

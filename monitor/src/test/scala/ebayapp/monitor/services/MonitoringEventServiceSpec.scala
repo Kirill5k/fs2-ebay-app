@@ -1,6 +1,8 @@
 package ebayapp.monitor.services
 
-import cats.effect.IO
+import cats.Applicative
+import cats.effect.{Clock, IO}
+import cats.effect.kernel.Temporal
 import cats.effect.unsafe.implicits.global
 import ebayapp.kernel.MockitoMatchers
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
@@ -25,6 +27,34 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
   val downTime = Instant.parse("2011-01-01T00:00:00Z")
 
   "A MonitoringEventService" when {
+    "DOWN - PAUSED" should {
+      "record downtime and no notification" in {
+        val statusCheck   = MonitoringEvents.down().statusCheck
+        val previousEvent = Some(MonitoringEvents.paused())
+        val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, Some(statusCheck.time))
+
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, None)
+      }
+    }
+
+    "UP - PAUSED" should {
+      "clear downtime and no notification" in {
+        val statusCheck   = MonitoringEvents.up().statusCheck
+        val previousEvent = Some(MonitoringEvents.paused())
+        val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, None)
+
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, None)
+      }
+    }
+
+    "PAUSED - _" should {
+      "clear downtime and no notification" in {
+        val previousEvent = Some(MonitoringEvents.down(downTime = Some(downTime)))
+
+        runScenarioWhenMonitorIsInactive(previousEvent)
+      }
+    }
+
     "UP - DOWN" should {
       "clear downtime and send notification" in {
         val statusCheck   = MonitoringEvents.up().statusCheck
@@ -32,7 +62,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
         val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, None)
         val notification  = Notification(Monitor.Status.Up, statusCheck.time, Some(downTime), statusCheck.reason)
 
-        runScenario(statusCheck, previousEvent, expectedEvent, Some(notification))
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, Some(notification))
       }
     }
 
@@ -42,7 +72,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
         val previousEvent = Some(MonitoringEvents.up())
         val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, None)
 
-        runScenario(statusCheck, previousEvent, expectedEvent, None)
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, None)
       }
     }
 
@@ -52,7 +82,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
         val previousEvent = None
         val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, None)
 
-        runScenario(statusCheck, previousEvent, expectedEvent, None)
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, None)
       }
     }
 
@@ -62,7 +92,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
         val previousEvent = Some(MonitoringEvents.down(downTime = Some(downTime)))
         val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, Some(downTime))
 
-        runScenario(statusCheck, previousEvent, expectedEvent, None)
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, None)
       }
     }
 
@@ -73,7 +103,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
         val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, Some(statusCheck.time))
         val notification  = Notification(Monitor.Status.Down, statusCheck.time, None, statusCheck.reason)
 
-        runScenario(statusCheck, previousEvent, expectedEvent, Some(notification))
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, Some(notification))
       }
     }
 
@@ -83,17 +113,18 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
         val previousEvent = None
         val expectedEvent = MonitoringEvent(Monitors.id, statusCheck, Some(statusCheck.time))
 
-        runScenario(statusCheck, previousEvent, expectedEvent, None)
+        runScenarioWhenMonitorIsActive(statusCheck, previousEvent, expectedEvent, None)
       }
     }
   }
 
-  def runScenario(
+  def runScenarioWhenMonitorIsActive(
       currentStatusCheck: MonitoringEvent.StatusCheck,
       previousEvent: Option[MonitoringEvent],
       expectedEvent: MonitoringEvent,
       notification: Option[Notification]
   ): Future[Assertion] = {
+    val monitor            = Monitors.gen()
     val (disp, repo, http) = (mock[ActionDispatcher[IO]], mock[MonitoringEventRepository[IO]], mock[HttpClient[IO]])
     when(disp.dispatch(any[Action])).thenReturn(IO.unit)
     when(repo.save(any[MonitoringEvent])).thenReturn(IO.unit)
@@ -101,15 +132,37 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
 
     val result = for
       svc <- MonitoringEventService.make[IO](disp, repo, http)
-      _   <- svc.enqueue(Monitors.gen(), previousEvent)
+      _   <- svc.enqueue(monitor, previousEvent)
       _   <- svc.process.interruptAfter(250.millis).compile.drain
     yield ()
 
     result.unsafeToFuture().map { res =>
       verify(http).status(Monitors.httpConnection)
-      verify(disp).dispatch(Action.Requeue(Monitors.id, Monitors.gen().interval, expectedEvent))
-      notification.fold(verifyNoMoreInteractions(disp))(n => verify(disp).dispatch(Action.Notify(Monitors.gen(), n)))
+      verify(disp).dispatch(Action.Requeue(monitor.id, monitor.interval, expectedEvent))
+      notification.fold(verifyNoMoreInteractions(disp))(n => verify(disp).dispatch(Action.Notify(monitor, n)))
       verify(repo).save(expectedEvent)
+      res mustBe ()
+    }
+  }
+
+  def runScenarioWhenMonitorIsInactive(
+      previousEvent: Option[MonitoringEvent]
+  ): Future[Assertion] = {
+    val monitor            = Monitors.gen(active = false)
+    val (disp, repo, http) = (mock[ActionDispatcher[IO]], mock[MonitoringEventRepository[IO]], mock[HttpClient[IO]])
+    when(disp.dispatch(any[Action])).thenReturn(IO.unit)
+    when(repo.save(any[MonitoringEvent])).thenReturn(IO.unit)
+
+    val result = for
+      svc <- MonitoringEventService.make[IO](disp, repo, http)
+      _   <- svc.enqueue(monitor, previousEvent)
+      _   <- svc.process.interruptAfter(250.millis).compile.drain
+    yield ()
+
+    result.unsafeToFuture().map { res =>
+      verify(disp).dispatch(any[Action.Requeue])
+      verifyNoMoreInteractions(http, disp)
+      verify(repo).save(any[MonitoringEvent])
       res mustBe ()
     }
   }

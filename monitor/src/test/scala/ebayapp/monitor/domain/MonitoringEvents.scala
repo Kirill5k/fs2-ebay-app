@@ -30,3 +30,8 @@ object MonitoringEvents:
       reason: String = "DOWN",
       downTime: Option[Instant] = Some(ts)
   ): MonitoringEvent = MonitoringEvent(Monitors.id, MonitoringEvent.StatusCheck(Monitor.Status.Down, 125.millis, ts, reason), downTime)
+
+  def paused(
+      monitorId: Monitor.Id = Monitors.id,
+      ts: Instant = ts
+  ): MonitoringEvent = MonitoringEvent(Monitors.id, MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, ts, "Paused"), None)

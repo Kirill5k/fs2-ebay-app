@@ -1,6 +1,6 @@
 package ebayapp.monitor.services
 
-import cats.effect.Concurrent
+import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.monitor.actions.ActionDispatcher
@@ -18,7 +18,7 @@ trait Services[F[_]]:
     monitoringEvent.process
 
 object Services:
-  def make[F[_]: Concurrent: Logger](
+  def make[F[_]: Temporal: Logger](
       dispatcher: ActionDispatcher[F],
       clients: Clients[F],
       repositories: Repositories[F]
