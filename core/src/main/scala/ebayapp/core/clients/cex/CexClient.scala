@@ -10,7 +10,7 @@ import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.ResellableItem

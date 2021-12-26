@@ -4,7 +4,7 @@ import cats.Monad
 import cats.effect.std.Queue
 import cats.effect.{Async, Deferred}
 import cats.syntax.apply.*
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.{Logger => Logger4Cats}

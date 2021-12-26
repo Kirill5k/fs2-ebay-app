@@ -20,6 +20,7 @@ trait MonitorRepository[F[_]]:
   def pause(id: Monitor.Id): F[Unit]
   def unpause(id: Monitor.Id): F[Unit]
   def delete(id: Monitor.Id): F[Unit]
+  def getAll: F[List[Monitor]]
   def getAllActive: F[List[Monitor]]
 
 final private class LiveMonitorRepository[F[_]: Async](
@@ -30,6 +31,9 @@ final private class LiveMonitorRepository[F[_]: Async](
     val entity = MonitorEntity.from(monitor)
     collection.insertOne(entity).as(entity.toDomain)
 
+  def getAll: F[List[Monitor]] =
+    collection.find.all.map(_.map(_.toDomain).toList)
+  
   def getAllActive: F[List[Monitor]] =
     collection.find(Filter.eq("active", true)).all.map(_.map(_.toDomain).toList)
 

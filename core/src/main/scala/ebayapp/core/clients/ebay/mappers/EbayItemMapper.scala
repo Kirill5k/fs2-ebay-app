@@ -4,7 +4,7 @@ import ebayapp.core.clients.{ItemMapper, SearchCriteria}
 
 import java.time.Instant
 import ebayapp.core.clients.ebay.browse.responses.EbayItem
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 

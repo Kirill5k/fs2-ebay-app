@@ -7,7 +7,7 @@ import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, MessengerClient, Notification}
 import ebayapp.core.common.config.TelegramConfig
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.Logger
 import sttp.client3.*
 import sttp.model.StatusCode

@@ -1,4 +1,4 @@
-package ebayapp.core.common
+package ebayapp.kernel
 
 object errors {
   sealed trait AppError extends Throwable {
@@ -11,5 +11,6 @@ object errors {
     final case class Auth(message: String)              extends AppError
     final case class Json(message: String)              extends AppError
     final case class Critical(message: String)          extends AppError
+    final case class NotFound(message: String)          extends AppError
   }
 }

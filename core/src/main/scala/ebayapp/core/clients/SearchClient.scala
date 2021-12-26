@@ -1,6 +1,6 @@
 package ebayapp.core.clients
 
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemKind, ResellableItem}
 import fs2.Stream
 import pureconfig._

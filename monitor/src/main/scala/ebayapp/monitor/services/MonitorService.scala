@@ -9,6 +9,7 @@ import ebayapp.monitor.repositories.{MonitorRepository, MonitoringEventRepositor
 import fs2.Stream
 
 trait MonitorService[F[_]]:
+  def getAll: F[List[Monitor]]
   def getAllActive: F[List[Monitor]]
   def create(monitor: CreateMonitor): F[Monitor]
   def find(id: Monitor.Id): F[Option[Monitor]]
@@ -18,6 +19,7 @@ final private class LiveMonitorService[F[_]: Monad](
     private val repository: MonitorRepository[F]
 ) extends MonitorService[F]:
   def find(id: Monitor.Id): F[Option[Monitor]] = repository.find(id)
+  def getAll: F[List[Monitor]]                 = repository.getAll
   def getAllActive: F[List[Monitor]]           = repository.getAllActive
   def create(monitor: CreateMonitor): F[Monitor] =
     repository.save(monitor).flatTap(m => dispatcher.dispatch(Action.EnqueueNew(m)))

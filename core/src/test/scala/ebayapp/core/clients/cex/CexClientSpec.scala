@@ -6,7 +6,7 @@ import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
 import ebayapp.kernel.SttpClientSpec

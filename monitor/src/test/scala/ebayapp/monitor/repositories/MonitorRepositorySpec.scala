@@ -2,7 +2,7 @@ package ebayapp.monitor.repositories
 
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import ebayapp.monitor.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.domain.Monitors
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
@@ -16,6 +16,17 @@ import scala.concurrent.Future
 class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo with OptionValues {
 
   "A MonitorRepository" when {
+
+    "getAll" should {
+      "return all monitors" in withEmbeddedMongoClient { db =>
+        for
+          repo <- MonitorRepository.make(db)
+          mon1 <- repo.save(Monitors.create())
+          mon2 <- repo.save(Monitors.create())
+          mons <- repo.getAllActive
+        yield mons mustBe List(mon1, mon2)
+      }
+    }
 
     "getAllActive" should {
       "return active monitors" in withEmbeddedMongoClient { db =>

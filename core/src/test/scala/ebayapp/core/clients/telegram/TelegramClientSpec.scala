@@ -6,7 +6,7 @@ import ebayapp.core.MockLogger
 import ebayapp.core.clients.Notification
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.TelegramConfig
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 import ebayapp.kernel.SttpClientSpec

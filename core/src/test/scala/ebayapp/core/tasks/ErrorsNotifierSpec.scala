@@ -3,7 +3,7 @@ package ebayapp.core.tasks
 import cats.effect.kernel.Outcome.Errored
 import cats.effect.{IO, Temporal}
 import ebayapp.core.CatsSpec
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Error, Logger}
 
 import scala.concurrent.duration._

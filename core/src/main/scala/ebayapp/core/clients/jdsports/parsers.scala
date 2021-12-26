@@ -1,7 +1,7 @@
 package ebayapp.core.clients.jdsports
 
 import cats.syntax.either.*
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import io.circe.Codec
 import io.circe.parser.*
 

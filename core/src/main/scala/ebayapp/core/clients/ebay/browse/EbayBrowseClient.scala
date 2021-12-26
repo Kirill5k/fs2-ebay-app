@@ -8,7 +8,7 @@ import ebayapp.core.clients.HttpClient
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.EbayConfig
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import sttp.client3.*
 import sttp.client3.circe.*
 import sttp.model.{HeaderNames, MediaType, StatusCode}

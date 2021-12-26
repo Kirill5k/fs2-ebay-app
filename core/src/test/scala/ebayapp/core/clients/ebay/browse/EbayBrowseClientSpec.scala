@@ -5,7 +5,7 @@ import cats.effect.unsafe.implicits.global
 import ebayapp.core.MockLogger
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
-import ebayapp.core.common.errors.AppError
+import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
