@@ -25,9 +25,9 @@ final private class LiveActionProcessor[F[_]](
   def process: Stream[F, Unit] =
     dispatcher.actions
       .map {
-        case Action.Notify(monitor, notification) => Stream.eval(services.notification.notify(monitor, notification))
-        case Action.EnqueueNew(monitor)           => Stream.eval(services.monitoringEvent.enqueue(monitor, None))
-        case Action.Enqueue(monitor, prevEvent)   => Stream.eval(services.monitoringEvent.enqueue(monitor, Some(prevEvent)))
+        case Action.Notify(monitor, notification) => Stream.eval(services.notify(monitor, notification))
+        case Action.EnqueueNew(monitor)           => Stream.eval(services.enqueue(monitor, None))
+        case Action.Enqueue(monitor, prevEvent)   => Stream.eval(services.enqueue(monitor, Some(prevEvent)))
         case Action.EnqueueAll =>
           Stream
             .evalSeq(services.monitor.getAllActive)
@@ -37,7 +37,7 @@ final private class LiveActionProcessor[F[_]](
             .eval(services.monitor.find(id))
             .delayBy(interval)
             .evalMap {
-              case Some(monitor) => services.monitoringEvent.enqueue(monitor, Some(prevEvent))
+              case Some(monitor) => services.enqueue(monitor, Some(prevEvent))
               case None          => logger.warn(s"monitor $id does not exist")
             }
       }
