@@ -9,20 +9,26 @@ import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
+import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.controllers.views.{MonitorView, MonitoringEventView}
 import ebayapp.monitor.domain.Monitor
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import org.bson.types.ObjectId
 import org.http4s.HttpRoutes
 import sttp.tapir.*
+import sttp.tapir.generic.SchemaDerivation
 import sttp.tapir.server.http4s.Http4sServerInterpreter
+
+import scala.concurrent.duration.FiniteDuration
 
 final private class LiveMonitorController[F[_]](
     private val monitorService: MonitorService[F],
     private val monitoringEventService: MonitoringEventService[F]
 )(using
     F: Async[F]
-) extends Controller[F]:
+) extends Controller[F] with JsonCodecs with SchemaDerivation:
+
+  given fdSchema: Schema[FiniteDuration] = Schema.string
 
   given idCodec: Codec.PlainCodec[Monitor.Id] = Codec.string.mapDecode { id =>
     Either
