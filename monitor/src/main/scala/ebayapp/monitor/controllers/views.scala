@@ -56,6 +56,8 @@ private[controllers] object views extends JsonCodecs {
       contact: Monitor.Contact
   ) derives Codec.AsObject:
     def toDomain: CreateMonitor = CreateMonitor(Monitor.Name(name), connection, interval, contact)
-
+  
   final case class CreateMonitorResponse(id: String) derives Codec.AsObject
+  
+  final case class PauseMonitorRequest(active: Boolean) derives Codec.AsObject
 }

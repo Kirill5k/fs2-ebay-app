@@ -9,7 +9,6 @@ import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
-import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.controllers.views.{CreateMonitorRequest, CreateMonitorResponse, MonitorView, MonitoringEventView}
 import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
@@ -27,7 +26,7 @@ final private class LiveMonitorController[F[_]](
     private val monitoringEventService: MonitoringEventService[F]
 )(using
     F: Async[F]
-) extends Controller[F] with JsonCodecs with SchemaDerivation:
+) extends Controller[F] with SchemaDerivation:
 
   given methodSchema: Schema[HttpMethod] = Schema.string
   given urlSchema: Schema[Url]           = Schema.string
