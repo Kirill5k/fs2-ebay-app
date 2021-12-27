@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "fs2-app-monitor"
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  ports:
+    - targetPort: 8080
+      port: 8080
+  selector:
+    app: "fs2-app-monitor"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "fs2-app-monitor"
+  labels:
+    app: "fs2-app-monitor"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: "fs2-app-monitor"
+  template:
+    metadata:
+      labels:
+        app: "fs2-app-monitor"
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fs2-app-core-config
+      containers:
+        - name: "core"
+          image: "registry.cloud.okteto.net/kirill5k/fs2-app-monitor:latest"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+          envFrom:
+            - secretRef:
+                name: "fs2-app-secret"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "0.05"
+            limits:
+              memory: "512Mi"
+              cpu: "0.3"
+          readinessProbe:
+            httpGet:
+              path: /health/status
+              port: 8080
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /health/status
+              port: 8080
+            periodSeconds: 60
