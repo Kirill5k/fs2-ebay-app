@@ -64,6 +64,30 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
 
         result.map(_.value.active mustBe false)
       }
+
+      "allow pausing monitor multiple times in the row" in withEmbeddedMongoClient { db =>
+        val result = for
+          repo <- MonitorRepository.make(db)
+          mon  <- repo.save(Monitors.create())
+          _    <- repo.pause(mon.id)
+          _    <- repo.pause(mon.id)
+          _    <- repo.pause(mon.id)
+          _    <- repo.pause(mon.id)
+          mon  <- repo.find(mon.id)
+        yield mon
+
+        result.map(_.value.active mustBe false)
+      }
+
+
+      "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
+        val result = for
+          repo <- MonitorRepository.make(db)
+          res  <- repo.pause(Monitors.id).attempt
+        yield res
+
+        result.map(_ mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist")))
+      }
     }
 
     "unpause" should {
@@ -78,6 +102,15 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
 
         result.map(_.value.active mustBe true)
       }
+
+      "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
+        val result = for
+          repo <- MonitorRepository.make(db)
+          res  <- repo.unpause(Monitors.id).attempt
+        yield res
+
+        result.map(_ mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist")))
+      }
     }
 
     "delete" should {
@@ -90,6 +123,15 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
         yield res
 
         result.map(_ mustBe None)
+      }
+
+      "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
+        val result = for
+          repo <- MonitorRepository.make(db)
+          res  <- repo.delete(Monitors.id).attempt
+        yield res
+
+        result.map(_ mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist")))
       }
     }
   }

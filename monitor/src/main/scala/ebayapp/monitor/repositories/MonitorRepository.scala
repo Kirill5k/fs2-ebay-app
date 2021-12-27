@@ -5,6 +5,7 @@ import cats.syntax.applicative.*
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
+import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.common.json.given
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
@@ -41,14 +42,24 @@ final private class LiveMonitorRepository[F[_]: Async](
     collection.find(Filter.idEq(id.toObjectId)).first.map(_.map(_.toDomain))
 
   def delete(id: Monitor.Id): F[Unit] =
-    collection.deleteOne(Filter.idEq(id.toObjectId)).void
+    collection
+      .deleteOne(Filter.idEq(id.toObjectId))
+      .flatMap { result =>
+        if (result.getDeletedCount > 0) ().pure[F]
+        else AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit]
+      }
 
   def pause(id: Monitor.Id): F[Unit] = setActive(id, false)
 
   def unpause(id: Monitor.Id): F[Unit] = setActive(id, true)
 
   private def setActive(id: Monitor.Id, active: Boolean): F[Unit] =
-    collection.updateOne(Filter.idEq(id.toObjectId), Update.set("active", active)).void
+    collection
+      .updateOne(Filter.idEq(id.toObjectId), Update.set("active", active))
+      .flatMap { result =>
+        if (result.getMatchedCount > 0) ().pure[F]
+        else AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit]
+      }
 
 object MonitorRepository:
   private val collectionName = "monitors"
