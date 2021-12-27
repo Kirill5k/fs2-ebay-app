@@ -77,6 +77,22 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
         mons mustBe List(Monitors.gen(), Monitors.gen())
       }
     }
+
+    "activate monitor" in {
+      val (dispatcher, repo) = mocks
+      when(repo.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.unit)
+
+      val res = for
+        svc <- MonitorService.make[IO](dispatcher, repo)
+        mon <- svc.activate(Monitors.id, true)
+      yield mon
+
+      res.unsafeToFuture().map { mon =>
+        verifyNoInteractions(dispatcher)
+        verify(repo).activate(Monitors.id, true)
+        mon mustBe ()
+      }
+    }
   }
 
   def mocks: (ActionDispatcher[IO], MonitorRepository[IO]) =

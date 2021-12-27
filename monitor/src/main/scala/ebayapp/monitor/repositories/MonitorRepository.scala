@@ -18,8 +18,9 @@ import mongo4cats.database.MongoDatabase
 trait MonitorRepository[F[_]]:
   def save(monitor: CreateMonitor): F[Monitor]
   def find(id: Monitor.Id): F[Option[Monitor]]
-  def pause(id: Monitor.Id): F[Unit]
-  def unpause(id: Monitor.Id): F[Unit]
+  def activate(id: Monitor.Id, active: Boolean): F[Unit]
+  def pause(id: Monitor.Id): F[Unit]   = activate(id, false)
+  def unpause(id: Monitor.Id): F[Unit] = activate(id, true)
   def delete(id: Monitor.Id): F[Unit]
   def getAll: F[List[Monitor]]
   def getAllActive: F[List[Monitor]]
@@ -32,11 +33,10 @@ final private class LiveMonitorRepository[F[_]: Async](
     val entity = MonitorEntity.from(monitor)
     collection.insertOne(entity).as(entity.toDomain)
 
-  def getAll: F[List[Monitor]] =
-    collection.find.all.map(_.map(_.toDomain).toList)
-  
-  def getAllActive: F[List[Monitor]] =
-    collection.find(Filter.eq("active", true)).all.map(_.map(_.toDomain).toList)
+  def getAll: F[List[Monitor]]       = findAll(Filter.empty)
+  def getAllActive: F[List[Monitor]] = findAll(Filter.eq("active", true))
+  private def findAll(filter: Filter): F[List[Monitor]] =
+    collection.find(filter).all.map(_.map(_.toDomain).toList)
 
   def find(id: Monitor.Id): F[Option[Monitor]] =
     collection.find(Filter.idEq(id.toObjectId)).first.map(_.map(_.toDomain))
@@ -44,22 +44,17 @@ final private class LiveMonitorRepository[F[_]: Async](
   def delete(id: Monitor.Id): F[Unit] =
     collection
       .deleteOne(Filter.idEq(id.toObjectId))
-      .flatMap { result =>
-        if (result.getDeletedCount > 0) ().pure[F]
-        else AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit]
-      }
+      .map(_.getDeletedCount)
+      .flatMap(notFoundErrorIfNoMatches(id))
 
-  def pause(id: Monitor.Id): F[Unit] = setActive(id, false)
-
-  def unpause(id: Monitor.Id): F[Unit] = setActive(id, true)
-
-  private def setActive(id: Monitor.Id, active: Boolean): F[Unit] =
+  def activate(id: Monitor.Id, active: Boolean): F[Unit] =
     collection
       .updateOne(Filter.idEq(id.toObjectId), Update.set("active", active))
-      .flatMap { result =>
-        if (result.getMatchedCount > 0) ().pure[F]
-        else AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit]
-      }
+      .map(_.getMatchedCount)
+      .flatMap(notFoundErrorIfNoMatches(id))
+
+  private def notFoundErrorIfNoMatches(id: Monitor.Id)(matchCount: Long): F[Unit] =
+    if (matchCount == 0) AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit] else ().pure[F]
 
 object MonitorRepository:
   private val collectionName = "monitors"

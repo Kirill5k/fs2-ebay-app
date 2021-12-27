@@ -59,5 +59,5 @@ private[controllers] object views extends JsonCodecs {
   
   final case class CreateMonitorResponse(id: String) derives Codec.AsObject
   
-  final case class PauseMonitorRequest(active: Boolean) derives Codec.AsObject
+  final case class ActivateMonitorRequest(active: Boolean) derives Codec.AsObject
 }
