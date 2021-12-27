@@ -138,7 +138,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
 
     result.unsafeToFuture().map { res =>
       verify(http).status(Monitors.httpConnection)
-      verify(disp).dispatch(Action.Requeue(monitor.id, monitor.interval, expectedEvent))
+      verify(disp).dispatch(Action.Requeue(monitor.id, monitor.interval - currentStatusCheck.responseTime, expectedEvent))
       notification.fold(verifyNoMoreInteractions(disp))(n => verify(disp).dispatch(Action.Notify(monitor, n)))
       verify(repo).save(expectedEvent)
       res mustBe ()

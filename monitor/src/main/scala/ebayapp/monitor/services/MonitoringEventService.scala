@@ -59,7 +59,7 @@ final private class LiveMonitoringEventService[F[_]](
           event                    = MonitoringEvent(pending.monitor.id, currentCheck, downTime)
           _ <- repository.save(event)
           _ <- notification.fold(F.unit)(n => dispatcher.dispatch(Action.Notify(pending.monitor, n)))
-          _ <- dispatcher.dispatch(Action.Requeue(pending.monitor.id, pending.monitor.interval, event))
+          _ <- dispatcher.dispatch(Action.Requeue(pending.monitor.id, pending.monitor.interval - currentCheck.responseTime, event))
         yield ()
       }
       .handleErrorWith(e => Stream.eval(logger.error(e)("error during monitor processing")) ++ process)
