@@ -15,12 +15,11 @@ trait Controllers[F[_]]:
 
   def routes(using M: Monad[F]): HttpRoutes[F] =
     Router(
-      "" -> health.routes,
+      ""    -> health.routes,
       "api" -> monitor.routes
     )
 
 object Controllers:
-
   def make[F[_]: Async: Logger](services: Services[F]): F[Controllers[F]] =
     (
       HealthController.make[F],

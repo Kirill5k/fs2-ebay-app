@@ -32,7 +32,7 @@ object Monitor {
       def toObjectId: ObjectId = ObjectId(id)
       def value: String        = id
 
-  opaque type Name = String
+  opaque type Name <: String = String
   object Name:
     def apply(name: String): Name            = name
     extension (name: Name) def value: String = name

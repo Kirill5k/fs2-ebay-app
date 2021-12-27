@@ -2,7 +2,7 @@ package ebayapp.monitor
 
 import cats.effect.{IO, IOApp}
 import ebayapp.kernel.Server
-import ebayapp.monitor.actions.{ActionDispatcher, ActionProcessor}
+import ebayapp.monitor.actions.{ActionDispatcher, ActionProcessor, Action}
 import ebayapp.monitor.common.config.AppConfig
 import ebayapp.monitor.clients.Clients
 import ebayapp.monitor.controllers.Controllers
@@ -29,6 +29,7 @@ object Application extends IOApp.Simple:
           controllers     <- Controllers.make[IO](services) <* logger.info("created controllers")
           _               <- logger.info("starting http server and processors")
           _ <- Stream(
+            Stream.eval(dispatcher.dispatch(Action.EnqueueAll)),
             Server.serve[IO](config.server, controllers.routes, runtime.compute),
             actionProcessor.process,
             services.process
