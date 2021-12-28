@@ -12,6 +12,25 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
   "A MonitorController" when {
 
+    "PUT /monitors/:id/active" should {
+      "activate monitor and return 204" in {
+        val monitor = Monitors.gen()
+        val (monSvc, meSvc) = mocks
+        when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.unit)
+
+        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+
+        val requestBody = """{"active":true}""".stripMargin
+
+        val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}/active").value, method = Method.PUT).withEntity(requestBody)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.NoContent, None)
+        verify(monSvc).activate(Monitors.id, true)
+        verifyNoInteractions(meSvc)
+      }
+    }
+
     "POST /monitors" should {
       "return 400 on malformed request" in {
         val monitor = Monitors.gen()
