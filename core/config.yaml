@@ -132,7 +132,7 @@ data:
       argos {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "PlayStation 5 Console"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "PlayStation 5 Console"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
