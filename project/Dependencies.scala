@@ -10,12 +10,17 @@ object Dependencies {
     val logback    = "1.2.9"
     val log4cats   = "2.1.1"
     val tapir      = "0.19.1"
+    val courier    = "3.0.1"
 
-    val scalaTest = "3.2.10"
-    val mockito   = "3.2.10.0"
+    val scalaTest    = "3.2.10"
+    val mockito      = "3.2.10.0"
+    val mockJavaMail = "1.9"
   }
 
   object Libraries {
+    val courier      = "com.github.daddykotex"  %% "courier"       % Versions.courier
+    val mockJavaMail = "org.jvnet.mock-javamail" % "mock-javamail" % Versions.mockJavaMail
+
     object mongo4cats {
       val core     = "io.github.kirill5k" %% "mongo4cats-core"     % Versions.mongo4cats
       val circe    = "io.github.kirill5k" %% "mongo4cats-circe"    % Versions.mongo4cats
@@ -84,7 +89,9 @@ object Dependencies {
     Libraries.tapir.all
 
   lazy val proxy = Seq(
-    Libraries.http4s.blazeClient
+    Libraries.http4s.blazeClient,
+    Libraries.courier,
+    Libraries.mockJavaMail % Test
   )
 
   lazy val test = Seq(

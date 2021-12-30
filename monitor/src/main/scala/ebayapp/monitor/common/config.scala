@@ -6,9 +6,17 @@ import pureconfig.*
 import pureconfig.generic.derivation.default.*
 
 object config {
+  final case class EmailConfig(
+      smtpHost: String,
+      smtpPort: String,
+      username: String,
+      password: String
+  )
+
   final case class AppConfig(
       server: ServerConfig,
-      mongo: MongoConfig
+      mongo: MongoConfig,
+      email: EmailConfig
   ) derives ConfigReader
 
   object AppConfig:
