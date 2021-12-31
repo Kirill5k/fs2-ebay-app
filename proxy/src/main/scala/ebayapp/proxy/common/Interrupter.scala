@@ -2,13 +2,15 @@ package ebayapp.proxy.common
 
 import cats.effect.{Deferred, Ref, Temporal}
 import cats.effect.kernel.Temporal
-import cats.syntax.applicativeError._
+import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
+import cats.syntax.apply.*
 import cats.syntax.flatMap.*
-import ebayapp.kernel.controllers.HealthController
+import ebayapp.kernel.common.time.*
 import org.typelevel.log4cats.Logger
 
 import java.time.Instant
+import scala.concurrent.duration.*
 
 trait Interrupter[F[_]]:
   def terminate: F[Unit]
@@ -21,8 +23,15 @@ final private class LiveInterrupter[F[_]](
     F: Temporal[F],
     logger: Logger[F]
 ) extends Interrupter[F]:
-  def terminate: F[Unit]                       = logger.info("received termination signal") >> sigTerm.complete(()).void
-  def awaitSigTerm: F[Either[Throwable, Unit]] = sigTerm.get.attempt
+  def terminate: F[Unit] =
+    (startupTime.get, F.realTimeInstant)
+      .mapN(_ durationBetween _)
+      .flatMap { duration =>
+        if (duration < 1.minute) logger.info("delaying termination as app has just started")
+        else logger.info("terminating app") >> sigTerm.complete(()).void
+      }
+  def awaitSigTerm: F[Either[Throwable, Unit]] =
+    sigTerm.get.attempt
 
 object Interrupter:
   def make[F[_]: Logger](implicit F: Temporal[F]): F[Interrupter[F]] =
