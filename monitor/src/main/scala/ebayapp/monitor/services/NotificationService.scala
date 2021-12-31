@@ -2,7 +2,7 @@ package ebayapp.monitor.services
 
 import cats.Monad
 import cats.effect.Concurrent
-import ebayapp.monitor.common.time.*
+import ebayapp.kernel.common.time.*
 import ebayapp.monitor.clients.{EmailClient, EmailMessage}
 import ebayapp.monitor.domain.Monitor.Contact
 import ebayapp.monitor.domain.{Monitor, Notification}
