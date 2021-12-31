@@ -18,7 +18,7 @@ object Application extends IOApp.Simple:
     for
       _      <- logger.info("starting ebay-app-monitor")
       config <- logger.info("loading config") *> AppConfig.load[IO]
-      _ <- Resources.make[IO](config).use { resources =>
+      _ <- Resources.make[IO](config, runtime.compute).use { resources =>
         for
           _               <- logger.info("created resources")
           clients         <- Clients.make(resources) <* logger.info("created clients")

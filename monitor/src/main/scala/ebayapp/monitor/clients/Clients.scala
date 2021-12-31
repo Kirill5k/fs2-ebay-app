@@ -13,7 +13,7 @@ object Clients:
   def make[F[_]: Async](resources: Resources[F]): F[Clients[F]] =
     for
       hc <- HttpClient.make[F](resources.clientBackend)
-      ec <- EmailClient.make[F]
+      ec <- EmailClient.make[F](resources.mailer)
     yield new Clients[F] {
       def email: EmailClient[F] = ec
       def http: HttpClient[F] = hc

@@ -8,7 +8,7 @@ import pureconfig.generic.derivation.default.*
 object config {
   final case class EmailConfig(
       smtpHost: String,
-      smtpPort: String,
+      smtpPort: Int,
       username: String,
       password: String
   )

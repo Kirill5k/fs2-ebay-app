@@ -78,5 +78,6 @@ lazy val monitor = project
   .settings(
     name                 := "fs2-ebay-app-monitor",
     moduleName           := "fs2-ebay-app-monitor",
-    Docker / packageName := "fs2-app-monitor" // fs2-app/monitor
+    Docker / packageName := "fs2-app-monitor", // fs2-app/monitor
+    libraryDependencies ++= Dependencies.monitor
   )

@@ -77,7 +77,7 @@ object Dependencies {
     val mockito   = "org.scalatestplus" %% "mockito-3-4" % Versions.mockito
   }
 
-  lazy val kernel = Seq(
+  val kernel = Seq(
     Libraries.mongo4cats.core,
     Libraries.mongo4cats.circe,
     Libraries.pureconfig.core
@@ -88,13 +88,16 @@ object Dependencies {
     Libraries.sttp.all ++
     Libraries.tapir.all
 
-  lazy val proxy = Seq(
-    Libraries.http4s.blazeClient,
+  val proxy = Seq(
+    Libraries.http4s.blazeClient
+  )
+
+  val monitor = Seq(
     Libraries.courier,
     Libraries.mockJavaMail % Test
   )
 
-  lazy val test = Seq(
+  val test = Seq(
     Libraries.scalaTest           % Test,
     Libraries.mockito             % Test,
     Libraries.mongo4cats.embedded % Test
