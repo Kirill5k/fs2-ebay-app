@@ -4,6 +4,7 @@ import cats.effect.Resource
 import cats.effect.kernel.Async
 import org.http4s.client.Client
 import org.http4s.blaze.client.BlazeClientBuilder
+import org.http4s.client.middleware.FollowRedirect
 
 import scala.concurrent.duration.*
 
@@ -24,6 +25,6 @@ object Resources:
   def make[F[_]: Async]: Resource[F, Resources[F]] =
     makeBlazeClient[F].map { client =>
       new Resources[F] {
-        def blazeClient: Client[F] = client
+        def blazeClient: Client[F] = FollowRedirect(10)(client)
       }
     }

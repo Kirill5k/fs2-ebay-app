@@ -8,6 +8,7 @@ import cats.syntax.functor.*
 import cats.syntax.applicative.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.proxy.common.Interrupter
+import org.http4s.client.middleware.FollowRedirect
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
 import org.http4s.*
@@ -30,16 +31,18 @@ final case class RedirectController[F[_]: Concurrent](
         req.headers.get(XRerouteToHeader) match {
           case Some(redirectToUri) =>
             client
-              .toHttpApp {
+              .stream {
                 req
                   .withUri(Uri.unsafeFromString(redirectToUri.head.value + req.uri.toString))
                   .removeHeader(HostHeader)
                   .removeHeader(XReloadOn403Header)
                   .removeHeader(XRerouteToHeader)
               }
+              .compile
+              .lastOrError
               .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.headers.get(XReloadOn403Header).isDefined))
           case None =>
-            BadRequest(s"missing $XRerouteToHeader header")
+            BadRequest(s"Missing $XRerouteToHeader header")
         }
     }
 
