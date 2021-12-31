@@ -73,11 +73,10 @@ final private class LiveMonitorController[F[_]](
     .errorOut(errorResponse)
     .out(statusCode(StatusCode.NoContent))
     .serverLogic { case (id, mon) =>
-      F.fromEither(Either.cond(id == mon.id, (), AppError.Failed(s"Id in path is different from id in the request body"))) >>
-        monitorService
-          .update(mon.toDomain)
-          .as(().asRight[ErrorResponse])
-          .handleError(ErrorResponse.from(_).asLeft)
+      F.fromEither(Either.cond(id == mon.id, (), AppError.Failed(s"Id in path is different from id in the request body")))
+        .flatMap(_ => monitorService.update(mon.toDomain))
+        .as(().asRight[ErrorResponse])
+        .handleError(ErrorResponse.from(_).asLeft)
     }
 
   private val createNew = endpoint.post

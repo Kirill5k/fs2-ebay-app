@@ -2,6 +2,7 @@ package ebayapp.monitor.controllers
 
 import cats.effect.IO
 import ebayapp.kernel.ControllerSpec
+import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import ebayapp.monitor.domain.{CreateMonitor, Monitor, Monitors}
 import org.http4s.implicits.*
@@ -11,6 +12,74 @@ import org.scalatest.EitherValues
 class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
   "A MonitorController" when {
+
+    "PUT /monitors/:id" should {
+      "activate monitor and return 204" in {
+        val monitor = Monitors.gen()
+        val (monSvc, meSvc) = mocks
+        when(monSvc.update(any[Monitor])).thenReturn(IO.unit)
+
+        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+
+        val requestBody =
+          s"""{
+             |"id": "${monitor.id}",
+             |"name": "${monitor.name}",
+             |"active": true,
+             |"interval": "10 minutes",
+             |"connection": {
+             |  "Http": {
+             |    "url": "http://foo.bar",
+             |    "method": "GET",
+             |    "timeout": "1 minute"
+             |  }
+             |},
+             |"contact": {
+             |  "Email": {
+             |    "email": "foo@bar.com"
+             |  }
+             |}
+             |}""".stripMargin
+
+        val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}").value, method = Method.PUT).withEntity(requestBody)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.NoContent, None)
+        verify(monSvc).update(monitor)
+        verifyNoInteractions(meSvc)
+      }
+
+      "return 400 when ids do not match" in {
+        val (monSvc, meSvc) = mocks
+        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+
+        val requestBody =
+          s"""{
+             |"id": "foo",
+             |"name": "bar",
+             |"active": true,
+             |"interval": "10 minutes",
+             |"connection": {
+             |  "Http": {
+             |    "url": "http://foo.bar",
+             |    "method": "GET",
+             |    "timeout": "1 minute"
+             |  }
+             |},
+             |"contact": {
+             |  "Email": {
+             |    "email": "foo@bar.com"
+             |  }
+             |}
+             |}""".stripMargin
+
+        val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}").value, method = Method.PUT).withEntity(requestBody)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.BadRequest, Some("""{"message":"Id in path is different from id in the request body"}"""))
+        verifyNoInteractions(meSvc, monSvc)
+      }
+    }
 
     "PUT /monitors/:id/active" should {
       "activate monitor and return 204" in {
@@ -26,6 +95,23 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
         val response = controller.routes.orNotFound.run(request)
 
         verifyJsonResponse(response, Status.NoContent, None)
+        verify(monSvc).activate(Monitors.id, true)
+        verifyNoInteractions(meSvc)
+      }
+
+      "return 404 if monitor does not exist" in {
+        val monitor = Monitors.gen()
+        val (monSvc, meSvc) = mocks
+        when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.raiseError(AppError.NotFound("does not exist")))
+
+        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+
+        val requestBody = """{"active":true}""".stripMargin
+
+        val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}/active").value, method = Method.PUT).withEntity(requestBody)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.NotFound, Some("""{"message":"does not exist"}"""))
         verify(monSvc).activate(Monitors.id, true)
         verifyNoInteractions(meSvc)
       }
