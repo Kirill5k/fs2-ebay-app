@@ -31,15 +31,13 @@ final case class RedirectController[F[_]: Concurrent](
         req.headers.get(XRerouteToHeader) match {
           case Some(redirectToUri) =>
             client
-              .stream {
+              .toHttpApp {
                 req
                   .withUri(Uri.unsafeFromString(redirectToUri.head.value + req.uri.toString))
                   .removeHeader(HostHeader)
                   .removeHeader(XReloadOn403Header)
                   .removeHeader(XRerouteToHeader)
               }
-              .compile
-              .lastOrError
               .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.headers.get(XReloadOn403Header).isDefined))
           case None =>
             BadRequest(s"Missing $XRerouteToHeader header")
