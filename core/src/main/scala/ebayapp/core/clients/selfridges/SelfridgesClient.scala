@@ -36,7 +36,7 @@ final private class LiveSelfridgesClient[F[_]](
     "thong",
     "\\bBRA\\b",
     "bikini",
-    "jersey brief",
+    "jersey (brief|shirt|t-shirt|top)",
     "swimsuit",
     "jock( )?strap",
     "bralette",
