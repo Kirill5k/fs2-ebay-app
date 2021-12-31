@@ -4,9 +4,9 @@ import cats.effect.kernel.Deferred
 import cats.effect.{IO, IOApp}
 import cats.syntax.semigroupk.*
 import ebayapp.kernel.controllers.HealthController
-import ebayapp.proxy.common.Resources
+import ebayapp.proxy.common.{Interrupter, Resources}
 import ebayapp.proxy.common.config.AppConfig
-import ebayapp.proxy.controllers.{RedirectController}
+import ebayapp.proxy.controllers.RedirectController
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
@@ -22,8 +22,8 @@ object Application extends IOApp.Simple:
         for
           _                  <- logger.info("created resources")
           config             <- AppConfig.load[IO] <* logger.info("loaded config")
-          sigTerm            <- Deferred[IO, Unit]
-          redirectController <- RedirectController.make[IO](resources.blazeClient, sigTerm)
+          interrupter        <- Interrupter.make[IO]
+          redirectController <- RedirectController.make[IO](resources.blazeClient, interrupter)
           healthController   <- HealthController.make[IO]
           routes = healthController.routes <+> redirectController.routes
           _ <- logger.info("starting http server")
@@ -34,7 +34,7 @@ object Application extends IOApp.Simple:
             .withIdleTimeout(1.hour)
             .withHttpApp(routes.orNotFound)
             .serve
-            .interruptWhen(sigTerm.get.attempt)
+            .interruptWhen(interrupter.awaitSigTerm)
             .compile
             .drain
         yield ()

@@ -7,6 +7,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.applicative.*
 import ebayapp.kernel.controllers.Controller
+import ebayapp.proxy.common.Interrupter
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
 import org.http4s.*
@@ -14,7 +15,7 @@ import org.typelevel.ci.CIString
 
 final case class RedirectController[F[_]: Concurrent](
     private val client: Client[F],
-    private val sigTerm: Deferred[F, Unit]
+    private val interrupter: Interrupter[F]
 ) extends Controller[F] with Http4sDsl[F] {
 
   private val HostHeader         = CIString("host")
@@ -43,10 +44,10 @@ final case class RedirectController[F[_]: Concurrent](
     }
 
   private def terminateIfTrue(cond: Boolean): F[Unit] =
-    if (cond) sigTerm.complete(()).void else ().pure[F]
+    if (cond) interrupter.terminate else ().pure[F]
 }
 
 object RedirectController {
-  def make[F[_]: Concurrent](client: Client[F], sigTerm: Deferred[F, Unit]): F[Controller[F]] =
-    Monad[F].pure(new RedirectController[F](client, sigTerm))
+  def make[F[_]: Concurrent](client: Client[F], interrupter: Interrupter[F]): F[Controller[F]] =
+    Monad[F].pure(new RedirectController[F](client, interrupter))
 }
