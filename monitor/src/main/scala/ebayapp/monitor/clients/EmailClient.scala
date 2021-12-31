@@ -8,21 +8,27 @@ import ebayapp.monitor.domain.Monitor
 
 import javax.mail.internet.InternetAddress
 
+final case class EmailMessage(
+    to: String,
+    subject: String,
+    body: String
+)
+
 trait EmailClient[F[_]]:
-  def send(contact: Monitor.Contact.Email, subject: String, message: String): F[Unit]
+  def send(message: EmailMessage): F[Unit]
 
 final private class LiveEmailClient[F[_]](
     private val mailer: MailerF[F]
 )(using
     F: Async[F]
 ) extends EmailClient[F]:
-  def send(contact: Monitor.Contact.Email, subject: String, message: String): F[Unit] =
+  def send(message: EmailMessage): F[Unit] =
     mailer.send {
       Envelope
         .from(new InternetAddress(mailer.from))
-        .to(new InternetAddress(contact.email))
-        .subject(subject)
-        .content(Text(message))
+        .to(new InternetAddress(message.to))
+        .subject(message.subject)
+        .content(Text(message.body))
     }
 
 object EmailClient:

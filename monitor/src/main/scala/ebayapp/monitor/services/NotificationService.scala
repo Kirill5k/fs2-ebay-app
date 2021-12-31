@@ -3,10 +3,11 @@ package ebayapp.monitor.services
 import cats.Monad
 import cats.effect.Concurrent
 import ebayapp.monitor.common.time.*
-import ebayapp.monitor.clients.EmailClient
+import ebayapp.monitor.clients.{EmailClient, EmailMessage}
 import ebayapp.monitor.domain.Monitor.Contact
 import ebayapp.monitor.domain.{Monitor, Notification}
 import org.typelevel.log4cats.Logger
+
 import java.time.Duration
 
 trait NotificationService[F[_]]:
@@ -25,9 +26,9 @@ final private class LiveNotificationService[F[_]](
     val msg4        = s"Event timestamp: ${notification.timeString}"
     val completeMsg = s"$msg1$msg2$msg3$msg4"
     monitor.contact match
-      case Contact.Logging      => logger.info(completeMsg)
-      case email: Contact.Email => emailClient.send(email, s"Monitor is ${notification.statusString}: ${monitor.name}", completeMsg)
-      case contact              => F.raiseError(new IllegalArgumentException(s"Contact $contact is not yet supported"))
+      case Contact.Logging   => logger.info(completeMsg)
+      case Contact.Email(to) => emailClient.send(EmailMessage(to, s"Monitor is ${notification.statusString}: ${monitor.name}", completeMsg))
+      case contact           => F.raiseError(new IllegalArgumentException(s"Contact $contact is not yet supported"))
 
 object NotificationService:
   def make[F[_]: Logger: Concurrent](emailClient: EmailClient[F]): F[NotificationService[F]] =
