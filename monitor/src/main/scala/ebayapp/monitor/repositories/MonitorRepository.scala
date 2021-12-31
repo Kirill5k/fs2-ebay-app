@@ -24,6 +24,7 @@ trait MonitorRepository[F[_]]:
   def delete(id: Monitor.Id): F[Unit]
   def getAll: F[List[Monitor]]
   def getAllActive: F[List[Monitor]]
+  def update(monitor: Monitor): F[Unit]
 
 final private class LiveMonitorRepository[F[_]: Async](
     private val collection: MongoCollection[F, MonitorEntity]
@@ -52,6 +53,12 @@ final private class LiveMonitorRepository[F[_]: Async](
       .updateOne(Filter.idEq(id.toObjectId), Update.set("active", active))
       .map(_.getMatchedCount)
       .flatMap(notFoundErrorIfNoMatches(id))
+
+  def update(monitor: Monitor): F[Unit] =
+    collection
+      .replaceOne(Filter.idEq(monitor.id.toObjectId), MonitorEntity.from(monitor))
+      .map(_.getMatchedCount)
+      .flatMap(notFoundErrorIfNoMatches(monitor.id))
 
   private def notFoundErrorIfNoMatches(id: Monitor.Id)(matchCount: Long): F[Unit] =
     if (matchCount == 0) AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit] else ().pure[F]

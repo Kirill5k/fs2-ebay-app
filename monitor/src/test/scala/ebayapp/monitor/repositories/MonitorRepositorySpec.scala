@@ -3,7 +3,7 @@ package ebayapp.monitor.repositories
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import ebayapp.kernel.errors.AppError
-import ebayapp.monitor.domain.Monitors
+import ebayapp.monitor.domain.{Monitors, Monitor}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import mongo4cats.embedded.EmbeddedMongo
@@ -79,7 +79,6 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
         result.map(_.value.active mustBe false)
       }
 
-
       "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
         val result = for
           repo <- MonitorRepository.make(db)
@@ -129,6 +128,28 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
         val result = for
           repo <- MonitorRepository.make(db)
           res  <- repo.delete(Monitors.id).attempt
+        yield res
+
+        result.map(_ mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist")))
+      }
+    }
+
+    "update" should {
+      "replace existing monitor in db" in withEmbeddedMongoClient { db =>
+        val result = for
+          repo <- MonitorRepository.make(db)
+          mon  <- repo.save(Monitors.create())
+          _    <- repo.update(mon.copy(name = Monitor.Name("foo")))
+          upd  <- repo.find(mon.id)
+        yield upd
+
+        result.map(_.map(_.name) mustBe Some(Monitor.Name("foo")))
+      }
+
+      "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
+        val result = for
+          repo <- MonitorRepository.make(db)
+          res  <- repo.update(Monitors.gen()).attempt
         yield res
 
         result.map(_ mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist")))

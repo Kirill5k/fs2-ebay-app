@@ -13,6 +13,7 @@ trait MonitorService[F[_]]:
   def getAllActive: F[List[Monitor]]
   def create(monitor: CreateMonitor): F[Monitor]
   def find(id: Monitor.Id): F[Option[Monitor]]
+  def update(monit: Monitor): F[Unit]
   def activate(id: Monitor.Id, active: Boolean): F[Unit]
 
 final private class LiveMonitorService[F[_]: Monad](
@@ -22,6 +23,7 @@ final private class LiveMonitorService[F[_]: Monad](
   def find(id: Monitor.Id): F[Option[Monitor]]           = repository.find(id)
   def getAll: F[List[Monitor]]                           = repository.getAll
   def getAllActive: F[List[Monitor]]                     = repository.getAllActive
+  def update(monitor: Monitor): F[Unit]                  = repository.update(monitor)
   def activate(id: Monitor.Id, active: Boolean): F[Unit] = repository.activate(id, active)
   def create(monitor: CreateMonitor): F[Monitor] =
     repository.save(monitor).flatTap(m => dispatcher.dispatch(Action.EnqueueNew(m)))

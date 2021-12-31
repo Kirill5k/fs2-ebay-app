@@ -24,6 +24,16 @@ final private[repositories] case class MonitorEntity(
     )
 
 private[repositories] object MonitorEntity:
+  def from(monitor: Monitor): MonitorEntity =
+    MonitorEntity(
+      monitor.id.toObjectId,
+      monitor.name.value,
+      monitor.connection,
+      monitor.active,
+      monitor.interval,
+      monitor.contact
+    )
+  
   def from(monitor: CreateMonitor): MonitorEntity =
     MonitorEntity(
       ObjectId(),

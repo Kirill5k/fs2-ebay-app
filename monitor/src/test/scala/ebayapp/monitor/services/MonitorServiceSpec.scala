@@ -4,7 +4,7 @@ import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import ebayapp.kernel.MockitoMatchers
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
-import ebayapp.monitor.domain.{CreateMonitor, Monitors, Monitor}
+import ebayapp.monitor.domain.{CreateMonitor, Monitor, Monitors}
 import ebayapp.monitor.repositories.MonitorRepository
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatest.matchers.must.Matchers
@@ -27,6 +27,22 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
         verify(dispatcher).dispatch(Action.EnqueueNew(Monitors.gen()))
         verify(repo).save(Monitors.create())
         mon mustBe Monitors.gen()
+      }
+    }
+
+    "update monitor" in {
+      val (dispatcher, repo) = mocks
+      when(repo.update(any[Monitor])).thenReturn(IO.unit)
+
+      val res = for
+        svc <- MonitorService.make[IO](dispatcher, repo)
+        _   <- svc.update(Monitors.gen())
+      yield ()
+
+      res.unsafeToFuture().map { res =>
+        verifyNoInteractions(dispatcher)
+        verify(repo).update(Monitors.gen())
+        res mustBe ()
       }
     }
 
