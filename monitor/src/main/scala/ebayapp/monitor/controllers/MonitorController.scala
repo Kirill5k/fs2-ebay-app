@@ -9,7 +9,13 @@ import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
-import ebayapp.monitor.controllers.views.{CreateMonitorRequest, CreateMonitorResponse, MonitorView, MonitoringEventView, ActivateMonitorRequest}
+import ebayapp.monitor.controllers.views.{
+  ActivateMonitorRequest,
+  CreateMonitorRequest,
+  CreateMonitorResponse,
+  MonitorView,
+  MonitoringEventView
+}
 import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import org.bson.types.ObjectId
@@ -61,6 +67,19 @@ final private class LiveMonitorController[F[_]](
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
+  private val update = endpoint.put
+    .in(idPath)
+    .in(jsonBody[MonitorView])
+    .errorOut(errorResponse)
+    .out(statusCode(StatusCode.NoContent))
+    .serverLogic { case (id, mon) =>
+      F.fromEither(Either.cond(id == mon.id, (), AppError.Failed(s"Id in path is different from id in the request body"))) >>
+        monitorService
+          .update(mon.toDomain)
+          .as(().asRight[ErrorResponse])
+          .handleError(ErrorResponse.from(_).asLeft)
+    }
+
   private val createNew = endpoint.post
     .in(basePath)
     .in(jsonBody[CreateMonitorRequest])
@@ -97,7 +116,7 @@ final private class LiveMonitorController[F[_]](
     }
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getById, createNew, getEvents, activate))
+    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getById, createNew, getEvents, activate, update))
 
 object MonitorController:
   def make[F[_]: Async](monitorService: MonitorService[F], monitoringEventService: MonitoringEventService[F]): F[Controller[F]] =

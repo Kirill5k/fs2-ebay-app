@@ -18,6 +18,7 @@ object views {
     final case class UnprocessableEntity(message: String) extends ErrorResponse
 
     def from(err: Throwable): ErrorResponse = err match {
+      case e: AppError.Failed   => BadRequest(e.message)
       case e: AppError.NotFound => NotFound(e.message)
       case e: AppError.Invalid  => UnprocessableEntity(e.message)
       case e: Throwable         => InternalError(err.getMessage)
