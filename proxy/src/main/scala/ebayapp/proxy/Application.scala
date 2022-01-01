@@ -3,12 +3,11 @@ package ebayapp.proxy
 import cats.effect.kernel.Deferred
 import cats.effect.{IO, IOApp}
 import cats.syntax.semigroupk.*
+import ebayapp.kernel.Server
 import ebayapp.kernel.controllers.HealthController
 import ebayapp.proxy.common.{Interrupter, Resources}
 import ebayapp.proxy.common.config.AppConfig
 import ebayapp.proxy.controllers.RedirectController
-import org.http4s.blaze.server.BlazeServerBuilder
-import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.Logger
 
@@ -27,13 +26,8 @@ object Application extends IOApp.Simple:
           healthController   <- HealthController.make[IO]
           routes = healthController.routes <+> redirectController.routes
           _ <- logger.info("starting http server")
-          _ <- BlazeServerBuilder[IO]
-            .withExecutionContext(runtime.compute)
-            .bindHttp(config.server.port, config.server.host)
-            .withResponseHeaderTimeout(3.minutes)
-            .withIdleTimeout(1.hour)
-            .withHttpApp(routes.orNotFound)
-            .serve
+          _ <- Server
+            .serve[IO](config.server, routes, runtime.compute)
             .interruptWhen(interrupter.awaitSigTerm)
             .compile
             .drain

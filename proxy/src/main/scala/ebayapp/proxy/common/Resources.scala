@@ -12,14 +12,15 @@ trait Resources[F[_]]:
   def blazeClient: Client[F]
 
 object Resources:
-
+  
   private def makeBlazeClient[F[_]: Async]: Resource[F, Client[F]] =
     BlazeClientBuilder[F]
       .withBufferSize(1024 * 200)
       .withMaxWaitQueueLimit(256 * 10)
       .withMaxTotalConnections(256 * 10)
       .withRequestTimeout(10.minutes)
-      .withResponseHeaderTimeout(10.minutes)
+      .withResponseHeaderTimeout(5.minutes)
+      .withIdleTimeout(Duration.Inf)
       .resource
 
   def make[F[_]: Async]: Resource[F, Resources[F]] =
