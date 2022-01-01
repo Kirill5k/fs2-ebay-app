@@ -27,7 +27,7 @@ final private class LiveInterrupter[F[_]](
     (startupTime.get, F.realTimeInstant)
       .mapN(_ durationBetween _)
       .flatMap { duration =>
-        if (duration < 5.minutes) logger.info("delaying termination as app has just started")
+        if (duration < 5.minutes) logger.info(s"delaying termination as app has started ${duration.toCoarsest} ago")
         else logger.info("terminating app") >> sigTerm.complete(()).void
       }
   def awaitSigTerm: F[Either[Throwable, Unit]] =
