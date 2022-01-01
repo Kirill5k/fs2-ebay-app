@@ -1,14 +1,12 @@
 package ebayapp.proxy.controllers
 
 import cats.Monad
-import cats.effect.Deferred
-import cats.effect.kernel.Concurrent
+import cats.effect.{Concurrent, Deferred}
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.applicative.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.proxy.common.Interrupter
-import org.http4s.client.middleware.FollowRedirect
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
 import org.http4s.*
