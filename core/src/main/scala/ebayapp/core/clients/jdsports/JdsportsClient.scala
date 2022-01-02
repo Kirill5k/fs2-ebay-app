@@ -75,7 +75,7 @@ final private class LiveJdsportsClient[F[_]](
         case Right(html) =>
           F.fromEither(ResponseParser.parseSearchResponse(html))
         case Left(_) if r.code == StatusCode.Forbidden =>
-          logger.error(s"$name-search/forbidden") *> F.sleep(30.seconds) *> searchByBrand(criteria, step)
+          logger.warn(s"$name-search/403") *> F.sleep(30.seconds) *> searchByBrand(criteria, step)
         case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
           logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
         case Left(_) if r.code == StatusCode.NotFound =>
@@ -98,8 +98,6 @@ final private class LiveJdsportsClient[F[_]](
       r.body match {
         case Right(html) =>
           F.fromEither(ResponseParser.parseProductStockResponse(html))
-        case Left(_) if r.code == StatusCode.NotFound =>
-          logger.warn(s"$name-get-stock/404") *> F.pure(None)
         case Left(_) if r.code == StatusCode.Forbidden =>
           logger.warn(s"$name-get-stock/403") *> F.sleep(10.second) *> getProductStock(ci)
         case Left(_) if r.code.isClientError =>
