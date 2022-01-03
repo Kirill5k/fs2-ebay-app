@@ -56,14 +56,14 @@ final private class LiveHarveyNicholsClient[F[_]](
 
   private def searchForProducts(criteria: SearchCriteria)(page: Int): F[(List[HarveyNicholsProduct], Option[Int])] = {
     val queryParams = Map(
-      "query"                     -> s"%2F%2Fsearch=${criteria.query}%2Fcategories=cp2_cp134%2F",
+      "query"                     -> s"%2F%2Fsearch=${criteria.query.replaceAll(" ", "%20")}%2Fcategories=cp2_cp134%2F",
       "context[page_number]"      -> s"$page",
       "context[fh_sort_by]"       -> "price",
       "context[sort_by]"          -> "low_to_high",
       "context[country_code]"     -> "GB",
       "context[site]"             -> "UK",
       "context[customer_dept]"    -> "Mens",
-      "context[region]"           -> "United Kingdom"
+      "context[region]"           -> "United%20Kingdom"
     )
     sendRequest[HarveyNicholsSearchResponse](
       uri"${config.baseUri}/data/lister?$queryParams",
