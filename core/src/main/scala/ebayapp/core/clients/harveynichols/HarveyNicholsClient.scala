@@ -43,8 +43,8 @@ final private class LiveHarveyNicholsClient[F[_]](
               name = product.name.value,
               brand = product.brand.value,
               size = size,
-              currentPrice = product.price.value,
-              originalPrice = product.original_price.value,
+              currentPrice = product.price.encoded,
+              originalPrice = product.original_price.encoded,
               discount = Some(product.percentage_discount.encoded).filter(_ > 0),
               itemUrl = product.product_brand_url.value,
               imageUrl = product._imageurl.value

@@ -113,7 +113,7 @@ data:
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36 OPR/82.0.4227.33"
         "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8"
         "Accept-Encoding": "gzip, deflate, br"
-        "Cookie": "_mitata=ZTg0MjM5MDQ5YWFiMDM1ZTJkOTZkNTcyOTZkZGVmNDMxZWM1ZmEyYjMwNDM5Y2U2MGJjODA3YmQ4MmZlYWUzMA==_/@#/1641209806_/@#/m6mwsbwmn47jqog1_/@#/000; frontend=b4n7jr98re51o0d5ruohnti3r2; GlobalE_Gem_Data=%7B%22CartID%22%3A%220%22%2C%22UserId%22%3A0%2C%22PreferedCulture%22%3A%22en_GB%22%2C%22StoreCode%22%3A%22default%22%7D; CACHED_FRONT_FORM_KEY=NXF8gOfBfGmRpZyK; CACHED_FRONT_FORM_KEY=NXF8gOfBfGmRpZyK; cookies_populated=1; CART_ITEMS_QUANTITY=%7B%22default%22%3A0%7D; CART_TOTAL=%7B%22default%22%3A%7B%22subtotal%22%3A0%2C%22grand_total%22%3Anull%2C%22giftwrapping%22%3A0%2C%22subtotal_formatted%22%3A%22%5Cu00a30.00%22%7D%7D; hn.customer.channel=desktop; hn.geo.site-entry=1; hn.geo.switcher=globale; hn.globale.country=GB; hn.globale.currency=GBP; GlobalE_Data={%22countryISO%22:%22GB%22%2C%22currencyCode%22:%22GBP%22%2C%22cultureCode%22:%22en-GB%22}; _ata_pow=195f"
+        "Cookie": "_mitata=Y2M2NmU5ZGU5NGM2YTUzZmFhNzllYmJiZDIxYjc0NDZlNzE2ZDk3NmQzZWY5N2M3NjVjMDA3OGRjZDgzMTc3ZQ==_/@#/1641233436_/@#/mo0355dlygzuwa2s_/@#/000; frontend=q6iv8h1d2ni3h120sondvqk094; GlobalE_Gem_Data=%7B%22CartID%22%3A%220%22%2C%22UserId%22%3A0%2C%22PreferedCulture%22%3A%22en_GB%22%2C%22StoreCode%22%3A%22default%22%7D; CACHED_FRONT_FORM_KEY=KFE1WJxD7LV95YdE; CACHED_FRONT_FORM_KEY=KFE1WJxD7LV95YdE; cookies_populated=1; CART_ITEMS_QUANTITY=%7B%22default%22%3A0%7D; CART_TOTAL=%7B%22default%22%3A%7B%22subtotal%22%3A0%2C%22grand_total%22%3Anull%2C%22giftwrapping%22%3A0%2C%22subtotal_formatted%22%3A%22%5Cu00a30.00%22%7D%7D; hn.customer.channel=desktop; hn.geo.site-entry=1; hn.geo.switcher=globale; hn.globale.country=GB; hn.globale.currency=GBP; GlobalE_Data={%22countryISO%22:%22GB%22%2C%22currencyCode%22:%22GBP%22%2C%22cultureCode%22:%22en-GB%22}; _ata_pow=7ff; hn.pecr.explicit=1; hn.nonEssentialCookiesRejected=0; hn.customer.dept=mens; hn.pecr=1111/"  
       }
     }
 
@@ -206,11 +206,13 @@ data:
       }
 
       harvey-nichols {
-        delay-between-requests: 25s
-        monitoring-frequency: 6m
+        delay-between-requests: 1m
+        monitoring-frequency: 15m
         monitoring-requests: [
+          {search-criteria: {query: "gucci"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 24}
           {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
           {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
+          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
           {search-criteria: {query: "moncler peyre"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "moncler blesle"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "moncler provins"}, monitor-stock-change: false, monitor-price-change: true}
