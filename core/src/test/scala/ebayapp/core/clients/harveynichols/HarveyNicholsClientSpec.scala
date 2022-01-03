@@ -6,6 +6,8 @@ import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
+import ebayapp.core.domain.ItemDetails.Clothing
+import ebayapp.core.domain.search.BuyPrice
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
@@ -34,6 +36,12 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
 
       client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
         items must have size 102
+
+        val item = items.head
+        item.itemDetails mustBe Clothing("Black cotton-blend shorts", "Kenzo", "M")
+        item.buyPrice mustBe BuyPrice(1, BigDecimal(90.00), Some(50))
+        item.listingDetails.url mustBe "https://www.harveynichols.com/brand/kenzo-kids/449414-black-cotton-blend-shorts/p4077689/"
+        item.listingDetails.image mustBe Some("https://m.hng.io/catalog/product/8/5/857602_black_1.jpg?io=1&width=490&canvas=1:1")
       }
     }
   }
