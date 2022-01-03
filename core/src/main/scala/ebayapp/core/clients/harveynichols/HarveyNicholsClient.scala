@@ -56,7 +56,7 @@ final private class LiveHarveyNicholsClient[F[_]](
 
   private def searchForProducts(criteria: SearchCriteria)(page: Int): F[(List[HarveyNicholsProduct], Option[Int])] = {
     val queryParams = Map(
-      "query"                     -> s"//search=${criteria.query}/categories=cp2_cp134/",
+      "query"                     -> s"%2F%2Fsearch=${criteria.query}%2Fcategories=cp2_cp134%2F",
       "context[page_number]"      -> s"$page",
       "context[customer_type]"    -> "Public",
       "context[hn_page_template]" -> "Search Lister",
@@ -68,7 +68,7 @@ final private class LiveHarveyNicholsClient[F[_]](
       "context[customer_dept]"    -> "Mens",
       "context[region]"           -> "United Kingdom",
       "context[storeCode]"        -> "default",
-      "context[query]"            -> s"//search=${criteria.query}/categories=cp2_cp134/sort_by=low_to_high/",
+      "context[query]"            -> s"%2F%2Fsearch=${criteria.query}%2Fcategories=cp2_cp134%2Fsort_by=low_to_high%2F",
       "meta[searchTerm]"          -> criteria.query,
       "meta[categoryIdPath][]"    -> "134",
       "meta[categoryId]"          -> "134"

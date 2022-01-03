@@ -103,8 +103,9 @@ data:
     }
 
     harvey-nichols {
-      base-uri: "https://www.harveynichols.com"
+      base-uri: "https://fs2-proxy.herokuapp.com"
       headers {
+        "X-Reroute-To": "https://www.harveynichols.com"
         "Accept": "application/json, text/javascript, */*; q=0.01"
         "x-requested-with": "XMLHttpRequest"
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36 OPR/82.0.4227.33"
@@ -208,6 +209,8 @@ data:
           {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
           {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
           {search-criteria: {query: "moncler peyre"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "moncler blesle"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "moncler provins"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
