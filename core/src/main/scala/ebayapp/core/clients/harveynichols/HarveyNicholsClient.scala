@@ -88,7 +88,7 @@ final private class LiveHarveyNicholsClient[F[_]](
           logger.warn(s"$name-$endpoint/exhausted input") *>
             F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
         case Left(DeserializationException(_, error)) =>
-          logger.error(s"$name-$endpoint response parsing error: ${error.getMessage}") *>
+          logger.error(s"$name-$endpoint/json-parsing-error: ${error.getMessage}\norigin uri: $uri") *>
             F.pure(defaultResponse)
         case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
           logger.error(s"$name-$endpoint/$s-critical") *>
