@@ -1,0 +1,984 @@
+{
+  "universe": {
+    "campaigns": [
+      {
+        "id": "702245cd-bbf6-42c4-83dd-52e4cc1a56a6",
+        "name": "TOP NAV - Beauty  - UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/beauty/skincare/?TN_B_PNY",
+            "contentLinkAlt": "|PREP FOR NEW YEAR| | Shop now | bottom | 1",
+            "contentValue": "https://n.hng.io/uploads/2021/12/uk-int-1.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Beauty",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "46f5573b-20cf-4a01-ab2f-41d0b9048fae",
+        "name": "Ticker - Homepage/PLP/PDP - Desktop/Tablet - UK - Sale Preview - Public",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/sale",
+            "contentLinkAlt": null,
+            "contentValue": "SALE | Receive up to 50% off for a limited time only | Shop now",
+            "name": "title",
+            "type": "text",
+            "id": "titletext"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": null,
+            "contentLinkAlt": null,
+            "contentValue": "",
+            "name": "line1",
+            "type": "text",
+            "id": "line1text"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": null,
+            "contentLinkAlt": null,
+            "contentValue": "",
+            "name": "line2",
+            "type": "text",
+            "id": "line2text"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "",
+        "type": "Ticker",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "475132de-bf79-4a80-bd01-e3f0b9eb40bc",
+        "name": "TOP NAV - Kidswear - UK/HK/INT - SALE - 50%",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/kidswear/",
+            "contentLinkAlt": "| C.P. COMPANY, MOSCHINO AND MORE | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-4.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Kids",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "d130b998-5fcf-434d-8ed8-eb9a9a759592",
+        "name": "TOP NAV - Bags - UK/HK/INT - Sale - 50%",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/womens/all-accessories/bags/",
+            "contentLinkAlt": "| WOMEN'S BAGS | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-4.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/mens/all-accessories/bags/",
+            "contentLinkAlt": "| MEN'S BAGS | | Shop now | bottom | 1",
+            "contentValue": "https://n.hng.io/uploads/2021/12/single-314x460-3.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Bags",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "54386363-14fd-4085-9a7c-5a5a226597a3",
+        "name": "TOP NAV - WW - UK/HK/INT",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/womens/",
+            "contentLinkAlt": "| Alice + Olivia, Ganni and more | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-4.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/brand/rotate-by-birger-christensen/?T_WW=rotate",
+            "contentLinkAlt": "| ROTATE BY BIRGER CHRISTENSEN | | Shop now | bottom | 1",
+            "contentValue": "https://n.hng.io/uploads/2021/12/ww2-1.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Women",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "3e68ddbf-8231-4789-aa7a-e913e2782fa3",
+        "name": "TOP NAV - Black Friday -  UK /HK/INT",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/promotion/black-friday/?p=1/",
+            "contentLinkAlt": "| BLACK FRIDAY | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/11/double-662x460.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Black Friday",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "3f04a87e-4905-43fc-8586-19ba756099a6",
+        "name": "TOP NAV - UK - Sleigh Top Level  - Public",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/shopping-party/",
+            "contentLinkAlt": "| 20% OFF FASHION WITH CODE HNSLEIGH | | Sign up / sign in | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/10/rewards-double-662x460.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Sleigh Sale",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "77ca015b-5cc4-4f9d-9b43-2e13ed40c757",
+        "name": "TOP NAV - Home -- HK/INT/UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/home/home-fragrance/candles/",
+            "contentLinkAlt": "| CANDLES | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/home.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Home",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "934577da-5e77-4c0f-9bc0-5318350ee06b",
+        "name": "TOP NAV - Shoes -  UK/HK/INT - Sale 50%",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/womens/all-shoes/",
+            "contentLinkAlt": "| WOMEN'S SHOES | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-4.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/mens/all-shoes/",
+            "contentLinkAlt": "| MEN'S SHOES | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-4.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Shoes",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "5544fd5b-474a-4c98-90a0-82957c8b06d9",
+        "name": "TOP NAV - MW -  UK/HK/INT",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/mens/",
+            "contentLinkAlt": "| PALM ANGELS, OFF-WHITE AND MORE | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-4.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/brand/dsquared-2/mens/?T_MW=dsq",
+            "contentLinkAlt": "| DSQUARED2 | | Shop now | bottom | 1",
+            "contentValue": "https://n.hng.io/uploads/2021/12/mw2.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Men",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "ed8d2aed-80b0-415d-94d5-ce642b6190a3",
+        "name": "TOP NAV - Sale - UK/INT/HK - 50%",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/sale/womens",
+            "contentLinkAlt": "| WOMENSWEAR| | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-4.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Sale",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "a0b48b49-e8d2-4c84-a062-444dacdbcb95",
+        "name": "TOP NAV - Food & Wine -   UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/food-and-wine/hampers/?F_FW=hampers",
+            "contentLinkAlt": "| HAMPERS | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/fw-10.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Food&Wine",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "d7ba14bb-a293-47c6-aa5e-8d9e226eeb2f",
+        "name": "TOP NAV - New In  - HK/INT/UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/new-in/womens/all-clothing//style=knitwear/?NI_WW=knitwear",
+            "contentLinkAlt": "| WOMEN'S KNITWEAR | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/ww-10.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/editorial/fy19/50/international-designers/?NI_MW=ID",
+            "contentLinkAlt": "| MEN'S INTERNATIONAL DESIGNERS | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/mw-10.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/new-in/beauty/?N_B=newin/",
+            "contentLinkAlt": "| NEW-IN BEAUTY| | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/beauty-3.jpg",
+            "name": "image_3",
+            "type": "image",
+            "id": "image3image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "New In",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "edcd156a-8049-40b6-8ddc-fcf4d01edfc3",
+        "name": "TOP NAV - CHRISTMAS - UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/christmas/stocking-fillers/for-her/",
+            "contentLinkAlt": "| STOCKING FILLERS FOR HER | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/xmas-2.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Christmas",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "bf879def-628a-40a4-b9f2-4dd7867d566e",
+        "name": "TOP NAV - Gifts - UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/gifts/gifts-for-her/",
+            "contentLinkAlt": "| GIFTS FOR HER | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/10/giftstopnav.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Gifts",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "ca883c98-4e51-45ed-a7f0-54064687f571",
+        "name": "TOP NAV - Brands - UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/brand/armani-beauty/beauty/?TN_B_ARM",
+            "contentLinkAlt": "| ARMANI BEAUTY | | Shop now | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/1-6.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/brand/canada-goose/?B_B=canadagoose",
+            "contentLinkAlt": "| CANADA GOOSE | | Shop now | bottom | 1",
+            "contentValue": "https://n.hng.io/uploads/2021/12/2-uk-5.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Brands",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "018967f9-fbcb-4cb0-b3be-0fefa68ff332",
+        "name": "TOP NAV - Stories - UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/news/features/event-season-style-guide/",
+            "contentLinkAlt": "| EVENT SEASON STYLE GUIDE | | Read more | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/glam-squad-topnav.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/news/features/how-to-pick-a-hamper/",
+            "contentLinkAlt": "| HOW TO PICK A HAMPER  | | Read more | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/how-to-pick-a-hamper​-topnav.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Stories",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "3fdf9462-e328-4529-8dc2-d22dbf239b50",
+        "name": "TOP NAV - Covid-19 - UK",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/info/help/contact-us/re-opening/",
+            "contentLinkAlt": "| STORE & RESTAURANT FAQs | | Learn more | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2020/07/covid1.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Covid Policy",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "80c3d7a3-6aaf-46ad-a6a0-00b91e19b0e4",
+        "name": "TOP NAV - Stores & Restaurants",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": "/news/2021/12/20/winter-dining-2022/",
+            "contentLinkAlt": "| WINTER DINING | | Learn more | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/double-662x460-5.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          },
+          {
+            "areaLinks": [],
+            "contentLink": "/resell/?C_GI=Reflaunt/",
+            "contentLinkAlt": "| SHOP.LOVE.RESELL | | Learn more | bottom | 2",
+            "contentValue": "https://n.hng.io/uploads/2021/12/topnav-double-662x460.jpg",
+            "name": "image_2",
+            "type": "image",
+            "id": "image2image"
+          }
+        ],
+        "products": [],
+        "title": "",
+        "slogan": "Stores & Restaurants",
+        "type": "Advert on Mega Menu",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": true,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      },
+      {
+        "id": "4b5e45fc-9d24-473a-a62a-d37fbce52e39",
+        "name": "Kenzo - Brand Bio - Search",
+        "content": [
+          {
+            "areaLinks": [],
+            "contentLink": null,
+            "contentLinkAlt": null,
+            "contentValue": "https://n.hng.io/uploads/2020/09/kenzo.jpg",
+            "name": "image_1",
+            "type": "image",
+            "id": "image1image"
+          }
+        ],
+        "products": [],
+        "title": "Kenzo",
+        "slogan": "Kenzo has been infusing positive energy and contagious freedom for half a century by boldly proclaiming a polychrome, daring and borderless fashion that celebrates nature and cultural diversity. Founded in Paris in 1970 by Kenzo Takada, the House continues to cultivate and reinterpret codes that make it unique with dynamic modernity.",
+        "type": "Editorial Data",
+        "tnc": false,
+        "shopAll": false,
+        "hideTitle": false,
+        "hideSlogan": false,
+        "imageDynamicHeight": false,
+        "isImageOnly": false,
+        "imageWithLinks": false
+      }
+    ],
+    "filters": [
+      {
+        "type": "categories",
+        "id": "2befc44e-98d2-4292-a6fc-6b751d14539e",
+        "title": "Categories",
+        "custom": {
+          "Type": "Category",
+          "Show number of items": "Yes"
+        },
+        "facetOptions": [
+          {
+            "title": "All Clothing",
+            "nr": 37,
+            "encoded": "cp2_cp134_cp140",
+            "decoded": "cp2_cp134_cp140",
+            "selected": false,
+            "categoryEncodedValue": "{cp2_cp134_cp140}",
+            "url": "search/kenzo/mens/all-clothing/",
+            "categoryUrlPath": "mens/all-clothing",
+            "categoryIncludeInMenu": true
+          },
+          {
+            "title": "New Season",
+            "nr": 20,
+            "encoded": "cp2_cp134_cp4257",
+            "decoded": "cp2_cp134_cp4257",
+            "selected": false,
+            "categoryEncodedValue": "{cp2_cp134_cp4257}",
+            "url": "search/kenzo/mens/new-season/",
+            "categoryUrlPath": "mens/new-season",
+            "categoryIncludeInMenu": false
+          },
+          {
+            "title": "Trending Now",
+            "nr": 19,
+            "encoded": "cp2_cp134_cp2612",
+            "decoded": "cp2_cp134_cp2612",
+            "selected": false,
+            "categoryEncodedValue": "{cp2_cp134_cp2612}",
+            "url": "search/kenzo/mens/trending-now/",
+            "categoryUrlPath": "mens/trending-now",
+            "categoryIncludeInMenu": false
+          }
+        ]
+      },
+      {
+        "type": "brand",
+        "id": "9fd657ba-aa4c-465b-94e2-00ead9b79697",
+        "title": "Brand",
+        "custom": {
+          "Type": "Brand",
+          "Show number of items": "No"
+        },
+        "facetOptions": [
+          {
+            "title": "Kenzo",
+            "nr": 37,
+            "encoded": "kenzo",
+            "decoded": "kenzo",
+            "selected": false,
+            "standardBrandName": "kenzo",
+            "url": "search/kenzo/mens//brand=kenzo/"
+          }
+        ]
+      },
+      {
+        "type": "group_colour",
+        "id": "ee3b9406-43a9-4259-b8d0-d4ecb5e0c66d",
+        "title": "Colour",
+        "custom": {
+          "Type": "Standard",
+          "Show number of items": "No"
+        },
+        "facetOptions": [
+          {
+            "title": "Black",
+            "nr": 11,
+            "encoded": "black",
+            "decoded": "black",
+            "selected": false,
+            "url": "search/kenzo/mens//group_colour=black/"
+          },
+          {
+            "title": "Blue",
+            "nr": 6,
+            "encoded": "blue",
+            "decoded": "blue",
+            "selected": false,
+            "url": "search/kenzo/mens//group_colour=blue/"
+          },
+          {
+            "title": "Green",
+            "nr": 3,
+            "encoded": "green",
+            "decoded": "green",
+            "selected": false,
+            "url": "search/kenzo/mens//group_colour=green/"
+          },
+          {
+            "title": "Grey",
+            "nr": 9,
+            "encoded": "grey",
+            "decoded": "grey",
+            "selected": false,
+            "url": "search/kenzo/mens//group_colour=grey/"
+          },
+          {
+            "title": "Navy",
+            "nr": 3,
+            "encoded": "navy",
+            "decoded": "navy",
+            "selected": false,
+            "url": "search/kenzo/mens//group_colour=navy/"
+          },
+          {
+            "title": "White",
+            "nr": 4,
+            "encoded": "white",
+            "decoded": "white",
+            "selected": false,
+            "url": "search/kenzo/mens//group_colour=white/"
+          },
+          {
+            "title": "Yellow",
+            "nr": 1,
+            "encoded": "yellow",
+            "decoded": "yellow",
+            "selected": false,
+            "url": "search/kenzo/mens//group_colour=yellow/"
+          }
+        ]
+      },
+      {
+        "type": "size",
+        "id": "a7bfa9b5-7300-4c2a-9e81-60c62c3a98ad",
+        "title": "Size",
+        "custom": {
+          "Type": "Standard",
+          "Show number of items": "No"
+        },
+        "facetOptions": [
+          {
+            "title": "XS",
+            "nr": 2,
+            "encoded": "xs",
+            "decoded": "xs",
+            "selected": false,
+            "url": "search/kenzo/mens//size=xs/"
+          },
+          {
+            "title": "S",
+            "nr": 24,
+            "encoded": "s",
+            "decoded": "s",
+            "selected": false,
+            "url": "search/kenzo/mens//size=s/"
+          },
+          {
+            "title": "S/M",
+            "nr": 3,
+            "encoded": "s_h2dm",
+            "decoded": "s-m",
+            "selected": false,
+            "url": "search/kenzo/mens//size=s-m/"
+          },
+          {
+            "title": "M",
+            "nr": 24,
+            "encoded": "m",
+            "decoded": "m",
+            "selected": false,
+            "url": "search/kenzo/mens//size=m/"
+          },
+          {
+            "title": "L",
+            "nr": 23,
+            "encoded": "l",
+            "decoded": "l",
+            "selected": false,
+            "url": "search/kenzo/mens//size=l/"
+          },
+          {
+            "title": "XL",
+            "nr": 24,
+            "encoded": "xl",
+            "decoded": "xl",
+            "selected": false,
+            "url": "search/kenzo/mens//size=xl/"
+          },
+          {
+            "title": "XXL",
+            "nr": 1,
+            "encoded": "xxl",
+            "decoded": "xxl",
+            "selected": false,
+            "url": "search/kenzo/mens//size=xxl/"
+          }
+        ]
+      }
+    ],
+    "products": [],
+    "selections": [
+      {
+        "type": "search",
+        "valuesString": "",
+        "url": "search/kenzo/",
+        "values": [],
+        "typeLabel": null,
+        "searchTerm": "kenzo"
+      },
+      {
+        "type": "categories",
+        "valuesString": "Men",
+        "values": [
+          {
+            "title": "Men",
+            "encoded": "cp2_cp134",
+            "decoded": "cp2_cp134"
+          }
+        ],
+        "typeLabel": "Categories",
+        "categoryEncodedValue": "{cp2_cp134}",
+        "url": "search/kenzo/mens/",
+        "categoryUrlPath": "mens"
+      }
+    ],
+    "pagination": [
+      {
+        "label": "<",
+        "active": false,
+        "id": "nonpage132902",
+        "elipsis": false,
+        "url": "search/kenzo/mens//page=1/",
+        "pageNumber": 1
+      },
+      {
+        "label": 1,
+        "url": "search/kenzo/mens//page=1/",
+        "elipsis": false,
+        "pageNumber": 1,
+        "id": "page132903",
+        "active": false
+      }
+    ],
+    "numberOfItems": 37,
+    "numberOfSelections": 0,
+    "numberOfPages": 1,
+    "view": "search",
+    "uv": {
+      "version": "1.2.1",
+      "page": {
+        "environment": "production",
+        "type": "search",
+        "breadcrumb": [
+          "kenzo",
+          "Men"
+        ]
+      },
+      "listing": {
+        "result_count": 37,
+        "query": "kenzo"
+      }
+    },
+    "context": {
+      "customer_type": "Public",
+      "hn_page_template": "Search Lister",
+      "query": "//search=kenzo/categories=cp2_cp134/",
+      "channel": "Desktop",
+      "fh_sort_by": "price",
+      "sort_by": "low_to_high",
+      "trigger_date_time": "20220103T120100",
+      "fh_view_size": "60",
+      "country_code": "GB",
+      "filter_date_time": "2201031201",
+      "site": "UK",
+      "page_number": "2",
+      "customer_dept": "None",
+      "fh_location": "//cp2/en_GB/$s=kenzo/categories<{cp2_cp134}/",
+      "region": "United Kingdom",
+      "row_size": "12",
+      "storeCode": "default",
+      "fh_start_index": "60"
+    },
+    "logArgs": "id=unknown&proctime=0.081&view=search&paths=2befc44e-98d2-4292-a6fc-6b751d14539e,9fd657ba-aa4c-465b-94e2-00ead9b79697,ee3b9406-43a9-4259-b8d0-d4ecb5e0c66d,a7bfa9b5-7300-4c2a-9e81-60c62c3a98ad,314ae5b8-ecae-48f9-9f7c-c2a3cde8f021,a11dcb6c-5af6-4ea4-bfba-2ba818159314,2e4fea0b-9837-416f-9216-19f0d54a38f9,72303499-eee6-44fa-a933-f5519c559733,a2e1a861-296c-4b00-8bbf-7386cb23e47e,343c5744-d181-4768-8d65-620c60e31519,351cabc1-cfe2-45b5-a7be-3ce60f62544c,fce78f06-3361-4929-8288-307766fe4816,1e2f385e-42e5-4670-9fb9-bbac780d1909,499a4d61-8ce8-4d92-b3a6-2a466402b089,bf1a8898-77e3-4da1-bc67-82e2b967aedd&facets=categories,brand,group_colour,size,percentage_discount,is_mirakl_product,season,hn_size,mark_down,hk_mark_down,active_mark_down,hk_active_mark_down,family_of_business,product_slug,price&items=&themes=702245cd-bbf6-42c4-83dd-52e4cc1a56a6,46f5573b-20cf-4a01-ab2f-41d0b9048fae,475132de-bf79-4a80-bd01-e3f0b9eb40bc,d130b998-5fcf-434d-8ed8-eb9a9a759592,54386363-14fd-4085-9a7c-5a5a226597a3,3e68ddbf-8231-4789-aa7a-e913e2782fa3,3f04a87e-4905-43fc-8586-19ba756099a6,77ca015b-5cc4-4f9d-9b43-2e13ed40c757,934577da-5e77-4c0f-9bc0-5318350ee06b,5544fd5b-474a-4c98-90a0-82957c8b06d9,ed8d2aed-80b0-415d-94d5-ce642b6190a3,a0b48b49-e8d2-4c84-a062-444dacdbcb95,d7ba14bb-a293-47c6-aa5e-8d9e226eeb2f,edcd156a-8049-40b6-8ddc-fcf4d01edfc3,bf879def-628a-40a4-b9f2-4dd7867d566e,ca883c98-4e51-45ed-a7f0-54064687f571,018967f9-fbcb-4cb0-b3be-0fefa68ff332,3fdf9462-e328-4529-8dc2-d22dbf239b50,80c3d7a3-6aaf-46ad-a6a0-00b91e19b0e4,4b5e45fc-9d24-473a-a62a-d37fbce52e39&location=%2f%2fcp2%2fen_GB%2f%24s%3dkenzo%2fcategories%3c%7bcp2_cp134%7d%2f&searchterms=kenzo&listerstartindex=60&listernrofitems=37&viewsize=37&sortby=price&searchpasses=EXACT:37&modificationapplied=41504039-b2dd-49e0-8faf-f538f8cac92e,b986b306-b738-407b-b364-875ffc15d6bc,d53bace0-adcb-4889-a5bf-5ab97b20a956,6bf9c0b6-492e-4265-8bb7-42fa77d3d608,f59155b3-f833-4318-8e7d-82ec278b5aa4,401a50d2-3cb1-47bd-ac43-b1ccb47c66d5,37ab6be8-1741-4c7b-ba7b-0584825e0d0f,071e0aaf-9749-4095-96d9-4cc01aa993db,e1a6dd08-e413-442b-b834-4509d0e35dd6,8ae2c5fc-b578-4300-9804-da4edcf4c1a9,e0356f3f-cacf-4dce-9bb9-aaa7ba612c0c,5be66663-9669-477e-ac79-93bed8ef0cb3,883cf031-6181-4eac-a5ff-abf8a1eabf2c&fh_modification=41504039-b2dd-49e0-8faf-f538f8cac92e%2Cb986b306-b738-407b-b364-875ffc15d6bc%2Cd61ec958-7e6a-48ac-bdfe-ea0aec1d79e6%2Cd53bace0-adcb-4889-a5bf-5ab97b20a956%2C6bf9c0b6-492e-4265-8bb7-42fa77d3d608%2Ca9bdf86d-0e13-44dc-95d2-894ac693b194%2Cf59155b3-f833-4318-8e7d-82ec278b5aa4%2C401a50d2-3cb1-47bd-ac43-b1ccb47c66d5%2Cf6c086b7-7238-4aad-be49-abd833bbc1f8%2C37ab6be8-1741-4c7b-ba7b-0584825e0d0f%2C071e0aaf-9749-4095-96d9-4cc01aa993db%2Ce1a6dd08-e413-442b-b834-4509d0e35dd6%2C8ae2c5fc-b578-4300-9804-da4edcf4c1a9%2Ce0356f3f-cacf-4dce-9bb9-aaa7ba612c0c%2C5be66663-9669-477e-ac79-93bed8ef0cb3%2C3df87d56-146d-47a4-b1f7-4af61fc71861%2C883cf031-6181-4eac-a5ff-abf8a1eabf2c%2C340a40e4-62b8-450d-86fc-438c6f573bb7%2C&itemsinselection=37&usertype=unknown&qid=100698&triggers=country_code:GB,trigger_date_time:20220103T120100,site:UK,filter_date_time:2201031201,row_size:12,channel:Desktop,customer_type:Public,hn_page_template:Search+Lister,region:United+Kingdom,customer_dept:None&querystring=customer_type%3DPublic%26hn_page_template%3DSearch+Lister%26query%3D%2F%2Fsearch%3Dkenzo%2Fcategories%3Dcp2_cp134%2Fsort_by%3Dlow_to_high%2F%26channel%3DDesktop%26fh_sort_by%3Dprice%26sort_by%3Dlow_to_high%26trigger_date_time%3D20220103T120100%26fh_view_size%3D60%26country_code%3DGB%26filter_date_time%3D2201031201%26site%3DUK%26page_number%3D2%26customer_dept%3DNone%26region%3DUnited+Kingdom%26row_size%3D12%26storeCode%3Ddefault%26fh_start_index%3D60",
+    "productsDataLayer": [],
+    "rid": "b0024948-37d0-41a3-bd6a-c4dee96ac28d",
+    "search": {
+      "suggestions": [],
+      "term": "kenzo"
+    }
+  },
+  "editorial": {
+    "name": "Kenzo",
+    "description": "Kenzo has been infusing positive energy and contagious freedom for half a century by boldly proclaiming a polychrome, daring and borderless fashion that celebrates nature and cultural diversity. Founded in Paris in 1970 by Kenzo Takada, the House continues to cultivate and reinterpret codes that make it unique with dynamic modernity.",
+    "image": "https://n.hng.io/uploads/2020/09/kenzo.jpg"
+  },
+  "metadata": {
+    "canonical": "https://www.harveynichols.com/data/lister/",
+    "title": "Kenzo - Harvey Nichols",
+    "keywords": "",
+    "description": "Luxury department store, Harvey Nichols, offers designer fashion, beauty, food & wine both online and in-store including Knightsbridge, Leeds & Edinburgh.",
+    "jsonld": [
+      {
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "foundingDate": "1831",
+        "name": "Harvey Nichols",
+        "brand": "Harvey Nichols",
+        "url": "https://www.harveynichols.com/",
+        "logo": "https://www.harveynichols.com/static/images/logo/harvey-nichols-stacked.png",
+        "description": "Luxury department store, Harvey Nichols, offers designer fashion, beauty, food &amp; wine both online and in-store including Knightsbridge, Leeds &amp; Edinburgh.",
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "telephone": "+44-(0)20-7201-8088",
+            "contactType": "customer service"
+          }
+        ],
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.harveynichols.com/search/{search_term_string}/",
+          "query-input": "required name=search_term_string"
+        },
+        "sameAs": [
+          "https://www.youtube.com/user/HarveyNicholsUK",
+          "https://twitter.com/HarveyNichols",
+          "https://www.facebook.com/harveynichols/",
+          "https://www.instagram.com/harveynichols/",
+          "https://www.pinterest.co.uk/harveynichols/",
+          "https://plus.google.com/+harveynichols"
+        ]
+      },
+      {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@id": "search/kenzo/",
+              "name": ""
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@id": "search/kenzo/mens/",
+              "name": "Men"
+            }
+          }
+        ]
+      }
+    ],
+    "noIndex": false,
+    "twitterCard": [],
+    "openGraph": [],
+    "prev": "https://www.harveynichols.com/search/kenzo/mens//page=1/"
+  }
+}
