@@ -12,10 +12,9 @@ private[harveynichols] object responses {
       brand: DisplayItem[String, Option[String]],
       price: DisplayItem[String, Int],
       original_price: DisplayItem[String, Int],
-      special_price: Option[DisplayItem[String, Int]],
-      percentage_discount: Option[DisplayItem[String, Int]],
+      percentage_discount: DisplayItem[String, Int],
       product_brand_url: DisplayItem[String, String],
-      _imageurl: DisplayItem[String, String],
+      _imageurl: DisplayItem[String, Option[String]],
       variant_display_size: DisplayItem[List[String], Option[String]]
   ) derives Codec.AsObject
 

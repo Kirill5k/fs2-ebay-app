@@ -45,7 +45,7 @@ final private class LiveHarveyNicholsClient[F[_]](
               size = size,
               currentPrice = product.price.value,
               originalPrice = product.original_price.value,
-              discount = product.percentage_discount.map(_.encoded),
+              discount = Some(product.percentage_discount.encoded).filter(_ > 0),
               itemUrl = product.product_brand_url.value,
               imageUrl = product._imageurl.value
             )
@@ -74,12 +74,12 @@ final private class LiveHarveyNicholsClient[F[_]](
       "meta[categoryId]"          -> "134"
     )
     sendRequest[HarveyNicholsSearchResponse](
-      uri"${config.baseUri}/data/lister/?$queryParams",
+      uri"${config.baseUri}/data/lister?$queryParams",
       "search",
       HarveyNicholsSearchResponse.empty
     )
       .map(_.universe.products)
-      .map(is => (is, is.nonEmpty.guard[Option].as(page + 1)))
+      .map(ps => (ps, ps.nonEmpty.guard[Option].as(page + 1)))
   }
 
   private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
