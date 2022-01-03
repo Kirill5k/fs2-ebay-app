@@ -137,8 +137,8 @@ data:
       }
 
       tessuti {
-        delay-between-requests: 25s
-        monitoring-frequency: 4m
+        delay-between-requests: 20s
+        monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
@@ -153,8 +153,8 @@ data:
       }
 
       scotts {
-        delay-between-requests: 25s
-        monitoring-frequency: 4m
+        delay-between-requests: 15s
+        monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
@@ -166,7 +166,7 @@ data:
 
       jdsports {
         delay-between-requests: 10s
-        monitoring-frequency: 4m
+        monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
