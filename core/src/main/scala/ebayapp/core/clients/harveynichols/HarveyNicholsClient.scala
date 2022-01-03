@@ -56,14 +56,14 @@ final private class LiveHarveyNicholsClient[F[_]](
 
   private def searchForProducts(criteria: SearchCriteria)(page: Int): F[(List[HarveyNicholsProduct], Option[Int])] = {
     val queryParams = Map(
-      "query"                     -> s"%2F%2Fsearch=${criteria.query.replaceAll(" ", "%20")}%2Fcategories=cp2_cp134%2F",
+      "query"                     -> s"//search=${criteria.query}/categories=cp2_cp134/",
       "context[page_number]"      -> s"$page",
       "context[fh_sort_by]"       -> "price",
       "context[sort_by]"          -> "low_to_high",
       "context[country_code]"     -> "GB",
       "context[site]"             -> "UK",
       "context[customer_dept]"    -> "Mens",
-      "context[region]"           -> "United%20Kingdom"
+      "context[region]"           -> "United Kingdom"
     )
     sendRequest[HarveyNicholsSearchResponse](
       uri"${config.baseUri}/data/lister?$queryParams",
@@ -88,7 +88,7 @@ final private class LiveHarveyNicholsClient[F[_]](
           logger.warn(s"$name-$endpoint/exhausted input") *>
             F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
         case Left(DeserializationException(json, error)) =>
-          logger.error(s"$name-$endpoint/json-parsing-error: ${error.getMessage}\n$json") *>
+          logger.error(s"$name-$endpoint/json-parsing-error: ${error.getMessage}\n$uri") *>
             F.pure(defaultResponse)
         case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
           logger.error(s"$name-$endpoint/$s-critical") *>
