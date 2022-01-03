@@ -202,6 +202,15 @@ data:
         ]
       }
 
+      harvey-nichols {
+        monitoring-frequency: 6m
+        monitoring-requests: [
+          {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
+          {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 50}
+          {search-criteria: {query: "moncler peyre"}, monitor-stock-change: false, monitor-price-change: true}
+        ]
+      }
+
       scan {
         monitoring-frequency: 15m
         monitoring-requests: [

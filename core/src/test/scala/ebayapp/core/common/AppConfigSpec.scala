@@ -18,6 +18,7 @@ class AppConfigSpec extends CatsSpec {
       conf.harveyNichols.baseUri mustBe "https://www.harveynichols.com"
 
       conf.stockMonitor must contain key Retailer.Nvidia
+      conf.stockMonitor must contain key Retailer.HarveyNichols
       conf.dealsFinder must contain key Retailer.Ebay
     }
   }
