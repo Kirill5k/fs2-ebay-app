@@ -15,6 +15,7 @@ class AppConfigSpec extends CatsSpec {
       conf.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
       conf.selfridges.headers mustBe Map("api-key" -> "key")
       conf.nvidia.proxied mustBe Some(true)
+      conf.harveyNichols.baseUri mustBe "https://www.harveynichols.com"
 
       conf.stockMonitor must contain key Retailer.Nvidia
       conf.dealsFinder must contain key Retailer.Ebay

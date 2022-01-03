@@ -104,7 +104,6 @@ data:
 
     harvey-nichols {
       base-uri: "https://www.harveynichols.com"
-      proxied: true
       headers {
         "Accept": "application/json, text/javascript, */*; q=0.01"
         "x-requested-with": "XMLHttpRequest"
