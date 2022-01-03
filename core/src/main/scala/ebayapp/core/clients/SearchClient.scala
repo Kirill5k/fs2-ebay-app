@@ -9,22 +9,20 @@ import pureconfig.generic.derivation.default._
 final case class SearchCriteria(
     query: String,
     category: Option[String] = None,
-    itemKind: Option[ItemKind] = None,
-    minPrice: Option[BigDecimal] = None,
-    maxPrice: Option[BigDecimal] = None
+    itemKind: Option[ItemKind] = None
 ) derives ConfigReader
 
-
 enum Retailer(val name: String):
-  case Cex        extends Retailer("cex")
-  case Ebay       extends Retailer("ebay")
+  case Cex extends Retailer("cex")
+  case Ebay extends Retailer("ebay")
   case Selfridges extends Retailer("selfridges")
-  case Argos      extends Retailer("argos")
-  case Scotts     extends Retailer("scotts")
-  case Jdsports   extends Retailer("jdsports")
-  case Tessuti    extends Retailer("tessuti")
-  case Nvidia     extends Retailer("nvidia")
-  case Scan       extends Retailer("scan")
+  case Argos extends Retailer("argos")
+  case Scotts extends Retailer("scotts")
+  case Jdsports extends Retailer("jdsports")
+  case Tessuti extends Retailer("tessuti")
+  case Nvidia extends Retailer("nvidia")
+  case Scan extends Retailer("scan")
+  case HarveyNichols extends Retailer("harvey-nichols")
 
 object Retailer:
   def fromUnsafe(name: String): Retailer =

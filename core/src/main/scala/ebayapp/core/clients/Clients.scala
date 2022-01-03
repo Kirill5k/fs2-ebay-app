@@ -1,10 +1,11 @@
 package ebayapp.core.clients
 
 import cats.effect.Temporal
-import cats.syntax.apply._
+import cats.syntax.apply.*
 import ebayapp.core.clients.argos.ArgosClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
+import ebayapp.core.clients.harveynichols.HarveyNicholsClient
 import ebayapp.core.clients.jdsports.JdsportsClient
 import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.scan.ScanClient
@@ -34,22 +35,24 @@ object Clients {
       JdsportsClient.scotts[F](config.scotts, resources.clientBackend(config.scotts.proxied)),
       JdsportsClient.tessuti[F](config.tessuti, resources.clientBackend(config.tessuti.proxied)),
       NvidiaClient.make[F](config.nvidia, resources.clientBackend(config.nvidia.proxied)),
-      ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied))
-    ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC) =>
+      ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied)),
+      HarveyNicholsClient.make[F](config.harveyNichols, resources.clientBackend(config.scan.proxied))
+    ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC) =>
       new Clients[F] {
-        def cex: CexClient[F]            = cexC
+        def cex: CexClient[F]             = cexC
         def messenger: MessengerClient[F] = telC
         def get(shop: Retailer): SearchClient[F] =
           shop match {
-            case Retailer.Cex        => cexC
-            case Retailer.Ebay       => ebayC
-            case Retailer.Selfridges => selfridgesC
-            case Retailer.Argos      => argosC
-            case Retailer.Scotts     => scottsC
-            case Retailer.Jdsports   => jdC
-            case Retailer.Tessuti    => tessutiC
-            case Retailer.Nvidia     => nvidiaC
-            case Retailer.Scan       => scanC
+            case Retailer.Cex           => cexC
+            case Retailer.Ebay          => ebayC
+            case Retailer.Selfridges    => selfridgesC
+            case Retailer.Argos         => argosC
+            case Retailer.Scotts        => scottsC
+            case Retailer.Jdsports      => jdC
+            case Retailer.Tessuti       => tessutiC
+            case Retailer.Nvidia        => nvidiaC
+            case Retailer.Scan          => scanC
+            case Retailer.HarveyNichols => harNichC
           }
       }
     }

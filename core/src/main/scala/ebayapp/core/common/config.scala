@@ -95,6 +95,7 @@ object config {
       jdsports: GenericRetailerConfig,
       tessuti: GenericRetailerConfig,
       scotts: GenericRetailerConfig,
+      harveyNichols: GenericRetailerConfig,
       nvidia: GenericRetailerConfig,
       scan: GenericRetailerConfig,
       cex: GenericRetailerConfig,
