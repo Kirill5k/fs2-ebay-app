@@ -25,9 +25,9 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
     "return stream of clothing items that are on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if isSearchRequest(r, Map("context[sort_by]" -> "low_to_high", "meta[searchTerm]" -> criteria.query, "context[page_number]" -> "1")) =>
+          case r if isSearchRequest(r, Map("context[sort_by]" -> "low_to_high", "query" -> s"%2F%2Fsearch=${criteria.query}%2Fcategories=cp2_cp134%2F", "context[page_number]" -> "1")) =>
             Response.ok(json("harvey-nichols/search-kenzo-page-1.json"))
-          case r if isSearchRequest(r, Map("context[sort_by]" -> "low_to_high", "meta[searchTerm]" -> criteria.query, "context[page_number]" -> "2")) =>
+          case r if isSearchRequest(r, Map("context[sort_by]" -> "low_to_high", "query" -> s"%2F%2Fsearch=${criteria.query}%2Fcategories=cp2_cp134%2F", "context[page_number]" -> "2")) =>
             Response.ok(json("harvey-nichols/search-kenzo-page-2.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }

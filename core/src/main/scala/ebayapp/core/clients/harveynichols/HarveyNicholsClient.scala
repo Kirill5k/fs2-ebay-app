@@ -58,20 +58,12 @@ final private class LiveHarveyNicholsClient[F[_]](
     val queryParams = Map(
       "query"                     -> s"%2F%2Fsearch=${criteria.query}%2Fcategories=cp2_cp134%2F",
       "context[page_number]"      -> s"$page",
-      "context[customer_type]"    -> "Public",
-      "context[hn_page_template]" -> "Search Lister",
-      "context[channel]"          -> "Desktop",
       "context[fh_sort_by]"       -> "price",
       "context[sort_by]"          -> "low_to_high",
       "context[country_code]"     -> "GB",
       "context[site]"             -> "UK",
       "context[customer_dept]"    -> "Mens",
-      "context[region]"           -> "United Kingdom",
-      "context[storeCode]"        -> "default",
-      "context[query]"            -> s"%2F%2Fsearch=${criteria.query}%2Fcategories=cp2_cp134%2Fsort_by=low_to_high%2F",
-      "meta[searchTerm]"          -> criteria.query,
-      "meta[categoryIdPath][]"    -> "134",
-      "meta[categoryId]"          -> "134"
+      "context[region]"           -> "United Kingdom"
     )
     sendRequest[HarveyNicholsSearchResponse](
       uri"${config.baseUri}/data/lister?$queryParams",
