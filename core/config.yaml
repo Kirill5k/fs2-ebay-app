@@ -198,7 +198,6 @@ data:
           {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
           {search-criteria: {query: "moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
           {search-criteria: {query: "tommy hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "calvin klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {query: "hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
