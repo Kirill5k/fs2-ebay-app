@@ -63,8 +63,9 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
     // removes the word GAME
-    "((new|all) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|limited run|(\\d+ )?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( (\\d+|in one))?( new)?",
+    "((new|all) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|limited run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( (\\d+|in one))?( new)?",
     "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|extreme sport(s)?|football sport|rally|driving|shooting|fighting|hacker|(car )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
+    "real driving simulator",
     // removes the word USED
     "((barely|condition|never|hardly|dlc) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
     // removes the word VERSION
@@ -79,7 +80,7 @@ private[mappers] object GameDetailsMapper {
     "\\bpegi( \\d+)?\\b(?s).*$", "((\\d+|ten)th|(20|ten))( year(s)?)? (anniversary|celebration)", "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b",
     "\\d \\d players", "1 ONE", "flash sale", "Fun Kids Play( Console)?", "with all extras", "free gift",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)(X|S)?\\b",
-    "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
+    "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)", "Stric(t|k)ly limited",
     "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular (cover|Sleeve)", "plays perfect", "100 trusted seller",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", "(last one )?in stock( now)?",
@@ -123,7 +124,7 @@ private[mappers] object GameDetailsMapper {
   ).mkString("(?i)", "|", "")
 
   private val PLATFORMS_MATCH_REGEX = List(
-    "PS[1-5]", "PLAYSTATION(\\s+)?([1-5](?!\\d+)|one)", "PSVR",
+    "PS( )?[1-5]", "PLAYSTATION(\\s+)?([1-5](?!\\d+)|one)", "PSVR",
     "NINTENDO SWITCH", "SWITCH",
     "\\bWII( )?U\\b", "\\bWII\\b",
     "SERIES \\b(X|S)( )?(X|S)?\\b",
@@ -184,7 +185,8 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)\\bll\\b", "II")
       .replaceAll("(?i)\\blll\\b", "III")
       .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (2|II)(?s).*", "WWII")
-      .replaceAll("(?i)(resident evil 8)", "Resident Evil Village")
+      .replaceAll("(?i)(resident evil \bVII\b)", "Resident Evil 7")
+      .replaceAll("(?i)(resident evil (8|\bVIII\b))", "Resident Evil Village")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(Read Dead Redemption)", "Red Dead Redemption")
@@ -192,7 +194,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)Mortal Comba(t|r)", "Mortal Kombat")
       .replaceAll("(?i)(Hello Neighbour)", "Hello Neighbor")
       .replaceAll("(?i)(witcher iii)", "witcher 3")
-      .replaceAll("(?i)(wolfenstein 2)", "Wolfenstein II")
+      .replaceAll("(?i)(wolfenstein (II|2))", "Wolfenstein")
       .replaceAll("(?i)(wafare|warefare)", "Warfare")
       .replaceAll("(?i)(as(s)?a(s)?(s)?in)", "Assassin")
       .replaceAll("(?i)(va(l)?(l)?hal(l)?a)", "Valhalla")

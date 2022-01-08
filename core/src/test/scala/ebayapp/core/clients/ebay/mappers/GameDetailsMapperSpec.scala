@@ -42,6 +42,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
     "map uncommon platform spellings" in {
       val platforms = Map(
+        "PS-4"                      -> "PLAYSTATION4",
         "PS4"                       -> "PLAYSTATION4",
         "PS2"                       -> "PLAYSTATION2",
         "PS5"                       -> "PLAYSTATION5",
@@ -257,6 +258,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty Infinite Warfare \\ £54.99",
         "5 PS3 Games Call of Duty Infinite Warfare VR PSVR",
         "Call of Duty Infinite Warfare XBOX ONE, SERIES X|S",
+        "Call of Duty Infinite Warfare ps-4",
         "Call of Duty Infinite Warfare xone",
         "Call of Duty Infinite Warfare xbox one series x s",
         "Call of Duty Infinite Warfare xbox one x series x/s",
