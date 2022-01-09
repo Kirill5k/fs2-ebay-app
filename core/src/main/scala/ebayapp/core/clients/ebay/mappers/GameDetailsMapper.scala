@@ -56,7 +56,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=Warhammer) (40k|40( )?000)", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))",
     "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)", "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))",
     "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
-    "(?<=resident evil village) (8|VIII)", "(?<=resident evil) (8|VIII) (?=village)",
+    "(?<=resident evil village) (8|VIII)", "(?<=resident evil) (8|VIII)(?= village)",
     // removes year from some titles
     "(?<=(need for speed|minecraft|\\bLEGO\\b|Tomb Raider|call of duty|gran turismo|assassins creed|tom clanc).*)20\\d\\d(?s).*"
   ).mkString("(?i)", "|", "")
