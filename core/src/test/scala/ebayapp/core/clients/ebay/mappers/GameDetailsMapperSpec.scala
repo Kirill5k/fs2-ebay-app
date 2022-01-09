@@ -42,7 +42,6 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
     "map uncommon platform spellings" in {
       val platforms = Map(
-        "PS-4"                      -> "PLAYSTATION4",
         "PS4"                       -> "PLAYSTATION4",
         "PS2"                       -> "PLAYSTATION2",
         "PS5"                       -> "PLAYSTATION5",
@@ -111,7 +110,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
-      gameDetails.name mustBe (Some("Gran Turismo"))
+      gameDetails.name mustBe Some("Gran Turismo")
     }
 
     "remove GT from gran turismo title or similar" in {
