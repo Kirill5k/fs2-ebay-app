@@ -68,7 +68,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
       .aggregateWithCodec[ItemSummary] {
         Aggregate
           .matchBy(searchFilter(params))
-          .sort(Sort.asc(Field.DatePosted))
+          .sort(Sort.desc(Field.DatePosted))
           .limit(params.limit.getOrElse(Int.MaxValue))
           .project(videoGameSummaryProjection)
       }

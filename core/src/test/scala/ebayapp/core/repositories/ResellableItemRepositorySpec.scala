@@ -153,9 +153,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
 
         result.map { res =>
           res mustBe List(
-            ItemSummary(Some("GTA 5 XBOX ONE"), "GTA 5", videoGames.head.listingDetails.url, BigDecimal(32.99), Some(BigDecimal(80))),
+            ItemSummary(None, "Super Mario 3", videoGames.last.listingDetails.url, BigDecimal(32.99), Some(BigDecimal(80))),
             ItemSummary(Some("Call of Duty WW2 XBOX ONE"), "Call of Duty WW2", videoGames(1).listingDetails.url, BigDecimal(32.99), None),
-            ItemSummary(None, "Super Mario 3", videoGames.last.listingDetails.url, BigDecimal(32.99), Some(BigDecimal(80)))
+            ItemSummary(Some("GTA 5 XBOX ONE"), "GTA 5", videoGames.head.listingDetails.url, BigDecimal(32.99), Some(BigDecimal(80)))
           )
         }
       }
