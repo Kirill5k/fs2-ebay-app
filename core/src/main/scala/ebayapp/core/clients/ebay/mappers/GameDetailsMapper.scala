@@ -43,7 +43,7 @@ private[mappers] object GameDetailsMapper {
     "(official\\s+)?(\\bUK\\b|\\bEU\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     "cleaned( )?(fully )?tested",
     // removes common publishers
-    "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Capcom|CD Projekt Red|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|LucasArt(s)?)( (presents|publishing))?",
+    "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Capcom|CD Projekt Red|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|LucasArt(s)?)( (presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b", "Sid Meiers",
     "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "\\d games in (one|1)",
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal)(?s).*",
