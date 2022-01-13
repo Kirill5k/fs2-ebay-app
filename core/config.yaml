@@ -211,8 +211,6 @@ data:
           {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
           {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
           {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
-          {search-criteria: {query: "moncler blesle"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "moncler provins"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
