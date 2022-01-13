@@ -7,9 +7,8 @@ import io.circe.{Decoder, Encoder}
 import io.circe.generic.auto.*
 import io.circe.syntax.*
 
-sealed trait ItemDetails {
+sealed trait ItemDetails:
   def fullName: Option[String]
-}
 
 object ItemDetails {
   final case class Generic(

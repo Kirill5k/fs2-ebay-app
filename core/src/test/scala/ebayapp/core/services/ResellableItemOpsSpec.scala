@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
-import ebayapp.core.clients.Notification
 import ebayapp.core.domain.ResellableItemBuilder
+import ebayapp.core.domain.Notification
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

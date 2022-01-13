@@ -21,9 +21,8 @@ import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration.*
 
-trait CexClient[F[_]] extends SearchClient[F] with HttpClient[F] {
+trait CexClient[F[_]] extends SearchClient[F] with HttpClient[F]:
   def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem]
-}
 
 final class CexApiClient[F[_]](
     private val config: GenericRetailerConfig,
@@ -108,8 +107,7 @@ final class CexApiClient[F[_]](
     }
 }
 
-object CexClient {
-
+object CexClient:
   def make[F[_]: Temporal: Logger](
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
@@ -117,5 +115,4 @@ object CexClient {
     Temporal[F]
       .fromOption(config.cache, AppError.Critical("missing cache settings for cex client"))
       .flatMap(c => Cache.make[F, String, Option[SellPrice]](c.expiration, c.validationPeriod))
-      .map(cache => new CexApiClient[F](config, cache, backend))
-}
+      .map(cache => CexApiClient[F](config, cache, backend))

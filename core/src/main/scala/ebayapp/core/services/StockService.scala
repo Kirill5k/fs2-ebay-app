@@ -66,4 +66,4 @@ object StockService:
       config: StockMonitorConfig,
       client: SearchClient[F]
   ): F[StockService[F]] =
-    Monad[F].pure(new SimpleStockService[F](retailer, config, client))
+    Monad[F].pure(SimpleStockService[F](retailer, config, client))

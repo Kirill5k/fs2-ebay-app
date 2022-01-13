@@ -5,8 +5,9 @@ import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
-import ebayapp.core.clients.{HttpClient, MessengerClient, Notification}
+import ebayapp.core.clients.{HttpClient, MessengerClient}
 import ebayapp.core.common.config.TelegramConfig
+import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.Logger
 import sttp.client3.*
@@ -55,5 +56,5 @@ object TelegramClient {
       config: TelegramConfig,
       backend: SttpBackend[F, Any]
   )(using F: Temporal[F]): F[MessengerClient[F]] =
-    F.pure(new LiveTelegramClient[F](config, backend))
+    F.pure(LiveTelegramClient[F](config, backend))
 }

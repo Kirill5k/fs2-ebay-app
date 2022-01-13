@@ -5,9 +5,9 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.{MessengerClient, Notification}
+import ebayapp.core.clients.MessengerClient
 import ebayapp.core.domain.stock.StockUpdate
-import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.{Notification, ResellableItem}
 import ebayapp.core.common.{Cache, Error, Logger}
 
 import java.nio.charset.StandardCharsets
@@ -85,5 +85,5 @@ object NotificationService {
   def make[F[_]: Temporal: Logger](client: MessengerClient[F]): F[NotificationService[F]] =
     Cache
       .make[F, String, Unit](1.hour, 5.minutes)
-      .map(cache => new TelegramNotificationService[F](client, cache))
+      .map(cache => TelegramNotificationService[F](client, cache))
 }

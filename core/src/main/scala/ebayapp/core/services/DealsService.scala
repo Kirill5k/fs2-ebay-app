@@ -64,5 +64,5 @@ object DealsService {
       cexClient: CexClient[F],
       repository: ResellableItemRepository[F]
   ): F[DealsService[F]] =
-    Monad[F].pure(new LiveDealsService[F](retailer, config, searchClient, cexClient, repository))
+    Monad[F].pure(LiveDealsService[F](retailer, config, searchClient, cexClient, repository))
 }

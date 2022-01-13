@@ -67,5 +67,5 @@ object NvidiaClient {
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveNvidiaClient[F](config, backend))
+    Monad[F].pure(LiveNvidiaClient[F](config, backend))
 }

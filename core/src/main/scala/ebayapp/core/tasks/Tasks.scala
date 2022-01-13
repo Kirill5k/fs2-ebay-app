@@ -33,5 +33,5 @@ object Tasks {
       ErrorsNotifier.make[F](services),
       DealsFinder.make[F](services),
       StockMonitor.make[F](services)
-    ).sequence.map(tasks => new Tasks[F](tasks))
+    ).sequence.map(tasks => Tasks[F](tasks))
 }

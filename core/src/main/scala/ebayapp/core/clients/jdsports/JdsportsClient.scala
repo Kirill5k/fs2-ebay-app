@@ -117,17 +117,17 @@ object JdsportsClient {
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveJdsportsClient[F](config, "jdsports", backend))
+    Monad[F].pure(LiveJdsportsClient[F](config, "jdsports", backend))
 
   def tessuti[F[_]: Temporal: Logger](
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveJdsportsClient[F](config, "tessuti", backend))
+    Monad[F].pure(LiveJdsportsClient[F](config, "tessuti", backend))
 
   def scotts[F[_]: Temporal: Logger](
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveJdsportsClient[F](config, "scotts", backend))
+    Monad[F].pure(LiveJdsportsClient[F](config, "scotts", backend))
 }

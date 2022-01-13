@@ -11,18 +11,16 @@ import scala.concurrent.duration.*
 
 final class ErrorsNotifier[F[_]: Logger: Temporal](
     private val notificationService: NotificationService[F]
-) extends Task[F] {
-
+) extends Task[F]:
   def run: Stream[F, Unit] =
     Logger[F]
       .errors
       .throttle(30.seconds)
       .evalMap(notificationService.alert)
-}
 
 object ErrorsNotifier {
 
   def make[F[_]: Temporal: Logger](services: Services[F]): F[Task[F]] =
-    Monad[F].pure(new ErrorsNotifier[F](services.notification))
+    Monad[F].pure(ErrorsNotifier[F](services.notification))
 }
 

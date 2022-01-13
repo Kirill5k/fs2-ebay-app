@@ -106,11 +106,9 @@ final private class LiveHarveyNicholsClient[F[_]](
     }
 }
 
-object HarveyNicholsClient {
-
+object HarveyNicholsClient:
   def make[F[_]: Temporal: Logger](
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveHarveyNicholsClient[F](config, backend))
-}
+    Monad[F].pure(LiveHarveyNicholsClient[F](config, backend))

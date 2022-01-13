@@ -4,12 +4,11 @@ import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
 import io.circe.{Decoder, Encoder, Codec}
 import pureconfig.generic.derivation.EnumConfigReader
 
-enum ItemKind(val value: String) derives EnumConfigReader {
+enum ItemKind(val value: String) derives EnumConfigReader:
   case Generic     extends ItemKind("generic")
   case VideoGame   extends ItemKind("video-game")
   case MobilePhone extends ItemKind("mobile-phone")
   case Clothing    extends ItemKind("clothing")
-}
 
 object ItemKind {
 

@@ -8,7 +8,6 @@ import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 
 object StockComparer:
-
   def compareItems(
       prev: Map[String, ResellableItem],
       curr: Map[String, ResellableItem],

@@ -74,14 +74,11 @@ final private[ebay] class LiveEbayClient[F[_]](
   }
 }
 
-object EbayClient {
-
+object EbayClient:
   def make[F[_]: Temporal: Logger](
       config: EbayConfig,
       backend: SttpBackend[F, Any]
-  ): F[SearchClient[F]] = {
+  ): F[SearchClient[F]] =
     val auth   = EbayAuthClient.make[F](config, backend)
     val browse = EbayBrowseClient.make[F](config, backend)
-    (auth, browse).mapN((a, b) => new LiveEbayClient[F](config, a, b))
-  }
-}
+    (auth, browse).mapN((a, b) => LiveEbayClient[F](config, a, b))

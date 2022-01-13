@@ -2,8 +2,9 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.{MessengerClient, Notification}
+import ebayapp.core.clients.{MessengerClient}
 import ebayapp.core.common.Error
+import ebayapp.core.domain.Notification
 import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.stock.StockUpdate
 import org.mockito.Mockito.{times}

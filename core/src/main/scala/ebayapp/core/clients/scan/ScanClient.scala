@@ -69,5 +69,5 @@ object ScanClient {
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveScanClient[F](config, backend))
+    Monad[F].pure(LiveScanClient[F](config, backend))
 }
