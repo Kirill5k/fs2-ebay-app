@@ -13,7 +13,7 @@ object StockComparer:
       curr: Map[String, ResellableItem],
       req: StockMonitorRequest
   ): List[ItemStockUpdates] =
-    curr.flatMap { case (name, currItem) =>
+    curr.flatMap { (name, currItem) =>
       val updates = prev
         .get(name)
         .fold(List[StockUpdate](StockUpdate.New)) { prevItem =>

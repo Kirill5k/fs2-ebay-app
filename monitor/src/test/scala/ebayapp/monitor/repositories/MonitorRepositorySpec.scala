@@ -36,9 +36,7 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
           mons <- repo.getAllActive
         yield (mon, mons)
 
-        result.map { case (mon, mons) =>
-          mons mustBe List(mon)
-        }
+        result.map((mon, mons) => mons mustBe List(mon))
       }
 
       "return empty list when there are no active monitor" in withEmbeddedMongoClient { db =>

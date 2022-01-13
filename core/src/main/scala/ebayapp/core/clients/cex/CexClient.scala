@@ -37,13 +37,13 @@ final class CexApiClient[F[_]](
 
   private val headers = defaultHeaders ++ config.headers
 
-  private val categoriesMap: Map[String, List[Int]] = Map(
+  private inline def categoriesMap: Map[String, String] = Map(
     "games-ps3"               -> List(808),
     "games-xbox-360"          -> List(782),
     "games-xbox-one-series-x" -> List(1000, 1146, 1147),
     "games-ps4-ps5"           -> List(1003, 1141),
     "games-switch"            -> List(1064)
-  )
+  ).map((k, v) => (k, v.mkString("[", ",", "]")))
 
   override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] =
     item.itemDetails.fullName match {
@@ -54,10 +54,9 @@ final class CexApiClient[F[_]](
         findSellPrice(name, categories).map(sp => item.copy(sellPrice = sp))
     }
 
-  private def findSellPrice(query: String, categories: Option[List[Int]]): F[Option[SellPrice]] =
+  private def findSellPrice(query: String, categories: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
-      val categoryIds = categories.map(_.mkString("[", ",", "]"))
-      search(uri"${config.baseUri}/v3/boxes?q=$query&categoryIds=$categoryIds")
+      search(uri"${config.baseUri}/v3/boxes?q=$query&categoryIds=$categories")
         .map(getMinResellPrice)
         .flatTap { rp =>
           if (rp.isEmpty) logger.warn(s"""cex-price-match "$query" returned 0 results""")

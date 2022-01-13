@@ -28,16 +28,16 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
   private def isNew(item: ResellableItem): F[Boolean] =
     repository.existsByUrl(item.listingDetails.url).map(!_)
 
-  private def hasRequiredStock(req: DealsFinderRequest): ResellableItem => Boolean =
+  private inline def hasRequiredStock(req: DealsFinderRequest): ResellableItem => Boolean =
     item => item.buyPrice.quantityAvailable > 0 && item.buyPrice.quantityAvailable < req.maxQuantity.getOrElse(Int.MaxValue)
 
-  private def isProfitableToResell(req: DealsFinderRequest): ResellableItem => Boolean =
+  private inline def isProfitableToResell(req: DealsFinderRequest): ResellableItem => Boolean =
     item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.rrp - 100) > req.minMargin)
 
   override def newDeals: Stream[F, ResellableItem] =
     Stream
       .emits(config.searchRequests.zipWithIndex)
-      .map { case (req, i) =>
+      .map { (req, i) =>
         searchClient
           .search(req.searchCriteria)
           .evalFilter(isNew)
@@ -55,8 +55,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
       .repeatEvery(config.searchFrequency)
 }
 
-object DealsService {
-
+object DealsService:
   def make[F[_]: Temporal: Logger](
       retailer: Retailer,
       config: DealsFinderConfig,
@@ -65,4 +64,3 @@ object DealsService {
       repository: ResellableItemRepository[F]
   ): F[DealsService[F]] =
     Monad[F].pure(LiveDealsService[F](retailer, config, searchClient, cexClient, repository))
-}

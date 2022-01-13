@@ -34,7 +34,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .in(searchQueryParams)
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemResponse]])
-    .serverLogic { case (limit, query, from, to) =>
+    .serverLogic { (limit, query, from, to) =>
       itemService
         .search(SearchParams(itemKind, limit, from, to, query))
         .map(_.map(ResellableItemResponse.from).asRight[ErrorResponse])
@@ -46,7 +46,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .in(searchQueryParams)
     .errorOut(errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
-    .serverLogic { case (limit, query, from, to) =>
+    .serverLogic { (limit, query, from, to) =>
       itemService
         .summaries(SearchParams(itemKind, limit, from, to, query))
         .map(ResellableItemsSummaryResponse.from(_).asRight[ErrorResponse])
@@ -59,4 +59,4 @@ final private[controllers] class ResellableItemController[F[_]: Async](
 
 object ResellableItemController:
   def videoGame[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
-    Monad[F].pure(new ResellableItemController[F]("video-games", ItemKind.VideoGame, service))
+    Monad[F].pure(ResellableItemController[F]("video-games", ItemKind.VideoGame, service))

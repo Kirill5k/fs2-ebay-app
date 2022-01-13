@@ -72,7 +72,7 @@ final private class LiveMonitorController[F[_]](
     .in(jsonBody[MonitorView])
     .errorOut(errorResponse)
     .out(statusCode(StatusCode.NoContent))
-    .serverLogic { case (id, mon) =>
+    .serverLogic { (id, mon) =>
       F.fromEither(Either.cond(id == mon.id, (), AppError.Failed(s"Id in path is different from id in the request body")))
         .flatMap(_ => monitorService.update(mon.toDomain))
         .as(().asRight[ErrorResponse])
@@ -96,7 +96,7 @@ final private class LiveMonitorController[F[_]](
     .in(jsonBody[ActivateMonitorRequest])
     .errorOut(errorResponse)
     .out(statusCode(StatusCode.NoContent))
-    .serverLogic { case (id, request) =>
+    .serverLogic { (id, request) =>
       parseId(id)
         .flatMap(id => monitorService.activate(id, request.active))
         .map(_.asRight[ErrorResponse])

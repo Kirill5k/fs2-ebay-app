@@ -26,7 +26,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
   override def stockUpdates: Stream[F, ItemStockUpdates] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
-      .map { case (req, index) =>
+      .map { (req, index) =>
         getUpdates(req, config.monitoringFrequency)
           .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong)
       }

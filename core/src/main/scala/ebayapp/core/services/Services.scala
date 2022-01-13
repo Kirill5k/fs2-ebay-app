@@ -24,8 +24,8 @@ object Services {
     (
       NotificationService.make[F](clients.messenger),
       ResellableItemService.make[F](repo.resellableItems),
-      config.stockMonitor.toList.traverse { case (r, c) => StockService.make(r, c, clients.get(r)) },
-      config.dealsFinder.toList.traverse { case (r, c) => DealsService.make(r, c, clients.get(r), clients.cex, repo.resellableItems) }
+      config.stockMonitor.toList.traverse((r, c) => StockService.make(r, c, clients.get(r))),
+      config.dealsFinder.toList.traverse((r, c) => DealsService.make(r, c, clients.get(r), clients.cex, repo.resellableItems))
     ).mapN((not, rs, ss: List[StockService[F]], ds: List[DealsService[F]]) =>
       new Services[F] {
         def notification: NotificationService[F]     = not

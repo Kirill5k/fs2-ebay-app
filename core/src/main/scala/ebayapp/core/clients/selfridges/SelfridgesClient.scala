@@ -58,14 +58,14 @@ final private class LiveSelfridgesClient[F[_]](
         Stream
           .evalSeq(getItemDetails(item))
           .metered(1.second)
-          .map { case (stock, price) => SelfridgesItem(item, stock, price) }
+          .map((stock, price) => SelfridgesItem(item, stock, price))
       }
       .map(selfridgesClothingMapper.toDomain)
       .filter(_.buyPrice.quantityAvailable > 0)
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
-      .mapN { case (stock, prices) =>
+      .mapN { (stock, prices) =>
         val pricesBySkuid = prices.groupBy(_.SKUID)
         stock.map(s => (s, pricesBySkuid.get(s.SKUID).flatMap(_.headOption)))
       }
