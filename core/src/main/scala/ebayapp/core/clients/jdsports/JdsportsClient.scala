@@ -59,7 +59,7 @@ final private class LiveJdsportsClient[F[_]](
   private def brands(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
     Stream
       .unfoldLoopEval(0) { step =>
-        searchByBrand(criteria, step).map(items => (items, items.nonEmpty.guard[Option].as(step + 1)))
+        searchByBrand(criteria, step).map(items => (items, Option.when(items.nonEmpty)(step + 1)))
       }
       .flatMap(Stream.emits)
 

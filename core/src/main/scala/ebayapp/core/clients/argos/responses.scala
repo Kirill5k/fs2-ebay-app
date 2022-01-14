@@ -24,7 +24,7 @@ private[argos] object responses {
       currentPage: Int,
       totalPages: Int
   ) derives Codec.AsObject {
-    val nextPage: Option[Int] = (currentPage < totalPages).guard[Option].as(currentPage + 1)
+    val nextPage: Option[Int] = Option.when(currentPage < totalPages)(currentPage + 1)
   }
 
   final case class SearchResponse(

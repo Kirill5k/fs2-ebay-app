@@ -71,7 +71,7 @@ final private class LiveHarveyNicholsClient[F[_]](
       HarveyNicholsSearchResponse.empty
     )
       .map(_.universe.products)
-      .map(ps => (ps, ps.nonEmpty.guard[Option].as(page + 1)))
+      .map(ps => (ps, Option.when(ps.nonEmpty)(page + 1)))
   }
 
   private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =

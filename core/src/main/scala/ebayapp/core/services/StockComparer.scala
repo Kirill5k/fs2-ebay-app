@@ -1,8 +1,5 @@
 package ebayapp.core.services
 
-import cats.syntax.alternative.*
-import cats.syntax.functor.*
-import cats.syntax.flatMap.*
 import ebayapp.core.common.config.StockMonitorRequest
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
@@ -19,9 +16,9 @@ object StockComparer:
         case (None, currItem) =>
           Some(ItemStockUpdates(currItem, List(StockUpdate.New)))
         case (Some(prevItem), currItem) =>
-          val upd1    = req.monitorPriceChange.guard[Option] >> StockUpdate.priceChanged(prevItem.buyPrice, currItem.buyPrice)
-          val upd2    = req.monitorStockChange.guard[Option] >> StockUpdate.quantityChanged(prevItem.buyPrice, currItem.buyPrice)
-          val updates = upd1.toList ++ upd2.toList
-          updates.nonEmpty.guard[Option].as(ItemStockUpdates(currItem, updates))
+          val upd1    = if req.monitorPriceChange then StockUpdate.priceChanged(prevItem.buyPrice, currItem.buyPrice).toList else Nil
+          val upd2    = if req.monitorStockChange then StockUpdate.quantityChanged(prevItem.buyPrice, currItem.buyPrice).toList else Nil
+          val updates = upd1 ++ upd2
+          Option.when(updates.nonEmpty)(ItemStockUpdates(currItem, updates))
       }
       .toList
