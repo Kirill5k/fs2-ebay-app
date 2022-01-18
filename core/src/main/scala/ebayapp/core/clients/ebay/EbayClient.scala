@@ -79,6 +79,7 @@ object EbayClient:
       config: EbayConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    val auth   = EbayAuthClient.make[F](config, backend)
-    val browse = EbayBrowseClient.make[F](config, backend)
-    (auth, browse).mapN((a, b) => LiveEbayClient[F](config, a, b))
+    (
+      EbayAuthClient.make[F](config, backend),
+      EbayBrowseClient.make[F](config, backend)
+    ).mapN((a, b) => LiveEbayClient[F](config, a, b))
