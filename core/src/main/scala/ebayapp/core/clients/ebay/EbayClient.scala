@@ -33,7 +33,7 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     for {
-      time   <- Stream.eval(now.map(_.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)))
+      time   <- Stream.eval(now.map(_.minusMillis(config.search.maxListingDuration.toMillis)))
       mapper <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       items <- Stream

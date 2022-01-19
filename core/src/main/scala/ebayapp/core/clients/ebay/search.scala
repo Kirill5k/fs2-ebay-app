@@ -5,6 +5,7 @@ import ebayapp.core.clients.ebay.browse.responses.EbayItemSummary
 import ebayapp.kernel.errors.AppError
 
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 private[ebay] object search {
   trait EbaySearchParams {
@@ -17,7 +18,7 @@ private[ebay] object search {
       Map(
         "fieldgroups"  -> "EXTENDED",
         "category_ids" -> categoryId.toString,
-        "filter"       -> searchFilterTemplate.format(from).replaceAll("\\{", "%7B").replaceAll("}", "%7D"),
+        "filter"       -> searchFilterTemplate.format(from.truncatedTo(ChronoUnit.SECONDS)).replaceAll("\\{", "%7B").replaceAll("}", "%7D"),
         "limit"        -> "200",
         "q"            -> query
       )

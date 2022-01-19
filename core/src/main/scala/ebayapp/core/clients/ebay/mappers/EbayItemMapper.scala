@@ -9,6 +9,13 @@ import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 
 private[ebay] object EbayItemMapper {
+  object Props {
+    val categoryId = "CategoryId"
+    val price = "Price"
+    val postage = "Postage"
+    val currency = "Currency"
+  }
+
   type EbayItemMapper = ItemMapper[EbayItem]
 
   def get(criteria: SearchCriteria): Either[Throwable, EbayItemMapper] =
@@ -59,8 +66,8 @@ private[ebay] object EbayItemMapper {
       seller = item.seller.username.fold("EBAY")(s => s"EBAY:$s"),
       properties = {
         val itemProps  = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
-        val priceProps = Map("Price" -> item.price.value.toString(), "Currency" -> item.price.currency, "Postage" -> postageCost(item).toString())
-        val otherProps = Map("CategoryId" -> item.categoryId.toString)
+        val priceProps = Map(Props.price -> item.price.value.toString(), Props.currency -> item.price.currency, Props.postage -> postageCost(item).toString())
+        val otherProps = Map(Props.categoryId -> item.categoryId.toString)
         itemProps.concat(priceProps).concat(otherProps)
       }
     )
