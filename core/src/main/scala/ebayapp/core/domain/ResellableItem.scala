@@ -1,22 +1,23 @@
 package ebayapp.core.domain
 
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
-import io.circe.{Decoder, Encoder, Codec}
+import io.circe.{Codec, Decoder, Encoder}
 import pureconfig.generic.derivation.EnumConfigReader
 
-enum ItemKind(val value: String) derives EnumConfigReader:
-  case Generic     extends ItemKind("generic")
-  case VideoGame   extends ItemKind("video-game")
-  case MobilePhone extends ItemKind("mobile-phone")
-  case Clothing    extends ItemKind("clothing")
+import scala.util.Try
+
+enum ItemKind derives EnumConfigReader:
+  case Generic
+  case VideoGame
+  case MobilePhone
+  case Clothing
 
 object ItemKind {
 
-  def from(value: String): Either[String, ItemKind] =
-    ItemKind.values.find(_.value == value).toRight(s"unexpected item kind $value")
-
-  inline given decode: Decoder[ItemKind] = Decoder[String].emap(ItemKind.from)
-  inline given encode: Encoder[ItemKind] = Encoder[String].contramap(_.value)
+  inline given decode: Decoder[ItemKind] =
+    Decoder[String].emapTry(s => Try(ItemKind.valueOf(s.split("-").map(_.capitalize).mkString)))
+  inline given encode: Encoder[ItemKind] =
+    Encoder[String].contramap(_.toString.replaceAll("(?<=[a-z])(?=[A-Z])", "-").toLowerCase)
 }
 
 final case class ItemSummary(
