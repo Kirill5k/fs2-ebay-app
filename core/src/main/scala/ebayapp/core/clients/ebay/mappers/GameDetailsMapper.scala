@@ -1,7 +1,6 @@
 package ebayapp.core.clients.ebay.mappers
 
 import cats.syntax.option._
-import cats.syntax.traverse._
 import ebayapp.core.domain.ItemDetails.VideoGame
 import ebayapp.core.domain.search.ListingDetails
 
@@ -167,7 +166,7 @@ private[mappers] object GameDetailsMapper {
 
   def from(listingDetails: ListingDetails): VideoGame =
     VideoGame(
-      name = sanitizeTitle(listingDetails.title),
+      name = sanitizeTitle(listingDetails.title).orElse(listingDetails.properties.get("Game Name")),
       platform = mapPlatform(listingDetails),
       genre = mapGenre(listingDetails),
       releaseYear = listingDetails.properties.get("Release Year")
@@ -240,9 +239,9 @@ private[mappers] object GameDetailsMapper {
       listingDetails.properties.get("Genre"),
       listingDetails.properties.get("Sub-Genre")
     )
-      .filter(_.isDefined)
-      .sequence
-      .map(_.mkString(" / "))
+      .flatten
+      .mkString(" / ")
+      .some
       .filter(_.nonEmpty)
 
   extension (str: String)
