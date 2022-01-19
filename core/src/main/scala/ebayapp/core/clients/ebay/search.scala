@@ -18,7 +18,7 @@ private[ebay] object search {
       Map(
         "fieldgroups"  -> "EXTENDED",
         "category_ids" -> categoryId.toString,
-        "filter"       -> searchFilterTemplate.format(from.truncatedTo(ChronoUnit.SECONDS)).replaceAll("\\{", "%7B").replaceAll("}", "%7D"),
+        "filter"       -> searchFilterTemplate.format(from.truncatedTo(ChronoUnit.SECONDS)),
         "limit"        -> "200",
         "q"            -> query
       )
