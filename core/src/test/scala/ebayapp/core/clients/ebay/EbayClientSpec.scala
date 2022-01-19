@@ -61,7 +61,7 @@ class EbayClientSpec extends CatsSpec {
           "category_ids" -> "139973"
         )
         searchParamsCaptor.getValue()("filter") must startWith(
-          "conditionIds:%7B1000|1500|2000|2500|3000|4000|5000%7D,itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:%7BFIXED_PRICE%7D,itemStartDate:["
+          "conditionIds:{1000|1500|2000|2500|3000|4000|5000},itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE},itemStartDate:["
         )
         items mustBe Nil
       }
