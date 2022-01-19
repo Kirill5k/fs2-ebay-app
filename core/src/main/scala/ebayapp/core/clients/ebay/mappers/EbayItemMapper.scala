@@ -60,7 +60,8 @@ private[ebay] object EbayItemMapper {
       properties = {
         val itemProps  = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
         val priceProps = Map("Price" -> item.price.value.toString(), "Currency" -> item.price.currency, "Postage" -> postageCost(item).toString())
-        itemProps.concat(priceProps)
+        val otherProps = Map("CategoryId" -> item.categoryId.toString)
+        itemProps.concat(priceProps).concat(otherProps)
       }
     )
 

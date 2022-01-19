@@ -88,7 +88,8 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Genre" -> "Action",
           "Postage" -> "2.99",
           "Price" -> "30.0",
-          "Currency" -> "GBP"
+          "Currency" -> "GBP",
+          "CategoryId" -> "139973"
         )
       )
 
@@ -118,6 +119,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Postage" -> "0",
           "Price" -> "30.0",
           "Currency" -> "GBP",
+          "CategoryId" -> "139973",
         )
       )
 
@@ -155,6 +157,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
           "Postage" -> "4.99",
           "Price" -> "425.0",
           "Currency" -> "GBP",
+          "CategoryId" -> "0",
         )
       )
 
