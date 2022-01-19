@@ -25,19 +25,19 @@ private[ebay] object search {
   }
 
   object EbaySearchParams {
-    def get(criteria: SearchCriteria): Either[Throwable, EbaySearchParams] =
+    def get(criteria: SearchCriteria): Either[AppError, EbaySearchParams] =
       criteria.category
         .toRight(AppError.Critical("category kind is required in ebay-client"))
         .flatMap(EbaySearchParams.get)
 
-    def get(category: String): Either[Throwable, EbaySearchParams] =
+    def get(category: String): Either[AppError, EbaySearchParams] =
       category match {
-        case "smart-lighting"            => Right(smartLightingSearchParams)
-        case c if c.startsWith("games-") => Right(videoGameSearchParams)
+        case "smart-lighting"            => Right(SmartLightingSearchParams)
+        case c if c.startsWith("games-") => Right(VideoGameSearchParams)
         case c                           => Left(AppError.Critical(s"unable to find search params for category '$c' in EbayClient"))
       }
 
-    private val smartLightingSearchParams = new EbaySearchParams {
+    private object SmartLightingSearchParams extends EbaySearchParams {
       private val DEFAULT_SEARCH_FILTER = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
         "itemLocationCountry:GB," +
         "deliveryCountry:GB," +
@@ -51,12 +51,11 @@ private[ebay] object search {
 
       private val ACCEPTER_BUYING_OPTIONS = Set("FIXED_PRICE", "BEST_OFFER")
 
-      override def filter: EbayItemSummary => Boolean = { item =>
-        item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
-      }
+      override def filter: EbayItemSummary => Boolean =
+        item => item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
     }
 
-    private val videoGameSearchParams = new EbaySearchParams {
+    private object VideoGameSearchParams extends EbaySearchParams {
       private val DEFAULT_SEARCH_FILTER = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
         "itemLocationCountry:GB," +
         "deliveryCountry:GB," +
