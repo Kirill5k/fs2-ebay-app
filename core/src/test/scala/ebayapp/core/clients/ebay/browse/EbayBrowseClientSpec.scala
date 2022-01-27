@@ -18,7 +18,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
 
   val accessToken       = "access-token"
   val itemId            = "item-id-1"
-  val searchQueryParams = Map("q" -> "iphone")
+  val searchQueryParams = Map("q" -> "iphone", "filter" -> "buyingOptions:{FIXED_PRICE}")
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
   val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))

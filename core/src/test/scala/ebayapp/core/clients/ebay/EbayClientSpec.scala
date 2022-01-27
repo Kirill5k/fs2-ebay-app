@@ -29,8 +29,8 @@ class EbayClientSpec extends CatsSpec {
   "An EbayClient" should {
 
     "return error when invalid category specified" in {
-      val (authClient, browseClient)                              = mocks
-      val videoGameSearchClient                                   = new LiveEbayClient[IO](config, authClient, browseClient)
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       val itemsResponse = videoGameSearchClient.search(criteria.copy(category = None))
 
@@ -54,12 +54,14 @@ class EbayClientSpec extends CatsSpec {
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), searchParamsCaptor.capture())
         searchParamsCaptor.getAllValues.asScala must have size 2
-        searchParamsCaptor.getValue()("q") mustBe "xbox"
-        searchParamsCaptor.getValue()("fieldgroups") mustBe "EXTENDED"
-        searchParamsCaptor.getValue()("limit") mustBe "200"
-        searchParamsCaptor.getValue()("category_ids") mustBe "139973"
+        searchParamsCaptor.getValue() must contain allElementsOf Map(
+          "q"            -> "xbox",
+          "fieldgroups"  -> "EXTENDED",
+          "limit"        -> "200",
+          "category_ids" -> "139973"
+        )
         searchParamsCaptor.getValue()("filter") must startWith(
-          "conditionIds:%7B1000|1500|2000|2500|3000|4000|5000%7D,itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:%7BFIXED_PRICE%7D,itemStartDate:["
+          "conditionIds:{1000|1500|2000|2500|3000|4000|5000},itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE},itemStartDate:["
         )
         items mustBe Nil
       }

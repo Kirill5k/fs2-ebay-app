@@ -33,7 +33,7 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     for {
-      time   <- Stream.eval(now.map(_.minusMillis(config.search.maxListingDuration.toMillis).`with`(MILLI_OF_SECOND, 0)))
+      time   <- Stream.eval(now.map(_.minusMillis(config.search.maxListingDuration.toMillis)))
       mapper <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       items <- Stream
@@ -79,6 +79,7 @@ object EbayClient:
       config: EbayConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    val auth   = EbayAuthClient.make[F](config, backend)
-    val browse = EbayBrowseClient.make[F](config, backend)
-    (auth, browse).mapN((a, b) => LiveEbayClient[F](config, a, b))
+    (
+      EbayAuthClient.make[F](config, backend),
+      EbayBrowseClient.make[F](config, backend)
+    ).mapN((a, b) => LiveEbayClient[F](config, a, b))

@@ -26,9 +26,10 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
     state.get.map(_.get(key).map(_._1))
 
   override def put(key: K, value: V): F[Unit] =
-    Clock[F].realTime.flatMap { ts =>
-      state.update(s => s + (key -> (value -> ts.toMillis)))
-    }
+    for
+      ts <- Clock[F].realTime
+      _  <- state.update(_ + (key -> (value -> ts.toMillis)))
+    yield ()
 
   override def contains(key: K): F[Boolean] =
     state.get.map(_.contains(key))
