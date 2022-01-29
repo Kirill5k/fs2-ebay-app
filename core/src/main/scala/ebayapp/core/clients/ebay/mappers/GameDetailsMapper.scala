@@ -49,6 +49,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=FIFA) (soccer|football)", "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling", "(?<=(FIFA|NHL|Madden|MotoGP) )20(?=\\d\\d)",
     "(?<=F1)\\s+(Formula( )?(one|1)?)( racing)?", "(?<=20\\d\\d).*formula(?s).*",
     "(?<=Fifa 21.*) (NXT LVL|Next level)", "(?<=PGA Tour.*) golf.*",
+    "(?<=Super meat) (?=boy)",
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
     "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)",
     "bandicoot( CTR)? (?=team racing)", "(?<=resident evil (vii|7)).*biohazard.*", "(?<=cyber) (?=punk)",
@@ -75,7 +76,7 @@ private[mappers] object GameDetailsMapper {
     "(new )?(still )?((factory) )?(un)?sealed( in packaging)?", "(s|c)ellophane wrapped",
     "(official )?Strategy Combat( guide)?", "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football)", "football soccer( sim(ulator)?)?", "action stealth", "(car|motorcycles|rally) (Driving|Racing)",
-    "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer", "Multi Player", "life simulation", "racing rally",
+    "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer", "(Multi|Single)( )?Player", "life simulation", "racing rally",
     "\\bpegi( \\d+)?\\b(?s).*$", "((\\d+|ten)th|(20|ten))( year(s)?)? (anniversary|celebration)", "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b",
     "\\d \\d players", "1 ONE", "flash sale", "Fun Kids Play( Console)?", "with all extras", "free gift",
     "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)(X|S)?\\b",
@@ -90,7 +91,7 @@ private[mappers] object GameDetailsMapper {
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", "essentials", "Re Mars tered", "booklet",
     "classic(s)?( (hit(s)?|version))?", "(case|box).{0,20}(complete|manual)", "(super|very) rare", "award winning", "Instruction(s)? Book", "works perfectly( fine)?",
     "Unwanted Gift", "limited (release|quantity)", "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b",
-    "must see", "see (pictures|photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included", "(still )?in wrap(p)?(ing|er)",
+    "must see", "see (pictures|photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included", "(still )?in( (plastic|cellophane))? wrap(p)?(ing|er)",
     "\\brated \\d+\\b", "\\d supplied", "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?", "\\ben\\b", "\\bcr\\b", "\\bnc\\b",
     "\\bfr\\b", "\\bes\\b", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?", "\\ban\\b", "\\bLTD\\b", "\\b\\w+VG(C)?\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b",
     "\\bnsw\\b", "\\bsft\\b", "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", "\\bWAR L\\d+\\b",
@@ -119,7 +120,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=Far)(?=Cry)", "(?<=Star)(?=Wars)", "(?<=Mario)(?=Kart)", "(?<=Pro)(?=Street)", "(?<=player)(?=unknown)", "(?<=south)(?=park)",
     "(?<=Super)(?=Heroes)", "(?<=Rock)(?=Band)", "(?<=My)(?=Sims)", "(?<=Nier)(?=Automata)", "(?<=Race)(?=driver grid)",
     "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)", "(?<=WATCH)(?=DOGS)", "(?<=PES)(?=20\\d\\d)", "(?<=MICRO)(?=MACHINES)",
-    "(?<=PLAYER)(?=UNKNOWN)"
+    "(?<=PLAYER)(?=UNKNOWN)", "(?<=ARK)(?=PARK)"
   ).mkString("(?i)", "|", "")
 
   private val PLATFORMS_MATCH_REGEX = List(
@@ -184,8 +185,8 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)\\bll\\b", "II")
       .replaceAll("(?i)\\blll\\b", "III")
       .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (2|II)(?s).*", "WWII")
-      .replaceAll("(?i)(resident evil \bVII\b)", "Resident Evil 7")
-      .replaceAll("(?i)(resident evil (8|\bVIII\b))", "Resident Evil Village")
+      .replaceAll("(?i)(resident evil \\bVII\\b)", "Resident Evil 7")
+      .replaceAll("(?i)(resident evil (8|\\bVIII\\b))", "Resident Evil Village")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(Read Dead Redemption)", "Red Dead Redemption")

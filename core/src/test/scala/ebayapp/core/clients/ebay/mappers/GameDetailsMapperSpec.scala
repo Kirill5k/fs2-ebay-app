@@ -351,12 +351,15 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val titles = Map(
         "FIFA 18 (XBOX ONE, SERIES X|S) VERY GOOD CONDITION" -> "FIFA 18",
         "the last of us part 2"                              -> "last of us Part II",
+        "resident evil VII"                                  -> "Resident Evil 7",
+        "resident evil VIII"                                 -> "Resident Evil Village",
         "resident evil 8"                                    -> "Resident Evil Village",
         "resident evil village 8"                            -> "resident evil village",
         "XBOX ONE GAME F1 2018 HEADLINE EDITION"             -> "F1 2018",
         "FIFA 21 NEXT LEVEL"                                 -> "FIFA 21",
         "Resident Evil 7 Biohazard"                          -> "Resident Evil 7",
-        "pga tour 2k21 golf fun"                             -> "pga tour 2k21"
+        "pga tour 2k21 golf fun"                             -> "pga tour 2k21",
+        "Super Meat Boy"                                     -> "Super MeatBoy"
       )
 
       forAll(titles) { case (title, expected) =>
