@@ -154,7 +154,7 @@ data:
         delay-between-requests: 20s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {category: "men", query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
+          {search-criteria: {category: "men", query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "calvin-klein-jeans"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
@@ -162,8 +162,8 @@ data:
           {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "Moschino"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-          {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
-          {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
+          {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 29}
         ]
       }
 
@@ -171,8 +171,8 @@ data:
         delay-between-requests: 15s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
-          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
+          {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {query: "tommy-hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {query: "emporio-armani-loungewear"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
@@ -183,9 +183,9 @@ data:
         delay-between-requests: 10s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
+          {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {category: "men", query: "Calvin Klein"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
+          {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {category: "men", query: "tommy-hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
         ]
       }
@@ -195,8 +195,8 @@ data:
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "stone-island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
-          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
-          {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
+          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {query: "moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 10}
           {search-criteria: {query: "tommy hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
           {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 59}
@@ -209,9 +209,9 @@ data:
         monitoring-frequency: 12m
         monitoring-requests: [
           {search-criteria: {query: "gucci"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 24}
-          {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
-          {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
-          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 54}
+          {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
+          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
       }
 
