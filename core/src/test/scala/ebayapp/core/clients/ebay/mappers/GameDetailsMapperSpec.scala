@@ -258,6 +258,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "5 PS3 Games Call of Duty Infinite Warfare VR PSVR",
         "Call of Duty Infinite Warfare XBOX ONE, SERIES X|S",
         "Call of Duty Infinite Warfare ps-4",
+        "Call of Duty Infinite Warfare ps4 free ps5 upgrade",
         "Call of Duty Infinite Warfare xone",
         "Call of Duty Infinite Warfare xbox one series x s",
         "Call of Duty Infinite Warfare xbox one x series x/s",

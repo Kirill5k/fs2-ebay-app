@@ -8,7 +8,10 @@ private[mappers] object GameDetailsMapper {
 
   private val CONSOLE_REGEX_PATTERN =
     "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
-      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?|((microsoft|\\bms\\b) )?\\bx( )?(b)?(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?( series( (X|S)?( )?(X|S)?)?)?|\\d+))?\\b|\\bps( )?\\d\\b|(nintendo )?(switch|\\bwii( u)?\\b))" +
+      "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?" + "|" +
+      "\\bps( )?\\d\\b" + "|" +
+      "(nintendo )?(switch|\\bwii( u)?\\b)" + "|" +
+      "((microsoft|\\bms\\b) )?\\bx( )?(b)?(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?( series( (X|S)?( )?(X|S)?)?)?|\\d+))?\\b" + ")" +
       "(( )?game(s)?)?( (promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( +20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
@@ -73,7 +76,7 @@ private[mappers] object GameDetailsMapper {
     // removes the word "BRAND NEW"
     "(sealed )?brand new( (condition|case|(factory )?sealed|still wrapped))?( in packaging)?( 20\\d\\d)?",
     // removes the word SEALED
-    "(new )?(still )?((factory) )?(un)?sealed( in packaging)?", "(s|c)ellophane wrapped",
+    "(new )?(still )?((factory) )?(un)?sealed( in packaging)?", "(s|c)ellophane wrapped", "free\\s+upgrade",
     "(official )?Strategy Combat( guide)?", "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football)", "football soccer( sim(ulator)?)?", "action stealth", "(car|motorcycles|rally) (Driving|Racing)",
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer", "(Multi|Single)( )?Player", "life simulation", "racing rally",
