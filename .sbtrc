@@ -1,0 +1,1 @@
+alias libUpdates = ; dependencyUpdates; reload plugins; dependencyUpdates ; reload return;
