@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v10
         with:
-          java-version: adopt@1.15
+          java-version: temurin@17
       - name: Stage docker image
         run: sbt docker:stage
       - name: Push to heroku

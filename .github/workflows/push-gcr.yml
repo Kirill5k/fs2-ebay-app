@@ -23,6 +23,6 @@ jobs:
 
       - uses: olafurpg/setup-scala@v10
         with:
-          java-version: adopt@1.15
+          java-version: temurin@17
       - name: Build and push Docker images
         run: sbt docker:publish
