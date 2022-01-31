@@ -64,7 +64,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       )
 
       forAll(platforms) { platform =>
-        val details = GameDetailsMapper.from(testListing.copy(title = s"Call of Duty: Infinite Warfare ${platform._1}", properties = Map()))
+        val details = GameDetailsMapper.from(testListing.copy(title = s"Call of Duty: Infinite Warfare ${platform._1}", properties = Map.empty))
         details.platform mustBe (Some(platform._2))
       }
     }
@@ -78,7 +78,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     }
 
     "map telltale game series to simply telltale" in {
-      val listingDetails = testListing.copy(title = "Minecraft A Telltale Game Series", properties = Map())
+      val listingDetails = testListing.copy(title = "Minecraft A Telltale Game Series", properties = Map.empty)
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
@@ -86,7 +86,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     }
 
     "only map WII title from complete words" in {
-      val listingDetails = testListing.copy(title = s"COD WWII for Sony Playstation 4", properties = Map())
+      val listingDetails = testListing.copy(title = s"COD WWII for Sony Playstation 4", properties = Map.empty)
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
@@ -95,7 +95,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     }
 
     "get details from title if properties are missing" in {
-      val listingDetails = testListing.copy(properties = Map())
+      val listingDetails = testListing.copy(properties = Map.empty)
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
@@ -130,7 +130,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     }
 
     "leave new in the middle of title" in {
-      val listingDetails = testListing.copy(title = "pal Wolfenstein: The NEW Colosus", properties = Map())
+      val listingDetails = testListing.copy(title = "pal Wolfenstein: The NEW Colosus", properties = Map.empty)
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
@@ -138,7 +138,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     }
 
     "remove new from the end and beginning of title" in {
-      val listingDetails = testListing.copy(title = "NEW LEGO Marvel Avengers New", properties = Map())
+      val listingDetails = testListing.copy(title = "NEW LEGO Marvel Avengers New", properties = Map.empty)
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
@@ -343,7 +343,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       )
 
       forAll(titles) { title =>
-        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map()))
+        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map.empty))
         details.name mustBe Some("Call of Duty Infinite Warfare")
       }
     }
@@ -358,6 +358,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "resident evil village 8"                            -> "resident evil village",
         "XBOX ONE GAME F1 2018 HEADLINE EDITION"             -> "F1 2018",
         "FIFA 21 NEXT LEVEL"                                 -> "FIFA 21",
+        "FIFA 21 Xbox one 2021"                              -> "FIFA 21",
         "Resident Evil 7 Biohazard"                          -> "Resident Evil 7",
         "pga tour 2k21 golf fun"                             -> "pga tour 2k21",
         "Super Meat Boy"                                     -> "Super MeatBoy",
@@ -365,7 +366,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       )
 
       forAll(titles) { case (title, expected) =>
-        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map()))
+        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map.empty))
         details.name mustBe Some(expected)
       }
     }
@@ -380,7 +381,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       )
 
       forAll(titles) { case (title, expected) =>
-        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map()))
+        val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map.empty))
         details.name mustBe Some(expected)
       }
     }
