@@ -21,7 +21,7 @@ jobs:
       - name: Authorize Docker push
         run: gcloud auth configure-docker
 
-      - uses: olafurpg/setup-scala@v10
+      - uses: olafurpg/setup-scala@v11
         with:
           java-version: temurin@17
       - name: Build and push Docker images
