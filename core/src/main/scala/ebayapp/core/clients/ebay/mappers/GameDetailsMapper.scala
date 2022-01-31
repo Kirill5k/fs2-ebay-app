@@ -11,7 +11,8 @@ private[mappers] object GameDetailsMapper {
       "((sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?" + "|" +
       "\\bps( )?\\d\\b" + "|" +
       "(nintendo )?(switch|\\bwii( u)?\\b)" + "|" +
-      "((microsoft|\\bms\\b) )?\\bx( )?(b)?(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?( series( (X|S)?( )?(X|S)?)?)?|\\d+))?\\b" + ")" +
+      "((microsoft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|series( )?(s|x)( )?(s|x)?|o(ne)?( x)?|\\d+)\\b" + ")" +
+//      "((microsoft|\\bms\\b) )?\\bx( )?(b)?(ox)?(( )?(live|(one (x)?)?series( )?(s|x)( )?(s|x)?|o(ne)?( x)?( series( (X|S)?( )?(X|S)?)?)?|\\d+))?\\b" +
       "(( )?game(s)?)?( (promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football))?( game(s)?)?( new)?( +20\\d\\d)?"
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
@@ -82,7 +83,7 @@ private[mappers] object GameDetailsMapper {
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer", "(Multi|Single)( )?Player", "life simulation", "racing rally",
     "\\bpegi( \\d+)?\\b(?s).*$", "((\\d+|ten)th|(20|ten))( year(s)?)? (anniversary|celebration)", "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b",
     "\\d \\d players", "1 ONE", "flash sale", "Fun Kids Play( Console)?", "with all extras", "free gift",
-    "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)(X|S)?\\b",
+    "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)( )?(X|S)?\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)", "Stric(t|k)ly limited",
     "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "Lenticular (cover|Sleeve)", "plays perfect", "100 trusted seller",
     "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?", "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
