@@ -6,18 +6,16 @@ import ebayapp.core.domain.search.ListingDetails
 
 private[mappers] object GameDetailsMapper {
 
-  private val CONSOLE_REGEX_PATTERN =
-    "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?" +
-      "(" +
-      "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?" +
-      "|" +
-      "\\bPS( )?\\d\\b" +
-      "|" +
-      "(nintendo )?(switch|\\bwii( u)?\\b)" +
-      "|" +
-      "((microsoft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|series( )?(s|x)( )?(s|x)?|o(ne)?( x)?|\\d+)\\b" +
-      ")" +
-      "( )?(game(s)?)?( )?(promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football)?( game(s)?)?( new)?( )?(20\\d\\d)?"
+  private val CONSOLE_REGEX_PATTERN = List(
+    "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
+    "\\bPS( )?\\d\\b",
+    "(nintendo )?(switch|\\bwii( u)?\\b)",
+    "((microsoft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|series( )?(s|x)( )?(s|x)?|o(ne)?( x)?|\\d+)\\b"
+  ).mkString(
+    "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
+    "|",
+    ")( )?(game(s)?)?( )?(promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football)?( game(s)?)?( new)?( )?(20\\d\\d)?"
+  )
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
     "(gold )?((greatest|playstation|ps) )?\\bhits\\b( (series|range|edition))?",
