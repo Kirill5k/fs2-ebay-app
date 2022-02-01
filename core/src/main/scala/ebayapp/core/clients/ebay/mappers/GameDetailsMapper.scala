@@ -10,7 +10,7 @@ private[mappers] object GameDetailsMapper {
     "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
     "\\bPS( )?\\d\\b",
     "(nintendo )?(switch|\\bwii( u)?\\b)",
-    "((microsoft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|series( )?(s|x)( )?(s|x)?|o(ne)?( x)?|\\d+)\\b"
+    "((microsoft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d+)\\b"
   ).mkString(
     "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
     "|",
@@ -41,7 +41,7 @@ private[mappers] object GameDetailsMapper {
     "(royal mail )?(1st|2nd|first) class.*$",
     "(?<=\\w+ )((all|fully) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$",
-    "(\\bW\\b|with| inc(ludes)?|contain|bonus|plus).{0,20}(guide|dlc|pass|level|content|bonus|pack)(?s).*$",
+    "(\\bW\\b|with| inc(ludes)?|contain|(\\d )?bonus|plus).{0,20}(guide|dlc|pass|level|content|bonus|pack)(?s).*$",
     "(supplied|comes)? (with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
     "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
@@ -55,7 +55,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=FIFA) (soccer|football)", "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling", "(?<=(FIFA|NHL|Madden|MotoGP) )20(?=\\d\\d)",
     "(?<=F1)\\s+(Formula( )?(one|1)?)( racing)?", "(?<=20\\d\\d).*formula(?s).*",
     "(?<=Fifa 21.*) (NXT LVL|Next level)", "(?<=PGA Tour.*) golf.*",
-    "(?<=Super meat) (?=boy)",
+    "(?<=Super meat) (?=boy)", "(?<=harry potter).*years.*",
     "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*",
     "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)",
     "bandicoot( CTR)? (?=team racing)", "(?<=resident evil (vii|7)).*biohazard.*", "(?<=cyber) (?=punk)",
@@ -70,7 +70,7 @@ private[mappers] object GameDetailsMapper {
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
     // removes the word GAME
     "((new|all) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|limited run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( (\\d+|in one))?( new)?",
-    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|extreme sport(s)?|football sport|rally|driving|shooting|fighting|hacker|(car )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
+    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|extreme sport(s)?|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
     "real driving simulator",
     // removes the word USED
     "((barely|condition|never|hardly|dlc) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
@@ -105,7 +105,7 @@ private[mappers] object GameDetailsMapper {
     "\\buns\\b", "\\bx360\\b", "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b", "\\bSE\\b",
     "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( |\\d)?)?VR\\b( version)?", "\\bDEFY\\b", "\\bArgos\\b", "\\bGD\\b",
     "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b", "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b",
-    "(?<=\\d)PS\\d",
+    "(?<=\\d)PS\\d", "\bXBOX\b",
     "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "(condition )?NEW(\\s+)?$"
   ).mkString("(?i)", "|", "")
 

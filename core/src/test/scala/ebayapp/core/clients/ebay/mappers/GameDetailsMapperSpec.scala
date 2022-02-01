@@ -364,7 +364,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Resident Evil 7 Biohazard"                          -> "Resident Evil 7",
         "pga tour 2k21 golf fun"                             -> "pga tour 2k21",
         "Super Meat Boy"                                     -> "Super MeatBoy",
-        "GTA 5 Xbox Series X / Xbox One"                     -> "Grand Theft Auto 5"
+        "GTA 5 Xbox Series X / Xbox One"                     -> "Grand Theft Auto 5",
+        "Switch-LEGO HARRY POTTER YEARS 1-7 GAME NEW"        -> "LEGO HARRY POTTER"
       )
 
       forAll(titles) { case (title, expected) =>
