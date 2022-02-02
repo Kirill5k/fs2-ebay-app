@@ -158,9 +158,8 @@ data:
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "calvin-klein-jeans"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
-          {search-criteria: {category: "men", query: "polo-ralph-lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
           {search-criteria: {category: "men", query: "Tommy Hilfiger"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
-          {search-criteria: {category: "men", query: "Moschino"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 53}
+          {search-criteria: {category: "men", query: "Moschino"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 39}
           {search-criteria: {category: "men", query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 29}
@@ -209,7 +208,6 @@ data:
         monitoring-frequency: 12m
         monitoring-requests: [
           {search-criteria: {query: "gucci"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 24}
-          {search-criteria: {query: "polo ralph lauren"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {query: "kenzo"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
           {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true, min-discount: 49}
         ]
