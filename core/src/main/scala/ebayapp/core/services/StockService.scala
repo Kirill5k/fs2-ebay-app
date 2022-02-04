@@ -43,7 +43,6 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
             case Some(prev) => (StockComparer.compareItems(prev, curr, req), Some(StockComparer.mergeItems(prev, curr).some))
             case None => (List.empty[ItemStockUpdates], Some(curr.some))
           }
-          (prevOpt.fold(List.empty[ItemStockUpdates])(prev => StockComparer.compareItems(prev, curr, req)), Some(curr.some))
         }
       }
       .flatMap(r => Stream.emits(r) ++ Stream.sleep_(freq))
