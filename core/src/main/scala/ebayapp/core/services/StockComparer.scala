@@ -3,8 +3,26 @@ package ebayapp.core.services
 import ebayapp.core.common.config.StockMonitorRequest
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
+import java.time.Instant
+
+import scala.concurrent.duration._
 
 object StockComparer:
+  def mergeItems(
+      prev: Map[String, ResellableItem],
+      curr: Map[String, ResellableItem]
+  ): Map[String, ResellableItem] =
+    val allKeys = prev.keySet.union(curr.keySet)
+    val ts   = Instant.now.minusSeconds(6.hours.toSeconds)
+    allKeys.flatMap { key =>
+      (prev.get(key), curr.get(key)) match {
+        case (Some(p), Some(c))                                         => Some((key, c))
+        case (None, Some(c))                                            => Some((key, c))
+        case (Some(p), None) if p.listingDetails.datePosted.isAfter(ts) => Some((key, p))
+        case _                                                          => None
+      }
+    }.toMap
+
   def compareItems(
       prev: Map[String, ResellableItem],
       curr: Map[String, ResellableItem],

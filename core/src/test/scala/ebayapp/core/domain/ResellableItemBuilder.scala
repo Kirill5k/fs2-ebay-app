@@ -1,6 +1,6 @@
 package ebayapp.core.domain
 
-import ebayapp.core.domain.ItemDetails.{VideoGame, Phone}
+import ebayapp.core.domain.ItemDetails.{Phone, VideoGame}
 import ebayapp.core.domain.search.{SellPrice, _}
 
 import java.time.Instant
@@ -10,15 +10,21 @@ object ResellableItemBuilder {
   def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Option[Int] = Some(50)): ResellableItem =
     ResellableItem.clothing(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
-      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
+      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map.empty),
       BuyPrice(quantity, BigDecimal(price), discount),
       None
     )
 
-  def generic(name: String, quantity: Int = 1, price: Double = 1800.0, discount: Option[Int] = None): ResellableItem =
+  def generic(
+      name: String,
+      quantity: Int = 1,
+      price: Double = 1800.0,
+      discount: Option[Int] = None,
+      datePosted: Instant = Instant.now()
+  ): ResellableItem =
     ResellableItem.generic(
       ItemDetails.Generic(name),
-      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map()),
+      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", datePosted, "CEX", Map.empty),
       BuyPrice(quantity, BigDecimal(price), discount),
       None
     )
@@ -74,7 +80,7 @@ object ResellableItemBuilder {
         "NEW",
         datePosted,
         "EBAY:168.robinhood",
-        Map()
+        Map.empty
       ),
       BuyPrice(1, BigDecimal(99.99)),
       Some(SellPrice(BigDecimal(150), BigDecimal(110)))

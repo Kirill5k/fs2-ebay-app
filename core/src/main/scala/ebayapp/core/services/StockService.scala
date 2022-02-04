@@ -39,6 +39,10 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
     Stream
       .unfoldLoopEval[F, Option[Map[String, ResellableItem]], List[ItemStockUpdates]](None) { prevOpt =>
         findItems(req).map { curr =>
+          prevOpt match {
+            case Some(prev) => (StockComparer.compareItems(prev, curr, req), Some(StockComparer.mergeItems(prev, curr).some))
+            case None => (List.empty[ItemStockUpdates], Some(curr.some))
+          }
           (prevOpt.fold(List.empty[ItemStockUpdates])(prev => StockComparer.compareItems(prev, curr, req)), Some(curr.some))
         }
       }
