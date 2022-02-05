@@ -23,23 +23,25 @@ final case class RedirectController[F[_]: Concurrent](
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
-      case DELETE -> Root =>
-        terminateIfTrue(true) >> Forbidden("Retry")
-      case req @ GET -> _ =>
-        req.headers.get(XRerouteToHeader) match {
-          case Some(redirectToUri) =>
-            client
-              .toHttpApp {
-                req
-                  .withUri(Uri.unsafeFromString(redirectToUri.head.value + req.uri.toString))
-                  .removeHeader(HostHeader)
-                  .removeHeader(XReloadOn403Header)
-                  .removeHeader(XRerouteToHeader)
-              }
-              .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.headers.get(XReloadOn403Header).isDefined))
-          case None =>
-            BadRequest(s"Missing $XRerouteToHeader header")
-        }
+      case DELETE -> Root  => terminateIfTrue(true) >> Forbidden("Retry")
+      case req @ GET -> _  => redirect(req)
+      case req @ POST -> _ => redirect(req)
+    }
+
+  private def redirect(req: Request[F]): F[Response[F]] =
+    req.headers.get(XRerouteToHeader) match {
+      case Some(redirectToUri) =>
+        client
+          .toHttpApp {
+            req
+              .withUri(Uri.unsafeFromString(redirectToUri.head.value + req.uri.toString))
+              .removeHeader(HostHeader)
+              .removeHeader(XReloadOn403Header)
+              .removeHeader(XRerouteToHeader)
+          }
+          .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.headers.get(XReloadOn403Header).isDefined))
+      case None =>
+        BadRequest(s"Missing $XRerouteToHeader header")
     }
 
   private def terminateIfTrue(cond: Boolean): F[Unit] =
