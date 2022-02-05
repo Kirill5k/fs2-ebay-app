@@ -41,12 +41,14 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
         val item = items.head
 
         item.itemDetails mustBe Clothing("Emporio Armani Crew Neck Logo T Shirt Black", "Armani", "Medium")
+        item.listingDetails.url mustBe "https://www.mainlinemenswear.co.uk/product/emporio-armani-crew-neck-logo-t-shirt-black/149663"
+        item.listingDetails.image mustBe Some("https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/shopimages/products/149663/Mainimage.jpg")
 
         items.map(_.buyPrice) mustBe List(
-          BuyPrice(5, BigDecimal(51.98), Some(50)),
-          BuyPrice(2, BigDecimal(51.98), Some(50)),
-          BuyPrice(3, BigDecimal(51.98), Some(50)),
-          BuyPrice(2, BigDecimal(51.98), Some(50)),
+          BuyPrice(5, BigDecimal(51.98), Some(51)),
+          BuyPrice(2, BigDecimal(51.98), Some(51)),
+          BuyPrice(3, BigDecimal(51.98), Some(51)),
+          BuyPrice(2, BigDecimal(51.98), Some(51)),
         )
       }
     }

@@ -44,7 +44,7 @@ final private class LiveMainlineMenswearClient[F[_]](
             p.name,
             p.brand,
             p.base_price,
-            p.rrp,
+            p.rrp1,
             s.content,
             s.onlinestock,
             p.mainimage,
@@ -68,7 +68,7 @@ final private class LiveMainlineMenswearClient[F[_]](
     dispatch() {
       basicRequest
         .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
-        .body(SearchRequest(1, criteria.query).toJson)
+        .body(SearchRequest(page, criteria.query).toJson)
         .headers(headers)
         .response(asJson[SearchResponse])
     }.flatMap { r =>

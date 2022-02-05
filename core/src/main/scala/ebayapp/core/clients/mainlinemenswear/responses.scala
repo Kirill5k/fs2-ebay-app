@@ -14,7 +14,7 @@ private[mainlinemenswear] object responses {
       brand: String,
       category: String,
       base_price: BigDecimal,
-      rrp: BigDecimal,
+      rrp1: BigDecimal,
       sizes: ProductSizes,
       clean_url: String,
       mainimage: String
@@ -29,7 +29,7 @@ private[mainlinemenswear] object responses {
       base_price: BigDecimal,
       rrp: BigDecimal
   ) derives Codec.AsObject {
-    def isOnSale: Boolean = base_price > 0 && rrp > 0
+    def isOnSale: Boolean = base_price.toInt > 0 && rrp.toInt > 0
   }
 
   final case class SearchData(products: List[ProductPreview]) derives Codec.AsObject

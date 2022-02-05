@@ -1,7 +1,11 @@
 package ebayapp.core.clients.mainlinemenswear
 
 import ebayapp.core.clients.ItemMapper
-import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.ItemDetails.Clothing
+import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
+
+import java.time.Instant
 
 private[mainlinemenswear] object mappers {
 
@@ -21,6 +25,35 @@ private[mainlinemenswear] object mappers {
   type MainlineMenswearItemMapper = ItemMapper[MainlineMenswearItem]
 
   val mainlineMenswearClothingMapper: MainlineMenswearItemMapper = new MainlineMenswearItemMapper {
-    override def toDomain(jdi: MainlineMenswearItem): ResellableItem = ???
+    override def toDomain(mmi: MainlineMenswearItem): ResellableItem =
+      ResellableItem.clothing(itemDetails(mmi), listingDetails(mmi), buyPrice(mmi), None)
+
+    private def itemDetails(mmi: MainlineMenswearItem): ItemDetails.Clothing =
+      Clothing(
+        mmi.name,
+        mmi.brand,
+        mmi.size
+      )
+
+    private def buyPrice(mmi: MainlineMenswearItem): BuyPrice = {
+      val current  = mmi.currentPrice
+      val rrp = mmi.previousPrice
+      val discount = 100 - (current * 100 / rrp).toInt
+      BuyPrice(mmi.onlineStock, current, Some(discount))
+    }
+
+    private def listingDetails(mmi: MainlineMenswearItem): ListingDetails =
+      ListingDetails(
+        s"https://www.mainlinemenswear.co.uk/${mmi.url}",
+        s"${mmi.name} (${mmi.brand} / ${mmi.size})",
+        Some(s"Clothing/${mmi.category}"),
+        None,
+        None,
+        Some(s"https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/${mmi.image}"),
+        "NEW",
+        Instant.now,
+        "mainlinemenswear",
+        Map.empty
+      )
   }
 }

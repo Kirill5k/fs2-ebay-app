@@ -60,7 +60,7 @@ private[jdsports] object mappers {
         "NEW",
         Instant.now,
         jdi.storeName.toUpperCase,
-        Map()
+        Map.empty
       )
   }
 }
