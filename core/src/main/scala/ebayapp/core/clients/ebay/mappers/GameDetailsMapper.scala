@@ -12,7 +12,7 @@ private[mappers] object GameDetailsMapper {
     "(nintendo )?(switch|\\bwii( u)?\\b)",
     "((microsoft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d+)\\b"
   ).mkString(
-    "((new|rare|cheapest|excellent|official|select) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
+    "((new|rare|cheapest|excellent|official|select|enhanced) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
     "|",
     ")( )?(game(s)?)?( )?(promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football)?( game(s)?)?( new)?( )?(20\\d\\d)?"
   )
