@@ -1,0 +1,578 @@
+{
+  "data": {
+    "productID": 149663,
+    "code": "3K1TAC1JUVZ0999 aw21p ",
+    "name": "Emporio Armani Crew Neck Logo T Shirt Black",
+    "brand": "Armani",
+    "category": "T Shirts",
+    "description": "Emporio Armani Crew Neck Logo T Shirt In Black, Constructed in tencel jersey fabrics with a ribbed crew neckline and short sleeves. The signature Emporio Armani EA logo is embroidered on the chest in black and white. The signature Emporio Armani logo is situated on the centre of the chest in a raised rubberised print in white. This t shirt is made from tencel fibres that are durable, breathable, wrinkle proof and highly wicking. 70% Lyocell and 30% Cotton.\r\n",
+    "mainimage": "shopimages/products/149663/Mainimage.jpg",
+    "price1": "51.98",
+    "rrp1": "105.00",
+    "colour": "Black       ",
+    "extrafield1": "shopimages/products/149663/Alternative1.jpg",
+    "extrafield11": "shopimages/products/149663/Alternative2.jpg",
+    "exclusive": 0,
+    "HasAGift": "N",
+    "Keywords": null,
+    "sectionUrl": "emporio-armani",
+    "brandCategories": [
+      {
+        "sectionID": 24,
+        "title": "Emporio Armani T Shirts",
+        "position": 1,
+        "index": 0,
+        "sectionUrl": "emporio-armani/t-shirts",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "T%20Shirts",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "t-shirts",
+        "seoTitle": "Emporio Armani T Shirts"
+      },
+      {
+        "sectionID": 7,
+        "title": "Emporio Armani",
+        "position": 0,
+        "index": 1,
+        "sectionUrl": "emporio-armani",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "",
+        "type": "category",
+        "page": "section",
+        "pageValue": "section",
+        "param1": "emporio-armani",
+        "param2": null,
+        "seoTitle": "Emporio Armani"
+      },
+      {
+        "sectionID": 25,
+        "title": "Emporio Armani Shirts",
+        "position": 2,
+        "index": 2,
+        "sectionUrl": "emporio-armani/shirts",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Shirts",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "shirts",
+        "seoTitle": "Emporio Armani Shirts"
+      },
+      {
+        "sectionID": 26,
+        "title": "Emporio Armani Jumpers And Zip Tops",
+        "position": 3,
+        "index": 3,
+        "sectionUrl": "emporio-armani/jumpers-and-zip-tops",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Jumpers%20And%20Zip%20Tops",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "jumpers-and-zip-tops",
+        "seoTitle": "Emporio Armani Jumpers and Zip Tops"
+      },
+      {
+        "sectionID": 27,
+        "title": "Emporio Armani Jackets",
+        "position": 4,
+        "index": 4,
+        "sectionUrl": "emporio-armani/jackets",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Jackets",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "jackets",
+        "seoTitle": "Emporio Armani Jackets"
+      },
+      {
+        "sectionID": 28,
+        "title": "Emporio Armani Jeans And Trousers",
+        "position": 5,
+        "index": 5,
+        "sectionUrl": "emporio-armani/jeans-and-trousers",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Jeans%20And%20Trousers",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "jeans-and-trousers",
+        "seoTitle": "Emporio Armani Jeans and Trousers"
+      },
+      {
+        "sectionID": 5174,
+        "title": "Emporio Armani Shorts",
+        "position": 6,
+        "index": 6,
+        "sectionUrl": "emporio-armani/shorts",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Shorts",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "shorts",
+        "seoTitle": "Emporio Armani Shorts"
+      },
+      {
+        "sectionID": 2573,
+        "title": "Emporio Armani Underwear",
+        "position": 7,
+        "index": 7,
+        "sectionUrl": "emporio-armani/underwear",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Underwear",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "underwear",
+        "seoTitle": "Emporio Armani Underwear"
+      },
+      {
+        "sectionID": 413,
+        "title": "Emporio Armani Shoes And Trainers",
+        "position": 8,
+        "index": 8,
+        "sectionUrl": "emporio-armani/shoes-and-trainers",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Shoes%20And%20Trainers",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "shoes-and-trainers",
+        "seoTitle": "Emporio Armani Shoes and Trainers"
+      },
+      {
+        "sectionID": 29,
+        "title": "Emporio Armani Accessories",
+        "position": 9,
+        "index": 9,
+        "sectionUrl": "emporio-armani/accessories",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Accessories",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "accessories",
+        "seoTitle": "Emporio Armani Accessories"
+      },
+      {
+        "sectionID": 5204,
+        "title": "Emporio Armani Watches",
+        "position": 10,
+        "index": 10,
+        "sectionUrl": "emporio-armani/watches",
+        "saleSection": "N",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Watches",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "watches",
+        "seoTitle": "Emporio Armani Watches"
+      },
+      {
+        "sectionID": 5007,
+        "title": "Emporio Armani Sale Items",
+        "position": 11,
+        "index": 11,
+        "sectionUrl": "emporio-armani/sale-items",
+        "saleSection": "Y",
+        "redEyeBrand": "Emporio%20Armani",
+        "redEyeCategory": "Sale%20Items",
+        "type": "category",
+        "page": "sub-section",
+        "pageValue": "sub-section",
+        "param1": "emporio-armani",
+        "param2": "sale-items",
+        "seoTitle": "Emporio Armani Sale Items"
+      }
+    ],
+    "isFreeDelivery": "N",
+    "IsInOffer": "Y",
+    "productFlagText": "FREE DELIVERY",
+    "schemaPrices": [
+      {
+        "code": "EUR",
+        "price": "62.33"
+      },
+      {
+        "code": "USD",
+        "price": "70.60"
+      },
+      {
+        "code": "AUD",
+        "price": "98.20"
+      },
+      {
+        "code": "DKK",
+        "price": "463.64"
+      },
+      {
+        "code": "CAD",
+        "price": "89.12"
+      },
+      {
+        "code": "NZD",
+        "price": "104.28"
+      },
+      {
+        "code": "SGD",
+        "price": "95.66"
+      },
+      {
+        "code": "SEK",
+        "price": "641.80"
+      },
+      {
+        "code": "NOK",
+        "price": "622.88"
+      },
+      {
+        "code": "AED",
+        "price": "259.26"
+      }
+    ],
+    "clean_url": "product/emporio-armani-crew-neck-logo-t-shirt-black/149663",
+    "logo": "images/minilogos/Armani.gif",
+    "thumbnail": "https://cdn.mainlinemenswear.co.uk/w_150,e_blur:10000,c_crop/f_auto,q_10/mainlinemenswear/shopimages/products/149663/Mainimage.jpg",
+    "klarnaPrice": "5198",
+    "klarnaPromoKey": "",
+    "klarnaPromoEnable": "N",
+    "base_price": "51.98",
+    "reviews": [],
+    "sizes": {
+      "data": [
+        {
+          "exvalID": 1298958,
+          "content": "Medium",
+          "onlinestock": 5
+        },
+        {
+          "exvalID": 1298960,
+          "content": "Large",
+          "onlinestock": 2
+        },
+        {
+          "exvalID": 1298964,
+          "content": "XX Large",
+          "onlinestock": 3
+        },
+        {
+          "exvalID": 1298966,
+          "content": "XXX Large",
+          "onlinestock": 2
+        }
+      ],
+      "display": "radio"
+    },
+    "mmwRecommended": [
+      {
+        "productID": 162434,
+        "thumbnail": "shopimages/products/162434/Mainimage.jpg",
+        "name": "Emporio Armani Short Sleeved Polo T Shirt White",
+        "price1": "120.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162411,
+        "thumbnail": "shopimages/products/162411/Mainimage.jpg",
+        "name": "Emporio Armani Short Sleeved Zip Polo T Shirt Blac",
+        "price1": "120.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162409,
+        "thumbnail": "shopimages/products/162409/Mainimage.jpg",
+        "name": "Emporio Armani Chinese New Year Logo T Shirt Black",
+        "price1": "100.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162407,
+        "thumbnail": "shopimages/products/162407/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt Black",
+        "price1": "100.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162225,
+        "thumbnail": "shopimages/products/162225/Mainimage.jpg",
+        "name": "Emporio Armani Short Sleeved Polo T Shirt Black",
+        "price1": "140.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162221,
+        "thumbnail": "shopimages/products/162221/Mainimage.jpg",
+        "name": "Emporio Armani Milano Logo T Shirt Black",
+        "price1": "90.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162218,
+        "thumbnail": "shopimages/products/162218/Mainimage.jpg",
+        "name": "Emporio Armani Capsule Crew Neck T Shirt Black",
+        "price1": "90.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162217,
+        "thumbnail": "shopimages/products/162217/Mainimage.jpg",
+        "name": "Emporio Armani Capsule Crew Neck T Shirt Beige",
+        "price1": "90.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162202,
+        "thumbnail": "shopimages/products/162202/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt Black",
+        "price1": "135.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162200,
+        "thumbnail": "shopimages/products/162200/Mainimage.jpg",
+        "name": "Emporio Armani Short Sleeved Polo T Shirt Blue",
+        "price1": "70.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162199,
+        "thumbnail": "shopimages/products/162199/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt White",
+        "price1": "100.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162197,
+        "thumbnail": "shopimages/products/162197/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt Grey",
+        "price1": "75.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162196,
+        "thumbnail": "shopimages/products/162196/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt Green",
+        "price1": "75.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162195,
+        "thumbnail": "shopimages/products/162195/Mainimage.jpg",
+        "name": "Emporio Armani Capsule Crew Neck T Shirt White",
+        "price1": "90.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 162194,
+        "thumbnail": "shopimages/products/162194/Mainimage.jpg",
+        "name": "Emporio Armani Long Sleeved Polo T Shirt Navy",
+        "price1": "115.00",
+        "rrp1": "0.00"
+      }
+    ],
+    "saleRecommended": [
+      {
+        "productID": 155110,
+        "thumbnail": "shopimages/products/155110/Mainimage.jpg",
+        "name": "Armani Exchange Padded Down Jacket Black",
+        "price1": "165.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 156774,
+        "thumbnail": "shopimages/products/156774/Mainimage.jpg",
+        "name": "Armani Exchange Jacket Black",
+        "price1": "84.15",
+        "rrp1": "170.00"
+      },
+      {
+        "productID": 147567,
+        "thumbnail": "shopimages/products/147567/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Pocket T Shirt Black",
+        "price1": "69.00",
+        "rrp1": "115.00"
+      },
+      {
+        "productID": 147056,
+        "thumbnail": "shopimages/products/147056/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo Sweatshirt Black",
+        "price1": "94.05",
+        "rrp1": "190.00"
+      },
+      {
+        "productID": 149621,
+        "thumbnail": "shopimages/products/149621/Mainimage.jpg",
+        "name": "Armani Exchange Crew Neck Logo T Shirt Navy",
+        "price1": "21.29",
+        "rrp1": "43.00"
+      },
+      {
+        "productID": 153892,
+        "thumbnail": "shopimages/products/153892/Mainimage.jpg",
+        "name": "Tommy Hilfiger Fade Logo T Shirt Black",
+        "price1": "19.80",
+        "rrp1": "40.00"
+      },
+      {
+        "productID": 152131,
+        "thumbnail": "shopimages/products/152131/Mainimage.jpg",
+        "name": "Nike Training Dri Fit Logo T Shirt Black",
+        "price1": "16.20",
+        "rrp1": "27.00"
+      },
+      {
+        "productID": 162993,
+        "thumbnail": "shopimages/products/162993/Mainimage.jpg",
+        "name": "adidas Originals 3 Stripes Tracksuit Grey",
+        "price1": "105.00",
+        "rrp1": "0.00"
+      },
+      {
+        "productID": 155021,
+        "thumbnail": "shopimages/products/155021/Mainimage.jpg",
+        "name": "BOSS Tlogo T Shirt Navy",
+        "price1": "33.00",
+        "rrp1": "55.00"
+      },
+      {
+        "productID": 156070,
+        "thumbnail": "shopimages/products/156070/Mainimage.jpg",
+        "name": "Diesel D Vocs Boot Cut Jeans Navy",
+        "price1": "71.78",
+        "rrp1": "145.00"
+      },
+      {
+        "productID": 154990,
+        "thumbnail": "shopimages/products/154990/Mainimage.jpg",
+        "name": "BOSS Pixel 1 T Shirt Navy",
+        "price1": "41.40",
+        "rrp1": "69.00"
+      },
+      {
+        "productID": 156789,
+        "thumbnail": "shopimages/products/156789/Mainimage.jpg",
+        "name": "Emporio Armani Full Zip Hoodie Grey",
+        "price1": "118.80",
+        "rrp1": "240.00"
+      },
+      {
+        "productID": 156602,
+        "thumbnail": "shopimages/products/156602/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt Grey",
+        "price1": "49.50",
+        "rrp1": "100.00"
+      },
+      {
+        "productID": 156620,
+        "thumbnail": "shopimages/products/156620/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt Green",
+        "price1": "44.55",
+        "rrp1": "90.00"
+      },
+      {
+        "productID": 156622,
+        "thumbnail": "shopimages/products/156622/Mainimage.jpg",
+        "name": "Emporio Armani Crew Neck Logo T Shirt Navy",
+        "price1": "44.55",
+        "rrp1": "90.00"
+      },
+      {
+        "productID": 162409,
+        "thumbnail": "shopimages/products/162409/Mainimage.jpg",
+        "name": "Emporio Armani Chinese New Year Logo T Shirt Black",
+        "price1": "100.00",
+        "rrp1": "0.00"
+      }
+    ],
+    "creptProtect": [],
+    "deliveryWindow": [],
+    "deliveryInfo": {
+      "topDescription": [
+        {
+          "header": "",
+          "text": "Order by 4pm on a weekday to ensure your order is despatched the same day. Orders after 4pm will be despatched the following day."
+        }
+      ],
+      "midDescription": [],
+      "bottomDescription": [
+        {
+          "header": "Please Note:",
+          "text": "Next Day Delivery UK Orders placed between 4pm on Friday and 4pm on Monday are delivered on Tuesday."
+        },
+        {
+          "header": "",
+          "text": "Next Day deliveries to BT postcodes and other UK islands can take upto 48 hours longer than expected at peak times."
+        }
+      ],
+      "deliveryOptions": [
+        {
+          "header": [
+            {
+              "type": "img",
+              "content": "m/img/UK-flag-icon.png"
+            },
+            {
+              "type": "text",
+              "content": "Mainland UK & Northern Ireland"
+            }
+          ],
+          "body": [
+            {
+              "service": "72 Hour Delivery",
+              "price": "£3.50",
+              "DeliverySpeed": "72 Hours",
+              "endText": " Free over £35.00"
+            },
+            {
+              "service": "Next Working Day",
+              "price": "£5.95",
+              "DeliverySpeed": "Next Day",
+              "endText": " Free over £150.00"
+            },
+            {
+              "service": "Saturday Delivery",
+              "price": "£7.95",
+              "DeliverySpeed": "Saturday",
+              "endText": " Free over £150.00"
+            },
+            {
+              "service": "Sunday Delivery",
+              "price": "£7.95",
+              "DeliverySpeed": "Sunday",
+              "endText": " Free over £150.00"
+            }
+          ]
+        }
+      ]
+    },
+    "seoTitle": "Emporio Armani Crew Neck Logo T Shirt Black | Mainline Menswear ",
+    "metaDescription": "Emporio Armani Crew Neck Logo T Shirt Black at Mainline Menswear. Huge range of mens designer clothing. Next Day UK delivery",
+    "metaKeywords": ""
+  },
+  "error": []
+}
