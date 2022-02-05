@@ -65,10 +65,9 @@ final private class LiveMainlineMenswearClient[F[_]](
       .flatMap(Stream.emits)
 
   private def sendSearchQuery(criteria: SearchCriteria, page: Int): F[List[ProductPreview]] =
-    val url = uri"${config.baseUri}/app/mmw/m/search/${criteria.query}"
     dispatch() {
       basicRequest
-        .post(url)
+        .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
         .body(SearchRequest(page, criteria.query).toJson)
         .headers(headers)
         .response(asJson[SearchResponse])
@@ -83,7 +82,7 @@ final private class LiveMainlineMenswearClient[F[_]](
           logger.error(s"$name-search/$s-critical") *>
             F.sleep(3.second) *> sendSearchQuery(criteria, page)
         case Left(HttpError(_, status)) if status.isClientError =>
-          logger.error(s"$name-search/$status-error - $url") *>
+          logger.error(s"$name-search/$status-error") *>
             F.pure(Nil)
         case Left(HttpError(_, status)) if status.isServerError =>
           logger.warn(s"$name-search/$status-repeatable") *>
