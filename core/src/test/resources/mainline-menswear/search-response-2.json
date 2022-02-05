@@ -1,0 +1,559 @@
+{
+  "data": {
+    "redirect": "N",
+    "searchTerm": "emporio armani",
+    "originalSearchTerm": "emporio armani",
+    "currencySymbol": "£",
+    "exchangeRate": 1,
+    "pageDressID": 372,
+    "error": "N",
+    "parsedBody": {
+      "request_platform": "mmw_webCount",
+      "price": "",
+      "size": "",
+      "legsize": "",
+      "colour": "",
+      "category": "",
+      "brand": "",
+      "isort": "",
+      "page": 1,
+      "isCom": "N",
+      "webLocale": "gb",
+      "fbEventID": 1644063588012126200
+    },
+    "products": [],
+    "filter": [
+      {
+        "name": "brands",
+        "icon": "arrow-forward",
+        "data": [
+          {
+            "brand": "armani",
+            "brand_display": "emporio armani",
+            "total": 358,
+            "position": 1,
+            "brand_profile": 0,
+            "name": "emporio armani",
+            "value": "armani",
+            "thumbnail": "https://static.mainlinemenswear.co.uk/shopimages/sections/thumbnails/Armani.gif"
+          }
+        ]
+      },
+      {
+        "name": "sizes",
+        "icon": "arrow-forward",
+        "data": [
+          {
+            "size": "XS",
+            "total": 29,
+            "size_org": "x small",
+            "position": "0",
+            "name": "XS",
+            "value": "XS"
+          },
+          {
+            "size": "S",
+            "total": 189,
+            "size_org": "small",
+            "position": "1",
+            "name": "S",
+            "value": "S"
+          },
+          {
+            "size": "M",
+            "total": 169,
+            "size_org": "medium",
+            "position": "2",
+            "name": "M",
+            "value": "M"
+          },
+          {
+            "size": "L",
+            "total": 142,
+            "size_org": "large",
+            "position": "3",
+            "name": "L",
+            "value": "L"
+          },
+          {
+            "size": "XL",
+            "total": 131,
+            "size_org": "x large",
+            "position": "4",
+            "name": "XL",
+            "value": "XL"
+          },
+          {
+            "size": "XXL",
+            "total": 85,
+            "size_org": "xx large",
+            "position": "5",
+            "name": "XXL",
+            "value": "XXL"
+          },
+          {
+            "size": "3XL",
+            "total": 57,
+            "size_org": "xxx large",
+            "position": "6",
+            "name": "3XL",
+            "value": "3XL"
+          },
+          {
+            "size": "28W",
+            "total": 24,
+            "size_org": "28w 32l",
+            "position": "9",
+            "name": "28W",
+            "value": "28W"
+          },
+          {
+            "size": "29W",
+            "total": 23,
+            "size_org": "29w 30l",
+            "position": "10",
+            "name": "29W",
+            "value": "29W"
+          },
+          {
+            "size": "30W",
+            "total": 25,
+            "size_org": "30w 30l",
+            "position": "11",
+            "name": "30W",
+            "value": "30W"
+          },
+          {
+            "size": "31W",
+            "total": 22,
+            "size_org": "31w 30l",
+            "position": "12",
+            "name": "31W",
+            "value": "31W"
+          },
+          {
+            "size": "32W",
+            "total": 25,
+            "size_org": "32w 30l",
+            "position": "13",
+            "name": "32W",
+            "value": "32W"
+          },
+          {
+            "size": "33W",
+            "total": 21,
+            "size_org": "33w 30l",
+            "position": "14",
+            "name": "33W",
+            "value": "33W"
+          },
+          {
+            "size": "34W",
+            "total": 21,
+            "size_org": "34w 32l",
+            "position": "15",
+            "name": "34W",
+            "value": "34W"
+          },
+          {
+            "size": "36W",
+            "total": 18,
+            "size_org": "36w 32l",
+            "position": "17",
+            "name": "36W",
+            "value": "36W"
+          },
+          {
+            "size": "38W",
+            "total": 20,
+            "size_org": "38w 32l",
+            "position": "18",
+            "name": "38W",
+            "value": "38W"
+          },
+          {
+            "size": "40W",
+            "total": 17,
+            "size_org": "40w 30l",
+            "position": "19",
+            "name": "40W",
+            "value": "40W"
+          },
+          {
+            "size": "42W",
+            "total": 16,
+            "size_org": "42w 32l",
+            "position": "20",
+            "name": "42W",
+            "value": "42W"
+          },
+          {
+            "size": "6",
+            "total": 1,
+            "size_org": "6 (40)",
+            "position": "22",
+            "name": "6",
+            "value": "6"
+          },
+          {
+            "size": "7",
+            "total": 6,
+            "size_org": "7 (41)",
+            "position": "23",
+            "name": "7",
+            "value": "7"
+          },
+          {
+            "size": "8",
+            "total": 6,
+            "size_org": "8 (42)",
+            "position": "24",
+            "name": "8",
+            "value": "8"
+          },
+          {
+            "size": "9",
+            "total": 5,
+            "size_org": "9 (43)",
+            "position": "25",
+            "name": "9",
+            "value": "9"
+          },
+          {
+            "size": "10",
+            "total": 5,
+            "size_org": "10 (44)",
+            "position": "26",
+            "name": "10",
+            "value": "10"
+          },
+          {
+            "size": "11",
+            "total": 4,
+            "size_org": "11 (45)",
+            "position": "27",
+            "name": "11",
+            "value": "11"
+          },
+          {
+            "size": "12",
+            "total": 3,
+            "size_org": "12 (47)",
+            "position": "28",
+            "name": "12",
+            "value": "12"
+          },
+          {
+            "size": "One Size",
+            "total": 52,
+            "size_org": "one size",
+            "position": "30",
+            "name": "One Size",
+            "value": "One Size"
+          }
+        ]
+      },
+      {
+        "name": "colours",
+        "icon": "arrow-forward",
+        "data": [
+          {
+            "colour": "Black",
+            "total": 137,
+            "position": 0,
+            "name": "Black",
+            "value": "Black"
+          },
+          {
+            "colour": "Navy",
+            "total": 84,
+            "position": 1,
+            "name": "Navy",
+            "value": "Navy"
+          },
+          {
+            "colour": "White",
+            "total": 49,
+            "position": 2,
+            "name": "White",
+            "value": "White"
+          },
+          {
+            "colour": "Grey",
+            "total": 32,
+            "position": 3,
+            "name": "Grey",
+            "value": "Grey"
+          },
+          {
+            "colour": "Blue",
+            "total": 26,
+            "position": 4,
+            "name": "Blue",
+            "value": "Blue"
+          },
+          {
+            "colour": "Green",
+            "total": 11,
+            "position": 5,
+            "name": "Green",
+            "value": "Green"
+          },
+          {
+            "colour": "Silver",
+            "total": 6,
+            "position": 6,
+            "name": "Silver",
+            "value": "Silver"
+          },
+          {
+            "colour": "Brown",
+            "total": 6,
+            "position": 7,
+            "name": "Brown",
+            "value": "Brown"
+          },
+          {
+            "colour": "Beige",
+            "total": 2,
+            "position": 8,
+            "name": "Beige",
+            "value": "Beige"
+          },
+          {
+            "colour": "Cream",
+            "total": 2,
+            "position": 9,
+            "name": "Cream",
+            "value": "Cream"
+          },
+          {
+            "colour": "Red",
+            "total": 2,
+            "position": 10,
+            "name": "Red",
+            "value": "Red"
+          },
+          {
+            "colour": "Pink",
+            "total": 1,
+            "position": 11,
+            "name": "Pink",
+            "value": "Pink"
+          }
+        ]
+      },
+      {
+        "name": "prices",
+        "icon": "arrow-forward",
+        "data": [
+          {
+            "price_filter": 0,
+            "total": 41,
+            "position": 0,
+            "name": "£0 - £25",
+            "value": "0_25"
+          },
+          {
+            "price_filter": 25,
+            "total": 109,
+            "position": 1,
+            "name": "£25 - £50",
+            "value": "25_50"
+          },
+          {
+            "price_filter": 50,
+            "total": 92,
+            "position": 2,
+            "name": "£50 - £100",
+            "value": "50_100"
+          },
+          {
+            "price_filter": 100,
+            "total": 116,
+            "position": 3,
+            "name": "£100 plus",
+            "value": "100"
+          }
+        ]
+      },
+      {
+        "name": "categories",
+        "icon": "arrow-forward",
+        "data": [
+          {
+            "category": "T Shirts",
+            "total": 119,
+            "position": 0,
+            "name": "T Shirts",
+            "value": "T Shirts"
+          },
+          {
+            "category": "Jumpers / Zip Tops",
+            "total": 44,
+            "position": 1,
+            "name": "Jumpers / Zip Tops",
+            "value": "Jumpers / Zip Tops"
+          },
+          {
+            "category": "Underwear",
+            "total": 37,
+            "position": 2,
+            "name": "Underwear",
+            "value": "Underwear"
+          },
+          {
+            "category": "Jeans / Trousers",
+            "total": 36,
+            "position": 3,
+            "name": "Jeans / Trousers",
+            "value": "Jeans / Trousers"
+          },
+          {
+            "category": "Socks",
+            "total": 23,
+            "position": 4,
+            "name": "Socks",
+            "value": "Socks"
+          },
+          {
+            "category": "Shorts",
+            "total": 17,
+            "position": 5,
+            "name": "Shorts",
+            "value": "Shorts"
+          },
+          {
+            "category": "Jackets",
+            "total": 16,
+            "position": 6,
+            "name": "Jackets",
+            "value": "Jackets"
+          },
+          {
+            "category": "Sunglasses",
+            "total": 13,
+            "position": 7,
+            "name": "Sunglasses",
+            "value": "Sunglasses"
+          },
+          {
+            "category": "Trainers / Shoes",
+            "total": 12,
+            "position": 8,
+            "name": "Trainers / Shoes",
+            "value": "Trainers / Shoes"
+          },
+          {
+            "category": "Watches",
+            "total": 8,
+            "position": 9,
+            "name": "Watches",
+            "value": "Watches"
+          },
+          {
+            "category": "Tracksuits",
+            "total": 8,
+            "position": 10,
+            "name": "Tracksuits",
+            "value": "Tracksuits"
+          },
+          {
+            "category": "Joggers",
+            "total": 7,
+            "position": 11,
+            "name": "Joggers",
+            "value": "Joggers"
+          },
+          {
+            "category": "Bags / Holdalls",
+            "total": 7,
+            "position": 12,
+            "name": "Bags / Holdalls",
+            "value": "Bags / Holdalls"
+          },
+          {
+            "category": "Shirts",
+            "total": 3,
+            "position": 13,
+            "name": "Shirts",
+            "value": "Shirts"
+          },
+          {
+            "category": "Flip Flops",
+            "total": 3,
+            "position": 14,
+            "name": "Flip Flops",
+            "value": "Flip Flops"
+          },
+          {
+            "category": "Jewellery",
+            "total": 3,
+            "position": 15,
+            "name": "Jewellery",
+            "value": "Jewellery"
+          },
+          {
+            "category": "Accessories",
+            "total": 1,
+            "position": 16,
+            "name": "Accessories",
+            "value": "Accessories"
+          },
+          {
+            "category": "Belts",
+            "total": 1,
+            "position": 17,
+            "name": "Belts",
+            "value": "Belts"
+          }
+        ]
+      }
+    ],
+    "desktop_pagination": [
+      {
+        "pag_class": "pageOn",
+        "pag_page": "",
+        "pag_text": 1
+      },
+      {
+        "pag_class": "pageOff",
+        "pag_page": 2,
+        "pag_text": 2
+      },
+      {
+        "pag_class": "pageOff",
+        "pag_page": 3,
+        "pag_text": 3
+      },
+      {
+        "pag_class": "pageOff",
+        "pag_page": 4,
+        "pag_text": 4
+      },
+      {
+        "pag_class": "pageOff",
+        "pag_page": 5,
+        "pag_text": 5
+      },
+      {
+        "pag_class": "pageOff",
+        "pag_page": 2,
+        "pag_text": "NEXT"
+      }
+    ],
+    "totalProducts": 358,
+    "firstItem": 1,
+    "lastItem": 64,
+    "jeansLegFilter": [],
+    "seoTitle": "Shop Emporio Armani | Designer Emporio Armani | Mainline Menswear United Kingdom",
+    "metaDescription": "",
+    "metaKeywords": "",
+    "topPageDescription": "Uncover the latest men's designer emporio armani online with Mainline Menswear. Shop online for emporio armani available to United Kingdom",
+    "noresult": "N",
+    "bottomPageDescription": "",
+    "canonicalUrl": "search/emporio-armani",
+    "showSizeButtons": "Y"
+  },
+  "error": []
+}

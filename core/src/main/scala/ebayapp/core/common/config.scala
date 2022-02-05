@@ -96,6 +96,7 @@ object config {
       tessuti: GenericRetailerConfig,
       scotts: GenericRetailerConfig,
       harveyNichols: GenericRetailerConfig,
+      mainlineMenswear: GenericRetailerConfig,
       nvidia: GenericRetailerConfig,
       scan: GenericRetailerConfig,
       cex: GenericRetailerConfig,

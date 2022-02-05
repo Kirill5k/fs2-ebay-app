@@ -23,6 +23,7 @@ enum Retailer(val name: String):
   case Nvidia extends Retailer("nvidia")
   case Scan extends Retailer("scan")
   case HarveyNichols extends Retailer("harvey-nichols")
+  case MainlineMenswear extends Retailer("mainline-menswear")
 
 object Retailer:
   def fromUnsafe(name: String): Retailer =

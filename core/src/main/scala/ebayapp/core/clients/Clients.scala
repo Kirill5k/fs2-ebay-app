@@ -7,6 +7,7 @@ import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.clients.harveynichols.HarveyNicholsClient
 import ebayapp.core.clients.jdsports.JdsportsClient
+import ebayapp.core.clients.mainlinemenswear.MainlineMenswearClient
 import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.scan.ScanClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
@@ -36,23 +37,25 @@ object Clients {
       JdsportsClient.tessuti[F](config.tessuti, resources.clientBackend(config.tessuti.proxied)),
       NvidiaClient.make[F](config.nvidia, resources.clientBackend(config.nvidia.proxied)),
       ScanClient.make[F](config.scan, resources.clientBackend(config.scan.proxied)),
-      HarveyNicholsClient.make[F](config.harveyNichols, resources.clientBackend(config.harveyNichols.proxied))
-    ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC) =>
+      HarveyNicholsClient.make[F](config.harveyNichols, resources.clientBackend(config.harveyNichols.proxied)),
+      MainlineMenswearClient.make[F](config.mainlineMenswear, resources.clientBackend(config.mainlineMenswear.proxied))
+    ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC, mmC) =>
       new Clients[F] {
         def cex: CexClient[F]             = cexC
         def messenger: MessengerClient[F] = telC
         def get(shop: Retailer): SearchClient[F] =
           shop match {
-            case Retailer.Cex           => cexC
-            case Retailer.Ebay          => ebayC
-            case Retailer.Selfridges    => selfridgesC
-            case Retailer.Argos         => argosC
-            case Retailer.Scotts        => scottsC
-            case Retailer.Jdsports      => jdC
-            case Retailer.Tessuti       => tessutiC
-            case Retailer.Nvidia        => nvidiaC
-            case Retailer.Scan          => scanC
-            case Retailer.HarveyNichols => harNichC
+            case Retailer.Cex              => cexC
+            case Retailer.Ebay             => ebayC
+            case Retailer.Selfridges       => selfridgesC
+            case Retailer.Argos            => argosC
+            case Retailer.Scotts           => scottsC
+            case Retailer.Jdsports         => jdC
+            case Retailer.Tessuti          => tessutiC
+            case Retailer.Nvidia           => nvidiaC
+            case Retailer.Scan             => scanC
+            case Retailer.HarveyNichols    => harNichC
+            case Retailer.MainlineMenswear => mmC
           }
       }
     }
