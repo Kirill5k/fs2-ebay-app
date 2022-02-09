@@ -120,7 +120,7 @@ data:
       base-uri: "https://fs2-proxy.herokuapp.com"
       headers {
         "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
-        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NDQwNTY1NTksImV4cCI6MTY0NDE0Mjk1OSwianRpIjoiNnh0UWNPeG1OcklkRE1kcFN1RGpKOCIsInN1YiI6IiIsInRva2VuRGV0YWlsIjp7Impzc0N1c3RvbWVyIjowfX0.AxzugBK9nSE93t0KLnPIQQKixQU8D-nqVQG7cRGWr34"
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NDQ0MzQ2NjcsImV4cCI6MTY0NDUyMTA2NywianRpIjoiM1E3VzJUa0FDQlllU0t4cjFXbHMwciIsInN1YiI6IiIsInRva2VuRGV0YWlsIjp7Impzc0N1c3RvbWVyIjowfX0.LcuYbjAAZp0WE_iQ6fzJ7qPuYj54INT1-yhCJqUwSno"
       }
     }
 
