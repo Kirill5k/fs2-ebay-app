@@ -40,7 +40,7 @@ final private class LiveNvidiaClient[F[_]](
       .map(nvidiaGenericItemMapper.toDomain)
 
   private def searchProducts(c: SearchCriteria): F[List[Product]] =
-    dispatch() {
+    dispatchReq {
       basicRequest
         .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
         .response(asJson[NvidiaSearchResponse])

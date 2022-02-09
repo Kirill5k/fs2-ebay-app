@@ -51,7 +51,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
 
   private def authenticate(): F[EbayAuthToken] =
     credentials.get.map(_.head).flatMap { creds =>
-      dispatch() {
+      dispatchReq {
         basicRequest
           .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
           .contentType(MediaType.ApplicationXWwwFormUrlencoded)

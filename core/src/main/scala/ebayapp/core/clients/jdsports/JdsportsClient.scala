@@ -3,7 +3,6 @@ package ebayapp.core.clients.jdsports
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.apply.*
-import cats.syntax.alternative.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
@@ -64,7 +63,7 @@ final private class LiveJdsportsClient[F[_]](
       .flatMap(Stream.emits)
 
   private def searchByBrand(criteria: SearchCriteria, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
-    dispatch() {
+    dispatchReq {
       val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
       val brand = criteria.query.toLowerCase.replace(" ", "-")
       basicRequest
@@ -90,7 +89,7 @@ final private class LiveJdsportsClient[F[_]](
     }
 
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
-    dispatch() {
+    dispatchReq {
       basicRequest
         .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock")
         .headers(headers)

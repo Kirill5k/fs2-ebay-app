@@ -27,7 +27,10 @@ trait HttpClient[F[_]] {
     "User-Agent"                  -> "PostmanRuntime/7.28.3"
   )
 
-  protected def dispatch[T](attempt: Int = 0)(request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
+  protected def dispatchReq[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
+    dispatch(0)(request)
+  
+  private def dispatch[T](attempt: Int = 0)(request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
     backend
       .send(request)
       .handleErrorWith { error =>

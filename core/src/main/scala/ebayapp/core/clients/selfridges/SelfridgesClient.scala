@@ -92,7 +92,7 @@ final private class LiveSelfridgesClient[F[_]](
     ).map(res => res.stocks.getOrElse(Nil))
 
   private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
-    dispatch() {
+    dispatchReq {
       basicRequest
         .get(uri)
         .headers(headers)

@@ -33,7 +33,7 @@ final private class LiveTelegramClient[F[_]](
     }
 
   private def sendMessage(channelId: String, message: String): F[Unit] =
-    dispatch() {
+    dispatchReq {
       basicRequest
         .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=$channelId&text=$message")
     }

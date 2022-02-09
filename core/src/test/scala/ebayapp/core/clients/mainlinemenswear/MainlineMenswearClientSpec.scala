@@ -19,17 +19,19 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
 
   "A MainlineMenswearClient" should {
 
-    val config = GenericRetailerConfig("http://mainlinemenswear.com", Map("Authorization" -> "Bearer foo-bar"))
+    val config   = GenericRetailerConfig("http://mainline.com", Map("Authorization" -> "Bearer foo-bar"))
     val criteria = SearchCriteria("emporio armani")
 
     "return items that are on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isPost && r.isGoingTo(s"mainlinemenswear.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 1""") =>
+          case r if r.isGet =>
+            Response.ok("hello")
+          case r if r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 1""") =>
             Response.ok(json("mainline-menswear/search-response-1.json"))
-          case r if r.isPost && r.isGoingTo(s"mainlinemenswear.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 2""") =>
+          case r if r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 2""") =>
             Response.ok(json("mainline-menswear/search-response-2.json"))
-          case r if r.isPost && r.isGoingTo("mainlinemenswear.com/app/mmw/m/product/149663") && r.hasBearerToken("foo-bar") =>
+          case r if r.isPost && r.isGoingTo("mainline.com/app/mmw/m/product/149663") && r.hasBearerToken("foo-bar") =>
             Response.ok(json("mainline-menswear/product-response-149663.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
@@ -48,7 +50,7 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
           BuyPrice(5, BigDecimal(51.98), Some(51)),
           BuyPrice(2, BigDecimal(51.98), Some(51)),
           BuyPrice(3, BigDecimal(51.98), Some(51)),
-          BuyPrice(2, BigDecimal(51.98), Some(51)),
+          BuyPrice(2, BigDecimal(51.98), Some(51))
         )
       }
     }

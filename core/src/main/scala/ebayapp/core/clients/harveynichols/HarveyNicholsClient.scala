@@ -5,7 +5,6 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
-import cats.syntax.alternative.*
 import ebayapp.core.clients.harveynichols.mappers.*
 import ebayapp.core.clients.harveynichols.responses.{HarveyNicholsProduct, HarveyNicholsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
@@ -75,7 +74,7 @@ final private class LiveHarveyNicholsClient[F[_]](
   }
 
   private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
-    dispatch() {
+    dispatchReq {
       basicRequest
         .get(uri)
         .headers(headers)

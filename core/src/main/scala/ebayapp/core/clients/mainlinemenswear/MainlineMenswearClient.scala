@@ -1,14 +1,14 @@
 package ebayapp.core.clients.mainlinemenswear
 
 import cats.Monad
-import cats.effect.Temporal
+import cats.effect.{Ref, Temporal}
 import cats.syntax.apply.*
-import cats.syntax.alternative.*
+import cats.syntax.applicative.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.mainlinemenswear.responses.{ProductPreview, ProductData, ProductResponse, SearchResponse}
+import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
-import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, mainlineMenswearClothingMapper}
+import ebayapp.core.clients.mainlinemenswear.mappers.{mainlineMenswearClothingMapper, MainlineMenswearItem}
 import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -23,7 +23,8 @@ import scala.concurrent.duration.*
 final private class LiveMainlineMenswearClient[F[_]](
     private val config: GenericRetailerConfig,
     override val name: String,
-    override val backend: SttpBackend[F, Any]
+    override val backend: SttpBackend[F, Any],
+    private val token: Ref[F, Option[String]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -49,7 +50,7 @@ final private class LiveMainlineMenswearClient[F[_]](
             s.onlinestock,
             p.mainimage,
             p.clean_url,
-            p.category,
+            p.category
           )
         }
       }
@@ -65,7 +66,7 @@ final private class LiveMainlineMenswearClient[F[_]](
       .flatMap(Stream.emits)
 
   private def sendSearchQuery(criteria: SearchCriteria, page: Int): F[List[ProductPreview]] =
-    dispatch() {
+    dispatchReqWithAuth {
       basicRequest
         .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
         .body(SearchRequest(page, criteria.query).toJson)
@@ -94,7 +95,7 @@ final private class LiveMainlineMenswearClient[F[_]](
     }
 
   private def getCompleteProduct(pp: ProductPreview): F[Option[ProductData]] =
-    dispatch() {
+    dispatchReqWithAuth {
       basicRequest
         .post(uri"${config.baseUri}/app/mmw/m/product/${pp.productID}")
         .body(ProductRequest.toJson)
@@ -121,12 +122,23 @@ final private class LiveMainlineMenswearClient[F[_]](
             F.sleep(5.second) *> getCompleteProduct(pp)
       }
     }
+
+  private def dispatchReqWithAuth[T](request: Request[T, Any]): F[Response[T]] =
+    token.get.flatMap {
+      case Some(t) => dispatchReq(request)
+      case None    => refreshAccessToken *> dispatchReqWithAuth(request)
+    }
+
+  private def refreshAccessToken: F[Unit] =
+    dispatchReq(basicRequest.get(uri"https://www.mainlinemenswear.co.uk"))
+      .flatMap { r =>
+        logger.info(s"$name response headers ${r.headers}") *> token.update(_ => Some("ok"))
+      }
 }
 
-object MainlineMenswearClient {
+object MainlineMenswearClient:
   def make[F[_]: Temporal: Logger](
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveMainlineMenswearClient[F](config, "mainline-menswear", backend))
-}
+    Ref.of[F, Option[String]](None).map(t => LiveMainlineMenswearClient[F](config, "mainline-menswear", backend, t))
