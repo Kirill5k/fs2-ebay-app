@@ -33,7 +33,7 @@ final private class LiveMainlineMenswearClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers
+  private val headers: Map[String, String] = defaultHeaders ++ config.headers.filter(_._1.toLowerCase != "authorization")
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     searchForItems(criteria)
@@ -82,9 +82,9 @@ final private class LiveMainlineMenswearClient[F[_]](
         case Left(DeserializationException(_, error)) =>
           logger.error(s"$name-search/json-error: ${error.getMessage}") *>
             F.pure(Nil)
-        case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
+        case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.Unauthorized =>
           logger.error(s"$name-search/$s-critical") *>
-            F.sleep(3.second) *> sendSearchQuery(criteria, page)
+            F.sleep(3.second) *> refreshAccessToken *> sendSearchQuery(criteria, page)
         case Left(HttpError(_, status)) if status.isClientError =>
           logger.error(s"$name-search/$status-error") *>
             F.pure(Nil)
@@ -111,9 +111,9 @@ final private class LiveMainlineMenswearClient[F[_]](
         case Left(DeserializationException(_, error)) =>
           logger.error(s"$name-product/json-error: ${error.getMessage}") *>
             F.pure(None)
-        case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
+        case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.Unauthorized =>
           logger.error(s"$name-product/$s-critical") *>
-            F.sleep(3.second) *> getCompleteProduct(pp)
+            F.sleep(3.second) *> refreshAccessToken *> getCompleteProduct(pp)
         case Left(HttpError(_, status)) if status.isClientError =>
           logger.error(s"$name-product/$status-error") *>
             F.pure(None)
@@ -142,9 +142,7 @@ final private class LiveMainlineMenswearClient[F[_]](
           .flatMap(_.value.replace("access_token=", "").split(";").headOption)
           .map(token => AccessToken(token, time.plusSeconds(3.hours.toSeconds)))
       }
-      .flatMap { accessToken =>
-        logger.info(s"$name access token $accessToken") *> token.update(_ => accessToken)
-      }
+      .flatMap(accessToken => logger.info(s"$name access token $accessToken") *> token.update(_ => accessToken))
 }
 
 object MainlineMenswearClient:
