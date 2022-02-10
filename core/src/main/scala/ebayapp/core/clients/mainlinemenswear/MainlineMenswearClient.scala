@@ -127,10 +127,12 @@ final private class LiveMainlineMenswearClient[F[_]](
     }
 
   private def dispatchReqWithAuth[T](request: Request[T, Any]): F[Response[T]] =
-    token.get.flatMap {
-      case Some(t) => dispatchReq(request)
-      case None    => refreshAccessToken *> dispatchReqWithAuth(request)
-    }
+    (token.get, F.realTimeInstant)
+      .mapN((token, time) => token.filter(_.expirationTime.isAfter(time)))
+      .flatMap {
+        case Some(t) => dispatchReq(request.auth.bearer(t.token))
+        case None    => refreshAccessToken *> dispatchReqWithAuth(request)
+      }
 
   private def refreshAccessToken: F[Unit] =
     (dispatchReq(basicRequest.get(uri"https://www.mainlinemenswear.co.uk")), F.realTimeInstant)
