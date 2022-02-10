@@ -11,11 +11,18 @@ import ebayapp.core.domain.search.BuyPrice
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
-import sttp.model.{Method, StatusCode}
+import sttp.model.{Method, StatusCode, Header}
 
 class MainlineMenswearClientSpec extends SttpClientSpec {
 
   given logger: Logger[IO] = MockLogger.make[IO]
+
+  val responseHeaders = List(
+    Header("Content-Type", "text/html; charset=utf-8"),
+    Header("set-cookie", "access_token=foo.bar; Max-Age=2592000; Path=/; HttpOnly; Secure"),
+    Header("set-cookie", "access_token_expiry=1644568903; Max-Age=2592000; Path=/; HttpOnly; Secure"),
+    Header("vary", "Accept-Encoding"),
+  )
 
   "A MainlineMenswearClient" should {
 
@@ -26,7 +33,7 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet =>
-            Response.ok("hello")
+            Response("hello", StatusCode.Ok, "Ok", responseHeaders)
           case r if r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 1""") =>
             Response.ok(json("mainline-menswear/search-response-1.json"))
           case r if r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 2""") =>

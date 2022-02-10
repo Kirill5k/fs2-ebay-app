@@ -16,15 +16,18 @@ import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.*
 import sttp.client3.circe.asJson
-import sttp.model.StatusCode
+import sttp.model.{Header, StatusCode}
+import java.time.Instant
 
 import scala.concurrent.duration.*
+
+final private[mainlinemenswear] case class AccessToken(token: String, expirationTime: Instant)
 
 final private class LiveMainlineMenswearClient[F[_]](
     private val config: GenericRetailerConfig,
     override val name: String,
     override val backend: SttpBackend[F, Any],
-    private val token: Ref[F, Option[String]]
+    private val token: Ref[F, Option[AccessToken]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -130,9 +133,15 @@ final private class LiveMainlineMenswearClient[F[_]](
     }
 
   private def refreshAccessToken: F[Unit] =
-    dispatchReq(basicRequest.get(uri"https://www.mainlinemenswear.co.uk"))
-      .flatMap { r =>
-        logger.info(s"$name response headers ${r.headers}") *> token.update(_ => Some("ok"))
+    (dispatchReq(basicRequest.get(uri"https://www.mainlinemenswear.co.uk")), F.realTimeInstant)
+      .mapN { (res, time) =>
+        res.headers
+          .find(_.value.startsWith("access_token="))
+          .flatMap(_.value.replace("access_token=", "").split(";").headOption)
+          .map(token => AccessToken(token, time.plusSeconds(3.hours.toSeconds)))
+      }
+      .flatMap { accessToken =>
+        logger.info(s"$name access token $accessToken") *> token.update(_ => accessToken)
       }
 }
 
@@ -141,4 +150,4 @@ object MainlineMenswearClient:
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Ref.of[F, Option[String]](None).map(t => LiveMainlineMenswearClient[F](config, "mainline-menswear", backend, t))
+    Ref.of[F, Option[AccessToken]](None).map(t => LiveMainlineMenswearClient[F](config, "mainline-menswear", backend, t))
