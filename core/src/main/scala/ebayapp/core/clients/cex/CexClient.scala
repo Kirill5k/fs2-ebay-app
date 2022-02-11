@@ -80,7 +80,7 @@ final class CexApiClient[F[_]](
       .map(cexGenericItemMapper.toDomain)
 
   private def search(uri: Uri): F[CexSearchResponse] =
-    dispatchReq {
+    dispatch {
       basicRequest
         .get(uri)
         .headers(headers)

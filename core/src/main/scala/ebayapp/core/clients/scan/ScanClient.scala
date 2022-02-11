@@ -38,7 +38,7 @@ final private class LiveScanClient[F[_]](
       }
 
   private def searchByCard(query: String, category: String): F[List[ScanItem]] =
-    dispatchReq {
+    dispatch {
       val cat  = category.toLowerCase.replaceAll(" ", "-")
       val card = query.toLowerCase.replaceAll(" ", "-")
       basicRequest

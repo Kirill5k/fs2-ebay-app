@@ -74,7 +74,7 @@ final private class LiveHarveyNicholsClient[F[_]](
   }
 
   private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
-    dispatchReq {
+    dispatch {
       basicRequest
         .get(uri)
         .headers(headers)

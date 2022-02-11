@@ -41,7 +41,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
   )
 
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]] =
-    dispatchReq {
+    dispatch {
       basicRequest
         .headers(headers)
         .auth
@@ -70,7 +70,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
     }
 
   private def findItem(accessToken: String, itemId: String): F[Option[EbayItem]] =
-    dispatchReq {
+    dispatch {
       basicRequest
         .headers(headers)
         .auth

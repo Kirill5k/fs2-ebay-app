@@ -63,7 +63,7 @@ final private class LiveJdsportsClient[F[_]](
       .flatMap(Stream.emits)
 
   private def searchByBrand(criteria: SearchCriteria, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
-    dispatchReq {
+    dispatch {
       val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
       val brand = criteria.query.toLowerCase.replace(" ", "-")
       basicRequest
@@ -89,7 +89,7 @@ final private class LiveJdsportsClient[F[_]](
     }
 
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
-    dispatchReq {
+    dispatch {
       basicRequest
         .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock")
         .headers(headers)

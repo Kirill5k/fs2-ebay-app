@@ -27,10 +27,10 @@ trait HttpClient[F[_]] {
     "User-Agent"                  -> "PostmanRuntime/7.28.3"
   )
 
-  protected def dispatchReq[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
-    dispatch(0)(request)
+  protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
+    dispatchWithRetry(request)
   
-  private def dispatch[T](attempt: Int = 0)(request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
+  private def dispatchWithRetry[T](request: Request[T, Any], attempt: Int = 0)(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
     backend
       .send(request)
       .handleErrorWith { error =>
@@ -39,6 +39,6 @@ trait HttpClient[F[_]] {
         val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
         val message    = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
         (if (attempt > 10) logger.error(message) else logger.warn(message)) *>
-          F.sleep(delayBetweenFailures) *> dispatch(attempt + 1)(request)
+          F.sleep(delayBetweenFailures) *> dispatchWithRetry(request, attempt + 1)
       }
 }
