@@ -27,6 +27,7 @@ final private class LiveNvidiaClient[F[_]](
 ) extends SearchClient[F] with HttpClient[F] {
 
   override protected val name: String = "nvidia"
+  override protected val delayBetweenFailures: FiniteDuration = 2.seconds
 
   private val headers: Map[String, String] = defaultHeaders ++ config.headers
 

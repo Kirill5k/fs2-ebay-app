@@ -144,7 +144,7 @@ data:
       }
 
       nvidia {
-        monitoring-frequency: 5m
+        monitoring-frequency: 1m
         monitoring-requests: [
           {search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true}
         ]
