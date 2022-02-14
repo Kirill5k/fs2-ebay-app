@@ -15,7 +15,7 @@ private[harveynichols] object responses {
       percentage_discount: DisplayItem[String, Int],
       product_brand_url: DisplayItem[String, String],
       _imageurl: DisplayItem[String, Option[String]],
-      variant_display_size: DisplayItem[List[String], Option[String]]
+      variant_display_size: DisplayItem[Option[List[String]], Option[String]]
   ) derives Codec.AsObject
 
   final case class ProductUniverse(products: List[HarveyNicholsProduct]) derives Codec.AsObject
