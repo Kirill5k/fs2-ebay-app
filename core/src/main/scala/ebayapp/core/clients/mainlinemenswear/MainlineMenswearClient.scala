@@ -21,13 +21,11 @@ import java.time.Instant
 
 import scala.concurrent.duration.*
 
-final private[mainlinemenswear] case class AccessToken(token: String, expirationTime: Instant)
-
 final private class LiveMainlineMenswearClient[F[_]](
     private val config: GenericRetailerConfig,
     override val name: String,
     override val backend: SttpBackend[F, Any],
-    private val token: Ref[F, Option[AccessToken]]
+    private val token: Ref[F, Option[String]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -127,20 +125,17 @@ final private class LiveMainlineMenswearClient[F[_]](
     }
 
   private def dispatchReqWithAuth[T](request: Request[T, Any]): F[Response[T]] =
-    (token.get, F.realTimeInstant)
-      .mapN((token, time) => token.filter(_.expirationTime.isAfter(time)))
-      .flatMap {
-        case Some(t) => dispatch(request.auth.bearer(t.token))
-        case None    => refreshAccessToken *> dispatchReqWithAuth(request)
-      }
+    token.get.flatMap {
+      case Some(t) => dispatch(request.auth.bearer(t))
+      case None    => refreshAccessToken *> dispatchReqWithAuth(request)
+    }
 
   private def refreshAccessToken: F[Unit] =
-    (dispatch(basicRequest.get(uri"https://www.mainlinemenswear.co.uk")), F.realTimeInstant)
-      .mapN { (res, time) =>
+    dispatch(basicRequest.get(uri"https://www.mainlinemenswear.co.uk"))
+      .map { res =>
         res.headers
           .find(_.value.startsWith("access_token="))
           .flatMap(_.value.replace("access_token=", "").split(";").headOption)
-          .map(token => AccessToken(token, time.plusSeconds(3.hours.toSeconds)))
       }
       .flatMap(accessToken => logger.info(s"$name access token $accessToken") *> token.update(_ => accessToken))
 }
@@ -150,4 +145,4 @@ object MainlineMenswearClient:
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Ref.of[F, Option[AccessToken]](None).map(t => LiveMainlineMenswearClient[F](config, "mainline-menswear", backend, t))
+    Ref.of(Option.empty[String]).map(t => LiveMainlineMenswearClient[F](config, "mainline-menswear", backend, t))
