@@ -37,7 +37,7 @@ final private class LiveHarveyNicholsClient[F[_]](
       .flatMap(Stream.emits)
       .flatMap { product =>
         Stream.emits {
-          product.variant_display_size.value.map { size =>
+          product.variant_display_size.value.getOrElse(Nil).map { size =>
             HarveyNicholsItem(
               name = product.name.value,
               brand = product.brand.value,
