@@ -7,14 +7,14 @@ ThisBuild / organization                        := "io.github.kirill5k"
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
 ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.temurin("17"))
 
-lazy val noPublish = Seq(
+val noPublish = Seq(
   publish         := {},
   publishLocal    := {},
   publishArtifact := false,
   publish / skip  := true
 )
 
-lazy val docker = Seq(
+val docker = Seq(
   packageName        := moduleName.value,
   version            := version.value,
   dockerUsername     := sys.env.get("DOCKER_USERNAME"),
@@ -32,15 +32,7 @@ lazy val docker = Seq(
   }
 )
 
-lazy val root = project
-  .in(file("."))
-  .settings(noPublish)
-  .settings(
-    name := "fs2-ebay-app"
-  )
-  .aggregate(core, proxy, monitor)
-
-lazy val kernel = project
+val kernel = project
   .in(file("kernel"))
   .settings(
     name       := "fs2-ebay-app-kernel",
@@ -48,7 +40,7 @@ lazy val kernel = project
     libraryDependencies ++= Dependencies.kernel ++ Dependencies.test
   )
 
-lazy val core = project
+val core = project
   .in(file("core"))
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
@@ -59,7 +51,7 @@ lazy val core = project
     Docker / packageName := "fs2-app-core" // fs2-app/core
   )
 
-lazy val proxy = project
+val proxy = project
   .in(file("proxy"))
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
@@ -71,7 +63,7 @@ lazy val proxy = project
     libraryDependencies ++= Dependencies.proxy
   )
 
-lazy val monitor = project
+val monitor = project
   .in(file("monitor"))
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
@@ -82,3 +74,11 @@ lazy val monitor = project
     Docker / packageName := "fs2-app-monitor", // fs2-app/monitor
     libraryDependencies ++= Dependencies.monitor
   )
+
+val root = project
+  .in(file("."))
+  .settings(noPublish)
+  .settings(
+    name := "fs2-ebay-app"
+  )
+  .aggregate(core, proxy, monitor, kernel)
