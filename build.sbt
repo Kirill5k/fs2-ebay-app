@@ -35,8 +35,8 @@ val docker = Seq(
 val kernel = project
   .in(file("kernel"))
   .settings(
-    name       := "fs2-ebay-app-kernel",
-    moduleName := "fs2-ebay-app-kernel",
+    name            := "fs2-ebay-app-kernel",
+    moduleName      := "fs2-ebay-app-kernel",
     libraryDependencies ++= Dependencies.kernel ++ Dependencies.test
   )
 
@@ -81,4 +81,4 @@ val root = project
   .settings(
     name := "fs2-ebay-app"
   )
-  .aggregate(core, proxy, monitor, kernel)
+  .aggregate(core, proxy, monitor)
