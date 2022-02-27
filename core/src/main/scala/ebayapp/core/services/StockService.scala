@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.option.*
-import ebayapp.core.clients.{Retailer, SearchClient}
+import ebayapp.core.clients.{Retailer, SearchClient, SearchCriteria}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItem
@@ -38,7 +38,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
   ): Stream[F, ItemStockUpdates] =
     Stream
       .unfoldLoopEval[F, Option[Map[String, ResellableItem]], List[ItemStockUpdates]](None) { prevOpt =>
-        findItems(req).map { curr =>
+        findItems(req.searchCriteria).map { curr =>
           prevOpt match {
             case Some(prev) => (StockComparer.compareItems(prev, curr, req), Some(StockComparer.mergeItems(prev, curr).some))
             case None => (List.empty[ItemStockUpdates], Some(curr.some))
@@ -51,15 +51,15 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
           getUpdates(req, freq)
       }
 
-  private def findItems(req: StockMonitorRequest): F[Map[String, ResellableItem]] =
+  private def findItems(sc: SearchCriteria): F[Map[String, ResellableItem]] =
     client
-      .search(req.searchCriteria)
-      .filter(item => req.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
+      .search(sc)
+      .filter(item => sc.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
       .compile
       .to(Map)
-      .flatTap(i => Logger[F].info(s"""${retailer.name}-search "${req.searchCriteria.query}" returned ${i.size} results"""))
+      .flatTap(i => Logger[F].info(s"""${retailer.name}-search "${sc.query}" returned ${i.size} results"""))
 }
 
 object StockService:

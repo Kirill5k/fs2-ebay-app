@@ -54,8 +54,7 @@ object config {
   final case class StockMonitorRequest(
       searchCriteria: SearchCriteria,
       monitorStockChange: Boolean,
-      monitorPriceChange: Boolean,
-      minDiscount: Option[Int] = None
+      monitorPriceChange: Boolean
   ) derives ConfigReader
 
   final case class StockMonitorConfig(

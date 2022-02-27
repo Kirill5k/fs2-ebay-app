@@ -9,7 +9,9 @@ import pureconfig.generic.derivation.default._
 final case class SearchCriteria(
     query: String,
     category: Option[String] = None,
-    itemKind: Option[ItemKind] = None
+    itemKind: Option[ItemKind] = None,
+    minDiscount: Option[Int] = None,
+    excludeFilters: Option[List[String]] = None
 ) derives ConfigReader
 
 enum Retailer(val name: String):

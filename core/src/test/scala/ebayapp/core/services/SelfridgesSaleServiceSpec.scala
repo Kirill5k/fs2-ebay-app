@@ -11,8 +11,8 @@ import scala.concurrent.duration._
 
 class SelfridgesSaleServiceSpec extends CatsSpec {
 
-  val criteria = SearchCriteria("foo")
-  val config   = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true, minDiscount = Some(50))))
+  val criteria = SearchCriteria("foo", minDiscount = Some(50))
+  val config   = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
 
   "A LiveSelfridgesSaleService" should {
 
@@ -29,7 +29,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
 
       val result = StockService
         .make[IO](Retailer.Selfridges, config, client)
-        .flatMap(_.stockUpdates.interruptAfter(1200.millis).compile.toList)
+        .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
 
       result.unsafeToFuture().map { updates =>
         updates must have size 1
