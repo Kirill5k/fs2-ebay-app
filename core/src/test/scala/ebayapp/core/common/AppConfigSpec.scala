@@ -1,8 +1,10 @@
 package ebayapp.core.common
 
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.Retailer
-import ebayapp.core.common.config.AppConfig
+import ebayapp.core.clients.{Retailer, SearchCriteria}
+import ebayapp.core.common.config.{AppConfig, StockMonitorConfig, StockMonitorRequest}
+
+import scala.concurrent.duration.*
 
 class AppConfigSpec extends CatsSpec {
   "An AppConfig" should {
@@ -17,7 +19,8 @@ class AppConfigSpec extends CatsSpec {
       conf.nvidia.proxied mustBe Some(true)
       conf.harveyNichols.baseUri mustBe "https://www.harveynichols.com"
 
-      conf.stockMonitor must contain key Retailer.Nvidia
+      val geforceMonReq = StockMonitorRequest(SearchCriteria("geforce", Some("GPU"), excludeFilters = Some(List("GTX 1650"))), true, true)
+      conf.stockMonitor must contain (Retailer.Nvidia -> StockMonitorConfig(5.minutes, List(geforceMonReq)))
       conf.stockMonitor must contain key Retailer.HarveyNichols
       conf.dealsFinder must contain key Retailer.Ebay
     }

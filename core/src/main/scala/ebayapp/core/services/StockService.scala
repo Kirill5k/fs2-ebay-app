@@ -41,7 +41,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
         findItems(req.searchCriteria).map { curr =>
           prevOpt match {
             case Some(prev) => (StockComparer.compareItems(prev, curr, req), Some(StockComparer.mergeItems(prev, curr).some))
-            case None => (List.empty[ItemStockUpdates], Some(curr.some))
+            case None       => (List.empty[ItemStockUpdates], Some(curr.some))
           }
         }
       }
@@ -57,6 +57,7 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
       .filter(item => sc.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
       .map(item => (item.itemDetails.fullName, item))
       .collect { case (Some(name), item) => (name, item) }
+      .filter { case (name, item) => sc.excludeFilterRegex.fold(true)(filter => !name.matches(filter)) }
       .compile
       .to(Map)
       .flatTap(i => Logger[F].info(s"""${retailer.name}-search "${sc.query}" returned ${i.size} results"""))

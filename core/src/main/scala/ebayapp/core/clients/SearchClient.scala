@@ -12,7 +12,9 @@ final case class SearchCriteria(
     itemKind: Option[ItemKind] = None,
     minDiscount: Option[Int] = None,
     excludeFilters: Option[List[String]] = None
-) derives ConfigReader
+) derives ConfigReader:
+  val excludeFilterRegex: Option[String] = excludeFilters.map(_.mkString("(?i).*(", "|", ").*"))
+
 
 enum Retailer(val name: String):
   case Cex extends Retailer("cex")
