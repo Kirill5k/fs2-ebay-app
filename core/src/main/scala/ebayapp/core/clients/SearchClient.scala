@@ -44,7 +44,7 @@ trait SearchClient[F[_]]:
         ri.itemDetails.fullName match {
           case Some(name) =>
             criteria.excludeFilterRegex.fold(true)(filter => !name.matches(filter)) &&
-              criteria.includeFilters.fold(true)(filter => name.matches(filter))
+              criteria.includeFiltersRegex.fold(true)(filter => name.matches(filter))
           case None => true
         }
       }
