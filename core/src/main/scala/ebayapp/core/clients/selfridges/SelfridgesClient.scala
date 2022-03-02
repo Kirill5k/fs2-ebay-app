@@ -123,11 +123,9 @@ final private class LiveSelfridgesClient[F[_]](
     }
 }
 
-object SelfridgesClient {
-
+object SelfridgesClient:
   def make[F[_]: Temporal: Logger](
       config: GenericRetailerConfig,
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(new LiveSelfridgesClient[F](config, backend))
-}

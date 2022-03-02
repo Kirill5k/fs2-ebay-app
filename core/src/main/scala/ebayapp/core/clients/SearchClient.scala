@@ -13,9 +13,10 @@ final case class SearchCriteria(
     minDiscount: Option[Int] = None,
     excludeFilters: Option[List[String]] = None,
     includeFilters: Option[List[String]] = None
-) derives ConfigReader:
+) derives ConfigReader {
   val excludeFilterRegex: Option[String]  = excludeFilters.map(_.mkString("(?i).*(", "|", ").*"))
   val includeFiltersRegex: Option[String] = includeFilters.map(_.mkString("(?i).*(", "|", ").*"))
+}
 
 enum Retailer(val name: String):
   case Cex              extends Retailer("cex")
@@ -36,15 +37,3 @@ object Retailer:
 
 trait SearchClient[F[_]]:
   def search(criteria: SearchCriteria): Stream[F, ResellableItem]
-
-  def searchWithFiltersApplied(criteria: SearchCriteria): Stream[F, ResellableItem] =
-    search(criteria)
-      .filter(item => criteria.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
-      .filter { ri =>
-        ri.itemDetails.fullName match {
-          case Some(name) =>
-            criteria.excludeFilterRegex.fold(true)(filter => !name.matches(filter)) &&
-              criteria.includeFiltersRegex.fold(true)(filter => name.matches(filter))
-          case None => true
-        }
-      }

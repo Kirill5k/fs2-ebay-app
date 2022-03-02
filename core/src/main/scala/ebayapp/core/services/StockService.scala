@@ -10,7 +10,7 @@ import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.stock.ItemStockUpdates
-import fs2.Stream
+import fs2.{Pipe, Stream}
 
 import scala.concurrent.duration.*
 
@@ -51,20 +51,29 @@ final private class SimpleStockService[F[_]: Temporal: Logger](
           getUpdates(req, freq)
       }
 
+  private def withFiltersApplied(sc: SearchCriteria): Pipe[F, ResellableItem, ResellableItem] =
+    _.filter(item => sc.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
+      .filter { ri =>
+        ri.itemDetails.fullName match {
+          case Some(name) =>
+            sc.excludeFilterRegex.fold(true)(filter => !name.matches(filter)) &&
+            sc.includeFiltersRegex.fold(true)(filter => name.matches(filter))
+          case None =>
+            false
+        }
+      }
+
   private def findItems(sc: SearchCriteria): F[Map[String, ResellableItem]] =
     client
       .search(sc)
-      .filter(item => sc.minDiscount.fold(true)(min => item.buyPrice.discount.exists(_ >= min)))
-      .map(item => (item.itemDetails.fullName, item))
-      .collect { case (Some(name), item) => (name, item) }
-      .filter { case (name, item) => sc.excludeFilterRegex.fold(true)(filter => !name.matches(filter)) }
+      .through(withFiltersApplied(sc))
+      .map(item => (item.itemDetails.fullName.get, item))
       .compile
       .to(Map)
       .flatTap(i => Logger[F].info(s"""${retailer.name}-search "${sc.query}" returned ${i.size} results"""))
 }
 
 object StockService:
-
   def make[F[_]: Temporal: Logger](
       retailer: Retailer,
       config: StockMonitorConfig,
