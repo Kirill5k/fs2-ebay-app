@@ -14,7 +14,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
   val criteria = SearchCriteria("foo", minDiscount = Some(50), excludeFilters = Some(List("ignore-me", "SKIP-ME")))
   val config   = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
 
-  "A LiveSelfridgesSaleService" should {
+  "A SelfridgesSaleService" should {
 
     "return items with discount greater than min" in {
       val items = List(
