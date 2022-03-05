@@ -145,37 +145,40 @@ class EbayClientSpec extends CatsSpec {
       val (authClient, browseClient) = mocks
       val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
-      val response = List(
-        ebayItemSummary("1", name = "fallout 4 disc only"),
-        ebayItemSummary("2", name = "fallout 76 blah damage blah blah blah"),
-        ebayItemSummary("3", name = "call of duty digital code"),
-        ebayItemSummary("4", name = "lego worlds read description"),
-        ebayItemSummary("5", name = """Borderlands 3 "Spooling Recursion" X2 Godroll Moze Splash Damage (Xbox One)"""),
-        ebayItemSummary("6", name = """Borderlands 3 - (ps4) (new maliwan takedown pistol) Moonfire (Anointed) x3 (op)"""),
-        ebayItemSummary("7", name = """Borderlands 3 - (ps4) S3RV 80's Execute (anointed 50% cyro ase )(new takedown)"""),
-        ebayItemSummary("8", name = """Borderlands 3 -(ps4) Redistributor(anointed 100% dam ase x 6 pack)(new takedown)"""),
-        ebayItemSummary("9", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
-        ebayItemSummary("10", name = """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)"""),
-        ebayItemSummary("11", name = """call of duty pre-order bonus"""),
-        ebayItemSummary("13", name = """Call of Duty WW2 no case XBOX 360"""),
-        ebayItemSummary("14", name = """Call of Duty WW2 digital code XBOX"""),
-        ebayItemSummary("15", name = """Call of Duty WW2 with carry bag XBOX"""),
-        ebayItemSummary("16", name = """xbox game pass XBOX"""),
-        ebayItemSummary("17", name = """xbox gamepass XBOX"""),
-        ebayItemSummary("18", name = """fifa 2020 million 100 point XBOX"""),
-        ebayItemSummary("19", name = """animal crossing dinosaur recipe card"""),
-        ebayItemSummary("20", name = """fallout 76 5000 caps"""),
-        ebayItemSummary("21", name = """borderlands 4 promotional copy""")
-      ).pure[IO]
+      val badItems = List(
+        "switch amazing aluminium case",
+        "switch console mario kart case",
+        "fallout 4 disc only",
+        "fallout 4 disc only",
+        "fallout 76 blah damage blah blah blah",
+        "call of duty digital code",
+        "lego worlds read description",
+        """Borderlands 3 "Spooling Recursion" X2 Godroll Moze Splash Damage (Xbox One)""",
+        """Borderlands 3 - (ps4) (new maliwan takedown pistol) Moonfire (Anointed) x3 (op)""",
+        """Borderlands 3 - (ps4) S3RV 80's Execute (anointed 50% cyro ase )(new takedown)""",
+        """Borderlands 3 -(ps4) Redistributor(anointed 100% dam ase x 6 pack)(new takedown)""",
+        """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)""",
+        """Borderlands 3 “Teething St4kbot” SMGdmg/+5GRENADE/JWD (Xbox One)""",
+        """call of duty pre-order bonus""",
+        """Call of Duty WW2 no case XBOX 360""",
+        """Call of Duty WW2 digital code XBOX""",
+        """Call of Duty WW2 with carry bag XBOX""",
+        """xbox game pass XBOX""",
+        """xbox gamepass XBOX""",
+        """fifa 2020 million 100 point XBOX""",
+        """animal crossing dinosaur recipe card""",
+        """fallout 76 5000 caps""",
+        """borderlands 4 promotional copy"""
+      )
+
+      val response = badItems.map(name => ebayItemSummary(UUID.randomUUID().toString, name = name)).pure[IO]
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], any[Map[String, String]])).thenReturn(response)
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
-        items mustBe Nil
-      }
+      itemsResponse.compile.toList.unsafeToFuture().map(_ mustBe Nil)
     }
 
     "filter out items that are not buy it now" in {

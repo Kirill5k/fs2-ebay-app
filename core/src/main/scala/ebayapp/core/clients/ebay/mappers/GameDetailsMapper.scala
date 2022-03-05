@@ -95,7 +95,7 @@ private[mappers] object GameDetailsMapper {
     "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", "essentials", "Re Mars tered", "booklet",
-    "classic(s)?( (hit(s)?|version))?", "(case|box).{0,20}(complete|manual)", "(super|very) rare", "award winning", "Instruction(s)? Book", "works perfectly( fine)?",
+    "classic(s)?( (hit(s)?|version))?", "(\\bcase\\b|box).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very) rare", "award winning", "Instruction(s)? Book", "works perfectly( fine)?",
     "Unwanted Gift", "limited (release|quantity)", "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b",
     "must see", "see (pictures|photos|pics)", "Refurbished", "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included", "(still )?in( (plastic|cellophane))? wrap(p)?(ing|er)",
     "\\brated \\d+\\b", "\\d supplied", "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?", "\\ben\\b", "\\bcr\\b", "\\bnc\\b",
@@ -105,7 +105,7 @@ private[mappers] object GameDetailsMapper {
     "\\buns\\b", "\\bx360\\b", "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b", "\\bSE\\b",
     "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( |\\d)?)?VR\\b( version)?", "\\bDEFY\\b", "\\bArgos\\b", "\\bGD\\b",
     "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b", "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b",
-    "(?<=\\d)PS\\d", "\bXBOX\b",
+    "(?<=\\d)PS\\d", "\bXBOX\b", "\bCASED\b",
     "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "(condition )?NEW(\\s+)?$"
   ).mkString("(?i)", "|", "")
 
