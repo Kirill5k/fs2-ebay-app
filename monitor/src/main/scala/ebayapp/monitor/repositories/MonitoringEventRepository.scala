@@ -4,9 +4,7 @@ import cats.effect.Async
 import cats.syntax.applicative.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import io.circe.generic.auto.*
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
-import ebayapp.monitor.common.json.given
 import mongo4cats.collection.operations.{Filter, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}

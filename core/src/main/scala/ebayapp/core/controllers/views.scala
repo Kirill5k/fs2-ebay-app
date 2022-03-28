@@ -3,8 +3,6 @@ package ebayapp.core.controllers
 import ebayapp.core.domain.{ItemDetails, ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.domain.search.ListingDetails
 import io.circe.{Encoder, Codec}
-import io.circe.syntax.*
-import io.circe.generic.auto.*
 
 object views {
 

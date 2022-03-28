@@ -9,7 +9,6 @@ import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.common.json.given
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
-import io.circe.generic.auto.*
 import mongo4cats.collection.operations.{Filter, Update}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.circe.*

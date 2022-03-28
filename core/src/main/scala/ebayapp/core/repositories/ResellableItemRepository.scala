@@ -8,7 +8,7 @@ import cats.syntax.applicative.*
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.bson.Document
-import mongo4cats.circe.*
+import mongo4cats.circe.given
 import mongo4cats.collection.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}

@@ -1,12 +1,12 @@
 import sbt._
 
 object Dependencies {
-  object Versions {
-    val mongo4cats = "0.4.5"
+  private object Versions {
+    val mongo4cats = "0.4.7"
     val pureConfig = "0.17.1"
     val circe      = "0.14.1"
-    val sttp       = "3.5.0"
-    val http4s     = "0.23.10"
+    val sttp       = "3.5.1"
+    val http4s     = "0.23.11"
     val logback    = "1.2.10"
     val log4cats   = "2.2.0"
     val tapir      = "0.20.1"
@@ -17,7 +17,7 @@ object Dependencies {
     val mockJavaMail = "1.9"
   }
 
-  object Libraries {
+  private object Libraries {
     val courier      = "com.github.daddykotex"  %% "courier"       % Versions.courier
     val mockJavaMail = "org.jvnet.mock-javamail" % "mock-javamail" % Versions.mockJavaMail
 

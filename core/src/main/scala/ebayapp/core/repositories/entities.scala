@@ -4,7 +4,7 @@ import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.core.domain.search.ListingDetails
 import org.bson.types.ObjectId
 import io.circe.Codec
-import mongo4cats.circe.*
+import mongo4cats.circe.given
 
 private[repositories] object entities {
 
