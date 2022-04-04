@@ -6,7 +6,6 @@ import mongo4cats.bson.ObjectId
 import scala.concurrent.duration.*
 
 object Monitors {
-
   lazy val id: Monitor.Id                          = Monitor.Id(ObjectId())
   lazy val httpConnection: Monitor.Connection.Http = Monitor.Connection.Http(Url("http://foo.bar"), HttpMethod.GET, 60.seconds)
   lazy val emailContact: Monitor.Contact.Email     = Monitor.Contact.Email("foo@bar.com")

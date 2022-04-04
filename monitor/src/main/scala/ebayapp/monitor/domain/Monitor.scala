@@ -1,6 +1,6 @@
 package ebayapp.monitor.domain
 
-import io.circe.{Decoder, Encoder}
+import io.circe.Codec
 import mongo4cats.bson.ObjectId
 
 import java.util.UUID
@@ -49,7 +49,7 @@ object Monitor {
     extension (conn: Connection)
       def asString: String =
         conn match {
-          case Connection.Http(url, method, timeout) => s"$url"
+          case Connection.Http(url, method, _) => s"$method $url"
         }
 
   enum Status:

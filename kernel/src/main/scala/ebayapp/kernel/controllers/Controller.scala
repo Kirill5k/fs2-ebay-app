@@ -5,7 +5,6 @@ import cats.effect.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.kernel.controllers.views.*
-import io.circe.Encoder
 import io.circe.generic.auto.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
