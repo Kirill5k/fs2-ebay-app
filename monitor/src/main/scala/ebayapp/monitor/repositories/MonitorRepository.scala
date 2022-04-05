@@ -7,11 +7,10 @@ import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.common.JsonCodecs
-import ebayapp.monitor.common.json.given
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 import mongo4cats.collection.operations.{Filter, Update}
 import mongo4cats.collection.MongoCollection
-import mongo4cats.circe.*
+import mongo4cats.circe.MongoJsonCodecs
 import mongo4cats.database.MongoDatabase
 
 trait MonitorRepository[F[_]]:
@@ -62,7 +61,7 @@ final private class LiveMonitorRepository[F[_]: Async](
   private def notFoundErrorIfNoMatches(id: Monitor.Id)(matchCount: Long): F[Unit] =
     if (matchCount == 0) AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit] else ().pure[F]
 
-object MonitorRepository:
+object MonitorRepository extends MongoJsonCodecs:
   private val collectionName = "monitors"
   def make[F[_]: Async](database: MongoDatabase[F]): F[MonitorRepository[F]] =
     database

@@ -8,7 +8,7 @@ import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import mongo4cats.collection.operations.{Filter, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
-import mongo4cats.circe.*
+import mongo4cats.circe.MongoJsonCodecs
 
 trait MonitoringEventRepository[F[_]]:
   def save(event: MonitoringEvent): F[Unit]
@@ -30,7 +30,7 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
   def findLatestBy(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
     collection.find(monitorIdFilter(monitorId)).sortByDesc("statusCheck.time").first.map(_.map(_.toDomain))
 
-object MonitoringEventRepository:
+object MonitoringEventRepository extends MongoJsonCodecs:
   private val collectionName    = "monitoring-events"
   private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(134217728L)
 
