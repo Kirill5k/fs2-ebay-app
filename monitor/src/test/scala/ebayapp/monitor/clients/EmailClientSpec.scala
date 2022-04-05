@@ -15,14 +15,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class EmailClientSpec extends AsyncWordSpec with Matchers {
 
-  class MockedSMTPProvider extends Provider(Provider.Type.TRANSPORT, "mocked", classOf[MockTransport].getName, "Mock", null)
+  object MockedSMTPProvider extends Provider(Provider.Type.TRANSPORT, "mocked", classOf[MockTransport].getName, "Mock", null)
 
   private val mockedSession = Session.getDefaultInstance(new Properties() {{
     put("mail.transport.protocol.rfc822", "mocked")
   }})
-  mockedSession.setProvider(new MockedSMTPProvider)
+  mockedSession.setProvider(MockedSMTPProvider)
 
-  val mailerF = new MailerF[IO]("foo@bar.com", Mailer(mockedSession))
+  val mailerF = MailerF[IO]("foo@bar.com", Mailer(mockedSession))
 
   "An EmailClient" should {
     "send email to an external address" in {

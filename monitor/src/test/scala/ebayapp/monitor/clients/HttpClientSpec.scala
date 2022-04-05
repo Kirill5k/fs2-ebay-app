@@ -2,6 +2,7 @@ package ebayapp.monitor.clients
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
+import cats.syntax.option.*
 import ebayapp.kernel.SttpClientSpec
 import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import org.scalatest.wordspec.AsyncWordSpec
@@ -22,7 +23,7 @@ class HttpClientSpec extends SttpClientSpec {
     "return status Up on success" in {
       val backend = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.uri == uri"${url.toString}" =>
+          case r if r.isGet && r.uri == uri"${url.toString}" && r.hasHeader("foo", "bar") =>
             Response.ok("success")
           case r =>
             throw new RuntimeException()
@@ -30,7 +31,7 @@ class HttpClientSpec extends SttpClientSpec {
 
       val result = for
         client <- HttpClient.make[IO](backend)
-        status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds))
+        status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds, Map("foo" -> "bar").some))
       yield status
 
       result.unsafeToFuture().map { event =>

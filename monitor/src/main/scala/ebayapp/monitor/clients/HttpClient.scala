@@ -25,6 +25,7 @@ final private class LiveHttpClient[F[_]](
     for
       start <- F.realTime
       res <- basicRequest
+        .headers(connection.headers.getOrElse(Map.empty))
         .method(Method(connection.method.toString), uri"${connection.url.toString}")
         .readTimeout(connection.timeout)
         .send(backend)

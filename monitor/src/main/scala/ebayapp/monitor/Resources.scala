@@ -17,7 +17,7 @@ import scala.concurrent.duration.*
 final class MailerF[F[_]](
     val from: String,
     private val mailer: Mailer
-)(implicit
+)(using
     ec: ExecutionContext,
     F: Async[F]
 ) {
@@ -30,9 +30,9 @@ trait Resources[F[_]]:
   def mailer: MailerF[F]
 
 object Resources:
-  private def mkMailer[F[_]: Async](config: EmailConfig)(implicit ec: ExecutionContext): Resource[F, MailerF[F]] =
+  private def mkMailer[F[_]: Async](config: EmailConfig)(using ec: ExecutionContext): Resource[F, MailerF[F]] =
     val mailer = Mailer(config.smtpHost, config.smtpPort).auth(true).as(config.username, config.password).startTls(true)()
-    Resource.pure(new MailerF[F](config.username, mailer))
+    Resource.pure(MailerF[F](config.username, mailer))
 
   private def mkHttpClientBackend[F[_]: Async]: Resource[F, SttpBackend[F, Any]] =
     Resource.make(AsyncHttpClientCatsBackend[F](SttpBackendOptions(connectionTimeout = 3.minutes, proxy = None)))(_.close())
