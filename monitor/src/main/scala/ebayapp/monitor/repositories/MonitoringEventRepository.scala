@@ -25,7 +25,7 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
     collection.insertOne(MonitoringEventEntity.from(event)).void
 
   def findAllBy(monitorId: Monitor.Id): F[List[MonitoringEvent]] =
-    collection.find(monitorIdFilter(monitorId)).all.map(_.map(_.toDomain).toList)
+    collection.find(monitorIdFilter(monitorId)).sortByDesc("statusCheck.time").all.map(_.map(_.toDomain).toList)
 
   def findLatestBy(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
     collection.find(monitorIdFilter(monitorId)).sortByDesc("statusCheck.time").first.map(_.map(_.toDomain))
