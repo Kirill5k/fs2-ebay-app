@@ -1,12 +1,12 @@
 package ebayapp.core.clients
 
 import cats.effect.Temporal
-import cats.syntax.apply._
-import cats.syntax.applicativeError._
+import cats.syntax.apply.*
+import cats.syntax.applicativeError.*
 import ebayapp.core.common.Logger
 import sttp.client3.{Request, Response, SttpBackend}
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 trait HttpClient[F[_]] {
   protected val name: String

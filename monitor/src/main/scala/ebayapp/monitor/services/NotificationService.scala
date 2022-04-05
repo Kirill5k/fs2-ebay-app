@@ -2,6 +2,7 @@ package ebayapp.monitor.services
 
 import cats.Monad
 import cats.effect.Concurrent
+import cats.syntax.applicativeError.*
 import ebayapp.kernel.common.time.*
 import ebayapp.monitor.clients.{EmailClient, EmailMessage}
 import ebayapp.monitor.domain.Monitor.Contact
@@ -25,10 +26,11 @@ final private class LiveNotificationService[F[_]](
     val msg3        = notification.downTime.fold("")(dt => s"It was down for ${dt.durationBetween(notification.time).toCoarsest}\n")
     val msg4        = s"Event timestamp: ${notification.timeString}"
     val completeMsg = s"$msg1$msg2$msg3$msg4"
-    monitor.contact match
+    (monitor.contact match
       case Contact.Logging   => logger.info(completeMsg)
       case Contact.Email(to) => emailClient.send(EmailMessage(to, s"Monitor is ${notification.statusString}: ${monitor.name}", completeMsg))
       case contact           => F.raiseError(new IllegalArgumentException(s"Contact $contact is not yet supported"))
+    ).handleErrorWith(e => logger.error(e)(s"error sending notification for monitor id=${monitor.id} status change"))
 
 object NotificationService:
   def make[F[_]: Logger: Concurrent](emailClient: EmailClient[F]): F[NotificationService[F]] =
