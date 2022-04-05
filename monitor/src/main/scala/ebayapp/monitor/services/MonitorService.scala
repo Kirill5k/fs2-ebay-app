@@ -15,12 +15,14 @@ trait MonitorService[F[_]]:
   def find(id: Monitor.Id): F[Option[Monitor]]
   def update(monit: Monitor): F[Unit]
   def activate(id: Monitor.Id, active: Boolean): F[Unit]
+  def delete(id: Monitor.Id): F[Unit]
 
 final private class LiveMonitorService[F[_]: Monad](
     private val dispatcher: ActionDispatcher[F],
     private val repository: MonitorRepository[F]
 ) extends MonitorService[F]:
   def find(id: Monitor.Id): F[Option[Monitor]]           = repository.find(id)
+  def delete(id: Monitor.Id): F[Unit]                    = repository.delete(id)
   def getAll: F[List[Monitor]]                           = repository.getAll
   def getAllActive: F[List[Monitor]]                     = repository.getAllActive
   def update(monitor: Monitor): F[Unit]                  = repository.update(monitor)

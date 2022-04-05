@@ -62,6 +62,22 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
       }
     }
 
+    "delete monitor by id" in {
+      val (dispatcher, repo) = mocks
+      when(repo.delete(any[Monitor.Id])).thenReturn(IO.unit)
+
+      val result = for
+        svc <- MonitorService.make[IO](dispatcher, repo)
+        res <- svc.delete(Monitors.id)
+      yield res
+
+      result.unsafeToFuture().map { res =>
+        verifyNoInteractions(dispatcher)
+        verify(repo).delete(Monitors.id)
+        res mustBe ()
+      }
+    }
+
     "get all active monitors" in {
       val (dispatcher, repo) = mocks
       when(repo.getAllActive).thenReturn(IO.pure(List(Monitors.gen(), Monitors.gen())))

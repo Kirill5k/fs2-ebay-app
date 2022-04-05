@@ -13,6 +13,33 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
   "A MonitorController" when {
 
+    "DELETE /monitors/:id" should {
+      "delete a monitor and return 204" in {
+        val (monSvc, meSvc) = mocks
+        when(monSvc.delete(any[Monitor.Id])).thenReturn(IO.unit)
+
+        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+
+        val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}").value, method = Method.DELETE)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.NoContent, None)
+        verify(monSvc).delete(Monitors.id)
+        verifyNoInteractions(meSvc)
+      }
+
+      "return 422 when id is invalid" in {
+        val (monSvc, meSvc) = mocks
+        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+
+        val request  = Request[IO](uri = Uri.fromString(s"/monitors/fooo").value, method = Method.DELETE)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"Monitor id fooo is invalid"}"""))
+        verifyNoInteractions(meSvc, monSvc)
+      }
+    }
+
     "PUT /monitors/:id" should {
       "activate monitor and return 204" in {
         val monitor = Monitors.gen()

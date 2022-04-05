@@ -114,8 +114,19 @@ final private class LiveMonitorController[F[_]](
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
+  private val delete = endpoint.delete
+    .in(idPath)
+    .errorOut(errorResponse)
+    .out(statusCode(StatusCode.NoContent))
+    .serverLogic { id =>
+      parseId(id)
+        .flatMap(monitorService.delete)
+        .map(_.asRight[ErrorResponse])
+        .handleError(ErrorResponse.from(_).asLeft)
+    }
+
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getById, createNew, getEvents, activate, update))
+    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getById, createNew, getEvents, activate, update, delete))
 
 object MonitorController:
   def make[F[_]: Async](monitorService: MonitorService[F], monitoringEventService: MonitoringEventService[F]): F[Controller[F]] =
