@@ -191,7 +191,8 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
             |  "Http": {
             |    "url": "http://foo.bar",
             |    "method": "GET",
-            |    "timeout": "1 minute"
+            |    "timeout": "1 minute",
+            |    "headers": null
             |  }
             |},
             |"contact": {
@@ -255,7 +256,8 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |  "Http": {
              |    "url": "http://foo.bar",
              |    "method": "GET",
-             |    "timeout": "1 minute"
+             |    "timeout": "1 minute",
+             |    "headers": null
              |  }
              |},
              |"contact": {

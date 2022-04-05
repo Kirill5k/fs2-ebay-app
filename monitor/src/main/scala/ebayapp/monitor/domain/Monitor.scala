@@ -1,7 +1,8 @@
 package ebayapp.monitor.domain
 
-import io.circe.Codec
+import io.circe.{Codec, Decoder, Encoder}
 import mongo4cats.bson.ObjectId
+import ebayapp.monitor.common.json.given
 
 import java.util.UUID
 import java.time.Instant
@@ -37,23 +38,29 @@ object Monitor {
     def apply(name: String): Name            = name
     extension (name: Name) def value: String = name
 
+  enum Status:
+    case Up, Down, Paused
+
   enum Contact:
     case Logging
     case Email(email: String)
     case Telegram(channelId: String)
 
-  enum Connection:
-    case Http(url: Url, method: HttpMethod, timeout: FiniteDuration)
-
+  sealed trait Connection
   object Connection:
+    final case class Http(
+        url: Url,
+        method: HttpMethod,
+        timeout: FiniteDuration,
+        headers: Option[Map[String, String]] = None
+    ) extends Connection
+        derives Codec.AsObject
+
     extension (conn: Connection)
       def asString: String =
         conn match {
-          case Connection.Http(url, method, _) => s"$method $url"
+          case Connection.Http(url, method, _, _) => s"$method $url"
         }
-
-  enum Status:
-    case Up, Down, Paused
 }
 
 final case class CreateMonitor(
