@@ -5,7 +5,6 @@ import cats.effect.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.kernel.controllers.views.*
-import io.circe.generic.auto.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
 import sttp.tapir.Codec.PlainCodec
@@ -28,11 +27,11 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
     localDate.fold(DecodeResult.Error(dateString, _), DecodeResult.Value.apply)
   }
 
-  given instantCodec: PlainCodec[Instant] = Codec.string.mapDecode(decodeInstant)(_.toString)
+  inline given instantCodec: PlainCodec[Instant] = Codec.string.mapDecode(decodeInstant)(_.toString)
 
   protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F, F] = Http4sServerOptions
     .customInterceptors[F, F]
-    .errorOutput(e => ValuedEndpointOutput(jsonBody[ErrorResponse], ErrorResponse.BadRequest(e)))
+    .errorOutput(e => ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e)))
     .options
 
   protected val errorResponse =

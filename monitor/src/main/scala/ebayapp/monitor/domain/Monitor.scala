@@ -53,8 +53,7 @@ object Monitor {
         method: HttpMethod,
         timeout: FiniteDuration,
         headers: Option[Map[String, String]] = None
-    ) extends Connection
-        derives Codec.AsObject
+    ) extends Connection derives Codec.AsObject
 
     extension (conn: Connection)
       def asString: String =
