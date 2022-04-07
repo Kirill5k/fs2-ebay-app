@@ -4,6 +4,7 @@ import cats.Monad
 import cats.effect.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
+import ebayapp.kernel.common.time.*
 import ebayapp.kernel.controllers.views.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
@@ -19,15 +20,8 @@ import scala.util.Try
 
 trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
 
-  private def decodeInstant(dateString: String): DecodeResult[Instant] = {
-    val localDate =
-      if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay().toInstant(ZoneOffset.UTC))
-      else if (dateString.length == 19) Try(LocalDateTime.parse(dateString)).map(_.toInstant(ZoneOffset.UTC))
-      else Try(Instant.parse(dateString))
-    localDate.fold(DecodeResult.Error(dateString, _), DecodeResult.Value.apply)
-  }
-
-  inline given instantCodec: PlainCodec[Instant] = Codec.string.mapDecode(decodeInstant)(_.toString)
+  inline given instantCodec: PlainCodec[Instant] =
+    Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
 
   protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F, F] = Http4sServerOptions
     .customInterceptors[F, F]
