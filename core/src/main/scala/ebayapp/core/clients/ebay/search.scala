@@ -69,7 +69,7 @@ private[ebay] object search {
         "(demo|game)( )?(code|disc|key|cart|pass)", "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|no)( )?(redeem )?(\\bDL\\b|avatar|game|code|key)",
         "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo) only",
         "(case|variety|accessor(ies|y)|storage|charge|robot) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "switch.*(alu|unicorn).*\\bcase\\b",
-        "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch)\\s+(pouch|case|bag)",
+        "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch)\\s+(sleeve|pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging) (dock|station|stand)", "download",
         "credits", "instant delivery", "official server", "damaged", "Option File", "offline", "unlock all", "online", "mini dock",
         "coin", "skins", "collectors box", "soundtrack", "poster", "protection accessor", "PLAYSTAND", "Press Release",

@@ -42,6 +42,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
     "map uncommon platform spellings" in {
       val platforms = Map(
+        "PS-4"                      -> "PLAYSTATION4",
         "PS4"                       -> "PLAYSTATION4",
         "PS2"                       -> "PLAYSTATION2",
         "PS5"                       -> "PLAYSTATION5",
@@ -57,6 +58,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "XBOX ONE, SERIES X|S"      -> "XBOX ONE",
         " (XBOX ONE, SERIES X|S)"   -> "XBOX ONE",
         "SERIES X"                  -> "XBOX",
+        "SERIES X|S"                -> "XBOX",
         "X BOX X SERIES"            -> "XBOX",
         "XBOX SERIES X"             -> "XBOX",
         "Xbox-Live-Xbox-One"        -> "XBOX",
@@ -64,10 +66,9 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Sony Playstation 2016 PS3" -> "PLAYSTATION3"
       )
 
-      forAll(platforms) { platform =>
-        val details =
-          GameDetailsMapper.from(testListing.copy(title = s"Call of Duty: Infinite Warfare ${platform._1}", properties = Map.empty))
-        details.platform mustBe (Some(platform._2))
+      forAll(platforms) { case (exp, act) =>
+        val details = GameDetailsMapper.from(testListing.copy(title = s"Call of Duty: Infinite Warfare $exp", properties = Map.empty))
+        details.platform mustBe Some(act)
       }
     }
 
@@ -261,6 +262,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty Infinite Warfare XBOX ONE, SERIES X|S",
         "Call of Duty Infinite Warfare ps-4",
         "Call of Duty Infinite Warfare ps4 free ps5 upgrade",
+        "Call of Duty Infinite Warfare inc manual",
         "Call of Duty Infinite Warfare xone",
         "Call of Duty Infinite Warfare xbox one series x s",
         "Call of Duty Infinite Warfare xbox one x series x/s",
@@ -308,6 +310,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare case + cart",
         "Call of Duty: Infinite Warfare case and cartridge",
         "Call of Duty: Infinite Warfare xbox one x xbox series x",
+        "Call of Duty: Infinite Warfare map included",
         "Call of Duty: Infinite Warfare xbox 360 classics 2017",
         "Call of Duty: Infinite Warfare only on Playstation 4",
         "Call of Duty: Infinite Warfare - game of the year edition goty",
