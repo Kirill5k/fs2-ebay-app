@@ -32,7 +32,7 @@ class NotificationServiceSpec extends AsyncWordSpec with Matchers with MockitoMa
 
       result.unsafeToFuture().map { res =>
         val h = "Monitor is UP: test"
-        val m = "The monitor test (GET http://foo.bar) is back UP (HTTP 200 Success)\nIt was down for 75 minutes\nEvent timestamp: 2022-01-01 01:15:00"
+        val m = "The monitor test (GET http://foo.bar) is back UP (HTTP 200 Success)\nIt was down for 1h15m\nEvent timestamp: 2022-01-01 01:15:00"
         verify(emailClient).send(EmailMessage(Monitors.emailContact.email, h, m))
         res mustBe ()
       }

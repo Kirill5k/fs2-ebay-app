@@ -23,7 +23,7 @@ final private class LiveNotificationService[F[_]](
   def notify(monitor: Monitor, notification: Notification): F[Unit] =
     val msg1        = s"The monitor ${monitor.name} (${monitor.connection.asString}) "
     val msg2        = s"is ${if notification.isUp then "back" else "currently"} ${notification.statusString} (${notification.reason})\n"
-    val msg3        = notification.downTime.fold("")(dt => s"It was down for ${dt.durationBetween(notification.time).toCoarsest}\n")
+    val msg3        = notification.downTime.fold("")(dt => s"It was down for ${dt.durationBetween(notification.time).toReadableString}\n")
     val msg4        = s"Event timestamp: ${notification.timeString}"
     val completeMsg = s"$msg1$msg2$msg3$msg4"
     (monitor.contact match
