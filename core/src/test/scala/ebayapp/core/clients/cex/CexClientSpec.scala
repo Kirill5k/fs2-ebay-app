@@ -206,11 +206,31 @@ class CexClientSpec extends SttpClientSpec {
       }
     }
 
-    "return none when no results" in {
+    "retry without category when there are no results" in {
       val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None, platform = Some("SWITCH"))
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH", "categoryIds" -> "[1064]")) =>
+            Response.ok(json("cex/search-noresults-response.json"))
+          case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH")) =>
+            Response.ok(json("cex/search-game-success-response.json"))
+          case _ => throw new RuntimeException()
+        }
+
+      val cexClient = CexClient.make[IO](config, testingBackend)
+
+      val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-switch"))(item))
+
+      result.unsafeToFuture().map { updatedItem =>
+        updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(0.8), BigDecimal(1.4)))
+      }
+    }
+
+    "return none when no results" in {
+      val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None, platform = Some("SWITCH"))
+      val testingBackend: SttpBackend[IO, Any] = backendStub
+        .whenRequestMatchesPartial {
+          case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH")) =>
             Response.ok(json("cex/search-noresults-response.json"))
           case _ => throw new RuntimeException()
         }

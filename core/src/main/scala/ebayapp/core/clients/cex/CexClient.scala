@@ -58,9 +58,10 @@ final class CexApiClient[F[_]](
     resellPriceCache.evalPutIfNew(query) {
       search(uri"${config.baseUri}/v3/boxes?q=$query&categoryIds=$categories")
         .map(getMinResellPrice)
-        .flatTap { rp =>
-          if (rp.isEmpty) logger.warn(s"""cex-price-match "$query" returned 0 results""")
-          else ().pure[F]
+        .flatMap { rp =>
+          if (rp.isEmpty && categories.isDefined) findSellPrice(query, None)
+          else if (rp.isEmpty) logger.warn(s"""cex-price-match "$query" returned 0 results""") *> rp.pure[F]
+          else rp.pure[F]
         }
     }
 

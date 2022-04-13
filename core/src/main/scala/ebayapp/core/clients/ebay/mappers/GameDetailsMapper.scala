@@ -109,7 +109,7 @@ private[mappers] object GameDetailsMapper {
     "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b", "must see", "see (pictures|photos|pics)", "Refurbished",
     "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included",
     "(still )?in( (plastic|cellophane))? wrap(p)?(ing|er)", "\\brated \\d+\\b", "\\d supplied",
-    "((region|europe) )?(\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?",
+    "((region|europe) )?((R2( )?)?\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?",
     "\\ben\\b", "\\bcr\\b", "\\bnc\\b", "\\bfr\\b", "\\bes\\b", "\\ban\\b", "\\bLTD\\b",
     "\\b\\w+VG(C)?\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b", "\\bnsw\\b", "\\bsft\\b",
     "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", 

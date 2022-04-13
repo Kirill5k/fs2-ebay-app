@@ -307,6 +307,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare Anniversary CE",
         "Call of Duty: Infinite Warfare for ages 18 and over",
         "Call of Duty: Infinite Warfare HD collection cased",
+        "Call of Duty: Infinite Warfare R2 PAL UK",
         "Call of Duty: Infinite Warfare case + cart",
         "Call of Duty: Infinite Warfare case and cartridge",
         "Call of Duty: Infinite Warfare xbox one x xbox series x",
