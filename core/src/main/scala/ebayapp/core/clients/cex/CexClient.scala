@@ -50,8 +50,7 @@ final class CexApiClient[F[_]](
       case None =>
         logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
       case Some(name) =>
-        val categories = category.flatMap(categoriesMap.get)
-        findSellPrice(name, categories).map(sp => item.copy(sellPrice = sp))
+        findSellPrice(name, category.flatMap(categoriesMap.get)).map(sp => item.copy(sellPrice = sp))
     }
 
   private def findSellPrice(query: String, categories: Option[String]): F[Option[SellPrice]] =

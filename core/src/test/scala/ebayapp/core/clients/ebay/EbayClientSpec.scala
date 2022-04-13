@@ -146,6 +146,7 @@ class EbayClientSpec extends CatsSpec {
       val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       val badItems = List(
+        "Starlink Weapons Pack x 2  PS4 XBox Switch - Hailstorm & Iron Fist",
         "switch amazing aluminium case",
         "switch console mario kart case",
         "fallout 4 disc only",

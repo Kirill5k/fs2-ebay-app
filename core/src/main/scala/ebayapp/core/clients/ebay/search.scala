@@ -72,12 +72,12 @@ private[ebay] object search {
         "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch)\\s+(sleeve|pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging) (dock|station|stand)", "download",
         "credits", "instant delivery", "official server", "damaged", "Option File", "offline", "unlock all", "online", "mini dock",
-        "coin", "skins", "collectors box", "soundtrack", "poster", "protection accessor", "PLAYSTAND", "Press Release",
+        "coin", "skins", "collectors box", "soundtrack", "poster", "protection accessor", "PLAYSTAND", "Press Release", "starlink(?s).*pack",
         "(no|protective|case|silicone|phone|style|\\bUS\\b|miss(ing)?) cover(s)?", "promotional game", "starter pack", "Microphone", "KontrolFreek",
         "sniper thumbs", "(game|skin|thumb|Silicone|floating) grip", "thumb( )?stick", "(screen|grip) (protector|combat|stick)", "leg strap", "Cleaning Cloth",
         "dual( )?(shock|charge)", "efigs", "gamepad", "(toy|joy|ring)(\\s+)?con", "controller", "(card|stand) holder", "memory card", "(Spa|messenger)?( )?Bag", "keyring",
         "headset", "\\bhdmi\\b", "\\bUSB\\b", "\\bhdd\\b", "(nintendo|switch) labo", "(steering|racing|driving|official|nintendo|wii|race) wheel", "wristband",
-        "horipad", "(cord|power|\\bAC\\b|hdmi)( )?(adapter|level|supply)", "tv tuner",
+        "horipad", "(cord|power|\\bAC\\b|hdmi)( )?(adapter|level|supply)", "tv tuner", "home circuit",
         "starter (set|pack|bundle|kit)", "figure(s)? bundle", "k eso", "(mini|gift) toy", "pad pro", "cable (adapter|pack)", "dvd player",
         "pre(\\s+|-)?(order|sale)", "season pass", "(steel|art)( )?book", "(game|mini)( )?figure", "collectable", "collectible", "remote control", "(aux|charg(ing|e)|power|av) cable",
         "membership", "(subscription|gift)( |-)?card", "12 month", "(wallpaper|dynamic|ps\\d) theme", "themes", "account", "achievement pack",
@@ -100,7 +100,7 @@ private[ebay] object search {
         "borderlands(?s).* (artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "elden ring(?s).*(rune|million|level)",
         "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
-        "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "XBOX( )?360"
+        "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "XBOX( )?360", "nintendo ds",
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       private val LISTING_DESCRIPTION_TRIGGER_WORDS = List(
