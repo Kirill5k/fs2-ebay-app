@@ -38,7 +38,7 @@ private[mappers] object GameDetailsMapper {
     "(royal mail )?(1st|2nd|first) class.*$",
     "(?<=\\w+ )((all|fully) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$", "cleaned( )?(fully )?tested",
-    "(\\bW\\b|with| inc(ludes)?|contain|(\\d )?bonus|plus).{0,20}(guide|dlc|pass|level|content|bonus|pack)(?s).*$",
+    "(\\bW\\b|with| inc(ludes)?|including|contain|(\\d )?bonus|plus).{0,20}(guide|dlc|pass|level|content|bonus|pack)(?s).*$",
     "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
     "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
@@ -59,6 +59,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=cyber) (?=punk)", "(?<=Warhammer) (40k|40( )?000)", "Formula (1|One)\\s+(?=F1)",
     "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))", "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)",
     "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
+    "COD\\s+(?=Call of duty)", "AC\\s+(?=assassins creed)", "ACNH\\s+(?=Animal Crossing New Horizons)",
     "(?<=resident evil (vii|7)).*biohazard.*", "(?<=resident evil village) (8|VIII)", "(?<=resident evil) (8|VIII)(?= village)",
     // removes year from some titles
     "(?<=(need for speed|minecraft|\\bLEGO\\b|Tomb Raider|call of duty|gran turismo|assassins creed|tom clanc).*)20\\d\\d(?s).*"
@@ -111,7 +112,7 @@ private[mappers] object GameDetailsMapper {
     "(still )?in( (plastic|cellophane))? wrap(p)?(ing|er)", "\\brated \\d+\\b", "\\d supplied",
     "((region|europe) )?((R2( )?)?\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?",
     "\\ben\\b", "\\bcr\\b", "\\bnc\\b", "\\bfr\\b", "\\bes\\b", "\\ban\\b", "\\bLTD\\b",
-    "\\b\\w+VG(C)?\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b", "\\bnsw\\b", "\\bsft\\b",
+    "\\b\\w+VG(C)?\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b", "\\bnsw\\b", "\\bsft\\b", "uac pack",
     "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", 
     "\\bWAR L\\d+\\b", "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", 
     "(ultra )?\\b(u)?hd(r)?\\b", "(\\b4k\\b|\\bone x\\b)( enhanced)?", "\\buns\\b", "\\bx360\\b", 
@@ -212,10 +213,11 @@ private[mappers] object GameDetailsMapper {
       )
       .replaceAll("(?i)\\bll\\b", "II")
       .replaceAll("(?i)\\blll\\b", "III")
+      .replaceAll("(?i)(\\bww2|ww11\\b)", "wwii")
+      .replaceAll("(?i)(\\bcod\\b)", "Call of Duty ")
       .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (2|II)(?s).*", "WWII")
       .replaceAll("(?i)(resident evil \\bVII\\b)", "Resident Evil 7")
       .replaceAll("(?i)(resident evil (8|\\bVIII\\b))", "Resident Evil Village")
-      .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(Read Dead Redemption)", "Red Dead Redemption")
       .replaceAll("(?i)(W2K)", "WWE 2k")
@@ -232,8 +234,6 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(\\bPVZ\\b)", "Plants vs Zombies ")
       .replaceAll("(?i)(\\bnsane\\b)", "N Sane")
       .replaceAll("(?i)(\\bmoto gp\\b)", "MotoGP")
-      .replaceAll("(?i)(\\bww2|ww11\\b)", "wwii")
-      .replaceAll("(?i)(\\bcod\\b)", "Call of Duty ")
       .replaceAll("(?i)(?<=(^| ))RDR( )?(?=\\d)?", "Red Dead Redemption ")
       .replaceAll("(?i)(?<=(^| ))GTA( )?(?=\\d)?", "Grand Theft Auto ")
       .replaceAll("(?i)(\\bMGS\\b)", "Metal Gear Solid ")

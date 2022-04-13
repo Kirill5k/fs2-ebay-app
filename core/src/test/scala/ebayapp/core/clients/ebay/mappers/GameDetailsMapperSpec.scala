@@ -261,6 +261,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "5 PS3 Games Call of Duty Infinite Warfare VR PSVR",
         "Call of Duty Infinite Warfare XBOX ONE, SERIES X|S",
         "Call of Duty Infinite Warfare ps-4",
+        "(COD) Call of Duty Infinite Warfare including dlc",
         "Call of Duty Infinite Warfare ps4 free ps5 upgrade",
         "Call of Duty Infinite Warfare inc manual",
         "Call of Duty Infinite Warfare xone",
@@ -396,11 +397,11 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     }
 
     "quick test" in {
-      val listingDetails = testListing.copy(title = "motorsport kids racing motorbike game")
+      val listingDetails = testListing.copy(title = "Ps4 Medievil (PS4) - Including DLC Game NEW")
 
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
-      gameDetails.name mustBe Some("motorsport")
+      gameDetails.name mustBe Some("Medievil")
     }
   }
 }
