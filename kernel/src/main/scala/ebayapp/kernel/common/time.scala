@@ -3,16 +3,15 @@ package ebayapp.kernel.common
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.concurrent.duration.*
 import scala.util.Try
-import scala.concurrent.duration.*
 
 object time:
   extension (dateString: String)
     def toInstant: Either[Throwable, Instant] =
-      val localDate =
-        if (dateString.length == 10) Try(LocalDate.parse(dateString)).map(_.atStartOfDay().toInstant(ZoneOffset.UTC))
-        else if (dateString.length == 19) Try(LocalDateTime.parse(dateString)).map(_.toInstant(ZoneOffset.UTC))
-        else Try(Instant.parse(dateString))
-      localDate.toEither
+      val localDate = dateString.length match
+        case 10 => s"${dateString}T00:00:00Z"
+        case 19 => s"${dateString}Z"
+        case _ => dateString
+      Try(Instant.parse(localDate)).toEither
       
   extension (ts: Instant)
     def durationBetween(otherTs: Instant): FiniteDuration =
