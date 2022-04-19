@@ -34,7 +34,7 @@ final case class RedirectController[F[_]: Concurrent](
         client
           .toHttpApp {
             req
-              .withUri(Uri.unsafeFromString(redirectToUri.head.value + req.uri.toString))
+              .withUri(Uri.unsafeFromString(redirectToUri.head.value + req.uri.toString.replaceFirst("/proxy-pass", "")))
               .removeHeader(HostHeader)
               .removeHeader(XReloadOn403Header)
               .removeHeader(XRerouteToHeader)
