@@ -2,18 +2,19 @@ package ebayapp.core.common
 
 import cats.Monad
 import cats.effect.std.Queue
-import cats.effect.{Async, Deferred}
+import cats.effect.{Async, Deferred, Temporal}
 import cats.syntax.apply.*
+import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import org.typelevel.log4cats.{Logger => Logger4Cats}
+import org.typelevel.log4cats.Logger as Logger4Cats
 
 import java.time.Instant
 
 final case class Error(
     message: String,
-    time: Instant = Instant.now()
+    time: Instant
 )
 
 trait Logger[F[_]] extends Logger4Cats[F] {
@@ -23,7 +24,7 @@ trait Logger[F[_]] extends Logger4Cats[F] {
   def critical(t: Throwable)(message: => String): F[Unit]
 }
 
-final private class LiveLogger[F[_]: Monad](
+final private class LiveLogger[F[_]: Temporal](
     private val logger: Logger4Cats[F],
     private val loggedErrors: Queue[F, Error],
     private val sigTerm: Deferred[F, Either[Throwable, Unit]]
@@ -33,7 +34,7 @@ final private class LiveLogger[F[_]: Monad](
     enqueue(s"${message.split("\n").head} - ${t.getMessage}")
 
   private def enqueue(message: => String): F[Unit] =
-    loggedErrors.offer(Error(message.split("\n").head))
+    Temporal[F].realTimeInstant.flatMap(time => loggedErrors.offer(Error(message.split("\n").head, time)))
 
   override def awaitSigTerm: F[Either[Throwable, Unit]] =
     sigTerm.get
