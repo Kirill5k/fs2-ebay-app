@@ -2,7 +2,6 @@ package ebayapp.monitor.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.effect.std.Queue
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.monitor.actions.{Action, ActionDispatcher}

@@ -1,15 +1,14 @@
 package ebayapp.monitor.actions
 
-import cats.Monad
+import cats.{Monad, Parallel}
 import cats.effect.Temporal
 import cats.effect.std.Queue
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import cats.syntax.traverse.*
+import cats.syntax.parallel.*
 import cats.syntax.applicativeError.*
 import ebayapp.kernel.errors.AppError
-import ebayapp.monitor.actions.Action.EnqueueAll
-import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
+import ebayapp.monitor.domain.Monitor
 import ebayapp.monitor.services.Services
 import fs2.Stream
 import org.typelevel.log4cats.Logger
@@ -19,7 +18,7 @@ import scala.concurrent.duration.*
 trait ActionProcessor[F[_]]:
   def process: Stream[F, Unit]
 
-final private class LiveActionProcessor[F[_]](
+final private class LiveActionProcessor[F[_]: Parallel](
     private val dispatcher: ActionDispatcher[F],
     private val services: Services[F]
 )(using
@@ -32,8 +31,8 @@ final private class LiveActionProcessor[F[_]](
 
   private def handleAction(action: Action): F[Unit] =
     (action match
-      case EnqueueAll =>
-        services.monitor.getAllActive.flatMap(_.traverse(enqueueWithEventFetched).void)
+      case Action.EnqueueAll =>
+        services.monitor.getAllActive.flatMap(_.parTraverse(enqueueWithEventFetched).void)
       case Action.EnqueueNew(monitor) =>
         services.monitoringEvent.process(monitor, None)
       case Action.Enqueue(monitor, prevEvent) =>
@@ -50,7 +49,7 @@ final private class LiveActionProcessor[F[_]](
         logger.warn(error)(s"domain error while processing action $action")
       case error =>
         logger.error(error)(s"unexpected error processing action $action") >>
-          Temporal[F].sleep(1.second) >>
+          F.sleep(1.second) >>
           dispatcher.dispatch(action)
     }
 
@@ -60,5 +59,5 @@ final private class LiveActionProcessor[F[_]](
       .flatMap(e => services.monitoringEvent.process(monitor, e))
 
 object ActionProcessor:
-  def make[F[_]: Temporal: Logger](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
+  def make[F[_]: Temporal: Logger: Parallel](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
     Monad[F].pure(LiveActionProcessor(dispatcher, services))
