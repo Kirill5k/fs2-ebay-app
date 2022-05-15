@@ -5,10 +5,16 @@ import cats.effect.Temporal
 import cats.effect.std.Queue
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
+import cats.syntax.traverse.*
+import cats.syntax.applicativeError.*
+import ebayapp.kernel.errors.AppError
+import ebayapp.monitor.actions.Action.EnqueueAll
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import ebayapp.monitor.services.Services
 import fs2.Stream
 import org.typelevel.log4cats.Logger
+
+import scala.concurrent.duration.*
 
 trait ActionProcessor[F[_]]:
   def process: Stream[F, Unit]
@@ -20,29 +26,33 @@ final private class LiveActionProcessor[F[_]](
     F: Temporal[F],
     logger: Logger[F]
 ) extends ActionProcessor[F]:
-  private val maxConcurrent: Int = 1024
 
   def process: Stream[F, Unit] =
-    dispatcher.actions
-      .map {
-        case Action.Notify(monitor, notification) => Stream.eval(services.notify(monitor, notification))
-        case Action.EnqueueNew(monitor)           => Stream.eval(services.enqueue(monitor, None))
-        case Action.Enqueue(monitor, prevEvent)   => Stream.eval(services.enqueue(monitor, Some(prevEvent)))
-        case Action.EnqueueAll =>
-          Stream
-            .evalSeq(services.monitor.getAllActive)
-            .mapAsync(maxConcurrent)(enqueueWithEventFetched)
-        case Action.Requeue(id, interval, prevEvent) =>
-          Stream
-            .eval(services.monitor.find(id))
-            .delayBy(interval)
-            .evalMap {
-              case Some(monitor) => services.enqueue(monitor, Some(prevEvent))
-              case None          => logger.warn(s"monitor $id does not exist")
-            }
-      }
-      .parJoinUnbounded
-      .handleErrorWith(e => Stream.eval(logger.error(e)("error during action processing")) ++ process)
+    dispatcher.actions.map(a => Stream.eval(handleAction(a))).parJoinUnbounded
+
+  private def handleAction(action: Action): F[Unit] =
+    (action match
+      case EnqueueAll =>
+        services.monitor.getAllActive.flatMap(_.traverse(enqueueWithEventFetched).void)
+      case Action.EnqueueNew(monitor) =>
+        services.enqueue(monitor, None)
+      case Action.Enqueue(monitor, prevEvent) =>
+        services.enqueue(monitor, Some(prevEvent))
+      case Action.Requeue(id, interval, prevEvent) =>
+        F.sleep(interval) >> services.monitor.find(id).flatMap {
+          case Some(monitor) => services.enqueue(monitor, Some(prevEvent))
+          case None          => logger.warn(s"monitor $id does not exist")
+        }
+      case Action.Notify(monitor, notification) =>
+        services.notify(monitor, notification)
+    ).handleErrorWith {
+      case error: AppError =>
+        logger.warn(error)(s"domain error while processing action $action")
+      case error =>
+        logger.error(error)(s"unexpected error processing action $action") >>
+          Temporal[F].sleep(1.second) >>
+          dispatcher.dispatch(action)
+    }
 
   private def enqueueWithEventFetched(monitor: Monitor): F[Unit] =
     services.monitoringEvent
