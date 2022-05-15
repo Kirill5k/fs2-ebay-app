@@ -2,9 +2,7 @@ package ebayapp.monitor.actions
 
 import cats.{Monad, Parallel}
 import cats.effect.Temporal
-import cats.effect.std.Queue
 import cats.syntax.flatMap.*
-import cats.syntax.functor.*
 import cats.syntax.parallel.*
 import cats.syntax.applicativeError.*
 import ebayapp.kernel.errors.AppError
@@ -32,7 +30,7 @@ final private class LiveActionProcessor[F[_]: Parallel](
   private def handleAction(action: Action): F[Unit] =
     (action match
       case Action.EnqueueAll =>
-        services.monitor.getAllActive.flatMap(_.parTraverse(enqueueWithEventFetched).void)
+        services.monitor.getAllActive.flatMap(_.parTraverse_(enqueueWithEventFetched))
       case Action.EnqueueNew(monitor) =>
         services.monitoringEvent.process(monitor, None)
       case Action.Enqueue(monitor, prevEvent) =>
