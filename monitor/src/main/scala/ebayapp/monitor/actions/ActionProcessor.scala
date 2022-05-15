@@ -35,16 +35,16 @@ final private class LiveActionProcessor[F[_]](
       case EnqueueAll =>
         services.monitor.getAllActive.flatMap(_.traverse(enqueueWithEventFetched).void)
       case Action.EnqueueNew(monitor) =>
-        services.enqueue(monitor, None)
+        services.monitoringEvent.process(monitor, None)
       case Action.Enqueue(monitor, prevEvent) =>
-        services.enqueue(monitor, Some(prevEvent))
+        services.monitoringEvent.process(monitor, Some(prevEvent))
       case Action.Requeue(id, interval, prevEvent) =>
         F.sleep(interval) >> services.monitor.find(id).flatMap {
-          case Some(monitor) => services.enqueue(monitor, Some(prevEvent))
+          case Some(monitor) => services.monitoringEvent.process(monitor, Some(prevEvent))
           case None          => logger.warn(s"monitor $id does not exist")
         }
       case Action.Notify(monitor, notification) =>
-        services.notify(monitor, notification)
+        services.notification.notify(monitor, notification)
     ).handleErrorWith {
       case error: AppError =>
         logger.warn(error)(s"domain error while processing action $action")
@@ -57,7 +57,7 @@ final private class LiveActionProcessor[F[_]](
   private def enqueueWithEventFetched(monitor: Monitor): F[Unit] =
     services.monitoringEvent
       .findLatest(monitor.id)
-      .flatMap(e => services.monitoringEvent.enqueue(monitor, e))
+      .flatMap(e => services.monitoringEvent.process(monitor, e))
 
 object ActionProcessor:
   def make[F[_]: Temporal: Logger](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =

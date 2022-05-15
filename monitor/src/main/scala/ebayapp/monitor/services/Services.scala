@@ -15,10 +15,6 @@ trait Services[F[_]]:
   def monitoringEvent: MonitoringEventService[F]
   def notification: NotificationService[F]
 
-  def notify(mon: Monitor, not: Notification): F[Unit]                   = notification.notify(mon, not)
-  def enqueue(mon: Monitor, prevEvent: Option[MonitoringEvent]): F[Unit] = monitoringEvent.enqueue(mon, prevEvent)
-  def process: Stream[F, Unit]                                           = monitoringEvent.process
-
 object Services:
   def make[F[_]: Temporal: Logger](
       dispatcher: ActionDispatcher[F],

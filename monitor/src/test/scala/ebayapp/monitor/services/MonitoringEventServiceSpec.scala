@@ -21,9 +21,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.*
 
 class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with MockitoMatchers with MockitoSugar {
-
-  given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
-
+  
   val downTime = Instant.parse("2011-01-01T00:00:00Z")
 
   "A MonitoringEventService" when {
@@ -132,8 +130,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
 
     val result = for
       svc <- MonitoringEventService.make[IO](disp, repo, http)
-      _   <- svc.enqueue(monitor, previousEvent)
-      _   <- svc.process.interruptAfter(250.millis).compile.drain
+      _   <- svc.process(monitor, previousEvent)
     yield ()
 
     result.unsafeToFuture().map { res =>
@@ -155,8 +152,7 @@ class MonitoringEventServiceSpec extends AsyncWordSpec with Matchers with Mockit
 
     val result = for
       svc <- MonitoringEventService.make[IO](disp, repo, http)
-      _   <- svc.enqueue(monitor, previousEvent)
-      _   <- svc.process.interruptAfter(250.millis).compile.drain
+      _   <- svc.process(monitor, previousEvent)
     yield ()
 
     result.unsafeToFuture().map { res =>

@@ -2,7 +2,7 @@ package ebayapp.monitor
 
 import cats.effect.{IO, IOApp}
 import ebayapp.kernel.Server
-import ebayapp.monitor.actions.{ActionDispatcher, ActionProcessor, Action}
+import ebayapp.monitor.actions.{Action, ActionDispatcher, ActionProcessor}
 import ebayapp.monitor.common.config.AppConfig
 import ebayapp.monitor.clients.Clients
 import ebayapp.monitor.controllers.Controllers
@@ -31,8 +31,7 @@ object Application extends IOApp.Simple:
           _ <- Stream(
             Stream.eval(dispatcher.dispatch(Action.EnqueueAll)),
             Server.serve[IO](config.server, controllers.routes, runtime.compute),
-            actionProcessor.process,
-            services.process
+            actionProcessor.process
           ).parJoinUnbounded.compile.drain
         yield ()
       }
