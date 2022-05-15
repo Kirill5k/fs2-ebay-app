@@ -32,7 +32,7 @@ class MonitoringEventRepositorySpec extends AsyncWordSpec with Matchers with Emb
       val result = for
         repo   <- MonitoringEventRepository.make(db)
         _      <- events.traverse(repo.save)
-        events <- repo.findAllBy(Monitors.id)
+        events <- repo.findAllBy(Monitors.id, 100)
       yield events
 
       result.map(_ mustBe events)

@@ -14,7 +14,7 @@ import java.time.Instant
 import scala.concurrent.duration.*
 
 trait MonitoringEventService[F[_]]:
-  def find(monitorId: Monitor.Id): F[List[MonitoringEvent]]
+  def find(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]]
   def findLatest(monitorId: Monitor.Id): F[Option[MonitoringEvent]]
   def process(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit]
 
@@ -26,8 +26,8 @@ final private class LiveMonitoringEventService[F[_]](
     F: Temporal[F]
 ) extends MonitoringEventService[F]:
 
-  def find(monitorId: Monitor.Id): F[List[MonitoringEvent]] =
-    repository.findAllBy(monitorId)
+  def find(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]] =
+    repository.findAllBy(monitorId, limit)
 
   def findLatest(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
     repository.findLatestBy(monitorId)

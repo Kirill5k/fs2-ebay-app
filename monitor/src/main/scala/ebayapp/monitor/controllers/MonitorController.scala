@@ -105,11 +105,12 @@ final private class LiveMonitorController[F[_]](
 
   private val getEvents = endpoint.get
     .in(eventsPath)
+    .in(query[Option[Int]]("limit"))
     .errorOut(errorResponse)
     .out(jsonBody[List[MonitoringEventView]])
-    .serverLogic { id =>
+    .serverLogic { (id, limit) =>
       parseId(id)
-        .flatMap(monitoringEventService.find)
+        .flatMap(mid => monitoringEventService.find(mid, limit.getOrElse(25)))
         .map(_.map(MonitoringEventView.from).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
