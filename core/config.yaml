@@ -136,8 +136,7 @@ data:
       cex {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "airpods max space grey"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "airpods max blue"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "airpods max space grey"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
