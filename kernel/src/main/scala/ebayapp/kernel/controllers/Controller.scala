@@ -9,11 +9,12 @@ import ebayapp.kernel.controllers.views.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
 import sttp.tapir.Codec.PlainCodec
-import sttp.tapir.generic.SchemaDerivation
+import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.server.http4s.Http4sServerOptions
-import sttp.tapir.server.interceptor.ValuedEndpointOutput
-import sttp.tapir.{oneOf, oneOfDefaultVariant, oneOfVariant, Codec, DecodeResult}
+import sttp.tapir.server.model.ValuedEndpointOutput
+import sttp.tapir.server.interceptor.exception.ExceptionHandler
+import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultVariant, oneOfVariant}
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.util.Try
@@ -23,9 +24,11 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
   inline given instantCodec: PlainCodec[Instant] =
     Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
 
-  protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F, F] = Http4sServerOptions
-    .customInterceptors[F, F]
-    .errorOutput(e => ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e)))
+  private val exceptionHandler = (e: Throwable) => Some(ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e.getMessage)))
+
+  protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F] = Http4sServerOptions
+    .customiseInterceptors
+    .exceptionHandler(ExceptionHandler.pure(ctx => exceptionHandler(ctx.e)))
     .options
 
   protected val errorResponse =

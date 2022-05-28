@@ -22,7 +22,6 @@ import org.bson.types.ObjectId
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
 import sttp.tapir.*
-import sttp.tapir.generic.SchemaDerivation
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import scala.concurrent.duration.FiniteDuration
@@ -32,7 +31,7 @@ final private class LiveMonitorController[F[_]](
     private val monitoringEventService: MonitoringEventService[F]
 )(using
     F: Async[F]
-) extends Controller[F] with SchemaDerivation:
+) extends Controller[F]:
 
   given methodSchema: Schema[HttpMethod] = Schema.string
   given urlSchema: Schema[Url]           = Schema.string
