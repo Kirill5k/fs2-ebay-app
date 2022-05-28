@@ -258,7 +258,7 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-one-series-x"))(item))
 
       result.attempt.unsafeToFuture().map { price =>
-        price mustBe Left(AppError.Json("cex-search/json-error: C[A]: DownField(boxes),DownField(data),DownField(response)"))
+        price mustBe Left(AppError.Json("cex-search/json-error: Got value '\"foo-bar\"' with wrong type, expecting array: DownField(boxes),DownField(data),DownField(response)"))
       }
     }
 

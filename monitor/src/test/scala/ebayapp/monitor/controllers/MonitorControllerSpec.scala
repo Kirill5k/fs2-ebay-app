@@ -157,7 +157,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
         val request  = Request[IO](uri = uri"/monitors", method = Method.POST).withEntity(requestBody)
         val response = controller.routes.orNotFound.run(request)
 
-        val error = "Invalid value for: body (Attempt to decode value on failed cursor at 'name', Attempt to decode value on failed cursor at 'connection', Attempt to decode value on failed cursor at 'interval', Attempt to decode value on failed cursor at 'contact')"
+        val error = "Invalid value for: body (Missing required field at 'name', Missing required field at 'connection', Missing required field at 'interval', Missing required field at 'contact')"
         verifyJsonResponse(response, Status.BadRequest, Some(s"""{"message":"$error"}"""))
         verifyNoInteractions(meSvc, monSvc)
       }

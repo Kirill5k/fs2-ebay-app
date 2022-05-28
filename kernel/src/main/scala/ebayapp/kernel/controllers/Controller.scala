@@ -12,9 +12,10 @@ import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.server.http4s.Http4sServerOptions
+import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.model.ValuedEndpointOutput
 import sttp.tapir.server.interceptor.exception.ExceptionHandler
-import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultVariant, oneOfVariant}
+import sttp.tapir.{oneOf, oneOfDefaultVariant, oneOfVariant, Codec, DecodeResult, ValidationError}
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.util.Try
@@ -24,12 +25,10 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
   inline given instantCodec: PlainCodec[Instant] =
     Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
 
-  private val exceptionHandler = (e: Throwable) => Some(ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e.getMessage)))
-
-  protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F] = Http4sServerOptions
-    .customiseInterceptors
-    .exceptionHandler(ExceptionHandler.pure(ctx => exceptionHandler(ctx.e)))
-    .options
+  protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F] = {
+    val exceptionHandler = (e: String) => ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e))
+    Http4sServerOptions.customiseInterceptors.defaultHandlers(exceptionHandler).options
+  }
 
   protected val errorResponse =
     oneOf[ErrorResponse](
