@@ -151,6 +151,7 @@ class EbayClientSpec extends CatsSpec {
         "switch console mario kart case",
         "fallout 4 disc only",
         "fallout 4 disc only",
+        "fallout taken king full game",
         "fallout 76 blah damage blah blah blah",
         "call of duty digital code",
         "lego worlds read description",

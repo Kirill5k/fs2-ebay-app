@@ -91,7 +91,7 @@ private[ebay] object search {
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|recipe|fossil|dino|egg|gold)",
         "(gta|grand theft)(?s).* (acc|lvl|fast run|bogdan|glitch|heist|character|cars|boost|cash|money|online|mill)",
-        "(cod|of duty)(?s).* (points|boost|unlock|warzone)", "Destiny 2", "heatsink",
+        "(cod|of duty)(?s).* (points|boost|unlock|warzone)", "Destiny 2", "Destiny.*taken king","heatsink",
         "Temperature Sensor", "RGB LED", "powerstand",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor) Switch", "Switching Sack",
         "(ammo|damage|weapon|tesla|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
