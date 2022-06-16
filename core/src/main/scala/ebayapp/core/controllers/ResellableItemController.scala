@@ -8,7 +8,7 @@ import cats.syntax.functor.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
 import ebayapp.core.controllers.views.{ResellableItemResponse, ResellableItemsSummaryResponse}
-import ebayapp.core.domain.ItemKind
+import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
 import org.http4s.HttpRoutes
@@ -22,6 +22,9 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     private val itemKind: ItemKind,
     private val itemService: ResellableItemService[F]
 ) extends Controller[F] {
+
+  given Schema[ItemKind]    = Schema.string
+  given Schema[ItemDetails] = Schema.string
 
   private val searchQueryParams =
     query[Option[Int]]("limit")

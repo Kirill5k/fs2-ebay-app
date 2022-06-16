@@ -9,8 +9,8 @@ import ebayapp.kernel.controllers.views.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
 import sttp.tapir.Codec.PlainCodec
-import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
+import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.server.http4s.Http4sServerOptions
 import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.model.ValuedEndpointOutput

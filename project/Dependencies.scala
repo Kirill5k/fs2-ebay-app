@@ -5,11 +5,11 @@ object Dependencies {
     val mongo4cats = "0.4.8"
     val pureConfig = "0.17.1"
     val circe      = "0.14.2"
-    val sttp       = "3.6.1"
+    val sttp       = "3.6.2"
     val http4s     = "0.23.12"
     val logback    = "1.2.11"
     val log4cats   = "2.3.0"
-    val tapir      = "1.0.0-RC1"
+    val tapir      = "1.0.0"
     val courier    = "3.1.0"
 
     val scalaTest    = "3.2.12"

@@ -33,9 +33,12 @@ final private class LiveMonitorController[F[_]](
     F: Async[F]
 ) extends Controller[F]:
 
-  given methodSchema: Schema[HttpMethod] = Schema.string
-  given urlSchema: Schema[Url]           = Schema.string
-  given fdSchema: Schema[FiniteDuration] = Schema.string
+  given Schema[HttpMethod]         = Schema.string
+  given Schema[Url]                = Schema.string
+  given Schema[FiniteDuration]     = Schema.string
+  given Schema[Monitor.Contact]    = Schema.string
+  given Schema[Monitor.Connection] = Schema.string
+  given Schema[Monitor.Status]     = Schema.string
 
   private val basePath   = "monitors"
   private val idPath     = basePath / path[String]
