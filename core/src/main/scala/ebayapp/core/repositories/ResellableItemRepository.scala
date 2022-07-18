@@ -35,11 +35,10 @@ final private class ResellableItemMongoRepository[F[_]: Async](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
 ) extends ResellableItemRepository[F] {
 
-  private object Field {
+  private object Field:
     val Kind       = "kind"
     val DatePosted = "listingDetails.datePosted"
     val Url        = "listingDetails.url"
-  }
 
   private val videoGameSummaryProjection = Projection
     .computed("url", "$listingDetails.url")
@@ -57,6 +56,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
       .void
       .handleErrorWith {
         case _: DuplicateKeyException => ().pure[F]
+        case e                        => e.raiseError[F, Unit]
       }
 
   def saveAll(items: Seq[ResellableItem]): F[Unit] =
