@@ -6,7 +6,7 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicative.*
 import cats.syntax.applicativeError.*
-import com.mongodb.DuplicateKeyException
+import com.mongodb.{DuplicateKeyException, MongoWriteException}
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.bson.Document
@@ -55,8 +55,9 @@ final private class ResellableItemMongoRepository[F[_]: Async](
       .insertOne(ResellableItemEntityMapper.toEntity(item))
       .void
       .handleErrorWith {
-        case _: DuplicateKeyException => ().pure[F]
-        case e                        => e.raiseError[F, Unit]
+        case _: DuplicateKeyException                              => ().pure[F]
+        case e: MongoWriteException if e.getError.getCode == 11000 => ().pure[F]
+        case e                                                     => e.raiseError[F, Unit]
       }
 
   def saveAll(items: Seq[ResellableItem]): F[Unit] =
