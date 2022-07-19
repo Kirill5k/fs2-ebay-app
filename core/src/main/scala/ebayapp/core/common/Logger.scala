@@ -3,14 +3,15 @@ package ebayapp.core.common
 import cats.Monad
 import cats.effect.std.Queue
 import cats.effect.{Async, Deferred, Temporal}
-import cats.syntax.apply.*
 import cats.syntax.flatMap.*
+import cats.syntax.functor.*
 import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.Logger as Logger4Cats
 
 import java.time.Instant
+import scala.concurrent.duration.*
 
 final case class Error(
     message: String,
@@ -24,17 +25,20 @@ trait Logger[F[_]] extends Logger4Cats[F] {
   def critical(t: Throwable)(message: => String): F[Unit]
 }
 
-final private class LiveLogger[F[_]: Temporal](
+final private class LiveLogger[F[_]](
     private val logger: Logger4Cats[F],
     private val loggedErrors: Queue[F, Error],
-    private val sigTerm: Deferred[F, Either[Throwable, Unit]]
+    private val sigTerm: Deferred[F, Either[Throwable, Unit]],
+    private val warningsCache: Cache[F, String, Unit]
+)(using
+    F: Temporal[F]
 ) extends Logger[F] {
 
-  private def enqueue(t: Throwable, message: => String): F[Unit] =
-    enqueue(s"${message.split("\n").head} - ${t.getMessage}")
+  private def enqueueError(t: Throwable, message: => String): F[Unit] =
+    enqueueError(s"${message.split("\n").head} - ${t.getMessage}")
 
-  private def enqueue(message: => String): F[Unit] =
-    Temporal[F].realTimeInstant.flatMap(time => loggedErrors.offer(Error(message.split("\n").head, time)))
+  private def enqueueError(message: => String): F[Unit] =
+    F.realTimeInstant.flatMap(time => loggedErrors.offer(Error(message.split("\n").head, time)))
 
   override def awaitSigTerm: F[Either[Throwable, Unit]] =
     sigTerm.get
@@ -43,19 +47,19 @@ final private class LiveLogger[F[_]: Temporal](
     Stream.fromQueueUnterminated(loggedErrors)
 
   override def critical(message: => String): F[Unit] =
-    sigTerm.complete(Left(AppError.Critical(message))) *> error(message)
+    sigTerm.complete(Left(AppError.Critical(message))) >> error(message)
 
   override def critical(t: Throwable)(message: => String): F[Unit] =
-    sigTerm.complete(Left(t)) *> error(t)(message)
+    sigTerm.complete(Left(t)) >> error(t)(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
-    enqueue(t, message) *> logger.error(t)(message)
+    enqueueError(t, message) >> logger.error(t)(message)
 
   override def error(message: => String): F[Unit] =
-    enqueue(message) *> logger.error(message)
+    enqueueError(message) >> logger.error(message)
 
   override def warn(t: Throwable)(message: => String): F[Unit] =
-    logger.warn(t)(message)
+    warningsCache.evalIfNew(message)(warningsCache.put(message, ()) >> logger.warn(t)(message))
 
   override def info(t: Throwable)(message: => String): F[Unit] =
     logger.info(t)(message)
@@ -67,7 +71,7 @@ final private class LiveLogger[F[_]: Temporal](
     logger.trace(t)(message)
 
   override def warn(message: => String): F[Unit] =
-    logger.warn(message)
+    warningsCache.evalIfNew(message)(warningsCache.put(message, ()) >> logger.warn(message))
 
   override def info(message: => String): F[Unit] =
     logger.info(message)
@@ -79,10 +83,12 @@ final private class LiveLogger[F[_]: Temporal](
     logger.trace(message)
 }
 
-object Logger {
+object Logger:
   def apply[F[_]](using ev: Logger[F]): Logger[F] = ev
 
   def make[F[_]: Async]: F[Logger[F]] =
-    (Queue.unbounded[F, Error], Deferred[F, Either[Throwable, Unit]])
-      .mapN((q, s) => new LiveLogger[F](Slf4jLogger.getLogger[F], q, s))
-}
+    for
+      loggedErrors  <- Queue.unbounded[F, Error]
+      sigTerm       <- Deferred[F, Either[Throwable, Unit]]
+      warningsCache <- Cache.make[F, String, Unit](3.minute, 10.seconds)
+    yield LiveLogger[F](Slf4jLogger.getLogger[F], loggedErrors, sigTerm, warningsCache)
