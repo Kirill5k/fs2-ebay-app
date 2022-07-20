@@ -29,7 +29,8 @@ final private class LiveLogger[F[_]](
     private val logger: Logger4Cats[F],
     private val loggedErrors: Queue[F, Error],
     private val sigTerm: Deferred[F, Either[Throwable, Unit]],
-    private val warningsCache: Cache[F, String, Unit]
+    private val warningsCache: Cache[F, String, Unit],
+    private val errorsCache: Cache[F, String, Unit]
 )(using
     F: Temporal[F]
 ) extends Logger[F] {
@@ -53,10 +54,14 @@ final private class LiveLogger[F[_]](
     sigTerm.complete(Left(t)) >> error(t)(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
-    enqueueError(t, message) >> logger.error(t)(message)
+    errorsCache.evalIfNew(message) {
+      errorsCache.put(message, ()) >> enqueueError(t, message) >> logger.error(t)(message)
+    }
 
   override def error(message: => String): F[Unit] =
-    enqueueError(message) >> logger.error(message)
+    errorsCache.evalIfNew(message) {
+      errorsCache.put(message, ()) >> enqueueError(message) >> logger.error(message)
+    }
 
   override def warn(t: Throwable)(message: => String): F[Unit] =
     warningsCache.evalIfNew(message)(warningsCache.put(message, ()) >> logger.warn(t)(message))
@@ -91,4 +96,5 @@ object Logger:
       loggedErrors  <- Queue.unbounded[F, Error]
       sigTerm       <- Deferred[F, Either[Throwable, Unit]]
       warningsCache <- Cache.make[F, String, Unit](3.minute, 10.seconds)
-    yield LiveLogger[F](Slf4jLogger.getLogger[F], loggedErrors, sigTerm, warningsCache)
+      errorsCache   <- Cache.make[F, String, Unit](1.minute, 10.seconds)
+    yield LiveLogger[F](Slf4jLogger.getLogger[F], loggedErrors, sigTerm, warningsCache, errorsCache)
