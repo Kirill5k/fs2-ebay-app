@@ -44,8 +44,7 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
     }
 }
 
-object Cache {
-
+object Cache:
   def make[F[_], K, V](
       expiresIn: FiniteDuration,
       checkOnEvery: FiniteDuration
@@ -64,6 +63,5 @@ object Cache {
     Ref
       .of[F, Map[K, (V, Long)]](Map.empty[K, (V, Long)])
       .flatTap(s => checkExpirations(s).start.void)
-      .map(s => new RefbasedCache[F, K, V](s))
+      .map(s => RefbasedCache[F, K, V](s))
   }
-}

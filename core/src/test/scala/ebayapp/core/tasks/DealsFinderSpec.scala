@@ -21,7 +21,7 @@ class DealsFinderSpec extends CatsSpec {
         _    <- task.run.compile.drain
       } yield ()
 
-      result.unsafeToFuture().map { r =>
+      result.asserting { r =>
         verify(services.deals.head).newDeals
         verify(services.notification).cheapItem(game)
         r mustBe ()

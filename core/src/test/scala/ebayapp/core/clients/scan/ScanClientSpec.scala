@@ -29,7 +29,7 @@ class ScanClientSpec extends SttpClientSpec {
 
       val client = ScanClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items must have size 12
       }
     }

@@ -24,7 +24,7 @@ class ErrorsNotifierSpec extends CatsSpec {
         _               <- notifierProcess.join
       } yield ()
 
-      res.unsafeToFuture().map { r =>
+      res.asserting { r =>
         verify(services.notification).alert(any[Error])
         r mustBe ()
       }
@@ -40,7 +40,7 @@ class ErrorsNotifierSpec extends CatsSpec {
         error           <- notifierProcess.join.attempt
       } yield error
 
-      res.unsafeToFuture().map { r =>
+      res.asserting { r =>
         r mustBe Right(Errored(AppError.Critical("omg, critical error")))
       }
     }

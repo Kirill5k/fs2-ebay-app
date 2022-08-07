@@ -34,7 +34,7 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
 
       val client = HarveyNicholsClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items must have size 102
 
         val item = items.head

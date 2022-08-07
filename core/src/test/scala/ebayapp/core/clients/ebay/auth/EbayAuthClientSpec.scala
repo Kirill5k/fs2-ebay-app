@@ -2,7 +2,6 @@ package ebayapp.core.clients.ebay.auth
 
 import cats.effect.IO
 import cats.effect.Ref
-import cats.effect.unsafe.IORuntime
 import cats.syntax.apply.*
 import ebayapp.core.MockLogger
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.EbayAuthToken
@@ -16,8 +15,6 @@ import sttp.model.*
 import scala.concurrent.duration.*
 
 class EbayAuthClientSpec extends SttpClientSpec {
-
-  given rt: IORuntime      = IORuntime.global
   given logger: Logger[IO] = MockLogger.make[IO]
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
@@ -36,7 +33,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = EbayAuthClient.make[IO](config, testingBackend)
       val accessToken    = ebayAuthClient.flatMap(_.accessToken)
 
-      accessToken.unsafeToFuture().map { token =>
+      accessToken.asserting { token =>
         token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
@@ -52,7 +49,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
         Ref.of[IO, List[EbayCredentials]](Nil)
       ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
 
-      ebayAuthClient.flatMap(_.accessToken).unsafeToFuture().map { token =>
+      ebayAuthClient.flatMap(_.accessToken).asserting { token =>
         token mustBe "test-token"
       }
     }
@@ -73,7 +70,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
         token  <- client.accessToken
       } yield token
 
-      result.unsafeToFuture().map { token =>
+      result.asserting { token =>
         token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
@@ -91,7 +88,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
         Ref.of[IO, List[EbayCredentials]](credentials)
       ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
 
-      ebayAuthClient.flatMap(_.accessToken).unsafeToFuture().map { token =>
+      ebayAuthClient.flatMap(_.accessToken).asserting { token =>
         token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
@@ -107,7 +104,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = EbayAuthClient.make[IO](config, testingBackend)
       val accessToken    = ebayAuthClient.flatMap(_.accessToken)
 
-      accessToken.unsafeToFuture().map { token =>
+      accessToken.asserting { token =>
         token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }
@@ -125,7 +122,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = EbayAuthClient.make[IO](config, testingBackend)
       val accessToken    = ebayAuthClient.flatMap(_.accessToken)
 
-      accessToken.unsafeToFuture().map { token =>
+      accessToken.asserting { token =>
         token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="
       }
     }

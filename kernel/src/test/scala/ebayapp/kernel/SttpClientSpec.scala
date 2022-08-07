@@ -1,6 +1,8 @@
 package ebayapp.kernel
 
 import cats.effect.IO
+import cats.effect.unsafe.IORuntime
+import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import sttp.client3
@@ -8,6 +10,8 @@ import sttp.client3.*
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.testing.SttpBackendStub
 import sttp.model.{Header, HeaderNames, MediaType, Method}
+
+import scala.concurrent.Future
 
 trait SttpClientSpec extends AsyncWordSpec with Matchers {
 
@@ -55,4 +59,8 @@ trait SttpClientSpec extends AsyncWordSpec with Matchers {
       val urlParts = url.split("/")
       hasHost(urlParts.head) && req.uri.path.startsWith(urlParts.tail.filter(_.nonEmpty).toList)
     }
+
+  extension[A] (io: IO[A])
+    def asserting(f: A => Assertion): Future[Assertion] =
+      io.map(f).unsafeToFuture()(IORuntime.global)
 }

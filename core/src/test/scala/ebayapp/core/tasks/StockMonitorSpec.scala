@@ -27,7 +27,7 @@ class StockMonitorSpec extends CatsSpec {
         _            <- stockMonitor.run.interruptAfter(2.seconds).compile.drain
       } yield ()
 
-      result.unsafeToFuture().map { res =>
+      result.asserting { res =>
         verify(services.stock.head).stockUpdates
         verify(services.stock.drop(1).head).stockUpdates
         verify(services.stock.drop(2).head).stockUpdates

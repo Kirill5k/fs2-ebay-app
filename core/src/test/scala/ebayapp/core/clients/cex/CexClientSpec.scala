@@ -1,7 +1,6 @@
 package ebayapp.core.clients.cex
 
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.common.Logger
@@ -17,9 +16,7 @@ import sttp.model.StatusCode
 import scala.concurrent.duration.*
 
 class CexClientSpec extends SttpClientSpec {
-
-  given rt: IORuntime      = IORuntime.global
-  given logger: Logger[IO] = MockLogger.make[IO]
+  given Logger[IO] = MockLogger.make[IO]
 
   "CexClient" should {
 
@@ -39,8 +36,7 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.search(criteria).compile.toList)
 
       result
-        .unsafeToFuture()
-        .map(res =>
+        .asserting(res =>
           res mustBe List(
             ResellableItem.generic(
               ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A"),
@@ -110,7 +106,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
       }
     }
@@ -128,7 +124,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-ps4-ps5"))(item))
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(0.8), BigDecimal(1.4)))
       }
     }
@@ -146,7 +142,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-360"))(item))
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(6.0), BigDecimal(9.0)))
       }
     }
@@ -165,7 +161,7 @@ class CexClientSpec extends SttpClientSpec {
         rp        <- cexClient.withUpdatedSellPrice(None)(item)
       } yield rp
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
       }
     }
@@ -181,7 +177,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe None
       }
     }
@@ -201,7 +197,7 @@ class CexClientSpec extends SttpClientSpec {
         rp        <- cexClient.withUpdatedSellPrice(None)(item)
       } yield rp
 
-      result.unsafeToFuture().map { res =>
+      result.asserting { res =>
         res.sellPrice mustBe None
       }
     }
@@ -221,7 +217,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-switch"))(item))
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(0.8), BigDecimal(1.4)))
       }
     }
@@ -239,7 +235,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-switch"))(item))
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe None
       }
     }
@@ -257,7 +253,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-one-series-x"))(item))
 
-      result.attempt.unsafeToFuture().map { price =>
+      result.attempt.asserting { price =>
         price mustBe Left(AppError.Json("cex-search/json-error: Got value '\"foo-bar\"' with wrong type, expecting array: DownField(boxes),DownField(data),DownField(response)"))
       }
     }
@@ -275,7 +271,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
-      result.unsafeToFuture().map { updatedItem =>
+      result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
       }
     }
@@ -293,7 +289,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
-      result.unsafeToFuture().map { item =>
+      result.asserting { item =>
         item.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
       }
     }

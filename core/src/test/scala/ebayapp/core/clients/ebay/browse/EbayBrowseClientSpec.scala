@@ -36,7 +36,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
       val foundItems       = ebaySearchClient.flatMap(_.search(accessToken, searchQueryParams))
 
-      foundItems.unsafeToFuture().map { items =>
+      foundItems.asserting { items =>
         items.map(_.itemId) mustBe (List("item-1", "item-2", "item-3", "item-4", "item-5"))
       }
     }
@@ -52,7 +52,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
       val foundItems       = ebaySearchClient.flatMap(_.search(accessToken, searchQueryParams))
 
-      foundItems.unsafeToFuture().map { items =>
+      foundItems.asserting { items =>
         items mustBe Nil
       }
     }
@@ -68,7 +68,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
       val result           = ebaySearchClient.flatMap(_.search(accessToken, searchQueryParams))
 
-      result.attempt.unsafeToFuture().map { error =>
+      result.attempt.asserting { error =>
         error mustBe (Left(AppError.Auth("ebay account has expired: 403")))
       }
     }
@@ -84,7 +84,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
       val itemResult       = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
 
-      itemResult.unsafeToFuture().map { item =>
+      itemResult.asserting { item =>
         item.map(_.itemId) mustBe (Some("v1|114059888671|0"))
       }
     }
@@ -100,7 +100,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
       val itemResult       = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
 
-      itemResult.unsafeToFuture().map { item =>
+      itemResult.asserting { item =>
         item.map(_.localizedAspects) mustBe (Some(None))
       }
     }
@@ -116,7 +116,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
       val result           = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
 
-      result.attempt.unsafeToFuture().map { error =>
+      result.attempt.asserting { error =>
         error mustBe (Left(AppError.Auth("ebay account has expired: 403")))
       }
     }
@@ -132,7 +132,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
       val itemResult       = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
 
-      itemResult.unsafeToFuture().map { items =>
+      itemResult.asserting { items =>
         items mustBe None
       }
     }
@@ -153,7 +153,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
         item3 <- client.getItem(accessToken, itemId)
       } yield List(item1, item2, item3)
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         items must have size 3
       }
     }

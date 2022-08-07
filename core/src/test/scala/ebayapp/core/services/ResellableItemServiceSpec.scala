@@ -25,7 +25,7 @@ class ResellableItemServiceSpec extends CatsSpec {
 
       val latestResult = ResellableItemService.make(repository).flatMap(_.search(searchFilters))
 
-      latestResult.unsafeToFuture().map { latest =>
+      latestResult.asserting { latest =>
         verify(repository).search(searchFilters)
         latest mustBe List(videoGame)
       }
@@ -37,7 +37,7 @@ class ResellableItemServiceSpec extends CatsSpec {
 
       val result = ResellableItemService.make(repository).flatMap(_.summaries(searchFilters))
 
-      result.unsafeToFuture().map { res =>
+      result.asserting { res =>
         verify(repository).summaries(searchFilters)
         res mustBe List(summary)
       }

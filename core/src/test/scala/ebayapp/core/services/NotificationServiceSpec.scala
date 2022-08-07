@@ -24,7 +24,7 @@ class NotificationServiceSpec extends CatsSpec {
         val error  = Error("very serious error", Instant.parse("2021-01-01T00:10:00Z"))
         val result = NotificationService.make(client).flatMap(_.alert(error))
 
-        result.unsafeToFuture().map { r =>
+        result.asserting { r =>
           verify(client).send(Notification.Alert("""2021-01-01T00:10:00Z ERROR - very serious error"""))
           r mustBe ()
         }
@@ -39,7 +39,7 @@ class NotificationServiceSpec extends CatsSpec {
 
         val result = NotificationService.make(client).flatMap(_.cheapItem(videoGame))
 
-        result.unsafeToFuture().map { r =>
+        result.asserting { r =>
           val msg = """NEW "super mario 3 SWITCH" - ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3"""
           verify(client).send(Notification.Deal(msg))
           r mustBe ()
@@ -56,7 +56,7 @@ class NotificationServiceSpec extends CatsSpec {
         val update = StockUpdate.PriceDrop(BigDecimal(100.0), BigDecimal(50.0))
         val result = NotificationService.make(client).flatMap(_.stockUpdate(item, update))
 
-        result.unsafeToFuture().map { r =>
+        result.asserting { r =>
           val msg = """PRICE/DROP for macbook pro (£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro"""
           verify(client).send(Notification.Stock(msg))
           r mustBe ()
@@ -76,7 +76,7 @@ class NotificationServiceSpec extends CatsSpec {
           .flatTap(_ => IO.sleep(1.seconds))
           .flatMap(_.stockUpdate(item, StockUpdate.New))
 
-        result.unsafeToFuture().map { r =>
+        result.asserting { r =>
           val msg = """STOCK/NEW for macbook pro (£1800.0, 1): New in stock http://cex.com/macbookpro"""
           verify(client, times(1)).send(Notification.Stock(msg))
           r mustBe ()

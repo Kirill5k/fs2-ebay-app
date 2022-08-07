@@ -38,7 +38,7 @@ class CexStockServiceSpec extends CatsSpec {
             .toList
         }
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         verify(client, atLeastTimes(2)).search(req1.searchCriteria)
         verify(client, atLeastTimes(1)).search(req2.searchCriteria)
         u mustBe Nil
@@ -56,7 +56,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.New)))
       }
     }
@@ -72,7 +72,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.StockIncrease(1, 2))))
       }
     }
@@ -88,7 +88,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.StockDecrease(3, 2))))
       }
     }
@@ -109,7 +109,7 @@ class CexStockServiceSpec extends CatsSpec {
             .toList
         }
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u mustBe Nil
       }
     }
@@ -124,7 +124,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.PriceRaise(BigDecimal(950.0), BigDecimal(1950.0)))))
       }
     }
@@ -139,7 +139,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u mustBe List(ItemStockUpdates(mb1, List(StockUpdate.PriceDrop(BigDecimal(2950.0), BigDecimal(1950.0)))))
       }
     }
@@ -156,7 +156,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config, client)
         .flatMap(_.stockUpdates.interruptAfter(6200.millis).compile.toList)
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u must have size 3
       }
     }
@@ -180,7 +180,7 @@ class CexStockServiceSpec extends CatsSpec {
             .toList
         }
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u mustBe Nil
       }
     }
@@ -196,7 +196,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
-      result.unsafeToFuture().map { u =>
+      result.asserting { u =>
         u must have size 2
         u.flatMap(_.updates) must have size 4
       }

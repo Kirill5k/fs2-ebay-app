@@ -37,7 +37,7 @@ class JdsportsClientSpec extends SttpClientSpec {
 
       val client = JdsportsClient.jd[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items.map(_.itemDetails) mustBe List(
           Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
           Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
@@ -66,7 +66,7 @@ class JdsportsClientSpec extends SttpClientSpec {
 
       val client = JdsportsClient.tessuti[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items mustBe Nil
       }
     }

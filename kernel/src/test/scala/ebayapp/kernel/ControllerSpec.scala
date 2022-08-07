@@ -11,9 +11,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
 trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with MockitoMatchers {
-
-  given rt: IORuntime = IORuntime.global
-
+  
   def verifyJsonResponse(
       response: IO[Response[IO]],
       expectedStatus: Status,
@@ -34,5 +32,5 @@ trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with Mo
             }
         }
       }
-      .unsafeRunSync()
+      .unsafeRunSync()(IORuntime.global)
 }

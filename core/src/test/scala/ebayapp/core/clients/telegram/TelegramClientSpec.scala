@@ -34,7 +34,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
 
-      result.unsafeToFuture().map(_ mustBe ())
+      result.asserting(_ mustBe ())
     }
 
     "send message to the secondary channel" in {
@@ -49,7 +49,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val result = telegramClient.flatMap(_.send(Notification.Stock(message)))
 
-      result.unsafeToFuture().map(_ mustBe ())
+      result.asserting(_ mustBe ())
     }
 
     "send message to the alerts channel" in {
@@ -64,7 +64,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val result = telegramClient.flatMap(_.send(Notification.Alert(message)))
 
-      result.unsafeToFuture().map(_ mustBe ())
+      result.asserting(_ mustBe ())
     }
 
     "retry on 429" in {
@@ -78,7 +78,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
 
-      result.unsafeToFuture().map(_ mustBe ())
+      result.asserting(_ mustBe ())
     }
 
     "return error when not success" in {
@@ -93,7 +93,7 @@ class TelegramClientSpec extends SttpClientSpec {
 
       val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
 
-      result.attempt.unsafeToFuture().map(_ mustBe (Left(AppError.Http(400, "error sending message to telegram channel m1: 400"))))
+      result.attempt.asserting(_ mustBe (Left(AppError.Http(400, "error sending message to telegram channel m1: 400"))))
     }
   }
 }

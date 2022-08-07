@@ -45,7 +45,7 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
 
       val client = MainlineMenswearClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items must have size 4
         val item = items.head
 

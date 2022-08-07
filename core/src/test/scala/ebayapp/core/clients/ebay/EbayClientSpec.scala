@@ -34,7 +34,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria.copy(category = None))
 
-      itemsResponse.attempt.compile.last.unsafeToFuture().map { res =>
+      itemsResponse.attempt.compile.last.asserting { res =>
         verifyNoInteractions(authClient, browseClient)
         res mustBe Some(Left(AppError.Critical("category kind is required in ebay-client")))
       }
@@ -50,7 +50,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+      itemsResponse.compile.toList.asserting { items =>
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), searchParamsCaptor.capture())
         searchParamsCaptor.getAllValues.asScala must have size 2
@@ -77,7 +77,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { error =>
+      itemsResponse.compile.toList.asserting { error =>
         verify(authClient).accessToken
         verify(authClient).switchAccount()
         verify(browseClient).search(eqTo(accessToken), any[Map[String, String]])
@@ -96,7 +96,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { error =>
+      itemsResponse.compile.toList.asserting { error =>
         verify(authClient).accessToken
         verify(authClient, never).switchAccount()
         verify(browseClient).search(eqTo(accessToken), any[Map[String, String]])
@@ -115,7 +115,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+      itemsResponse.compile.toList.asserting { items =>
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), any[Map[String, String]])
         verify(browseClient, never).getItem(any[String], any[String])
@@ -133,7 +133,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+      itemsResponse.compile.toList.asserting { items =>
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), any[Map[String, String]])
         verify(browseClient, never).getItem(any[String], any[String])
@@ -180,7 +180,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map(_ mustBe Nil)
+      itemsResponse.compile.toList.asserting(_ mustBe Nil)
     }
 
     "filter out items that are not buy it now" in {
@@ -193,7 +193,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+      itemsResponse.compile.toList.asserting { items =>
         items mustBe Nil
       }
     }
@@ -212,7 +212,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+      itemsResponse.compile.toList.asserting { items =>
         items mustBe Nil
       }
     }
@@ -227,7 +227,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.unsafeToFuture().map { items =>
+      itemsResponse.compile.toList.asserting { items =>
         verify(authClient, times(2)).accessToken
         verify(browseClient).search(eqTo(accessToken), any[Map[String, String]])
         verify(browseClient).getItem(eqTo(accessToken), any[String])
@@ -243,7 +243,7 @@ class EbayClientSpec extends CatsSpec {
 
       val itemsResponse = videoGameSearchClient.search(criteria.copy(itemKind = None))
 
-      itemsResponse.compile.drain.attempt.unsafeToFuture().map { err =>
+      itemsResponse.compile.drain.attempt.asserting { err =>
         err mustBe Left(AppError.Critical("item kind is required in ebay-client"))
       }
     }

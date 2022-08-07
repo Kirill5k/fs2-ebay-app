@@ -3,7 +3,7 @@ package ebayapp.core.common
 import cats.effect.IO
 import ebayapp.core.CatsSpec
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class CacheSpec extends CatsSpec {
 
@@ -17,7 +17,7 @@ class CacheSpec extends CatsSpec {
         res   <- cache.get("foo")
       } yield res
 
-      result.unsafeToFuture().map(_ mustBe Some("bar"))
+      result.asserting(_ mustBe Some("bar"))
     }
 
     "return empty option when element expires" in {
@@ -28,7 +28,7 @@ class CacheSpec extends CatsSpec {
         res   <- cache.get("foo")
       } yield res
 
-      result.unsafeToFuture().map(_ mustBe None)
+      result.asserting(_ mustBe None)
     }
 
     "return true when item is present in cache" in {
@@ -38,7 +38,7 @@ class CacheSpec extends CatsSpec {
         res   <- cache.contains("foo")
       } yield res
 
-      result.unsafeToFuture().map(_ mustBe true)
+      result.asserting(_ mustBe true)
     }
 
     "return false when item has expired" in {
@@ -49,7 +49,7 @@ class CacheSpec extends CatsSpec {
         res   <- cache.contains("foo")
       } yield res
 
-      result.unsafeToFuture().map(_ mustBe false)
+      result.asserting(_ mustBe false)
     }
 
     "evalIfNew" should {
@@ -60,7 +60,7 @@ class CacheSpec extends CatsSpec {
           res   <- cache.get("foo")
         } yield res
 
-        result.unsafeToFuture().map(_ mustBe Some("bar2"))
+        result.asserting(_ mustBe Some("bar2"))
       }
 
       "not eval computation if the key already exists" in {
@@ -71,7 +71,7 @@ class CacheSpec extends CatsSpec {
           res   <- cache.get("foo")
         } yield res
 
-        result.unsafeToFuture().map(_ mustBe Some("bar"))
+        result.asserting(_ mustBe Some("bar"))
       }
     }
 
@@ -83,7 +83,7 @@ class CacheSpec extends CatsSpec {
           cachedValue <- cache.get("foo")
         } yield (newValue, cachedValue)
 
-        result.unsafeToFuture().map(_ mustBe (("foobar", Some("foobar"))))
+        result.asserting(_ mustBe (("foobar", Some("foobar"))))
       }
 
       "return existing value when key is not new" in {
@@ -93,7 +93,7 @@ class CacheSpec extends CatsSpec {
           newValue   <- cache.evalPutIfNew("foo")(IO.raiseError(new RuntimeException("uh oh")))
         } yield newValue
 
-        result.unsafeToFuture().map(_ mustBe "bar")
+        result.asserting(_ mustBe "bar")
       }
     }
   }

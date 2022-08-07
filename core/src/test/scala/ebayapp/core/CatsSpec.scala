@@ -5,9 +5,12 @@ import cats.effect.unsafe.IORuntime
 import ebayapp.core.common.Logger
 import ebayapp.core.services.{DealsService, NotificationService, ResellableItemService, Services, StockService}
 import ebayapp.kernel.MockitoMatchers
+import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+
+import scala.concurrent.Future
 
 trait CatsSpec extends AsyncWordSpec with Matchers with MockitoSugar with MockitoMatchers {
 
@@ -20,4 +23,8 @@ trait CatsSpec extends AsyncWordSpec with Matchers with MockitoSugar with Mockit
     val stock: List[StockService[IO]]             = List(mock[StockService[IO]], mock[StockService[IO]], mock[StockService[IO]])
     val deals: List[DealsService[IO]]             = List(mock[DealsService[IO]])
   }
+
+  extension[A] (io: IO[A])
+    def asserting(f: A => Assertion): Future[Assertion] =
+      io.map(f).unsafeToFuture()(IORuntime.global)
 }

@@ -32,7 +32,7 @@ class NvidiaClientSpec extends SttpClientSpec {
 
       val result = client.flatMap(_.search(criteria).compile.toList)
 
-      result.unsafeToFuture().map { res =>
+      result.asserting { res =>
         res must have size 99
       }
     }

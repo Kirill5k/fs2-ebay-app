@@ -31,7 +31,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
         .make[IO](Retailer.Selfridges, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
 
-      result.unsafeToFuture().map { updates =>
+      result.asserting { updates =>
         updates must have size 1
         updates.head.item.itemDetails.fullName mustBe Some("Foo-bar - T-shirt cheap, size XXL")
       }
@@ -52,7 +52,7 @@ class SelfridgesSaleServiceSpec extends CatsSpec {
         .make[IO](Retailer.Selfridges, config, client)
         .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
 
-      result.unsafeToFuture().map { updates =>
+      result.asserting { updates =>
         updates must have size 1
         updates.head.item.itemDetails.fullName mustBe Some("Foo-bar - T-shirt, size XXL")
       }

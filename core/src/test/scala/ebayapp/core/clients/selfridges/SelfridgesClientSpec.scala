@@ -51,7 +51,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map { items =>
+      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items must have size 16
         val item = items.head
 
@@ -75,7 +75,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map(_ mustBe Nil)
+      client.flatMap(_.search(criteria).compile.toList).asserting(_ mustBe Nil)
     }
 
     "return empty stream when failed to deserialize response" in {
@@ -88,7 +88,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       val client = SelfridgesClient.make[IO](config, testingBackend)
 
-      client.flatMap(_.search(criteria).compile.toList).unsafeToFuture().map(_ mustBe Nil)
+      client.flatMap(_.search(criteria).compile.toList).asserting(_ mustBe Nil)
     }
   }
 

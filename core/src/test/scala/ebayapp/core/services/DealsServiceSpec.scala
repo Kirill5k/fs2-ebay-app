@@ -40,7 +40,7 @@ class DealsServiceSpec extends CatsSpec {
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
         verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
         verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
@@ -63,7 +63,7 @@ class DealsServiceSpec extends CatsSpec {
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
@@ -90,7 +90,7 @@ class DealsServiceSpec extends CatsSpec {
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
@@ -116,7 +116,7 @@ class DealsServiceSpec extends CatsSpec {
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
         verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
         verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
@@ -144,7 +144,7 @@ class DealsServiceSpec extends CatsSpec {
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
         verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
         verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
@@ -165,7 +165,7 @@ class DealsServiceSpec extends CatsSpec {
         items   <- service.newDeals.interruptAfter(5.seconds).compile.toList
       } yield items
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         verify(searchClient, times(3)).search(request1.searchCriteria)
         verify(searchClient, times(3)).search(request2.searchCriteria)
         verifyNoInteractions(cexClient, repo)
@@ -187,7 +187,7 @@ class DealsServiceSpec extends CatsSpec {
         items   <- service.newDeals.interruptAfter(3.seconds).compile.toList
       } yield items
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         verify(searchClient, times(2)).search(request1.searchCriteria)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verifyNoInteractions(cexClient)

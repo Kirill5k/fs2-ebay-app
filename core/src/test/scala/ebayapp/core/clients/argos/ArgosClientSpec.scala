@@ -1,7 +1,6 @@
 package ebayapp.core.clients.argos
 
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import ebayapp.core.MockLogger
 import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.common.Logger
@@ -11,7 +10,6 @@ import sttp.client3.{Response, SttpBackend}
 
 class ArgosClientSpec extends SttpClientSpec {
 
-  given rt: IORuntime      = IORuntime.global
   given logger: Logger[IO] = MockLogger.make[IO]
 
   "An ArgosClient" should {
@@ -33,7 +31,7 @@ class ArgosClientSpec extends SttpClientSpec {
 
       val result = client.flatMap(_.search(criteria).compile.toList)
 
-      result.unsafeToFuture().map { items =>
+      result.asserting { items =>
         items must have size 1
         items.head.itemDetails.fullName mustBe Some("Sony PlayStation 5 Digital Console")
       }
