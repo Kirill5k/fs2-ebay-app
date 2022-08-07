@@ -290,6 +290,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "Call of Duty: Infinite Warfare classic edition foo",
         "Call of Duty: Infinite Warfare 2017",
         "Call of Duty: Infinite Warfare PAL R2",
+        "Call of Duty: Infinite Warfare X BOX ONE REF",
+        "Call of Duty: Infinite Warfare - factory sealed",
         "Call of Duty: Infinite Warfare only on playstation",
         "Call of Duty: Infinite Warfare PS4 Game UK PAL VR Compatible PREOWNED",
         "3307216096665BC Call of Duty: Infinite Warfare BRAND NEW SEALED",
