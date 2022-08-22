@@ -11,6 +11,7 @@ import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.bson.Document
 import mongo4cats.circe.given
+import mongo4cats.bson.syntax.*
 import mongo4cats.collection.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
@@ -43,7 +44,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
   private val videoGameSummaryProjection = Projection
     .computed("url", "$listingDetails.url")
     .computed("title", "$listingDetails.title")
-    .computed("name", Document("$concat" -> List("$itemDetails.name", " ", "$itemDetails.platform")))
+    .computed("name", Document("$concat" := List("$itemDetails.name", " ", "$itemDetails.platform")))
     .computed("buyPrice", "$price.buy")
     .computed("exchangePrice", "$price.credit")
 
