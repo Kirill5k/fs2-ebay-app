@@ -30,12 +30,8 @@ class JdsportsClientSpec extends SttpClientSpec {
             Response("n/a", StatusCode.NotFound)
           case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock/") =>
             Response.ok(json("jdsports/get-product-stock.html"))
-          case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/") =>
-            Response.ok("ok")
           case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock/") =>
             Response.ok(json("jdsports/get-product-stock-oos.html"))
-          case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/") =>
-            Response.ok("ok")
           case r => throw new RuntimeException(r.uri.toString())
         }
 
