@@ -98,7 +98,7 @@ final private class LiveJdsportsClient[F[_]](
         case Right(html) =>
           F.fromEither(ResponseParser.parseProductStockResponse(html))
         case Left(_) if r.code == StatusCode.Forbidden =>
-          logger.warn(s"$name-get-stock/403") *> F.sleep(10.second) *> getProductStock(ci)
+          logger.warn(s"$name-get-stock/403-${r.request.uri.toString}") *> F.sleep(10.second) *> getProductStock(ci)
         case Left(_) if r.code == StatusCode.NotFound =>
           logger.warn(s"$name-get-stock/404") *> F.pure(None)
         case Left(_) if r.code.isClientError =>
