@@ -91,7 +91,7 @@ final private class LiveJdsportsClient[F[_]](
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     dispatch {
       basicRequest
-        .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock")
+        .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
         .headers(headers)
     }.flatMap { r =>
       r.body match {
