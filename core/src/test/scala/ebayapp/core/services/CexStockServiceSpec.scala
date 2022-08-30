@@ -5,13 +5,14 @@ import ebayapp.core.CatsSpec
 import ebayapp.core.clients.{Retailer, SearchCriteria}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.ResellableItemBuilder
+import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.Stream
-import org.mockito.Mockito.{atLeast => atLeastTimes}
+import org.mockito.Mockito.atLeast as atLeastTimes
 
-import scala.concurrent.duration._
+import java.time.Instant
+import scala.concurrent.duration.*
 
 class CexStockServiceSpec extends CatsSpec {
 
@@ -19,8 +20,11 @@ class CexStockServiceSpec extends CatsSpec {
   val req2   = StockMonitorRequest(SearchCriteria("iphone"), true, true)
   val config = StockMonitorConfig(1.seconds, List(req1))
 
-  val mb1 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0)
-  val mb2 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B")
+  val ts = Instant.now()
+
+  val mb1 =
+    ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0, datePosted = ts)
+  val mb2 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B", datePosted = ts)
 
   "A GenericStatefulCexStockService" should {
 
@@ -65,7 +69,7 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(1, 1950.0))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(1, 1950.0), ts.minusSeconds(1))))
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
@@ -81,7 +85,7 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(3, 1950.0), ts.minusSeconds(1))))
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
@@ -97,7 +101,7 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(3, 1950.0))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(3, 1950.0), ts.minusSeconds(1))))
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
@@ -117,7 +121,7 @@ class CexStockServiceSpec extends CatsSpec {
     "return price increase update if price increase" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 950.0))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 950.0), ts.minusSeconds(1))))
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
@@ -132,7 +136,7 @@ class CexStockServiceSpec extends CatsSpec {
     "return price drop update if price decrease" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 2950.0), ts.minusSeconds(1))))
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
@@ -147,9 +151,9 @@ class CexStockServiceSpec extends CatsSpec {
     "return multiple price drop updates" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 4950.0))))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 3950.0))))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 4950.0), ts.minusSeconds(3))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 3950.0), ts.minusSeconds(2))))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 2950.0), ts.minusSeconds(1))))
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
@@ -164,8 +168,8 @@ class CexStockServiceSpec extends CatsSpec {
     "non return anything if monitor is disabled for price" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.copy(buyPrice = BuyPrice(2, 2950.0))))
-        .thenReturn(Stream.emit(mb1))
+        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 2950.0))))
+        .thenReturn(Stream.emit(mb1.withDatePosted(ts.minusSeconds(1))))
 
       val result = StockService
         .make[IO](
@@ -189,8 +193,8 @@ class CexStockServiceSpec extends CatsSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emits(List(mb1.copy(buyPrice = BuyPrice(3, 3000.0)), mb2.copy(buyPrice = BuyPrice(3, 3000.0)))))
-        .thenReturn(Stream.emits(List(mb1, mb2)))
+        .thenReturn(Stream.emits(List(mb1.withPrice(BuyPrice(3, 3000.0)), mb2.withPrice(BuyPrice(3, 3000.0)))))
+        .thenReturn(Stream.emits(List(mb1.withDatePosted(ts.plusSeconds(1)), mb2.withDatePosted(ts.plusSeconds(1)))))
 
       val result = StockService
         .make[IO](Retailer.Cex, config, client)
@@ -202,4 +206,15 @@ class CexStockServiceSpec extends CatsSpec {
       }
     }
   }
+
+  extension (item: ResellableItem)
+    def withDatePosted(datePosted: Instant): ResellableItem =
+      item.copy(listingDetails = item.listingDetails.copy(datePosted = datePosted))
+    def withPrice(price: BuyPrice): ResellableItem =
+      withPrice(price, item.listingDetails.datePosted)
+    def withPrice(price: BuyPrice, datePosted: Instant): ResellableItem =
+      item.copy(
+        buyPrice = price,
+        listingDetails = item.listingDetails.copy(datePosted = datePosted)
+      )
 }
