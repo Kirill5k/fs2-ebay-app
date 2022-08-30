@@ -88,27 +88,27 @@ final private class LiveJdsportsClient[F[_]](
       }
     }
 
-  private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
-    dispatch {
-      basicRequest
-        .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
-        .headers(headers)
-    }.flatMap { r =>
-      r.body match {
-        case Right(html) =>
-          F.fromEither(ResponseParser.parseProductStockResponse(html))
-        case Left(_) if r.code == StatusCode.Forbidden =>
-          logger.warn(s"$name-get-stock/403-${r.request.uri.toString}") *> F.sleep(10.second) *> getProductStock(ci)
-        case Left(_) if r.code == StatusCode.NotFound =>
-          logger.warn(s"$name-get-stock/404") *> F.pure(None)
-        case Left(_) if r.code.isClientError =>
-          logger.error(s"$name-get-stock/${r.code}-error") *> F.pure(None)
-        case Left(_) if r.code.isServerError =>
-          logger.warn(s"$name-get-stock/${r.code}-repeatable") *> F.sleep(1.second) *> getProductStock(ci)
-        case Left(error) =>
-          logger.error(s"$name-get-stock: $error") *> F.sleep(1.second) *> getProductStock(ci)
+  private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] = {
+    val url = uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}"
+    dispatch(basicRequest.get(uri"$url/").headers(headers))
+      .flatMap(_ => dispatch(basicRequest.get(uri"$url/stock/").headers(headers)))
+      .flatMap { r =>
+        r.body match {
+          case Right(html) =>
+            F.fromEither(ResponseParser.parseProductStockResponse(html))
+          case Left(_) if r.code == StatusCode.Forbidden =>
+            logger.warn(s"$name-get-stock/403-${r.request.uri.toString}") *> F.sleep(10.second) *> getProductStock(ci)
+          case Left(_) if r.code == StatusCode.NotFound =>
+            logger.warn(s"$name-get-stock/404") *> F.pure(None)
+          case Left(_) if r.code.isClientError =>
+            logger.error(s"$name-get-stock/${r.code}-error") *> F.pure(None)
+          case Left(_) if r.code.isServerError =>
+            logger.warn(s"$name-get-stock/${r.code}-repeatable") *> F.sleep(1.second) *> getProductStock(ci)
+          case Left(error) =>
+            logger.error(s"$name-get-stock: $error") *> F.sleep(1.second) *> getProductStock(ci)
+        }
       }
-    }
+  }
 }
 
 object JdsportsClient {
