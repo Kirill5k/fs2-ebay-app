@@ -96,5 +96,33 @@ class CacheSpec extends CatsSpec {
         result.asserting(_ mustBe "bar")
       }
     }
+
+    "values" should {
+      "return all current values in cache" in {
+        val result = for {
+          cache <- Cache.make[IO, String, String](15.seconds, 1.second)
+          _ <- cache.put("k1", "foo")
+          _ <- cache.put("k2", "bar")
+          _ <- cache.put("k3", "baz")
+          res <- cache.values
+        } yield res
+
+        result.asserting(_ mustBe List("foo", "bar", "baz"))
+      }
+    }
+
+    "size" should {
+      "return count of all values in cache" in {
+        val result = for {
+          cache <- Cache.make[IO, String, String](15.seconds, 1.second)
+          _ <- cache.put("k1", "foo")
+          _ <- cache.put("k2", "bar")
+          _ <- cache.put("k3", "baz")
+          res <- cache.size
+        } yield res
+
+        result.asserting(_ mustBe 3)
+      }
+    }
   }
 }

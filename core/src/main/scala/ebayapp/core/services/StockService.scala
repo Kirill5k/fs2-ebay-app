@@ -2,6 +2,7 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
+import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.{Retailer, SearchClient, SearchCriteria}
@@ -30,7 +31,7 @@ final private class SimpleStockService[F[_]](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .covary[F]
-      .evalTap((req, _) => preloadCache(req))
+      .evalTap((req, _) => preloadCache(req) >> logCacheSize.start.void)
       .map { (req, index) =>
         Stream
           .awakeDelay(config.monitoringFrequency)
@@ -46,6 +47,11 @@ final private class SimpleStockService[F[_]](
       .evalMap(item => cache.put(item.key, item))
       .compile
       .drain
+
+  private def logCacheSize: F[Unit] =
+    F.sleep(config.monitoringFrequency) >>
+      cache.size.flatMap(s => logger.info(s"""${retailer.name}-cache-stock currently contains $s items""")) >>
+      logCacheSize
 
   private def getUpdates(req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
     client
@@ -89,7 +95,6 @@ final private class SimpleStockService[F[_]](
       item.listingDetails.datePosted.isAfter(otherItem.listingDetails.datePosted)
 }
 
-//TODO: Log items periodically based on brand
 object StockService:
   def make[F[_]: Temporal: Logger](
       retailer: Retailer,

@@ -12,6 +12,8 @@ import cats.syntax.applicative.*
 import scala.concurrent.duration.FiniteDuration
 
 trait Cache[F[_], K, V]:
+  def size: F[Int]
+  def values: F[List[V]]
   def get(key: K): F[Option[V]]
   def put(key: K, value: V): F[Unit]
   def contains(key: K): F[Boolean]
@@ -42,6 +44,11 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
       case Some(v) => v.pure[F]
       case None    => fa.flatTap(v => put(key, v))
     }
+
+  override def values: F[List[V]] =
+    state.get.map(_.values.map(_._1).toList)
+
+  override def size: F[Int] = state.get.map(_.size)
 }
 
 object Cache:
