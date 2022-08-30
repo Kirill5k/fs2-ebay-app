@@ -62,7 +62,7 @@ data:
     }
 
     jdsports {
-      base-uri: "https://fs2-proxy.herokuapp.com"
+      base-uri: "https://proxy-kirill5k.cloud.okteto.net"
       headers {
         "Referer": "https://www.jdsports.co.uk/men",
         "X-Reroute-To": "https://www.jdsports.co.uk"

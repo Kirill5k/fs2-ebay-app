@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "proxy"
+  annotations:
+    dev.okteto.com/auto-ingress: "true"
+spec:
+  ports:
+    - targetPort: 8080
+      port: 8080
+  selector:
+    app: "fs2-app-proxy"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "fs2-app-proxy"
+  labels:
+    app: "fs2-app-proxy"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "fs2-app-proxy"
+  template:
+    metadata:
+      labels:
+        app: "fs2-app-proxy"
+    spec:
+      containers:
+        - name: "core"
+          image: "registry.cloud.okteto.net/kirill5k/fs2-app-proxy:latest"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "0.05"
+            limits:
+              memory: "512Mi"
+              cpu: "0.3"
+          readinessProbe:
+            httpGet:
+              path: /health/status
+              port: 8080
+            periodSeconds: 60
+          livenessProbe:
+            httpGet:
+              path: /health/status
+              port: 8080
+            periodSeconds: 60
