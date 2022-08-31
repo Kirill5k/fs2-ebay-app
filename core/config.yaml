@@ -221,12 +221,12 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 12m
         monitoring-requests: [
-          {search-criteria: {query: "moschino", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "ea7 emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss bodywear", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss athleisure", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss casual", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "moschino", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "ea7 emporio armani", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss bodywear", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss athleisure", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss casual", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "emporio armani", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 

@@ -5,10 +5,17 @@ import ebayapp.kernel.config.ServerConfig
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 
+import scala.concurrent.duration.FiniteDuration
+
 object config:
 
+  final case class InterrupterConfig(
+      initialDelay: FiniteDuration
+  ) derives ConfigReader
+
   final case class AppConfig(
-      server: ServerConfig
+      server: ServerConfig,
+      interrupter: InterrupterConfig
   ) derives ConfigReader
 
   object AppConfig:

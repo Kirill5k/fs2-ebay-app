@@ -21,7 +21,7 @@ object Application extends IOApp.Simple:
         for
           _                  <- logger.info("created resources")
           config             <- AppConfig.load[IO] <* logger.info("loaded config")
-          interrupter        <- Interrupter.make[IO]
+          interrupter        <- Interrupter.make[IO](config.interrupter)
           redirectController <- RedirectController.make[IO](resources.blazeClient, interrupter)
           healthController   <- HealthController.make[IO]
           routes = healthController.routes <+> redirectController.routes
