@@ -9,12 +9,19 @@ import scala.concurrent.duration.FiniteDuration
 
 object config:
 
+  final case class ClientConfig(
+      connectTimeout: FiniteDuration,
+      proxyHost: String,
+      proxyPort: Int
+  ) derives ConfigReader
+
   final case class InterrupterConfig(
       initialDelay: FiniteDuration
   ) derives ConfigReader
 
   final case class AppConfig(
       server: ServerConfig,
+      client: ClientConfig,
       interrupter: InterrupterConfig
   ) derives ConfigReader
 
