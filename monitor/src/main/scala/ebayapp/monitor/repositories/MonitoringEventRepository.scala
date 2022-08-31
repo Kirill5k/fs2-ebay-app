@@ -5,10 +5,11 @@ import cats.syntax.applicative.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
-import mongo4cats.collection.operations.{Filter, Sort}
+import mongo4cats.operations.{Filter, Sort}
 import mongo4cats.collection.MongoCollection
-import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
+import mongo4cats.database.MongoDatabase
 import mongo4cats.circe.MongoJsonCodecs
+import mongo4cats.models.database.CreateCollectionOptions
 
 trait MonitoringEventRepository[F[_]]:
   def save(event: MonitoringEvent): F[Unit]

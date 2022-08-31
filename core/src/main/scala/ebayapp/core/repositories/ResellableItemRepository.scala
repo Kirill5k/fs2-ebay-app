@@ -12,9 +12,10 @@ import ebayapp.core.repositories.entities.ResellableItemEntity
 import mongo4cats.bson.Document
 import mongo4cats.circe.given
 import mongo4cats.bson.syntax.*
-import mongo4cats.collection.operations.{Aggregate, Filter, Projection, Sort}
+import mongo4cats.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
-import mongo4cats.database.{CreateCollectionOptions, MongoDatabase}
+import mongo4cats.database.MongoDatabase
+import mongo4cats.models.database.CreateCollectionOptions
 
 final case class SearchParams(
     kind: ItemKind,

@@ -8,7 +8,7 @@ import cats.syntax.applicativeError.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
-import mongo4cats.collection.operations.{Filter, Update}
+import mongo4cats.operations.{Filter, Update}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.circe.MongoJsonCodecs
 import mongo4cats.database.MongoDatabase

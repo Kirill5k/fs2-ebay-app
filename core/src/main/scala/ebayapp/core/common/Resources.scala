@@ -6,8 +6,9 @@ import cats.syntax.apply.*
 import com.mongodb.ConnectionString
 import ebayapp.kernel.config.MongoConfig
 import ebayapp.core.common.config.{AppConfig, ClientProxyConfig}
-import mongo4cats.client.{MongoClient, MongoClientSettings}
+import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
+import mongo4cats.models.client.MongoClientSettings
 import sttp.client3.SttpBackendOptions.Proxy
 import sttp.client3.{SttpBackend, SttpBackendOptions}
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
