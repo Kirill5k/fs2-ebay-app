@@ -4,7 +4,6 @@ import cats.Monad
 import cats.effect.{Concurrent, Deferred}
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import cats.syntax.applicative.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.proxy.common.{Interrupter, Resources}
 import org.http4s.client.Client
@@ -33,24 +32,27 @@ final private class RedirectController[F[_]](
     }
 
   private def redirect(req: Request[F]): F[Response[F]] =
-    req.headers.get(XRerouteToHeader) match {
-      case Some(redirectToUri) =>
-        standardClient
-          .toHttpApp {
-            req
-              .withUri(Uri.unsafeFromString(redirectToUri.head.value + req.uri.toString.replaceFirst("/proxy-pass", "")))
-              .removeHeader(HostHeader)
-              .removeHeader(XReloadOn403Header)
-              .removeHeader(XRerouteToHeader)
-              .removeHeader(XProxiedHeader)
-          }
-          .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.headers.get(XReloadOn403Header).isDefined))
+    req.redirectUri match {
+      case Some(url) =>
+        req.redirectClient
+          .toHttpApp(req.withUri(url).removeHeaders(HostHeader, XReloadOn403Header, XRerouteToHeader, XProxiedHeader))
+          .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.reloadOn403))
       case None =>
         BadRequest(s"Missing $XRerouteToHeader header")
     }
 
-  private def terminateIfTrue(cond: Boolean): F[Unit] =
-    F.whenA(cond)(interrupter.terminate)
+  private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
+
+  extension (req: Request[F])
+    def removeHeaders(keys: CIString*): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
+    def reloadOn403: Boolean                       = req.headers.get(XReloadOn403Header).isDefined
+    def redirectClient: Client[F]                  = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
+    def redirectUri: Option[Uri] =
+      req.headers
+        .get(XRerouteToHeader)
+        .map { headerValue =>
+          Uri.unsafeFromString(headerValue.head.value + req.uri.toString.replaceFirst("/proxy-pass", ""))
+        }
 }
 
 object RedirectController {
