@@ -33,12 +33,12 @@ final private class RedirectController[F[_]](
 
   private def redirect(req: Request[F]): F[Response[F]] =
     req.redirectUri match {
-      case Some(url) =>
+      case Right(url) =>
         req.redirectClient
           .toHttpApp(req.withUri(url).removeHeaders(HostHeader, XReloadOn403Header, XRerouteToHeader, XProxiedHeader))
           .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.reloadOn403))
-      case None =>
-        BadRequest(s"Missing $XRerouteToHeader header")
+      case Left(errorMessage) =>
+        BadRequest(errorMessage)
     }
 
   private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
@@ -47,11 +47,12 @@ final private class RedirectController[F[_]](
     def removeHeaders(keys: CIString*): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
     def reloadOn403: Boolean                       = req.headers.get(XReloadOn403Header).isDefined
     def redirectClient: Client[F]                  = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
-    def redirectUri: Option[Uri] =
+    def redirectUri: Either[String, Uri] =
       req.headers
         .get(XRerouteToHeader)
-        .map { headerValue =>
-          Uri.unsafeFromString(headerValue.head.value + req.uri.toString.replaceFirst("/proxy-pass", ""))
+        .toRight(s"Missing $XRerouteToHeader header")
+        .flatMap { headerValue =>
+          Uri.fromString(headerValue.head.value + req.uri.toString.replaceFirst("/proxy-pass", "")).left.map(_.message)
         }
 }
 
