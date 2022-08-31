@@ -28,18 +28,17 @@ final private class SimpleStockService[F[_]](
 ) extends StockService[F] {
 
   override def stockUpdates: Stream[F, ItemStockUpdates] =
-      Stream
-        .emits(config.monitoringRequests.zipWithIndex)
-        .covary[F]
-        .evalTap((req, _) => preloadCache(req))
-        .map { (req, index) =>
+    Stream
+      .emits(config.monitoringRequests.zipWithIndex)
+      .map { (req, index) =>
+        Stream.eval(preloadCache(req)).drain ++
           Stream
             .awakeDelay(config.monitoringFrequency)
             .flatMap(_ => getUpdates(req))
             .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong)
-        }
-        .parJoinUnbounded
-        .concurrently(Stream.eval(logCacheSize))
+      }
+      .parJoinUnbounded
+      .concurrently(Stream.eval(logCacheSize))
 
   private def preloadCache(req: StockMonitorRequest): F[Unit] =
     client
