@@ -2,7 +2,6 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.{Retailer, SearchClient, SearchCriteria}
@@ -31,7 +30,7 @@ final private class SimpleStockService[F[_]](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { (req, index) =>
-        Stream.eval(preloadCache(req)).drain ++
+        preloadCache(req) ++
           Stream
             .awakeDelay(config.monitoringFrequency)
             .flatMap(_ => getUpdates(req))
@@ -40,12 +39,11 @@ final private class SimpleStockService[F[_]](
       .parJoinUnbounded
       .concurrently(Stream.eval(logCacheSize))
 
-  private def preloadCache(req: StockMonitorRequest): F[Unit] =
+  private def preloadCache(req: StockMonitorRequest): Stream[F, Nothing] =
     client
       .search(req.searchCriteria)
       .through(withFiltersApplied(req.searchCriteria))
       .evalMap(item => cache.put(item.key, item))
-      .compile
       .drain
 
   private def logCacheSize: F[Unit] =
