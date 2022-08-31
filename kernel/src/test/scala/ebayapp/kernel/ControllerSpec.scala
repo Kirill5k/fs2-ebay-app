@@ -3,7 +3,6 @@ package ebayapp.kernel
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import io.circe.parser.parse
-import org.http4s.circe.*
 import org.http4s.{Response, Status}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers

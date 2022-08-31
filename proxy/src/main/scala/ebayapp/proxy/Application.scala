@@ -24,10 +24,9 @@ object Application extends IOApp.Simple:
           interrupter        <- Interrupter.make[IO](config.interrupter)
           redirectController <- RedirectController.make[IO](resources.blazeClient, interrupter)
           healthController   <- HealthController.make[IO]
-          routes = healthController.routes <+> redirectController.routes
           _ <- logger.info("starting http server")
           _ <- Server
-            .serve[IO](config.server, routes, runtime.compute)
+            .serve[IO](config.server, healthController.routes <+> redirectController.routes, runtime.compute)
             .interruptWhen(interrupter.awaitSigTerm)
             .compile
             .drain
