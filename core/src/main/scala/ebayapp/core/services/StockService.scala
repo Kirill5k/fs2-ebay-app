@@ -30,11 +30,10 @@ final private class SimpleStockService[F[_]](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { (req, index) =>
-        preloadCache(req) ++
+        preloadCache(req).delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong) ++
           Stream
             .awakeDelay(config.monitoringFrequency)
             .flatMap(_ => getUpdates(req))
-            .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong)
       }
       .parJoinUnbounded
       .concurrently(Stream.eval(logCacheSize))
