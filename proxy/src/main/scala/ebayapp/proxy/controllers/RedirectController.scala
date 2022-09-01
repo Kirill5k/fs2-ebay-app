@@ -1,7 +1,7 @@
 package ebayapp.proxy.controllers
 
 import cats.Monad
-import cats.effect.{Concurrent, Deferred}
+import cats.effect.Concurrent
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.kernel.controllers.Controller
