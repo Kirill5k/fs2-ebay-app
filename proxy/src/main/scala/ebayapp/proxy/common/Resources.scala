@@ -33,8 +33,8 @@ object Resources:
       .withMaxWaitQueueLimit(256 * 10)
       .withMaxTotalConnections(256 * 10)
       .withConnectTimeout(config.connectTimeout)
-      .withRequestTimeout(config.connectTimeout)
-      .withResponseHeaderTimeout(5.minutes)
+      .withResponseHeaderTimeout(1.minutes)
+      .withRequestTimeout(Duration.Inf)
       .withIdleTimeout(Duration.Inf)
       .resource
 
