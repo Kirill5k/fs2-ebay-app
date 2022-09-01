@@ -51,7 +51,7 @@ object Resources:
         builder.sslParameters(params)
       }
       builder
-        .proxy(ProxySelector.of(InetSocketAddress.createUnresolved(config.proxyHost, config.proxyPort)))
+        .proxy(ProxySelector.of(new InetSocketAddress(config.proxyHost, config.proxyPort)))
         .connectTimeout(JDuration.ofMillis(config.connectTimeout.toMillis))
         .build()
     }
