@@ -66,7 +66,7 @@ data:
       headers {
         "Referer": "https://www.jdsports.co.uk/men",
         "X-Reroute-To": "https://www.jdsports.co.uk"
-        "X-Reload-On-403": "true"
+        "X-Proxied": "true"
       }
     }
 
