@@ -3,7 +3,7 @@ package ebayapp.core.clients.harveynichols
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
-import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
 
 import java.time.Instant
 
@@ -24,12 +24,13 @@ private[harveynichols] object mappers {
 
   inline def harveyNicholsClothingMapper: HarveyNicholsItemMapper = new HarveyNicholsItemMapper {
 
-    override def toDomain(hni: HarveyNicholsItem): ResellableItem =
+    override def toDomain(foundWith: SearchCriteria)(hni: HarveyNicholsItem): ResellableItem =
       ResellableItem.clothing(
         Clothing(hni.name, hni.brand, hni.size),
         listingDetails(hni),
         BuyPrice(1, BigDecimal(hni.currentPrice), hni.discount),
-        None
+        None,
+        Some(foundWith)
       )
 
     private def listingDetails(hni: HarveyNicholsItem): ListingDetails =

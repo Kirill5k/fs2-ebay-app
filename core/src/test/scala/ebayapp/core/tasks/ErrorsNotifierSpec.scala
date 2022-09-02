@@ -6,7 +6,7 @@ import ebayapp.core.CatsSpec
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Error, Logger}
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class ErrorsNotifierSpec extends CatsSpec {
 

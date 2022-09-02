@@ -1,12 +1,12 @@
 package ebayapp.core.clients.ebay.mappers
 
-import ebayapp.core.clients.{ItemMapper, SearchCriteria}
-
-import java.time.Instant
+import ebayapp.core.clients.ItemMapper
 import ebayapp.core.clients.ebay.browse.responses.EbayItem
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
-import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
+
+import java.time.Instant
 
 private[ebay] object EbayItemMapper {
   object Props {
@@ -35,22 +35,22 @@ private[ebay] object EbayItemMapper {
   )
 
   val phoneDetailsMapper = new EbayItemMapper {
-    override def toDomain(ebayItem: EbayItem): ResellableItem = {
+    override def toDomain(foundWith: SearchCriteria)(ebayItem: EbayItem): ResellableItem = {
       val listing = listingDetails(ebayItem)
-      ResellableItem.mobilePhone(PhoneDetailsMapper.from(listing), listing, price(ebayItem), None)
+      ResellableItem.mobilePhone(PhoneDetailsMapper.from(listing), listing, price(ebayItem), None, Some(foundWith))
     }
   }
 
   val gameDetailsMapper = new EbayItemMapper {
-    override def toDomain(ebayItem: EbayItem): ResellableItem = {
+    override def toDomain(foundWith: SearchCriteria)(ebayItem: EbayItem): ResellableItem = {
       val listing = listingDetails(ebayItem)
-      ResellableItem.videoGame(GameDetailsMapper.from(listing), listing, price(ebayItem), None)
+      ResellableItem.videoGame(GameDetailsMapper.from(listing), listing, price(ebayItem), None, Some(foundWith))
     }
   }
 
   val genericDetailsMapper = new EbayItemMapper {
-    override def toDomain(ebayItem: EbayItem): ResellableItem =
-      ResellableItem.generic(ItemDetails.Generic(ebayItem.title), listingDetails(ebayItem), price(ebayItem), None)
+    override def toDomain(foundWith: SearchCriteria)(ebayItem: EbayItem): ResellableItem =
+      ResellableItem.generic(ItemDetails.Generic(ebayItem.title), listingDetails(ebayItem), price(ebayItem), None, Some(foundWith))
   }
 
   private[mappers] def listingDetails(item: EbayItem): ListingDetails =

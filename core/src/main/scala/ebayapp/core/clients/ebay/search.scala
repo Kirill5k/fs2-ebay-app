@@ -1,7 +1,7 @@
 package ebayapp.core.clients.ebay
 
-import ebayapp.core.clients.SearchCriteria
 import ebayapp.core.clients.ebay.browse.responses.EbayItemSummary
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.kernel.errors.AppError
 
 import java.time.Instant

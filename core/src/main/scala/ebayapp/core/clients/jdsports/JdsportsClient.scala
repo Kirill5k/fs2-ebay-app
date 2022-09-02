@@ -5,12 +5,13 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.*
 import sttp.model.StatusCode
@@ -83,7 +84,7 @@ final private class LiveJdsportsClient[F[_]](
         }
       }
       .flatMap(Stream.emits)
-      .map(jdsportsClothingMapper.toDomain)
+      .map(jdsportsClothingMapper.toDomain(criteria))
       .handleErrorWith(e => Stream.eval(logger.error(e)(e.getMessage)).drain)
 
   private def brands(criteria: SearchCriteria): Stream[F, JdCatalogItem] =

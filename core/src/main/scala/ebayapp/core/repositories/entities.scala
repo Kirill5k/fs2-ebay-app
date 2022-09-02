@@ -1,7 +1,7 @@
 package ebayapp.core.repositories
 
 import ebayapp.core.domain.{ItemDetails, ItemKind}
-import ebayapp.core.domain.search.ListingDetails
+import ebayapp.core.domain.search.{ListingDetails, SearchCriteria}
 import org.bson.types.ObjectId
 import io.circe.Codec
 import mongo4cats.circe.given
@@ -20,6 +20,7 @@ private[repositories] object entities {
       kind: ItemKind,
       itemDetails: ItemDetails,
       listingDetails: ListingDetails,
-      price: ItemPrice
+      price: ItemPrice,
+      foundWith: Option[SearchCriteria]
   ) derives Codec.AsObject
 }

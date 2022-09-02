@@ -7,10 +7,11 @@ import cats.syntax.functor.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.harveynichols.mappers.*
 import ebayapp.core.clients.harveynichols.responses.{HarveyNicholsProduct, HarveyNicholsSearchResponse}
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import io.circe.Decoder
 import sttp.client3.*
@@ -52,7 +53,7 @@ final private class LiveHarveyNicholsClient[F[_]](
           }
         }
       }
-      .map(harveyNicholsClothingMapper.toDomain)
+      .map(harveyNicholsClothingMapper.toDomain(criteria))
 
   private def searchForProducts(criteria: SearchCriteria)(page: Int): F[(List[HarveyNicholsProduct], Option[Int])] = {
     val queryParams = Map(

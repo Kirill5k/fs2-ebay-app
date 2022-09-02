@@ -4,7 +4,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.{SearchClient, SearchCriteria}
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
@@ -13,8 +13,9 @@ import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.config.EbayConfig
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.Logger
-import fs2._
+import fs2.Stream
 import sttp.client3.SttpBackend
 
 import java.time.Instant
@@ -40,7 +41,7 @@ final private[ebay] class LiveEbayClient[F[_]](
         .evalSeq(searchForItems(params.requestArgs(time, criteria.query), params.filter))
         .evalMap(getCompleteItem)
         .unNone
-        .map(mapper.toDomain)
+        .map(mapper.toDomain(criteria))
         .handleErrorWith(switchAccountIfItHasExpired)
     } yield items
 

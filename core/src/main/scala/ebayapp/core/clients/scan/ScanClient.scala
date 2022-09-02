@@ -2,19 +2,20 @@ package ebayapp.core.clients.scan
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.flatMap._
-import cats.syntax.apply._
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import cats.syntax.flatMap.*
+import cats.syntax.apply.*
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
-import sttp.client3._
+import sttp.client3.*
 import sttp.model.StatusCode
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final private class LiveScanClient[F[_]](
     private val config: GenericRetailerConfig,
@@ -34,7 +35,7 @@ final private class LiveScanClient[F[_]](
       .flatMap { cat =>
         Stream
           .evalSeq(searchByCard(criteria.query, cat))
-          .map(scanaGenericItemMapper.toDomain)
+          .map(scanaGenericItemMapper.toDomain(criteria))
       }
 
   private def searchByCard(query: String, category: String): F[List[ScanItem]] =

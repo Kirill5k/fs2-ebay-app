@@ -1,8 +1,9 @@
 package ebayapp.core.common
 
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.{Retailer, SearchCriteria}
+import ebayapp.core.clients.Retailer
 import ebayapp.core.common.config.{AppConfig, StockMonitorConfig, StockMonitorRequest}
+import ebayapp.core.domain.search.SearchCriteria
 
 import scala.concurrent.duration.*
 

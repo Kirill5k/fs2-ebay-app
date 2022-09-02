@@ -12,7 +12,7 @@ import ebayapp.core.common.{Cache, Error, Logger}
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 trait NotificationService[F[_]]:
   def alert(error: Error): F[Unit]
@@ -26,7 +26,7 @@ final class TelegramNotificationService[F[_]](
     F: Monad[F],
     logger: Logger[F]
 ) extends NotificationService[F] {
-  import NotificationService._
+  import NotificationService.*
 
   override def cheapItem(item: ResellableItem): F[Unit] =
     F.pure(item.cheapItemNotification).flatMap {

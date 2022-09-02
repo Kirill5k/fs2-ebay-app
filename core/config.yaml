@@ -206,8 +206,8 @@ data:
           {search-criteria: {query: "moncler", min-discount: 10}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "tommy hilfiger", min-discount: 59}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "polo ralph lauren", min-discount: 59}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "hugo", min-discount: 44}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss", min-discount: 44}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "hugo", min-discount: 48}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss", min-discount: 48}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 

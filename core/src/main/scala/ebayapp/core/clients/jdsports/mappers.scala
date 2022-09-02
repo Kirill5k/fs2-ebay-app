@@ -2,7 +2,7 @@ package ebayapp.core.clients.jdsports
 
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.domain.ItemDetails.Clothing
-import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 
 import java.time.Instant
@@ -32,8 +32,8 @@ private[jdsports] object mappers {
   type JdsportsItemMapper = ItemMapper[JdsportsItem]
 
   val jdsportsClothingMapper: JdsportsItemMapper = new JdsportsItemMapper {
-    override def toDomain(jdi: JdsportsItem): ResellableItem =
-      ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None)
+    override def toDomain(foundWith: SearchCriteria)(jdi: JdsportsItem): ResellableItem =
+      ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None, Some(foundWith))
 
     private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing =
       Clothing(

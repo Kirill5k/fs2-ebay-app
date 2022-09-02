@@ -1,18 +1,27 @@
 package ebayapp.core.domain
 
 import ebayapp.core.domain.ItemDetails.{Phone, VideoGame}
-import ebayapp.core.domain.search.{SellPrice, _}
+import ebayapp.core.domain.search.*
 
 import java.time.Instant
 
 object ResellableItemBuilder {
 
-  def clothing(name: String, quantity: Int = 1, price: Double = 100.0, discount: Option[Int] = Some(50)): ResellableItem =
+  val searchCriteria = SearchCriteria("item")
+
+  def clothing(
+      name: String,
+      quantity: Int = 1,
+      price: Double = 100.0,
+      discount: Option[Int] = Some(50),
+      foundWith: Option[SearchCriteria] = Some(searchCriteria)
+  ): ResellableItem =
     ResellableItem.clothing(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map.empty),
       BuyPrice(quantity, BigDecimal(price), discount),
-      None
+      None,
+      foundWith
     )
 
   def generic(
@@ -20,13 +29,15 @@ object ResellableItemBuilder {
       quantity: Int = 1,
       price: Double = 1800.0,
       discount: Option[Int] = None,
-      datePosted: Instant = Instant.now()
+      datePosted: Instant = Instant.now(),
+      foundWith: Option[SearchCriteria] = Some(searchCriteria)
   ): ResellableItem =
     ResellableItem.generic(
       ItemDetails.Generic(name),
       ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", datePosted, "CEX", Map.empty),
       BuyPrice(quantity, BigDecimal(price), discount),
-      None
+      None,
+      foundWith
     )
 
   def videoGame(
@@ -34,7 +45,8 @@ object ResellableItemBuilder {
       datePosted: Instant = Instant.now(),
       platform: Option[String] = Some("XBOX ONE"),
       buyPrice: BuyPrice = BuyPrice(1, BigDecimal(32.99)),
-      sellPrice: Option[SellPrice] = Some(SellPrice(BigDecimal(100), BigDecimal(80)))
+      sellPrice: Option[SellPrice] = Some(SellPrice(BigDecimal(100), BigDecimal(80))),
+      foundWith: Option[SearchCriteria] = Some(searchCriteria)
   ): ResellableItem =
     ResellableItem.videoGame(
       VideoGame(Some(name), platform, Some("2019"), Some("Action")),
@@ -58,7 +70,8 @@ object ResellableItemBuilder {
         )
       ),
       buyPrice,
-      sellPrice
+      sellPrice,
+      foundWith
     )
 
   def mobilePhone(
@@ -66,7 +79,8 @@ object ResellableItemBuilder {
       model: String,
       colour: String,
       storage: String = "16GB",
-      datePosted: Instant = Instant.now()
+      datePosted: Instant = Instant.now(),
+      foundWith: Option[SearchCriteria] = Some(searchCriteria)
   ): ResellableItem =
     ResellableItem.mobilePhone(
       Phone(Some(make), Some(model), Some(colour), Some(storage), Some("Unlocked"), Some("USED")),
@@ -83,6 +97,7 @@ object ResellableItemBuilder {
         Map.empty
       ),
       BuyPrice(1, BigDecimal(99.99)),
-      Some(SellPrice(BigDecimal(150), BigDecimal(110)))
+      Some(SellPrice(BigDecimal(150), BigDecimal(110))),
+      foundWith
     )
 }

@@ -1,6 +1,6 @@
 package ebayapp.core.clients.ebay.mappers
 
-import cats.syntax.option._
+import cats.syntax.option.*
 import ebayapp.core.domain.ItemDetails.VideoGame
 import ebayapp.core.domain.search.ListingDetails
 

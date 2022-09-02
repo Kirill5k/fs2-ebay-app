@@ -20,7 +20,8 @@ private[repositories] object ResellableItemEntityMapper {
         item.buyPrice.quantityAvailable,
         item.sellPrice.map(_.cash),
         item.sellPrice.map(_.credit)
-      )
+      ),
+      item.foundWith
     )
 
   def toDomain(entity: ResellableItemEntity): ResellableItem =
@@ -29,6 +30,7 @@ private[repositories] object ResellableItemEntityMapper {
       entity.itemDetails,
       entity.listingDetails,
       BuyPrice(entity.price.quantityAvailable, entity.price.buy),
-      (entity.price.sell, entity.price.credit).mapN((s, c) => SellPrice(s, c))
+      (entity.price.sell, entity.price.credit).mapN((s, c) => SellPrice(s, c)),
+      entity.foundWith
     )
 }

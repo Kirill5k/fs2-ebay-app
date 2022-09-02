@@ -6,7 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.flatMap.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -77,7 +77,7 @@ final class CexApiClient[F[_]](
       .eval(search(uri"${config.baseUri}/v3/boxes?q=${criteria.query}&inStock=1&inStockOnline=1"))
       .map(_.response.data.fold(List.empty[CexItem])(_.boxes))
       .flatMap(Stream.emits)
-      .map(cexGenericItemMapper.toDomain)
+      .map(cexGenericItemMapper.toDomain(criteria))
 
   private def search(uri: Uri): F[CexSearchResponse] =
     dispatch {

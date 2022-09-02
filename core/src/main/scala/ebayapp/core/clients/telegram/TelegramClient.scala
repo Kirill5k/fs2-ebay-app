@@ -13,7 +13,7 @@ import ebayapp.core.common.Logger
 import sttp.client3.*
 import sttp.model.StatusCode
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final private class LiveTelegramClient[F[_]](
     private val config: TelegramConfig,
