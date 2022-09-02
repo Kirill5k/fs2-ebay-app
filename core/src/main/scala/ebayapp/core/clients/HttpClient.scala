@@ -18,16 +18,19 @@ trait HttpClient[F[_]] {
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 OPR/89.0.4447.83"
 
   protected val defaultHeaders = Map(
-    "Access-Control-Allow-Origin" -> "*",
-    "Content-Type"                -> "application/json",
-    "Connection"                  -> "keep-alive",
-    "Cache-Control"               -> "no-store, max-age=0",
-    "Accept"                      -> "*/*",
-    "Accept-Encoding"             -> "gzip, deflate, br",
-    "Accept-Language"             -> "en-GB,en-US;q=0.9,en;q=0.8",
-    "Accept"                      -> "application/json, text/javascript, */*; q=0.01",
-    "Connection"                  -> "keep-alive",
-    "User-Agent"                  -> "PostmanRuntime/7.28.3"
+    "accept"             -> "*/*",
+    "accept-encoding"    -> "gzip, deflate, br",
+    "accept-language"    -> "en-GB,en;q=0.9",
+    "cache-control"      -> "no-store, max-age=0",
+    "content-type"       -> "application/json",
+    "sec-ch-ua"          -> """" Not A;Brand";v="99", "Chromium";v="104", "Opera";v="90"""",
+    "sec-ch-ua-mobile"   -> "?0",
+    "sec-ch-ua-platform" -> "macOS",
+    "sec-fetch-dest"     -> "empty",
+    "sec-fetch-mode"     -> "cors",
+    "sec-fetch-site"     -> "same-origin",
+    "connection"         -> "keep-alive",
+    "user-agent"         -> userAgent
   )
 
   protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =

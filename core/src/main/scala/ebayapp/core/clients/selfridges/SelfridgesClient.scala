@@ -51,13 +51,14 @@ final private class LiveSelfridgesClient[F[_]](
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .unfoldLoopEval(1)(searchForItems(criteria))
+      .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
       .flatMap(Stream.emits)
       .filter(!_.name.matches(filters))
-      .filter(_.price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined))
+      .filter(_.isOnSale)
       .flatMap { item =>
         Stream
           .evalSeq(getItemDetails(item))
-          .metered(1.second)
+          .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
           .map((stock, price) => SelfridgesItem(item, stock, price))
       }
       .map(selfridgesClothingMapper.toDomain)

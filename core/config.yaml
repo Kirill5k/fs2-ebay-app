@@ -48,7 +48,9 @@ data:
 
     selfridges {
       base-uri: "https://fs2-proxy.herokuapp.com"
+      delay-between-individual-requests: 2s
       headers: {
+        "referer": "https://www.selfridges.com"
         "api-key": ${?SELFRIDGES_API_KEY}
         "X-Reload-On-403": "true"
         "X-Reroute-To": "https://www.selfridges.com"
@@ -199,12 +201,13 @@ data:
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "stone-island", min-discount: 39}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "emporio armani", min-discount: 44}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "moncler", min-discount: 10}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "tommy hilfiger", min-discount: 59}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "polo ralph lauren", min-discount: 59}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "hugo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "hugo", min-discount: 44}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss", min-discount: 44}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
