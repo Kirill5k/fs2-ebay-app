@@ -62,30 +62,30 @@ data:
     }
 
     jdsports {
-      base-uri: "https://proxy-kirill5k.cloud.okteto.net"
+      base-uri: "https://fs2-proxy.herokuapp.com"
       headers {
-        "Referer": "https://www.jdsports.co.uk/men",
         "X-Reroute-To": "https://www.jdsports.co.uk"
-        "X-Proxied": "true"
+        "X-Reload-On-403": "true"
       }
+      delay-between-individual-requests: 2s
     }
 
     scotts {
       base-uri: "https://fs2-proxy.herokuapp.com"
       headers {
-        "Referer": "https://www.scottsmenswear.com/men",
         "X-Reroute-To": "https://www.scottsmenswear.com"
         "X-Reload-On-403": "true"
       }
+      delay-between-individual-requests: 2s
     }
 
     tessuti {
       base-uri: "https://fs2-proxy.herokuapp.com"
       headers {
-        "Referer": "https://www.tessuti.co.uk/men",
         "X-Reroute-To": "https://www.tessuti.co.uk"
         "X-Reload-On-403": "true"
       }
+      delay-between-individual-requests: 2s
     }
 
     nvidia {

@@ -18,6 +18,7 @@ class AppConfigSpec extends CatsSpec {
       conf.selfridges.headers mustBe Map("api-key" -> "key")
       conf.nvidia.proxied mustBe Some(true)
       conf.harveyNichols.baseUri mustBe "https://www.harveynichols.com"
+      conf.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
 
       val geforceMonReq = StockMonitorRequest(SearchCriteria("geforce", Some("GPU"), excludeFilters = Some(List("GTX 1650"))), true, true)
       conf.stockMonitor must contain (Retailer.Nvidia -> StockMonitorConfig(5.minutes, List(geforceMonReq)))

@@ -26,12 +26,30 @@ final private class LiveJdsportsClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers
+  private val websiteUri = config.headers.getOrElse("X-Reroute-To", config.baseUri) + "/"
+
+  private val getBrandHeaders = Map(
+    "cookie" -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
+    "accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "accept-encoding"           -> "gzip, deflate, br",
+    "accept-language"           -> "en-GB,en;q=0.9",
+    "upgrade-insecure-requests" -> "1",
+    "user-agent"                -> userAgent
+  ) ++ config.headers
+
+  private val getStockHeaders = Map(
+    "accept"           -> "*/*",
+    "accept-encoding"  -> "gzip, deflate, br",
+    "accept-language"  -> "en-GB,en;q=0.9",
+    "content-type"     -> "application/json",
+    "x-requested-with" -> "XMLHttpRequest",
+    "user-agent"       -> userAgent
+  ) ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     brands(criteria)
       .filter(_.sale)
-      .metered(250.millis)
+      .metered(config.delayBetweenIndividualRequests.getOrElse(0.second))
       .evalMap(getProductStock)
       .unNone
       .map { p =>
@@ -46,7 +64,7 @@ final private class LiveJdsportsClient[F[_]](
             size,
             p.details.PrimaryImage,
             p.details.Category,
-            config.headers.getOrElse("X-Reroute-To", config.baseUri),
+            websiteUri,
             name
           )
         }
@@ -68,7 +86,7 @@ final private class LiveJdsportsClient[F[_]](
       val brand = criteria.query.toLowerCase.replace(" ", "-")
       basicRequest
         .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
-        .headers(headers)
+        .headers(getBrandHeaders + ("referer" -> websiteUri))
     }.flatMap { r =>
       r.body match {
         case Right(html) =>
@@ -90,9 +108,10 @@ final private class LiveJdsportsClient[F[_]](
 
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     dispatch {
+      val referrer = websiteUri + s"product/${ci.fullName}/${ci.plu}/"
       basicRequest
         .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
-        .headers(headers)
+        .headers(getStockHeaders + ("referer" -> referrer))
     }.flatMap { r =>
       r.body match {
         case Right(html) =>
