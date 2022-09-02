@@ -34,16 +34,29 @@ final private class LiveJdsportsClient[F[_]](
     "accept-encoding"           -> "gzip, deflate, br",
     "accept-language"           -> "en-GB,en;q=0.9",
     "upgrade-insecure-requests" -> "1",
-    "user-agent"                -> userAgent
+    "user-agent"                -> userAgent,
+    "sec-ch-ua"                 -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
+    "sec-ch-ua-mobile"          -> "?0",
+    "sec-ch-ua-platform"        -> "macOS",
+    "sec-fetch-dest"            -> "document",
+    "sec-fetch-mode"            -> "navigate",
+    "sec-fetch-site"            -> "same-origin",
+    "sec-fetch-user"            -> "?1"
   ) ++ config.headers
 
   private val getStockHeaders = Map(
-    "accept"           -> "*/*",
-    "accept-encoding"  -> "gzip, deflate, br",
-    "accept-language"  -> "en-GB,en;q=0.9",
-    "content-type"     -> "application/json",
-    "x-requested-with" -> "XMLHttpRequest",
-    "user-agent"       -> userAgent
+    "accept"             -> "*/*",
+    "accept-encoding"    -> "gzip, deflate, br",
+    "accept-language"    -> "en-GB,en;q=0.9",
+    "content-type"       -> "application/json",
+    "x-requested-with"   -> "XMLHttpRequest",
+    "user-agent"         -> userAgent,
+    "sec-ch-ua"          -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
+    "sec-ch-ua-mobile"   -> "?0",
+    "sec-ch-ua-platform" -> "macOS",
+    "sec-fetch-dest"     -> "empty",
+    "sec-fetch-mode"     -> "cors",
+    "sec-fetch-site"     -> "same-origin"
   ) ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
