@@ -26,7 +26,7 @@ private[selfridges] object mappers {
         listingDetails(si.item),
         buyPrice(si.item, si.stock, si.price),
         None,
-        Some(foundWith)
+        foundWith
       )
 
     private def itemDetails(item: CatalogItem, stock: ItemStock): ItemDetails.Clothing =

@@ -30,7 +30,7 @@ final case class ResellableItem(
     listingDetails: ListingDetails,
     buyPrice: BuyPrice,
     sellPrice: Option[SellPrice],
-    foundWith: Option[SearchCriteria]
+    foundWith: SearchCriteria
 )
 
 object ResellableItem {
@@ -39,7 +39,7 @@ object ResellableItem {
       listingDetails: ListingDetails,
       buyPrice: BuyPrice,
       sellPrice: Option[SellPrice],
-      foundWith: Option[SearchCriteria]
+      foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
       ItemKind.Generic,
@@ -55,7 +55,7 @@ object ResellableItem {
       listingDetails: ListingDetails,
       buyPrice: BuyPrice,
       sellPrice: Option[SellPrice],
-      foundWith: Option[SearchCriteria]
+      foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
       ItemKind.VideoGame,
@@ -71,7 +71,7 @@ object ResellableItem {
       listingDetails: ListingDetails,
       buyPrice: BuyPrice,
       sellPrice: Option[SellPrice],
-      foundWith: Option[SearchCriteria]
+      foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
       ItemKind.Clothing,
@@ -87,7 +87,7 @@ object ResellableItem {
       listingDetails: ListingDetails,
       buyPrice: BuyPrice,
       sellPrice: Option[SellPrice],
-      foundWith: Option[SearchCriteria]
+      foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
       ItemKind.MobilePhone,

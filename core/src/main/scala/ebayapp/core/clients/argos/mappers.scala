@@ -30,7 +30,7 @@ private[argos] object mappers {
         ),
         BuyPrice(1, data.attributes.price),
         None,
-        Some(foundWith)
+        foundWith
       )
   }
 }

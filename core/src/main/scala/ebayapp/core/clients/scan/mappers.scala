@@ -29,7 +29,7 @@ private[scan] object mappers {
         ),
         BuyPrice(1, BigDecimal(item.price)),
         None,
-        Some(foundWith)
+        foundWith
       )
   }
 }

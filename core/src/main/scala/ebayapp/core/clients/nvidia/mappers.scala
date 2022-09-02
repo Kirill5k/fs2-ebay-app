@@ -29,7 +29,7 @@ private[nvidia] object mappers {
         ),
         BuyPrice(item.retailer.stock, item.retailer.salePrice),
         None,
-        Some(foundWith)
+        foundWith
       )
   }
 }

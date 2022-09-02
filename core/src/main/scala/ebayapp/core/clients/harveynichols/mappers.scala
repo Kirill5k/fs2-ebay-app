@@ -30,7 +30,7 @@ private[harveynichols] object mappers {
         listingDetails(hni),
         BuyPrice(1, BigDecimal(hni.currentPrice), hni.discount),
         None,
-        Some(foundWith)
+        foundWith
       )
 
     private def listingDetails(hni: HarveyNicholsItem): ListingDetails =

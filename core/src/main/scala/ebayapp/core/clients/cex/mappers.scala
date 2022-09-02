@@ -18,7 +18,7 @@ private[cex] object mappers {
         listingDetails(sr),
         price(sr),
         Some(resellPrice(sr)),
-        Some(foundWith)
+        foundWith
       )
   }
 

@@ -26,7 +26,7 @@ private[mainlinemenswear] object mappers {
 
   val mainlineMenswearClothingMapper: MainlineMenswearItemMapper = new MainlineMenswearItemMapper {
     override def toDomain(foundWith: SearchCriteria)(mmi: MainlineMenswearItem): ResellableItem =
-      ResellableItem.clothing(itemDetails(mmi), listingDetails(mmi), buyPrice(mmi), None, Some(foundWith))
+      ResellableItem.clothing(itemDetails(mmi), listingDetails(mmi), buyPrice(mmi), None, foundWith)
 
     private def itemDetails(mmi: MainlineMenswearItem): ItemDetails.Clothing =
       Clothing(

@@ -53,7 +53,7 @@ class CexClientSpec extends SttpClientSpec {
               ),
               BuyPrice(2, 1950.0),
               Some(SellPrice(BigDecimal(1131.0), BigDecimal(1365.0))),
-              Some(criteria)
+              criteria
             ),
             ResellableItem.generic(
               ItemDetails.Generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B"),
@@ -71,7 +71,7 @@ class CexClientSpec extends SttpClientSpec {
               ),
               BuyPrice(1, 1800.0),
               Some(SellPrice(BigDecimal(1044.0), BigDecimal(1260.0))),
-              Some(criteria)
+              criteria
             ),
             ResellableItem.generic(
               ItemDetails.Generic("Apple MacBook Pro 16,1/i9-9880H/16GB/1TB SSD/5500M 4GB/16\"/Space Grey/A"),
@@ -89,7 +89,7 @@ class CexClientSpec extends SttpClientSpec {
               ),
               BuyPrice(1, 2200.0),
               Some(SellPrice(BigDecimal(1276.0), BigDecimal(1540.0))),
-              Some(criteria)
+              criteria
             )
           )
         )

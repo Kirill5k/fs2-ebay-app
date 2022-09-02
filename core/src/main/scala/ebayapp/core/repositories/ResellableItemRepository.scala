@@ -25,13 +25,12 @@ final case class SearchParams(
     query: Option[String] = None
 )
 
-trait ResellableItemRepository[F[_]] {
+trait ResellableItemRepository[F[_]]:
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: ResellableItem): F[Unit]
   def saveAll(items: Seq[ResellableItem]): F[Unit]
   def search(params: SearchParams): F[List[ResellableItem]]
   def summaries(params: SearchParams): F[List[ItemSummary]]
-}
 
 final private class ResellableItemMongoRepository[F[_]: Async](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
@@ -98,7 +97,6 @@ final private class ResellableItemMongoRepository[F[_]: Async](
 }
 
 object ResellableItemRepository:
-
   private val collectionName    = "items"
   private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
 

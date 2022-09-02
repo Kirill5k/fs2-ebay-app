@@ -33,7 +33,7 @@ private[jdsports] object mappers {
 
   val jdsportsClothingMapper: JdsportsItemMapper = new JdsportsItemMapper {
     override def toDomain(foundWith: SearchCriteria)(jdi: JdsportsItem): ResellableItem =
-      ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None, Some(foundWith))
+      ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None, foundWith)
 
     private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing =
       Clothing(

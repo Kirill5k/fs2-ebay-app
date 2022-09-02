@@ -14,7 +14,7 @@ object ResellableItemBuilder {
       quantity: Int = 1,
       price: Double = 100.0,
       discount: Option[Int] = Some(50),
-      foundWith: Option[SearchCriteria] = Some(searchCriteria)
+      foundWith: SearchCriteria = searchCriteria
   ): ResellableItem =
     ResellableItem.clothing(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
@@ -30,7 +30,7 @@ object ResellableItemBuilder {
       price: Double = 1800.0,
       discount: Option[Int] = None,
       datePosted: Instant = Instant.now(),
-      foundWith: Option[SearchCriteria] = Some(searchCriteria)
+      foundWith: SearchCriteria = searchCriteria
   ): ResellableItem =
     ResellableItem.generic(
       ItemDetails.Generic(name),
@@ -46,7 +46,7 @@ object ResellableItemBuilder {
       platform: Option[String] = Some("XBOX ONE"),
       buyPrice: BuyPrice = BuyPrice(1, BigDecimal(32.99)),
       sellPrice: Option[SellPrice] = Some(SellPrice(BigDecimal(100), BigDecimal(80))),
-      foundWith: Option[SearchCriteria] = Some(searchCriteria)
+      foundWith: SearchCriteria = searchCriteria
   ): ResellableItem =
     ResellableItem.videoGame(
       VideoGame(Some(name), platform, Some("2019"), Some("Action")),
@@ -80,7 +80,7 @@ object ResellableItemBuilder {
       colour: String,
       storage: String = "16GB",
       datePosted: Instant = Instant.now(),
-      foundWith: Option[SearchCriteria] = Some(searchCriteria)
+      foundWith: SearchCriteria = searchCriteria
   ): ResellableItem =
     ResellableItem.mobilePhone(
       Phone(Some(make), Some(model), Some(colour), Some(storage), Some("Unlocked"), Some("USED")),

@@ -51,7 +51,7 @@ final private class SimpleStockService[F[_]](
       val item = if items.size == 1 then "item" else "items"
       val groups =
         if items.isEmpty then ""
-        else items.flatMap(_.foundWith).map(_.query).groupMapReduce(identity)(_ => 1)(_ + _).mkString("(", ", ", ")")
+        else items.map(_.foundWith.query).groupMapReduce(identity)(_ => 1)(_ + _).mkString("(", ", ", ")")
       logger.info(s"""${retailer.name}-cache-stock: ${items.size} $item $groups""")
     }
 
