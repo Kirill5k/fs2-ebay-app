@@ -104,6 +104,7 @@ data:
 
     harvey-nichols {
       base-uri: "https://fs2-proxy.herokuapp.com"
+      delay-between-individual-requests: 15s
       headers {
         "X-Reroute-To": "https://www.harveynichols.com"
         "Accept": "application/json, text/javascript, */*; q=0.01"
@@ -212,8 +213,10 @@ data:
         monitoring-frequency: 12m
         monitoring-requests: [
           //{search-criteria: {query: "gucci", min-discount: 24}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "off-white", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     

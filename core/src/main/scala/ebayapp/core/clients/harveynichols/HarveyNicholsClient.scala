@@ -29,11 +29,12 @@ final private class LiveHarveyNicholsClient[F[_]](
 
   override protected val name: String = "harvey-nichols"
 
-  private val headers = defaultHeaders ++ config.headers
+  private val headers = config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .unfoldLoopEval(1)(searchForProducts(criteria))
+      .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
       .flatMap(Stream.emits)
       .flatMap { product =>
         Stream.emits {
@@ -55,14 +56,14 @@ final private class LiveHarveyNicholsClient[F[_]](
 
   private def searchForProducts(criteria: SearchCriteria)(page: Int): F[(List[HarveyNicholsProduct], Option[Int])] = {
     val queryParams = Map(
-      "query"                     -> s"//search=${criteria.query}/categories=cp2_cp134/",
-      "context[page_number]"      -> s"$page",
-      "context[fh_sort_by]"       -> "price",
-      "context[sort_by]"          -> "low_to_high",
-      "context[country_code]"     -> "GB",
-      "context[site]"             -> "UK",
-      "context[customer_dept]"    -> "Mens",
-      "context[region]"           -> "United Kingdom"
+      "query"                  -> s"//search=${criteria.query}/categories=cp2_cp134/",
+      "context[page_number]"   -> s"$page",
+      "context[fh_sort_by]"    -> "price",
+      "context[sort_by]"       -> "low_to_high",
+      "context[country_code]"  -> "GB",
+      "context[site]"          -> "UK",
+      "context[customer_dept]" -> "Mens",
+      "context[region]"        -> "United Kingdom"
     )
     sendRequest[HarveyNicholsSearchResponse](
       uri"${config.baseUri}/data/lister?$queryParams",
