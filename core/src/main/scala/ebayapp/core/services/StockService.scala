@@ -37,7 +37,7 @@ final private class SimpleStockService[F[_]](
             .flatMap(_ => getUpdates(req))
       }
       .parJoinUnbounded
-      .concurrently(Stream.eval(logCacheSize))
+      .concurrently(Stream.awakeEvery(config.monitoringFrequency).evalMap(_ => logCacheSize))
 
   private def preloadCache(req: StockMonitorRequest): Stream[F, Nothing] =
     client
@@ -47,9 +47,13 @@ final private class SimpleStockService[F[_]](
       .drain
 
   private def logCacheSize: F[Unit] =
-    F.sleep(config.monitoringFrequency) >>
-      cache.size.flatMap(s => logger.info(s"""${retailer.name}-cache-stock currently contains $s items""")) >>
-      logCacheSize
+    cache.values.flatMap { items =>
+      val item = if items.size == 1 then "item" else "items"
+      val groups =
+        if items.isEmpty then ""
+        else items.flatMap(_.foundWith).map(_.query).groupMapReduce(identity)(_ => 1)(_ + _).mkString("(", ", ", ")")
+      logger.info(s"""${retailer.name}-cache-stock: ${items.size} $item $groups""")
+    }
 
   private def getUpdates(req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
     client
