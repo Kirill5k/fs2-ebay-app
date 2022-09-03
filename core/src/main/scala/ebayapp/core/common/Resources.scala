@@ -3,12 +3,11 @@ package ebayapp.core.common
 import cats.effect.{Async, Resource}
 import cats.syntax.option.*
 import cats.syntax.apply.*
-import com.mongodb.ConnectionString
 import ebayapp.kernel.config.MongoConfig
 import ebayapp.core.common.config.{AppConfig, ClientProxyConfig}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
-import mongo4cats.models.client.MongoClientSettings
+import mongo4cats.models.client.{MongoClientSettings, ConnectionString}
 import sttp.client3.SttpBackendOptions.Proxy
 import sttp.client3.{SttpBackend, SttpBackendOptions}
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
@@ -42,8 +41,8 @@ object Resources {
   }
 
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
-    val settings = MongoClientSettings.builder
-      .applyConnectionString(new ConnectionString(config.connectionUri))
+    val settings = MongoClientSettings.builder()
+      .applyConnectionString(ConnectionString(config.connectionUri))
       .applyToSocketSettings { builder =>
         builder.connectTimeout(3, TimeUnit.MINUTES).readTimeout(3, TimeUnit.MINUTES)
       }

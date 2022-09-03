@@ -1,7 +1,6 @@
 package ebayapp.monitor.repositories
 
 import cats.effect.Async
-import cats.syntax.applicative.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
@@ -33,11 +32,11 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
 
 object MonitoringEventRepository extends MongoJsonCodecs:
   private val collectionName    = "monitoring-events"
-  private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(134217728L)
+  private val collectionOptions = CreateCollectionOptions(capped = true, sizeInBytes = 134217728L)
 
-  def make[F[_]: Async](database: MongoDatabase[F]): F[MonitoringEventRepository[F]] =
+  def make[F[_]](database: MongoDatabase[F])(using F: Async[F]): F[MonitoringEventRepository[F]] =
     for
       collNames <- database.listCollectionNames
-      _    <- if (collNames.toSet.contains(collectionName)) ().pure[F] else database.createCollection(collectionName, collectionOptions)
-      coll <- database.getCollectionWithCodec[MonitoringEventEntity](collectionName)
+      _         <- F.unlessA(collNames.toSet.contains(collectionName))(database.createCollection(collectionName, collectionOptions))
+      coll      <- database.getCollectionWithCodec[MonitoringEventEntity](collectionName)
     yield LiveMonitoringEventRepository[F](coll)

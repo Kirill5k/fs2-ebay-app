@@ -32,8 +32,10 @@ trait ResellableItemRepository[F[_]]:
   def search(params: SearchParams): F[List[ResellableItem]]
   def summaries(params: SearchParams): F[List[ItemSummary]]
 
-final private class ResellableItemMongoRepository[F[_]: Async](
+final private class ResellableItemMongoRepository[F[_]](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
+)(using
+    F: Async[F]
 ) extends ResellableItemRepository[F] {
 
   private object Field:
@@ -56,8 +58,8 @@ final private class ResellableItemMongoRepository[F[_]: Async](
       .insertOne(ResellableItemEntityMapper.toEntity(item))
       .void
       .handleErrorWith {
-        case _: DuplicateKeyException                              => ().pure[F]
-        case e: MongoWriteException if e.getError.getCode == 11000 => ().pure[F]
+        case _: DuplicateKeyException                              => F.unit
+        case e: MongoWriteException if e.getError.getCode == 11000 => F.unit
         case e                                                     => e.raiseError[F, Unit]
       }
 
@@ -98,11 +100,11 @@ final private class ResellableItemMongoRepository[F[_]: Async](
 
 object ResellableItemRepository:
   private val collectionName    = "items"
-  private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
+  private val collectionOptions = CreateCollectionOptions(capped = true, sizeInBytes = 268435456L)
 
-  def mongo[F[_]: Async](database: MongoDatabase[F]): F[ResellableItemRepository[F]] =
+  def mongo[F[_]](database: MongoDatabase[F])(using F: Async[F]): F[ResellableItemRepository[F]] =
     for
       collNames <- database.listCollectionNames
-      _    <- if (collNames.toSet.contains(collectionName)) ().pure[F] else database.createCollection(collectionName, collectionOptions)
-      coll <- database.getCollectionWithCodec[ResellableItemEntity](collectionName)
+      _         <- F.unlessA(collNames.toSet.contains(collectionName))(database.createCollection(collectionName, collectionOptions))
+      coll      <- database.getCollectionWithCodec[ResellableItemEntity](collectionName)
     yield new ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])
