@@ -13,9 +13,9 @@ private[harveynichols] object mappers {
       name: String,
       brand: String,
       size: String,
-      currentPrice: Int,
-      originalPrice: Int,
-      discount: Option[Int],
+      currentPrice: Double,
+      originalPrice: Double,
+      discount: Option[Double],
       itemUrl: String,
       imageUrl: String
   )
@@ -28,7 +28,7 @@ private[harveynichols] object mappers {
       ResellableItem.clothing(
         Clothing(hni.name, hni.brand, hni.size),
         listingDetails(hni),
-        BuyPrice(1, BigDecimal(hni.currentPrice), hni.discount),
+        BuyPrice(1, BigDecimal(hni.currentPrice), hni.discount.map(_.toInt)),
         None,
         foundWith
       )

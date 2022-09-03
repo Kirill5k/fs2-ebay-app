@@ -30,7 +30,7 @@ trait HttpClient[F[_]] {
     "sec-fetch-mode"     -> "cors",
     "sec-fetch-site"     -> "same-origin",
     "connection"         -> "keep-alive",
-    "user-agent"         -> userAgent
+    "user-agent"         -> "PostmanRuntime/7.28.3"
   )
 
   protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
