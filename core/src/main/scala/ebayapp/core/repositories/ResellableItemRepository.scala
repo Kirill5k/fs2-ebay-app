@@ -69,7 +69,7 @@ final private class ResellableItemMongoRepository[F[_]](
   def search(params: SearchParams): F[List[ResellableItem]] =
     mongoCollection.find
       .sortByDesc(Field.DatePosted)
-      .filter(searchFilter(params))
+      .filter(params.toFilter)
       .limit(params.limit.getOrElse(Int.MaxValue))
       .all
       .map(_.map(ResellableItemEntityMapper.toDomain).toList)
@@ -78,7 +78,7 @@ final private class ResellableItemMongoRepository[F[_]](
     mongoCollection
       .aggregateWithCodec[ItemSummary] {
         Aggregate
-          .matchBy(searchFilter(params))
+          .matchBy(params.toFilter)
           .sort(Sort.desc(Field.DatePosted))
           .limit(params.limit.getOrElse(Int.MaxValue))
           .project(videoGameSummaryProjection)
@@ -92,10 +92,10 @@ final private class ResellableItemMongoRepository[F[_]](
     List(fromFilter, toFilter).flatten.foldLeft(Filter.empty)((acc, el) => acc && el)
   }
 
-  private def searchFilter(filters: SearchParams): Filter =
-    postedDateRangeSelector(filters.from, filters.to) &&
-      Filter.eq(Field.Kind, filters.kind) &&
-      filters.query.fold(Filter.empty)(Filter.text)
+  extension (sp: SearchParams)
+    def toFilter: Filter = postedDateRangeSelector(sp.from, sp.to) &&
+      Filter.eq(Field.Kind, sp.kind) &&
+      sp.query.fold(Filter.empty)(Filter.text)
 }
 
 object ResellableItemRepository:
