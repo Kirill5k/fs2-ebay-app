@@ -50,6 +50,7 @@ data:
       base-uri: "https://fs2-proxy.herokuapp.com"
       delay-between-individual-requests: 2s
       headers: {
+        "user-agent": "PostmanRuntime/7.28.3"
         "referer": "https://www.selfridges.com"
         "api-key": ${?SELFRIDGES_API_KEY}
         "X-Reload-On-403": "true"
@@ -189,9 +190,10 @@ data:
         delay-between-requests: 10s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {category: "men", query: "Emporio Armani EA7", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Emporio Armani EA7", min-discount: 45}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Calvin Klein", min-discount: 59}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Boss", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Hugo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "tommy-hilfiger", min-discount: 59}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
@@ -215,7 +217,7 @@ data:
         delay-between-requests: 10s
         monitoring-frequency: 12m
         monitoring-requests: [
-          //{search-criteria: {query: "gucci", min-discount: 24}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "gucci", min-discount: 24}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "off-white", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
