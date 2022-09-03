@@ -14,8 +14,10 @@ trait HttpClient[F[_]] {
 
   protected val delayBetweenFailures: FiniteDuration = 10.seconds
 
-  protected val userAgent =
+  protected val operaUserAgent =
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 OPR/89.0.4447.83"
+
+  protected val postmanUserAgent = "PostmanRuntime/7.28.3"
 
   protected val defaultHeaders = Map(
     "accept"             -> "*/*",
@@ -30,7 +32,7 @@ trait HttpClient[F[_]] {
     "sec-fetch-mode"     -> "cors",
     "sec-fetch-site"     -> "same-origin",
     "connection"         -> "keep-alive",
-    "user-agent"         -> "PostmanRuntime/7.28.3"
+    "user-agent"         -> operaUserAgent
   )
 
   protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =

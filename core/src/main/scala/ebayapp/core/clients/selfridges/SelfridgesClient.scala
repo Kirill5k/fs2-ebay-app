@@ -30,7 +30,7 @@ final private class LiveSelfridgesClient[F[_]](
 
   override protected val name: String = "selfridges"
 
-  private val headers = defaultHeaders ++ config.headers
+  private val headers = defaultHeaders ++ config.headers + ("user-agent" -> postmanUserAgent)
 
   private val filters: String = List(
     "\\d+-\\d+ (year|month)",
