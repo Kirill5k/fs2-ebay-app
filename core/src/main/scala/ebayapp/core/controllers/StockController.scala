@@ -9,7 +9,7 @@ import cats.syntax.traverse.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.Retailer
 import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
-import ebayapp.core.domain.{ItemDetails, ItemKind}
+import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.{ResellableItemService, StockService}
 import ebayapp.kernel.controllers.Controller
@@ -41,7 +41,7 @@ final private[controllers] class StockController[F[_]](
     .serverLogic { _ =>
       stockServices
         .traverse(_.cachedItems)
-        .map(_.flatten.map(ResellableItemView.from).asRight[ErrorResponse])
+        .map(_.flatten.toView.asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
@@ -52,7 +52,7 @@ final private[controllers] class StockController[F[_]](
     .serverLogic { retailer =>
       serviceByRetailer(retailer)
         .flatMap(_.cachedItems)
-        .map(_.map(ResellableItemView.from).asRight[ErrorResponse])
+        .map(_.toView.asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
@@ -77,6 +77,10 @@ final private[controllers] class StockController[F[_]](
         .map(_.asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
+
+  extension (items: List[ResellableItem])
+    def toView: List[ResellableItemView] =
+      items.sortBy(_.buyPrice.discount.getOrElse(0))(Ordering[Int].reverse).map(ResellableItemView.from)
 
   private def serviceByRetailer(retailer: String): F[StockService[F]] =
     F.fromEither(Retailer.from(retailer))
