@@ -15,11 +15,12 @@ import fs2.{Pipe, Stream}
 import scala.concurrent.duration.*
 
 trait StockService[F[_]]:
+  def retailer: Retailer
   def cachedItems: F[List[ResellableItem]]
   def stockUpdates: Stream[F, ItemStockUpdates]
 
 final private class SimpleStockService[F[_]](
-    private val retailer: Retailer,
+    val retailer: Retailer,
     private val config: StockMonitorConfig,
     private val client: SearchClient[F],
     private val cache: Cache[F, String, ResellableItem]
@@ -29,7 +30,7 @@ final private class SimpleStockService[F[_]](
 ) extends StockService[F] {
 
   override def cachedItems: F[List[ResellableItem]] = cache.values
-  
+
   override def stockUpdates: Stream[F, ItemStockUpdates] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)

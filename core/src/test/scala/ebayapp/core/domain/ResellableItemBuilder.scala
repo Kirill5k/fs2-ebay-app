@@ -1,5 +1,6 @@
 package ebayapp.core.domain
 
+import ebayapp.core.clients.Retailer
 import ebayapp.core.domain.ItemDetails.{Phone, VideoGame}
 import ebayapp.core.domain.search.*
 
@@ -14,11 +15,13 @@ object ResellableItemBuilder {
       quantity: Int = 1,
       price: Double = 100.0,
       discount: Option[Int] = Some(50),
-      foundWith: SearchCriteria = searchCriteria
+      foundWith: SearchCriteria = searchCriteria,
+      retailer: Retailer = Retailer.Cex,
+      datePosted: Instant = Instant.now
   ): ResellableItem =
     ResellableItem.clothing(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
-      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", Instant.now(), "CEX", Map.empty),
+      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", datePosted, retailer.name.toUpperCase, Map.empty),
       BuyPrice(quantity, BigDecimal(price), discount),
       None,
       foundWith

@@ -19,8 +19,11 @@ enum Retailer(val name: String):
   case MainlineMenswear extends Retailer("mainline-menswear")
 
 object Retailer:
+  def from(name: String): Either[AppError, Retailer] =
+    Retailer.values.find(_.name.equalsIgnoreCase(name)).toRight(AppError.Invalid(s"unrecognized retailer $name"))
+
   def fromUnsafe(name: String): Retailer =
-    Retailer.values.find(_.name == name).getOrElse(throw AppError.Critical(s"unrecognized retailer $name"))
+    from(name).fold(throw _, identity)
 
 trait SearchClient[F[_]]:
   def search(criteria: SearchCriteria): Stream[F, ResellableItem]

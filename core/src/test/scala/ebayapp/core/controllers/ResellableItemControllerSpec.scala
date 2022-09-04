@@ -61,6 +61,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |},
           |"price":{
           |"buy":32.99,
+          |"discount":null,
           |"quantityAvailable":1,
           |"sell":100,
           |"credit":80
@@ -87,6 +88,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |},
           |"price":{
           |"buy":32.99,
+          |"discount":null,
           |"quantityAvailable":1,
           |"sell":null,
           |"credit":null

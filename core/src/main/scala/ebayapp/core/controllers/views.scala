@@ -38,6 +38,7 @@ object views {
 
   final case class ItemPrice(
       buy: BigDecimal,
+      discount: Option[Int],
       quantityAvailable: Int,
       sell: Option[BigDecimal],
       credit: Option[BigDecimal]
@@ -58,6 +59,7 @@ object views {
         item.listingDetails,
         ItemPrice(
           item.buyPrice.rrp,
+          item.buyPrice.discount,
           item.buyPrice.quantityAvailable,
           item.sellPrice.map(_.cash),
           item.sellPrice.map(_.credit)
