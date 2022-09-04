@@ -43,16 +43,16 @@ object views {
       credit: Option[BigDecimal]
   ) derives Codec.AsObject
 
-  final case class ResellableItemResponse(
+  final case class ResellableItemView(
       kind: ItemKind,
       itemDetails: ItemDetails,
       listingDetails: ListingDetails,
       price: ItemPrice
   ) derives Codec.AsObject
 
-  object ResellableItemResponse {
-    def from(item: ResellableItem): ResellableItemResponse =
-      ResellableItemResponse(
+  object ResellableItemView {
+    def from(item: ResellableItem): ResellableItemView =
+      ResellableItemView(
         item.kind,
         item.itemDetails,
         item.listingDetails,

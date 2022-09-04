@@ -13,10 +13,11 @@ trait Controllers[F[_]] {
   def home: Controller[F]
   def videoGame: Controller[F]
   def health: Controller[F]
+  def stock: Controller[F]
 
   def routes(using M: Monad[F]): HttpRoutes[F] =
     Router(
-      "api" -> videoGame.routes,
+      "api" -> (videoGame.routes <+> stock.routes),
       ""    -> (home.routes <+> health.routes)
     )
 }
@@ -27,12 +28,14 @@ object Controllers {
     (
       HomeController.make[F],
       ResellableItemController.videoGame(services.resellableItem),
-      HealthController.make[F]
-    ).mapN((ho, vg, he) =>
+      HealthController.make[F],
+      StockController.make[F](services.stock)
+    ).mapN((ho, vg, he, st) =>
       new Controllers[F] {
         def home: Controller[F]      = ho
         def videoGame: Controller[F] = vg
         def health: Controller[F]    = he
+        def stock: Controller[F]     = st
       }
     )
 }

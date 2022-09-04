@@ -15,6 +15,7 @@ import fs2.{Pipe, Stream}
 import scala.concurrent.duration.*
 
 trait StockService[F[_]]:
+  def cachedItems: F[List[ResellableItem]]
   def stockUpdates: Stream[F, ItemStockUpdates]
 
 final private class SimpleStockService[F[_]](
@@ -27,6 +28,8 @@ final private class SimpleStockService[F[_]](
     logger: Logger[F]
 ) extends StockService[F] {
 
+  override def cachedItems: F[List[ResellableItem]] = cache.values
+  
   override def stockUpdates: Stream[F, ItemStockUpdates] =
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
@@ -47,7 +50,7 @@ final private class SimpleStockService[F[_]](
       .drain
 
   private def logCacheSize: F[Unit] =
-    cache.values.flatMap { items =>
+    cachedItems.flatMap { items =>
       val item = if items.size == 1 then "item" else "items"
       val groups =
         if items.isEmpty then ""
