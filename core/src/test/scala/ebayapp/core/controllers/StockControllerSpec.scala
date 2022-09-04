@@ -155,6 +155,40 @@ class StockControllerSpec extends ControllerSpec {
         verify(services(Retailer.Selfridges), Mockito.never()).cachedItems
       }
     }
+
+    "PUT /stock/:retailer/pause" should {
+      "pause stock monitor for a retailer" in {
+        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+
+        val controller = new StockController[IO](services.values.toList)
+
+        val request = Request[IO](uri = uri"/stock/scotts/pause", method = Method.PUT)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.NoContent, None)
+        verify(services(Retailer.Scotts)).pause
+        verify(services(Retailer.Scotts)).retailer
+        verifyNoMoreInteractions(services(Retailer.Scotts))
+        verifyNoInteractions(services(Retailer.Selfridges))
+      }
+    }
+
+    "PUT /stock/:retailer/resume" should {
+      "resume stock monitor for a retailer" in {
+        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+
+        val controller = new StockController[IO](services.values.toList)
+
+        val request = Request[IO](uri = uri"/stock/scotts/resume", method = Method.PUT)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.NoContent, None)
+        verify(services(Retailer.Scotts)).resume
+        verify(services(Retailer.Scotts)).retailer
+        verifyNoMoreInteractions(services(Retailer.Scotts))
+        verifyNoInteractions(services(Retailer.Selfridges))
+      }
+    }
   }
 
   def mocks(retailers: Retailer*): Map[Retailer, StockService[IO]] =
@@ -162,6 +196,8 @@ class StockControllerSpec extends ControllerSpec {
       val svc = mock[StockService[IO]]
       val item = ResellableItemBuilder.clothing(s"${r.name} item", retailer = r, datePosted = ts)
       when(svc.retailer).thenReturn(r)
+      when(svc.pause).thenReturn(IO.unit)
+      when(svc.resume).thenReturn(IO.unit)
       when(svc.cachedItems).thenReturn(IO.pure(List(item)))
       r -> svc
     }.toMap
