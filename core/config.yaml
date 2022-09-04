@@ -106,10 +106,11 @@ data:
     }
 
     harvey-nichols {
-      base-uri: "https://fs2-proxy.herokuapp.com"
+      base-uri: "https://proxy-kirill5k.cloud.okteto.net"
       delay-between-individual-requests: 15s
       headers {
         "X-Reroute-To": "https://www.harveynichols.com"
+        "X-Reload-On-403": "true"
         "Accept": "application/json, text/javascript, */*; q=0.01"
         "Cache-Control": "no-cache"
         "Connection": "keep-alive"
@@ -147,7 +148,7 @@ data:
       nvidia {
         monitoring-frequency: 1m
         monitoring-requests: [
-          {search-criteria: {query: "geforce", category: "GPU", exclude-filters: ["GTX 1650"]}, monitor-stock-change: true, monitor-price-change: true}
+          {search-criteria: {query: "geforce", category: "GPU", exclude-filters: ["GTX 1650", "GTX 1660"]}, monitor-stock-change: true, monitor-price-change: true}
         ]
       }
 
@@ -159,7 +160,7 @@ data:
       }
 
       tessuti {
-        delay-between-requests: 20s
+        delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
@@ -175,7 +176,7 @@ data:
       }
 
       scotts {
-        delay-between-requests: 15s
+        delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani EA7", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
@@ -187,7 +188,7 @@ data:
       }
 
       jdsports {
-        delay-between-requests: 10s
+        delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani EA7", min-discount: 45}, monitor-stock-change: false, monitor-price-change: true}
@@ -199,7 +200,7 @@ data:
       }
 
       selfridges {
-        delay-between-requests: 10s
+        delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "stone-island", min-discount: 39}, monitor-stock-change: false, monitor-price-change: true}
@@ -214,12 +215,11 @@ data:
       }
 
       harvey-nichols {
-        delay-between-requests: 10s
+        delay-between-requests: 2m
         monitoring-frequency: 12m
         monitoring-requests: [
           {search-criteria: {query: "gucci", min-discount: 24}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "off-white", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "palm-angels", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
