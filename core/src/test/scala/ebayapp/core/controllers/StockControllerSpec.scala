@@ -7,6 +7,7 @@ import ebayapp.core.services.StockService
 import ebayapp.kernel.ControllerSpec
 import org.http4s.implicits.*
 import org.http4s.*
+import org.mockito.Mockito
 
 import java.time.Instant
 
@@ -20,7 +21,7 @@ class StockControllerSpec extends ControllerSpec {
       "return all items from currently tracked stock" in {
         val services = mocks(Retailer.Scotts, Retailer.Selfridges)
 
-        val controller = new StockController[IO](services)
+        val controller = new StockController[IO](services.values.toList)
 
         val request = Request[IO](uri = uri"/stock", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
@@ -84,7 +85,7 @@ class StockControllerSpec extends ControllerSpec {
              |]""".stripMargin
 
         verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
-        services.foreach { svc =>
+        services.foreach { (_, svc) =>
           verify(svc).cachedItems
         }
       }
@@ -100,10 +101,19 @@ class StockControllerSpec extends ControllerSpec {
         verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"unrecognized retailer foo"}"""))
       }
 
+      "return error when retailer is not monitored" in {
+        val controller = new StockController[IO](Nil)
+
+        val request = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
+        val response = controller.routes.orNotFound.run(request)
+
+        verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"Scotts is not being monitored"}"""))
+      }
+
       "return items for a specific retailer" in {
         val services = mocks(Retailer.Scotts, Retailer.Selfridges)
 
-        val controller = new StockController[IO](services)
+        val controller = new StockController[IO](services.values.toList)
 
         val request = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
@@ -140,19 +150,19 @@ class StockControllerSpec extends ControllerSpec {
              |]""".stripMargin
 
         verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
-        services.foreach { svc =>
-          verify(svc).retailer
-        }
+        verify(services(Retailer.Scotts)).retailer
+        verify(services(Retailer.Scotts)).cachedItems
+        verify(services(Retailer.Selfridges), Mockito.never()).cachedItems
       }
     }
   }
 
-  def mocks(retailers: Retailer*): List[StockService[IO]] =
-    retailers.toList.map { r =>
+  def mocks(retailers: Retailer*): Map[Retailer, StockService[IO]] =
+    retailers.map { r =>
       val svc = mock[StockService[IO]]
       val item = ResellableItemBuilder.clothing(s"${r.name} item", retailer = r, datePosted = ts)
       when(svc.retailer).thenReturn(r)
       when(svc.cachedItems).thenReturn(IO.pure(List(item)))
-      svc
-    }
+      r -> svc
+    }.toMap
 }

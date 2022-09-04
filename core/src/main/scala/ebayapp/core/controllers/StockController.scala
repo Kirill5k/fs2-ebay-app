@@ -49,13 +49,15 @@ final private[controllers] class StockController[F[_]](
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemView]])
     .serverLogic { retailer =>
-      F
-        .fromEither(Retailer.from(retailer))
-        .map(r => stockServices.filter(_.retailer == r))
-        .flatMap(_.traverse(_.cachedItems))
-        .map(_.flatten.map(ResellableItemView.from).asRight[ErrorResponse])
+      serviceByRetailer(retailer)
+        .flatMap(_.cachedItems)
+        .map(_.map(ResellableItemView.from).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
+
+  private def serviceByRetailer(retailer: String): F[StockService[F]] =
+    F.fromEither(Retailer.from(retailer))
+      .flatMap(r => F.fromOption(stockServices.find(_.retailer == r), AppError.Invalid(s"$r is not being monitored")))
 
   override def routes: HttpRoutes[F] =
     Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getByRetailer))
