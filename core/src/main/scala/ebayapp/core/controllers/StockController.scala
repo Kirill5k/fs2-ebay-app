@@ -16,6 +16,7 @@ import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
 import ebayapp.kernel.errors.AppError
 import org.http4s.HttpRoutes
+import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
@@ -55,12 +56,34 @@ final private[controllers] class StockController[F[_]](
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
+  private val pauseRetailer = endpoint.put
+    .in(byRetailer / "pause")
+    .errorOut(errorResponse)
+    .out(statusCode(StatusCode.NoContent))
+    .serverLogic { retailer =>
+      serviceByRetailer(retailer)
+        .flatMap(_.pause)
+        .map(_.asRight[ErrorResponse])
+        .handleError(ErrorResponse.from(_).asLeft)
+    }
+
+  private val resumeRetailer = endpoint.put
+    .in(byRetailer / "resume")
+    .errorOut(errorResponse)
+    .out(statusCode(StatusCode.NoContent))
+    .serverLogic { retailer =>
+      serviceByRetailer(retailer)
+        .flatMap(_.resume)
+        .map(_.asRight[ErrorResponse])
+        .handleError(ErrorResponse.from(_).asLeft)
+    }
+
   private def serviceByRetailer(retailer: String): F[StockService[F]] =
     F.fromEither(Retailer.from(retailer))
       .flatMap(r => F.fromOption(stockServices.find(_.retailer == r), AppError.Invalid(s"$r is not being monitored")))
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getByRetailer))
+    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getByRetailer, pauseRetailer, resumeRetailer))
 }
 
 object StockController:
