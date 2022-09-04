@@ -14,131 +14,135 @@ class StockControllerSpec extends ControllerSpec {
 
   val ts = Instant.now
 
-  "A StockController" should {
+  "A StockController" when {
 
-    "return all items from currently tracked stock" in {
-      val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+    "GET /stock" should {
+      "return all items from currently tracked stock" in {
+        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
 
-      val controller = new StockController[IO](services)
+        val controller = new StockController[IO](services)
 
-      val request = Request[IO](uri = uri"/stock", method = Method.GET)
-      val response = controller.routes.orNotFound.run(request)
+        val request = Request[IO](uri = uri"/stock", method = Method.GET)
+        val response = controller.routes.orNotFound.run(request)
 
-      val expectedResponse =
-        s"""[
-          |  {
-          |    "kind" : "clothing",
-          |    "itemDetails" : {
-          |      "name" : "scotts item",
-          |      "brand" : "Foo-bar",
-          |      "size" : "XXL"
-          |    },
-          |    "listingDetails" : {
-          |      "url" : "http://cex.com/scottsitem",
-          |      "title" : "scotts item",
-          |      "category" : null,
-          |      "shortDescription" : null,
-          |      "description" : null,
-          |      "image" : null,
-          |      "condition" : "USED",
-          |      "datePosted" : "${ts}",
-          |      "seller" : "SCOTTS",
-          |      "properties" : {}
-          |    },
-          |    "price" : {
-          |      "buy" : 100.0,
-          |      "discount" : 50,
-          |      "quantityAvailable" : 1,
-          |      "sell" : null,
-          |      "credit" : null
-          |    }
-          |  },
-          |  {
-          |    "kind" : "clothing",
-          |    "itemDetails" : {
-          |      "name" : "selfridges item",
-          |      "brand" : "Foo-bar",
-          |      "size" : "XXL"
-          |    },
-          |    "listingDetails" : {
-          |      "url" : "http://cex.com/selfridgesitem",
-          |      "title" : "selfridges item",
-          |      "category" : null,
-          |      "shortDescription" : null,
-          |      "description" : null,
-          |      "image" : null,
-          |      "condition" : "USED",
-          |      "datePosted" : "${ts}",
-          |      "seller" : "SELFRIDGES",
-          |      "properties" : {}
-          |    },
-          |    "price" : {
-          |      "buy" : 100.0,
-          |      "discount" : 50,
-          |      "quantityAvailable" : 1,
-          |      "sell" : null,
-          |      "credit" : null
-          |    }
-          |  }
-          |]""".stripMargin
+        val expectedResponse =
+          s"""[
+             |  {
+             |    "kind" : "clothing",
+             |    "itemDetails" : {
+             |      "name" : "scotts item",
+             |      "brand" : "Foo-bar",
+             |      "size" : "XXL"
+             |    },
+             |    "listingDetails" : {
+             |      "url" : "http://cex.com/scottsitem",
+             |      "title" : "scotts item",
+             |      "category" : null,
+             |      "shortDescription" : null,
+             |      "description" : null,
+             |      "image" : null,
+             |      "condition" : "USED",
+             |      "datePosted" : "${ts}",
+             |      "seller" : "SCOTTS",
+             |      "properties" : {}
+             |    },
+             |    "price" : {
+             |      "buy" : 100.0,
+             |      "discount" : 50,
+             |      "quantityAvailable" : 1,
+             |      "sell" : null,
+             |      "credit" : null
+             |    }
+             |  },
+             |  {
+             |    "kind" : "clothing",
+             |    "itemDetails" : {
+             |      "name" : "selfridges item",
+             |      "brand" : "Foo-bar",
+             |      "size" : "XXL"
+             |    },
+             |    "listingDetails" : {
+             |      "url" : "http://cex.com/selfridgesitem",
+             |      "title" : "selfridges item",
+             |      "category" : null,
+             |      "shortDescription" : null,
+             |      "description" : null,
+             |      "image" : null,
+             |      "condition" : "USED",
+             |      "datePosted" : "${ts}",
+             |      "seller" : "SELFRIDGES",
+             |      "properties" : {}
+             |    },
+             |    "price" : {
+             |      "buy" : 100.0,
+             |      "discount" : 50,
+             |      "quantityAvailable" : 1,
+             |      "sell" : null,
+             |      "credit" : null
+             |    }
+             |  }
+             |]""".stripMargin
 
-      verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
-      services.foreach { svc =>
-        verify(svc).cachedItems
+        verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
+        services.foreach { svc =>
+          verify(svc).cachedItems
+        }
       }
     }
 
-    "return error when provided unrecognised retailer" in {
-      val controller = new StockController[IO](Nil)
+    "GET /stock/:retailer" should {
+      "return error when provided unrecognised retailer" in {
+        val controller = new StockController[IO](Nil)
 
-      val request = Request[IO](uri = uri"/stock?retailer=foo", method = Method.GET)
-      val response = controller.routes.orNotFound.run(request)
+        val request = Request[IO](uri = uri"/stock/foo", method = Method.GET)
+        val response = controller.routes.orNotFound.run(request)
 
-      verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"unrecognized retailer foo"}"""))
-    }
+        verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"unrecognized retailer foo"}"""))
+      }
 
-    "return items for a specific retailer" in {
-      val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+      "return items for a specific retailer" in {
+        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
 
-      val controller = new StockController[IO](services)
+        val controller = new StockController[IO](services)
 
-      val request = Request[IO](uri = uri"/stock?retailer=scotts", method = Method.GET)
-      val response = controller.routes.orNotFound.run(request)
+        val request = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
+        val response = controller.routes.orNotFound.run(request)
 
-      val expectedResponse =
-        s"""[
-           |  {
-           |    "kind" : "clothing",
-           |    "itemDetails" : {
-           |      "name" : "scotts item",
-           |      "brand" : "Foo-bar",
-           |      "size" : "XXL"
-           |    },
-           |    "listingDetails" : {
-           |      "url" : "http://cex.com/scottsitem",
-           |      "title" : "scotts item",
-           |      "category" : null,
-           |      "shortDescription" : null,
-           |      "description" : null,
-           |      "image" : null,
-           |      "condition" : "USED",
-           |      "datePosted" : "${ts}",
-           |      "seller" : "SCOTTS",
-           |      "properties" : {}
-           |    },
-           |    "price" : {
-           |      "buy" : 100.0,
-           |      "discount" : 50,
-           |      "quantityAvailable" : 1,
-           |      "sell" : null,
-           |      "credit" : null
-           |    }
-           |  }
-           |]""".stripMargin
+        val expectedResponse =
+          s"""[
+             |  {
+             |    "kind" : "clothing",
+             |    "itemDetails" : {
+             |      "name" : "scotts item",
+             |      "brand" : "Foo-bar",
+             |      "size" : "XXL"
+             |    },
+             |    "listingDetails" : {
+             |      "url" : "http://cex.com/scottsitem",
+             |      "title" : "scotts item",
+             |      "category" : null,
+             |      "shortDescription" : null,
+             |      "description" : null,
+             |      "image" : null,
+             |      "condition" : "USED",
+             |      "datePosted" : "${ts}",
+             |      "seller" : "SCOTTS",
+             |      "properties" : {}
+             |    },
+             |    "price" : {
+             |      "buy" : 100.0,
+             |      "discount" : 50,
+             |      "quantityAvailable" : 1,
+             |      "sell" : null,
+             |      "credit" : null
+             |    }
+             |  }
+             |]""".stripMargin
 
-      verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
-      services.foreach { svc =>
-        verify(svc).retailer
+        verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
+        services.foreach { svc =>
+          verify(svc).retailer
+        }
       }
     }
   }

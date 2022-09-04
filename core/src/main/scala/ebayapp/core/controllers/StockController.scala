@@ -24,35 +24,41 @@ import java.time.Instant
 final private[controllers] class StockController[F[_]](
     private val stockServices: List[StockService[F]]
 )(using
-  F: Async[F]
+    F: Async[F]
 ) extends Controller[F] {
 
-  given Schema[ItemKind] = Schema.string
+  given Schema[ItemKind]    = Schema.string
   given Schema[ItemDetails] = Schema.string
 
-  private val searchQueryParams =
-    query[Option[String]]("retailer")
-
-  private val basePath = "stock"
+  private val basePath   = "stock"
+  private val byRetailer = basePath / path[String]
 
   private val getAll = endpoint.get
     .in(basePath)
-    .in(searchQueryParams)
+    .errorOut(errorResponse)
+    .out(jsonBody[List[ResellableItemView]])
+    .serverLogic { _ =>
+      stockServices
+        .traverse(_.cachedItems)
+        .map(_.flatten.map(ResellableItemView.from).asRight[ErrorResponse])
+        .handleError(ErrorResponse.from(_).asLeft)
+    }
+
+  private val getByRetailer = endpoint.get
+    .in(byRetailer)
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemView]])
     .serverLogic { retailer =>
-      val services = retailer match
-        case None => F.pure(stockServices)
-        case Some(value) => F.fromEither(Retailer.from(value)).map(r => stockServices.filter(_.retailer == r))
-
-      services
+      F
+        .fromEither(Retailer.from(retailer))
+        .map(r => stockServices.filter(_.retailer == r))
         .flatMap(_.traverse(_.cachedItems))
         .map(_.flatten.map(ResellableItemView.from).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll))
+    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getByRetailer))
 }
 
 object StockController:

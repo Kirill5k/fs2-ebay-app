@@ -218,11 +218,11 @@ data:
         delay-between-requests: 2m
         monitoring-frequency: 12m
         monitoring-requests: [
-          {search-criteria: {query: "gucci", min-discount: 24}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "off-white", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "gucci", min-discount: 24}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "off-white", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "boss", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "emporio armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
     
