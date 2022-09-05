@@ -15,11 +15,11 @@ class AppConfigSpec extends CatsSpec {
 
       conf.mongo.dbName mustBe "ebay-app"
       conf.server.host mustBe "0.0.0.0"
-      conf.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
-      conf.selfridges.headers mustBe Map("api-key" -> "key")
-      conf.nvidia.proxied mustBe Some(true)
-      conf.harveyNichols.baseUri mustBe "https://www.harveynichols.com"
-      conf.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
+      conf.retailer.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
+      conf.retailer.selfridges.headers mustBe Map("api-key" -> "key")
+      conf.retailer.nvidia.proxied mustBe Some(true)
+      conf.retailer.harveyNichols.baseUri mustBe "https://www.harveynichols.com"
+      conf.retailer.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
 
       val geforceMonReq = StockMonitorRequest(SearchCriteria("geforce", Some("GPU"), excludeFilters = Some(List("GTX 1650"))), true, true)
       conf.stockMonitor must contain (Retailer.Nvidia -> StockMonitorConfig(5.minutes, List(geforceMonReq)))

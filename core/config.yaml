@@ -8,126 +8,17 @@ data:
       port: ${?PORT}
     }
 
-    client-proxy {
-      host: "140.227.211.47"
-      port: 8080
+    client {
+      connect-timeout: 2m
+      proxy-host: "140.227.211.47"
+      proxy-port: 8080
     }
 
     mongo {
       connection-uri: "mongodb+srv://"${?MONGO_USER}":"${?MONGO_PASSWORD}"@"${?MONGO_HOST}"/ebay-app"
       db-name: "ebay-app"
     }
-
-    cex {
-      base-uri: "https://fs2-proxy.herokuapp.com"
-      cache {
-        expiration: 24h
-        validation-period: 1h
-      }
-      headers {
-        "X-Reroute-To": "https://wss2.cex.uk.webuy.io"
-        "X-Reload-On-403": "true"
-      }
-    }
-
-    ebay {
-      base-uri: "https://api.ebay.com"
-      credentials: [
-        {client-id: ${?EBAY_CLIENT_ID}, client-secret: ${?EBAY_CLIENT_SECRET}}
-        {client-id: ${?EBAY_CLIENT_ID_2}, client-secret: ${?EBAY_CLIENT_SECRET_2}}
-        {client-id: ${?EBAY_CLIENT_ID_2}, client-secret: ${?EBAY_CLIENT_SECRET_3}}
-        {client-id: ${?EBAY_CLIENT_ID_4}, client-secret: ${?EBAY_CLIENT_SECRET_4}}
-      ]
-      search {
-        min-feedback-score: 5
-        min-feedback-percentage: 92
-        max-listing-duration: 20m
-      }
-      headers: {}
-    }
-
-    selfridges {
-      base-uri: "https://fs2-proxy.herokuapp.com"
-      delay-between-individual-requests: 2s
-      headers: {
-        "user-agent": "PostmanRuntime/7.28.3"
-        "referer": "https://www.selfridges.com"
-        "api-key": ${?SELFRIDGES_API_KEY}
-        "X-Reload-On-403": "true"
-        "X-Reroute-To": "https://www.selfridges.com"
-      }
-    }
-
-    argos {
-      base-uri: "https://www.argos.co.uk"
-      proxied: true
-      headers: {}
-    }
-
-    jdsports {
-      base-uri: "https://fs2-proxy.herokuapp.com"
-      headers {
-        "X-Reroute-To": "https://www.jdsports.co.uk"
-        "X-Reload-On-403": "true"
-      }
-      delay-between-individual-requests: 2s
-    }
-
-    scotts {
-      base-uri: "https://fs2-proxy.herokuapp.com"
-      headers {
-        "X-Reroute-To": "https://www.scottsmenswear.com"
-        "X-Reload-On-403": "true"
-      }
-      delay-between-individual-requests: 2s
-    }
-
-    tessuti {
-      base-uri: "https://fs2-proxy.herokuapp.com"
-      headers {
-        "X-Reroute-To": "https://www.tessuti.co.uk"
-        "X-Reload-On-403": "true"
-      }
-      delay-between-individual-requests: 2s
-    }
-
-    nvidia {
-      base-uri: "https://api.nvidia.partners"
-      proxied: true
-      headers: {}
-    }
-
-    scan {
-      base-uri: "https://www.scan.co.uk"
-      proxied: true
-      headers {
-        "X-Forwarded-For": "92.7.76.29"
-      }
-    }
-
-    harvey-nichols {
-      base-uri: "https://proxy-kirill5k.cloud.okteto.net"
-      delay-between-individual-requests: 15s
-      headers {
-        "X-Reroute-To": "https://www.harveynichols.com"
-        "X-Reload-On-403": "true"
-        "Accept": "application/json, text/javascript, */*; q=0.01"
-        "Cache-Control": "no-cache"
-        "Connection": "keep-alive"
-        "x-requested-with": "XMLHttpRequest"
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36 OPR/82.0.4227.33"
-        "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8"
-        "Accept-Encoding": "gzip, deflate, br"
-      }
-    }
-
-    mainline-menswear {
-      base-uri: "https://fs2-proxy.herokuapp.com"
-      headers {
-        "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
-      }
-    }
-
+    
     telegram {
       base-uri: "https://api.telegram.org"
       bot-key: ${?TELEGRAM_BOT_API_KEY}
@@ -135,6 +26,118 @@ data:
       secondary-channel-id: ${?TELEGRAM_SECONDARY_CHANNEL_ID}
       alerts-channel-id: ${?TELEGRAM_ALERTS_CHANNEL_ID}
       headers: {}
+    }
+    
+    retailer {
+      cex {
+        base-uri: "https://fs2-proxy.herokuapp.com"
+        cache {
+          expiration: 24h
+          validation-period: 1h
+        }
+        headers {
+          "X-Reroute-To": "https://wss2.cex.uk.webuy.io"
+          "X-Reload-On-403": "true"
+        }
+      }
+  
+      ebay {
+        base-uri: "https://api.ebay.com"
+        credentials: [
+          {client-id: ${?EBAY_CLIENT_ID}, client-secret: ${?EBAY_CLIENT_SECRET}}
+          {client-id: ${?EBAY_CLIENT_ID_2}, client-secret: ${?EBAY_CLIENT_SECRET_2}}
+          {client-id: ${?EBAY_CLIENT_ID_2}, client-secret: ${?EBAY_CLIENT_SECRET_3}}
+          {client-id: ${?EBAY_CLIENT_ID_4}, client-secret: ${?EBAY_CLIENT_SECRET_4}}
+        ]
+        search {
+          min-feedback-score: 5
+          min-feedback-percentage: 92
+          max-listing-duration: 20m
+        }
+        headers: {}
+      }
+  
+      selfridges {
+        base-uri: "https://fs2-proxy.herokuapp.com"
+        delay-between-individual-requests: 2s
+        headers: {
+          "user-agent": "PostmanRuntime/7.28.3"
+          "referer": "https://www.selfridges.com"
+          "api-key": ${?SELFRIDGES_API_KEY}
+          "X-Reload-On-403": "true"
+          "X-Reroute-To": "https://www.selfridges.com"
+        }
+      }
+  
+      argos {
+        base-uri: "https://www.argos.co.uk"
+        proxied: true
+        headers: {}
+      }
+  
+      jdsports {
+        base-uri: "https://fs2-proxy.herokuapp.com"
+        headers {
+          "X-Reroute-To": "https://www.jdsports.co.uk"
+          "X-Reload-On-403": "true"
+        }
+        delay-between-individual-requests: 2s
+      }
+  
+      scotts {
+        base-uri: "https://fs2-proxy.herokuapp.com"
+        headers {
+          "X-Reroute-To": "https://www.scottsmenswear.com"
+          "X-Reload-On-403": "true"
+        }
+        delay-between-individual-requests: 2s
+      }
+  
+      tessuti {
+        base-uri: "https://fs2-proxy.herokuapp.com"
+        headers {
+          "X-Reroute-To": "https://www.tessuti.co.uk"
+          "X-Reload-On-403": "true"
+        }
+        delay-between-individual-requests: 2s
+      }
+  
+      nvidia {
+        base-uri: "https://api.nvidia.partners"
+        proxied: true
+        headers: {}
+      }
+  
+      scan {
+        base-uri: "https://www.scan.co.uk"
+        proxied: true
+        headers {
+          "X-Forwarded-For": "92.7.76.29"
+        }
+      }
+  
+      harvey-nichols {
+        base-uri: "https://proxy-kirill5k.cloud.okteto.net"
+        delay-between-individual-requests: 15s
+        headers {
+          "X-Reroute-To": "https://www.harveynichols.com"
+          "X-Reload-On-403": "true"
+          "Accept": "application/json, text/javascript, */*; q=0.01"
+          "Cache-Control": "no-cache"
+          "Connection": "keep-alive"
+          "x-requested-with": "XMLHttpRequest"
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36 OPR/82.0.4227.33"
+          "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8"
+          "Accept-Encoding": "gzip, deflate, br"
+        }
+      }
+  
+      mainline-menswear {
+        base-uri: "https://fs2-proxy.herokuapp.com"
+        headers {
+          "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
+        }
+      }
     }
 
     stock-monitor {

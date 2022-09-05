@@ -19,6 +19,7 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 object config {
 
   final case class ClientConfig(
+      connectTimeout: FiniteDuration,
       proxyHost: Option[String],
       proxyPort: Option[Int]
   ) derives ConfigReader
@@ -85,12 +86,8 @@ object config {
       alertsChannelId: String
   ) derives ConfigReader
 
-  final case class AppConfig(
-      server: ServerConfig,
-      client: ClientConfig,
-      mongo: MongoConfig,
+  final case class RetailerConfig(
       ebay: EbayConfig,
-      telegram: TelegramConfig,
       selfridges: GenericRetailerConfig,
       argos: GenericRetailerConfig,
       jdsports: GenericRetailerConfig,
@@ -100,7 +97,15 @@ object config {
       mainlineMenswear: GenericRetailerConfig,
       nvidia: GenericRetailerConfig,
       scan: GenericRetailerConfig,
-      cex: GenericRetailerConfig,
+      cex: GenericRetailerConfig
+  ) derives ConfigReader
+
+  final case class AppConfig(
+      server: ServerConfig,
+      client: ClientConfig,
+      mongo: MongoConfig,
+      telegram: TelegramConfig,
+      retailer: RetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]
   ) derives ConfigReader
