@@ -18,9 +18,9 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 
 object config {
 
-  final case class ClientProxyConfig(
-      host: Option[String],
-      port: Option[Int]
+  final case class ClientConfig(
+      proxyHost: Option[String],
+      proxyPort: Option[Int]
   ) derives ConfigReader
 
   final case class EbayCredentials(
@@ -87,7 +87,7 @@ object config {
 
   final case class AppConfig(
       server: ServerConfig,
-      clientProxy: ClientProxyConfig,
+      client: ClientConfig,
       mongo: MongoConfig,
       ebay: EbayConfig,
       telegram: TelegramConfig,
