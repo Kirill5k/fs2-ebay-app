@@ -80,7 +80,9 @@ final private[controllers] class StockController[F[_]](
 
   extension (items: List[ResellableItem])
     def toView: List[ResellableItemView] =
-      items.sortBy(_.buyPrice.discount.getOrElse(0))(Ordering[Int].reverse).map(ResellableItemView.from)
+      items
+        .sortBy(i => (i.buyPrice.discount.getOrElse(0), i.itemDetails.fullName))(Ordering[(Int, Option[String])].reverse)
+        .map(ResellableItemView.from)
 
   private def serviceByRetailer(retailer: String): F[StockService[F]] =
     F.fromEither(Retailer.from(retailer))

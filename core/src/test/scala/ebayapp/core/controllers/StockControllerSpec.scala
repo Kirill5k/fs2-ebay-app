@@ -31,34 +31,6 @@ class StockControllerSpec extends ControllerSpec {
              |  {
              |    "kind" : "clothing",
              |    "itemDetails" : {
-             |      "name" : "scotts item",
-             |      "brand" : "Foo-bar",
-             |      "size" : "XXL"
-             |    },
-             |    "listingDetails" : {
-             |      "url" : "http://cex.com/scottsitem",
-             |      "title" : "scotts item",
-             |      "category" : null,
-             |      "shortDescription" : null,
-             |      "description" : null,
-             |      "image" : null,
-             |      "condition" : "USED",
-             |      "datePosted" : "${ts}",
-             |      "seller" : "SCOTTS",
-             |      "properties" : {}
-             |    },
-             |    "price" : {
-             |      "buy" : 100.0,
-             |      "discount" : 50,
-             |      "quantityAvailable" : 1,
-             |      "sell" : null,
-             |      "credit" : null
-             |    },
-             |    "foundWith" : "item"
-             |  },
-             |  {
-             |    "kind" : "clothing",
-             |    "itemDetails" : {
              |      "name" : "selfridges item",
              |      "brand" : "Foo-bar",
              |      "size" : "XXL"
@@ -73,6 +45,34 @@ class StockControllerSpec extends ControllerSpec {
              |      "condition" : "USED",
              |      "datePosted" : "${ts}",
              |      "seller" : "SELFRIDGES",
+             |      "properties" : {}
+             |    },
+             |    "price" : {
+             |      "buy" : 100.0,
+             |      "discount" : 50,
+             |      "quantityAvailable" : 1,
+             |      "sell" : null,
+             |      "credit" : null
+             |    },
+             |    "foundWith" : "item"
+             |  },
+             |  {
+             |    "kind" : "clothing",
+             |    "itemDetails" : {
+             |      "name" : "scotts item",
+             |      "brand" : "Foo-bar",
+             |      "size" : "XXL"
+             |    },
+             |    "listingDetails" : {
+             |      "url" : "http://cex.com/scottsitem",
+             |      "title" : "scotts item",
+             |      "category" : null,
+             |      "shortDescription" : null,
+             |      "description" : null,
+             |      "image" : null,
+             |      "condition" : "USED",
+             |      "datePosted" : "${ts}",
+             |      "seller" : "SCOTTS",
              |      "properties" : {}
              |    },
              |    "price" : {
