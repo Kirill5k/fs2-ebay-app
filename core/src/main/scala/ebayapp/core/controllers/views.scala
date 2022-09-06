@@ -48,7 +48,8 @@ object views {
       kind: ItemKind,
       itemDetails: ItemDetails,
       listingDetails: ListingDetails,
-      price: ItemPrice
+      price: ItemPrice,
+      foundWith: String
   ) derives Codec.AsObject
 
   object ResellableItemView {
@@ -63,7 +64,8 @@ object views {
           item.buyPrice.quantityAvailable,
           item.sellPrice.map(_.cash),
           item.sellPrice.map(_.credit)
-        )
+        ),
+        item.foundWith.query
       )
   }
 }

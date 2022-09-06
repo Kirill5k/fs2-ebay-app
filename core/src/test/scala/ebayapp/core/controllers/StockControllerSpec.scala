@@ -53,7 +53,8 @@ class StockControllerSpec extends ControllerSpec {
              |      "quantityAvailable" : 1,
              |      "sell" : null,
              |      "credit" : null
-             |    }
+             |    },
+             |    "foundWith" : "item"
              |  },
              |  {
              |    "kind" : "clothing",
@@ -80,7 +81,8 @@ class StockControllerSpec extends ControllerSpec {
              |      "quantityAvailable" : 1,
              |      "sell" : null,
              |      "credit" : null
-             |    }
+             |    },
+             |    "foundWith" : "item"
              |  }
              |]""".stripMargin
 
@@ -145,7 +147,8 @@ class StockControllerSpec extends ControllerSpec {
              |      "quantityAvailable" : 1,
              |      "sell" : null,
              |      "credit" : null
-             |    }
+             |    },
+             |    "foundWith" : "item"
              |  }
              |]""".stripMargin
 
