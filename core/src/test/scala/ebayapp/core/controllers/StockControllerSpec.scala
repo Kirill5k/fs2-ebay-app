@@ -91,6 +91,52 @@ class StockControllerSpec extends ControllerSpec {
           verify(svc).cachedItems
         }
       }
+
+      "filter items by query" in {
+        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+
+        val controller = new StockController[IO](services.values.toList)
+
+        val request = Request[IO](uri = uri"/stock?query=selfridges", method = Method.GET)
+        val response = controller.routes.orNotFound.run(request)
+
+        val expectedResponse =
+          s"""[
+             |  {
+             |    "kind" : "clothing",
+             |    "itemDetails" : {
+             |      "name" : "selfridges item",
+             |      "brand" : "Foo-bar",
+             |      "size" : "XXL"
+             |    },
+             |    "listingDetails" : {
+             |      "url" : "http://cex.com/selfridgesitem",
+             |      "title" : "selfridges item",
+             |      "category" : null,
+             |      "shortDescription" : null,
+             |      "description" : null,
+             |      "image" : null,
+             |      "condition" : "USED",
+             |      "datePosted" : "${ts}",
+             |      "seller" : "SELFRIDGES",
+             |      "properties" : {}
+             |    },
+             |    "price" : {
+             |      "buy" : 100.0,
+             |      "discount" : 50,
+             |      "quantityAvailable" : 1,
+             |      "sell" : null,
+             |      "credit" : null
+             |    },
+             |    "foundWith" : "item"
+             |  }
+             |]""".stripMargin
+
+        verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
+        services.foreach { (_, svc) =>
+          verify(svc).cachedItems
+        }
+      }
     }
 
     "GET /stock/:retailer" should {

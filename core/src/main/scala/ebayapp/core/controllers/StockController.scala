@@ -34,25 +34,30 @@ final private[controllers] class StockController[F[_]](
   private val basePath   = "stock"
   private val byRetailer = basePath / path[String]
 
+  private val searchQueryParams =
+    query[Option[String]]("query")
+
   private val getAll = endpoint.get
     .in(basePath)
+    .in(searchQueryParams)
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemView]])
-    .serverLogic { _ =>
+    .serverLogic { q =>
       stockServices
         .traverse(_.cachedItems)
-        .map(_.flatten.toView.asRight[ErrorResponse])
+        .map(_.flatten.toView(q).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
   private val getByRetailer = endpoint.get
     .in(byRetailer)
+    .in(searchQueryParams)
     .errorOut(errorResponse)
     .out(jsonBody[List[ResellableItemView]])
-    .serverLogic { retailer =>
+    .serverLogic { (retailer, q) =>
       serviceByRetailer(retailer)
         .flatMap(_.cachedItems)
-        .map(_.toView.asRight[ErrorResponse])
+        .map(_.toView(q).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
 
@@ -79,8 +84,9 @@ final private[controllers] class StockController[F[_]](
     }
 
   extension (items: List[ResellableItem])
-    def toView: List[ResellableItemView] =
+    def toView(q: Option[String]): List[ResellableItemView] =
       items
+        .filter(i => i.itemDetails.fullName.exists(_.contains(q.getOrElse(""))))
         .sortBy(i => (i.buyPrice.discount.getOrElse(0), i.itemDetails.fullName))(Ordering[(Int, Option[String])].reverse)
         .map(ResellableItemView.from)
 
