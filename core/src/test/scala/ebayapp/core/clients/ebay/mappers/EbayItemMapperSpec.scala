@@ -1,13 +1,15 @@
 package ebayapp.core.clients.ebay.mappers
 
-import cats.syntax.option._
-import ebayapp.core.clients.ebay.browse.responses._
+import cats.syntax.option.*
+import ebayapp.core.clients.ebay.browse.responses.*
 import ebayapp.core.domain.ItemDetails
-import ebayapp.core.domain.search.{ListingDetails, BuyPrice}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class EbayItemMapperSpec extends AnyWordSpec with Matchers {
+
+  val searchCriteria = SearchCriteria("search")
 
   val videoGameEbayItem = EbayItem(
     "item-1",
@@ -67,7 +69,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
   "EbayItemMapper" should {
 
     "transform to GameDetails" in {
-      val game = EbayItemMapper.gameDetailsMapper.toDomain(videoGameEbayItem)
+      val game = EbayItemMapper.gameDetailsMapper.toDomain(searchCriteria)(videoGameEbayItem)
 
       game.itemDetails mustBe ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))
 
@@ -97,7 +99,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     }
 
     "transform to GameDetails even if no shipping options" in {
-      val game = EbayItemMapper.gameDetailsMapper.toDomain(videoGameEbayItem.copy(shippingOptions = None))
+      val game = EbayItemMapper.gameDetailsMapper.toDomain(searchCriteria)(videoGameEbayItem.copy(shippingOptions = None))
 
       game.itemDetails mustBe(ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
 
@@ -127,7 +129,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     }
 
     "transform to PhoneDetails" in {
-      val phone = EbayItemMapper.phoneDetailsMapper.toDomain(mobilePhoneEbayItem)
+      val phone = EbayItemMapper.phoneDetailsMapper.toDomain(searchCriteria)(mobilePhoneEbayItem)
 
       phone.itemDetails mustBe ItemDetails.Phone(
         Some("Samsung"),

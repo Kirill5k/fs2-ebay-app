@@ -2,19 +2,20 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.{Retailer, SearchClient, SearchCriteria}
+import ebayapp.core.clients.{Retailer, SearchClient}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.clothing
+import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
-class SelfridgesSaleServiceSpec extends CatsSpec {
+class SelfridgesStockServiceSpec extends CatsSpec {
 
   val criteria = SearchCriteria("foo", minDiscount = Some(50), excludeFilters = Some(List("ignore-me", "SKIP-ME")))
   val config   = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
 
-  "A SelfridgesSaleService" should {
+  "A SelfridgesStockService" should {
 
     "return items with discount greater than min" in {
       val items = List(

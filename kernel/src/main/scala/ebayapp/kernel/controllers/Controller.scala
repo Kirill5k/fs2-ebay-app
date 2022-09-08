@@ -21,7 +21,7 @@ import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.util.Try
 
 trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
-
+  
   inline given instantCodec: PlainCodec[Instant] =
     Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
 

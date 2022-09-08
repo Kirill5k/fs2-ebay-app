@@ -4,8 +4,9 @@ import cats.effect.Sync
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.{Retailer, SearchCriteria}
+import ebayapp.core.clients.Retailer
 import ebayapp.core.domain.ItemKind
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.kernel.config.{MongoConfig, ServerConfig}
 import pureconfig.ConfigConvert.catchReadError
 import pureconfig.*
@@ -17,9 +18,10 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 
 object config {
 
-  final case class ClientProxyConfig(
-      host: Option[String],
-      port: Option[Int]
+  final case class ClientConfig(
+      connectTimeout: FiniteDuration,
+      proxyHost: Option[String],
+      proxyPort: Option[Int]
   ) derives ConfigReader
 
   final case class EbayCredentials(
@@ -72,7 +74,8 @@ object config {
       baseUri: String,
       headers: Map[String, String] = Map.empty,
       proxied: Option[Boolean] = None,
-      cache: Option[CacheConfig] = None
+      cache: Option[CacheConfig] = None,
+      delayBetweenIndividualRequests: Option[FiniteDuration] = None
   ) derives ConfigReader
 
   final case class TelegramConfig(
@@ -83,12 +86,8 @@ object config {
       alertsChannelId: String
   ) derives ConfigReader
 
-  final case class AppConfig(
-      server: ServerConfig,
-      clientProxy: ClientProxyConfig,
-      mongo: MongoConfig,
+  final case class RetailerConfig(
       ebay: EbayConfig,
-      telegram: TelegramConfig,
       selfridges: GenericRetailerConfig,
       argos: GenericRetailerConfig,
       jdsports: GenericRetailerConfig,
@@ -98,7 +97,15 @@ object config {
       mainlineMenswear: GenericRetailerConfig,
       nvidia: GenericRetailerConfig,
       scan: GenericRetailerConfig,
-      cex: GenericRetailerConfig,
+      cex: GenericRetailerConfig
+  ) derives ConfigReader
+
+  final case class AppConfig(
+      server: ServerConfig,
+      client: ClientConfig,
+      mongo: MongoConfig,
+      telegram: TelegramConfig,
+      retailer: RetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]
   ) derives ConfigReader

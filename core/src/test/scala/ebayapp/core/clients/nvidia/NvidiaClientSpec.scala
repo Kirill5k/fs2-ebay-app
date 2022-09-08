@@ -3,7 +3,7 @@ package ebayapp.core.clients.nvidia
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import ebayapp.core.MockLogger
-import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import sttp.client3.*

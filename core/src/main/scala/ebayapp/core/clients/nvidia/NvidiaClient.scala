@@ -2,21 +2,22 @@ package ebayapp.core.clients.nvidia
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.flatMap._
-import cats.syntax.functorFilter._
-import cats.syntax.apply._
-import cats.syntax.applicative._
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import cats.syntax.flatMap.*
+import cats.syntax.functorFilter.*
+import cats.syntax.apply.*
+import cats.syntax.applicative.*
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.circe.asJson
-import sttp.client3._
+import sttp.client3.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final private class LiveNvidiaClient[F[_]](
     private val config: GenericRetailerConfig,
@@ -38,7 +39,7 @@ final private class LiveNvidiaClient[F[_]](
       .flatMap { p =>
         Stream.emits(p.retailers.map(r => NvidiaItem(p.productTitle, p.imageURL, p.category, r)))
       }
-      .map(nvidiaGenericItemMapper.toDomain)
+      .map(nvidiaGenericItemMapper.toDomain(criteria))
 
   private def searchProducts(c: SearchCriteria): F[List[Product]] =
     dispatch {

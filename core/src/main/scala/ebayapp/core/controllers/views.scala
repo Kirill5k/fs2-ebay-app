@@ -38,30 +38,34 @@ object views {
 
   final case class ItemPrice(
       buy: BigDecimal,
+      discount: Option[Int],
       quantityAvailable: Int,
       sell: Option[BigDecimal],
       credit: Option[BigDecimal]
   ) derives Codec.AsObject
 
-  final case class ResellableItemResponse(
+  final case class ResellableItemView(
       kind: ItemKind,
       itemDetails: ItemDetails,
       listingDetails: ListingDetails,
-      price: ItemPrice
+      price: ItemPrice,
+      foundWith: String
   ) derives Codec.AsObject
 
-  object ResellableItemResponse {
-    def from(item: ResellableItem): ResellableItemResponse =
-      ResellableItemResponse(
+  object ResellableItemView {
+    def from(item: ResellableItem): ResellableItemView =
+      ResellableItemView(
         item.kind,
         item.itemDetails,
         item.listingDetails,
         ItemPrice(
           item.buyPrice.rrp,
+          item.buyPrice.discount,
           item.buyPrice.quantityAvailable,
           item.sellPrice.map(_.cash),
           item.sellPrice.map(_.credit)
-        )
+        ),
+        item.foundWith.query
       )
   }
 }

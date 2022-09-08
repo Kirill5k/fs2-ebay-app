@@ -3,7 +3,7 @@ package ebayapp.core.clients.scan
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.clients.scan.parsers.ScanItem
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
-import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
 
 import java.time.Instant
 
@@ -12,7 +12,7 @@ private[scan] object mappers {
   type ScanItemMapper = ItemMapper[ScanItem]
 
   val scanaGenericItemMapper: ScanItemMapper = new ScanItemMapper {
-    override def toDomain(item: ScanItem): ResellableItem =
+    override def toDomain(foundWith: SearchCriteria)(item: ScanItem): ResellableItem =
       ResellableItem.generic(
         ItemDetails.Generic(item.name),
         ListingDetails(
@@ -28,7 +28,8 @@ private[scan] object mappers {
           Map.empty[String, String]
         ),
         BuyPrice(1, BigDecimal(item.price)),
-        None
+        None,
+        foundWith
       )
   }
 }

@@ -25,16 +25,17 @@ final case class SearchParams(
     query: Option[String] = None
 )
 
-trait ResellableItemRepository[F[_]] {
+trait ResellableItemRepository[F[_]]:
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: ResellableItem): F[Unit]
   def saveAll(items: Seq[ResellableItem]): F[Unit]
   def search(params: SearchParams): F[List[ResellableItem]]
   def summaries(params: SearchParams): F[List[ItemSummary]]
-}
 
-final private class ResellableItemMongoRepository[F[_]: Async](
+final private class ResellableItemMongoRepository[F[_]](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
+)(using
+    F: Async[F]
 ) extends ResellableItemRepository[F] {
 
   private object Field:
@@ -57,8 +58,8 @@ final private class ResellableItemMongoRepository[F[_]: Async](
       .insertOne(ResellableItemEntityMapper.toEntity(item))
       .void
       .handleErrorWith {
-        case _: DuplicateKeyException                              => ().pure[F]
-        case e: MongoWriteException if e.getError.getCode == 11000 => ().pure[F]
+        case _: DuplicateKeyException                              => F.unit
+        case e: MongoWriteException if e.getError.getCode == 11000 => F.unit
         case e                                                     => e.raiseError[F, Unit]
       }
 
@@ -68,7 +69,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
   def search(params: SearchParams): F[List[ResellableItem]] =
     mongoCollection.find
       .sortByDesc(Field.DatePosted)
-      .filter(searchFilter(params))
+      .filter(params.toFilter)
       .limit(params.limit.getOrElse(Int.MaxValue))
       .all
       .map(_.map(ResellableItemEntityMapper.toDomain).toList)
@@ -77,7 +78,7 @@ final private class ResellableItemMongoRepository[F[_]: Async](
     mongoCollection
       .aggregateWithCodec[ItemSummary] {
         Aggregate
-          .matchBy(searchFilter(params))
+          .matchBy(params.toFilter)
           .sort(Sort.desc(Field.DatePosted))
           .limit(params.limit.getOrElse(Int.MaxValue))
           .project(videoGameSummaryProjection)
@@ -91,20 +92,19 @@ final private class ResellableItemMongoRepository[F[_]: Async](
     List(fromFilter, toFilter).flatten.foldLeft(Filter.empty)((acc, el) => acc && el)
   }
 
-  private def searchFilter(filters: SearchParams): Filter =
-    postedDateRangeSelector(filters.from, filters.to) &&
-      Filter.eq(Field.Kind, filters.kind) &&
-      filters.query.fold(Filter.empty)(Filter.text)
+  extension (sp: SearchParams)
+    def toFilter: Filter = postedDateRangeSelector(sp.from, sp.to) &&
+      Filter.eq(Field.Kind, sp.kind) &&
+      sp.query.fold(Filter.empty)(Filter.text)
 }
 
 object ResellableItemRepository:
-
   private val collectionName    = "items"
-  private val collectionOptions = CreateCollectionOptions().capped(true).sizeInBytes(268435456L)
+  private val collectionOptions = CreateCollectionOptions(capped = true, sizeInBytes = 268435456L)
 
-  def mongo[F[_]: Async](database: MongoDatabase[F]): F[ResellableItemRepository[F]] =
+  def mongo[F[_]](database: MongoDatabase[F])(using F: Async[F]): F[ResellableItemRepository[F]] =
     for
       collNames <- database.listCollectionNames
-      _    <- if (collNames.toSet.contains(collectionName)) ().pure[F] else database.createCollection(collectionName, collectionOptions)
-      coll <- database.getCollectionWithCodec[ResellableItemEntity](collectionName)
+      _         <- F.unlessA(collNames.toSet.contains(collectionName))(database.createCollection(collectionName, collectionOptions))
+      coll      <- database.getCollectionWithCodec[ResellableItemEntity](collectionName)
     yield new ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])

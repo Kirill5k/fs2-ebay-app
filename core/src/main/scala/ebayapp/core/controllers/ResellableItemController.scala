@@ -7,7 +7,7 @@ import cats.syntax.either.*
 import cats.syntax.functor.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.controllers.views.ErrorResponse
-import ebayapp.core.controllers.views.{ResellableItemResponse, ResellableItemsSummaryResponse}
+import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
@@ -23,9 +23,9 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     private val itemService: ResellableItemService[F]
 ) extends Controller[F] {
 
-  given Schema[ItemKind]    = Schema.string
+  given Schema[ItemKind] = Schema.string
   given Schema[ItemDetails] = Schema.string
-
+  
   private val searchQueryParams =
     query[Option[Int]]("limit")
       .and(query[Option[String]]("query"))
@@ -36,11 +36,11 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .in(basePath)
     .in(searchQueryParams)
     .errorOut(errorResponse)
-    .out(jsonBody[List[ResellableItemResponse]])
+    .out(jsonBody[List[ResellableItemView]])
     .serverLogic { (limit, query, from, to) =>
       itemService
         .search(SearchParams(itemKind, limit, from, to, query))
-        .map(_.map(ResellableItemResponse.from).asRight[ErrorResponse])
+        .map(_.map(ResellableItemView.from).asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
     }
 

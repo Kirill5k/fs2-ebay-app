@@ -1,10 +1,8 @@
 package ebayapp.monitor.repositories
 
 import cats.effect.Async
-import cats.syntax.applicative.*
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
-import cats.syntax.applicativeError.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
@@ -24,8 +22,10 @@ trait MonitorRepository[F[_]]:
   def getAllActive: F[List[Monitor]]
   def update(monitor: Monitor): F[Unit]
 
-final private class LiveMonitorRepository[F[_]: Async](
+final private class LiveMonitorRepository[F[_]](
     private val collection: MongoCollection[F, MonitorEntity]
+)(using
+    F: Async[F]
 ) extends MonitorRepository[F]:
 
   def save(monitor: CreateMonitor): F[Monitor] =
@@ -59,7 +59,7 @@ final private class LiveMonitorRepository[F[_]: Async](
       .flatMap(notFoundErrorIfNoMatches(monitor.id))
 
   private def notFoundErrorIfNoMatches(id: Monitor.Id)(matchCount: Long): F[Unit] =
-    if (matchCount == 0) AppError.NotFound(s"Monitor with id $id does not exist").raiseError[F, Unit] else ().pure[F]
+    F.raiseWhen(matchCount == 0)(AppError.NotFound(s"Monitor with id $id does not exist"))
 
 object MonitorRepository extends MongoJsonCodecs:
   private val collectionName = "monitors"

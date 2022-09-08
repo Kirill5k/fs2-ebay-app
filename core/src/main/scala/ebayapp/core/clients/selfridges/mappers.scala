@@ -3,7 +3,7 @@ package ebayapp.core.clients.selfridges
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.clients.selfridges.responses.{CatalogItem, ItemPrice, ItemStock}
 import ebayapp.core.domain.ItemDetails.Clothing
-import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 
 import java.time.Instant
@@ -20,12 +20,13 @@ private[selfridges] object mappers {
 
   inline def selfridgesClothingMapper: SelfridgesItemMapper = new SelfridgesItemMapper {
 
-    override def toDomain(si: SelfridgesItem): ResellableItem =
+    override def toDomain(foundWith: SearchCriteria)(si: SelfridgesItem): ResellableItem =
       ResellableItem.clothing(
         itemDetails(si.item, si.stock),
         listingDetails(si.item),
         buyPrice(si.item, si.stock, si.price),
-        None
+        None,
+        foundWith
       )
 
     private def itemDetails(item: CatalogItem, stock: ItemStock): ItemDetails.Clothing =

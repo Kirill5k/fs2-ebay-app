@@ -61,10 +61,12 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |},
           |"price":{
           |"buy":32.99,
+          |"discount":null,
           |"quantityAvailable":1,
           |"sell":100,
           |"credit":80
-          |}
+          |},
+          |"foundWith" : "item"
           |},{
           |"kind": "video-game",
           |"itemDetails":{
@@ -87,10 +89,12 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |},
           |"price":{
           |"buy":32.99,
+          |"discount":null,
           |"quantityAvailable":1,
           |"sell":null,
           |"credit":null
-          |}
+          |},
+          |"foundWith" : "item"
           |}]""".stripMargin
       verifyJsonResponse(response, Status.Ok, Some(expected))
       verify(service).search(searchFilters)

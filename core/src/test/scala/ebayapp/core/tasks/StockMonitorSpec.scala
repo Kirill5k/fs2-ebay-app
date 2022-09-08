@@ -6,7 +6,7 @@ import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 import fs2.Stream
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class StockMonitorSpec extends CatsSpec {
 

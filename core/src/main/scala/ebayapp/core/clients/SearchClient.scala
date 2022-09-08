@@ -1,22 +1,9 @@
 package ebayapp.core.clients
 
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.kernel.errors.AppError
-import ebayapp.core.domain.{ItemKind, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import fs2.Stream
-import pureconfig._
-import pureconfig.generic.derivation.default._
-
-final case class SearchCriteria(
-    query: String,
-    category: Option[String] = None,
-    itemKind: Option[ItemKind] = None,
-    minDiscount: Option[Int] = None,
-    excludeFilters: Option[List[String]] = None,
-    includeFilters: Option[List[String]] = None
-) derives ConfigReader {
-  val excludeFilterRegex: Option[String]  = excludeFilters.map(_.mkString("(?i).*(", "|", ").*"))
-  val includeFiltersRegex: Option[String] = includeFilters.map(_.mkString("(?i).*(", "|", ").*"))
-}
 
 enum Retailer(val name: String):
   case Cex              extends Retailer("cex")
@@ -32,8 +19,11 @@ enum Retailer(val name: String):
   case MainlineMenswear extends Retailer("mainline-menswear")
 
 object Retailer:
+  def from(name: String): Either[AppError, Retailer] =
+    Retailer.values.find(_.name.equalsIgnoreCase(name)).toRight(AppError.Invalid(s"unrecognized retailer $name"))
+
   def fromUnsafe(name: String): Retailer =
-    Retailer.values.find(_.name == name).getOrElse(throw AppError.Critical(s"unrecognized retailer $name"))
+    from(name).fold(throw _, identity)
 
 trait SearchClient[F[_]]:
   def search(criteria: SearchCriteria): Stream[F, ResellableItem]

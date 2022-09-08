@@ -5,19 +5,20 @@ import ebayapp.core.clients.ItemMapper
 import java.time.Instant
 import ebayapp.core.clients.cex.responses.CexItem
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
-import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SellPrice}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria, SellPrice}
 
 private[cex] object mappers {
 
   type CexItemMapper = ItemMapper[CexItem]
 
   val cexGenericItemMapper: CexItemMapper = new CexItemMapper {
-    override def toDomain(sr: CexItem): ResellableItem =
+    override def toDomain(foundWith: SearchCriteria)(sr: CexItem): ResellableItem =
       ResellableItem.generic(
         ItemDetails.Generic(sr.boxName),
         listingDetails(sr),
         price(sr),
-        Some(resellPrice(sr))
+        Some(resellPrice(sr)),
+        foundWith
       )
   }
 

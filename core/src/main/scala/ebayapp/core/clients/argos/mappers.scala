@@ -3,8 +3,8 @@ package ebayapp.core.clients.argos
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.clients.argos.responses.ArgosItem
 import ebayapp.core.domain.ItemDetails.Generic
-import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
-import ebayapp.core.domain.{ResellableItem}
+import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
+import ebayapp.core.domain.ResellableItem
 
 import java.time.Instant
 
@@ -13,7 +13,7 @@ private[argos] object mappers {
   type ArgosItemMapper = ItemMapper[ArgosItem]
 
   val argosGenericItemMapper: ArgosItemMapper = new ArgosItemMapper {
-    override def toDomain(data: ArgosItem): ResellableItem =
+    override def toDomain(foundWith: SearchCriteria)(data: ArgosItem): ResellableItem =
       ResellableItem.generic(
         Generic(data.attributes.name),
         ListingDetails(
@@ -29,7 +29,8 @@ private[argos] object mappers {
           Map()
         ),
         BuyPrice(1, data.attributes.price),
-        None
+        None,
+        foundWith
       )
   }
 }

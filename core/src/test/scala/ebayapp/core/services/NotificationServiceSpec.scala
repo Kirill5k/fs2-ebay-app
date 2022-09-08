@@ -10,7 +10,7 @@ import ebayapp.core.domain.stock.StockUpdate
 import org.mockito.Mockito.{times}
 
 import java.time.Instant
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class NotificationServiceSpec extends CatsSpec {
 

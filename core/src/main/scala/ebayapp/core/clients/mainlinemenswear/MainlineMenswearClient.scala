@@ -9,10 +9,11 @@ import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
 import ebayapp.core.clients.mainlinemenswear.mappers.{mainlineMenswearClothingMapper, MainlineMenswearItem}
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.*
 import sttp.client3.circe.asJson
@@ -56,7 +57,7 @@ final private class LiveMainlineMenswearClient[F[_]](
         }
       }
       .flatMap(Stream.emits)
-      .map(mainlineMenswearClothingMapper.toDomain)
+      .map(mainlineMenswearClothingMapper.toDomain(criteria))
       .handleErrorWith(e => Stream.eval(logger.error(e)(e.getMessage)).drain)
 
   private def searchForItems(criteria: SearchCriteria): Stream[F, ProductPreview] =

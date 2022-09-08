@@ -5,11 +5,12 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.Decoder
@@ -51,16 +52,17 @@ final private class LiveSelfridgesClient[F[_]](
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .unfoldLoopEval(1)(searchForItems(criteria))
+      .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
       .flatMap(Stream.emits)
       .filter(!_.name.matches(filters))
-      .filter(_.price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined))
+      .filter(_.isOnSale)
       .flatMap { item =>
         Stream
           .evalSeq(getItemDetails(item))
-          .metered(1.second)
+          .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
           .map((stock, price) => SelfridgesItem(item, stock, price))
       }
-      .map(selfridgesClothingMapper.toDomain)
+      .map(selfridgesClothingMapper.toDomain(criteria))
       .filter(_.buyPrice.quantityAvailable > 0)
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =

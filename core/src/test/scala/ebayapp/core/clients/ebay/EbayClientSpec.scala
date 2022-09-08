@@ -1,13 +1,13 @@
 package ebayapp.core.clients.ebay
 
 import cats.effect.IO
-import cats.syntax.applicative._
-import cats.syntax.option._
+import cats.syntax.applicative.*
+import cats.syntax.option.*
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
-import ebayapp.core.clients.ebay.browse.responses._
+import ebayapp.core.clients.ebay.browse.responses.*
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
@@ -15,8 +15,8 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.{never, times}
 
 import java.util.UUID
-import scala.concurrent.duration._
-import scala.jdk.CollectionConverters._
+import scala.concurrent.duration.*
+import scala.jdk.CollectionConverters.*
 
 class EbayClientSpec extends CatsSpec {
 

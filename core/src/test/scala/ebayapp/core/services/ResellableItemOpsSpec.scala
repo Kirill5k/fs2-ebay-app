@@ -7,7 +7,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class ResellableItemOpsSpec extends AnyWordSpec with Matchers {
 
-  import NotificationService._
+  import NotificationService.*
 
   "A VideoGame" should {
     "return cheap item notification message string" in {

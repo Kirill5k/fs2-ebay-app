@@ -5,12 +5,13 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{HttpClient, SearchClient, SearchCriteria}
+import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.*
 import sttp.model.StatusCode
@@ -26,12 +27,43 @@ final private class LiveJdsportsClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers
+  private val websiteUri = config.headers.getOrElse("X-Reroute-To", config.baseUri) + "/"
+
+  private val getBrandHeaders = Map(
+    "cookie" -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
+    "accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "accept-encoding"           -> "gzip, deflate, br",
+    "accept-language"           -> "en-GB,en;q=0.9",
+    "upgrade-insecure-requests" -> "1",
+    "user-agent"                -> operaUserAgent,
+    "sec-ch-ua"                 -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
+    "sec-ch-ua-mobile"          -> "?0",
+    "sec-ch-ua-platform"        -> "macOS",
+    "sec-fetch-dest"            -> "document",
+    "sec-fetch-mode"            -> "navigate",
+    "sec-fetch-site"            -> "same-origin",
+    "sec-fetch-user"            -> "?1"
+  ) ++ config.headers
+
+  private val getStockHeaders = Map(
+    "accept"             -> "*/*",
+    "accept-encoding"    -> "gzip, deflate, br",
+    "accept-language"    -> "en-GB,en;q=0.9",
+    "content-type"       -> "application/json",
+    "x-requested-with"   -> "XMLHttpRequest",
+    "user-agent"         -> operaUserAgent,
+    "sec-ch-ua"          -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
+    "sec-ch-ua-mobile"   -> "?0",
+    "sec-ch-ua-platform" -> "macOS",
+    "sec-fetch-dest"     -> "empty",
+    "sec-fetch-mode"     -> "cors",
+    "sec-fetch-site"     -> "same-origin"
+  ) ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     brands(criteria)
       .filter(_.sale)
-      .metered(250.millis)
+      .metered(config.delayBetweenIndividualRequests.getOrElse(0.second))
       .evalMap(getProductStock)
       .unNone
       .map { p =>
@@ -46,13 +78,13 @@ final private class LiveJdsportsClient[F[_]](
             size,
             p.details.PrimaryImage,
             p.details.Category,
-            config.headers.getOrElse("X-Reroute-To", config.baseUri),
+            websiteUri,
             name
           )
         }
       }
       .flatMap(Stream.emits)
-      .map(jdsportsClothingMapper.toDomain)
+      .map(jdsportsClothingMapper.toDomain(criteria))
       .handleErrorWith(e => Stream.eval(logger.error(e)(e.getMessage)).drain)
 
   private def brands(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
@@ -68,7 +100,7 @@ final private class LiveJdsportsClient[F[_]](
       val brand = criteria.query.toLowerCase.replace(" ", "-")
       basicRequest
         .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
-        .headers(headers)
+        .headers(getBrandHeaders + ("referer" -> websiteUri))
     }.flatMap { r =>
       r.body match {
         case Right(html) =>
@@ -90,9 +122,10 @@ final private class LiveJdsportsClient[F[_]](
 
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     dispatch {
+      val referrer = websiteUri + s"product/${ci.fullName}/${ci.plu}/"
       basicRequest
         .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
-        .headers(headers)
+        .headers(getStockHeaders + ("referer" -> referrer))
     }.flatMap { r =>
       r.body match {
         case Right(html) =>

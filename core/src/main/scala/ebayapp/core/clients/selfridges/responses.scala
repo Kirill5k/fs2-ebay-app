@@ -39,7 +39,8 @@ private[selfridges] object responses {
       name: String,
       brandName: String,
       price: List[CatalogItemPrice]
-  ) derives Codec.AsObject
+  ) derives Codec.AsObject:
+    def isOnSale: Boolean = price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined)
 
   final case class SelfridgesSearchResponse(
       noOfPages: Int,

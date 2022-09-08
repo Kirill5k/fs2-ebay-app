@@ -10,9 +10,9 @@ private[harveynichols] object responses {
       id: String,
       name: DisplayItem[String, Option[String]],
       brand: DisplayItem[String, Option[String]],
-      price: DisplayItem[String, Int],
-      original_price: DisplayItem[String, Int],
-      percentage_discount: DisplayItem[String, Int],
+      price: DisplayItem[String, Double],
+      original_price: DisplayItem[String, Double],
+      percentage_discount: DisplayItem[String, Double],
       product_brand_url: DisplayItem[String, String],
       _imageurl: DisplayItem[String, Option[String]],
       variant_display_size: DisplayItem[Option[List[String]], Option[String]]

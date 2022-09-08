@@ -2,7 +2,7 @@ package ebayapp.core.clients.argos
 
 import cats.effect.IO
 import ebayapp.core.MockLogger
-import ebayapp.core.clients.SearchCriteria
+import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.SttpClientSpec
