@@ -99,5 +99,5 @@ object StockService:
       client: SearchClient[F]
   ): F[StockService[F]] =
     Cache
-      .make[F, String, ResellableItem](4.hours, 1.minute)
+      .make[F, String, ResellableItem](6.hours, 1.minute)
       .map(cache => SimpleStockService[F](retailer, config, client, cache))
