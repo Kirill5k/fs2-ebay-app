@@ -3,19 +3,22 @@ package ebayapp.core
 import cats.effect.{IO, IOApp}
 import ebayapp.kernel.Server
 import ebayapp.core.clients.Clients
-import ebayapp.core.common.{Logger, Resources}
+import ebayapp.core.common.{ConfigProvider, Logger, Resources}
 import ebayapp.core.common.config.AppConfig
 import ebayapp.core.controllers.Controllers
 import ebayapp.core.repositories.Repositories
 import ebayapp.core.services.Services
 import ebayapp.core.tasks.Tasks
 
+import scala.concurrent.duration.*
+
 object Application extends IOApp.Simple:
   override val run: IO[Unit] =
     Logger.make[IO].flatMap { implicit logger =>
       for
-        _      <- logger.info("starting ebay-app-core")
-        config <- logger.info("loading config") *> AppConfig.load[IO]
+        _              <- logger.info("starting ebay-app-core")
+        configProvider <- logger.info("loading config") *> ConfigProvider.make[IO](5.minutes)
+        config         <- configProvider.config
         _ <- Resources.make[IO](config).use { resources =>
           for
             _            <- logger.info("created resources")

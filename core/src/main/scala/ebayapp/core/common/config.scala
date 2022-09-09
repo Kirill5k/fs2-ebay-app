@@ -112,19 +112,11 @@ object config {
 
   object AppConfig {
     val mountedConfigPath = "/opt/app/application.conf"
-    
+
     given stockMonitorMapReader: ConfigReader[Map[Retailer, StockMonitorConfig]] =
       genericMapReader[Retailer, StockMonitorConfig](catchReadError(Retailer.fromUnsafe))
     given dealsFinderMapReader: ConfigReader[Map[Retailer, DealsFinderConfig]] =
       genericMapReader[Retailer, DealsFinderConfig](catchReadError(Retailer.fromUnsafe))
-
-    def load[F[_]](using F: Sync[F], logger: Logger[F]): F[AppConfig] =
-      F.blocking(AppConfig.loadFromMount)
-        .flatTap(_ => logger.info("loaded config from a configmap mount"))
-        .handleErrorWith { e =>
-          logger.warn(s"error loading a config from a configmap mount, will try resources: ${e.getMessage}") *>
-            F.blocking(AppConfig.loadDefault)
-        }
 
     def loadDefault: AppConfig   = ConfigSource.default.loadOrThrow[AppConfig]
     def loadFromMount: AppConfig = ConfigSource.file(new File(mountedConfigPath)).loadOrThrow[AppConfig]
