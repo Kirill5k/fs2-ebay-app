@@ -111,6 +111,8 @@ object config {
   ) derives ConfigReader
 
   object AppConfig {
+    val mountedConfigPath = "/opt/app/application.conf"
+    
     given stockMonitorMapReader: ConfigReader[Map[Retailer, StockMonitorConfig]] =
       genericMapReader[Retailer, StockMonitorConfig](catchReadError(Retailer.fromUnsafe))
     given dealsFinderMapReader: ConfigReader[Map[Retailer, DealsFinderConfig]] =
@@ -125,7 +127,7 @@ object config {
         }
 
     def loadDefault: AppConfig   = ConfigSource.default.loadOrThrow[AppConfig]
-    def loadFromMount: AppConfig = ConfigSource.file(new File("/opt/app/application.conf")).loadOrThrow[AppConfig]
+    def loadFromMount: AppConfig = ConfigSource.file(new File(mountedConfigPath)).loadOrThrow[AppConfig]
   }
 
 }
