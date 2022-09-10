@@ -33,21 +33,22 @@ final private class LiveConfigProvider[F[_]](
 object ConfigProvider:
 
   def make[F[_]](reloadEvery: FiniteDuration)(using F: Async[F], logger: Logger[F]): F[ConfigProvider[F]] = {
-    def reloadUpdatedConfig(state: Ref[F, AppConfig]): F[Unit] =
-      F.sleep(reloadEvery) *>
-        (mountedConfigModifiedDate, F.realTimeInstant).mapN { (modifiedDate, now) =>
-          F.whenA(modifiedDate.plusSeconds(reloadEvery.toSeconds + 30L).isAfter(now)) {
-            F.blocking(AppConfig.loadFromMount).flatMap(c => logger.info("reloading updated config from mount") *> state.set(c))
-          }
-        }.flatten *>
-        reloadUpdatedConfig(state)
+    def reloadConfigWhenUpdated(state: Ref[F, AppConfig]): F[Unit] = {
+      val process = (mountedConfigModifiedDate, F.realTimeInstant).mapN { (modifiedDate, now) =>
+        F.whenA(modifiedDate.plusSeconds(reloadEvery.toSeconds + 30L).isAfter(now)) {
+          F.blocking(AppConfig.loadFromMount)
+            .flatMap(c => logger.info("reloading updated config from mount") >> state.set(c))
+        }
+      }.flatten
+      F.sleep(reloadEvery) >> process >> reloadConfigWhenUpdated(state)
+    }
 
     F
       .blocking(AppConfig.loadFromMount)
-      .flatMap(c => logger.info("loaded config from a configmap mount") *> Ref.of(c))
-      .flatTap(s => reloadUpdatedConfig(s).start.void)
+      .flatMap(c => logger.info("loaded config from a configmap mount") >> Ref.of(c))
+      .flatTap(s => reloadConfigWhenUpdated(s).start.void)
       .handleErrorWith { e =>
-        logger.warn(s"error loading config from a configmap mount, will try resources: ${e.getMessage}") *>
+        logger.warn(s"error loading config from a configmap mount, will try resources: ${e.getMessage}") >>
           F.blocking(AppConfig.loadDefault).flatMap(c => Ref.of(c))
       }
       .map(LiveConfigProvider(_))
