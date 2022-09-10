@@ -2,7 +2,7 @@ package ebayapp.core.clients.telegram
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
@@ -15,8 +15,9 @@ class TelegramClientSpec extends SttpClientSpec {
 
   given logger: Logger[IO] = MockLogger.make[IO]
 
-  val message = "lorem ipsum dolor sit amet"
-  val config  = TelegramConfig("http://telegram.com", "BOT-KEY", "m1", "m2", "alerts")
+  val message        = "lorem ipsum dolor sit amet"
+  val telegramConfig = TelegramConfig("http://telegram.com", "BOT-KEY", "m1", "m2", "alerts")
+  val config         = MockConfigProvider.make[IO](telegramConfig = Some(telegramConfig))
 
   "TelegramClient" should {
 

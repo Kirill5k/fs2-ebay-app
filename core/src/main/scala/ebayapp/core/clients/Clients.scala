@@ -12,7 +12,7 @@ import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.scan.ScanClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.telegram.TelegramClient
-import ebayapp.core.common.{Logger, Resources}
+import ebayapp.core.common.{ConfigProvider, Logger, Resources}
 import ebayapp.core.common.config.AppConfig
 
 trait Clients[F[_]]:
@@ -23,13 +23,14 @@ trait Clients[F[_]]:
 object Clients {
 
   def make[F[_]: Temporal: Logger](
+      configProvider: ConfigProvider[F],
       config: AppConfig,
       resources: Resources[F]
   ): F[Clients[F]] =
     (
-      CexClient.make[F](config.retailer.cex, resources.clientBackend(None)),
-      TelegramClient.make[F](config.telegram, resources.clientBackend(None)),
-      EbayClient.make[F](config.retailer.ebay, resources.clientBackend(None)),
+      CexClient.make[F](configProvider, resources.httpClientBackend),
+      TelegramClient.make[F](configProvider, resources.httpClientBackend),
+      EbayClient.make[F](config.retailer.ebay, resources.httpClientBackend),
       SelfridgesClient.make[F](config.retailer.selfridges, resources.clientBackend(config.retailer.selfridges.proxied)),
       ArgosClient.make[F](config.retailer.argos, resources.clientBackend(config.retailer.argos.proxied)),
       JdsportsClient.jd[F](config.retailer.jdsports, resources.clientBackend(config.retailer.jdsports.proxied)),

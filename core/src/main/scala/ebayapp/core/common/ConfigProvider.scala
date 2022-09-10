@@ -7,7 +7,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.functor.*
-import ebayapp.core.common.config.AppConfig
+import ebayapp.core.common.config.{AppConfig, EbayConfig, GenericRetailerConfig, TelegramConfig}
 
 import java.nio.file.Paths
 import java.time.Instant
@@ -15,13 +15,19 @@ import scala.concurrent.duration.*
 
 trait ConfigProvider[F[_]]:
   def config: F[AppConfig]
+  def cex: F[GenericRetailerConfig]
+  def telegram: F[TelegramConfig]
+  def ebay: F[EbayConfig]
 
 final private class LiveConfigProvider[F[_]](
     private val state: Ref[F, AppConfig]
 )(using
     F: Monad[F]
 ) extends ConfigProvider[F] {
-  override def config: F[AppConfig] = state.get
+  override def config: F[AppConfig]          = state.get
+  override def cex: F[GenericRetailerConfig] = config.map(_.retailer.cex)
+  override def telegram: F[TelegramConfig]   = config.map(_.telegram)
+  override def ebay: F[EbayConfig]           = config.map(_.retailer.ebay)
 }
 
 object ConfigProvider:

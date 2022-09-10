@@ -1,7 +1,7 @@
 package ebayapp.core.clients.cex
 
 import cats.effect.IO
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
 import ebayapp.kernel.errors.AppError
@@ -19,7 +19,8 @@ class CexClientSpec extends SttpClientSpec {
 
   "CexClient" should {
 
-    val config = GenericRetailerConfig("http://cex.com", cache = Some(CacheConfig(3.seconds, 1.second)))
+    val cexConfig = GenericRetailerConfig("http://cex.com", cache = Some(CacheConfig(3.seconds, 1.second)))
+    val config = MockConfigProvider.make[IO](cexConfig = Some(cexConfig))
 
     "find items" in {
       val criteria = SearchCriteria("macbook pro 16,1")

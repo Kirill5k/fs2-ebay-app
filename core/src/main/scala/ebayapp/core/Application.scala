@@ -22,7 +22,7 @@ object Application extends IOApp.Simple:
         _ <- Resources.make[IO](config).use { resources =>
           for
             _            <- logger.info("created resources")
-            clients      <- Clients.make(config, resources) <* logger.info("created clients")
+            clients      <- Clients.make(configProvider, config, resources) <* logger.info("created clients")
             repositories <- Repositories.make(resources.database) <* logger.info("created repositories")
             services     <- Services.make(config, clients, repositories) <* logger.info("created services")
             tasks        <- Tasks.make(services) <* logger.info("created tasks")
