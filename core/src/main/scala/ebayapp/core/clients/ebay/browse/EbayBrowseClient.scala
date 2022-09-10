@@ -5,7 +5,7 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.HttpClient
-import ebayapp.core.common.{Cache, Logger}
+import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.common.config.EbayConfig
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
 import ebayapp.kernel.errors.AppError
@@ -98,10 +98,11 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 private[ebay] object EbayBrowseClient {
 
   def make[F[_]: Logger: Temporal](
-      config: EbayConfig,
+      configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[EbayBrowseClient[F]] =
-    Cache
-      .make[F, String, EbayItem](2.hours, 5.minutes)
-      .map(cache => new LiveEbayBrowseClient[F](config, backend, cache))
+    (
+      configProvider.ebay,
+      Cache.make[F, String, EbayItem](2.hours, 5.minutes)
+    ).mapN((config, cache) => LiveEbayBrowseClient[F](config, backend, cache))
 }

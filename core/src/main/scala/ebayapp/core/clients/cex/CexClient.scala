@@ -9,7 +9,6 @@ import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
 import ebayapp.core.clients.cex.responses.*
-import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.domain.search.*

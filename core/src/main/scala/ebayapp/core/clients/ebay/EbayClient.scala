@@ -15,14 +15,14 @@ import ebayapp.core.common.predicates.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
-import ebayapp.core.common.Logger
+import ebayapp.core.common.{ConfigProvider, Logger}
 import fs2.Stream
 import sttp.client3.SttpBackend
 
 import java.time.Instant
 
 final private[ebay] class LiveEbayClient[F[_]](
-    private val config: EbayConfig,
+    private val configProvider: ConfigProvider[F],
     private val authClient: EbayAuthClient[F],
     private val browseClient: EbayBrowseClient[F]
 )(using
@@ -34,11 +34,12 @@ final private[ebay] class LiveEbayClient[F[_]](
 
   def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     for
-      time   <- Stream.eval(now.map(_.minusMillis(config.search.maxListingDuration.toMillis)))
-      mapper <- Stream.fromEither[F](EbayItemMapper.get(criteria))
-      params <- Stream.fromEither[F](EbaySearchParams.get(criteria))
+      searchConfig <- Stream.eval(configProvider.ebay.map(_.search))
+      time         <- Stream.eval(now.map(_.minusMillis(searchConfig.maxListingDuration.toMillis)))
+      mapper       <- Stream.fromEither[F](EbayItemMapper.get(criteria))
+      params       <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       items <- Stream
-        .evalSeq(searchForItems(params.requestArgs(time, criteria.query), params.filter and hasTrustedSeller(config.search)))
+        .evalSeq(searchForItems(params.requestArgs(time, criteria.query), params.filter and hasTrustedSeller(searchConfig)))
         .evalMap(getCompleteItem)
         .unNone
         .map(mapper.toDomain(criteria))
@@ -77,10 +78,10 @@ final private[ebay] class LiveEbayClient[F[_]](
 
 object EbayClient:
   def make[F[_]: Temporal: Logger](
-      config: EbayConfig,
+      configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     (
-      EbayAuthClient.make[F](config, backend),
-      EbayBrowseClient.make[F](config, backend)
-    ).mapN((a, b) => LiveEbayClient[F](config, a, b))
+      EbayAuthClient.make[F](configProvider, backend),
+      EbayBrowseClient.make[F](configProvider, backend)
+    ).mapN((a, b) => LiveEbayClient[F](configProvider, a, b))

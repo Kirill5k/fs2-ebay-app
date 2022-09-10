@@ -3,7 +3,7 @@ package ebayapp.core.clients.ebay.auth
 import cats.effect.IO
 import cats.effect.Ref
 import cats.syntax.apply.*
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.EbayAuthToken
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
@@ -18,7 +18,8 @@ class EbayAuthClientSpec extends SttpClientSpec {
   given logger: Logger[IO] = MockLogger.make[IO]
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
+  val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
+  val config      = MockConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
 
   "EbayAuthClient" should {
 
@@ -47,7 +48,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = (
         Ref.of[IO, Option[EbayAuthToken]](Some(EbayAuthToken("test-token", 7200))),
         Ref.of[IO, List[EbayCredentials]](Nil)
-      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
+      ).mapN((t, c) => new LiveEbayAuthClient[IO](ebayConfig, t, c, testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).asserting { token =>
         token mustBe "test-token"
@@ -86,7 +87,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val ebayAuthClient = (
         Ref.of[IO, Option[EbayAuthToken]](Some(EbayAuthToken("test-token", 0))),
         Ref.of[IO, List[EbayCredentials]](credentials)
-      ).mapN((t, c) => new LiveEbayAuthClient[IO](config, t, c, testingBackend))
+      ).mapN((t, c) => new LiveEbayAuthClient[IO](ebayConfig, t, c, testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).asserting { token =>
         token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="

@@ -6,7 +6,7 @@ import cats.syntax.functor.*
 import cats.syntax.option.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
-import ebayapp.core.common.Logger
+import ebayapp.core.common.{ConfigProvider, Logger}
 import EbayAuthClient.EbayAuthToken
 import ebayapp.core.clients.HttpClient
 import responses.{EbayAuthErrorResponse, EbayAuthSuccessResponse}
@@ -40,7 +40,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
     authToken.get
       .flatMap {
         case Some(t) if t.isValid => t.pure[F]
-        case _                    => authenticate().flatTap(t => authToken.set(t.some))
+        case _                    => authenticate.flatTap(t => authToken.set(t.some))
       }
       .map(_.token)
 
@@ -49,7 +49,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
       authToken.set(None) *>
       credentials.update(creds => creds.tail :+ creds.head)
 
-  private def authenticate(): F[EbayAuthToken] =
+  private def authenticate: F[EbayAuthToken] =
     credentials.get.map(_.head).flatMap { creds =>
       dispatch {
         basicRequest
@@ -66,17 +66,16 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
             EbayAuthToken(token.access_token, token.expires_in).pure[F]
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
             logger.warn(s"reached api calls limit (cid - ${creds.clientId})") *>
-              switchAccount() *> authenticate()
+              switchAccount() *> authenticate
           case Left(HttpError(error, StatusCode.Unauthorized)) =>
             logger.warn(s"unauthorized: ${error.error_description} (cid - ${creds.clientId})") *>
-              switchAccount() *> authenticate()
+              switchAccount() *> authenticate
           case Left(HttpError(error, status)) =>
             logger.error(s"http error authenticating with ebay ${status.code}: ${error.error_description} (cid - ${creds.clientId})") *>
-              T.sleep(1.second) *> authenticate()
+              T.sleep(1.second) *> authenticate
           case Left(error) =>
             logger.error(s"unexpected error authenticating with ebay: ${error.getMessage}") *>
-              T.sleep(1.second) *> authenticate()
-
+              T.sleep(1.second) *> authenticate
         }
       }
     }
@@ -94,11 +93,13 @@ private[ebay] object EbayAuthClient {
   }
 
   def make[F[_]: Temporal: Logger](
-      config: EbayConfig,
+      configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[EbayAuthClient[F]] =
-    (
-      Ref.of[F, Option[EbayAuthToken]](None),
-      Ref.of[F, List[EbayCredentials]](config.credentials)
-    ).mapN((t, c) => new LiveEbayAuthClient[F](config, t, c, backend))
+    configProvider.ebay.flatMap { config =>
+      (
+        Ref.of[F, Option[EbayAuthToken]](None),
+        Ref.of[F, List[EbayCredentials]](config.credentials)
+      ).mapN((t, c) => new LiveEbayAuthClient[F](config, t, c, backend))
+    }
 }

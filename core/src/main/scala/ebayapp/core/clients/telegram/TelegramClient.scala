@@ -6,7 +6,6 @@ import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, MessengerClient}
-import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{ConfigProvider, Logger}

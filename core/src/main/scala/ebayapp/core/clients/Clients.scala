@@ -30,7 +30,7 @@ object Clients {
     (
       CexClient.make[F](configProvider, resources.httpClientBackend),
       TelegramClient.make[F](configProvider, resources.httpClientBackend),
-      EbayClient.make[F](config.retailer.ebay, resources.httpClientBackend),
+      EbayClient.make[F](configProvider, resources.httpClientBackend),
       SelfridgesClient.make[F](config.retailer.selfridges, resources.clientBackend(config.retailer.selfridges.proxied)),
       ArgosClient.make[F](config.retailer.argos, resources.clientBackend(config.retailer.argos.proxied)),
       JdsportsClient.jd[F](config.retailer.jdsports, resources.clientBackend(config.retailer.jdsports.proxied)),

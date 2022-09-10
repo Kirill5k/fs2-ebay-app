@@ -2,7 +2,7 @@ package ebayapp.core.clients.ebay.browse
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
 import ebayapp.kernel.errors.AppError
@@ -21,7 +21,8 @@ class EbayBrowseClientSpec extends SttpClientSpec {
   val searchQueryParams = Map("q" -> "iphone", "filter" -> "buyingOptions:{FIXED_PRICE}")
 
   val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
-  val config      = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
+  val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
+  val config      = MockConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
 
   "EbaySearchClient" should {
 
@@ -138,8 +139,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     }
 
     "return item from cache when itemid is the same" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
-        .whenAnyRequest
+      val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
           Response.ok(json("ebay/get-item-1-success-response.json")),
           Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden),
@@ -148,9 +148,9 @@ class EbayBrowseClientSpec extends SttpClientSpec {
 
       val result = for {
         client <- EbayBrowseClient.make[IO](config, testingBackend)
-        item1 <- client.getItem(accessToken, itemId)
-        item2 <- client.getItem(accessToken, itemId)
-        item3 <- client.getItem(accessToken, itemId)
+        item1  <- client.getItem(accessToken, itemId)
+        item2  <- client.getItem(accessToken, itemId)
+        item3  <- client.getItem(accessToken, itemId)
       } yield List(item1, item2, item3)
 
       result.asserting { items =>
