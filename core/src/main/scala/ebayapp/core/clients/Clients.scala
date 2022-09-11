@@ -38,8 +38,8 @@ object Clients {
       JdsportsClient.tessuti[F](configProvider, resources.clientBackend(config.retailer.tessuti.proxied)),
       NvidiaClient.make[F](configProvider, resources.clientBackend(config.retailer.nvidia.proxied)),
       ScanClient.make[F](configProvider, resources.clientBackend(config.retailer.scan.proxied)),
-      HarveyNicholsClient.make[F](config.retailer.harveyNichols, resources.clientBackend(config.retailer.harveyNichols.proxied)),
-      MainlineMenswearClient.make[F](config.retailer.mainlineMenswear, resources.clientBackend(config.retailer.mainlineMenswear.proxied))
+      HarveyNicholsClient.make[F](configProvider, resources.clientBackend(config.retailer.harveyNichols.proxied)),
+      MainlineMenswearClient.make[F](configProvider, resources.clientBackend(config.retailer.mainlineMenswear.proxied))
     ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC, mmC) =>
       new Clients[F] {
         def cex: CexClient[F]             = cexC

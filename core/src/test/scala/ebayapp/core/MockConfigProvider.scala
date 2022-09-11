@@ -17,7 +17,9 @@ object MockConfigProvider {
       scottsConfig: Option[GenericRetailerConfig] = None,
       tessutiConfig: Option[GenericRetailerConfig] = None,
       nvidiaConfig: Option[GenericRetailerConfig] = None,
-      scanConfig: Option[GenericRetailerConfig] = None
+      scanConfig: Option[GenericRetailerConfig] = None,
+      harveyNicholsConfig: Option[GenericRetailerConfig] = None,
+      mainlineMenswearConfig: Option[GenericRetailerConfig] = None
   )(using
       F: MonadThrow[F]
   ) = new ConfigProvider[F]:
@@ -33,4 +35,6 @@ object MockConfigProvider {
     override def tessuti: F[GenericRetailerConfig]                = fromOpt(tessutiConfig, "tessuti")
     override def nvidia: F[GenericRetailerConfig]                 = fromOpt(nvidiaConfig, "nvidia")
     override def scan: F[GenericRetailerConfig]                   = fromOpt(scanConfig, "scan")
+    override def harveyNichols: F[GenericRetailerConfig]          = fromOpt(harveyNicholsConfig, "harvey-nichols")
+    override def mainlineMenswear: F[GenericRetailerConfig]       = fromOpt(mainlineMenswearConfig, "mainline-menswear")
 }

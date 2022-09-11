@@ -2,7 +2,7 @@ package ebayapp.core.clients.mainlinemenswear
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
@@ -10,7 +10,7 @@ import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
-import sttp.model.{Method, StatusCode, Header}
+import sttp.model.{Header, Method, StatusCode}
 
 class MainlineMenswearClientSpec extends SttpClientSpec {
 
@@ -25,7 +25,9 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
 
   "A MainlineMenswearClient" should {
 
-    val config   = GenericRetailerConfig("http://mainline.com", Map("Authorization" -> "Bearer foo-bar"))
+    val mainlineMenswearConfig   = GenericRetailerConfig("http://mainline.com", Map("Authorization" -> "Bearer foo-bar"))
+    val config                   = MockConfigProvider.make[IO](mainlineMenswearConfig = Some(mainlineMenswearConfig))
+
     val criteria = SearchCriteria("emporio armani")
 
     "return items that are on sale" in {
