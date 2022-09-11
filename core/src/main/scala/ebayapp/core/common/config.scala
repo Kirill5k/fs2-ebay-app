@@ -24,6 +24,8 @@ object config {
       proxyPort: Option[Int]
   ) derives ConfigReader
 
+  sealed trait HttpClientConfig
+
   final case class EbayCredentials(
       clientId: String,
       clientSecret: String
@@ -39,6 +41,44 @@ object config {
       baseUri: String,
       credentials: List[EbayCredentials],
       search: EbaySearchConfig
+  ) extends HttpClientConfig
+      derives ConfigReader
+
+  final case class CacheConfig(
+      expiration: FiniteDuration,
+      validationPeriod: FiniteDuration
+  ) derives ConfigReader
+
+  final case class GenericRetailerConfig(
+      baseUri: String,
+      headers: Map[String, String] = Map.empty,
+      proxied: Option[Boolean] = None,
+      cache: Option[CacheConfig] = None,
+      delayBetweenIndividualRequests: Option[FiniteDuration] = None
+  ) extends HttpClientConfig
+      derives ConfigReader
+
+  final case class TelegramConfig(
+      baseUri: String,
+      botKey: String,
+      mainChannelId: String,
+      secondaryChannelId: String,
+      alertsChannelId: String
+  ) extends HttpClientConfig
+      derives ConfigReader
+
+  final case class RetailerConfig(
+      ebay: EbayConfig,
+      selfridges: GenericRetailerConfig,
+      argos: GenericRetailerConfig,
+      jdsports: GenericRetailerConfig,
+      tessuti: GenericRetailerConfig,
+      scotts: GenericRetailerConfig,
+      harveyNichols: GenericRetailerConfig,
+      mainlineMenswear: GenericRetailerConfig,
+      nvidia: GenericRetailerConfig,
+      scan: GenericRetailerConfig,
+      cex: GenericRetailerConfig
   ) derives ConfigReader
 
   final case class DealsFinderConfig(
@@ -63,41 +103,6 @@ object config {
       monitoringFrequency: FiniteDuration,
       monitoringRequests: List[StockMonitorRequest],
       delayBetweenRequests: Option[FiniteDuration] = None
-  ) derives ConfigReader
-
-  final case class CacheConfig(
-      expiration: FiniteDuration,
-      validationPeriod: FiniteDuration
-  ) derives ConfigReader
-
-  final case class GenericRetailerConfig(
-      baseUri: String,
-      headers: Map[String, String] = Map.empty,
-      proxied: Option[Boolean] = None,
-      cache: Option[CacheConfig] = None,
-      delayBetweenIndividualRequests: Option[FiniteDuration] = None
-  ) derives ConfigReader
-
-  final case class TelegramConfig(
-      baseUri: String,
-      botKey: String,
-      mainChannelId: String,
-      secondaryChannelId: String,
-      alertsChannelId: String
-  ) derives ConfigReader
-
-  final case class RetailerConfig(
-      ebay: EbayConfig,
-      selfridges: GenericRetailerConfig,
-      argos: GenericRetailerConfig,
-      jdsports: GenericRetailerConfig,
-      tessuti: GenericRetailerConfig,
-      scotts: GenericRetailerConfig,
-      harveyNichols: GenericRetailerConfig,
-      mainlineMenswear: GenericRetailerConfig,
-      nvidia: GenericRetailerConfig,
-      scan: GenericRetailerConfig,
-      cex: GenericRetailerConfig
   ) derives ConfigReader
 
   final case class AppConfig(

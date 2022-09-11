@@ -21,17 +21,18 @@ import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration.*
 
-trait CexClient[F[_]] extends SearchClient[F] with HttpClient[F]:
+trait CexClient[F[_]] extends SearchClient[F]:
   def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem]
 
 final class CexApiClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
-    override val backend: SttpBackend[F, Any]
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     T: Temporal[F],
     logger: Logger[F]
-) extends CexClient[F] {
+) extends CexClient[F] with HttpClient[F, GenericRetailerConfig] {
 
   override protected val name: String = "cex"
 
@@ -111,10 +112,11 @@ final class CexApiClient[F[_]](
 object CexClient:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[CexClient[F]] =
     for
       config      <- configProvider.cex
       cacheConfig <- Temporal[F].fromOption(config.cache, AppError.Critical("missing cache settings for cex client"))
       cache       <- Cache.make[F, String, Option[SellPrice]](cacheConfig.expiration, cacheConfig.validationPeriod)
-    yield CexApiClient[F](() => configProvider.cex, cache, backend)
+    yield CexApiClient[F](() => configProvider.cex, cache, backend, proxyBackend)

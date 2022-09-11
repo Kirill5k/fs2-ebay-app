@@ -22,11 +22,12 @@ import scala.concurrent.duration.*
 
 final private class LiveHarveyNicholsClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val backend: SttpBackend[F, Any]
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
 
   override protected val name: String = "harvey-nichols"
 
@@ -115,6 +116,7 @@ final private class LiveHarveyNicholsClient[F[_]](
 object HarveyNicholsClient:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveHarveyNicholsClient[F](() => configProvider.harveyNichols, backend))
+    Monad[F].pure(LiveHarveyNicholsClient[F](() => configProvider.harveyNichols, backend, proxyBackend))

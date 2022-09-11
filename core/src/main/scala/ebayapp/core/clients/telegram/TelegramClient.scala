@@ -15,13 +15,14 @@ import scala.concurrent.duration.*
 
 final private class LiveTelegramClient[F[_]](
     private val configProvider: () => F[TelegramConfig],
-    override val backend: SttpBackend[F, Any]
+    override val httpBackend: SttpBackend[F, Any]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends MessengerClient[F] with HttpClient[F] {
+) extends MessengerClient[F] with HttpClient[F, TelegramConfig] {
 
-  override protected val name: String = "telegram"
+  override protected val name: String                              = "telegram"
+  override protected val proxyBackend: Option[SttpBackend[F, Any]] = None
 
   def send(notification: Notification): F[Unit] =
     configProvider().flatMap { config =>

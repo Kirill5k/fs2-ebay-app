@@ -21,11 +21,12 @@ import scala.concurrent.duration.*
 final private class LiveJdsportsClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val name: String,
-    override val backend: SttpBackend[F, Any]
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
 
   private val getBrandHeaders = Map(
     "cookie" -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
@@ -155,19 +156,22 @@ final private class LiveJdsportsClient[F[_]](
 object JdsportsClient {
   def jd[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.jdsports, "jdsports", backend))
+    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.jdsports, "jdsports", backend, proxyBackend))
 
   def tessuti[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.tessuti, "tessuti", backend))
+    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.tessuti, "tessuti", backend, proxyBackend))
 
   def scotts[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.scotts, "scotts", backend))
+    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.scotts, "scotts", backend, proxyBackend))
 }

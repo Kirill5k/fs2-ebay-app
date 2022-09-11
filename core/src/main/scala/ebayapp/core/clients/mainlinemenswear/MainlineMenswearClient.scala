@@ -25,12 +25,13 @@ import scala.concurrent.duration.*
 final private class LiveMainlineMenswearClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val name: String,
-    override val backend: SttpBackend[F, Any],
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]],
     private val token: Ref[F, Option[String]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     searchForItems(criteria)
@@ -141,14 +142,15 @@ final private class LiveMainlineMenswearClient[F[_]](
           .find(_.value.startsWith("access_token="))
           .flatMap(_.value.replace("access_token=", "").split(";").headOption)
       }
-      .flatMap(accessToken => logger.info(s"$name access token $accessToken") *> token.update(_ => accessToken))
+      .flatMap(accessToken => logger.info(s"$name access token $accessToken") *> token.set(accessToken))
 }
 
 object MainlineMenswearClient:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Ref
       .of(Option.empty[String])
-      .map(t => LiveMainlineMenswearClient[F](() => configProvider.mainlineMenswear, "mainline-menswear", backend, t))
+      .map(t => LiveMainlineMenswearClient[F](() => configProvider.mainlineMenswear, "mainline-menswear", backend, proxyBackend, t))

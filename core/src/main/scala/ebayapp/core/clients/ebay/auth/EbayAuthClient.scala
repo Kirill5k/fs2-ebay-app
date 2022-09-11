@@ -18,23 +18,23 @@ import sttp.model.{HeaderNames, MediaType, StatusCode}
 import java.time.Instant
 import scala.concurrent.duration.*
 
-private[ebay] trait EbayAuthClient[F[_]] extends HttpClient[F] {
+private[ebay] trait EbayAuthClient[F[_]]:
   def accessToken: F[String]
   def switchAccount(): F[Unit]
-}
 
 final private[ebay] class LiveEbayAuthClient[F[_]](
     private val config: EbayConfig,
     private val authToken: Ref[F, Option[EbayAuthToken]],
     private val credentials: Ref[F, List[EbayCredentials]],
-    override protected val backend: SttpBackend[F, Any]
+    override protected val httpBackend: SttpBackend[F, Any]
 )(using
     val logger: Logger[F],
     val T: Temporal[F]
-) extends EbayAuthClient[F] {
+) extends EbayAuthClient[F] with HttpClient[F, EbayConfig] {
 
-  override protected val name: String                         = "ebay-auth"
-  override protected val delayBetweenFailures: FiniteDuration = 1.second
+  override protected val name: String                              = "ebay-auth"
+  override protected val proxyBackend: Option[SttpBackend[F, Any]] = None
+  override protected val delayBetweenFailures: FiniteDuration      = 1.second
 
   def accessToken: F[String] =
     authToken.get

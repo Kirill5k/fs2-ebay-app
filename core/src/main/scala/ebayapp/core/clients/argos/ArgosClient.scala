@@ -22,11 +22,12 @@ import scala.concurrent.duration.*
 
 final private class LiveArgosClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val backend: SttpBackend[F, Any]
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]],
 )(using
     logger: Logger[F],
     timer: Temporal[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
 
   override val name = "argos"
 
@@ -73,7 +74,8 @@ final private class LiveArgosClient[F[_]](
 object ArgosClient {
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveArgosClient[F](() => configProvider.argos, backend))
+    Monad[F].pure(LiveArgosClient[F](() => configProvider.argos, backend, proxyBackend))
 }

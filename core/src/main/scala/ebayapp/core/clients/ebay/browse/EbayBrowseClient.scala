@@ -15,22 +15,22 @@ import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import scala.concurrent.duration.*
 
-private[ebay] trait EbayBrowseClient[F[_]] extends HttpClient[F] {
+private[ebay] trait EbayBrowseClient[F[_]]:
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]]
   def getItem(accessToken: String, itemId: String): F[Option[EbayItem]]
-}
 
 final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig,
-    override protected val backend: SttpBackend[F, Any],
+    override protected val httpBackend: SttpBackend[F, Any],
     private val itemsCache: Cache[F, String, EbayItem]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends EbayBrowseClient[F] {
+) extends EbayBrowseClient[F] with HttpClient[F, EbayConfig] {
 
-  override protected val name: String                         = "ebay-browse"
-  override protected val delayBetweenFailures: FiniteDuration = 1.second
+  override protected val name: String                              = "ebay-browse"
+  override protected val proxyBackend: Option[SttpBackend[F, Any]] = None
+  override protected val delayBetweenFailures: FiniteDuration      = 1.second
 
   private val expiredStatuses = Set(StatusCode.TooManyRequests, StatusCode.Forbidden, StatusCode.Unauthorized)
 

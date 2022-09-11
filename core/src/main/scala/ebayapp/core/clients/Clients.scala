@@ -20,32 +20,31 @@ trait Clients[F[_]]:
   def messenger: MessengerClient[F]
   def get(shop: Retailer): SearchClient[F]
 
-object Clients {
-
+object Clients:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       config: AppConfig,
       resources: Resources[F]
   ): F[Clients[F]] =
     (
-      CexClient.make[F](configProvider, resources.httpClientBackend),
+      CexClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       TelegramClient.make[F](configProvider, resources.httpClientBackend),
       EbayClient.make[F](configProvider, resources.httpClientBackend),
-      SelfridgesClient.make[F](configProvider, resources.clientBackend(config.retailer.selfridges.proxied)),
-      ArgosClient.make[F](configProvider, resources.clientBackend(config.retailer.argos.proxied)),
-      JdsportsClient.jd[F](configProvider, resources.clientBackend(config.retailer.jdsports.proxied)),
-      JdsportsClient.scotts[F](configProvider, resources.clientBackend(config.retailer.scotts.proxied)),
-      JdsportsClient.tessuti[F](configProvider, resources.clientBackend(config.retailer.tessuti.proxied)),
-      NvidiaClient.make[F](configProvider, resources.clientBackend(config.retailer.nvidia.proxied)),
-      ScanClient.make[F](configProvider, resources.clientBackend(config.retailer.scan.proxied)),
-      HarveyNicholsClient.make[F](configProvider, resources.clientBackend(config.retailer.harveyNichols.proxied)),
-      MainlineMenswearClient.make[F](configProvider, resources.clientBackend(config.retailer.mainlineMenswear.proxied))
+      SelfridgesClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      ArgosClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      JdsportsClient.jd[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      JdsportsClient.scotts[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      JdsportsClient.tessuti[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      NvidiaClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      ScanClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
     ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC, mmC) =>
       new Clients[F] {
         def cex: CexClient[F]             = cexC
         def messenger: MessengerClient[F] = telC
         def get(shop: Retailer): SearchClient[F] =
-          shop match {
+          shop match
             case Retailer.Cex              => cexC
             case Retailer.Ebay             => ebayC
             case Retailer.Selfridges       => selfridgesC
@@ -57,8 +56,5 @@ object Clients {
             case Retailer.Scan             => scanC
             case Retailer.HarveyNichols    => harNichC
             case Retailer.MainlineMenswear => mmC
-          }
       }
     }
-
-}

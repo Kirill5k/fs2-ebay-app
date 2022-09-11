@@ -22,11 +22,12 @@ import scala.concurrent.duration.*
 
 final private class LiveSelfridgesClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val backend: SttpBackend[F, Any]
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
 
   override protected val name: String = "selfridges"
 
@@ -76,7 +77,8 @@ final private class LiveSelfridgesClient[F[_]](
 
   private def searchForItems(criteria: SearchCriteria)(page: Int): F[(List[CatalogItem], Option[Int])] =
     sendRequest[SelfridgesSearchResponse](
-      baseUri => uri"$baseUri/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${criteria.query.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
+      baseUri =>
+        uri"$baseUri/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${criteria.query.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
       "products-by-ids",
       SelfridgesSearchResponse(0, None, Nil)
     ).map(res => (res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
@@ -133,6 +135,7 @@ final private class LiveSelfridgesClient[F[_]](
 object SelfridgesClient:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveSelfridgesClient[F](() => configProvider.selfridges, backend))
+    Monad[F].pure(new LiveSelfridgesClient[F](() => configProvider.selfridges, backend, proxyBackend))

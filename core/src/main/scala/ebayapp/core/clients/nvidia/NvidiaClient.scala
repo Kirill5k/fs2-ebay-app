@@ -22,11 +22,12 @@ import scala.concurrent.duration.*
 
 final private class LiveNvidiaClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val backend: SttpBackend[F, Any]
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     logger: Logger[F],
     F: Temporal[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
 
   override protected val name: String                         = "nvidia"
   override protected val delayBetweenFailures: FiniteDuration = 2.seconds
@@ -68,6 +69,7 @@ final private class LiveNvidiaClient[F[_]](
 object NvidiaClient:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend))
+    Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend, proxyBackend))

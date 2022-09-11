@@ -4,13 +4,15 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.applicativeError.*
 import ebayapp.core.common.Logger
+import ebayapp.core.common.config.HttpClientConfig
 import sttp.client3.{Request, Response, SttpBackend}
 
 import scala.concurrent.duration.*
 
-trait HttpClient[F[_]] {
+trait HttpClient[F[_], C <: HttpClientConfig] {
   protected val name: String
-  protected val backend: SttpBackend[F, Any]
+  protected val httpBackend: SttpBackend[F, Any]
+  protected val proxyBackend: Option[SttpBackend[F, Any]]
 
   protected val delayBetweenFailures: FiniteDuration = 10.seconds
 
@@ -39,7 +41,7 @@ trait HttpClient[F[_]] {
     dispatchWithRetry(request)
 
   private def dispatchWithRetry[T](request: Request[T, Any], attempt: Int = 0)(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
-    backend
+    httpBackend
       .send(request)
       .handleErrorWith { error =>
         val cause      = Option(error.getCause)
