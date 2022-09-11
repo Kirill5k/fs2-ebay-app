@@ -5,13 +5,12 @@ import cats.syntax.apply.*
 import cats.syntax.applicativeError.*
 import cats.syntax.flatMap.*
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.HttpClientConfig
 import ebayapp.kernel.errors.AppError
 import sttp.client3.{Request, Response, SttpBackend}
 
 import scala.concurrent.duration.*
 
-trait HttpClient[F[_], C <: HttpClientConfig] {
+trait HttpClient[F[_]] {
   protected val name: String
   protected val httpBackend: SttpBackend[F, Any]
   protected val proxyBackend: Option[SttpBackend[F, Any]]

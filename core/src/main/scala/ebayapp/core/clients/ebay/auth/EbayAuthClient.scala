@@ -30,7 +30,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]](
 )(using
     val logger: Logger[F],
     val T: Temporal[F]
-) extends EbayAuthClient[F] with HttpClient[F, EbayConfig] {
+) extends EbayAuthClient[F] with HttpClient[F] {
 
   override protected val name: String                              = "ebay-auth"
   override protected val proxyBackend: Option[SttpBackend[F, Any]] = None

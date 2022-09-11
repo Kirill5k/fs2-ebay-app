@@ -32,7 +32,7 @@ final class CexApiClient[F[_]](
 )(using
     T: Temporal[F],
     logger: Logger[F]
-) extends CexClient[F] with HttpClient[F, GenericRetailerConfig] {
+) extends CexClient[F] with HttpClient[F] {
 
   override protected val name: String = "cex"
 

@@ -19,7 +19,7 @@ final private class LiveTelegramClient[F[_]](
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends MessengerClient[F] with HttpClient[F, TelegramConfig] {
+) extends MessengerClient[F] with HttpClient[F] {
 
   override protected val name: String                              = "telegram"
   override protected val proxyBackend: Option[SttpBackend[F, Any]] = None

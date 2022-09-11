@@ -27,7 +27,7 @@ final private class LiveHarveyNicholsClient[F[_]](
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
+) extends SearchClient[F] with HttpClient[F] {
 
   override protected val name: String = "harvey-nichols"
 

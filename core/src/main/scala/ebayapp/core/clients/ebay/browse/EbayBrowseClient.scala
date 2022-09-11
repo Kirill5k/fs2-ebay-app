@@ -26,7 +26,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends EbayBrowseClient[F] with HttpClient[F, EbayConfig] {
+) extends EbayBrowseClient[F] with HttpClient[F] {
 
   override protected val name: String                              = "ebay-browse"
   override protected val proxyBackend: Option[SttpBackend[F, Any]] = None

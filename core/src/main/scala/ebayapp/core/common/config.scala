@@ -24,8 +24,6 @@ object config {
       proxyPort: Option[Int]
   ) derives ConfigReader
 
-  sealed trait HttpClientConfig
-
   final case class EbayCredentials(
       clientId: String,
       clientSecret: String
@@ -41,8 +39,7 @@ object config {
       baseUri: String,
       credentials: List[EbayCredentials],
       search: EbaySearchConfig
-  ) extends HttpClientConfig
-      derives ConfigReader
+  ) derives ConfigReader
 
   final case class CacheConfig(
       expiration: FiniteDuration,
@@ -55,8 +52,7 @@ object config {
       proxied: Option[Boolean] = None,
       cache: Option[CacheConfig] = None,
       delayBetweenIndividualRequests: Option[FiniteDuration] = None
-  ) extends HttpClientConfig
-      derives ConfigReader
+  ) derives ConfigReader
 
   final case class TelegramConfig(
       baseUri: String,
@@ -64,8 +60,7 @@ object config {
       mainChannelId: String,
       secondaryChannelId: String,
       alertsChannelId: String
-  ) extends HttpClientConfig
-      derives ConfigReader
+  ) derives ConfigReader
 
   final case class RetailerConfig(
       ebay: EbayConfig,

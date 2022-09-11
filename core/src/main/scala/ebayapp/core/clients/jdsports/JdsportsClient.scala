@@ -26,7 +26,7 @@ final private class LiveJdsportsClient[F[_]](
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
+) extends SearchClient[F] with HttpClient[F] {
 
   private val getBrandHeaders = Map(
     "cookie" -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",

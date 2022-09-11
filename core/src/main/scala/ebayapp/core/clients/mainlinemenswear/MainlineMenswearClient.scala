@@ -31,7 +31,7 @@ final private class LiveMainlineMenswearClient[F[_]](
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
+) extends SearchClient[F] with HttpClient[F] {
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     searchForItems(criteria)

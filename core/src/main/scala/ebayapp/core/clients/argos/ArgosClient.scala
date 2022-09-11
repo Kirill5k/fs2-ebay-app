@@ -27,7 +27,7 @@ final private class LiveArgosClient[F[_]](
 )(using
     logger: Logger[F],
     timer: Temporal[F]
-) extends SearchClient[F] with HttpClient[F, GenericRetailerConfig] {
+) extends SearchClient[F] with HttpClient[F] {
 
   override val name = "argos"
 
