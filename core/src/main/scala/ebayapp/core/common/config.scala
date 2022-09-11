@@ -24,7 +24,7 @@ object config {
       proxyPort: Option[Int]
   ) derives ConfigReader
 
-  final case class EbayCredentials(
+  final case class OAuthCredentials(
       clientId: String,
       clientSecret: String
   ) derives ConfigReader
@@ -37,7 +37,7 @@ object config {
 
   final case class EbayConfig(
       baseUri: String,
-      credentials: List[EbayCredentials],
+      credentials: List[OAuthCredentials],
       search: EbaySearchConfig
   ) derives ConfigReader
 

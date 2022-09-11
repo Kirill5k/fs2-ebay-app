@@ -4,7 +4,7 @@ import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
+import ebayapp.core.common.config.{EbayConfig, OAuthCredentials, EbaySearchConfig}
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
@@ -20,7 +20,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
   val itemId            = "item-id-1"
   val searchQueryParams = Map("q" -> "iphone", "filter" -> "buyingOptions:{FIXED_PRICE}")
 
-  val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
+  val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))
   val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
   val config      = MockConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
 

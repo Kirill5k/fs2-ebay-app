@@ -4,20 +4,21 @@ import cats.effect.IO
 import cats.effect.Ref
 import cats.syntax.apply.*
 import ebayapp.core.{MockConfigProvider, MockLogger}
-import ebayapp.core.clients.ebay.auth.EbayAuthClient.EbayAuthToken
+import ebayapp.core.clients.ebay.auth.EbayAuthClient.OAuthToken
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
+import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.*
 
+import java.time.Instant
 import scala.concurrent.duration.*
 
 class EbayAuthClientSpec extends SttpClientSpec {
   given logger: Logger[IO] = MockLogger.make[IO]
 
-  val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
+  val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))
   val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
   val config      = MockConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
 
@@ -46,8 +47,8 @@ class EbayAuthClientSpec extends SttpClientSpec {
         }
 
       val ebayAuthClient = (
-        Ref.of[IO, Option[EbayAuthToken]](Some(EbayAuthToken("test-token", 7200))),
-        Ref.of[IO, List[EbayCredentials]](Nil)
+        Ref.of[IO, Option[OAuthToken]](Some(OAuthToken("test-token", Instant.now().plusSeconds(3600L)))),
+        Ref.of[IO, List[OAuthCredentials]](Nil)
       ).mapN((t, c) => new LiveEbayAuthClient[IO](ebayConfig, t, c, testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).asserting { token =>
@@ -85,8 +86,8 @@ class EbayAuthClientSpec extends SttpClientSpec {
         }
 
       val ebayAuthClient = (
-        Ref.of[IO, Option[EbayAuthToken]](Some(EbayAuthToken("test-token", 0))),
-        Ref.of[IO, List[EbayCredentials]](credentials)
+        Ref.of[IO, Option[OAuthToken]](Some(OAuthToken("test-token", Instant.now().minusSeconds(60)))),
+        Ref.of[IO, List[OAuthCredentials]](credentials)
       ).mapN((t, c) => new LiveEbayAuthClient[IO](ebayConfig, t, c, testingBackend))
 
       ebayAuthClient.flatMap(_.accessToken).asserting { token =>

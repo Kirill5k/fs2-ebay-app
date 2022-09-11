@@ -8,7 +8,7 @@ import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses.*
-import ebayapp.core.common.config.{EbayConfig, EbayCredentials, EbaySearchConfig}
+import ebayapp.core.common.config.{EbayConfig, OAuthCredentials, EbaySearchConfig}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.ArgumentCaptor
@@ -23,7 +23,7 @@ class EbayClientSpec extends CatsSpec {
   val accessToken = "access-token"
   val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame), category = Some("games-xbox"))
 
-  val credentials = List(EbayCredentials("id-1", "secret-1"), EbayCredentials("id-2", "secret-2"))
+  val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))
   val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
   val config      = MockConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
 

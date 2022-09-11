@@ -7,6 +7,7 @@ import cats.syntax.flatMap.*
 import ebayapp.core.common.Logger
 import ebayapp.kernel.errors.AppError
 import sttp.client3.{Request, Response, SttpBackend}
+import sttp.model.HeaderNames
 
 import scala.concurrent.duration.*
 
@@ -23,19 +24,19 @@ trait HttpClient[F[_]] {
   protected val postmanUserAgent = "PostmanRuntime/7.28.3"
 
   protected val defaultHeaders = Map(
-    "accept"             -> "*/*",
-    "accept-encoding"    -> "gzip, deflate, br",
-    "accept-language"    -> "en-GB,en;q=0.9",
-    "cache-control"      -> "no-store, max-age=0",
-    "content-type"       -> "application/json",
-    "sec-ch-ua"          -> """" Not A;Brand";v="99", "Chromium";v="104", "Opera";v="90"""",
-    "sec-ch-ua-mobile"   -> "?0",
-    "sec-ch-ua-platform" -> "macOS",
-    "sec-fetch-dest"     -> "empty",
-    "sec-fetch-mode"     -> "cors",
-    "sec-fetch-site"     -> "same-origin",
-    "connection"         -> "keep-alive",
-    "user-agent"         -> operaUserAgent
+    HeaderNames.Accept         -> "*/*",
+    HeaderNames.AcceptEncoding -> "gzip, deflate, br",
+    HeaderNames.AcceptEncoding -> "en-GB,en;q=0.9",
+    HeaderNames.CacheControl   -> "no-store, max-age=0",
+    HeaderNames.ContentType    -> "application/json",
+    "sec-ch-ua"                -> """" Not A;Brand";v="99", "Chromium";v="104", "Opera";v="90"""",
+    "sec-ch-ua-mobile"         -> "?0",
+    "sec-ch-ua-platform"       -> "macOS",
+    "sec-fetch-dest"           -> "empty",
+    "sec-fetch-mode"           -> "cors",
+    "sec-fetch-site"           -> "same-origin",
+    HeaderNames.Connection     -> "keep-alive",
+    HeaderNames.UserAgent      -> operaUserAgent
   )
 
   protected def dispatchWithProxy[T](

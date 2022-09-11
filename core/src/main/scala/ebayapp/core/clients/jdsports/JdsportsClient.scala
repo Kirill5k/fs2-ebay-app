@@ -14,7 +14,7 @@ import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.*
-import sttp.model.StatusCode
+import sttp.model.{HeaderNames, StatusCode}
 
 import scala.concurrent.duration.*
 
@@ -29,12 +29,12 @@ final private class LiveJdsportsClient[F[_]](
 ) extends SearchClient[F] with HttpClient[F] {
 
   private val getBrandHeaders = Map(
-    "cookie" -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
-    "accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    "accept-encoding"           -> "gzip, deflate, br",
-    "accept-language"           -> "en-GB,en;q=0.9",
+    HeaderNames.Cookie -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
+    HeaderNames.Accept -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    HeaderNames.AcceptEncoding  -> "gzip, deflate, br",
+    HeaderNames.AcceptLanguage  -> "en-GB,en;q=0.9",
+    HeaderNames.UserAgent       -> operaUserAgent,
     "upgrade-insecure-requests" -> "1",
-    "user-agent"                -> operaUserAgent,
     "sec-ch-ua"                 -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
     "sec-ch-ua-mobile"          -> "?0",
     "sec-ch-ua-platform"        -> "macOS",
@@ -45,18 +45,18 @@ final private class LiveJdsportsClient[F[_]](
   )
 
   private val getStockHeaders = Map(
-    "accept"             -> "*/*",
-    "accept-encoding"    -> "gzip, deflate, br",
-    "accept-language"    -> "en-GB,en;q=0.9",
-    "content-type"       -> "application/json",
-    "x-requested-with"   -> "XMLHttpRequest",
-    "user-agent"         -> operaUserAgent,
-    "sec-ch-ua"          -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
-    "sec-ch-ua-mobile"   -> "?0",
-    "sec-ch-ua-platform" -> "macOS",
-    "sec-fetch-dest"     -> "empty",
-    "sec-fetch-mode"     -> "cors",
-    "sec-fetch-site"     -> "same-origin"
+    HeaderNames.Accept         -> "*/*",
+    HeaderNames.AcceptEncoding -> "gzip, deflate, br",
+    HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
+    HeaderNames.ContentType    -> "application/json",
+    HeaderNames.XRequestedWith -> "XMLHttpRequest",
+    HeaderNames.UserAgent      -> operaUserAgent,
+    "sec-ch-ua"                -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
+    "sec-ch-ua-mobile"         -> "?0",
+    "sec-ch-ua-platform"       -> "macOS",
+    "sec-fetch-dest"           -> "empty",
+    "sec-fetch-mode"           -> "cors",
+    "sec-fetch-site"           -> "same-origin"
   )
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
@@ -103,7 +103,7 @@ final private class LiveJdsportsClient[F[_]](
           val brand = criteria.query.toLowerCase.replace(" ", "-")
           basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
-            .headers(getBrandHeaders ++ config.headers + ("referer" -> config.websiteUri))
+            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> config.websiteUri))
         }
       }
       .flatMap { r =>
@@ -132,7 +132,7 @@ final private class LiveJdsportsClient[F[_]](
           val referrer = config.websiteUri + s"product/${ci.fullName}/${ci.plu}/"
           basicRequest
             .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
-            .headers(getStockHeaders ++ config.headers + ("referer" -> referrer))
+            .headers(getStockHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
         }
       }
       .flatMap { r =>

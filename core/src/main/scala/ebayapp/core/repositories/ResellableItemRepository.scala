@@ -107,4 +107,4 @@ object ResellableItemRepository:
       collNames <- database.listCollectionNames
       _         <- F.unlessA(collNames.toSet.contains(collectionName))(database.createCollection(collectionName, collectionOptions))
       coll      <- database.getCollectionWithCodec[ResellableItemEntity](collectionName)
-    yield new ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])
+    yield ResellableItemMongoRepository[F](coll.withAddedCodec[ItemKind])

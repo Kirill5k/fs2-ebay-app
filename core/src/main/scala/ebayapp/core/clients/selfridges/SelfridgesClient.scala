@@ -108,7 +108,7 @@ final private class LiveSelfridgesClient[F[_]](
         }
       }
       .flatMap { r =>
-        r.body match {
+        r.body match
           case Right(res) =>
             F.pure(res)
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
@@ -129,7 +129,6 @@ final private class LiveSelfridgesClient[F[_]](
           case Left(error) =>
             logger.error(s"$name-$endpoint/error: ${error.getMessage}") *>
               F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-        }
       }
 }
 
@@ -139,4 +138,4 @@ object SelfridgesClient:
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveSelfridgesClient[F](() => configProvider.selfridges, backend, proxyBackend))
+    Monad[F].pure(LiveSelfridgesClient[F](() => configProvider.selfridges, backend, proxyBackend))

@@ -78,7 +78,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
         .get(uri"${config.baseUri}/buy/browse/v1/item/$itemId")
         .response(asJson[EbayItem])
     }.flatMap { r =>
-      r.body match {
+      r.body match
         case Right(item) =>
           itemsCache.put(itemId, item).as(Some(item))
         case Left(DeserializationException(body, error)) =>
@@ -91,12 +91,10 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
         case Left(error) =>
           logger.error(s"ebay-browse-get-item/${r.code.code}: ${error.getMessage}\n$error") *>
             F.sleep(5.seconds) *> findItem(accessToken, itemId)
-      }
     }
 }
 
-private[ebay] object EbayBrowseClient {
-
+private[ebay] object EbayBrowseClient:
   def make[F[_]: Logger: Temporal](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
@@ -105,4 +103,3 @@ private[ebay] object EbayBrowseClient {
       configProvider.ebay,
       Cache.make[F, String, EbayItem](2.hours, 5.minutes)
     ).mapN((config, cache) => LiveEbayBrowseClient[F](config, backend, cache))
-}

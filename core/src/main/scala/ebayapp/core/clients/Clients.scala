@@ -18,7 +18,7 @@ import ebayapp.core.common.config.AppConfig
 trait Clients[F[_]]:
   def cex: CexClient[F]
   def messenger: MessengerClient[F]
-  def get(shop: Retailer): SearchClient[F]
+  def get(retailer: Retailer): SearchClient[F]
 
 object Clients:
   def make[F[_]: Temporal: Logger](
@@ -42,8 +42,8 @@ object Clients:
       new Clients[F] {
         def cex: CexClient[F]             = cexC
         def messenger: MessengerClient[F] = telC
-        def get(shop: Retailer): SearchClient[F] =
-          shop match
+        def get(retailer: Retailer): SearchClient[F] =
+          retailer match
             case Retailer.Cex              => cexC
             case Retailer.Ebay             => ebayC
             case Retailer.Selfridges       => selfridgesC
