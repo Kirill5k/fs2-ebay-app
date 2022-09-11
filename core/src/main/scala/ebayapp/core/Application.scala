@@ -17,7 +17,7 @@ object Application extends IOApp.Simple:
     Logger.make[IO].flatMap { implicit logger =>
       for
         _              <- logger.info("starting ebay-app-core")
-        configProvider <- logger.info("loading config") *> ConfigProvider.make[IO](5.minutes)
+        configProvider <- logger.info("loading config") *> ConfigProvider.make[IO](2.minutes)
         config         <- configProvider.config
         _ <- Resources.make[IO](config).use { resources =>
           for
