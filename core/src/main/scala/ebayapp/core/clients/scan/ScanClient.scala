@@ -40,16 +40,17 @@ final private class LiveScanClient[F[_]](
 
   private def searchByCard(query: String, category: String): F[List[ScanItem]] =
     configProvider()
-      .map { config =>
-        val cat  = category.toLowerCase.replaceAll(" ", "-")
-        val card = query.toLowerCase.replaceAll(" ", "-")
-        basicRequest
-          .get(uri"${config.baseUri}/shop/gaming/$cat/$card#filter=1&inStock=1")
-          .headers(defaultHeaders ++ config.headers)
+      .flatMap { config =>
+        dispatchWithProxy(config.proxied) {
+          val cat  = category.toLowerCase.replaceAll(" ", "-")
+          val card = query.toLowerCase.replaceAll(" ", "-")
+          basicRequest
+            .get(uri"${config.baseUri}/shop/gaming/$cat/$card#filter=1&inStock=1")
+            .headers(defaultHeaders ++ config.headers)
+        }
       }
-      .flatMap(dispatch)
       .flatMap { r =>
-        r.body match {
+        r.body match
           case Right(html) =>
             F.fromEither(ResponseParser.parseSearchResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
@@ -64,7 +65,6 @@ final private class LiveScanClient[F[_]](
           case Left(error) =>
             logger.error(s"$name-search/error: $error") *>
               F.sleep(3.second) *> searchByCard(query, category)
-        }
       }
 }
 

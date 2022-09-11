@@ -81,7 +81,7 @@ final class CexApiClient[F[_]](
   private def search(fullUri: String => Uri): F[CexSearchResponse] =
     configProvider()
       .flatMap { config =>
-        dispatch {
+        dispatchWithProxy(config.proxied) {
           basicRequest
             .get(fullUri(config.baseUri))
             .headers(defaultHeaders ++ config.headers)

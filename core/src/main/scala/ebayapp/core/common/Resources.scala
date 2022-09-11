@@ -15,17 +15,10 @@ import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
-trait Resources[F[_]] {
+trait Resources[F[_]]:
   def httpClientBackend: SttpBackend[F, Any]
   def proxyClientBackend: Option[SttpBackend[F, Any]]
   def database: MongoDatabase[F]
-
-  def clientBackend(proxied: Option[Boolean]): SttpBackend[F, Any] =
-    proxied match {
-      case Some(true) => proxyClientBackend.getOrElse(throw new IllegalStateException("proxy is not setup"))
-      case _          => httpClientBackend
-    }
-}
 
 object Resources {
 

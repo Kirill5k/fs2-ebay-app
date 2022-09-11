@@ -3,8 +3,10 @@ package ebayapp.core.clients
 import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.applicativeError.*
+import cats.syntax.flatMap.*
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.HttpClientConfig
+import ebayapp.kernel.errors.AppError
 import sttp.client3.{Request, Response, SttpBackend}
 
 import scala.concurrent.duration.*
@@ -37,11 +39,31 @@ trait HttpClient[F[_], C <: HttpClientConfig] {
     "user-agent"         -> operaUserAgent
   )
 
-  protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
-    dispatchWithRetry(request)
+  protected def dispatchWithProxy[T](
+      useProxy: Option[Boolean]
+  )(
+      request: Request[T, Any]
+  )(using
+      F: Temporal[F],
+      logger: Logger[F]
+  ): F[Response[T]] =
+    useProxy match {
+      case Some(true) => F.fromOption(proxyBackend, AppError.Critical("proxy is not setup")).flatMap(dispatchWithRetry(_, request))
+      case _          => dispatchWithRetry(httpBackend, request)
+    }
 
-  private def dispatchWithRetry[T](request: Request[T, Any], attempt: Int = 0)(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
-    httpBackend
+  protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
+    dispatchWithRetry(httpBackend, request)
+
+  private def dispatchWithRetry[T](
+      backend: SttpBackend[F, Any],
+      request: Request[T, Any],
+      attempt: Int = 0
+  )(using
+      F: Temporal[F],
+      logger: Logger[F]
+  ): F[Response[T]] =
+    backend
       .send(request)
       .handleErrorWith { error =>
         val cause      = Option(error.getCause)
@@ -49,6 +71,6 @@ trait HttpClient[F[_], C <: HttpClientConfig] {
         val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
         val message    = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
         (if (attempt >= 50 && attempt % 10 == 0) logger.error(message) else logger.warn(message)) *>
-          F.sleep(delayBetweenFailures) *> dispatchWithRetry(request, attempt + 1)
+          F.sleep(delayBetweenFailures) *> dispatchWithRetry(backend, request, attempt + 1)
       }
 }

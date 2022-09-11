@@ -68,14 +68,15 @@ final private class LiveMainlineMenswearClient[F[_]](
 
   private def sendSearchQuery(criteria: SearchCriteria, page: Int): F[List[ProductPreview]] =
     configProvider()
-      .map { config =>
-        basicRequest
-          .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
-          .body(SearchRequest(page, criteria.query).toJson)
-          .headers(defaultHeaders ++ config.headers.filter(_._1.toLowerCase != "authorization"))
-          .response(asJson[SearchResponse])
+      .flatMap { config =>
+        dispatchReqWithAuth(config.proxied) {
+          basicRequest
+            .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
+            .body(SearchRequest(page, criteria.query).toJson)
+            .headers(defaultHeaders ++ config.headers.filter(_._1.toLowerCase != "authorization"))
+            .response(asJson[SearchResponse])
+        }
       }
-      .flatMap(dispatchReqWithAuth)
       .flatMap { r =>
         r.body match {
           case Right(res) =>
@@ -100,14 +101,15 @@ final private class LiveMainlineMenswearClient[F[_]](
 
   private def getCompleteProduct(pp: ProductPreview): F[Option[ProductData]] =
     configProvider()
-      .map { config =>
-        basicRequest
-          .post(uri"${config.baseUri}/app/mmw/m/product/${pp.productID}")
-          .body(ProductRequest.toJson)
-          .headers(defaultHeaders ++ config.headers.filter(_._1.toLowerCase != "authorization"))
-          .response(asJson[ProductResponse])
+      .flatMap { config =>
+        dispatchReqWithAuth(config.proxied) {
+          basicRequest
+            .post(uri"${config.baseUri}/app/mmw/m/product/${pp.productID}")
+            .body(ProductRequest.toJson)
+            .headers(defaultHeaders ++ config.headers.filter(_._1.toLowerCase != "authorization"))
+            .response(asJson[ProductResponse])
+        }
       }
-      .flatMap(dispatchReqWithAuth)
       .flatMap { r =>
         r.body match
           case Right(res) =>
@@ -129,10 +131,10 @@ final private class LiveMainlineMenswearClient[F[_]](
               F.sleep(5.second) *> getCompleteProduct(pp)
       }
 
-  private def dispatchReqWithAuth[T](request: Request[T, Any]): F[Response[T]] =
+  private def dispatchReqWithAuth[T](useProxy: Option[Boolean])(request: Request[T, Any]): F[Response[T]] =
     token.get.flatMap {
-      case Some(t) => dispatch(request.auth.bearer(t))
-      case None    => refreshAccessToken *> dispatchReqWithAuth(request)
+      case Some(t) => dispatchWithProxy(useProxy)(request.auth.bearer(t))
+      case None    => refreshAccessToken *> dispatchReqWithAuth(useProxy)(request)
     }
 
   private def refreshAccessToken: F[Unit] =

@@ -43,13 +43,14 @@ final private class LiveNvidiaClient[F[_]](
 
   private def searchProducts(c: SearchCriteria): F[List[Product]] =
     configProvider()
-      .map { config =>
-        basicRequest
-          .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
-          .response(asJson[NvidiaSearchResponse])
-          .headers(defaultHeaders ++ config.headers)
+      .flatMap { config =>
+        dispatchWithProxy(config.proxied) {
+          basicRequest
+            .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
+            .response(asJson[NvidiaSearchResponse])
+            .headers(defaultHeaders ++ config.headers)
+        }
       }
-      .flatMap(dispatch)
       .flatMap { r =>
         r.body match
           case Right(response) =>

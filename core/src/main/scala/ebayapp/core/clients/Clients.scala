@@ -23,7 +23,6 @@ trait Clients[F[_]]:
 object Clients:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
-      config: AppConfig,
       resources: Resources[F]
   ): F[Clients[F]] =
     (

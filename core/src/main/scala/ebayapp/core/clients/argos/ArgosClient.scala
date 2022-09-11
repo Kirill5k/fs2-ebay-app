@@ -46,15 +46,15 @@ final private class LiveArgosClient[F[_]](
 
   private def search(query: String, page: Int): F[Option[SearchData]] =
     configProvider()
-      .map { config =>
-        basicRequest
-          .get(
-            uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query};searchType=null?returnMeta=true"
-          )
-          .headers(defaultHeaders ++ config.headers)
-          .response(asJson[ArgosSearchResponse])
+      .flatMap { config =>
+        dispatchWithProxy(config.proxied) {
+          val uri = uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query};searchType=null?returnMeta=true"
+          basicRequest
+            .get(uri)
+            .headers(defaultHeaders ++ config.headers)
+            .response(asJson[ArgosSearchResponse])
+        }
       }
-      .flatMap(dispatch)
       .flatMap { r =>
         r.body match {
           case Right(response) => response.data.some.pure[F]

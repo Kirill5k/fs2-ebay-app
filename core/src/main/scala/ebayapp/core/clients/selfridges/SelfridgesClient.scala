@@ -99,13 +99,14 @@ final private class LiveSelfridgesClient[F[_]](
 
   private def sendRequest[A: Decoder](fullUri: String => Uri, endpoint: String, defaultResponse: A): F[A] =
     configProvider()
-      .map { config =>
-        basicRequest
-          .get(fullUri(config.baseUri))
-          .headers(defaultHeaders ++ config.headers)
-          .response(asJson[A])
+      .flatMap { config =>
+        dispatchWithProxy(config.proxied) {
+          basicRequest
+            .get(fullUri(config.baseUri))
+            .headers(defaultHeaders ++ config.headers)
+            .response(asJson[A])
+        }
       }
-      .flatMap(dispatch)
       .flatMap { r =>
         r.body match {
           case Right(res) =>

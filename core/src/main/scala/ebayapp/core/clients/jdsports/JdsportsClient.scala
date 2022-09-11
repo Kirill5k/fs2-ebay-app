@@ -97,14 +97,15 @@ final private class LiveJdsportsClient[F[_]](
 
   private def searchByBrand(criteria: SearchCriteria, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
     configProvider()
-      .map { config =>
-        val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
-        val brand = criteria.query.toLowerCase.replace(" ", "-")
-        basicRequest
-          .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
-          .headers(getBrandHeaders ++ config.headers + ("referer" -> config.websiteUri))
+      .flatMap { config =>
+        dispatchWithProxy(config.proxied) {
+          val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
+          val brand = criteria.query.toLowerCase.replace(" ", "-")
+          basicRequest
+            .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
+            .headers(getBrandHeaders ++ config.headers + ("referer" -> config.websiteUri))
+        }
       }
-      .flatMap(dispatch)
       .flatMap { r =>
         r.body match {
           case Right(html) =>
@@ -126,13 +127,14 @@ final private class LiveJdsportsClient[F[_]](
 
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     configProvider()
-      .map { config =>
-        val referrer = config.websiteUri + s"product/${ci.fullName}/${ci.plu}/"
-        basicRequest
-          .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
-          .headers(getStockHeaders ++ config.headers + ("referer" -> referrer))
+      .flatMap { config =>
+        dispatchWithProxy(config.proxied) {
+          val referrer = config.websiteUri + s"product/${ci.fullName}/${ci.plu}/"
+          basicRequest
+            .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
+            .headers(getStockHeaders ++ config.headers + ("referer" -> referrer))
+        }
       }
-      .flatMap(dispatch)
       .flatMap { r =>
         r.body match {
           case Right(html) =>
