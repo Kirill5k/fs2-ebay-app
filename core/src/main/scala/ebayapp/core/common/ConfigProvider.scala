@@ -22,6 +22,8 @@ trait ConfigProvider[F[_]]:
   def jdsports: F[GenericRetailerConfig]
   def scotts: F[GenericRetailerConfig]
   def tessuti: F[GenericRetailerConfig]
+  def nvidia: F[GenericRetailerConfig]
+  def scan: F[GenericRetailerConfig]
 
 final private class LiveConfigProvider[F[_]](
     private val state: Ref[F, AppConfig]
@@ -29,14 +31,16 @@ final private class LiveConfigProvider[F[_]](
     F: Monad[F]
 ) extends ConfigProvider[F] {
   override def config: F[AppConfig]                 = state.get
-  override def cex: F[GenericRetailerConfig]        = config.map(_.retailer.cex)
   override def telegram: F[TelegramConfig]          = config.map(_.telegram)
+  override def cex: F[GenericRetailerConfig]        = config.map(_.retailer.cex)
   override def ebay: F[EbayConfig]                  = config.map(_.retailer.ebay)
   override def selfridges: F[GenericRetailerConfig] = config.map(_.retailer.selfridges)
   override def argos: F[GenericRetailerConfig]      = config.map(_.retailer.argos)
   override def jdsports: F[GenericRetailerConfig]   = config.map(_.retailer.jdsports)
   override def scotts: F[GenericRetailerConfig]     = config.map(_.retailer.scotts)
   override def tessuti: F[GenericRetailerConfig]    = config.map(_.retailer.tessuti)
+  override def nvidia: F[GenericRetailerConfig]     = config.map(_.retailer.nvidia)
+  override def scan: F[GenericRetailerConfig]       = config.map(_.retailer.scan)
 }
 
 object ConfigProvider:

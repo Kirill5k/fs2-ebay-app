@@ -3,13 +3,14 @@ package ebayapp.core.clients.nvidia
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
+import cats.syntax.functor.*
 import cats.syntax.functorFilter.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
-import ebayapp.core.common.Logger
+import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
@@ -20,17 +21,15 @@ import sttp.client3.*
 import scala.concurrent.duration.*
 
 final private class LiveNvidiaClient[F[_]](
-    private val config: GenericRetailerConfig,
+    private val configProvider: () => F[GenericRetailerConfig],
     override val backend: SttpBackend[F, Any]
 )(using
     logger: Logger[F],
-    timer: Temporal[F]
+    F: Temporal[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
-  override protected val name: String = "nvidia"
+  override protected val name: String                         = "nvidia"
   override protected val delayBetweenFailures: FiniteDuration = 2.seconds
-
-  private val headers: Map[String, String] = defaultHeaders ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
@@ -42,32 +41,33 @@ final private class LiveNvidiaClient[F[_]](
       .map(nvidiaGenericItemMapper.toDomain(criteria))
 
   private def searchProducts(c: SearchCriteria): F[List[Product]] =
-    dispatch {
-      basicRequest
-        .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
-        .response(asJson[NvidiaSearchResponse])
-        .headers(headers)
-    }.flatMap { r =>
-      r.body match {
-        case Right(response) =>
-          response.searchedProducts.productDetails.pure[F]
-        case Left(DeserializationException(body, error)) =>
-          logger.error(s"$name-search/parsing-error: ${error.getMessage}, \n$body") *>
-            List.empty[Product].pure[F]
-        case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-          logger.error(s"$name-search/$status-error, \n$body") *>
-            timer.sleep(10.seconds) *> searchProducts(c)
-        case Left(error) =>
-          logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
-            timer.sleep(10.second) *> searchProducts(c)
+    configProvider()
+      .map { config =>
+        basicRequest
+          .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
+          .response(asJson[NvidiaSearchResponse])
+          .headers(defaultHeaders ++ config.headers)
       }
-    }
+      .flatMap(dispatch)
+      .flatMap { r =>
+        r.body match
+          case Right(response) =>
+            response.searchedProducts.productDetails.pure[F]
+          case Left(DeserializationException(body, error)) =>
+            logger.error(s"$name-search/parsing-error: ${error.getMessage}, \n$body") *>
+              List.empty[Product].pure[F]
+          case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
+            logger.error(s"$name-search/$status-error, \n$body") *>
+              F.sleep(10.seconds) *> searchProducts(c)
+          case Left(error) =>
+            logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
+              F.sleep(10.second) *> searchProducts(c)
+      }
 }
 
-object NvidiaClient {
+object NvidiaClient:
   def make[F[_]: Temporal: Logger](
-      config: GenericRetailerConfig,
+      configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveNvidiaClient[F](config, backend))
-}
+    Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend))

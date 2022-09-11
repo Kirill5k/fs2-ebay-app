@@ -1,8 +1,7 @@
 package ebayapp.core.clients.scan
 
 import cats.effect.IO
-import cats.effect.unsafe.implicits.global
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.search.SearchCriteria
@@ -15,7 +14,8 @@ class ScanClientSpec extends SttpClientSpec {
 
   "A ScanClient" should {
 
-    val config = GenericRetailerConfig("http://scan.co.uk")
+    val scanConfig = GenericRetailerConfig("http://scan.co.uk")
+    val config     = MockConfigProvider.make[IO](scanConfig = Some(scanConfig))
 
     val criteria = SearchCriteria("all", Some("gpu-nvidia-gaming"))
 
