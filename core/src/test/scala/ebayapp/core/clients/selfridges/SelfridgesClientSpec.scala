@@ -2,7 +2,7 @@ package ebayapp.core.clients.selfridges
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
@@ -18,7 +18,8 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
   "A SelfridgesClient" should {
 
-    val config = GenericRetailerConfig("http://selfridges.com", Map("api-key" -> "foo-bar"))
+    val selfridgesConfig = GenericRetailerConfig("http://selfridges.com", Map("api-key" -> "foo-bar"))
+    val config = MockConfigProvider.make[IO](selfridgesConfig = Some(selfridgesConfig))
 
     val criteria = SearchCriteria("EA7 Armani")
 

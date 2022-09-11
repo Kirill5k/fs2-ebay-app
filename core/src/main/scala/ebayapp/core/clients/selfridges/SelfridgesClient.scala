@@ -8,8 +8,7 @@ import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
 import ebayapp.core.clients.selfridges.responses.*
-import ebayapp.core.common.Logger
-import ebayapp.core.common.config.GenericRetailerConfig
+import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
@@ -21,7 +20,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration.*
 
 final private class LiveSelfridgesClient[F[_]](
-    private val config: GenericRetailerConfig,
+    private val configProvider: ConfigProvider[F],
     override val backend: SttpBackend[F, Any]
 )(using
     F: Temporal[F],
@@ -29,8 +28,6 @@ final private class LiveSelfridgesClient[F[_]](
 ) extends SearchClient[F] with HttpClient[F] {
 
   override protected val name: String = "selfridges"
-
-  private val headers = defaultHeaders ++ config.headers
 
   private val filters: String = List(
     "\\d+-\\d+ (year|month)",
@@ -51,19 +48,23 @@ final private class LiveSelfridgesClient[F[_]](
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
-      .unfoldLoopEval(1)(searchForItems(criteria))
-      .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
-      .flatMap(Stream.emits)
-      .filter(!_.name.matches(filters))
-      .filter(_.isOnSale)
-      .flatMap { item =>
+      .eval(configProvider.selfridges)
+      .flatMap { config =>
         Stream
-          .evalSeq(getItemDetails(item))
+          .unfoldLoopEval(1)(searchForItems(criteria))
           .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
-          .map((stock, price) => SelfridgesItem(item, stock, price))
+          .flatMap(Stream.emits)
+          .filter(!_.name.matches(filters))
+          .filter(_.isOnSale)
+          .flatMap { item =>
+            Stream
+              .evalSeq(getItemDetails(item))
+              .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
+              .map((stock, price) => SelfridgesItem(item, stock, price))
+          }
+          .map(selfridgesClothingMapper.toDomain(criteria))
+          .filter(_.buyPrice.quantityAvailable > 0)
       }
-      .map(selfridgesClothingMapper.toDomain(criteria))
-      .filter(_.buyPrice.quantityAvailable > 0)
 
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
@@ -74,60 +75,61 @@ final private class LiveSelfridgesClient[F[_]](
 
   private def searchForItems(criteria: SearchCriteria)(page: Int): F[(List[CatalogItem], Option[Int])] =
     sendRequest[SelfridgesSearchResponse](
-      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${criteria.query.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
+      baseUri => uri"$baseUri/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${criteria.query.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
       "products-by-ids",
       SelfridgesSearchResponse(0, None, Nil)
     ).map(res => (res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
 
   private def getItemPrice(number: String): F[List[ItemPrice]] =
     sendRequest[SelfridgesItemPriceResponse](
-      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/price/byId/$number",
+      baseUri => uri"$baseUri/api/cms/ecom/v1/GB/en/price/byId/$number",
       "item-price",
       SelfridgesItemPriceResponse(None)
     ).map(res => res.prices.getOrElse(Nil))
 
   private def getItemStock(number: String): F[List[ItemStock]] =
     sendRequest[SelfridgesItemStockResponse](
-      uri"${config.baseUri}/api/cms/ecom/v1/GB/en/stock/byId/$number",
+      baseUri => uri"$baseUri/api/cms/ecom/v1/GB/en/stock/byId/$number",
       "item-stock",
       SelfridgesItemStockResponse(None)
     ).map(res => res.stocks.getOrElse(Nil))
 
-  private def sendRequest[A: Decoder](uri: Uri, endpoint: String, defaultResponse: A): F[A] =
-    dispatch {
-      basicRequest
-        .get(uri)
-        .headers(headers)
-        .response(asJson[A])
-    }.flatMap { r =>
+  private def sendRequest[A: Decoder](fullUri: String => Uri, endpoint: String, defaultResponse: A): F[A] =
+    buildRequest(fullUri).flatMap(dispatch(_)).flatMap { r =>
       r.body match {
         case Right(res) =>
           F.pure(res)
         case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
           logger.warn(s"$name-$endpoint/exhausted input") *>
-            F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
+            F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
         case Left(DeserializationException(_, error)) =>
           logger.error(s"$name-$endpoint response parsing error: ${error.getMessage}") *>
             F.pure(defaultResponse)
         case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
           logger.error(s"$name-$endpoint/$s-critical") *>
-            F.sleep(3.second) *> sendRequest(uri, endpoint, defaultResponse)
+            F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
         case Left(HttpError(_, status)) if status.isClientError =>
           logger.error(s"$name-$endpoint/$status-error") *>
             F.pure(defaultResponse)
         case Left(HttpError(_, status)) if status.isServerError =>
           logger.warn(s"$name-$endpoint/$status-repeatable") *>
-            F.sleep(5.second) *> sendRequest(uri, endpoint, defaultResponse)
+            F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
         case Left(error) =>
           logger.error(s"$name-$endpoint/error: ${error.getMessage}") *>
-            F.sleep(5.second) *> sendRequest(uri, endpoint, defaultResponse)
+            F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
       }
     }
+
+  private def buildRequest[A: Decoder](fullUri: String => Uri) =
+    for
+      config <- configProvider.selfridges
+      headers = defaultHeaders ++ config.headers
+    yield basicRequest.get(fullUri(config.baseUri)).headers(headers).response(asJson[A])
 }
 
 object SelfridgesClient:
   def make[F[_]: Temporal: Logger](
-      config: GenericRetailerConfig,
+      configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveSelfridgesClient[F](config, backend))
+    Monad[F].pure(new LiveSelfridgesClient[F](configProvider, backend))
