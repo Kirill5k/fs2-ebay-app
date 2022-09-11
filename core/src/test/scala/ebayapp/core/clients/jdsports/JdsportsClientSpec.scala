@@ -2,7 +2,7 @@ package ebayapp.core.clients.jdsports
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import ebayapp.core.MockLogger
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
@@ -16,7 +16,8 @@ class JdsportsClientSpec extends SttpClientSpec {
   given logger: Logger[IO] = MockLogger.make[IO]
 
   "A JdsportsClient" should {
-    val config = GenericRetailerConfig("http://jdsports.com/proxy")
+    val jdsportsConfig = GenericRetailerConfig("http://jdsports.com/proxy")
+    val config         = MockConfigProvider.make[IO](jdsportsConfig = Some(jdsportsConfig))
 
     "return items on sale" in {
       val criteria = SearchCriteria("Emporio Armani EA7", category = Some("men"))
@@ -52,8 +53,9 @@ class JdsportsClientSpec extends SttpClientSpec {
   }
 
   "A TessutiClient" should {
-    val config   = GenericRetailerConfig("http://tessuti.com")
-    val criteria = SearchCriteria("Emporio Armani", category = Some("men"))
+    val tessutiConfig = GenericRetailerConfig("http://tessuti.com")
+    val config        = MockConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
+    val criteria      = SearchCriteria("Emporio Armani", category = Some("men"))
 
     "return items on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub

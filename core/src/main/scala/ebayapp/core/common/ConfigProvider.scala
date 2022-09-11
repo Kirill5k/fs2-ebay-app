@@ -19,6 +19,9 @@ trait ConfigProvider[F[_]]:
   def telegram: F[TelegramConfig]
   def ebay: F[EbayConfig]
   def argos: F[GenericRetailerConfig]
+  def jdsports: F[GenericRetailerConfig]
+  def scotts: F[GenericRetailerConfig]
+  def tessuti: F[GenericRetailerConfig]
 
 final private class LiveConfigProvider[F[_]](
     private val state: Ref[F, AppConfig]
@@ -31,6 +34,9 @@ final private class LiveConfigProvider[F[_]](
   override def ebay: F[EbayConfig]                  = config.map(_.retailer.ebay)
   override def selfridges: F[GenericRetailerConfig] = config.map(_.retailer.selfridges)
   override def argos: F[GenericRetailerConfig]      = config.map(_.retailer.argos)
+  override def jdsports: F[GenericRetailerConfig]   = config.map(_.retailer.jdsports)
+  override def scotts: F[GenericRetailerConfig]     = config.map(_.retailer.scotts)
+  override def tessuti: F[GenericRetailerConfig]    = config.map(_.retailer.tessuti)
 }
 
 object ConfigProvider:

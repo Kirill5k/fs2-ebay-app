@@ -12,7 +12,10 @@ object MockConfigProvider {
       telegramConfig: Option[TelegramConfig] = None,
       ebayConfig: Option[EbayConfig] = None,
       selfridgesConfig: Option[GenericRetailerConfig] = None,
-      argosConfig: Option[GenericRetailerConfig] = None
+      argosConfig: Option[GenericRetailerConfig] = None,
+      jdsportsConfig: Option[GenericRetailerConfig] = None,
+      scottsConfig: Option[GenericRetailerConfig] = None,
+      tessutiConfig: Option[GenericRetailerConfig] = None
   )(using
       F: MonadThrow[F]
   ) = new ConfigProvider[F]:
@@ -23,4 +26,7 @@ object MockConfigProvider {
     override def selfridges: F[GenericRetailerConfig]             = fromOpt(selfridgesConfig, "selfridges")
     override def cex: F[GenericRetailerConfig]                    = fromOpt(cexConfig, "cex")
     override def argos: F[GenericRetailerConfig]                  = fromOpt(argosConfig, "argos")
+    override def jdsports: F[GenericRetailerConfig]               = fromOpt(jdsportsConfig, "jdsports")
+    override def scotts: F[GenericRetailerConfig]                 = fromOpt(scottsConfig, "scotts")
+    override def tessuti: F[GenericRetailerConfig]                = fromOpt(tessutiConfig, "tessuti")
 }
