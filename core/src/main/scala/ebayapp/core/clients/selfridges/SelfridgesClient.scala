@@ -8,6 +8,7 @@ import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
 import ebayapp.core.clients.selfridges.responses.*
+import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.domain.ResellableItem
@@ -20,7 +21,7 @@ import sttp.model.{StatusCode, Uri}
 import scala.concurrent.duration.*
 
 final private class LiveSelfridgesClient[F[_]](
-    private val configProvider: ConfigProvider[F],
+    private val configProvider: () => F[GenericRetailerConfig],
     override val backend: SttpBackend[F, Any]
 )(using
     F: Temporal[F],
@@ -48,7 +49,7 @@ final private class LiveSelfridgesClient[F[_]](
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
-      .eval(configProvider.selfridges)
+      .eval(configProvider())
       .flatMap { config =>
         Stream
           .unfoldLoopEval(1)(searchForItems(criteria))
@@ -95,36 +96,38 @@ final private class LiveSelfridgesClient[F[_]](
     ).map(res => res.stocks.getOrElse(Nil))
 
   private def sendRequest[A: Decoder](fullUri: String => Uri, endpoint: String, defaultResponse: A): F[A] =
-    buildRequest(fullUri).flatMap(dispatch(_)).flatMap { r =>
-      r.body match {
-        case Right(res) =>
-          F.pure(res)
-        case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
-          logger.warn(s"$name-$endpoint/exhausted input") *>
-            F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-        case Left(DeserializationException(_, error)) =>
-          logger.error(s"$name-$endpoint response parsing error: ${error.getMessage}") *>
-            F.pure(defaultResponse)
-        case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
-          logger.error(s"$name-$endpoint/$s-critical") *>
-            F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-        case Left(HttpError(_, status)) if status.isClientError =>
-          logger.error(s"$name-$endpoint/$status-error") *>
-            F.pure(defaultResponse)
-        case Left(HttpError(_, status)) if status.isServerError =>
-          logger.warn(s"$name-$endpoint/$status-repeatable") *>
-            F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-        case Left(error) =>
-          logger.error(s"$name-$endpoint/error: ${error.getMessage}") *>
-            F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
+    configProvider()
+      .map { config =>
+        basicRequest
+          .get(fullUri(config.baseUri))
+          .headers(defaultHeaders ++ config.headers)
+          .response(asJson[A])
       }
-    }
-
-  private def buildRequest[A: Decoder](fullUri: String => Uri) =
-    for
-      config <- configProvider.selfridges
-      headers = defaultHeaders ++ config.headers
-    yield basicRequest.get(fullUri(config.baseUri)).headers(headers).response(asJson[A])
+      .flatMap(dispatch)
+      .flatMap { r =>
+        r.body match {
+          case Right(res) =>
+            F.pure(res)
+          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+            logger.warn(s"$name-$endpoint/exhausted input") *>
+              F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
+          case Left(DeserializationException(_, error)) =>
+            logger.error(s"$name-$endpoint response parsing error: ${error.getMessage}") *>
+              F.pure(defaultResponse)
+          case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
+            logger.error(s"$name-$endpoint/$s-critical") *>
+              F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
+          case Left(HttpError(_, status)) if status.isClientError =>
+            logger.error(s"$name-$endpoint/$status-error") *>
+              F.pure(defaultResponse)
+          case Left(HttpError(_, status)) if status.isServerError =>
+            logger.warn(s"$name-$endpoint/$status-repeatable") *>
+              F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
+          case Left(error) =>
+            logger.error(s"$name-$endpoint/error: ${error.getMessage}") *>
+              F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
+        }
+      }
 }
 
 object SelfridgesClient:
@@ -132,4 +135,4 @@ object SelfridgesClient:
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(new LiveSelfridgesClient[F](configProvider, backend))
+    Monad[F].pure(new LiveSelfridgesClient[F](() => configProvider.selfridges, backend))

@@ -2,10 +2,9 @@ package ebayapp.core.clients.telegram
 
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
-import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
-import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, MessengerClient}
+import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{ConfigProvider, Logger}
@@ -15,7 +14,7 @@ import sttp.model.StatusCode
 import scala.concurrent.duration.*
 
 final private class LiveTelegramClient[F[_]](
-    private val configProvider: ConfigProvider[F],
+    private val configProvider: () => F[TelegramConfig],
     override val backend: SttpBackend[F, Any]
 )(using
     F: Temporal[F],
@@ -25,7 +24,7 @@ final private class LiveTelegramClient[F[_]](
   override protected val name: String = "telegram"
 
   def send(notification: Notification): F[Unit] =
-    configProvider.telegram.flatMap { config =>
+    configProvider().flatMap { config =>
       notification match {
         case Notification.Alert(message) => sendMessage(config.baseUri, config.botKey, config.alertsChannelId, message)
         case Notification.Deal(message)  => sendMessage(config.baseUri, config.botKey, config.mainChannelId, message)
@@ -39,19 +38,16 @@ final private class LiveTelegramClient[F[_]](
       channelId: String,
       message: String
   ): F[Unit] =
-    dispatch {
-      basicRequest
-        .get(uri"$baseUri/bot$botKey/sendMessage?chat_id=$channelId&text=$message")
-    }
+    dispatch(basicRequest.get(uri"$baseUri/bot$botKey/sendMessage?chat_id=$channelId&text=$message"))
       .flatMap { r =>
         r.body match {
           case Right(_) =>
-            ().pure[F]
+            F.unit
           case Left(_) if r.code == StatusCode.TooManyRequests =>
             F.sleep(10.seconds) *> sendMessage(baseUri, botKey, channelId, message)
           case Left(error) =>
             logger.warn(s"error sending message to telegram: ${r.code}\n$error") *>
-              AppError.Http(r.code.code, s"error sending message to telegram channel $channelId: ${r.code}").raiseError[F, Unit]
+              F.raiseError(AppError.Http(r.code.code, s"error sending message to telegram channel $channelId: ${r.code}"))
         }
       }
 }
@@ -62,5 +58,5 @@ object TelegramClient {
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   )(using F: Temporal[F]): F[MessengerClient[F]] =
-    F.pure(LiveTelegramClient[F](configProvider, backend))
+    F.pure(LiveTelegramClient[F](() => configProvider.telegram, backend))
 }

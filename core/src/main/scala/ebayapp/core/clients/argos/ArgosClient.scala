@@ -21,7 +21,7 @@ import fs2.Stream
 import scala.concurrent.duration.*
 
 final private class LiveArgosClient[F[_]](
-    private val configProvider: ConfigProvider[F],
+    private val configProvider: () => F[GenericRetailerConfig],
     override val backend: SttpBackend[F, Any]
 )(using
     logger: Logger[F],
@@ -44,7 +44,7 @@ final private class LiveArgosClient[F[_]](
       .map(argosGenericItemMapper.toDomain(criteria))
 
   private def search(query: String, page: Int): F[Option[SearchData]] =
-    configProvider.argos
+    configProvider()
       .map { config =>
         basicRequest
           .get(
@@ -75,5 +75,5 @@ object ArgosClient {
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveArgosClient[F](configProvider, backend))
+    Monad[F].pure(LiveArgosClient[F](() => configProvider.argos, backend))
 }
