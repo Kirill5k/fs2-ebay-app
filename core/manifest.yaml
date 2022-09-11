@@ -39,8 +39,7 @@ spec:
           imagePullPolicy: Always
           volumeMounts:
             - name: config-volume
-              mountPath: /opt/app/application.conf
-              subPath: application.conf
+              mountPath: /opt/app
           ports:
             - containerPort: 8080
           env:
