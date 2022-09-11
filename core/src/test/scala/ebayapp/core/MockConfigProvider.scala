@@ -10,7 +10,8 @@ object MockConfigProvider {
   def make[F[_]](
       cexConfig: Option[GenericRetailerConfig] = None,
       telegramConfig: Option[TelegramConfig] = None,
-      ebayConfig: Option[EbayConfig] = None
+      ebayConfig: Option[EbayConfig] = None,
+      selfridgesConfig: Option[GenericRetailerConfig] = None
   )(using
       F: MonadThrow[F]
   ) = new ConfigProvider[F]:
@@ -18,5 +19,6 @@ object MockConfigProvider {
     override def config: F[AppConfig]                             = ???
     override def telegram: F[TelegramConfig]                      = fromOpt(telegramConfig, "telegram")
     override def ebay: F[EbayConfig]                              = fromOpt(ebayConfig, "ebay")
+    override def selfridges: F[GenericRetailerConfig]             = fromOpt(selfridgesConfig, "selfridges")
     override def cex: F[GenericRetailerConfig]                    = fromOpt(cexConfig, "cex")
 }
