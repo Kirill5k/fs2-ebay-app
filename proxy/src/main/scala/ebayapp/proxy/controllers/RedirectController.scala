@@ -19,15 +19,23 @@ final private class RedirectController[F[_]](
     F: Concurrent[F]
 ) extends Controller[F] with Http4sDsl[F] {
 
-  private val HostHeader         = CIString("host")
-  private val XRealIp            = CIString("X-Real-IP")
-  private val XForwardedFor      = CIString("X-Forwarded-For")
-  private val XForwardedHost     = CIString("X-Forwarded-Host")
   private val XRerouteToHeader   = CIString("X-Reroute-To")
   private val XReloadOn403Header = CIString("X-Reload-On-403")
   private val XProxiedHeader     = CIString("X-Proxied")
 
-  private val headersToRemove = List(HostHeader, XReloadOn403Header, XRerouteToHeader, XProxiedHeader, XRealIp, XForwardedFor, XForwardedHost)
+  private val headersToRemove = List(
+    XReloadOn403Header,
+    XRerouteToHeader,
+    XProxiedHeader,
+    CIString("host"),
+    CIString("X-Real-IP"),
+    CIString("X-Forwarded-For"),
+    CIString("X-Forwarded-Port"),
+    CIString("X-Forwarded-Scheme"),
+    CIString("X-Forwarded-Host"),
+    CIString("X-Forwarded-Proto"),
+    CIString("X-Scheme")
+  )
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
