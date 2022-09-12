@@ -20,9 +20,14 @@ final private class RedirectController[F[_]](
 ) extends Controller[F] with Http4sDsl[F] {
 
   private val HostHeader         = CIString("host")
+  private val XRealIp            = CIString("X-Real-IP")
+  private val XForwardedFor      = CIString("X-Forwarded-For")
+  private val XForwardedHost     = CIString("X-Forwarded-Host")
   private val XRerouteToHeader   = CIString("X-Reroute-To")
   private val XReloadOn403Header = CIString("X-Reload-On-403")
   private val XProxiedHeader     = CIString("X-Proxied")
+
+  private val headersToRemove = List(HostHeader, XReloadOn403Header, XRerouteToHeader, XProxiedHeader, XRealIp, XForwardedFor, XForwardedHost)
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
@@ -35,7 +40,7 @@ final private class RedirectController[F[_]](
     req.redirectUri match {
       case Right(url) =>
         req.redirectClient
-          .toHttpApp(req.withUri(url).removeHeaders(HostHeader, XReloadOn403Header, XRerouteToHeader, XProxiedHeader))
+          .toHttpApp(req.withUri(url).removeHeaders(headersToRemove))
           .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.reloadOn403))
       case Left(errorMessage) =>
         BadRequest(errorMessage)
@@ -44,9 +49,9 @@ final private class RedirectController[F[_]](
   private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
 
   extension (req: Request[F])
-    def removeHeaders(keys: CIString*): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
-    def reloadOn403: Boolean                       = req.headers.get(XReloadOn403Header).isDefined
-    def redirectClient: Client[F]                  = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
+    def removeHeaders(keys: List[CIString]): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
+    def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
+    def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
     def redirectUri: Either[String, Uri] =
       req.headers
         .get(XRerouteToHeader)

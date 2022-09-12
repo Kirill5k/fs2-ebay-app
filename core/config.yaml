@@ -61,10 +61,9 @@ data:
         base-uri: "https://proxy-kirill5k.cloud.okteto.net"
         delay-between-individual-requests: 2s
         headers: {
-          "user-agent": "PostmanRuntime/7.28.3"
+          "User-Agent": "PostmanRuntime/7.28.3"
           "referer": "https://www.selfridges.com"
           "api-key": ${?SELFRIDGES_API_KEY}
-          "X-Reload-On-403": "true"
           "X-Reroute-To": "https://www.selfridges.com"
         }
       }
