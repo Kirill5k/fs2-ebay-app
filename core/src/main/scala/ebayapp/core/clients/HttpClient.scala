@@ -58,7 +58,8 @@ trait HttpClient[F[_]] {
   private def dispatchWithRetry[T](
       backend: SttpBackend[F, Any],
       request: Request[T, Any],
-      attempt: Int = 0
+      attempt: Int = 0,
+      maxRetries: Int = 100
   )(using
       F: Temporal[F],
       logger: Logger[F]
@@ -66,11 +67,13 @@ trait HttpClient[F[_]] {
     backend
       .send(request)
       .handleErrorWith { error =>
-        val cause      = Option(error.getCause)
-        val errorClass = cause.fold(error.getClass.getSimpleName)(_.getClass.getSimpleName)
-        val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
-        val message    = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
-        (if (attempt >= 50 && attempt % 10 == 0) logger.error(message) else logger.warn(message)) *>
-          F.sleep(delayBetweenFailures) *> dispatchWithRetry(backend, request, attempt + 1)
+        if (attempt < maxRetries) {
+          val cause = Option(error.getCause)
+          val errorClass = cause.fold(error.getClass.getSimpleName)(_.getClass.getSimpleName)
+          val errorMsg = cause.fold(error.getMessage)(_.getMessage)
+          val message = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
+          (if (attempt >= 50 && attempt % 10 == 0) logger.error(message) else logger.warn(message)) *>
+            F.sleep(delayBetweenFailures) *> dispatchWithRetry(backend, request, attempt + 1, maxRetries)
+        } else F.raiseError(error)
       }
 }
