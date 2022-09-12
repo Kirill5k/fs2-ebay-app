@@ -35,9 +35,8 @@ final private class LiveNvidiaClient[F[_]](
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .evalSeq(searchProducts(criteria))
-      .filterNot(_.isOutOfStock)
       .flatMap { p =>
-        Stream.emits(p.retailers.map(r => NvidiaItem(p.productTitle, p.imageURL, p.category, r)))
+        Stream.emits(p.retailers.filter(_.isAvailable).map(r => NvidiaItem(p.displayName, p.imageURL, p.category, r)))
       }
       .map(nvidiaGenericItemMapper.toDomain(criteria))
 
@@ -54,7 +53,7 @@ final private class LiveNvidiaClient[F[_]](
       .flatMap { r =>
         r.body match
           case Right(response) =>
-            response.searchedProducts.productDetails.pure[F]
+            F.pure(response.searchedProducts.featuredProduct.toList ::: response.searchedProducts.productDetails)
           case Left(DeserializationException(body, error)) =>
             logger.error(s"$name-search/parsing-error: ${error.getMessage}, \n$body") *>
               List.empty[Product].pure[F]

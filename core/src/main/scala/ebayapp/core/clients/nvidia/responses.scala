@@ -4,7 +4,7 @@ import io.circe.Codec
 
 private[nvidia] object responses {
 
-  private[nvidia] final case class NvidiaItem(
+  final private[nvidia] case class NvidiaItem(
       productTitle: String,
       imageURL: String,
       category: String,
@@ -13,7 +13,8 @@ private[nvidia] object responses {
     val name: String = s"$productTitle (${retailer.partnerId}/${retailer.storeId})"
   }
 
-  private[nvidia] final case class ProductRetailer(
+  final private[nvidia] case class ProductRetailer(
+      isAvailable: Boolean,
       productId: Long,
       productTitle: String,
       salePrice: BigDecimal,
@@ -25,7 +26,8 @@ private[nvidia] object responses {
       storeId: String
   ) derives Codec.AsObject
 
-  private[nvidia] final case class Product(
+  final private[nvidia] case class Product(
+      displayName: String,
       productTitle: String,
       productID: Long,
       imageURL: String,
@@ -33,11 +35,9 @@ private[nvidia] object responses {
       productPrice: String,
       category: String,
       retailers: List[ProductRetailer]
-  ) derives Codec.AsObject {
-    val isOutOfStock: Boolean = prdStatus == "out_of_stock"
-  }
+  ) derives Codec.AsObject
 
-  private[nvidia] final case class SearchedProducts(productDetails: List[Product]) derives Codec.AsObject
+  final private[nvidia] case class SearchedProducts(featuredProduct: Option[Product], productDetails: List[Product]) derives Codec.AsObject
 
-  private[nvidia] final case class NvidiaSearchResponse(searchedProducts: SearchedProducts) derives Codec.AsObject
+  final private[nvidia] case class NvidiaSearchResponse(searchedProducts: SearchedProducts) derives Codec.AsObject
 }

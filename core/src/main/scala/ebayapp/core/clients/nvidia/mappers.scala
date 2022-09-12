@@ -27,7 +27,7 @@ private[nvidia] object mappers {
           s"NVIDIA/${item.retailer.retailerName}",
           Map.empty[String, String]
         ),
-        BuyPrice(item.retailer.stock, item.retailer.salePrice),
+        BuyPrice(item.retailer.stock + 1, item.retailer.salePrice),
         None,
         foundWith
       )
