@@ -60,11 +60,14 @@ class NvidiaClientSpec extends SttpClientSpec {
           "NVIDIA RTX 3070 (19/19)",
           "NVIDIA RTX 3060 Ti (19/19)",
           "NVIDIA RTX 3070 Ti (19/19)",
-          "ACER RTX 3050 Ti (183/139)",
-          "ACER RTX 3050 Ti (1/9)",
-          "ACER RTX 3050 Ti (23/23)",
-          "LENOVO RTX 3060 (183/139)",
-          "MSI RTX 3070 (183/139)"
+          "PALIT GTX 1650 (12/10)",
+          "PALIT GTX 1650 (1/9)",
+          "PALIT GTX 1650 (16/18)",
+          "MSI GTX 1650 (12/10)",
+          "MSI GTX 1650 (13/14)",
+          "MSI GTX 1650 (23/23)",
+          "GIGABYTE GTX 1650 (12/10)",
+          "GIGABYTE GTX 1650 (1/9)"
         )
       }
     }

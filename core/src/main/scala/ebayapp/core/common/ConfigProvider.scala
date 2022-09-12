@@ -54,7 +54,7 @@ object ConfigProvider:
       val process = mountedConfigModifiedTs.flatMap { modifiedTs =>
         if (previousLastModifiedTs.isEmpty || previousLastModifiedTs.contains(modifiedTs)) F.pure(modifiedTs)
         else {
-          logger.info("reloading updated config from mount") >>
+          logger.info("reloading updated config from volume mount") >>
             F.blocking(AppConfig.loadFromMount).flatMap(state.set).as(modifiedTs)
         }
       }
@@ -63,7 +63,7 @@ object ConfigProvider:
 
     F
       .blocking(AppConfig.loadFromMount)
-      .flatMap(c => logger.info("loaded config from a configmap mount") >> Ref.of(c))
+      .flatMap(c => logger.info("loaded config from a configmap volume mount") >> Ref.of(c))
       .flatTap(s => reloadConfigWhenUpdated(s, None).start.void)
       .handleErrorWith { e =>
         logger.warn(s"error loading config from a configmap mount, will try resources: ${e.getMessage}") >>

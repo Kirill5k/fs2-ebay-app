@@ -64,7 +64,7 @@ final private class SimpleStockService[F[_]](
       val groups =
         if items.isEmpty then ""
         else items.map(_.foundWith.query).groupMapReduce(identity)(_ => 1)(_ + _).mkString("(", ", ", ")")
-      logger.info(s"""${retailer.name}-cache-stock: ${items.size} $item $groups""")
+      logger.info(s"""${retailer.name}-stock-cache: ${items.size} $item $groups""")
     }
 
   private def getUpdates(req: StockMonitorRequest): Stream[F, ItemStockUpdates] =

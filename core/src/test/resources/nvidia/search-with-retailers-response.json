@@ -19,7 +19,7 @@
           "dispValueDesription": null,
           "groupType": null,
           "units": 0,
-          "checked": false,
+          "checked": true,
           "imageURL": null,
           "isValidate": false
         },
@@ -81,7 +81,7 @@
           "dispValue": "RTX 3090",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 16,
+          "units": 17,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -90,7 +90,7 @@
           "dispValue": "RTX 3080 Ti",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 14,
+          "units": 7,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -99,7 +99,7 @@
           "dispValue": "RTX 3080",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 31,
+          "units": 21,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -108,7 +108,7 @@
           "dispValue": "RTX 3070",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 36,
+          "units": 18,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -117,7 +117,7 @@
           "dispValue": "RTX 3070 Ti",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 5,
+          "units": 1,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -135,7 +135,7 @@
           "dispValue": "RTX 3060",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 36,
+          "units": 19,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -144,7 +144,7 @@
           "dispValue": "RTX 3050 Ti",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 6,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -153,7 +153,7 @@
           "dispValue": "RTX 3050",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 5,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -162,7 +162,7 @@
           "dispValue": "RTX 2080 SUPER",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 2,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -180,7 +180,7 @@
           "dispValue": "RTX 2080",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 1,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -189,7 +189,7 @@
           "dispValue": "RTX 2070",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 3,
+          "units": 1,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -207,7 +207,7 @@
           "dispValue": "RTX 2060",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 8,
+          "units": 6,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -216,7 +216,7 @@
           "dispValue": "GTX 1660 Ti",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 6,
+          "units": 5,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -243,7 +243,7 @@
           "dispValue": "GTX 1650 Ti",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 1,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -279,7 +279,7 @@
           "dispValue": "NVIDIA",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 8,
+          "units": 7,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -288,7 +288,7 @@
           "dispValue": "3XS SYSTEMS",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 1,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -297,7 +297,7 @@
           "dispValue": "ACER",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 14,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -306,7 +306,7 @@
           "dispValue": "ALIENWARE",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 2,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -315,7 +315,7 @@
           "dispValue": "AORUS",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 2,
+          "units": 1,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -324,7 +324,7 @@
           "dispValue": "ASUS",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 49,
+          "units": 34,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -333,7 +333,7 @@
           "dispValue": "EVGA",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 7,
+          "units": 8,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -351,7 +351,7 @@
           "dispValue": "GIGABYTE",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 37,
+          "units": 28,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -360,7 +360,7 @@
           "dispValue": "HP",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 8,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -378,7 +378,7 @@
           "dispValue": "LENOVO",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 3,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -387,7 +387,7 @@
           "dispValue": "MSI",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 36,
+          "units": 26,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -396,7 +396,7 @@
           "dispValue": "NOVATECH",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 2,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -414,7 +414,7 @@
           "dispValue": "PC SPECIALIST",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 2,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -432,7 +432,7 @@
           "dispValue": "RAZER",
           "dispValueDesription": null,
           "groupType": null,
-          "units": 9,
+          "units": 0,
           "checked": false,
           "imageURL": null,
           "isValidate": false
@@ -467,69 +467,6 @@
       "dataType": "Double",
       "showCount": true,
       "filterDisplayOrder": 4
-    },
-    {
-      "displayName": "screen_size",
-      "filterField": "screen_size_filter",
-      "displayMaxValues": "8",
-      "fieldType": "checkbox",
-      "selectedMinRangeVal": null,
-      "selectedMaxRangeVal": null,
-      "defaultMinRangeVal": null,
-      "defaultMaxRangeVal": null,
-      "unitsOfMeasure": null,
-      "checked": false,
-      "units": null,
-      "filterValues": [
-        {
-          "dispValue": "17.3\"",
-          "dispValueDesription": null,
-          "groupType": null,
-          "units": 13,
-          "checked": false,
-          "imageURL": null,
-          "isValidate": false
-        },
-        {
-          "dispValue": "16.1\"",
-          "dispValueDesription": null,
-          "groupType": null,
-          "units": 6,
-          "checked": false,
-          "imageURL": null,
-          "isValidate": false
-        },
-        {
-          "dispValue": "16\"",
-          "dispValueDesription": null,
-          "groupType": null,
-          "units": 7,
-          "checked": false,
-          "imageURL": null,
-          "isValidate": false
-        },
-        {
-          "dispValue": "15.6\"",
-          "dispValueDesription": null,
-          "groupType": null,
-          "units": 48,
-          "checked": false,
-          "imageURL": null,
-          "isValidate": false
-        },
-        {
-          "dispValue": "14\"",
-          "dispValueDesription": null,
-          "groupType": null,
-          "units": 3,
-          "checked": false,
-          "imageURL": null,
-          "isValidate": false
-        }
-      ],
-      "dataType": "String",
-      "showCount": true,
-      "filterDisplayOrder": 5
     },
     {
       "displayName": "nv_technology",
@@ -569,32 +506,12 @@
     }
   ],
   "filterGroups": null,
-  "search": null,
+  "search": "",
   "version": "7",
   "sort": [
     {
-      "displayName": "featured_products",
-      "value": "fp",
-      "selected": false
-    },
-    {
-      "displayName": "featured_laptops",
-      "value": "fl",
-      "selected": false
-    },
-    {
-      "displayName": "featured_desktop",
-      "value": "fd",
-      "selected": false
-    },
-    {
       "displayName": "featured_gpu",
       "value": "fg",
-      "selected": false
-    },
-    {
-      "displayName": "featured_nvlinks",
-      "value": "fn",
       "selected": false
     },
     {
@@ -610,12 +527,12 @@
   ],
   "pagination": {
     "page": 1,
-    "limit": 9,
-    "totalRecords": 211,
+    "limit": 512,
+    "totalRecords": 135,
     "featuredProductIncludedInCount": true
   },
   "searchedProducts": {
-    "totalProducts": 211,
+    "totalProducts": 135,
     "featuredProductIncludedInCount": true,
     "featuredProductsFlag": true,
     "featuredProduct": {
@@ -623,7 +540,7 @@
       "totalCount": 1,
       "productID": 35673,
       "imageURL": "https://assets.nvidia.partners/images/png/3080-ti-back-300x198.png",
-      "productTitle": "NVIDIA GeForce RTX 3080 Ti \u003cbr\u003e\u003cspan class\u003d\"color-brand-green p-medium\"\u003ePromotional Price, Limited time only\u003c/span\u003e",
+      "productTitle": "NVIDIA GeForce RTX 3080 Ti <br><span class=\"color-brand-green p-medium\">Promotional Price, Limited time only</span>",
       "digitialRiverID": "",
       "productSKU": "NVGFT080T",
       "productUPC": "NVGFT080T_UK",
@@ -650,7 +567,7 @@
       "retailers": [
         {
           "productId": 35673,
-          "productTitle": "NVIDIA GeForce RTX 3080 Ti \u003cbr\u003e\u003cspan class\u003d\"color-brand-green p-medium\"\u003ePromotional Price, Limited time only\u003c/span\u003e",
+          "productTitle": "NVIDIA GeForce RTX 3080 Ti <br><span class=\"color-brand-green p-medium\">Promotional Price, Limited time only</span>",
           "logoUrl": null,
           "isAvailable": true,
           "salePrice": "1049.00",
@@ -703,10 +620,10 @@
     "productDetails": [
       {
         "displayName": "NVIDIA RTX 3090 Ti",
-        "totalCount": 210,
+        "totalCount": 134,
         "productID": 45228,
         "imageURL": "https://assets.nvidia.partners/images/png/nvidia-geforce-rtx-3090-ti.png",
-        "productTitle": "NVIDIA GeForce RTX 3090 Ti \u003cbr\u003e\u003cspan class\u003d\"color-brand-green p-medium\"\u003ePromotional Price, Limited time only\u003c/span\u003e",
+        "productTitle": "NVIDIA GeForce RTX 3090 Ti <br><span class=\"color-brand-green p-medium\">Promotional Price, Limited time only</span>",
         "digitialRiverID": "",
         "productSKU": "NVGFT090T",
         "productUPC": "NVGFT090T_UK",
@@ -733,7 +650,7 @@
         "retailers": [
           {
             "productId": 45228,
-            "productTitle": "NVIDIA GeForce RTX 3090 Ti \u003cbr\u003e\u003cspan class\u003d\"color-brand-green p-medium\"\u003ePromotional Price, Limited time only\u003c/span\u003e",
+            "productTitle": "NVIDIA GeForce RTX 3090 Ti <br><span class=\"color-brand-green p-medium\">Promotional Price, Limited time only</span>",
             "logoUrl": "https://assets.nvidia.partners/logos/geforce/scan-retailer.png",
             "isAvailable": true,
             "salePrice": "1879.00",
@@ -785,7 +702,7 @@
       },
       {
         "displayName": "NVIDIA RTX 3080",
-        "totalCount": 210,
+        "totalCount": 134,
         "productID": 30043,
         "imageURL": "https://assets.nvidia.partners/images/png/nvidia-geforce-rtx-3080.png",
         "productTitle": "NVIDIA GeForce RTX 3080",
@@ -867,10 +784,10 @@
       },
       {
         "displayName": "NVIDIA RTX 3090",
-        "totalCount": 210,
+        "totalCount": 134,
         "productID": 30035,
         "imageURL": "https://assets.nvidia.partners/images/png/nvidia-geforce-rtx-3090.png",
-        "productTitle": "NVIDIA GeForce RTX 3090 \u003cbr\u003e\u003cspan class\u003d\"color-brand-green p-medium\"\u003ePromotional Price, Limited time only\u003c/span\u003e",
+        "productTitle": "NVIDIA GeForce RTX 3090 <br><span class=\"color-brand-green p-medium\">Promotional Price, Limited time only</span>",
         "digitialRiverID": "",
         "productSKU": "NVGFT090",
         "productUPC": "NVGFT090_UK",
@@ -897,7 +814,7 @@
         "retailers": [
           {
             "productId": 30035,
-            "productTitle": "NVIDIA GeForce RTX 3090 \u003cbr\u003e\u003cspan class\u003d\"color-brand-green p-medium\"\u003ePromotional Price, Limited time only\u003c/span\u003e",
+            "productTitle": "NVIDIA GeForce RTX 3090 <br><span class=\"color-brand-green p-medium\">Promotional Price, Limited time only</span>",
             "logoUrl": "https://assets.nvidia.partners/logos/geforce/scan-retailer.png",
             "isAvailable": true,
             "salePrice": "1399.00",
@@ -949,7 +866,7 @@
       },
       {
         "displayName": "NVIDIA RTX 3070",
-        "totalCount": 210,
+        "totalCount": 134,
         "productID": 30051,
         "imageURL": "https://assets.nvidia.partners/images/png/nvidia-geforce-rtx-3070.png",
         "productTitle": "NVIDIA GeForce RTX 3070",
@@ -1031,7 +948,7 @@
       },
       {
         "displayName": "NVIDIA RTX 3060 Ti",
-        "totalCount": 210,
+        "totalCount": 134,
         "productID": 33823,
         "imageURL": "https://assets.nvidia.partners/images/png/nvidia-geforce-rtx-3060-ti.png",
         "productTitle": "NVIDIA GEFORCE RTX 3060 Ti",
@@ -1113,7 +1030,7 @@
       },
       {
         "displayName": "NVIDIA RTX 3070 Ti",
-        "totalCount": 210,
+        "totalCount": 134,
         "productID": 35978,
         "imageURL": "https://assets.nvidia.partners/images/png/3070-ti-back-300x198.png",
         "productTitle": "NVIDIA GeForce RTX 3070 Ti",
@@ -1194,27 +1111,27 @@
         ]
       },
       {
-        "displayName": "ACER RTX 3050 Ti",
-        "totalCount": 210,
-        "productID": 40254,
-        "imageURL": "https://assets.nvidia.partners/images/png/ACER-Nitro-5-15-Gaming-Laptop.png",
-        "productTitle": "ACER Nitro 5 - GeForce RTX 3050 Ti, 15.6\", Intel Core i5, 8GB RAM, 512 GB SSD",
+        "displayName": "PALIT GTX 1650",
+        "totalCount": 134,
+        "productID": 4564,
+        "imageURL": "https://assets.nvidia.partners/images/png/DE_70407754_95483027_UK.png",
+        "productTitle": "Palit NE51650006G1-1170F graphics card GeForce GTX 1650 4 GB GDDR5",
         "digitialRiverID": null,
-        "productSKU": "NH.QBVEK.001",
-        "productUPC": "NH.QBVEK.001_UK",
-        "productUPCOriginal": "NH.QBVEK.001",
-        "productPrice": "£699.00",
+        "productSKU": "NE51650006G1-1170F",
+        "productUPC": "NE51650006G1-1170F_UK",
+        "productUPCOriginal": "NE51650006G1-1170F",
+        "productPrice": "£174.99",
         "productAvailable": false,
         "productRating": null,
         "customerReviewCount": null,
         "isFounderEdition": false,
-        "isFeaturedProduct": true,
+        "isFeaturedProduct": false,
         "certified": false,
-        "manufacturer": "ACER",
+        "manufacturer": "PALIT",
         "locale": "UK",
         "isFeaturedProdcutFoundInSecondSearch": false,
-        "category": "LAPTOP",
-        "gpu": "RTX 3050 Ti",
+        "category": "GPU",
+        "gpu": "GTX 1650",
         "purchaseOption": "",
         "prdStatus": "buy_now",
         "minShipDays": null,
@@ -1224,55 +1141,173 @@
         "offerText": "",
         "retailers": [
           {
-            "productId": 40254,
-            "productTitle": "ACER Nitro 5 - GeForce RTX 3050 Ti, 15.6\", Intel Core i5, 8GB RAM, 512 GB SSD",
-            "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo53379.png",
+            "productId": 4564,
+            "productTitle": "Palit NE51650006G1-1170F graphics card GeForce GTX 1650 4 GB GDDR5",
+            "logoUrl": null,
             "isAvailable": true,
-            "salePrice": "699.00",
-            "directPurchaseLink": null,
-            "purchaseLink": "https://gethatch.com/wtbonline/merch/53379/go?region\u003dGB\u0026affiliate_id\u003d52439\u0026prod_id\u003d1276288162\u0026core_id\u003d101053729",
+            "salePrice": "174.99",
+            "directPurchaseLink": "null",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/9643/go?clickref=631e1d9c1bd10f51b4a16db0&region=GB&affiliate_id=52439&prod_id=1332694808&core_id=95483027",
             "hasOffer": false,
             "offerText": null,
-            "partnerId": "183",
-            "storeId": "139",
-            "upc": "NH.QBVEK.001_UK",
-            "sku": "NH.QBVEK.001",
+            "partnerId": "12",
+            "storeId": "10",
+            "upc": "NE51650006G1-1170F_UK",
+            "sku": "NE51650006G1-1170F",
             "stock": 0,
-            "retailerName": "Https://www.currys.co.uk",
+            "retailerName": "https://ebuyer.com",
             "type": 76
           },
           {
-            "productId": 40254,
-            "productTitle": "ACER Nitro 5 - GeForce RTX 3050 Ti, 15.6\", Intel Core i5, 8GB RAM, 512 GB SSD",
-            "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo38038.png",
+            "productId": 4564,
+            "productTitle": "Palit NE51650006G1-1170F graphics card GeForce GTX 1650 4 GB GDDR5",
+            "logoUrl": null,
             "isAvailable": true,
-            "salePrice": "699.97",
-            "directPurchaseLink": "https://gethatch.com/wtbonline/merch/38038/go?tag\u003d52439_nu0b8-21\u0026region\u003dGB\u0026affiliate_id\u003d52439\u0026prod_id\u003d1196652641\u0026core_id\u003d101053729",
-            "purchaseLink": "https://gethatch.com/wtbonline/merch/38038/go?tag\u003d52439_iceleads-21\u0026region\u003dGB\u0026affiliate_id\u003d52439\u0026prod_id\u003d1255071333\u0026core_id\u003d101053729",
+            "salePrice": "188.37",
+            "directPurchaseLink": "null",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/38038/go?tag=52439_iceleads-21&ascsubtag=631e1d9c1bd10f51b4a16db0&region=GB&affiliate_id=52439&prod_id=1332453583&core_id=95483027",
             "hasOffer": false,
             "offerText": null,
             "partnerId": "1",
             "storeId": "9",
-            "upc": "NH.QBVEK.001_UK",
-            "sku": "NH.QBVEK.001",
+            "upc": "NE51650006G1-1170F_UK",
+            "sku": "NE51650006G1-1170F",
             "stock": 0,
             "retailerName": "https://www.amazon.co.uk",
             "type": 76
           },
           {
-            "productId": 40254,
-            "productTitle": "ACER Nitro 5 - GeForce RTX 3050 Ti, 15.6\", Intel Core i5, 8GB RAM, 512 GB SSD",
+            "productId": 4564,
+            "productTitle": "Palit NE51650006G1-1170F graphics card GeForce GTX 1650 4 GB GDDR5",
+            "logoUrl": null,
+            "isAvailable": true,
+            "salePrice": "229.99",
+            "directPurchaseLink": "null",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/87057/go?utm_source=hatch&utm_campaign=nVidia+Shop+%28Batch%29&utm_medium=referral&region=GB&affiliate_id=52439&prod_id=1262491522&core_id=95483027",
+            "hasOffer": false,
+            "offerText": null,
+            "partnerId": "16",
+            "storeId": "18",
+            "upc": "NE51650006G1-1170F_UK",
+            "sku": "NE51650006G1-1170F",
+            "stock": 0,
+            "retailerName": "https://www.overclockers.co.uk",
+            "type": 76
+          }
+        ],
+        "productInfo": [
+          {
+            "name": "cooling_system",
+            "value": "Active"
+          },
+          {
+            "name": "gpu_boost_clock_speed",
+            "value": "1665 MHz"
+          },
+          {
+            "name": "gpu_memory_size",
+            "value": "4 GB"
+          }
+        ],
+        "compareProductInfo": [
+          {
+            "name": "cooling_system",
+            "value": "Active"
+          },
+          {
+            "name": "gpu_clock_speed",
+            "value": "1485 MHz"
+          },
+          {
+            "name": "gpu_boost_clock_speed",
+            "value": "1665 MHz"
+          },
+          {
+            "name": "gpu_memory_size",
+            "value": "4 GB"
+          }
+        ]
+      },
+      {
+        "displayName": "MSI GTX 1650",
+        "totalCount": 134,
+        "productID": 5496,
+        "imageURL": "https://assets.nvidia.partners/images/png/DE_70218858_95482817_UK.png",
+        "productTitle": "MSI GeForce GTX 1650 VENTUS XS 4G OC",
+        "digitialRiverID": null,
+        "productSKU": "GEFORCE GTX 1650 VENTUS XS 4G OC",
+        "productUPC": "GEFORCE%20GTX%201650%20VENTUS%20XS%204G%20OC_UK",
+        "productUPCOriginal": "GEFORCE GTX 1650 VENTUS XS 4G OC",
+        "productPrice": "£189.99",
+        "productAvailable": false,
+        "productRating": null,
+        "customerReviewCount": null,
+        "isFounderEdition": false,
+        "isFeaturedProduct": false,
+        "certified": false,
+        "manufacturer": "MSI",
+        "locale": "UK",
+        "isFeaturedProdcutFoundInSecondSearch": false,
+        "category": "GPU",
+        "gpu": "GTX 1650",
+        "purchaseOption": "",
+        "prdStatus": "buy_now",
+        "minShipDays": null,
+        "maxShipDays": null,
+        "shipInfo": null,
+        "isOffer": false,
+        "offerText": "",
+        "retailers": [
+          {
+            "productId": 5496,
+            "productTitle": "MSI GeForce GTX 1650 VENTUS XS 4G OC",
+            "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo9643.png",
+            "isAvailable": true,
+            "salePrice": "189.99",
+            "directPurchaseLink": "https://gethatch.com/iceleads_rest/merch/9643/go?region=GB&affiliate_id=52439&prod_id=654071813&core_id=95482817",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/9643/go?clickref=631e1d9c1bd10f51b4a16db0&region=GB&affiliate_id=52439&prod_id=1332496849&core_id=95482817",
+            "hasOffer": false,
+            "offerText": null,
+            "partnerId": "12",
+            "storeId": "10",
+            "upc": "GEFORCE GTX 1650 VENTUS XS 4G OC_UK",
+            "sku": "GEFORCE GTX 1650 VENTUS XS 4G OC",
+            "stock": 0,
+            "retailerName": "https://ebuyer.com",
+            "type": 76
+          },
+          {
+            "productId": 5496,
+            "productTitle": "MSI GeForce GTX 1650 VENTUS XS 4G OC",
+            "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo61413.png",
+            "isAvailable": true,
+            "salePrice": "199.99",
+            "directPurchaseLink": "https://gethatch.com/iceleads_rest/merch/61413/go?region=GB&affiliate_id=52439&prod_id=441791931&core_id=95482817",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/61413/go?region=GB&affiliate_id=52439&prod_id=1332735089&core_id=95482817",
+            "hasOffer": false,
+            "offerText": null,
+            "partnerId": "13",
+            "storeId": "14",
+            "upc": "GEFORCE GTX 1650 VENTUS XS 4G OC_UK",
+            "sku": "GEFORCE GTX 1650 VENTUS XS 4G OC",
+            "stock": 0,
+            "retailerName": "https://www.novatech.co.uk",
+            "type": 76
+          },
+          {
+            "productId": 5496,
+            "productTitle": "MSI GeForce GTX 1650 VENTUS XS 4G OC",
             "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo87127.png",
             "isAvailable": true,
-            "salePrice": "699.97",
-            "directPurchaseLink": "https://gethatch.com/wtbonline/merch/87127/go?region\u003dGB\u0026affiliate_id\u003d52439\u0026prod_id\u003d1200433785\u0026core_id\u003d101053729",
-            "purchaseLink": "https://gethatch.com/wtbonline/merch/87127/go?region\u003dGB\u0026affiliate_id\u003d52439\u0026prod_id\u003d1268451072\u0026core_id\u003d101053729",
+            "salePrice": "205.51",
+            "directPurchaseLink": "https://gethatch.com/iceleads_rest/merch/87127/go?region=GB&affiliate_id=52439&prod_id=441800437&core_id=95482817",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/87127/go?region=GB&affiliate_id=52439&prod_id=1331817893&core_id=95482817",
             "hasOffer": false,
             "offerText": null,
             "partnerId": "23",
             "storeId": "23",
-            "upc": "NH.QBVEK.001_UK",
-            "sku": "NH.QBVEK.001",
+            "upc": "GEFORCE GTX 1650 VENTUS XS 4G OC_UK",
+            "sku": "GEFORCE GTX 1650 VENTUS XS 4G OC",
             "stock": 0,
             "retailerName": "https://www.box.co.uk/",
             "type": 76
@@ -1280,71 +1315,59 @@
         ],
         "productInfo": [
           {
-            "name": "gpu",
-            "value": "GeForce RTX 3050 Ti"
+            "name": "cooling_system",
+            "value": "Active"
           },
           {
-            "name": "display_type",
-            "value": " 15.6\" | 1920 x 1080"
+            "name": "gpu_boost_clock_speed",
+            "value": "1740 MHz"
           },
           {
-            "name": "cpu_processor",
-            "value": "Intel Core i5-11400H"
-          },
-          {
-            "name": "memory",
-            "value": " 8 GB DDR4"
-          },
-          {
-            "name": "storage",
-            "value": "512 GB SSD"
+            "name": "gpu_memory_size",
+            "value": "4 GB"
           }
         ],
         "compareProductInfo": [
           {
-            "name": "gpu",
-            "value": "GeForce RTX 3050 Ti"
+            "name": "cooling_system",
+            "value": "Active"
           },
           {
-            "name": "display_type",
-            "value": " 15.6\" | 1920 x 1080"
+            "name": "gpu_clock_speed",
+            "value": "--"
           },
           {
-            "name": "cpu_processor",
-            "value": "Intel Core i5-11400H"
+            "name": "gpu_boost_clock_speed",
+            "value": "1740 MHz"
           },
           {
-            "name": "memory",
-            "value": " 8 GB DDR4"
-          },
-          {
-            "name": "storage",
-            "value": "512 GB SSD"
+            "name": "gpu_memory_size",
+            "value": "4 GB"
           }
         ]
       },
       {
-        "displayName": "LENOVO RTX 3060",
-        "totalCount": 210,
-        "productID": 70960,
-        "imageURL": "https://assets.nvidia.partners/images/png/LENOVO-Legion-5-15-Gaming-Laptop.png",
-        "productTitle": "Lenovo Legion 5 - GeForce RTX 3060, Ryzen 7 5800H, 8 GB RAM, 512 GB SSD",
+        "displayName": "GIGABYTE GTX 1650",
+        "totalCount": 134,
+        "productID": 25486,
+        "imageURL": "https://assets.nvidia.partners/images/png/DE_78679448_100259781_UK.png",
+        "productTitle": "Gigabyte GV-N1656OC-4GD graphics card NVIDIA",
         "digitialRiverID": null,
-        "productSKU": "82JU006YUK",
-        "productUPC": "82JU006YUK_UK",
-        "productUPCOriginal": "82JU006YUK",
-        "productPrice": "£899.00",
+        "productSKU": "GV-N1656OC-4GD",
+        "productUPC": "GV-N1656OC-4GD_UK",
+        "productUPCOriginal": "GV-N1656OC-4GD",
+        "productPrice": "£189.99",
         "productAvailable": false,
         "productRating": null,
         "customerReviewCount": null,
         "isFounderEdition": false,
-        "isFeaturedProduct": true,
+        "isFeaturedProduct": false,
         "certified": false,
-        "manufacturer": "LENOVO",
+        "manufacturer": "GIGABYTE",
         "locale": "UK",
         "isFeaturedProdcutFoundInSecondSearch": false,
-        "category": "LAPTOP",
-        "gpu": "RTX 3060",
+        "category": "GPU",
+        "gpu": "GTX 1650",
         "purchaseOption": "",
         "prdStatus": "buy_now",
         "minShipDays": null,
@@ -1354,160 +1377,72 @@
         "offerText": "",
         "retailers": [
           {
-            "productId": 70960,
-            "productTitle": "Lenovo Legion 5 - GeForce RTX 3060, Ryzen 7 5800H, 8 GB RAM, 512 GB SSD",
-            "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo53379.png",
+            "productId": 25486,
+            "productTitle": "Gigabyte GV-N1656OC-4GD graphics card NVIDIA",
+            "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo9643.png",
             "isAvailable": true,
-            "salePrice": "899.00",
-            "directPurchaseLink": "https://www.awin1.com/pclick.php?p\u003d29273782571\u0026a\u003d155280\u0026m\u003d1599",
-            "purchaseLink": "https://gethatch.com/wtbonline/merch/53379/go?region\u003dGB\u0026affiliate_id\u003d52439\u0026prod_id\u003d1276283964\u0026core_id\u003d100860213",
+            "salePrice": "189.99",
+            "directPurchaseLink": "https://track.webgains.com/click.html?wgcampaignid=1368285&wgprogramid=267255&product=1&wglinkid=2348045&productname=Gigabyte+GeForce+GTX+1650+4GB+D6+OC+Graphics+Card&wgtarget=https://www.ebuyer.com/973331-gigabyte-geforce-gtx-1650-4gb-d6-oc-graphics-card-gv-n1656oc-4gd",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/9643/go?clickref=631e1d9c1bd10f51b4a16db0&region=GB&affiliate_id=52439&prod_id=1332496959&core_id=100259781",
             "hasOffer": false,
             "offerText": null,
-            "partnerId": "183",
-            "storeId": "139",
-            "upc": "82JU006YUK_UK",
-            "sku": "82JU006YUK",
+            "partnerId": "12",
+            "storeId": "10",
+            "upc": "GV-N1656OC-4GD_UK",
+            "sku": "GV-N1656OC-4GD",
             "stock": 0,
-            "retailerName": "Https://www.currys.co.uk",
+            "retailerName": "https://ebuyer.com",
+            "type": 76
+          },
+          {
+            "productId": 25486,
+            "productTitle": "Gigabyte GV-N1656OC-4GD graphics card NVIDIA",
+            "logoUrl": "https://gethatch.com/resources/images/merchant/mLogo38038.png",
+            "isAvailable": true,
+            "salePrice": "204.58",
+            "directPurchaseLink": "https://gethatch.com/wtbonline/merch/38038/go?tag=52439_nu0b8-21&region=GB&affiliate_id=52439&prod_id=1173427033&core_id=100259781",
+            "purchaseLink": "https://gethatch.com/wtbonline/merch/38038/go?tag=52439_iceleads-21&ascsubtag=631e1d9c1bd10f51b4a16db0&region=GB&affiliate_id=52439&prod_id=1333044760&core_id=100259781",
+            "hasOffer": false,
+            "offerText": null,
+            "partnerId": "1",
+            "storeId": "9",
+            "upc": "GV-N1656OC-4GD_UK",
+            "sku": "GV-N1656OC-4GD",
+            "stock": 0,
+            "retailerName": "https://www.amazon.co.uk",
             "type": 76
           }
         ],
         "productInfo": [
           {
-            "name": "gpu",
-            "value": "GeForce RTX 3060"
+            "name": "cooling_system",
+            "value": "Active"
           },
           {
-            "name": "display_type",
-            "value": " 15.6\" | 1920 x 1080"
+            "name": "gpu_boost_clock_speed",
+            "value": "--"
           },
           {
-            "name": "cpu_processor",
-            "value": "Ryzen 7 5800H"
-          },
-          {
-            "name": "memory",
-            "value": " 8 GB DDR4"
-          },
-          {
-            "name": "storage",
-            "value": "512 GB SSD"
+            "name": "gpu_memory_size",
+            "value": "4 GB"
           }
         ],
         "compareProductInfo": [
           {
-            "name": "gpu",
-            "value": "GeForce RTX 3060"
+            "name": "cooling_system",
+            "value": "Active"
           },
           {
-            "name": "display_type",
-            "value": " 15.6\" | 1920 x 1080"
+            "name": "gpu_clock_speed",
+            "value": "1635 MHz"
           },
           {
-            "name": "cpu_processor",
-            "value": "Ryzen 7 5800H"
+            "name": "gpu_boost_clock_speed",
+            "value": "--"
           },
           {
-            "name": "memory",
-            "value": " 8 GB DDR4"
-          },
-          {
-            "name": "storage",
-            "value": "512 GB SSD"
-          }
-        ]
-      },
-      {
-        "displayName": "MSI RTX 3070",
-        "totalCount": 210,
-        "productID": 79984,
-        "imageURL": "https://assets.nvidia.partners/images/png/MSI-Katana-GF66.png",
-        "productTitle": "MSI Katana GF66 - GeForce RTX 3070 8 GB GDDR6, 15.6\", Intel Core i7-11800H 16GB DDR4, 512GB SSD",
-        "digitialRiverID": null,
-        "productSKU": "9S7-158112-843",
-        "productUPC": "9S7-158112-843_UK",
-        "productUPCOriginal": "9S7-158112-843",
-        "productPrice": "£999.00",
-        "productAvailable": false,
-        "productRating": null,
-        "customerReviewCount": null,
-        "isFounderEdition": false,
-        "isFeaturedProduct": true,
-        "certified": false,
-        "manufacturer": "MSI",
-        "locale": "UK",
-        "isFeaturedProdcutFoundInSecondSearch": false,
-        "category": "LAPTOP",
-        "gpu": "RTX 3070",
-        "purchaseOption": "",
-        "prdStatus": "buy_now",
-        "minShipDays": null,
-        "maxShipDays": null,
-        "shipInfo": null,
-        "isOffer": false,
-        "offerText": "",
-        "retailers": [
-          {
-            "productId": 79984,
-            "productTitle": "MSI Katana GF66 - GeForce RTX 3070 8 GB GDDR6, 15.6\", Intel Core i7-11800H 16GB DDR4, 512GB SSD",
-            "logoUrl": "https://store.nvidia.com/assets/shield/assets/retailer-currypcworld.png",
-            "isAvailable": true,
-            "salePrice": "999.00",
-            "directPurchaseLink": null,
-            "purchaseLink": "https://gethatch.com/wtbonline/merch/53379/go?region\u003dGB\u0026affiliate_id\u003d52378\u0026url_id\u003d55571",
-            "hasOffer": false,
-            "offerText": null,
-            "partnerId": "183",
-            "storeId": "139",
-            "upc": "9S7-158112-843_UK",
-            "sku": "9S7-158112-843",
-            "stock": 0,
-            "retailerName": "Https://www.currys.co.uk",
-            "type": 76
-          }
-        ],
-        "productInfo": [
-          {
-            "name": "gpu",
-            "value": "GeForce RTX 3070"
-          },
-          {
-            "name": "display_type",
-            "value": " 15.6\" | 1920 x 1080"
-          },
-          {
-            "name": "cpu_processor",
-            "value": "Intel Core i7-11800H"
-          },
-          {
-            "name": "memory",
-            "value": " 16GB DDR4"
-          },
-          {
-            "name": "storage",
-            "value": "512 GB SSD"
-          }
-        ],
-        "compareProductInfo": [
-          {
-            "name": "gpu",
-            "value": "GeForce RTX 3070"
-          },
-          {
-            "name": "display_type",
-            "value": " 15.6\" | 1920 x 1080"
-          },
-          {
-            "name": "cpu_processor",
-            "value": "Intel Core i7-11800H"
-          },
-          {
-            "name": "memory",
-            "value": " 16GB DDR4"
-          },
-          {
-            "name": "storage",
-            "value": "512 GB SSD"
+            "name": "gpu_memory_size",
+            "value": "4 GB"
           }
         ]
       }
