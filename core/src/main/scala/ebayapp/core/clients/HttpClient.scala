@@ -47,10 +47,9 @@ trait HttpClient[F[_]] {
       F: Temporal[F],
       logger: Logger[F]
   ): F[Response[T]] =
-    useProxy match {
+    useProxy match
       case Some(true) => F.fromOption(proxyBackend, AppError.Critical("proxy is not setup")).flatMap(dispatchWithRetry(_, request))
       case _          => dispatchWithRetry(httpBackend, request)
-    }
 
   protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
     dispatchWithRetry(httpBackend, request)

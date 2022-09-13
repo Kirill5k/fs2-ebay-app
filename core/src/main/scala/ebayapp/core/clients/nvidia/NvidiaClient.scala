@@ -58,7 +58,7 @@ final private class LiveNvidiaClient[F[_]](
             logger.error(s"$name-search/parsing-error: ${error.getMessage}, \n$body") *>
               List.empty[Product].pure[F]
           case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.error(s"$name-search/$status-error, \n$body") *>
+            logger.warn(s"$name-search/$status-error, \n$body") *>
               F.sleep(10.seconds) *> searchProducts(c)
           case Left(error) =>
             logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>

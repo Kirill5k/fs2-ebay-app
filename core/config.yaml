@@ -102,13 +102,12 @@ data:
       }
   
       nvidia {
-        //base-uri: "https://proxy-kirill5k.cloud.okteto.net"
-        base-uri: "https://api.nvidia.partners"
-        proxied: true
+        base-uri: "https://proxy-kirill5k.cloud.okteto.net"
+        //base-uri: "https://api.nvidia.partners"
+        //proxied: true
         headers: {
-          //"X-Proxied": "true"
-          //"X-Reroute-To": "https://api.nvidia.partners"
-          //"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 OPR/89.0.4447.83"
+          "X-Proxied": "true"
+          "X-Reroute-To": "https://api.nvidia.partners"
         }
       }
   

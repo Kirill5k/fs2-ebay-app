@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: fs2-app-proxy-config
 data:
-  CLIENT_PROXY_HOST: "140.227.211.47"
-  CLIENT_PROXY_PORT: "8080"
+  CLIENT_PROXY_HOST: "51.103.76.148"
+  CLIENT_PROXY_PORT: "8000"
   CLIENT_CONNECT_TIMEOUT: "2m"
 ---
 apiVersion: v1
@@ -61,9 +61,9 @@ spec:
             httpGet:
               path: /health/status
               port: 8080
-            periodSeconds: 60
+            periodSeconds: 30
           livenessProbe:
             httpGet:
               path: /health/status
               port: 8080
-            periodSeconds: 60
+            periodSeconds: 30
