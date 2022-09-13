@@ -106,8 +106,9 @@ data:
         //base-uri: "https://api.nvidia.partners"
         //proxied: true
         headers: {
-          "X-Proxied": "true"
+          //"X-Proxied": "true"
           "X-Reroute-To": "https://api.nvidia.partners"
+          "User-Agent": "PostmanRuntime/7.29.2"
         }
       }
   
@@ -152,7 +153,7 @@ data:
       }
 
       nvidia {
-        monitoring-frequency: 1m
+        monitoring-frequency: 10m
         monitoring-requests: [
           {search-criteria: {query: "geforce", category: "GPU", exclude-filters: ["GTX 1650", "GTX 1660"]}, monitor-stock-change: true, monitor-price-change: true}
         ]
