@@ -49,7 +49,7 @@ final private class SimpleStockService[F[_]](
             .pauseWhen(isPaused)
       }
       .parJoinUnbounded
-      .concurrently(Stream.awakeEvery(config.monitoringFrequency).evalMap(_ => logCacheSize))
+      .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
 
   private def preloadCache(req: StockMonitorRequest): Stream[F, Nothing] =
     client
@@ -58,14 +58,14 @@ final private class SimpleStockService[F[_]](
       .evalMap(item => cache.put(item.key, item))
       .drain
 
-  private def logCacheSize: F[Unit] =
-    cachedItems.flatMap { items =>
+  private def logCacheSize(frequency: FiniteDuration): F[Unit] =
+    F.sleep(frequency) >> cachedItems.flatMap { items =>
       val item = if items.size == 1 then "item" else "items"
       val groups =
         if items.isEmpty then ""
         else items.map(_.foundWith.query).groupMapReduce(identity)(_ => 1)(_ + _).mkString("(", ", ", ")")
       logger.info(s"""${retailer.name}-stock-cache: ${items.size} $item $groups""")
-    }
+    } >> logCacheSize(frequency)
 
   private def getUpdates(req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
     client
@@ -90,17 +90,11 @@ final private class SimpleStockService[F[_]](
       }
 
   private def withFiltersApplied(sc: SearchCriteria): Pipe[F, ResellableItem, ResellableItem] =
-    _.filter { ri =>
-      sc.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min))
-    }
+    _.filter(_.itemDetails.fullName.isDefined)
+      .filter(ri => sc.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)))
       .filter { ri =>
-        ri.itemDetails.fullName match {
-          case Some(name) =>
-            sc.excludeFilterRegex.fold(true)(filter => !name.matches(filter)) &&
-            sc.includeFiltersRegex.fold(true)(filter => name.matches(filter))
-          case None =>
-            false
-        }
+        sc.excludeFilterRegex.fold(true)(filter => !ri.key.matches(filter)) &&
+        sc.includeFiltersRegex.fold(true)(filter => ri.key.matches(filter))
       }
 
   extension (item: ResellableItem)
