@@ -1,10 +1,12 @@
 package ebayapp.core.services
 
 import cats.effect.Temporal
+import cats.effect.std.Queue
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
+import ebayapp.core.common.stream.*
 import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, Retailer}
@@ -38,21 +40,32 @@ final private class SimpleStockService[F[_]](
   override def resume: F[Unit]                      = isPaused.set(false) >> logger.info(s"""${retailer.name}-stock-monitor-resumed""")
 
   override def stockUpdates: Stream[F, ItemStockUpdates] =
-    configProvider.stockMonitor(retailer)
-      .flatMap { config =>
-        Stream
-          .emits(config.monitoringRequests.zipWithIndex)
-          .map { (req, index) =>
-            preloadCache(req).delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong) ++
-              Stream
-                .awakeDelay(config.monitoringFrequency)
-                .flatMap(_ => getUpdates(req))
-                .pauseWhen(isPaused)
-          }
-          .parJoinUnbounded
-          .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
-          .onFinalize(cache.clear)
+    for
+      reloads <- Stream.eval(Queue.unbounded[F, Long])
+      upd <- configProvider
+        .stockMonitor(retailer)
+        .zipWithIndex
+        .evalTap((_, n) => reloads.offer(n))
+        .map { (config, n) =>
+          itemStockUpdates(config)
+            .interruptWhen(Stream.fromQueueUnterminated(reloads).map(_ == n + 1))
+        }
+        .parJoinUnbounded
+    yield upd
+
+  private def itemStockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates] =
+    Stream
+      .emits(config.monitoringRequests.zipWithIndex)
+      .map { (req, index) =>
+        preloadCache(req).delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong) ++
+          Stream
+            .awakeDelay(config.monitoringFrequency)
+            .flatMap(_ => getUpdates(req))
+            .pauseWhen(isPaused)
       }
+      .parJoinUnbounded
+      .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
+      .onFinalize(cache.clear >> logger.info(s"reloading ${retailer.name}-stock-monitor stream"))
 
   private def preloadCache(req: StockMonitorRequest): Stream[F, Nothing] =
     client
@@ -88,8 +101,7 @@ final private class SimpleStockService[F[_]](
       }
       .unNone
       .handleErrorWith { error =>
-        Stream.eval(logger.error(error)(s"${retailer.name}-stock/error - ${error.getMessage}")).drain ++
-          getUpdates(req)
+        Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(req)
       }
 
   private def withFiltersApplied(sc: SearchCriteria): Pipe[F, ResellableItem, ResellableItem] =

@@ -12,6 +12,7 @@ import ebayapp.core.clients.mainlinemenswear.mappers.{mainlineMenswearClothingMa
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
+import ebayapp.core.common.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
@@ -57,7 +58,7 @@ final private class LiveMainlineMenswearClient[F[_]](
       }
       .flatMap(Stream.emits)
       .map(mainlineMenswearClothingMapper.toDomain(criteria))
-      .handleErrorWith(e => Stream.eval(logger.error(e)(e.getMessage)).drain)
+      .handleErrorWith(e => Stream.logError(e)(e.getMessage))
 
   private def searchForItems(criteria: SearchCriteria): Stream[F, ProductPreview] =
     Stream

@@ -10,6 +10,7 @@ import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsIt
 import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
+import ebayapp.core.common.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
@@ -85,7 +86,7 @@ final private class LiveJdsportsClient[F[_]](
         }
         .flatMap(Stream.emits)
         .map(jdsportsClothingMapper.toDomain(criteria))
-        .handleErrorWith(e => Stream.eval(logger.error(e)(e.getMessage)).drain)
+        .handleErrorWith(e => Stream.logError(e)(e.getMessage))
     }
 
   private def brands(criteria: SearchCriteria): Stream[F, JdCatalogItem] =

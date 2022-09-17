@@ -49,9 +49,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
               .filter(hasRequiredStock(req))
               .filter(isProfitableToResell(req))
               .metered(250.millis)
-              .handleErrorWith { error =>
-                Stream.eval(Logger[F].error(error)(s"${retailer.name}-deals/error - ${error.getMessage}")).drain
-              }
+              .handleErrorWith(e => Stream.logError(e)(s"${retailer.name}-deals/error - ${e.getMessage}"))
               .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
           }
           .parJoinUnbounded
