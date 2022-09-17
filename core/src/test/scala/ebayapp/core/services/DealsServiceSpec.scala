@@ -3,10 +3,10 @@ package ebayapp.core.services
 import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.clients.{Retailer, SearchClient}
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.domain.search.{BuyPrice, SellPrice, SearchCriteria}
-import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
+import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
 import fs2.Stream
 import org.mockito.Mockito.times

@@ -3,12 +3,12 @@ package ebayapp.core.services
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.functor.*
-import ebayapp.core.clients.{Retailer, SearchClient}
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.common.stream.*
-import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.{Retailer, ResellableItem}
 import ebayapp.core.repositories.ResellableItemRepository
 import fs2.*
 

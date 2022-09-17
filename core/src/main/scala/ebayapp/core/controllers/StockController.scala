@@ -7,9 +7,8 @@ import cats.syntax.either.*
 import cats.syntax.flatMap.*
 import cats.syntax.traverse.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.Retailer
 import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
-import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
+import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem, Retailer}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.{ResellableItemService, StockService}
 import ebayapp.kernel.controllers.Controller

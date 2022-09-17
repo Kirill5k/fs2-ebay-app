@@ -4,8 +4,7 @@ import cats.effect.Sync
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.Retailer
-import ebayapp.core.domain.ItemKind
+import ebayapp.core.domain.{ItemKind, Retailer}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.kernel.config.{MongoConfig, ServerConfig}
 import pureconfig.ConfigConvert.catchReadError

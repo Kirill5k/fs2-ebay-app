@@ -1,8 +1,8 @@
 package ebayapp.core.controllers
 
 import cats.effect.IO
-import ebayapp.core.clients.Retailer
 import ebayapp.core.domain.ResellableItemBuilder
+import ebayapp.core.domain.Retailer
 import ebayapp.core.services.StockService
 import ebayapp.kernel.ControllerSpec
 import org.http4s.implicits.*

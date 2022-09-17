@@ -2,9 +2,10 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.CatsSpec
-import ebayapp.core.clients.{Retailer, SearchClient}
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.clothing
+import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 

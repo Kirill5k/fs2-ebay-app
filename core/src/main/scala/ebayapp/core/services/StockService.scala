@@ -5,10 +5,10 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{Retailer, SearchClient}
+import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.{Cache, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.ResellableItem
+import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.concurrent.SignallingRef
