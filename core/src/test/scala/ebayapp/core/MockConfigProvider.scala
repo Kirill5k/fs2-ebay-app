@@ -5,6 +5,7 @@ import cats.effect.Sync
 import ebayapp.core.common.ConfigProvider
 import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
 import ebayapp.core.domain.Retailer
+import fs2.Stream
 
 object MockConfigProvider {
 
@@ -40,6 +41,6 @@ object MockConfigProvider {
     override def scan: F[GenericRetailerConfig]                   = fromOpt(scanConfig, "scan")
     override def harveyNichols: F[GenericRetailerConfig]          = fromOpt(harveyNicholsConfig, "harvey-nichols")
     override def mainlineMenswear: F[GenericRetailerConfig]       = fromOpt(mainlineMenswearConfig, "mainline-menswear")
-    override def stockMonitor(retailer: Retailer): F[Option[StockMonitorConfig]] = F.pure(stockMonitorConfigs.get(retailer))
-    override def dealsFinder(retailer: Retailer): F[Option[DealsFinderConfig]]   = F.pure(dealsFinderConfigs.get(retailer))
+    override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = Stream(stockMonitorConfigs.get(retailer)).unNone
+    override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = Stream(dealsFinderConfigs.get(retailer)).unNone
 }

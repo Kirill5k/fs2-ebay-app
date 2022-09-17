@@ -39,9 +39,7 @@ final private class SimpleStockService[F[_]](
   override def resume: F[Unit]                      = isPaused.set(false) >> logger.info(s"""${retailer.name}-stock-monitor-resumed""")
 
   override def stockUpdates: Stream[F, ItemStockUpdates] =
-    Stream
-      .eval(configProvider.stockMonitor(retailer))
-      .unNone
+    configProvider.stockMonitor(retailer)
       .flatMap { config =>
         Stream
           .emits(config.monitoringRequests.zipWithIndex)

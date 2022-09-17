@@ -35,9 +35,8 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
     item => item.sellPrice.exists(rp => (rp.credit * 100 / item.buyPrice.rrp - 100) > req.minMargin)
 
   override def newDeals: Stream[F, ResellableItem] =
-    Stream
-      .eval(configProvider.dealsFinder(retailer))
-      .unNone
+    configProvider
+      .dealsFinder(retailer)
       .flatMap { config =>
         Stream
           .emits(config.searchRequests.zipWithIndex)

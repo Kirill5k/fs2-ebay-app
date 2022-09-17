@@ -1,13 +1,15 @@
 package ebayapp.core.common
 
-import cats.Monad
-import cats.effect.{Async, Ref, Sync}
+import cats.effect.std.Queue
+import cats.effect.{Async, Ref, Sync, Temporal}
 import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
 import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
+import ebayapp.core.common.stream.*
 import ebayapp.core.domain.Retailer
+import fs2.Stream
 
 import java.nio.file.Paths
 import java.time.Instant
@@ -27,14 +29,14 @@ trait ConfigProvider[F[_]]:
   def scan: F[GenericRetailerConfig]
   def harveyNichols: F[GenericRetailerConfig]
   def mainlineMenswear: F[GenericRetailerConfig]
-  def stockMonitor(retailer: Retailer): F[Option[StockMonitorConfig]]
-  def dealsFinder(retailer: Retailer): F[Option[DealsFinderConfig]]
+  def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig]
+  def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]
 
 final private class LiveConfigProvider[F[_]](
     private val state: Ref[F, AppConfig]
 )(using
-    F: Monad[F]
-) extends ConfigProvider[F]:
+    F: Temporal[F]
+) extends ConfigProvider[F] {
   override def config: F[AppConfig]                                            = state.get
   override def telegram: F[TelegramConfig]                                     = config.map(_.telegram)
   override def cex: F[GenericRetailerConfig]                                   = config.map(_.retailer.cex)
@@ -48,8 +50,25 @@ final private class LiveConfigProvider[F[_]](
   override def scan: F[GenericRetailerConfig]                                  = config.map(_.retailer.scan)
   override def harveyNichols: F[GenericRetailerConfig]                         = config.map(_.retailer.harveyNichols)
   override def mainlineMenswear: F[GenericRetailerConfig]                      = config.map(_.retailer.mainlineMenswear)
-  override def stockMonitor(retailer: Retailer): F[Option[StockMonitorConfig]] = config.map(_.stockMonitor.get(retailer))
-  override def dealsFinder(retailer: Retailer): F[Option[DealsFinderConfig]]   = config.map(_.dealsFinder.get(retailer))
+  override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = streamUpdates(config.map(_.stockMonitor.get(retailer)))
+  override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = streamUpdates(config.map(_.dealsFinder.get(retailer)))
+
+  private def streamUpdates[C](getConfig: => F[Option[C]]): Stream[F, C] = for
+    configs       <- Stream.eval(Queue.unbounded[F, C])
+    currentConfig <- Stream.eval(Ref.of[F, Option[C]](None))
+    configUpdate = Stream
+      .eval(getConfig)
+      .zip(Stream.eval(currentConfig.get))
+      .evalMap {
+        case (None, None)                                       => F.unit
+        case (Some(latest), None)                               => currentConfig.set(Some(latest)) >> configs.offer(latest)
+        case (Some(latest), Some(current)) if current != latest => currentConfig.set(Some(latest)) >> configs.offer(latest)
+        case _                                                  => F.unit
+      }
+      .repeatEvery(2.minutes)
+    c <- Stream.fromQueueUnterminated(configs).concurrently(configUpdate)
+  yield c
+}
 
 object ConfigProvider:
 
