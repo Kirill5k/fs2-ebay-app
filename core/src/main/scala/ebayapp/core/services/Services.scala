@@ -5,8 +5,9 @@ import cats.syntax.traverse.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.AppConfig
+import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, StockMonitorConfig}
 import ebayapp.core.repositories.Repositories
+import ebayapp.core.domain.Retailer
 
 trait Services[F[_]]:
   def notification: NotificationService[F]
@@ -24,8 +25,12 @@ object Services {
     (
       NotificationService.make[F](clients.messenger),
       ResellableItemService.make[F](repo.resellableItems),
-      config.stockMonitor.toList.traverse((r, c) => StockService.make(r, c, clients.get(r))),
-      config.dealsFinder.toList.traverse((r, c) => DealsService.make(r, c, clients.get(r), clients.cex, repo.resellableItems))
+      Retailer.values.toList.traverse { r =>
+        StockService.make(r, config.stockMonitor.getOrElse(r, StockMonitorConfig.empty), clients.get(r))
+      },
+      Retailer.values.toList.traverse { r =>
+        DealsService.make(r, config.dealsFinder.getOrElse(r, DealsFinderConfig.empty), clients.get(r), clients.cex, repo.resellableItems)
+      }
     ).mapN((not, rs, ss: List[StockService[F]], ds: List[DealsService[F]]) =>
       new Services[F] {
         def notification: NotificationService[F]     = not

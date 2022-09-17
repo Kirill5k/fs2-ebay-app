@@ -81,6 +81,9 @@ object config {
       delayBetweenRequests: Option[FiniteDuration] = None
   ) derives ConfigReader
 
+  object DealsFinderConfig:
+    val empty: DealsFinderConfig = DealsFinderConfig(Duration.Zero, Nil, None)
+
   final case class DealsFinderRequest(
       searchCriteria: SearchCriteria,
       minMargin: Int,
@@ -98,6 +101,9 @@ object config {
       monitoringRequests: List[StockMonitorRequest],
       delayBetweenRequests: Option[FiniteDuration] = None
   ) derives ConfigReader
+
+  object StockMonitorConfig:
+    val empty: StockMonitorConfig = StockMonitorConfig(Duration.Zero, Nil, None)
 
   final case class AppConfig(
       server: ServerConfig,
