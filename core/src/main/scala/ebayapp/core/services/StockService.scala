@@ -6,7 +6,7 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.common.{Cache, Logger}
+import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.SearchCriteria
@@ -25,7 +25,7 @@ trait StockService[F[_]]:
 
 final private class SimpleStockService[F[_]](
     val retailer: Retailer,
-    private val config: StockMonitorConfig,
+    private val configProvider: ConfigProvider[F],
     private val client: SearchClient[F],
     private val cache: Cache[F, String, ResellableItem],
     private val isPaused: SignallingRef[F, Boolean]
@@ -40,16 +40,21 @@ final private class SimpleStockService[F[_]](
 
   override def stockUpdates: Stream[F, ItemStockUpdates] =
     Stream
-      .emits(config.monitoringRequests.zipWithIndex)
-      .map { (req, index) =>
-        preloadCache(req).delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong) ++
-          Stream
-            .awakeDelay(config.monitoringFrequency)
-            .flatMap(_ => getUpdates(req))
-            .pauseWhen(isPaused)
+      .eval(configProvider.stockMonitor(retailer))
+      .unNone
+      .flatMap { config =>
+        Stream
+          .emits(config.monitoringRequests.zipWithIndex)
+          .map { (req, index) =>
+            preloadCache(req).delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong) ++
+              Stream
+                .awakeDelay(config.monitoringFrequency)
+                .flatMap(_ => getUpdates(req))
+                .pauseWhen(isPaused)
+          }
+          .parJoinUnbounded
+          .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
       }
-      .parJoinUnbounded
-      .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
 
   private def preloadCache(req: StockMonitorRequest): Stream[F, Nothing] =
     client
@@ -106,10 +111,10 @@ final private class SimpleStockService[F[_]](
 object StockService:
   def make[F[_]: Temporal: Logger](
       retailer: Retailer,
-      config: StockMonitorConfig,
+      configProvider: ConfigProvider[F],
       client: SearchClient[F]
   ): F[StockService[F]] =
     (
       Cache.make[F, String, ResellableItem](6.hours, 1.minute),
       SignallingRef.of(false)
-    ).mapN((cache, isPaused) => SimpleStockService[F](retailer, config, client, cache, isPaused))
+    ).mapN((cache, isPaused) => SimpleStockService[F](retailer, configProvider, client, cache, isPaused))

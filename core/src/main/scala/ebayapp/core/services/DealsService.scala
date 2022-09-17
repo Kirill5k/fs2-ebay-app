@@ -5,10 +5,10 @@ import cats.effect.Temporal
 import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.common.Logger
+import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.common.stream.*
-import ebayapp.core.domain.{Retailer, ResellableItem}
+import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
 import fs2.*
 
@@ -19,7 +19,7 @@ trait DealsService[F[_]]:
 
 final private class LiveDealsService[F[_]: Logger: Temporal](
     private val retailer: Retailer,
-    private val config: DealsFinderConfig,
+    private val configProvider: ConfigProvider[F],
     private val searchClient: SearchClient[F],
     private val cexClient: CexClient[F],
     private val repository: ResellableItemRepository[F]
@@ -36,31 +36,36 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
 
   override def newDeals: Stream[F, ResellableItem] =
     Stream
-      .emits(config.searchRequests.zipWithIndex)
-      .map { (req, i) =>
-        searchClient
-          .search(req.searchCriteria)
-          .evalFilter(isNew)
-          .evalMap(cexClient.withUpdatedSellPrice(req.searchCriteria.category))
-          .evalTap(repository.save)
-          .filter(hasRequiredStock(req))
-          .filter(isProfitableToResell(req))
-          .metered(250.millis)
-          .handleErrorWith { error =>
-            Stream.eval(Logger[F].error(error)(s"${retailer.name}-deals/error - ${error.getMessage}")).drain
+      .eval(configProvider.dealsFinder(retailer))
+      .unNone
+      .flatMap { config =>
+        Stream
+          .emits(config.searchRequests.zipWithIndex)
+          .map { (req, i) =>
+            searchClient
+              .search(req.searchCriteria)
+              .evalFilter(isNew)
+              .evalMap(cexClient.withUpdatedSellPrice(req.searchCriteria.category))
+              .evalTap(repository.save)
+              .filter(hasRequiredStock(req))
+              .filter(isProfitableToResell(req))
+              .metered(250.millis)
+              .handleErrorWith { error =>
+                Stream.eval(Logger[F].error(error)(s"${retailer.name}-deals/error - ${error.getMessage}")).drain
+              }
+              .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
           }
-          .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
+          .parJoinUnbounded
+          .repeatEvery(config.searchFrequency)
       }
-      .parJoinUnbounded
-      .repeatEvery(config.searchFrequency)
 }
 
 object DealsService:
   def make[F[_]: Temporal: Logger](
       retailer: Retailer,
-      config: DealsFinderConfig,
+      configProvider: ConfigProvider[F],
       searchClient: SearchClient[F],
       cexClient: CexClient[F],
       repository: ResellableItemRepository[F]
   ): F[DealsService[F]] =
-    Monad[F].pure(LiveDealsService[F](retailer, config, searchClient, cexClient, repository))
+    Monad[F].pure(LiveDealsService[F](retailer, configProvider, searchClient, cexClient, repository))

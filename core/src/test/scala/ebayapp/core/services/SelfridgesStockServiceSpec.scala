@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.CatsSpec
+import ebayapp.core.{CatsSpec, MockConfigProvider}
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.clothing
@@ -13,8 +13,9 @@ import scala.concurrent.duration.*
 
 class SelfridgesStockServiceSpec extends CatsSpec {
 
-  val criteria = SearchCriteria("foo", minDiscount = Some(50), excludeFilters = Some(List("ignore-me", "SKIP-ME")))
-  val config   = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
+  val criteria           = SearchCriteria("foo", minDiscount = Some(50), excludeFilters = Some(List("ignore-me", "SKIP-ME")))
+  val stockMonitorConfig = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
+  val config             = MockConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Selfridges -> stockMonitorConfig))
 
   "A SelfridgesStockService" should {
 

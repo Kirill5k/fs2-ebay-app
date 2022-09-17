@@ -6,7 +6,7 @@ import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
-import ebayapp.core.common.config.{AppConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
+import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
 import ebayapp.core.domain.Retailer
 
 import java.nio.file.Paths
@@ -28,6 +28,7 @@ trait ConfigProvider[F[_]]:
   def harveyNichols: F[GenericRetailerConfig]
   def mainlineMenswear: F[GenericRetailerConfig]
   def stockMonitor(retailer: Retailer): F[Option[StockMonitorConfig]]
+  def dealsFinder(retailer: Retailer): F[Option[DealsFinderConfig]]
 
 final private class LiveConfigProvider[F[_]](
     private val state: Ref[F, AppConfig]
@@ -48,6 +49,7 @@ final private class LiveConfigProvider[F[_]](
   override def harveyNichols: F[GenericRetailerConfig]                         = config.map(_.retailer.harveyNichols)
   override def mainlineMenswear: F[GenericRetailerConfig]                      = config.map(_.retailer.mainlineMenswear)
   override def stockMonitor(retailer: Retailer): F[Option[StockMonitorConfig]] = config.map(_.stockMonitor.get(retailer))
+  override def dealsFinder(retailer: Retailer): F[Option[DealsFinderConfig]]   = config.map(_.dealsFinder.get(retailer))
 
 object ConfigProvider:
 

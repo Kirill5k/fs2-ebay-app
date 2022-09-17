@@ -4,7 +4,7 @@ import cats.effect.Temporal
 import cats.syntax.traverse.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.Clients
-import ebayapp.core.common.Logger
+import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, StockMonitorConfig}
 import ebayapp.core.repositories.Repositories
 import ebayapp.core.domain.Retailer
@@ -18,19 +18,15 @@ trait Services[F[_]]:
 object Services {
 
   def make[F[_]: Temporal: Logger](
-      config: AppConfig,
+      configProvider: ConfigProvider[F],
       clients: Clients[F],
       repo: Repositories[F]
   ): F[Services[F]] =
     (
       NotificationService.make[F](clients.messenger),
       ResellableItemService.make[F](repo.resellableItems),
-      Retailer.values.toList.traverse { r =>
-        StockService.make(r, config.stockMonitor.getOrElse(r, StockMonitorConfig.empty), clients.get(r))
-      },
-      Retailer.values.toList.traverse { r =>
-        DealsService.make(r, config.dealsFinder.getOrElse(r, DealsFinderConfig.empty), clients.get(r), clients.cex, repo.resellableItems)
-      }
+      Retailer.values.toList.traverse(r => StockService.make(r, configProvider, clients.get(r))),
+      Retailer.values.toList.traverse(r => DealsService.make(r, configProvider, clients.get(r), clients.cex, repo.resellableItems))
     ).mapN((not, rs, ss: List[StockService[F]], ds: List[DealsService[F]]) =>
       new Services[F] {
         def notification: NotificationService[F]     = not

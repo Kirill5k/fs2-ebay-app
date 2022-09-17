@@ -1,11 +1,11 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.CatsSpec
+import ebayapp.core.{CatsSpec, MockConfigProvider}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
-import ebayapp.core.domain.search.{BuyPrice, SellPrice, SearchCriteria}
+import ebayapp.core.domain.search.{BuyPrice, SearchCriteria, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
 import fs2.Stream
@@ -20,6 +20,8 @@ class DealsServiceSpec extends CatsSpec {
 
   val request1 = DealsFinderRequest(SearchCriteria("q1", Some("cat1")), 34, Some(10))
   val request2 = DealsFinderRequest(SearchCriteria("q2", Some("cat2")), 100, Some(10))
+
+  def config(c: DealsFinderConfig) = MockConfigProvider.make[IO](dealsFinderConfigs = Map(Retailer.Ebay -> c))
 
   "An DealsSearchService" should {
 
@@ -36,7 +38,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -59,7 +61,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
       val result = for {
-        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -86,7 +88,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -112,7 +114,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -140,7 +142,7 @@ class DealsServiceSpec extends CatsSpec {
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
       val result = for {
-        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
       } yield items
 
@@ -161,8 +163,14 @@ class DealsServiceSpec extends CatsSpec {
       when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.empty)
 
       val result = for {
-        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1, request2)), searchClient, cexClient, repo)
-        items   <- service.newDeals.interruptAfter(5.seconds).compile.toList
+        service <- DealsService.make(
+          Retailer.Ebay,
+          config(DealsFinderConfig(2.seconds, List(request1, request2))),
+          searchClient,
+          cexClient,
+          repo
+        )
+        items <- service.newDeals.interruptAfter(5.seconds).compile.toList
       } yield items
 
       result.asserting { items =>
@@ -183,7 +191,7 @@ class DealsServiceSpec extends CatsSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
       val result = for {
-        service <- DealsService.make(Retailer.Ebay, DealsFinderConfig(2.seconds, List(request1)), searchClient, cexClient, repo)
+        service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(3.seconds).compile.toList
       } yield items
 

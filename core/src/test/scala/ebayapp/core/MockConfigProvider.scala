@@ -3,7 +3,7 @@ package ebayapp.core
 import cats.MonadThrow
 import cats.effect.Sync
 import ebayapp.core.common.ConfigProvider
-import ebayapp.core.common.config.{AppConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
+import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
 import ebayapp.core.domain.Retailer
 
 object MockConfigProvider {
@@ -21,7 +21,8 @@ object MockConfigProvider {
       scanConfig: Option[GenericRetailerConfig] = None,
       harveyNicholsConfig: Option[GenericRetailerConfig] = None,
       mainlineMenswearConfig: Option[GenericRetailerConfig] = None,
-      stockMonitorConfigs: Map[Retailer, StockMonitorConfig] = Map.empty
+      stockMonitorConfigs: Map[Retailer, StockMonitorConfig] = Map.empty,
+      dealsFinderConfigs: Map[Retailer, DealsFinderConfig] = Map.empty
   )(using
       F: MonadThrow[F]
   ) = new ConfigProvider[F]:
@@ -40,4 +41,5 @@ object MockConfigProvider {
     override def harveyNichols: F[GenericRetailerConfig]          = fromOpt(harveyNicholsConfig, "harvey-nichols")
     override def mainlineMenswear: F[GenericRetailerConfig]       = fromOpt(mainlineMenswearConfig, "mainline-menswear")
     override def stockMonitor(retailer: Retailer): F[Option[StockMonitorConfig]] = F.pure(stockMonitorConfigs.get(retailer))
+    override def dealsFinder(retailer: Retailer): F[Option[DealsFinderConfig]]   = F.pure(dealsFinderConfigs.get(retailer))
 }

@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.CatsSpec
+import ebayapp.core.{CatsSpec, MockConfigProvider}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
@@ -15,9 +15,12 @@ import scala.concurrent.duration.*
 
 class CexStockServiceSpec extends CatsSpec {
 
-  val req1   = StockMonitorRequest(SearchCriteria("macbook"), true, true)
-  val req2   = StockMonitorRequest(SearchCriteria("iphone"), true, true)
-  val config = StockMonitorConfig(1.seconds, List(req1))
+  val req1               = StockMonitorRequest(SearchCriteria("macbook"), true, true)
+  val req2               = StockMonitorRequest(SearchCriteria("iphone"), true, true)
+
+  def config(req: StockMonitorRequest*)             = MockConfigProvider.make[IO](
+    stockMonitorConfigs = Map(Retailer.Cex -> StockMonitorConfig(1.seconds, req.toList))
+  )
 
   val ts = Instant.now()
 
@@ -29,11 +32,10 @@ class CexStockServiceSpec extends CatsSpec {
 
     "monitor multiple requests concurrently" in {
       val client = mock[CexClient[IO]]
-
       when(client.search(any[SearchCriteria])).thenReturn(Stream.empty)
 
       val result = StockService
-        .make[IO](Retailer.Cex, config.copy(monitoringRequests = List(req1, req2)), client)
+        .make[IO](Retailer.Cex, config(req1, req2), client)
         .flatMap { svc =>
           svc.stockUpdates
             .interruptAfter(1100.millis)
@@ -56,7 +58,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config, client)
+        .make[IO](Retailer.Cex, config(req1), client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.asserting { u =>
@@ -72,7 +74,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config, client)
+        .make[IO](Retailer.Cex, config(req1), client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.asserting { u =>
@@ -88,7 +90,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config, client)
+        .make[IO](Retailer.Cex, config(req1), client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.asserting { u =>
@@ -104,7 +106,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config.copy(monitoringRequests = List(req1.copy(monitorStockChange = false))), client)
+        .make[IO](Retailer.Cex, config((req1.copy(monitorStockChange = false))), client)
         .flatMap {
           _.stockUpdates
             .interruptAfter(2.second)
@@ -124,7 +126,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config, client)
+        .make[IO](Retailer.Cex, config(req1), client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.asserting { u =>
@@ -139,7 +141,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config, client)
+        .make[IO](Retailer.Cex, config(req1), client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.asserting { u =>
@@ -156,7 +158,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config, client)
+        .make[IO](Retailer.Cex, config(req1), client)
         .flatMap(_.stockUpdates.interruptAfter(6200.millis).compile.toList)
 
       result.asserting { u =>
@@ -171,11 +173,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emit(mb1.withDatePosted(ts.minusSeconds(1))))
 
       val result = StockService
-        .make[IO](
-          Retailer.Cex,
-          config.copy(monitoringRequests = List(req1.copy(monitorPriceChange = false, monitorStockChange = false))),
-          client
-        )
+        .make[IO](Retailer.Cex, config(req1.copy(monitorPriceChange = false, monitorStockChange = false)), client)
         .flatMap {
           _.stockUpdates
             .interruptAfter(2200.millis)
@@ -196,7 +194,7 @@ class CexStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.emits(List(mb1.withDatePosted(ts.plusSeconds(1)), mb2.withDatePosted(ts.plusSeconds(1)))))
 
       val result = StockService
-        .make[IO](Retailer.Cex, config, client)
+        .make[IO](Retailer.Cex, config(req1), client)
         .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
 
       result.asserting { u =>
