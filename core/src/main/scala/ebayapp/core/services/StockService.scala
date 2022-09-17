@@ -1,6 +1,5 @@
 package ebayapp.core.services
 
-import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
@@ -52,6 +51,7 @@ final private class SimpleStockService[F[_]](
           }
           .parJoinUnbounded
           .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
+          .onFinalize(cache.clear)
       }
 
   private def preloadCache(req: StockMonitorRequest): Stream[F, Nothing] =

@@ -33,7 +33,8 @@ trait ConfigProvider[F[_]]:
   def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]
 
 final private class LiveConfigProvider[F[_]](
-    private val state: Ref[F, AppConfig]
+    private val state: Ref[F, AppConfig],
+    private val updatePeriod: FiniteDuration
 )(using
     F: Temporal[F]
 ) extends ConfigProvider[F] {
@@ -65,7 +66,7 @@ final private class LiveConfigProvider[F[_]](
         case (Some(latest), Some(current)) if current != latest => currentConfig.set(Some(latest)) >> configs.offer(latest)
         case _                                                  => F.unit
       }
-      .repeatEvery(2.minutes)
+      .repeatEvery(updatePeriod)
     c <- Stream.fromQueueUnterminated(configs).concurrently(configUpdate)
   yield c
 }
@@ -92,7 +93,7 @@ object ConfigProvider:
         logger.warn(s"error loading config from a configmap mount, will try resources: ${e.getMessage}") >>
           F.blocking(AppConfig.loadDefault).flatMap(Ref.of)
       }
-      .map(LiveConfigProvider(_))
+      .map(LiveConfigProvider(_, checkEvery))
   }
 
   private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =

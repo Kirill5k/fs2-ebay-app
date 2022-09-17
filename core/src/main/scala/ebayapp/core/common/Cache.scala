@@ -13,6 +13,7 @@ import scala.concurrent.duration.FiniteDuration
 
 trait Cache[F[_], K, V]:
   def size: F[Int]
+  def clear: F[Unit]
   def values: F[List[V]]
   def get(key: K): F[Option[V]]
   def put(key: K, value: V): F[Unit]
@@ -49,6 +50,8 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
     state.get.map(_.values.map(_._1).toList)
 
   override def size: F[Int] = state.get.map(_.size)
+  
+  override def clear: F[Unit] = state.set(Map.empty)
 }
 
 object Cache:
