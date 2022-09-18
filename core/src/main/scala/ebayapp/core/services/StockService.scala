@@ -48,7 +48,7 @@ final private class SimpleStockService[F[_]](
         .evalTap((_, n) => reloads.offer(n))
         .map { (config, n) =>
           itemStockUpdates(config)
-            .interruptWhen(Stream.fromQueueUnterminated(reloads).map(_ == n + 1))
+            .interruptWhen(Stream.fromQueueUnterminated(reloads).map(_ >= n + 1))
         }
         .parJoinUnbounded
     yield upd

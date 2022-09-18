@@ -55,7 +55,7 @@ final private class ResellableItemMongoRepository[F[_]](
 
   def save(item: ResellableItem): F[Unit] =
     mongoCollection
-      .insertOne(ResellableItemEntityMapper.toEntity(item))
+      .insertOne(ResellableItemEntity.from(item))
       .void
       .handleErrorWith {
         case _: DuplicateKeyException                              => F.unit
@@ -64,7 +64,7 @@ final private class ResellableItemMongoRepository[F[_]](
       }
 
   def saveAll(items: Seq[ResellableItem]): F[Unit] =
-    mongoCollection.insertMany(items.map(ResellableItemEntityMapper.toEntity)).void
+    mongoCollection.insertMany(items.map(ResellableItemEntity.from)).void
 
   def search(params: SearchParams): F[List[ResellableItem]] =
     mongoCollection.find
@@ -72,7 +72,7 @@ final private class ResellableItemMongoRepository[F[_]](
       .filter(params.toFilter)
       .limit(params.limit.getOrElse(Int.MaxValue))
       .all
-      .map(_.map(ResellableItemEntityMapper.toDomain).toList)
+      .map(_.map(_.toDomain).toList)
 
   def summaries(params: SearchParams): F[List[ItemSummary]] =
     mongoCollection

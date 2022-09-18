@@ -19,26 +19,24 @@ trait NotificationService[F[_]]:
   def cheapItem(item: ResellableItem): F[Unit]
   def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit]
 
-final class TelegramNotificationService[F[_]](
+final class TelegramNotificationService[F[_]: Monad](
     private val messengerClient: MessengerClient[F],
     private val sentMessages: Cache[F, String, Unit]
 )(using
-    F: Monad[F],
     logger: Logger[F]
 ) extends NotificationService[F] {
   import NotificationService.*
 
   override def cheapItem(item: ResellableItem): F[Unit] =
-    F.pure(item.cheapItemNotification).flatMap {
+    item.cheapItemNotification match
       case Some(notification) =>
         logger.info(s"""sending "$notification"""") *>
           messengerClient.send(notification)
       case None =>
         logger.warn(s"not enough details for sending cheap item notification $item")
-    }
 
   override def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit] =
-    F.pure(item.stockUpdateNotification(update)).flatMap {
+    item.stockUpdateNotification(update) match
       case Some(notification) =>
         sentMessages.evalPutIfNew(base64(notification.message)) {
           logger.info(s"""sending "$notification" from ${item.listingDetails.seller}""") *>
@@ -46,7 +44,6 @@ final class TelegramNotificationService[F[_]](
         }
       case None =>
         logger.warn(s"not enough details for stock update notification $update")
-    }
 
   override def alert(error: Error): F[Unit] = {
     val alert = s"${error.time.toString} ERROR - ${error.message}"
@@ -60,7 +57,7 @@ final class TelegramNotificationService[F[_]](
 object NotificationService {
   extension (item: ResellableItem)
     def cheapItemNotification: Option[Notification] =
-      for {
+      for
         itemSummary <- item.itemDetails.fullName
         sell        <- item.sellPrice
         quantity         = item.buyPrice.quantityAvailable
@@ -69,7 +66,7 @@ object NotificationService {
         url              = item.listingDetails.url
         msg =
           s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: $quantity) $url"""
-      } yield Notification.Deal(msg)
+      yield Notification.Deal(msg)
 
     def stockUpdateNotification(update: StockUpdate): Option[Notification] =
       item.itemDetails.fullName.map { name =>

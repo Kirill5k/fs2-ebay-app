@@ -29,14 +29,14 @@ trait HttpClient[F[_]] {
     HeaderNames.AcceptEncoding -> "en-GB,en;q=0.9",
     HeaderNames.CacheControl   -> "no-store, max-age=0",
     HeaderNames.ContentType    -> "application/json",
+    HeaderNames.Connection     -> "keep-alive",
+    HeaderNames.UserAgent      -> operaUserAgent,
     "sec-ch-ua"                -> """" Not A;Brand";v="99", "Chromium";v="104", "Opera";v="90"""",
     "sec-ch-ua-mobile"         -> "?0",
     "sec-ch-ua-platform"       -> "macOS",
     "sec-fetch-dest"           -> "empty",
     "sec-fetch-mode"           -> "cors",
-    "sec-fetch-site"           -> "same-origin",
-    HeaderNames.Connection     -> "keep-alive",
-    HeaderNames.UserAgent      -> operaUserAgent
+    "sec-fetch-site"           -> "same-origin"
   )
 
   protected def dispatchWithProxy[T](
@@ -67,10 +67,10 @@ trait HttpClient[F[_]] {
       .send(request)
       .handleErrorWith { error =>
         if (attempt < maxRetries) {
-          val cause = Option(error.getCause)
+          val cause      = Option(error.getCause)
           val errorClass = cause.fold(error.getClass.getSimpleName)(_.getClass.getSimpleName)
-          val errorMsg = cause.fold(error.getMessage)(_.getMessage)
-          val message = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
+          val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
+          val message    = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
           (if (attempt >= 50 && attempt % 10 == 0) logger.error(message) else logger.warn(message)) *>
             F.sleep(delayBetweenFailures) *> dispatchWithRetry(backend, request, attempt + 1, maxRetries)
         } else F.raiseError(error)
