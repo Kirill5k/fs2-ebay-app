@@ -38,7 +38,7 @@ class CexStockServiceSpec extends CatsSpec {
         .make[IO](Retailer.Cex, config(req1, req2), client)
         .flatMap { svc =>
           svc.stockUpdates
-            .interruptAfter(1100.millis)
+            .interruptAfter(1300.millis)
             .compile
             .toList
         }
