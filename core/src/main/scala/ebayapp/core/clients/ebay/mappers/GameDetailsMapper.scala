@@ -226,6 +226,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(W2K)", "WWE 2k")
       .replaceAll("(?i)Mortal Comba(t|r)", "Mortal Kombat")
       .replaceAll("(?i)(Hello Neighbour)", "Hello Neighbor")
+      .replaceAll("(?i)((?<=f1 manager )(?=\\d{2}))", "20")
       .replaceAll("(?i)(witcher iii)", "witcher 3")
       .replaceAll("(?i)(wolfenstein (II|2))", "Wolfenstein")
       .replaceAll("(?i)(wafare|warefare)", "Warfare")
