@@ -10,7 +10,7 @@ private[mappers] object GameDetailsMapper {
     "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
     "\\bPS(-| )?\\d\\b",
     "(nintendo )?(switch|\\bwii( u)?\\b)",
-    "((microsoft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d+)\\b"
+    "((m(i)?(c)?(r)?(o)?soft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d+|sx)\\b"
   ).mkString(
     "((new|rare|cheapest|excellent|official|select|enhanced) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
     "|",
@@ -68,10 +68,10 @@ private[mappers] object GameDetailsMapper {
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
     // removes the word GAME
     "((new|all) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|(limited|LTD) run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( (\\d+|in one))?( new)?",
-    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|puzzle|extreme sport(s)?|soccer|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
+    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|puzzle|extreme sport(s)?|soccer|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike|driving) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
     "real driving simulator",
     // removes the word USED
-    "((barely|condition|never|hardly|dlc) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
+    "((barely|condition|never|hardly|dlc|only) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
     // removes the word VERSION
     "(official|20\\d\\d) version",
     // removes the word "BRAND NEW"
@@ -101,7 +101,7 @@ private[mappers] object GameDetailsMapper {
     "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm",
     "Ultimate Fighting Championship", "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", 
-    "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned",
+    "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
     "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids", 
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", 
