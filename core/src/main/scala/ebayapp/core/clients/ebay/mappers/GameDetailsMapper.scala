@@ -26,7 +26,7 @@ private[mappers] object GameDetailsMapper {
     "(\\bVR\\b|\\bHD\\b|steel case|n(e)?xt l(e)?v(e)?l|headline|\\bel\\b \\w+|standar|nuketown|wild run|Lenticular Sleeve|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th|ten year)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|((super|digital) )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
     "(?<=.{5})((new|pristine|\\binc\\b) )?(super|cheap( )?)?(free|fast|quick)?( )?(super( )?)?(prompt|free|fast|quick|(next|same|1|one) day|tracked|recorded|speedy|worldwide|bargain|\\bsc\\b|\\bfc\\b).{0,20}(dispatch|ship(ping)?|post(age)?|delivery|p( )?p).*$",
     "(?<=.{15})((brand )?new.{0,15})?(still )?((not |factory |un)?sealed|unopened|shrink( )?wrap)(?s).*$",
-    "(?<=.{10})\\b(kids( \\w+)?|hack slash|single player|open world|Family Fun|basketball|((action|fun) )?adventure|console single|tactical|3rd person|(action )?rpg|fps|survival|action|racing|role|wrestling|fighting|multi( )?player)\\b.{0,20}game(?s).*"
+    "(?<=.{10})\\b(kids( \\w+)?|hack slash|single player|open world|Family Fun|basketball|((action|fun) )?adventure|console single|tactical|3rd person|(action )?rpg|fps|survival|action|racing|role|wrestling|(octagon)? fighting|multi( )?player)\\b.{0,20}game(?s).*"
   ).mkString("(?i)", "|", "")
 
   private val LEVEL2_TITLE_WORDS_REPLACEMENTS = List(
@@ -97,10 +97,10 @@ private[mappers] object GameDetailsMapper {
     "plays perfect", "100 trusted seller", "(Backward(s)? )?compatible", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?",
     "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", 
-    "(last one )?in stock( now)?", "never( been)? (opened|played)", "(only )?played (once|twice)", 
+    "(last one )?in stock( now)?", "never( been)? (opened|played)", "(only )?played (once|twice)",  "Re Mastered", "Re elected",
     "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm",
-    "Ultimate Fighting Championship", "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", 
+    "remaster(ed)?( 20\\d\\d)?", "directors cut", "original", "english( language)?( version)?", 
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
     "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids", 
@@ -226,7 +226,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(W2K)", "WWE 2k")
       .replaceAll("(?i)Mortal Comba(t|r)", "Mortal Kombat")
       .replaceAll("(?i)(Hello Neighbour)", "Hello Neighbor")
-      .replaceAll("(?i)((?<=f1 manager )(?=\\d{2}))", "20")
+      .replaceAll("(?i)((?<=f1 manager )(?=\\b\\d{2}\\b))", "20")
       .replaceAll("(?i)(witcher iii)", "witcher 3")
       .replaceAll("(?i)(wolfenstein (II|2))", "Wolfenstein")
       .replaceAll("(?i)(wafare|warefare)", "Warfare")
