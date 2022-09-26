@@ -171,7 +171,6 @@ data:
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Emporio Armani EA7", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Hugo", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Boss", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "calvin-klein-jeans", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}
@@ -188,7 +187,6 @@ data:
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani EA7", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "EA7", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "Boss", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "Hugo", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio-armani-loungewear", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}

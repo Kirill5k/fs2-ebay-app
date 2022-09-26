@@ -2,19 +2,19 @@ import sbt._
 
 object Dependencies {
   private object Versions {
-    val mongo4cats      = "0.6.1"
+    val mongo4cats      = "0.6.3"
     val pureConfig      = "0.17.1"
-    val circe           = "0.14.2"
-    val sttp            = "3.7.6"
+    val circe           = "0.14.3"
+    val sttp            = "3.8.0"
     val http4s          = "0.23.12"
     val http4sJdkClient = "0.7.0"
-    val logback         = "1.2.11"
-    val log4cats        = "2.4.0"
-    val tapir           = "1.0.6"
+    val logback         = "1.4.1"
+    val log4cats        = "2.5.0"
+    val tapir           = "1.1.0"
     val courier         = "3.2.0"
 
     val scalaTest    = "3.2.12"
-    val mockito      = "3.2.10.0"
+    val mockito      = "3.2.13.0"
     val mockJavaMail = "1.9"
   }
 
@@ -75,7 +75,7 @@ object Dependencies {
     }
 
     val scalaTest = "org.scalatest"     %% "scalatest"   % Versions.scalaTest
-    val mockito   = "org.scalatestplus" %% "mockito-3-4" % Versions.mockito
+    val mockito   = "org.scalatestplus" %% "mockito-4-6" % Versions.mockito
   }
 
   val kernel = Seq(
