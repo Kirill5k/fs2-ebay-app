@@ -12,7 +12,7 @@ import scala.concurrent.duration.*
 
 object Server:
   def serve[F[_]: Async](config: ServerConfig, routes: HttpRoutes[F]): Stream[F, Unit] =
-    Stream.resource {
+    Stream.eval {
       EmberServerBuilder
         .default[F]
         .withHost(Ipv4Address.fromString(config.host).get)
@@ -20,4 +20,5 @@ object Server:
         .withHttpApp(routes.orNotFound)
         .withIdleTimeout(1.hour)
         .build
+        .use(_ => Async[F].never)
     }.drain
