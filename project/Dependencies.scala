@@ -6,7 +6,7 @@ object Dependencies {
     val pureConfig      = "0.17.1"
     val circe           = "0.14.3"
     val sttp            = "3.8.0"
-    val http4s          = "0.23.12"
+    val http4s          = "0.23.16"
     val http4sJdkClient = "0.7.0"
     val logback         = "1.4.1"
     val log4cats        = "2.5.0"
@@ -59,11 +59,11 @@ object Dependencies {
       val core          = "org.http4s" %% "http4s-core"            % Versions.http4s
       val dsl           = "org.http4s" %% "http4s-dsl"             % Versions.http4s
       val server        = "org.http4s" %% "http4s-server"          % Versions.http4s
-      val blazeServer   = "org.http4s" %% "http4s-blaze-server"    % Versions.http4s
-      val blazeClient   = "org.http4s" %% "http4s-blaze-client"    % Versions.http4s
+      val emberServer   = "org.http4s" %% "http4s-ember-server"    % Versions.http4s
+      val emberClient   = "org.http4s" %% "http4s-ember-client"    % Versions.http4s
       val jdkHttpClient = "org.http4s" %% "http4s-jdk-http-client" % Versions.http4sJdkClient
 
-      val all = Seq(core, dsl, server, blazeServer)
+      val all = Seq(core, dsl, server, emberServer)
     }
 
     object tapir {
@@ -90,7 +90,7 @@ object Dependencies {
     Libraries.tapir.all
 
   val proxy = Seq(
-    Libraries.http4s.blazeClient,
+    Libraries.http4s.emberClient,
     Libraries.http4s.jdkHttpClient
   )
 

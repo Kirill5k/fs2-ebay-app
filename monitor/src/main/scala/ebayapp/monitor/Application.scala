@@ -30,7 +30,7 @@ object Application extends IOApp.Simple:
           _               <- logger.info("starting http server and processors")
           _ <- Stream(
             Stream.eval(dispatcher.dispatch(Action.EnqueueAll)),
-            Server.serve[IO](config.server, controllers.routes, runtime.compute),
+            Server.serve[IO](config.server, controllers.routes),
             actionProcessor.process
           ).parJoinUnbounded.compile.drain
         yield ()

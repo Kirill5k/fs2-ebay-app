@@ -71,5 +71,5 @@ final private class RedirectController[F[_]](
 
 object RedirectController {
   def make[F[_]: Concurrent](resources: Resources[F], interrupter: Interrupter[F]): F[Controller[F]] =
-    Monad[F].pure(RedirectController[F](resources.blazeClient, resources.jdkHttpClient, interrupter))
+    Monad[F].pure(RedirectController[F](resources.emberClient, resources.jdkHttpClient, interrupter))
 }

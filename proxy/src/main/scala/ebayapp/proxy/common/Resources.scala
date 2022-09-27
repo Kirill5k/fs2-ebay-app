@@ -4,7 +4,7 @@ import cats.effect.{Async, Resource, Sync}
 import cats.syntax.apply.*
 import ebayapp.proxy.common.config.{AppConfig, ClientConfig}
 import org.http4s.client.Client
-import org.http4s.blaze.client.BlazeClientBuilder
+import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.client.middleware.FollowRedirect
 import org.http4s.jdkhttpclient.JdkHttpClient
 
@@ -14,29 +14,26 @@ import java.time.Duration as JDuration
 import scala.concurrent.duration.*
 
 trait Resources[F[_]]:
-  def blazeClient: Client[F]
+  def emberClient: Client[F]
   def jdkHttpClient: Client[F]
 
 object Resources:
 
   def make[F[_]: Async](config: AppConfig): Resource[F, Resources[F]] =
-    (makeBlazeClient[F](config.client), makeJdkHttpClient[F](config.client)).mapN { (blaze, jdkHttp) =>
+    (makeEmberClient[F](config.client), makeJdkHttpClient[F](config.client)).mapN { (blaze, jdkHttp) =>
       new Resources[F] {
-        def blazeClient: Client[F]   = FollowRedirect(10)(blaze)
+        def emberClient: Client[F]   = FollowRedirect(10)(blaze)
         def jdkHttpClient: Client[F] = FollowRedirect(10)(jdkHttp)
       }
     }
 
-  private def makeBlazeClient[F[_]: Async](config: ClientConfig): Resource[F, Client[F]] =
-    BlazeClientBuilder[F]
-      .withBufferSize(1024 * 200)
-      .withMaxWaitQueueLimit(256 * 10)
-      .withMaxTotalConnections(256 * 10)
-      .withConnectTimeout(config.connectTimeout)
-      .withResponseHeaderTimeout(1.minutes)
-      .withRequestTimeout(Duration.Inf)
-      .withIdleTimeout(Duration.Inf)
-      .resource
+  private def makeEmberClient[F[_]: Async](config: ClientConfig): Resource[F, Client[F]] =
+    EmberClientBuilder
+      .default[F]
+      .withMaxTotal(256 * 10)
+      .withTimeout(config.connectTimeout)
+      .withIdleConnectionTime(Duration.Inf)
+      .build
 
   private def makeJdkHttpClient[F[_]: Async](config: ClientConfig): Resource[F, Client[F]] =
     Resource.eval(defaultHttpClient[F](config)).flatMap(JdkHttpClient(_))

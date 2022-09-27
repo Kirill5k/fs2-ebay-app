@@ -24,7 +24,7 @@ object Application extends IOApp.Simple:
           healthController   <- HealthController.make[IO]
           routes = (healthController.routes <+> redirectController.routes)
           _ <- logger.info("starting http server") *> Server
-            .serve[IO](config.server, RequestLogger.httpRoutes(true, true)(routes), runtime.compute)
+            .serve[IO](config.server, RequestLogger.httpRoutes(true, true)(routes))
             .interruptWhen(interrupter.awaitSigTerm)
             .compile
             .drain
