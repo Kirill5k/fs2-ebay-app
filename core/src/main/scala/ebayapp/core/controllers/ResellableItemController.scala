@@ -40,8 +40,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .serverLogic { (limit, query, from, to) =>
       itemService
         .search(SearchParams(itemKind, limit, from, to, query))
-        .map(_.map(ResellableItemView.from).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .mapResponse(_.map(ResellableItemView.from))
     }
 
   private val getSummaries = endpoint.get
@@ -52,8 +51,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
     .serverLogic { (limit, query, from, to) =>
       itemService
         .summaries(SearchParams(itemKind, limit, from, to, query))
-        .map(ResellableItemsSummaryResponse.from(_).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .mapResponse(ResellableItemsSummaryResponse.from)
     }
 
   override def routes: HttpRoutes[F] =

@@ -23,12 +23,13 @@ class NotificationServiceSpec extends IOWordSpec {
 
       val result = for
         svc <- NotificationService.make[IO](emailClient)
-        _   <- svc.notify(Monitors.gen(), Notification(Monitor.Status.Up, eventTime, Some(downTime), "HTTP 200 Success"))
+        _   <- svc.notify(Monitors.monitor, Notification(Monitor.Status.Up, eventTime, Some(downTime), "HTTP 200 Success"))
       yield ()
 
       result.asserting { res =>
         val h = "Monitor is UP: test"
-        val m = "The monitor test (GET http://foo.bar) is back UP (HTTP 200 Success)\nIt was down for 1h15m\nEvent timestamp: 2022-01-01 01:15:00"
+        val m =
+          "The monitor test (GET http://foo.bar) is back UP (HTTP 200 Success)\nIt was down for 1h15m\nEvent timestamp: 2022-01-01 01:15:00"
         verify(emailClient).send(EmailMessage(Monitors.emailContact.email, h, m))
         res mustBe ()
       }
@@ -40,7 +41,7 @@ class NotificationServiceSpec extends IOWordSpec {
 
       val result = for
         svc <- NotificationService.make[IO](emailClient)
-        _   <- svc.notify(Monitors.gen(), Notification(Monitor.Status.Down, eventTime, None, "HTTP 500 Internal Error"))
+        _   <- svc.notify(Monitors.monitor, Notification(Monitor.Status.Down, eventTime, None, "HTTP 500 Internal Error"))
       yield ()
 
       result.asserting { res =>
