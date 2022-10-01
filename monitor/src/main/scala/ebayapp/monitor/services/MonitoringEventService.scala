@@ -38,7 +38,7 @@ final private class LiveMonitoringEventService[F[_]](
         case None => dispatcher.dispatch(Action.Query(monitor, None))
         case Some(event) =>
           F.realTimeInstant.flatMap { now =>
-            F.ifTrueOrElse(event.statusCheck.time.isAfter(now.minusSeconds(monitor.interval.toSeconds)))(
+            F.ifTrueOrElse(now.isBefore(event.statusCheck.time.plusSeconds(monitor.interval.toSeconds)))(
               dispatcher.dispatch(Action.Query(monitor, Some(event))),
               dispatcher.dispatch(Action.Reschedule(monitor.id, event.statusCheck.time.durationBetween(now)))
             )
