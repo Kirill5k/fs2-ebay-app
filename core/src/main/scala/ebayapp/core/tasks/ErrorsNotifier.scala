@@ -3,7 +3,7 @@ package ebayapp.core.tasks
 import cats.Monad
 import cats.effect.Temporal
 import ebayapp.core.common.Logger
-import ebayapp.core.common.stream.*
+import ebayapp.kernel.common.stream.*
 import ebayapp.core.services.{NotificationService, Services}
 import fs2.Stream
 

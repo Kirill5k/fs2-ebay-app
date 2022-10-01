@@ -30,7 +30,7 @@ private[mappers] object PhoneDetailsMapper {
     "Purple", "Yellow", "Orange", "Green", "Pink"
   ).mkString("(?i)", "|", "").r
 
-  def from(listingDetails: ListingDetails): Phone = {
+  def from(listingDetails: ListingDetails): Phone =
     Phone(
       make = listingDetails.properties.get("Brand"),
       model = listingDetails.properties.get("Model"),
@@ -39,43 +39,42 @@ private[mappers] object PhoneDetailsMapper {
       network = mapNetwork(listingDetails),
       condition = mapCondition(listingDetails)
     )
-  }
 
-  private def mapNetwork(listingDetails: ListingDetails): Option[String] = {
-    listingDetails.properties.get("Network")
+  private def mapNetwork(listingDetails: ListingDetails): Option[String] =
+    listingDetails.properties
+      .get("Network")
       .filter(NETWORKS_MATCH_REGEX.matches(_))
       .orElse(Some("Unlocked"))
-  }
 
-  private def mapStorage(listingDetails: ListingDetails): Option[String] = {
-    listingDetails.properties.get("Storage Capacity")
+  private def mapStorage(listingDetails: ListingDetails): Option[String] =
+    listingDetails.properties
+      .get("Storage Capacity")
       .map(_.split("[/,]")(0).trim)
       .map(_.replaceAll(" ", ""))
       .filter(!_.contains("MB"))
-  }
 
-  private def mapColour(listingDetails: ListingDetails): Option[String] = {
-    listingDetails.properties.get("Manufacturer Colour")
+  private def mapColour(listingDetails: ListingDetails): Option[String] =
+    listingDetails.properties
+      .get("Manufacturer Colour")
       .orElse(listingDetails.properties.get("Colour"))
       .map(_.replaceAll("(?i)Gray", "Grey"))
       .flatMap(COLOURS_MATCH_REGEX.findFirstIn(_))
-  }
 
   private def mapCondition(listingDetails: ListingDetails): Option[String] = {
     val originalCondition = Some(listingDetails.condition)
-    originalCondition.filter(_ == "New")
+    originalCondition
+      .filter(_ == "New")
       .orElse(conditionFromTitle(listingDetails))
       .orElse(conditionFromDescription(listingDetails))
       .orElse(originalCondition)
   }
 
-  private def conditionFromTitle(listingDetails: ListingDetails): Option[String] = {
-    if (TITLE_FAULTY_CONDITION_MATCHER.matches(listingDetails.title)) Some("Faulty") else None
-  }
+  private def conditionFromTitle(listingDetails: ListingDetails): Option[String] =
+    Option.when(TITLE_FAULTY_CONDITION_MATCHER.matches(listingDetails.title))("Faulty")
 
   private def conditionFromDescription(listingDetails: ListingDetails): Option[String] = {
-    val completeDescription = listingDetails.shortDescription.getOrElse("") + listingDetails.description.getOrElse("")
+    val completeDescription  = listingDetails.shortDescription.getOrElse("") + listingDetails.description.getOrElse("")
     val sanatisedDescription = completeDescription.replaceAll("'|\n", "").replaceAll(" a ", " ")
-    if (DESCRIPTION_FAULTY_CONDITION_MATCHER.matches(sanatisedDescription)) Some("Faulty") else None
+    Option.when(DESCRIPTION_FAULTY_CONDITION_MATCHER.matches(sanatisedDescription))("Faulty")
   }
 }

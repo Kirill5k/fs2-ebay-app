@@ -1,7 +1,8 @@
-package ebayapp.core.common
+package ebayapp.kernel.common
 
 import cats.effect.Temporal
 import fs2.Stream
+import org.typelevel.log4cats.Logger
 
 import scala.concurrent.duration.FiniteDuration
 

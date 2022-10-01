@@ -6,7 +6,7 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.common.stream.*
+import ebayapp.kernel.common.stream.*
 import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, Retailer}
