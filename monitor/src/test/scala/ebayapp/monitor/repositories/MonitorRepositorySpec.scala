@@ -3,7 +3,7 @@ package ebayapp.monitor.repositories
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import ebayapp.kernel.errors.AppError
-import ebayapp.monitor.domain.{Monitors, Monitor}
+import ebayapp.monitor.domain.{Monitor, Monitors}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import mongo4cats.embedded.EmbeddedMongo
@@ -136,7 +136,7 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
       "return error when monitor does not exist" in withEmbeddedMongoClient { db =>
         val result = for
           repo <- MonitorRepository.make(db)
-          res  <- repo.update(Monitors.gen()).attempt
+          res  <- repo.update(Monitors.monitor).attempt
         yield res
 
         result.map(_ mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist")))

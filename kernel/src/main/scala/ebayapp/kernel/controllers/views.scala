@@ -20,7 +20,7 @@ object views {
       case e: AppError.Failed   => BadRequest(e.message)
       case e: AppError.NotFound => NotFound(e.message)
       case e: AppError.Invalid  => UnprocessableEntity(e.message)
-      case e: Throwable         => InternalError(err.getMessage)
+      case e: Throwable         => InternalError(e.getMessage)
     }
 
     inline given encodeError: Encoder[ErrorResponse] = Encoder.instance {

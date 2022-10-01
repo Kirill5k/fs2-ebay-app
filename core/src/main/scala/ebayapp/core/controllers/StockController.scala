@@ -44,8 +44,7 @@ final private[controllers] class StockController[F[_]](
     .serverLogic { q =>
       stockServices
         .traverse(_.cachedItems)
-        .map(_.flatten.toView(q).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .mapResponse(_.flatten.toView(q))
     }
 
   private val getByRetailer = endpoint.get
@@ -56,8 +55,7 @@ final private[controllers] class StockController[F[_]](
     .serverLogic { (retailer, q) =>
       serviceByRetailer(retailer)
         .flatMap(_.cachedItems)
-        .map(_.toView(q).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .mapResponse(_.toView(q))
     }
 
   private val pauseRetailer = endpoint.put
@@ -67,8 +65,7 @@ final private[controllers] class StockController[F[_]](
     .serverLogic { retailer =>
       serviceByRetailer(retailer)
         .flatMap(_.pause)
-        .map(_.asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .voidResponse
     }
 
   private val resumeRetailer = endpoint.put
@@ -78,8 +75,7 @@ final private[controllers] class StockController[F[_]](
     .serverLogic { retailer =>
       serviceByRetailer(retailer)
         .flatMap(_.resume)
-        .map(_.asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .voidResponse
     }
 
   extension (items: List[ResellableItem])

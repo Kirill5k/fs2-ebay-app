@@ -52,9 +52,7 @@ final private class LiveMonitorController[F[_]](
     .errorOut(errorResponse)
     .out(jsonBody[List[MonitorView]])
     .serverLogic { _ =>
-      monitorService.getAll
-        .map(_.map(MonitorView.from).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+      monitorService.getAll.mapResponse(_.map(MonitorView.from))
     }
 
   private val getById = endpoint.get
@@ -65,8 +63,7 @@ final private class LiveMonitorController[F[_]](
       parseId(id)
         .flatMap(monitorService.find)
         .flatMap(monitor => F.fromOption(monitor, AppError.NotFound(s"Monitor with id $id does not exist")))
-        .map(MonitorView.from(_).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .mapResponse(MonitorView.from)
     }
 
   private val update = endpoint.put
@@ -77,8 +74,7 @@ final private class LiveMonitorController[F[_]](
     .serverLogic { (id, mon) =>
       F.raiseWhen(id != mon.id)(AppError.Failed(s"Id in path is different from id in the request body"))
         .flatMap(_ => monitorService.update(mon.toDomain))
-        .as(().asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .voidResponse
     }
 
   private val createNew = endpoint.post
@@ -89,8 +85,7 @@ final private class LiveMonitorController[F[_]](
     .serverLogic { create =>
       monitorService
         .create(create.toDomain)
-        .map(m => CreateMonitorResponse(m.id.value).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .mapResponse(m => CreateMonitorResponse(m.id.value))
     }
 
   private val activate = endpoint.put
@@ -101,8 +96,7 @@ final private class LiveMonitorController[F[_]](
     .serverLogic { (id, request) =>
       parseId(id)
         .flatMap(id => monitorService.activate(id, request.active))
-        .map(_.asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .voidResponse
     }
 
   private val getEvents = endpoint.get
@@ -113,8 +107,7 @@ final private class LiveMonitorController[F[_]](
     .serverLogic { (id, limit) =>
       parseId(id)
         .flatMap(mid => monitoringEventService.find(mid, limit.getOrElse(25)))
-        .map(_.map(MonitoringEventView.from).asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .mapResponse(_.map(MonitoringEventView.from))
     }
 
   private val delete = endpoint.delete
@@ -124,8 +117,7 @@ final private class LiveMonitorController[F[_]](
     .serverLogic { id =>
       parseId(id)
         .flatMap(monitorService.delete)
-        .map(_.asRight[ErrorResponse])
-        .handleError(ErrorResponse.from(_).asLeft)
+        .voidResponse
     }
 
   override def routes: HttpRoutes[F] =
