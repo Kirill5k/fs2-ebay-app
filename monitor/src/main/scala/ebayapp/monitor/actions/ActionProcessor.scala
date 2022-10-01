@@ -29,7 +29,7 @@ final private class LiveActionProcessor[F[_]](
 
   private def handleAction(action: Action): F[Unit] =
     (action match
-      case Action.RescheduleAll                 => services.monitor.rescheduleAll
+      case Action.RescheduleAll                 => logger.info("rescheduling all monitors") >> services.monitor.rescheduleAll
       case Action.Schedule(monitor)             => services.monitoringEvent.schedule(monitor)
       case Action.Reschedule(id, interval)      => F.sleep(interval) >> services.monitor.reschedule(id)
       case Action.Query(monitor, previousEvent) => services.monitoringEvent.query(monitor, previousEvent)

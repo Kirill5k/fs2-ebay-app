@@ -8,6 +8,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
 import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
 import ebayapp.kernel.common.stream.*
+import ebayapp.kernel.common.effects.*
 import ebayapp.core.domain.Retailer
 import fs2.Stream
 
@@ -76,11 +77,10 @@ object ConfigProvider:
   def make[F[_]](checkEvery: FiniteDuration)(using F: Async[F], logger: Logger[F]): F[ConfigProvider[F]] = {
     def reloadConfigWhenUpdated(state: Ref[F, AppConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
       val process = mountedConfigModifiedTs.flatMap { modifiedTs =>
-        if (previousLastModifiedTs.isEmpty || previousLastModifiedTs.contains(modifiedTs)) F.pure(modifiedTs)
-        else {
-          logger.info("reloading updated config from volume mount") >>
-            F.blocking(AppConfig.loadFromMount).flatMap(state.set).as(modifiedTs)
-        }
+        F.ifTrueOrElse(previousLastModifiedTs.isEmpty || previousLastModifiedTs.contains(modifiedTs))(
+          F.pure(modifiedTs),
+          logger.info("reloading updated config from volume mount") >> F.blocking(AppConfig.loadFromMount).flatMap(state.set).as(modifiedTs)
+        )
       }
       F.sleep(checkEvery) >> process.flatMap(ts => reloadConfigWhenUpdated(state, Some(ts)))
     }

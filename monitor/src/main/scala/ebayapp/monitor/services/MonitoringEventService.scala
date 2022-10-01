@@ -10,6 +10,7 @@ import ebayapp.monitor.domain.Monitor.Connection
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.MonitoringEventRepository
 import ebayapp.kernel.common.time.*
+import ebayapp.kernel.common.effects.*
 
 import java.time.Instant
 import scala.concurrent.duration.*
@@ -37,9 +38,10 @@ final private class LiveMonitoringEventService[F[_]](
         case None => dispatcher.dispatch(Action.Query(monitor, None))
         case Some(event) =>
           F.realTimeInstant.flatMap { now =>
-            if (event.statusCheck.time.isAfter(now.minusSeconds(monitor.interval.toSeconds)))
-              dispatcher.dispatch(Action.Query(monitor, Some(event)))
-            else dispatcher.dispatch(Action.Reschedule(monitor.id, event.statusCheck.time.durationBetween(now)))
+            F.ifTrueOrElse(event.statusCheck.time.isAfter(now.minusSeconds(monitor.interval.toSeconds)))(
+              dispatcher.dispatch(Action.Query(monitor, Some(event))),
+              dispatcher.dispatch(Action.Reschedule(monitor.id, event.statusCheck.time.durationBetween(now)))
+            )
           }
       }
 

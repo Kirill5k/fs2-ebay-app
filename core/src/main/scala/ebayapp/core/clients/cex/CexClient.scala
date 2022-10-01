@@ -30,7 +30,7 @@ final class CexApiClient[F[_]](
     override val httpBackend: SttpBackend[F, Any],
     override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
-    T: Temporal[F],
+    F: Temporal[F],
     logger: Logger[F]
 ) extends CexClient[F] with HttpClient[F] {
 
@@ -58,8 +58,7 @@ final class CexApiClient[F[_]](
         .map(getMinResellPrice)
         .flatMap { rp =>
           if (rp.isEmpty && categories.isDefined) findSellPrice(query, None)
-          else if (rp.isEmpty) logger.warn(s"""cex-price-match "$query" returned 0 results""") *> rp.pure[F]
-          else rp.pure[F]
+          else F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F]
         }
     }
 
@@ -94,17 +93,17 @@ final class CexApiClient[F[_]](
             response.pure[F]
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-search/exhausted input") *>
-              T.sleep(1.second) *> search(fullUri)
+              F.sleep(1.second) *> search(fullUri)
           case Left(DeserializationException(body, error)) =>
             logger.warn(s"$name-search/json-error: ${error.getMessage}\n$body") *>
               AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError[F, CexSearchResponse]
           case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.error(s"$name-search/403-critical") *> T.sleep(5.seconds) *> search(fullUri)
+            logger.error(s"$name-search/403-critical") *> F.sleep(5.seconds) *> search(fullUri)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"$name-search/429-retry") *> T.sleep(5.seconds) *> search(fullUri)
+            logger.warn(s"$name-search/429-retry") *> F.sleep(5.seconds) *> search(fullUri)
           case Left(error) =>
             logger.warn(s"$name-search/${r.code}-error\n$error") *>
-              T.sleep(5.second) *> search(fullUri)
+              F.sleep(5.second) *> search(fullUri)
         }
       }
 }

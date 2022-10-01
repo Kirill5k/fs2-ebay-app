@@ -6,6 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.flatMap.*
 import ebayapp.core.common.Logger
 import ebayapp.kernel.errors.AppError
+import ebayapp.kernel.common.effects.*
 import sttp.client3.{Request, Response, SttpBackend}
 import sttp.model.HeaderNames
 
@@ -71,7 +72,7 @@ trait HttpClient[F[_]] {
           val errorClass = cause.fold(error.getClass.getSimpleName)(_.getClass.getSimpleName)
           val errorMsg   = cause.fold(error.getMessage)(_.getMessage)
           val message    = s"$name-client/${errorClass.toLowerCase}-$attempt: ${errorMsg}\n$error"
-          (if (attempt >= 50 && attempt % 10 == 0) logger.error(message) else logger.warn(message)) *>
+          F.ifTrueOrElse(attempt >= 50 && attempt % 10 == 0)(logger.error(message), logger.warn(message)) *>
             F.sleep(delayBetweenFailures) *> dispatchWithRetry(backend, request, attempt + 1, maxRetries)
         } else F.raiseError(error)
       }
