@@ -1,6 +1,6 @@
 package ebayapp.monitor.actions
 
-import cats.{Monad, Parallel}
+import cats.{Monad}
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.parallel.*
@@ -16,7 +16,7 @@ import scala.concurrent.duration.*
 trait ActionProcessor[F[_]]:
   def process: Stream[F, Unit]
 
-final private class LiveActionProcessor[F[_]: Parallel](
+final private class LiveActionProcessor[F[_]](
     private val dispatcher: ActionDispatcher[F],
     private val services: Services[F]
 )(using
@@ -29,19 +29,11 @@ final private class LiveActionProcessor[F[_]: Parallel](
 
   private def handleAction(action: Action): F[Unit] =
     (action match
-      case Action.EnqueueAll =>
-        services.monitor.getAllActive.flatMap(_.parTraverse_(enqueueWithEventFetched))
-      case Action.EnqueueNew(monitor) =>
-        services.monitoringEvent.process(monitor, None)
-      case Action.Enqueue(monitor, prevEvent) =>
-        services.monitoringEvent.process(monitor, Some(prevEvent))
-      case Action.Requeue(id, interval, prevEvent) =>
-        F.sleep(interval) >> services.monitor.find(id).flatMap {
-          case Some(monitor) => services.monitoringEvent.process(monitor, Some(prevEvent))
-          case None          => logger.warn(s"monitor $id does not exist")
-        }
-      case Action.Notify(monitor, notification) =>
-        services.notification.notify(monitor, notification)
+      case Action.RescheduleAll                 => services.monitor.rescheduleAll
+      case Action.Schedule(monitor)             => services.monitoringEvent.schedule(monitor)
+      case Action.Reschedule(id, interval)      => F.sleep(interval) >> services.monitor.reschedule(id)
+      case Action.Query(monitor, previousEvent) => services.monitoringEvent.query(monitor, previousEvent)
+      case Action.Notify(monitor, notification) => services.notification.notify(monitor, notification)
     ).handleErrorWith {
       case error: AppError =>
         logger.warn(error)(s"domain error while processing action $action")
@@ -51,11 +43,6 @@ final private class LiveActionProcessor[F[_]: Parallel](
           dispatcher.dispatch(action)
     }
 
-  private def enqueueWithEventFetched(monitor: Monitor): F[Unit] =
-    services.monitoringEvent
-      .findLatest(monitor.id)
-      .flatMap(e => services.monitoringEvent.process(monitor, e))
-
 object ActionProcessor:
-  def make[F[_]: Temporal: Logger: Parallel](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
+  def make[F[_]: Temporal: Logger](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
     Monad[F].pure(LiveActionProcessor(dispatcher, services))

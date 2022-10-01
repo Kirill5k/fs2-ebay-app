@@ -17,37 +17,26 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
 
   "A MonitorRepository" when {
 
-    "getAll" should {
+    "all" should {
       "return all monitors" in withEmbeddedMongoClient { db =>
         for
           repo <- MonitorRepository.make(db)
           mon1 <- repo.save(Monitors.create())
           mon2 <- repo.save(Monitors.create())
-          mons <- repo.getAllActive
+          mons <- repo.all
         yield mons mustBe List(mon1, mon2)
       }
     }
 
-    "getAllActive" should {
-      "return active monitors" in withEmbeddedMongoClient { db =>
+    "stream" should {
+      "stream all monitors" in withEmbeddedMongoClient { db =>
         val result = for
           repo <- MonitorRepository.make(db)
           mon  <- repo.save(Monitors.create())
-          mons <- repo.getAllActive
+          mons <- repo.stream.compile.toList
         yield (mon, mons)
 
         result.map((mon, mons) => mons mustBe List(mon))
-      }
-
-      "return empty list when there are no active monitor" in withEmbeddedMongoClient { db =>
-        val result = for
-          repo <- MonitorRepository.make(db)
-          mon  <- repo.save(Monitors.create())
-          _    <- repo.pause(mon.id)
-          mons <- repo.getAllActive
-        yield mons
-
-        result.map(_ mustBe Nil)
       }
     }
 

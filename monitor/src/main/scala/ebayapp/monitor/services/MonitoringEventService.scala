@@ -9,14 +9,15 @@ import ebayapp.monitor.clients.HttpClient
 import ebayapp.monitor.domain.Monitor.Connection
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.MonitoringEventRepository
+import ebayapp.kernel.common.time.*
 
 import java.time.Instant
 import scala.concurrent.duration.*
 
 trait MonitoringEventService[F[_]]:
   def find(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]]
-  def findLatest(monitorId: Monitor.Id): F[Option[MonitoringEvent]]
-  def process(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit]
+  def schedule(monitor: Monitor): F[Unit]
+  def query(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit]
 
 final private class LiveMonitoringEventService[F[_]](
     private val dispatcher: ActionDispatcher[F],
@@ -29,25 +30,34 @@ final private class LiveMonitoringEventService[F[_]](
   def find(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]] =
     repository.findAllBy(monitorId, limit)
 
-  def findLatest(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
-    repository.findLatestBy(monitorId)
+  def schedule(monitor: Monitor): F[Unit] =
+    repository
+      .findLatestBy(monitor.id)
+      .flatMap {
+        case None => dispatcher.dispatch(Action.Query(monitor, None))
+        case Some(event) =>
+          F.realTimeInstant.flatMap { now =>
+            if (event.statusCheck.time.isAfter(now.minusSeconds(monitor.interval.toSeconds)))
+              dispatcher.dispatch(Action.Query(monitor, Some(event)))
+            else dispatcher.dispatch(Action.Reschedule(monitor.id, event.statusCheck.time.durationBetween(now)))
+          }
+      }
 
-  def process(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit] =
+  def query(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit] =
     for
-      currentCheck <- if (monitor.active) checkStatus(monitor) else pausedStatus
-      (downTime, notification) = compareStatus(currentCheck, previousEvent.map(_.statusCheck), previousEvent.flatMap(_.downTime))
-      event                    = MonitoringEvent(monitor.id, currentCheck, downTime)
-      _ <- repository.save(event)
+      status <- performStatusCheck(monitor)
+      (downTime, notification) = compareStatus(status, previousEvent.map(_.statusCheck), previousEvent.flatMap(_.downTime))
+      _ <- repository.save(MonitoringEvent(monitor.id, status, downTime))
       _ <- F.whenA(notification.nonEmpty)(dispatcher.dispatch(Action.Notify(monitor, notification.get)))
-      _ <- dispatcher.dispatch(Action.Requeue(monitor.id, monitor.interval - currentCheck.responseTime, event))
+      _ <- dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - status.responseTime))
     yield ()
 
-  private def checkStatus(monitor: Monitor): F[MonitoringEvent.StatusCheck] =
-    monitor.connection match
-      case http: Connection.Http => httpClient.status(http)
-
-  private def pausedStatus: F[MonitoringEvent.StatusCheck] =
-    F.realTimeInstant.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
+  private def performStatusCheck(monitor: Monitor): F[MonitoringEvent.StatusCheck] =
+    if (monitor.active)
+      monitor.connection match
+        case http: Connection.Http => httpClient.status(http)
+    else
+      F.realTimeInstant.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
 
   private def compareStatus(
       current: MonitoringEvent.StatusCheck,

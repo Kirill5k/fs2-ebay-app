@@ -12,7 +12,7 @@ import mongo4cats.models.database.CreateCollectionOptions
 
 trait MonitoringEventRepository[F[_]]:
   def save(event: MonitoringEvent): F[Unit]
-  def findAllBy(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]]
+  def findAllBy(mid: Monitor.Id, limit: Int): F[List[MonitoringEvent]]
   def findLatestBy(monitorId: Monitor.Id): F[Option[MonitoringEvent]]
 
 final private class LiveMonitoringEventRepository[F[_]: Async](
@@ -24,8 +24,8 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
   def save(event: MonitoringEvent): F[Unit] =
     collection.insertOne(MonitoringEventEntity.from(event)).void
 
-  def findAllBy(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]] =
-    collection.find(monitorIdFilter(monitorId)).sortByDesc("statusCheck.time").limit(limit).all.map(_.map(_.toDomain).toList)
+  def findAllBy(mid: Monitor.Id, limit: Int): F[List[MonitoringEvent]] =
+    collection.find(monitorIdFilter(mid)).sortByDesc("statusCheck.time").limit(limit).all.map(_.map(_.toDomain).toList)
 
   def findLatestBy(monitorId: Monitor.Id): F[Option[MonitoringEvent]] =
     collection.find(monitorIdFilter(monitorId)).sortByDesc("statusCheck.time").first.map(_.map(_.toDomain))

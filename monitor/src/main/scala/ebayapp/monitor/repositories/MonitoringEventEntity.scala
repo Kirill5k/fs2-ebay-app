@@ -9,7 +9,6 @@ import mongo4cats.circe.given
 import java.time.Instant
 
 final private[repositories] case class MonitoringEventEntity(
-    _id: ObjectId,
     monitorId: ObjectId,
     statusCheck: MonitoringEvent.StatusCheck,
     downTime: Option[Instant]
@@ -20,7 +19,6 @@ final private[repositories] case class MonitoringEventEntity(
 private[repositories] object MonitoringEventEntity:
   def from(me: MonitoringEvent): MonitoringEventEntity =
     MonitoringEventEntity(
-      ObjectId(),
       me.monitorId.toObjectId,
       me.statusCheck,
       me.downTime

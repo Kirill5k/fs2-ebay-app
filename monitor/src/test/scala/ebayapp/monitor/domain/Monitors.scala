@@ -10,19 +10,23 @@ object Monitors {
   lazy val httpConnection: Monitor.Connection.Http = Monitor.Connection.Http(Url("http://foo.bar"), HttpMethod.GET, 60.seconds)
   lazy val emailContact: Monitor.Contact.Email     = Monitor.Contact.Email("foo@bar.com")
 
+  lazy val monitor: Monitor = Monitor(id, Monitor.Name("test"), httpConnection, true, 10.minutes, emailContact)
+
+  def genId: Monitor.Id = Monitor.Id(ObjectId())
+
   def gen(
-      id: Monitor.Id = id,
+      id: Monitor.Id = genId,
       name: Monitor.Name = Monitor.Name("test"),
       connection: Monitor.Connection = httpConnection,
       active: Boolean = true,
       interval: FiniteDuration = 10.minutes,
       contact: Monitor.Contact = emailContact
-  ): Monitor = Monitor(id, name, connection, active, 10.minutes, contact)
+  ): Monitor = Monitor(id, name, connection, active, interval, contact)
 
   def create(
       name: Monitor.Name = Monitor.Name("test"),
       connection: Monitor.Connection = httpConnection,
       interval: FiniteDuration = 10.minutes,
       contact: Monitor.Contact = emailContact
-  ): CreateMonitor = CreateMonitor(name, connection, 10.minutes, contact)
+  ): CreateMonitor = CreateMonitor(name, connection, interval, contact)
 }

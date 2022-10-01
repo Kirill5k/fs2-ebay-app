@@ -1,32 +1,30 @@
 package ebayapp.monitor.services
 
 import cats.effect.IO
-import cats.effect.unsafe.implicits.global
-import ebayapp.kernel.MockitoMatchers
+import ebayapp.kernel.errors.AppError
+import ebayapp.monitor.IOWordSpec
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
 import ebayapp.monitor.domain.{CreateMonitor, Monitor, Monitors}
 import ebayapp.monitor.repositories.MonitorRepository
-import org.scalatest.wordspec.AsyncWordSpec
-import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.mockito.MockitoSugar
+import fs2.Stream
 
-class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar with MockitoMatchers {
+class MonitorServiceSpec extends IOWordSpec {
 
   "A MonitorService" should {
     "create new monitors and dispatch an action" in {
       val (dispatcher, repo) = mocks
       when(dispatcher.dispatch(any[Action])).thenReturn(IO.unit)
-      when(repo.save(any[CreateMonitor])).thenReturn(IO.pure(Monitors.gen()))
+      when(repo.save(any[CreateMonitor])).thenReturn(IO.pure(Monitors.monitor))
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
         mon <- svc.create(Monitors.create())
       yield mon
 
-      res.unsafeToFuture().map { mon =>
-        verify(dispatcher).dispatch(Action.EnqueueNew(Monitors.gen()))
+      res.asserting { mon =>
+        verify(dispatcher).dispatch(Action.Query(Monitors.monitor, None))
         verify(repo).save(Monitors.create())
-        mon mustBe Monitors.gen()
+        mon mustBe Monitors.monitor
       }
     }
 
@@ -36,29 +34,29 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
-        _   <- svc.update(Monitors.gen())
+        _   <- svc.update(Monitors.monitor)
       yield ()
 
-      res.unsafeToFuture().map { res =>
+      res.asserting { res =>
         verifyNoInteractions(dispatcher)
-        verify(repo).update(Monitors.gen())
+        verify(repo).update(Monitors.monitor)
         res mustBe ()
       }
     }
 
     "find monitor by id" in {
       val (dispatcher, repo) = mocks
-      when(repo.find(any[Monitor.Id])).thenReturn(IO.pure(Some(Monitors.gen())))
+      when(repo.find(any[Monitor.Id])).thenReturn(IO.some(Monitors.monitor))
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
         mon <- svc.find(Monitors.id)
       yield mon
 
-      res.unsafeToFuture().map { mon =>
+      res.asserting { mon =>
         verifyNoInteractions(dispatcher)
         verify(repo).find(Monitors.id)
-        mon mustBe Some(Monitors.gen())
+        mon mustBe Some(Monitors.monitor)
       }
     }
 
@@ -71,42 +69,27 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
         res <- svc.delete(Monitors.id)
       yield res
 
-      result.unsafeToFuture().map { res =>
+      result.asserting { res =>
         verifyNoInteractions(dispatcher)
         verify(repo).delete(Monitors.id)
         res mustBe ()
       }
     }
 
-    "get all active monitors" in {
-      val (dispatcher, repo) = mocks
-      when(repo.getAllActive).thenReturn(IO.pure(List(Monitors.gen(), Monitors.gen())))
-
-      val res = for
-        svc <- MonitorService.make[IO](dispatcher, repo)
-        mon <- svc.getAllActive
-      yield mon
-
-      res.unsafeToFuture().map { mons =>
-        verifyNoInteractions(dispatcher)
-        verify(repo).getAllActive
-        mons mustBe List(Monitors.gen(), Monitors.gen())
-      }
-    }
-
     "get all monitors" in {
       val (dispatcher, repo) = mocks
-      when(repo.getAll).thenReturn(IO.pure(List(Monitors.gen(), Monitors.gen())))
+      val monitors           = List(Monitors.gen(), Monitors.gen())
+      when(repo.all).thenReturn(IO.pure(monitors))
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
         mon <- svc.getAll
       yield mon
 
-      res.unsafeToFuture().map { mons =>
+      res.asserting { mons =>
         verifyNoInteractions(dispatcher)
-        verify(repo).getAll
-        mons mustBe List(Monitors.gen(), Monitors.gen())
+        verify(repo).all
+        mons mustBe monitors
       }
     }
 
@@ -119,10 +102,64 @@ class MonitorServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar w
         mon <- svc.activate(Monitors.id, true)
       yield mon
 
-      res.unsafeToFuture().map { mon =>
+      res.asserting { mon =>
         verifyNoInteractions(dispatcher)
         verify(repo).activate(Monitors.id, true)
         mon mustBe ()
+      }
+    }
+
+    // TODO: what to do with inactive monitors?
+    "reschedule all active monitors" in {
+      val (dispatcher, repo) = mocks
+      val mon1               = Monitors.gen()
+      val mon2               = Monitors.gen()
+      when(repo.stream).thenReturn(Stream(mon1, mon2))
+      when(dispatcher.dispatch(any[Action])).thenReturn(IO.unit)
+
+      val res = for
+        svc <- MonitorService.make[IO](dispatcher, repo)
+        _   <- svc.rescheduleAll
+      yield ()
+
+      res.asserting { res =>
+        verify(repo).stream
+        verify(dispatcher).dispatch(Action.Schedule(mon1))
+        verify(dispatcher).dispatch(Action.Schedule(mon2))
+        res mustBe ()
+      }
+    }
+
+    "reschedule single monitor" in {
+      val (dispatcher, repo) = mocks
+      when(repo.find(any[Monitor.Id])).thenReturn(IO.some(Monitors.monitor))
+      when(dispatcher.dispatch(any[Action])).thenReturn(IO.unit)
+
+      val res = for
+        svc <- MonitorService.make[IO](dispatcher, repo)
+        _   <- svc.reschedule(Monitors.id)
+      yield ()
+
+      res.asserting { res =>
+        verify(repo).find(Monitors.id)
+        verify(dispatcher).dispatch(Action.Schedule(Monitors.monitor))
+        res mustBe ()
+      }
+    }
+
+    "return error when rescheduled monitor is not found" in {
+      val (dispatcher, repo) = mocks
+      when(repo.find(any[Monitor.Id])).thenReturn(IO.none)
+
+      val res = for
+        svc <- MonitorService.make[IO](dispatcher, repo)
+        _   <- svc.reschedule(Monitors.id)
+      yield ()
+
+      res.attempt.asserting { res =>
+        verify(repo).find(Monitors.id)
+        verifyNoInteractions(dispatcher)
+        res mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist"))
       }
     }
   }

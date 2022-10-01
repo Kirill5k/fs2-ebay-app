@@ -29,7 +29,7 @@ object Application extends IOApp.Simple:
           controllers     <- Controllers.make[IO](services) <* logger.info("created controllers")
           _               <- logger.info("starting http server and processors")
           _ <- Stream(
-            Stream.eval(dispatcher.dispatch(Action.EnqueueAll)),
+            Stream.eval(dispatcher.dispatch(Action.RescheduleAll)),
             Server.serve[IO](config.server, controllers.routes),
             actionProcessor.process
           ).parJoinUnbounded.compile.drain

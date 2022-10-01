@@ -10,16 +10,17 @@ import mongo4cats.operations.{Filter, Update}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.circe.MongoJsonCodecs
 import mongo4cats.database.MongoDatabase
+import fs2.Stream
 
 trait MonitorRepository[F[_]]:
+  def all: F[List[Monitor]]
+  def stream: Stream[F, Monitor]
   def save(monitor: CreateMonitor): F[Monitor]
   def find(id: Monitor.Id): F[Option[Monitor]]
   def activate(id: Monitor.Id, active: Boolean): F[Unit]
   def pause(id: Monitor.Id): F[Unit]   = activate(id, false)
   def unpause(id: Monitor.Id): F[Unit] = activate(id, true)
   def delete(id: Monitor.Id): F[Unit]
-  def getAll: F[List[Monitor]]
-  def getAllActive: F[List[Monitor]]
   def update(monitor: Monitor): F[Unit]
 
 final private class LiveMonitorRepository[F[_]](
@@ -32,10 +33,8 @@ final private class LiveMonitorRepository[F[_]](
     val entity = MonitorEntity.from(monitor)
     collection.insertOne(entity).as(entity.toDomain)
 
-  def getAll: F[List[Monitor]]       = findAll(Filter.empty)
-  def getAllActive: F[List[Monitor]] = findAll(Filter.eq("active", true))
-  private def findAll(filter: Filter): F[List[Monitor]] =
-    collection.find(filter).all.map(_.map(_.toDomain).toList)
+  def all: F[List[Monitor]]      = collection.find.all.map(_.map(_.toDomain).toList)
+  def stream: Stream[F, Monitor] = collection.find.stream.map(_.toDomain)
 
   def find(id: Monitor.Id): F[Option[Monitor]] =
     collection.find(Filter.idEq(id.toObjectId)).first.map(_.map(_.toDomain))
