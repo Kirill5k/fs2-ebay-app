@@ -42,7 +42,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
     "PUT /monitors/:id" should {
       "activate monitor and return 204" in {
-        val monitor = Monitors.gen()
+        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.update(any[Monitor])).thenReturn(IO.unit)
 
@@ -110,7 +110,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
     "PUT /monitors/:id/active" should {
       "activate monitor and return 204" in {
-        val monitor = Monitors.gen()
+        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.unit)
 
@@ -127,7 +127,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
       }
 
       "return 404 if monitor does not exist" in {
-        val monitor = Monitors.gen()
+        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.raiseError(AppError.NotFound("does not exist")))
 
@@ -146,7 +146,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
     "POST /monitors" should {
       "return 400 on malformed request" in {
-        val monitor = Monitors.gen()
+        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.create(any[CreateMonitor])).thenReturn(IO.pure(monitor))
 
@@ -163,7 +163,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
       }
 
       "create new monitor and return 201 on success" in {
-        val monitor = Monitors.gen()
+        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.create(any[CreateMonitor])).thenReturn(IO.pure(monitor))
 
@@ -199,7 +199,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
     "GET /monitors" should {
 
       "return all monitors on success" in {
-        val monitor = Monitors.gen()
+        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.getAll).thenReturn(IO.pure(List(monitor)))
 
@@ -264,7 +264,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
       }
 
       "find monitor by on success" in {
-        val monitor = Monitors.gen()
+        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.find(any[Monitor.Id])).thenReturn(IO.pure(Some(monitor)))
 

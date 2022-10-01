@@ -75,7 +75,7 @@ final private class LiveMonitorController[F[_]](
     .errorOut(errorResponse)
     .out(statusCode(StatusCode.NoContent))
     .serverLogic { (id, mon) =>
-      F.fromEither(Either.cond(id == mon.id, (), AppError.Failed(s"Id in path is different from id in the request body")))
+      F.raiseWhen(id != mon.id)(AppError.Failed(s"Id in path is different from id in the request body"))
         .flatMap(_ => monitorService.update(mon.toDomain))
         .as(().asRight[ErrorResponse])
         .handleError(ErrorResponse.from(_).asLeft)
