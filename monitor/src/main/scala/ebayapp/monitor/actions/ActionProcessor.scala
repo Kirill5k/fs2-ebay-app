@@ -1,6 +1,6 @@
 package ebayapp.monitor.actions
 
-import cats.{Monad}
+import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.parallel.*
@@ -29,11 +29,16 @@ final private class LiveActionProcessor[F[_]](
 
   private def handleAction(action: Action): F[Unit] =
     (action match
-      case Action.RescheduleAll                 => logger.info("rescheduling all monitors") >> services.monitor.rescheduleAll
-      case Action.Schedule(monitor)             => services.monitoringEvent.schedule(monitor)
-      case Action.Reschedule(id, interval)      => F.sleep(interval) >> services.monitor.reschedule(id)
-      case Action.Query(monitor, previousEvent) => services.monitoringEvent.query(monitor, previousEvent)
-      case Action.Notify(monitor, notification) => services.notification.notify(monitor, notification)
+      case Action.RescheduleAll =>
+        logger.info("rescheduling all monitors") >> services.monitor.rescheduleAll
+      case Action.Schedule(monitor) =>
+        services.monitoringEvent.schedule(monitor)
+      case Action.Reschedule(id, interval) =>
+        F.sleep(interval) >> services.monitor.reschedule(id)
+      case Action.Query(monitor, previousEvent) =>
+        logger.info(s"querying monitor ${monitor.id}") >> services.monitoringEvent.query(monitor, previousEvent)
+      case Action.Notify(monitor, notification) =>
+        services.notification.notify(monitor, notification)
     ).handleErrorWith {
       case error: AppError =>
         logger.warn(error)(s"domain error while processing action $action")
