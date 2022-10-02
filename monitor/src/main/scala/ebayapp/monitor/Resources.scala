@@ -9,30 +9,30 @@ import mongo4cats.database.MongoDatabase
 import sttp.client3.SttpBackendOptions.Proxy
 import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
 import sttp.client3.{SttpBackend, SttpBackendOptions}
-import courier.{Envelope, Mailer}
+import courier.{Envelope, Mailer as CourierMailer}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.*
 
-final class MailerF[F[_]](
+final class Mailer[F[_]](
     val from: String,
-    private val mailer: Mailer
+    private val mailer: CourierMailer,
+    private val ec: ExecutionContext
 )(using
-    ec: ExecutionContext,
     F: Async[F]
 ) {
-  def send(envelop: Envelope): F[Unit] = F.fromFuture(F.delay(mailer(envelop)))
+  def send(envelop: Envelope): F[Unit] = F.fromFuture(F.delay(mailer(envelop)(ec)))
 }
 
 trait Resources[F[_]]:
   def clientBackend: SttpBackend[F, Any]
   def database: MongoDatabase[F]
-  def mailer: MailerF[F]
+  def mailer: Mailer[F]
 
 object Resources:
-  private def mkMailer[F[_]: Async](config: EmailConfig)(using ec: ExecutionContext): Resource[F, MailerF[F]] =
-    val mailer = Mailer(config.smtpHost, config.smtpPort).auth(true).as(config.username, config.password).startTls(true)()
-    Resource.pure(MailerF[F](config.username, mailer))
+  private def mkMailer[F[_]: Async](config: EmailConfig, ec: ExecutionContext): Resource[F, Mailer[F]] =
+    val mailer = CourierMailer(config.smtpHost, config.smtpPort).auth(true).as(config.username, config.password).startTls(true)()
+    Resource.pure(Mailer[F](config.username, mailer, ec))
 
   private def mkHttpClientBackend[F[_]: Async]: Resource[F, SttpBackend[F, Any]] =
     Resource.make(AsyncHttpClientCatsBackend[F](SttpBackendOptions(connectionTimeout = 3.minutes, proxy = None)))(_.close())
@@ -44,11 +44,11 @@ object Resources:
     (
       mkHttpClientBackend[F],
       mkMongoDatabase[F](config.mongo),
-      mkMailer(config.email)(Async[F], ec)
+      mkMailer(config.email, ec)
     ).mapN { (http, mongo, mail) =>
       new Resources[F] {
         def clientBackend: SttpBackend[F, Any] = http
         def database: MongoDatabase[F]         = mongo
-        def mailer: MailerF[F]                 = mail
+        def mailer: Mailer[F]                  = mail
       }
     }

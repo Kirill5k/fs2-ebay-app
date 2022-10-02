@@ -1,10 +1,8 @@
 package ebayapp.monitor.clients
 
 import cats.Monad
-import cats.effect.Async
-import courier.{Envelope, Mailer, Text}
-import ebayapp.monitor.MailerF
-import ebayapp.monitor.domain.Monitor
+import courier.{Envelope, Text}
+import ebayapp.monitor.Mailer
 
 import javax.mail.internet.InternetAddress
 
@@ -18,9 +16,7 @@ trait EmailClient[F[_]]:
   def send(message: EmailMessage): F[Unit]
 
 final private class LiveEmailClient[F[_]](
-    private val mailer: MailerF[F]
-)(using
-    F: Async[F]
+    private val mailer: Mailer[F]
 ) extends EmailClient[F]:
   def send(message: EmailMessage): F[Unit] =
     mailer.send {
@@ -32,5 +28,5 @@ final private class LiveEmailClient[F[_]](
     }
 
 object EmailClient:
-  def make[F[_]: Async](mailer: MailerF[F]): F[EmailClient[F]] =
+  def make[F[_]: Monad](mailer: Mailer[F]): F[EmailClient[F]] =
     Monad[F].pure(LiveEmailClient[F](mailer))

@@ -47,19 +47,19 @@ final private class LiveMonitoringEventService[F[_]](
 
   def query(monitor: Monitor, previousEvent: Option[MonitoringEvent]): F[Unit] =
     for
-      status <- performStatusCheck(monitor)
+      status <- F.ifTrueOrElse(monitor.active)(checkStatus(monitor), paused)
       (downTime, notification) = compareStatus(status, previousEvent.map(_.statusCheck), previousEvent.flatMap(_.downTime))
       _ <- repository.save(MonitoringEvent(monitor.id, status, downTime))
       _ <- F.whenA(notification.nonEmpty)(dispatcher.dispatch(Action.Notify(monitor, notification.get)))
       _ <- dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - status.responseTime))
     yield ()
 
-  private def performStatusCheck(monitor: Monitor): F[MonitoringEvent.StatusCheck] =
-    if (monitor.active)
-      monitor.connection match
-        case http: Connection.Http => httpClient.status(http)
-    else
-      F.realTimeInstant.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
+  private def checkStatus(monitor: Monitor): F[MonitoringEvent.StatusCheck] =
+    monitor.connection match
+      case http: Connection.Http => httpClient.status(http)
+
+  private def paused: F[MonitoringEvent.StatusCheck] =
+    F.realTimeInstant.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
 
   private def compareStatus(
       current: MonitoringEvent.StatusCheck,
@@ -67,24 +67,18 @@ final private class LiveMonitoringEventService[F[_]](
       downTime: Option[Instant]
   ): (Option[Instant], Option[Notification]) =
     (current.status, previous.map(_.status)) match
-      case (Monitor.Status.Up, Some(Monitor.Status.Paused)) =>
-        (None, None)
       case (Monitor.Status.Down, Some(Monitor.Status.Paused)) =>
         (Some(current.time), None)
-      case (Monitor.Status.Paused, _) =>
-        (None, None)
       case (Monitor.Status.Down, None) =>
         (Some(current.time), None)
-      case (Monitor.Status.Up, None) =>
-        (None, None)
       case (Monitor.Status.Down, Some(Monitor.Status.Down)) =>
         (downTime, None)
-      case (Monitor.Status.Up, Some(Monitor.Status.Up)) =>
-        (None, None)
       case (Monitor.Status.Up, Some(Monitor.Status.Down)) =>
         (None, Some(Notification(Monitor.Status.Up, current.time, downTime, current.reason)))
       case (Monitor.Status.Down, Some(Monitor.Status.Up)) =>
         (Some(current.time), Some(Notification(Monitor.Status.Down, current.time, None, current.reason)))
+      case _ =>
+        (None, None)
 
 object MonitoringEventService:
   def make[F[_]: Temporal](

@@ -39,7 +39,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
       }
 
       "PAUSED - _" should {
-        "clear downtime and no notification" in {
+        "clear downtime and do not send notification" in {
           val previousEvent = Some(MonitoringEvents.down(downTime = Some(downTime)))
 
           runScenarioWhenMonitorIsInactive(previousEvent)
