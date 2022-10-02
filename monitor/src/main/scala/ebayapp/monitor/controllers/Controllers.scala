@@ -14,10 +14,7 @@ trait Controllers[F[_]]:
   def health: Controller[F]
 
   def routes(using M: Monad[F]): HttpRoutes[F] =
-    Router(
-      ""    -> health.routes,
-      "api" -> monitor.routes
-    )
+    Router("" -> health.routes, "api" -> monitor.routes)
 
 object Controllers:
   def make[F[_]: Async: Logger](services: Services[F]): F[Controllers[F]] =
@@ -25,8 +22,7 @@ object Controllers:
       HealthController.make[F],
       MonitorController.make[F](services.monitor, services.monitoringEvent)
     ).mapN { (hc, mc) =>
-      new Controllers[F] {
+      new Controllers[F]:
         def health: Controller[F]  = hc
         def monitor: Controller[F] = mc
-      }
     }

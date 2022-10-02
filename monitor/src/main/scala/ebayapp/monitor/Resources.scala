@@ -46,9 +46,8 @@ object Resources:
       mkMongoDatabase[F](config.mongo),
       mkMailer(config.email, ec)
     ).mapN { (http, mongo, mail) =>
-      new Resources[F] {
+      new Resources[F]:
         def clientBackend: SttpBackend[F, Any] = http
         def database: MongoDatabase[F]         = mongo
         def mailer: Mailer[F]                  = mail
-      }
     }

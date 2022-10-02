@@ -57,9 +57,8 @@ object Monitor {
 
     extension (conn: Connection)
       def asString: String =
-        conn match {
+        conn match
           case Connection.Http(url, method, _, _) => s"$method $url"
-        }
 }
 
 final case class CreateMonitor(

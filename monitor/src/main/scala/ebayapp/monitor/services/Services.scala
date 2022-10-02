@@ -25,8 +25,7 @@ object Services:
       mon <- MonitorService.make[F](dispatcher, repositories.monitor)
       me  <- MonitoringEventService.make[F](dispatcher, repositories.monitoringEvent, clients.http)
       not <- NotificationService.make[F](clients.email)
-    yield new Services[F] {
+    yield new Services[F]:
       def monitor: MonitorService[F]                 = mon
       def monitoringEvent: MonitoringEventService[F] = me
       def notification: NotificationService[F]       = not
-    }

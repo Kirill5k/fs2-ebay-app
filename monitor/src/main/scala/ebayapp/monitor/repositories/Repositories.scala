@@ -14,7 +14,6 @@ object Repositories:
     for
       mon <- MonitorRepository.make[F](database)
       me  <- MonitoringEventRepository.make[F](database)
-    yield new Repositories[F] {
+    yield new Repositories[F]:
       def monitor: MonitorRepository[F]                 = mon
       def monitoringEvent: MonitoringEventRepository[F] = me
-    }

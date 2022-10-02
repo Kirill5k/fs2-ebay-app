@@ -13,8 +13,7 @@ final private[repositories] case class MonitoringEventEntity(
     statusCheck: MonitoringEvent.StatusCheck,
     downTime: Option[Instant]
 ) derives Codec.AsObject:
-  def toDomain: MonitoringEvent =
-    MonitoringEvent(Monitor.Id(monitorId), statusCheck, downTime)
+  def toDomain: MonitoringEvent = MonitoringEvent(Monitor.Id(monitorId), statusCheck, downTime)
 
 private[repositories] object MonitoringEventEntity:
   def from(me: MonitoringEvent): MonitoringEventEntity =
