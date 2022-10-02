@@ -6,9 +6,8 @@ import io.circe.{Codec, Encoder}
 import io.circe.syntax.*
 
 object views {
-  sealed trait ErrorResponse {
+  sealed trait ErrorResponse:
     def message: String
-  }
 
   object ErrorResponse {
     final case class InternalError(message: String)       extends ErrorResponse derives Codec.AsObject

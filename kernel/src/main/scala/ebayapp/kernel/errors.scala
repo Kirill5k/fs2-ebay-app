@@ -1,10 +1,9 @@
 package ebayapp.kernel
 
 object errors {
-  sealed trait AppError extends Throwable {
+  sealed trait AppError extends Throwable:
     def message: String
     override def getMessage: String = message
-  }
 
   object AppError {
     final case class Http(status: Int, message: String) extends AppError

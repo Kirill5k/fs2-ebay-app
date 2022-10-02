@@ -40,7 +40,7 @@ final private class LiveMonitoringEventService[F[_]](
           F.realTimeInstant.flatMap { now =>
             F.ifTrueOrElse(now.isAfter(event.statusCheck.time.plusSeconds(monitor.interval.toSeconds)))(
               dispatcher.dispatch(Action.Query(monitor, Some(event))),
-              dispatcher.dispatch(Action.Reschedule(monitor.id, event.statusCheck.time.durationBetween(now)))
+              dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - event.statusCheck.time.durationBetween(now)))
             )
           }
       }

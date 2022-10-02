@@ -18,7 +18,7 @@ object time:
       math.abs(ts.toEpochMilli - otherTs.toEpochMilli).millis
 
   extension (fd: FiniteDuration)
-    def toReadableString: String = {
+    def toReadableString: String =
       val hours = fd.toHours
       val remMins = fd - hours.hours
       val minutes = remMins.toMinutes
@@ -29,4 +29,4 @@ object time:
          |${if minutes > 0 then s"${minutes}m" else ""}
          |${if seconds > 0 then s"${seconds}s" else ""}
          |""".stripMargin.replaceAll("\n", "")
-    }
+    
