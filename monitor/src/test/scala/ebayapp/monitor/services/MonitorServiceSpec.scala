@@ -2,7 +2,7 @@ package ebayapp.monitor.services
 
 import cats.effect.IO
 import ebayapp.kernel.errors.AppError
-import ebayapp.monitor.IOWordSpec
+import ebayapp.monitor.{IOWordSpec, MockActionDispatcher}
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
 import ebayapp.monitor.domain.{CreateMonitor, Monitor, Monitors}
 import ebayapp.monitor.repositories.MonitorRepository
@@ -13,7 +13,6 @@ class MonitorServiceSpec extends IOWordSpec {
   "A MonitorService" should {
     "create new monitors and dispatch an action" in {
       val (dispatcher, repo) = mocks
-      when(dispatcher.dispatch(any[Action])).thenReturn(IO.unit)
       when(repo.save(any[CreateMonitor])).thenReturn(IO.pure(Monitors.monitor))
 
       val res = for
@@ -22,8 +21,8 @@ class MonitorServiceSpec extends IOWordSpec {
       yield mon
 
       res.asserting { mon =>
-        verify(dispatcher).dispatch(Action.Query(Monitors.monitor, None))
         verify(repo).save(Monitors.create())
+        dispatcher.submittedActions mustBe List(Action.Query(Monitors.monitor, None))
         mon mustBe Monitors.monitor
       }
     }
@@ -38,7 +37,7 @@ class MonitorServiceSpec extends IOWordSpec {
       yield ()
 
       res.asserting { res =>
-        verifyNoInteractions(dispatcher)
+        dispatcher.submittedActions mustBe empty
         verify(repo).update(Monitors.monitor)
         res mustBe ()
       }
@@ -54,7 +53,7 @@ class MonitorServiceSpec extends IOWordSpec {
       yield mon
 
       res.asserting { mon =>
-        verifyNoInteractions(dispatcher)
+        dispatcher.submittedActions mustBe empty
         verify(repo).find(Monitors.id)
         mon mustBe Some(Monitors.monitor)
       }
@@ -70,7 +69,7 @@ class MonitorServiceSpec extends IOWordSpec {
       yield res
 
       result.asserting { res =>
-        verifyNoInteractions(dispatcher)
+        dispatcher.submittedActions mustBe empty
         verify(repo).delete(Monitors.id)
         res mustBe ()
       }
@@ -87,7 +86,7 @@ class MonitorServiceSpec extends IOWordSpec {
       yield mon
 
       res.asserting { mons =>
-        verifyNoInteractions(dispatcher)
+        dispatcher.submittedActions mustBe empty
         verify(repo).all
         mons mustBe monitors
       }
@@ -103,19 +102,17 @@ class MonitorServiceSpec extends IOWordSpec {
       yield mon
 
       res.asserting { mon =>
-        verifyNoInteractions(dispatcher)
+        dispatcher.submittedActions mustBe empty
         verify(repo).activate(Monitors.id, true)
         mon mustBe ()
       }
     }
 
-    // TODO: what to do with inactive monitors?
     "reschedule all active monitors" in {
       val (dispatcher, repo) = mocks
       val mon1               = Monitors.gen()
       val mon2               = Monitors.gen()
       when(repo.stream).thenReturn(Stream(mon1, mon2))
-      when(dispatcher.dispatch(any[Action])).thenReturn(IO.unit)
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
@@ -124,8 +121,7 @@ class MonitorServiceSpec extends IOWordSpec {
 
       res.asserting { res =>
         verify(repo).stream
-        verify(dispatcher).dispatch(Action.Schedule(mon1))
-        verify(dispatcher).dispatch(Action.Schedule(mon2))
+        dispatcher.submittedActions mustBe List(Action.Schedule(mon1), Action.Schedule(mon2))
         res mustBe ()
       }
     }
@@ -133,7 +129,6 @@ class MonitorServiceSpec extends IOWordSpec {
     "reschedule single monitor" in {
       val (dispatcher, repo) = mocks
       when(repo.find(any[Monitor.Id])).thenReturn(IO.some(Monitors.monitor))
-      when(dispatcher.dispatch(any[Action])).thenReturn(IO.unit)
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
@@ -142,7 +137,7 @@ class MonitorServiceSpec extends IOWordSpec {
 
       res.asserting { res =>
         verify(repo).find(Monitors.id)
-        verify(dispatcher).dispatch(Action.Schedule(Monitors.monitor))
+        dispatcher.submittedActions mustBe List(Action.Schedule(Monitors.monitor))
         res mustBe ()
       }
     }
@@ -158,12 +153,12 @@ class MonitorServiceSpec extends IOWordSpec {
 
       res.attempt.asserting { res =>
         verify(repo).find(Monitors.id)
-        verifyNoInteractions(dispatcher)
+        dispatcher.submittedActions mustBe empty
         res mustBe Left(AppError.NotFound(s"Monitor with id ${Monitors.id} does not exist"))
       }
     }
   }
 
-  def mocks: (ActionDispatcher[IO], MonitorRepository[IO]) =
-    (mock[ActionDispatcher[IO]], mock[MonitorRepository[IO]])
+  def mocks: (MockActionDispatcher[IO], MonitorRepository[IO]) =
+    (MockActionDispatcher.make[IO], mock[MonitorRepository[IO]])
 }

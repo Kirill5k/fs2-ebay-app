@@ -15,10 +15,9 @@ object search {
       minDiscount: Option[Int] = None,
       excludeFilters: Option[List[String]] = None,
       includeFilters: Option[List[String]] = None
-  ) derives ConfigReader, Codec.AsObject {
+  ) derives ConfigReader, Codec.AsObject:
     val excludeFilterRegex: Option[String]  = excludeFilters.map(_.mkString("(?i).*(", "|", ").*"))
     val includeFiltersRegex: Option[String] = includeFilters.map(_.mkString("(?i).*(", "|", ").*"))
-  }
 
   final case class SellPrice(
       cash: BigDecimal,

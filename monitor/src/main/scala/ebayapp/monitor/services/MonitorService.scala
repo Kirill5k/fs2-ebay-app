@@ -30,20 +30,17 @@ final private class LiveMonitorService[F[_]](
   def getAll: F[List[Monitor]]                           = repository.all
   def update(monitor: Monitor): F[Unit]                  = repository.update(monitor)
   def activate(id: Monitor.Id, active: Boolean): F[Unit] = repository.activate(id, active)
-  def create(monitor: CreateMonitor): F[Monitor] =
-    repository.save(monitor).flatTap(m => dispatcher.dispatch(Action.Query(m, None)))
-
-  def rescheduleAll: F[Unit] =
-    repository.stream
-      .evalMap(m => dispatcher.dispatch(Action.Schedule(m)))
-      .compile
-      .drain
+  def create(monitor: CreateMonitor): F[Monitor]         = repository.save(monitor).flatTap(dispatchQuery)
+  def rescheduleAll: F[Unit]                             = repository.stream.evalMap(dispatchSchedule).compile.drain
 
   def reschedule(id: Monitor.Id): F[Unit] =
     repository.find(id).flatMap {
-      case Some(monitor) => dispatcher.dispatch(Action.Schedule(monitor))
+      case Some(monitor) => dispatchSchedule(monitor)
       case None          => F.raiseError(AppError.NotFound(s"Monitor with id $id does not exist"))
     }
+
+  private def dispatchSchedule(m: Monitor): F[Unit] = dispatcher.dispatch(Action.Schedule(m))
+  private def dispatchQuery(m: Monitor): F[Unit]    = dispatcher.dispatch(Action.Query(m, None))
 }
 
 object MonitorService:
