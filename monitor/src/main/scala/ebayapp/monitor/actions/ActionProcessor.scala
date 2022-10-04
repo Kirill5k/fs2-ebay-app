@@ -36,7 +36,7 @@ final private class LiveActionProcessor[F[_]](
       case Action.Reschedule(id, interval) =>
         F.sleep(interval) >> services.monitor.reschedule(id)
       case Action.Query(monitor, previousEvent) =>
-        logger.info(s"querying monitor ${monitor.id}") >> services.monitoringEvent.query(monitor, previousEvent)
+        logger.info(s"querying monitor ${monitor.id}-${monitor.name}") >> services.monitoringEvent.query(monitor, previousEvent)
       case Action.Notify(monitor, notification) =>
         logger.info(s"sending notification $notification for ${monitor.name}") >> services.notification.notify(monitor, notification)
     ).handleErrorWith {
