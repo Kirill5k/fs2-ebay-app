@@ -38,7 +38,7 @@ final private class LiveActionProcessor[F[_]](
       case Action.Query(monitor, previousEvent) =>
         logger.info(s"querying monitor ${monitor.id}") >> services.monitoringEvent.query(monitor, previousEvent)
       case Action.Notify(monitor, notification) =>
-        logger.info(s"sending notification $notification") >> services.notification.notify(monitor, notification)
+        logger.info(s"sending notification $notification for ${monitor.name}") >> services.notification.notify(monitor, notification)
     ).handleErrorWith {
       case error: AppError =>
         logger.warn(error)(s"domain error while processing action $action")
