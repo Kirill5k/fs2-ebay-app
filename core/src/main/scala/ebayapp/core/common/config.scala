@@ -96,8 +96,13 @@ object config {
   final case class StockMonitorConfig(
       monitoringFrequency: FiniteDuration,
       monitoringRequests: List[StockMonitorRequest],
-      delayBetweenRequests: Option[FiniteDuration] = None
-  ) derives ConfigReader
+      delayBetweenRequests: Option[FiniteDuration] = None,
+      excludeFilters: Option[List[String]] = None,
+      includeFilters: Option[List[String]] = None
+  ) derives ConfigReader {
+    val excludeFilterRegex: Option[String]  = excludeFilters.map(_.mkString("(?i).*(", "|", ").*"))
+    val includeFiltersRegex: Option[String] = includeFilters.map(_.mkString("(?i).*(", "|", ").*"))
+  }
 
   final case class AppConfig(
       server: ServerConfig,

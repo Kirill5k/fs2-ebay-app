@@ -148,7 +148,7 @@ data:
       cex {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "iphone 14 pro max unlocked"}, monitor-stock-change: true, monitor-price-change: true}
+          {search-criteria: {query: "iphone 14 pro max unlocked"}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 

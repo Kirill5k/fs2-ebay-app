@@ -57,20 +57,20 @@ final private class SimpleStockService[F[_]](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { (req, index) =>
-        preloadCache(req).delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong) ++
+        preloadCache(config, req).delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * index.toLong) ++
           Stream
             .awakeDelay(config.monitoringFrequency)
-            .flatMap(_ => getUpdates(req))
+            .flatMap(_ => getUpdates(config, req))
             .pauseWhen(isPaused)
       }
       .parJoinUnbounded
       .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
       .onFinalize(cache.clear >> logger.info(s"reloading ${retailer.name}-stock-monitor stream"))
 
-  private def preloadCache(req: StockMonitorRequest): Stream[F, Nothing] =
+  private def preloadCache(config: StockMonitorConfig, req: StockMonitorRequest): Stream[F, Nothing] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(req.searchCriteria))
+      .through(withFiltersApplied(config, req.searchCriteria))
       .evalMap(item => cache.put(item.key, item))
       .drain
 
@@ -83,10 +83,10 @@ final private class SimpleStockService[F[_]](
       logger.info(s"""${retailer.name}-stock-cache: ${items.size} $item $groups""")
     } >> logCacheSize(frequency)
 
-  private def getUpdates(req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
+  private def getUpdates(config: StockMonitorConfig, req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(req.searchCriteria))
+      .through(withFiltersApplied(config, req.searchCriteria))
       .evalMap(item => cache.get(item.key).map(_ -> item))
       .evalMap {
         case (None, currItem) =>
@@ -101,13 +101,15 @@ final private class SimpleStockService[F[_]](
       }
       .unNone
       .handleErrorWith { error =>
-        Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(req)
+        Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(config, req)
       }
 
-  private def withFiltersApplied(sc: SearchCriteria): Pipe[F, ResellableItem, ResellableItem] =
+  private def withFiltersApplied(config: StockMonitorConfig, sc: SearchCriteria): Pipe[F, ResellableItem, ResellableItem] =
     _.filter(_.itemDetails.fullName.isDefined)
       .filter(ri => sc.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)))
       .filter { ri =>
+        config.excludeFilterRegex.fold(true)(filter => !ri.key.matches(filter)) &&
+        config.includeFiltersRegex.fold(true)(filter => ri.key.matches(filter)) &&
         sc.excludeFilterRegex.fold(true)(filter => !ri.key.matches(filter)) &&
         sc.includeFiltersRegex.fold(true)(filter => ri.key.matches(filter))
       }

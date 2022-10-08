@@ -15,11 +15,13 @@ import scala.concurrent.duration.*
 
 class SelfridgesStockServiceSpec extends CatsSpec {
 
-  val criteria           = SearchCriteria("foo", minDiscount = Some(50), excludeFilters = Some(List("ignore-me", "SKIP-ME")))
-  val anotherCriteria    = SearchCriteria("bar", minDiscount = Some(50), excludeFilters = Some(List("ignore-me", "SKIP-ME")))
-  val yetAnotherCriteria = SearchCriteria("baz", minDiscount = Some(50), excludeFilters = Some(List("ignore-me", "SKIP-ME")))
+  val criteria           = SearchCriteria("foo", minDiscount = Some(50), excludeFilters = Some(List("SC-IGNORE", "SC-SKIP")))
+  val anotherCriteria    = SearchCriteria("bar", minDiscount = Some(50), excludeFilters = Some(List("SC-IGNORE", "SC-SKIP")))
+  val yetAnotherCriteria = SearchCriteria("baz", minDiscount = Some(50), excludeFilters = Some(List("SC-IGNORE", "SC-SKIP")))
   val stockMonitorConfig = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
-  val config             = MockConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Selfridges -> stockMonitorConfig))
+
+  def config(config: StockMonitorConfig = stockMonitorConfig) =
+    MockConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Selfridges -> config))
 
   "A SelfridgesStockService" should {
 
@@ -35,7 +37,7 @@ class SelfridgesStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.empty, Stream.emits(items))
 
       val result = StockService
-        .make[IO](Retailer.Selfridges, config, client)
+        .make[IO](Retailer.Selfridges, config(), client)
         .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
 
       result.asserting { updates =>
@@ -44,10 +46,10 @@ class SelfridgesStockServiceSpec extends CatsSpec {
       }
     }
 
-    "ignore items that are excluded" in {
+    "ignore items that are excluded with filter from SearchCriteria" in {
       val items = List(
-        clothing("T-shirt ignore-me", discount = Some(80)),
-        clothing("T-shirt skip-me", discount = Some(80)),
+        clothing("T-shirt Sc-Ignore", discount = Some(80)),
+        clothing("T-shirt Sc-Skip", discount = Some(80)),
         clothing("T-shirt", discount = Some(80))
       )
 
@@ -56,7 +58,28 @@ class SelfridgesStockServiceSpec extends CatsSpec {
         .thenReturn(Stream.empty, Stream.emits(items))
 
       val result = StockService
-        .make[IO](Retailer.Selfridges, config, client)
+        .make[IO](Retailer.Selfridges, config(), client)
+        .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
+
+      result.asserting { updates =>
+        updates must have size 1
+        updates.head.item.itemDetails.fullName mustBe Some("Foo-bar - T-shirt, size XXL")
+      }
+    }
+
+    "ignore items that are excluded with filter from StockMonitorConfig" in {
+      val items = List(
+        clothing("T-shirt conf-ignore", discount = Some(80)),
+        clothing("T-shirt conf-SKIP", discount = Some(80)),
+        clothing("T-shirt", discount = Some(80))
+      )
+
+      val client = mock[SearchClient[IO]]
+      when(client.search(any[SearchCriteria]))
+        .thenReturn(Stream.empty, Stream.emits(items))
+
+      val result = StockService
+        .make[IO](Retailer.Selfridges, config(stockMonitorConfig.copy(excludeFilters = Some(List("conf-skip", "CONF-ignore")))), client)
         .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
 
       result.asserting { updates =>
@@ -67,8 +90,8 @@ class SelfridgesStockServiceSpec extends CatsSpec {
 
     "reload stream when config changes" in {
       val items = List(
-        clothing("T-shirt ignore-me", discount = Some(80)),
-        clothing("T-shirt skip-me", discount = Some(80)),
+        clothing("T-shirt sc-ignore", discount = Some(80)),
+        clothing("T-shirt sc-skip", discount = Some(80)),
         clothing("T-shirt", discount = Some(80))
       )
 
