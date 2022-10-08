@@ -155,8 +155,9 @@ data:
       nvidia {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "geforce", category: "GPU", exclude-filters: ["GTX 1650", "GTX 1660"]}, monitor-stock-change: true, monitor-price-change: true}
+          {search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true}
         ]
+        exclude-filters: ["GTX 1650", "GTX 1660"]
       }
 
       argos {
@@ -180,6 +181,7 @@ data:
           {search-criteria: {category: "men", query: "Kenzo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moncler", min-discount: 29}, monitor-stock-change: false, monitor-price-change: true}
         ]
+        exclude-filters: ["size xxl", "size xl", "size l"]
       }
 
       scotts {
@@ -191,6 +193,7 @@ data:
           {search-criteria: {query: "Hugo", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio-armani-loungewear", min-discount: 53}, monitor-stock-change: false, monitor-price-change: true}
         ]
+        exclude-filters: ["size xxl", "size xl", "size l"]
       }
 
       jdsports {
@@ -204,6 +207,7 @@ data:
           {search-criteria: {category: "men", query: "Hugo", min-discount: 49}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "tommy-hilfiger", min-discount: 59}, monitor-stock-change: false, monitor-price-change: true}
         ]
+        exclude-filters: ["size xxl", "size xl", "size l"]
       }
 
       selfridges {
@@ -219,6 +223,7 @@ data:
           {search-criteria: {query: "hugo", min-discount: 48}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", min-discount: 48}, monitor-stock-change: false, monitor-price-change: true}
         ]
+        exclude-filters: ["size xxl", "size xl", "size l" ]
       }
 
       harvey-nichols {
@@ -244,6 +249,7 @@ data:
           {search-criteria: {query: "boss casual", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio armani", min-discount: 54}, monitor-stock-change: false, monitor-price-change: true}
         ]
+        exclude-filters: ["size xxl", "size xl", "size l"]
       }
 
       scan {
