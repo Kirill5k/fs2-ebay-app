@@ -7,7 +7,7 @@ import ebayapp.core.common.ConfigProvider
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.clothing
 import ebayapp.core.domain.Retailer
-import ebayapp.core.domain.search.SearchCriteria
+import ebayapp.core.domain.search.{Limits, SearchCriteria}
 import fs2.Stream
 import org.mockito.Mockito
 
@@ -15,9 +15,10 @@ import scala.concurrent.duration.*
 
 class SelfridgesStockServiceSpec extends CatsSpec {
 
-  val criteria           = SearchCriteria("foo", minDiscount = Some(50), excludeFilters = Some(List("SC-IGNORE", "SC-SKIP")))
-  val anotherCriteria    = SearchCriteria("bar", minDiscount = Some(50), excludeFilters = Some(List("SC-IGNORE", "SC-SKIP")))
-  val yetAnotherCriteria = SearchCriteria("baz", minDiscount = Some(50), excludeFilters = Some(List("SC-IGNORE", "SC-SKIP")))
+  val scLimits           = Limits(Some(50), Some(List("SC-IGNORE", "SC-SKIP")), None)
+  val criteria           = SearchCriteria("foo", limits = Some(scLimits))
+  val anotherCriteria    = SearchCriteria("bar", limits = Some(scLimits))
+  val yetAnotherCriteria = SearchCriteria("baz", limits = Some(scLimits))
   val stockMonitorConfig = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
 
   def config(config: StockMonitorConfig = stockMonitorConfig) =
@@ -78,8 +79,9 @@ class SelfridgesStockServiceSpec extends CatsSpec {
       when(client.search(any[SearchCriteria]))
         .thenReturn(Stream.empty, Stream.emits(items))
 
+      val limits = Limits(None, Some(List("conf-skip", "CONF-ignore")), None)
       val result = StockService
-        .make[IO](Retailer.Selfridges, config(stockMonitorConfig.copy(excludeFilters = Some(List("conf-skip", "CONF-ignore")))), client)
+        .make[IO](Retailer.Selfridges, config(stockMonitorConfig.copy(limits = Some(limits))), client)
         .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
 
       result.asserting { updates =>

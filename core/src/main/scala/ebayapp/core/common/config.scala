@@ -5,7 +5,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import ebayapp.core.domain.{ItemKind, Retailer}
-import ebayapp.core.domain.search.SearchCriteria
+import ebayapp.core.domain.search.{Limits, SearchCriteria}
 import ebayapp.kernel.config.{MongoConfig, ServerConfig}
 import pureconfig.ConfigConvert.catchReadError
 import pureconfig.*
@@ -97,12 +97,8 @@ object config {
       monitoringFrequency: FiniteDuration,
       monitoringRequests: List[StockMonitorRequest],
       delayBetweenRequests: Option[FiniteDuration] = None,
-      excludeFilters: Option[List[String]] = None,
-      includeFilters: Option[List[String]] = None
-  ) derives ConfigReader {
-    val excludeFilterRegex: Option[String]  = excludeFilters.map(_.mkString("(?i).*(", "|", ").*"))
-    val includeFiltersRegex: Option[String] = includeFilters.map(_.mkString("(?i).*(", "|", ").*"))
-  }
+      limits: Option[Limits] = None
+  ) derives ConfigReader
 
   final case class AppConfig(
       server: ServerConfig,

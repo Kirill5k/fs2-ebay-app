@@ -2,7 +2,7 @@ package ebayapp.core.common
 
 import ebayapp.core.CatsSpec
 import ebayapp.core.common.config.{AppConfig, StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.search.SearchCriteria
+import ebayapp.core.domain.search.{Limits, SearchCriteria}
 import ebayapp.core.domain.Retailer
 
 import scala.concurrent.duration.*
@@ -21,8 +21,9 @@ class AppConfigSpec extends CatsSpec {
       conf.retailer.harveyNichols.baseUri mustBe "https://www.harveynichols.com"
       conf.retailer.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
 
-      val geforceMonReq = StockMonitorRequest(SearchCriteria("geforce", Some("GPU"), excludeFilters = Some(List("GTX 1650"))), true, true)
-      conf.stockMonitor must contain (Retailer.Nvidia -> StockMonitorConfig(5.minutes, List(geforceMonReq)))
+      val geforceLimits = Some(Limits(None, Some(List("GTX 1650")), None))
+      val geforceMonReq = StockMonitorRequest(SearchCriteria("geforce", Some("GPU"), limits = geforceLimits), true, true)
+      conf.stockMonitor must contain(Retailer.Nvidia -> StockMonitorConfig(5.minutes, List(geforceMonReq)))
       conf.stockMonitor must contain key Retailer.HarveyNichols
       conf.dealsFinder must contain key Retailer.Ebay
     }
