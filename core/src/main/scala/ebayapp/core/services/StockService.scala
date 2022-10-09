@@ -10,7 +10,7 @@ import ebayapp.kernel.common.stream.*
 import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, Retailer}
-import ebayapp.core.domain.search.{Limits, SearchCriteria}
+import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.concurrent.SignallingRef
 import fs2.{Pipe, Stream}
@@ -67,10 +67,10 @@ final private class SimpleStockService[F[_]](
       .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
       .onFinalize(cache.clear >> logger.info(s"reloading ${retailer.name}-stock-monitor stream"))
 
-  private def preloadCache(confLimits: Limits, req: StockMonitorRequest): Stream[F, Nothing] =
+  private def preloadCache(confLimits: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(confLimits, req.searchCriteria.limitsOrDefault))
+      .through(withFiltersApplied(confLimits.mergeWith(req.searchCriteria.limitsOrDefault)))
       .evalMap(item => cache.put(item.key, item))
       .drain
 
@@ -83,10 +83,10 @@ final private class SimpleStockService[F[_]](
       logger.info(s"""${retailer.name}-stock-cache: ${items.size} $item $groups""")
     } >> logCacheSize(frequency)
 
-  private def getUpdates(confLimits: Limits, req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
+  private def getUpdates(confLimits: Filters, req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(confLimits, req.searchCriteria.limitsOrDefault))
+      .through(withFiltersApplied(confLimits.mergeWith(req.searchCriteria.limitsOrDefault)))
       .evalMap(item => cache.get(item.key).map(_ -> item))
       .evalMap {
         case (None, currItem) =>
@@ -104,21 +104,19 @@ final private class SimpleStockService[F[_]](
         Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confLimits, req)
       }
 
-  private def withFiltersApplied(confLimits: Limits, scLimits: Limits): Pipe[F, ResellableItem, ResellableItem] =
+  private def withFiltersApplied(limits: Filters): Pipe[F, ResellableItem, ResellableItem] =
     _.filter(_.itemDetails.fullName.isDefined)
-      .filter(ri => scLimits.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)))
+      .filter(ri => limits.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)))
       .filter { ri =>
-        confLimits.excludeFilterRegex.fold(true)(filter => !ri.key.matches(filter)) &&
-        confLimits.includeFiltersRegex.fold(true)(filter => ri.key.matches(filter)) &&
-        scLimits.excludeFilterRegex.fold(true)(filter => !ri.key.matches(filter)) &&
-        scLimits.includeFiltersRegex.fold(true)(filter => ri.key.matches(filter))
+        limits.excludeRegex.fold(true)(filter => !ri.key.matches(filter)) &&
+        limits.includeRegex.fold(true)(filter => ri.key.matches(filter))
       }
 
   extension (config: StockMonitorConfig)
-    def limitsOrDefault: Limits                       = config.limits.getOrElse(Limits())
+    def limitsOrDefault: Filters                       = config.filters.getOrElse(Filters())
     def delayBetweenRequestsOrDefault: FiniteDuration = config.delayBetweenRequests.getOrElse(Duration.Zero)
 
-  extension (sc: SearchCriteria) def limitsOrDefault: Limits = sc.limits.getOrElse(Limits())
+  extension (sc: SearchCriteria) def limitsOrDefault: Filters = sc.filters.getOrElse(Filters())
 
   extension (item: ResellableItem)
     def key: String = item.itemDetails.fullName.get

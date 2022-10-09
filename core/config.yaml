@@ -223,7 +223,7 @@ data:
           {search-criteria: {query: "hugo", min-discount: 48}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", min-discount: 48}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        exclude-filters: ["size xxl", "size xl", "size l" ]
+        exclude-filters: ["size xxl", "size xl", "size l"]
       }
 
       harvey-nichols {

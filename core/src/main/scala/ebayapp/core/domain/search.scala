@@ -8,13 +8,27 @@ import java.time.Instant
 
 object search {
 
-  final case class Limits(
+  final case class Filters(
       minDiscount: Option[Int] = None,
-      excludeFilters: Option[List[String]] = None,
-      includeFilters: Option[List[String]] = None
+      exclude: Option[List[String]] = None,
+      include: Option[List[String]] = None
   ) derives ConfigReader, Codec.AsObject {
-    val excludeFilterRegex: Option[String]  = excludeFilters.map(_.mkString("(?i).*(", "|", ").*"))
-    val includeFiltersRegex: Option[String] = includeFilters.map(_.mkString("(?i).*(", "|", ").*"))
+    val excludeRegex: Option[String] = exclude.map(_.mkString("(?i).*(", "|", ").*"))
+    val includeRegex: Option[String] = include.map(_.mkString("(?i).*(", "|", ").*"))
+
+    private def mergeOptWith[A](op1: Option[A], op2: Option[A], f: (A, A) => A): Option[A] =
+      (op1, op2) match
+        case (Some(v1), Some(v2)) => Some(f(v1, v2))
+        case (Some(v), None)      => Some(v)
+        case (None, Some(v))      => Some(v)
+        case _                    => None
+
+    def mergeWith(anotherLimit: Filters): Filters =
+      Filters(
+        minDiscount = mergeOptWith(minDiscount, anotherLimit.minDiscount, math.max),
+        exclude = mergeOptWith(exclude, anotherLimit.exclude, _ ::: _),
+        include = mergeOptWith(include, anotherLimit.include, _ ::: _)
+      )
   }
 
   final case class SearchCriteria(
@@ -22,7 +36,7 @@ object search {
       category: Option[String] = None,
       itemKind: Option[ItemKind] = None,
       minDiscount: Option[Int] = None,
-      limits: Option[Limits] = None
+      filters: Option[Filters] = None
   ) derives ConfigReader, Codec.AsObject
 
   final case class SellPrice(

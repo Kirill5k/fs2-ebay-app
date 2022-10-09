@@ -5,7 +5,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import ebayapp.core.domain.{ItemKind, Retailer}
-import ebayapp.core.domain.search.{Limits, SearchCriteria}
+import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.kernel.config.{MongoConfig, ServerConfig}
 import pureconfig.ConfigConvert.catchReadError
 import pureconfig.*
@@ -97,7 +97,7 @@ object config {
       monitoringFrequency: FiniteDuration,
       monitoringRequests: List[StockMonitorRequest],
       delayBetweenRequests: Option[FiniteDuration] = None,
-      limits: Option[Limits] = None
+      filters: Option[Filters] = None
   ) derives ConfigReader
 
   final case class AppConfig(
