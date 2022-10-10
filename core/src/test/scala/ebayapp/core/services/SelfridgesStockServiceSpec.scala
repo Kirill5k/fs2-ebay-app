@@ -70,8 +70,9 @@ class SelfridgesStockServiceSpec extends CatsSpec {
 
     "ignore items that are excluded with filter from StockMonitorConfig" in {
       val items = List(
-        clothing("T-shirt conf-ignore", discount = Some(80)),
-        clothing("T-shirt conf-SKIP", discount = Some(80)),
+        clothing("T-shirt conf-skip", discount = Some(80)),
+        clothing("T-shirt size 7", discount = Some(80)),
+        clothing("T-shirt size 12Y", discount = Some(80)),
         clothing("T-shirt", discount = Some(80))
       )
 
@@ -79,7 +80,7 @@ class SelfridgesStockServiceSpec extends CatsSpec {
       when(client.search(any[SearchCriteria]))
         .thenReturn(Stream.empty, Stream.emits(items))
 
-      val limits = Filters(None, Some(List("conf-skip", "CONF-ignore")), None)
+      val limits = Filters(None, Some(List("conf-skip", "size \\d+Y", "size [1-7]")), None)
       val result = StockService
         .make[IO](Retailer.Selfridges, config(stockMonitorConfig.copy(filters = Some(limits))), client)
         .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
