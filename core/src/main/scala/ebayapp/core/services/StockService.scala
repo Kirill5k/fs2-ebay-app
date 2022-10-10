@@ -57,20 +57,20 @@ final private class SimpleStockService[F[_]](
     Stream
       .emits(config.monitoringRequests.zipWithIndex)
       .map { (req, index) =>
-        preloadCache(config.limitsOrDefault, req).delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
+        preloadCache(config.filtersOrDefault, req).delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
           Stream
             .awakeDelay(config.monitoringFrequency)
-            .flatMap(_ => getUpdates(config.limitsOrDefault, req))
+            .flatMap(_ => getUpdates(config.filtersOrDefault, req))
             .pauseWhen(isPaused)
       }
       .parJoinUnbounded
       .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
       .onFinalize(cache.clear >> logger.info(s"reloading ${retailer.name}-stock-monitor stream"))
 
-  private def preloadCache(confLimits: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
+  private def preloadCache(confFilters: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(confLimits.mergeWith(req.searchCriteria.limitsOrDefault)))
+      .through(withFiltersApplied(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)))
       .evalMap(item => cache.put(item.key, item))
       .drain
 
@@ -83,10 +83,10 @@ final private class SimpleStockService[F[_]](
       logger.info(s"""${retailer.name}-stock-cache: ${items.size} $item $groups""")
     } >> logCacheSize(frequency)
 
-  private def getUpdates(confLimits: Filters, req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
+  private def getUpdates(confFilters: Filters, req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(confLimits.mergeWith(req.searchCriteria.limitsOrDefault)))
+      .through(withFiltersApplied(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)))
       .evalMap(item => cache.get(item.key).map(_ -> item))
       .evalMap {
         case (None, currItem) =>
@@ -101,22 +101,22 @@ final private class SimpleStockService[F[_]](
       }
       .unNone
       .handleErrorWith { error =>
-        Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confLimits, req)
+        Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confFilters, req)
       }
 
-  private def withFiltersApplied(limits: Filters): Pipe[F, ResellableItem, ResellableItem] =
+  private def withFiltersApplied(filters: Filters): Pipe[F, ResellableItem, ResellableItem] =
     _.filter(_.itemDetails.fullName.isDefined)
-      .filter(ri => limits.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)))
+      .filter(ri => filters.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)))
       .filter { ri =>
-        limits.excludeRegex.fold(true)(filter => !ri.key.matches(filter)) &&
-        limits.includeRegex.fold(true)(filter => ri.key.matches(filter))
+        filters.excludeRegex.fold(true)(filter => !ri.key.matches(filter)) &&
+        filters.includeRegex.fold(true)(filter => ri.key.matches(filter))
       }
 
   extension (config: StockMonitorConfig)
-    def limitsOrDefault: Filters                       = config.filters.getOrElse(Filters())
+    def filtersOrDefault: Filters                     = config.filters.getOrElse(Filters())
     def delayBetweenRequestsOrDefault: FiniteDuration = config.delayBetweenRequests.getOrElse(Duration.Zero)
 
-  extension (sc: SearchCriteria) def limitsOrDefault: Filters = sc.filters.getOrElse(Filters())
+  extension (sc: SearchCriteria) def filtersOrDefault: Filters = sc.filters.getOrElse(Filters())
 
   extension (item: ResellableItem)
     def key: String = item.itemDetails.fullName.get
