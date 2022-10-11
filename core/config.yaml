@@ -177,11 +177,11 @@ data:
           {search-criteria: {category: "men", query: "calvin-klein-jeans", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Tommy Hilfiger", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Stone Island", filters: {min-discount: 39}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Moncler", filters: {min-discount: 29}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size xxl", "size xl", "size l"]}
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 29}
       }
 
       scotts {
@@ -193,7 +193,7 @@ data:
           {search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio-armani-loungewear", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size xxl", "size xl", "size l"], min-discount: 49}
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 49}
       }
 
       jdsports {
@@ -205,9 +205,9 @@ data:
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "boss-loungewear"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "tommy-hilfiger", filters: {min-discount: 59}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "tommy-hilfiger", filters: {min-discount: 64}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size xxl", "size xl", "size l"], min-discount: 49}
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 49}
       }
 
       selfridges {
@@ -223,7 +223,7 @@ data:
           {search-criteria: {query: "hugo", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size xxl", "size xl", "size l"]}
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"]}
       }
 
       harvey-nichols {
