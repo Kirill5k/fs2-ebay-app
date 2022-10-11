@@ -7,7 +7,6 @@ import org.http4s.HttpRoutes
 import org.http4s.ember.server.EmberServerBuilder
 import fs2.Stream
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.*
 
 object Server:
