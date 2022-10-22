@@ -7,7 +7,7 @@ import ebayapp.monitor.common.config.{AppConfig, EmailConfig}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import sttp.client3.SttpBackendOptions.Proxy
-import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
+import sttp.client3.httpclient.fs2.HttpClientFs2Backend
 import sttp.client3.{SttpBackend, SttpBackendOptions}
 import courier.{Envelope, Mailer as CourierMailer}
 
@@ -35,7 +35,7 @@ object Resources:
     Resource.pure(Mailer[F](config.username, mailer, ec))
 
   private def mkHttpClientBackend[F[_]: Async]: Resource[F, SttpBackend[F, Any]] =
-    Resource.make(AsyncHttpClientCatsBackend[F](SttpBackendOptions(connectionTimeout = 3.minutes, proxy = None)))(_.close())
+    HttpClientFs2Backend.resource[F](SttpBackendOptions(connectionTimeout = 3.minutes, proxy = None))
 
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
     MongoClient.fromConnectionString[F](config.connectionUri).evalMap(_.getDatabase(config.dbName))

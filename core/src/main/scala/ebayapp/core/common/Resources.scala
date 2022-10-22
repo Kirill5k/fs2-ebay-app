@@ -10,7 +10,7 @@ import mongo4cats.database.MongoDatabase
 import mongo4cats.models.client.{ConnectionString, MongoClientSettings}
 import sttp.client3.SttpBackendOptions.Proxy
 import sttp.client3.{SttpBackend, SttpBackendOptions}
-import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
+import sttp.client3.httpclient.fs2.HttpClientFs2Backend
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
@@ -23,7 +23,7 @@ trait Resources[F[_]]:
 object Resources {
 
   private def mkHttpClientBackend[F[_]: Async](timeout: FiniteDuration, proxy: Option[Proxy]): Resource[F, SttpBackend[F, Any]] =
-    Resource.make(AsyncHttpClientCatsBackend[F](SttpBackendOptions(connectionTimeout = timeout, proxy = proxy)))(_.close())
+    HttpClientFs2Backend.resource[F](SttpBackendOptions(connectionTimeout = timeout, proxy = proxy))
 
   private def mkProxyClientBackend[F[_]: Async](config: ClientConfig): Resource[F, Option[SttpBackend[F, Any]]] = {
     val proxy: Option[Proxy] = (config.proxyHost, config.proxyPort)

@@ -8,7 +8,7 @@ import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatest.matchers.must.Matchers
 import sttp.client3.Response
-import sttp.client3.asynchttpclient.cats.AsyncHttpClientCatsBackend
+import sttp.client3.httpclient.fs2.HttpClientFs2Backend
 import sttp.client3.testing.SttpBackendStub
 import sttp.client3.*
 import sttp.model.{Method, StatusCode}
