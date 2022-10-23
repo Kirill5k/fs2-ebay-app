@@ -27,7 +27,7 @@ trait HttpClient[F[_]] {
   protected val defaultHeaders = Map(
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "gzip, deflate, br",
-    HeaderNames.AcceptEncoding -> "en-GB,en;q=0.9",
+    HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
     HeaderNames.CacheControl   -> "no-store, max-age=0",
     HeaderNames.ContentType    -> "application/json",
     HeaderNames.Connection     -> "keep-alive",
