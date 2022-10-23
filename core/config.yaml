@@ -105,8 +105,8 @@ data:
         base-uri: "https://proxy-kirill5k.cloud.okteto.net"
         headers: {
           "X-Reroute-To": "https://api.nvidia.partners"
-          "user-agent": "PostmanRuntime/7.29.2"
-          "accept-encoding": "application/json"
+          "User-Agent": "PostmanRuntime/7.29.2"
+          "Accept-Encoding": "application/json"
         }
       }
   
