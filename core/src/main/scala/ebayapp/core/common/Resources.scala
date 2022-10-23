@@ -53,10 +53,9 @@ object Resources {
       mkProxyClientBackend[F](config.client),
       mkMongoDatabase[F](config.mongo)
     ).mapN { (http, proxy, mongo) =>
-      new Resources[F] {
+      new Resources[F]:
         def httpClientBackend: SttpBackend[F, Any]          = http
         def proxyClientBackend: Option[SttpBackend[F, Any]] = proxy
         def database: MongoDatabase[F]                      = mongo
-      }
     }
 }

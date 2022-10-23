@@ -47,23 +47,21 @@ final private class RedirectController[F[_]](
     }
 
   private def redirect(req: Request[F]): F[Response[F]] =
-    req.redirectUri match {
+    req.redirectUri match
       case Right(url) =>
         req.redirectClient
           .toHttpApp(req.withUri(url).removeHeaders(headersToRemove).removeHttpClientSpecificHeaders)
           .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.reloadOn403))
       case Left(errorMessage) =>
         BadRequest(errorMessage)
-    }
 
   private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
 
   extension (req: Request[F])
-    def removeHttpClientSpecificHeaders: Request[F] =
-      req.headers.get(AcceptEncodingHeader) match
-        case None                         => req
-        case Some(aehs) if aehs.size == 1 => req
-        case Some(aehs)                   => req.putHeaders(aehs.tail.head)
+    def removeHttpClientSpecificHeaders: Request[F] = req.headers
+      .get(AcceptEncodingHeader)
+      .filter(_.size > 1)
+      .fold(req)(hs => req.putHeaders(hs.tail.head))
     def removeHeaders(keys: List[CIString]): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
     def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
     def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
@@ -76,7 +74,6 @@ final private class RedirectController[F[_]](
         }
 }
 
-object RedirectController {
+object RedirectController:
   def make[F[_]: Concurrent](resources: Resources[F], interrupter: Interrupter[F]): F[Controller[F]] =
     Monad[F].pure(RedirectController[F](resources.emberClient, resources.jdkHttpClient, interrupter))
-}
