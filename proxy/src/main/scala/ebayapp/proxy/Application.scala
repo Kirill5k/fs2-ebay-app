@@ -12,7 +12,6 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.Logger
 
 object Application extends IOApp.Simple:
-  System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection,content-length,expect,host,referer")
   given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
   override val run: IO[Unit] =
     for

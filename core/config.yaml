@@ -106,6 +106,7 @@ data:
         headers: {
           "X-Reroute-To": "https://api.nvidia.partners"
           "User-Agent": "PostmanRuntime/7.29.2"
+          "Accept-Encoding": "application/json"
         }
       }
   

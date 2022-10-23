@@ -17,6 +17,7 @@ import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.circe.asJson
 import sttp.client3.*
+import sttp.model.HeaderNames
 
 import scala.concurrent.duration.*
 
@@ -31,6 +32,8 @@ final private class LiveNvidiaClient[F[_]](
 
   override protected val name: String                         = "nvidia"
   override protected val delayBetweenFailures: FiniteDuration = 2.seconds
+  override protected val defaultHeaders: Map[String, String] =
+    super.defaultHeaders.view.filterKeys(k => k != HeaderNames.AcceptEncoding && k != HeaderNames.UserAgent).toMap
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
