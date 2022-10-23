@@ -31,13 +31,7 @@ trait HttpClient[F[_]] {
     HeaderNames.CacheControl   -> "no-store, max-age=0",
     HeaderNames.ContentType    -> "application/json",
     HeaderNames.Connection     -> "keep-alive",
-    HeaderNames.UserAgent      -> operaUserAgent,
-    "sec-ch-ua"                -> """" Not A;Brand";v="99", "Chromium";v="104", "Opera";v="90"""",
-    "sec-ch-ua-mobile"         -> "?0",
-    "sec-ch-ua-platform"       -> "macOS",
-    "sec-fetch-dest"           -> "empty",
-    "sec-fetch-mode"           -> "cors",
-    "sec-fetch-site"           -> "same-origin"
+    HeaderNames.UserAgent      -> operaUserAgent
   )
 
   protected def dispatchWithProxy[T](
