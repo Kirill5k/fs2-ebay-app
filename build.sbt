@@ -15,6 +15,7 @@ val noPublish = Seq(
 )
 
 val docker = Seq(
+  javaOptions += "-Djdk.httpclient.allowRestrictedHeaders=host,connection,referer",
   packageName        := moduleName.value,
   version            := version.value,
   dockerUsername     := sys.env.get("DOCKER_USERNAME"),
@@ -35,8 +36,8 @@ val docker = Seq(
 val kernel = project
   .in(file("kernel"))
   .settings(
-    name            := "fs2-ebay-app-kernel",
-    moduleName      := "fs2-ebay-app-kernel",
+    name       := "fs2-ebay-app-kernel",
+    moduleName := "fs2-ebay-app-kernel",
     libraryDependencies ++= Dependencies.kernel ++ Dependencies.test
   )
 

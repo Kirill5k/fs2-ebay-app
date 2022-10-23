@@ -30,6 +30,7 @@ trait HttpClient[F[_]] {
     HeaderNames.AcceptEncoding -> "en-GB,en;q=0.9",
     HeaderNames.CacheControl   -> "no-store, max-age=0",
     HeaderNames.ContentType    -> "application/json",
+    HeaderNames.Connection     -> "keep-alive",
     HeaderNames.UserAgent      -> operaUserAgent,
     "sec-ch-ua"                -> """" Not A;Brand";v="99", "Chromium";v="104", "Opera";v="90"""",
     "sec-ch-ua-mobile"         -> "?0",
