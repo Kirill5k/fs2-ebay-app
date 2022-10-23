@@ -34,7 +34,7 @@ class HttpClientSpec extends SttpClientSpec {
         status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds, Map("foo" -> "bar").some))
       yield status
 
-      result.unsafeToFuture().map { event =>
+      result.asserting { event =>
         event.status mustBe Monitor.Status.Up
         event.reason mustBe "HTTP 200 Ok"
       }
@@ -54,7 +54,7 @@ class HttpClientSpec extends SttpClientSpec {
         status <- client.status(Monitor.Connection.Http(url, HttpMethod.POST, 10.seconds))
       yield status
 
-      result.unsafeToFuture().map { event =>
+      result.asserting { event =>
         event.status mustBe Monitor.Status.Down
         event.reason mustBe "HTTP 400 Bad Request"
       }
@@ -70,7 +70,7 @@ class HttpClientSpec extends SttpClientSpec {
         status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 10.seconds))
       yield status
 
-      result.unsafeToFuture().map { event =>
+      result.asserting { event =>
         event.status mustBe Monitor.Status.Down
         event.reason mustBe "Internal server error"
       }
@@ -86,7 +86,7 @@ class HttpClientSpec extends SttpClientSpec {
         status <- client.status(Monitor.Connection.Http(url, HttpMethod.GET, 2.seconds))
       yield status
 
-      result.unsafeToFuture().map { event =>
+      result.asserting { event =>
         event.status mustBe Monitor.Status.Down
         event.reason mustBe "Request timed-out after 2 seconds"
       }
