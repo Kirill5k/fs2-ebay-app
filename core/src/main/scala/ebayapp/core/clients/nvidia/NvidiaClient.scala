@@ -17,7 +17,6 @@ import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.circe.asJson
 import sttp.client3.*
-import sttp.model.HeaderNames
 
 import scala.concurrent.duration.*
 

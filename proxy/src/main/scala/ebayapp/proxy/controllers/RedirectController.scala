@@ -23,6 +23,8 @@ final private class RedirectController[F[_]](
   private val XReloadOn403Header = CIString("X-Reload-On-403")
   private val XProxiedHeader     = CIString("X-Proxied")
 
+  private val GzipAcceptEncodingHeader = Header.Raw(CIString("accept-encoding"), "gzip, deflate")
+
   private val headersToRemove = List(
     XReloadOn403Header,
     XRerouteToHeader,
@@ -48,7 +50,7 @@ final private class RedirectController[F[_]](
     req.redirectUri match {
       case Right(url) =>
         req.redirectClient
-          .toHttpApp(req.withUri(url).removeHeaders(headersToRemove))
+          .toHttpApp(req.withUri(url).removeHeaders(headersToRemove).removeHttpClientSpecificHeaders)
           .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.reloadOn403))
       case Left(errorMessage) =>
         BadRequest(errorMessage)
@@ -57,6 +59,7 @@ final private class RedirectController[F[_]](
   private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
 
   extension (req: Request[F])
+    def removeHttpClientSpecificHeaders: Request[F]     = req.filterHeaders(_ != GzipAcceptEncodingHeader)
     def removeHeaders(keys: List[CIString]): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
     def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
     def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
