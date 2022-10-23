@@ -33,8 +33,8 @@ final private class LiveNvidiaClient[F[_]](
   override protected val name: String                         = "nvidia"
   override protected val delayBetweenFailures: FiniteDuration = 2.seconds
 
-  val nvidiaDefaultHeaders: Map[String, String] =
-    defaultHeaders.view.filterKeys(k => k != HeaderNames.AcceptEncoding && k != HeaderNames.UserAgent).toMap
+  private val ignoredHeaders                            = Set(HeaderNames.AcceptEncoding, HeaderNames.UserAgent)
+  private val nvidiaDefaultHeaders: Map[String, String] = defaultHeaders.view.filterKeys(k => !ignoredHeaders(k)).toMap
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
