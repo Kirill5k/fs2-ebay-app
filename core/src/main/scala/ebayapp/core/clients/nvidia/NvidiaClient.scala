@@ -32,8 +32,9 @@ final private class LiveNvidiaClient[F[_]](
 
   override protected val name: String                         = "nvidia"
   override protected val delayBetweenFailures: FiniteDuration = 2.seconds
-  override protected val defaultHeaders: Map[String, String] =
-    super.defaultHeaders.view.filterKeys(k => k != HeaderNames.AcceptEncoding && k != HeaderNames.UserAgent).toMap
+
+  val nvidiaDefaultHeaders: Map[String, String] =
+    defaultHeaders.view.filterKeys(k => k != HeaderNames.AcceptEncoding && k != HeaderNames.UserAgent).toMap
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
@@ -50,7 +51,7 @@ final private class LiveNvidiaClient[F[_]](
           basicRequest
             .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
             .response(asJson[NvidiaSearchResponse])
-            .headers(defaultHeaders ++ config.headers)
+            .headers(nvidiaDefaultHeaders ++ config.headers)
         }
       }
       .flatMap { r =>
