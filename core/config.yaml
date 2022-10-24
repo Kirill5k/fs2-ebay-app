@@ -137,6 +137,7 @@ data:
         base-uri: "https://proxy-kirill5k.cloud.okteto.net"
         headers {
           "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
+          "Accept-Encoding": "application/json"
         }
       }
     }
