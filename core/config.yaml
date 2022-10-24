@@ -102,7 +102,7 @@ data:
       }
   
       nvidia {
-        base-uri: "https://proxy-kirill5k.cloud.okteto.net"
+        base-uri: "https://fs2-proxy.herokuapp.com"
         headers: {
           "X-Reroute-To": "https://api.nvidia.partners"
           "User-Agent": "PostmanRuntime/7.29.2"
@@ -119,7 +119,7 @@ data:
       }
   
       harvey-nichols {
-        base-uri: "https://proxy-kirill5k.cloud.okteto.net"
+        base-uri: "https://fs2-proxy.herokuapp.com"
         delay-between-individual-requests: 15s
         headers {
           "X-Reroute-To": "https://www.harveynichols.com"
@@ -134,7 +134,7 @@ data:
       }
   
       mainline-menswear {
-        base-uri: "https://proxy-kirill5k.cloud.okteto.net"
+        base-uri: "https://fs2-proxy.herokuapp.com"
         headers {
           "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
           "Accept-Encoding": "application/json"
