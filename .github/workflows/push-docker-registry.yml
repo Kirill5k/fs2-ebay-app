@@ -1,10 +1,6 @@
-name: Publish to OKTETO container registry
+name: Publish to Docker Hub registry
 on:
   workflow_dispatch:
-#  workflow_run:
-#    workflows: ["CI"]
-#    types:
-#      - completed
 
 jobs:
 
