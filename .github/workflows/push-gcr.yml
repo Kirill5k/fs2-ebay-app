@@ -23,6 +23,6 @@ jobs:
 
       - uses: olafurpg/setup-scala@v11
         with:
-          java-version: amazon-corretto@1.17
+          java-version: amazon-corretto@1.19
       - name: Build and push Docker images
         run: sbt docker:publish
