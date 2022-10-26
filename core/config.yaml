@@ -58,7 +58,7 @@ data:
       }
   
       selfridges {
-        base-uri: "https://request-follow-prod-request-follower-d2xab5.mo4.mogenius.io"
+        base-uri: "https://request-follower-kirill5k.koyeb.app"
         delay-between-individual-requests: 2s
         headers: {
           "User-Agent": "PostmanRuntime/7.28.3"

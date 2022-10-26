@@ -51,7 +51,7 @@ final private class RedirectController[F[_]](
     req.redirectUri match
       case Right(url) =>
         req.redirectClient
-          .toHttpApp(req.withUri(url).removeHeaders(headersToRemove).removeHttpClientSpecificHeaders)
+          .toHttpApp(req.withUri(url).removeHeaders(headersToRemove).cleanAcceptEncodingHeader)
           .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.reloadOn403))
       case Left(errorMessage) =>
         BadRequest(errorMessage)
@@ -59,10 +59,13 @@ final private class RedirectController[F[_]](
   private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
 
   extension (req: Request[F])
-    def removeHttpClientSpecificHeaders: Request[F] = req.headers
-      .get(AcceptEncodingHeader)
-      .filter(_.exists(_.value.contains("application/json")))
-      .fold(req)(_ => req.putHeaders(Header.Raw(AcceptEncodingHeader, "application/json")))
+    def cleanAcceptEncodingHeader: Request[F] =
+      req.headers.get(AcceptEncodingHeader) match
+        case None => req
+        case Some(headers) if headers.exists(_.value.contains("application/json")) =>
+          req.putHeaders(Header.Raw(AcceptEncodingHeader, "application/json"))
+        case Some(headers) =>
+          req.putHeaders(headers.filter(!_.value.equalsIgnoreCase("gzip, deflate")))
     def removeHeaders(keys: List[CIString]): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
     def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
     def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
