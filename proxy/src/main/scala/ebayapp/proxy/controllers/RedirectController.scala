@@ -61,7 +61,8 @@ final private class RedirectController[F[_]](
   extension (req: Request[F])
     def removeHttpClientSpecificHeaders: Request[F] = req.headers
       .get(AcceptEncodingHeader)
-      .fold(req)(hs => req.putHeaders(hs.filter(!_.value.equalsIgnoreCase("gzip, deflate"))))
+      .filter(_.exists(_.value.contains("application/json")))
+      .fold(req)(_ => req.putHeaders(Header.Raw(AcceptEncodingHeader, "application/json")))
     def removeHeaders(keys: List[CIString]): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
     def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
     def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
