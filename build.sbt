@@ -23,6 +23,7 @@ val docker = Seq(
   maintainer         := "immotional@aol.com",
   dockerBaseImage    := "amazoncorretto:19.0.1-alpine",
   dockerUpdateLatest := true,
+  dockerEnvVars ++= Map("VERSION" -> version.value),
   dockerCommands := {
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)
