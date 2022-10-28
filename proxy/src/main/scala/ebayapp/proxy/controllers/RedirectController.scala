@@ -32,7 +32,6 @@ final private class RedirectController[F[_]](
     XRerouteToHeader,
     XProxiedHeader,
     CIString("host"),
-    CIString("Content-Length"),
     CIString("X-Real-IP"),
     CIString("X-Forwarded-For"),
     CIString("X-Forwarded-Port"),
