@@ -19,13 +19,15 @@ final private class RedirectController[F[_]](
     F: Concurrent[F]
 ) extends Controller[F] with Http4sDsl[F] {
 
-  private val XRerouteToHeader   = CIString("X-Reroute-To")
-  private val XReloadOn403Header = CIString("X-Reload-On-403")
-  private val XProxiedHeader     = CIString("X-Proxied")
+  private val XRerouteToHeader      = CIString("X-Reroute-To")
+  private val XReloadOn403Header    = CIString("X-Reload-On-403")
+  private val XProxiedHeader        = CIString("X-Proxied")
+  private val XAcceptEncodingHeader = CIString("X-Accept-Encoding")
 
   private val AcceptEncodingHeader = CIString("accept-encoding")
 
   private val headersToRemove = List(
+    XAcceptEncodingHeader,
     XReloadOn403Header,
     XRerouteToHeader,
     XProxiedHeader,
@@ -60,12 +62,7 @@ final private class RedirectController[F[_]](
 
   extension (req: Request[F])
     def cleanAcceptEncodingHeader: Request[F] =
-      req.headers.get(AcceptEncodingHeader) match
-        case None => req
-        case Some(headers) if headers.exists(_.value.contains("application/json")) =>
-          req.putHeaders(Header.Raw(AcceptEncodingHeader, "application/json"))
-        case Some(headers) =>
-          req.putHeaders(headers.filter(!_.value.equalsIgnoreCase("gzip, deflate")))
+      req.headers.get(XAcceptEncodingHeader).fold(req)(hs => req.putHeaders(Header.Raw(AcceptEncodingHeader, hs.head.value)))
     def removeHeaders(keys: List[CIString]): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
     def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
     def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
