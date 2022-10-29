@@ -24,7 +24,7 @@ trait HttpClient[F[_]] {
 
   protected val postmanUserAgent = "PostmanRuntime/7.28.3"
 
-  protected val gzipDeflateEncoding = "gzip, deflate, br"
+  protected val gzipDeflateEncoding = "gzip, deflate"
 
   protected val defaultHeaders = Map(
     HeaderNames.Accept         -> "*/*",

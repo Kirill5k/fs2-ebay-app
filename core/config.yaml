@@ -137,8 +137,6 @@ data:
         base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         headers {
           "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
-          "Accept-Encoding": "application/json"
-          "X-Accept-Encoding": "application/json"
         }
       }
     }
