@@ -17,7 +17,8 @@ import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import sttp.client3.circe.asJson
 import sttp.client3.*
-import sttp.model.{StatusCode, Uri}
+import sttp.model.headers.CacheDirective
+import sttp.model.{Header, MediaType, StatusCode, Uri}
 
 import scala.concurrent.duration.*
 
@@ -81,9 +82,14 @@ final class CexApiClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
-          basicRequest
+          emptyRequest
+            .contentType(MediaType.ApplicationXWwwFormUrlencoded)
+            .acceptEncoding(gzipDeflateEncoding)
+            .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
+            .header("Referrer", "https://uk.webuy.com/")
+            .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
             .get(fullUri(config.baseUri))
-            .headers(defaultHeaders ++ config.headers)
+            .headers(config.headers)
             .response(asJson[CexSearchResponse])
         }
       }

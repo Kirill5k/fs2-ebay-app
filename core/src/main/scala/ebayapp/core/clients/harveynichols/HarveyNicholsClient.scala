@@ -82,7 +82,7 @@ final private class LiveHarveyNicholsClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
-          basicRequest
+          emptyRequest
             .get(fullUri(config.baseUri))
             .headers(config.headers)
             .response(asJson[A])

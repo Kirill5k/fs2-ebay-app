@@ -44,7 +44,7 @@ final private class LiveScanClient[F[_]](
         dispatchWithProxy(config.proxied) {
           val cat  = category.toLowerCase.replaceAll(" ", "-")
           val card = query.toLowerCase.replaceAll(" ", "-")
-          basicRequest
+          emptyRequest
             .get(uri"${config.baseUri}/shop/gaming/$cat/$card#filter=1&inStock=1")
             .headers(defaultHeaders ++ config.headers)
         }

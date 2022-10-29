@@ -35,6 +35,7 @@ final private class LiveJdsportsClient[F[_]](
     HeaderNames.AcceptEncoding  -> "gzip, deflate, br",
     HeaderNames.AcceptLanguage  -> "en-GB,en;q=0.9",
     HeaderNames.UserAgent       -> operaUserAgent,
+    HeaderNames.ContentType     -> "application/json",
     "upgrade-insecure-requests" -> "1",
     "sec-ch-ua"                 -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
     "sec-ch-ua-mobile"          -> "?0",
@@ -102,7 +103,7 @@ final private class LiveJdsportsClient[F[_]](
         dispatchWithProxy(config.proxied) {
           val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
           val brand = criteria.query.toLowerCase.replace(" ", "-")
-          basicRequest
+          emptyRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
             .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> config.websiteUri))
         }
@@ -131,7 +132,7 @@ final private class LiveJdsportsClient[F[_]](
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
           val referrer = config.websiteUri + s"product/${ci.fullName}/${ci.plu}/"
-          basicRequest
+          emptyRequest
             .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
             .headers(getStockHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
         }

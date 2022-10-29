@@ -24,7 +24,7 @@ final private class LiveHttpClient[F[_]](
   def status(connection: Monitor.Connection.Http): F[MonitoringEvent.StatusCheck] =
     for
       start <- F.realTime
-      res <- basicRequest
+      res <- emptyRequest
         .headers(connection.headers.getOrElse(Map.empty))
         .method(Method(connection.method.toString), uri"${connection.url.toString}")
         .readTimeout(connection.timeout)

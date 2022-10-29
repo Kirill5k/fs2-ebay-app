@@ -17,6 +17,8 @@ import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.circe.asJson
 import sttp.client3.*
+import sttp.model.{Header, MediaType}
+import sttp.model.headers.CacheDirective
 
 import scala.concurrent.duration.*
 
@@ -44,7 +46,14 @@ final private class LiveNvidiaClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
-          basicRequest
+          emptyRequest
+            .acceptEncoding(gzipDeflateEncoding)
+            .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
+            .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
+            .header(Header.userAgent(postmanUserAgent))
+            .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
+            .header("origin", "https://store.nvidia.com")
+            .header("referrer", "https://store.nvidia.com")
             .get(uri"${config.baseUri}/edge/product/search?page=1&limit=512&locale=en-gb&search=${c.query}&category=${c.category}")
             .response(asJson[NvidiaSearchResponse])
             .headers(config.headers)

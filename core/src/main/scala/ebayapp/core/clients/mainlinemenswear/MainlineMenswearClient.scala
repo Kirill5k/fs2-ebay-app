@@ -8,7 +8,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
-import ebayapp.core.clients.mainlinemenswear.mappers.{mainlineMenswearClothingMapper, MainlineMenswearItem}
+import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, mainlineMenswearClothingMapper}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -18,7 +18,8 @@ import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.client3.*
 import sttp.client3.circe.asJson
-import sttp.model.{Header, StatusCode}
+import sttp.model.headers.CacheDirective
+import sttp.model.{Header, MediaType, StatusCode}
 
 import java.time.Instant
 import scala.concurrent.duration.*
@@ -71,10 +72,18 @@ final private class LiveMainlineMenswearClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchReqWithAuth(config.proxied) {
-          basicRequest
+          emptyRequest
+            .acceptEncoding(gzipDeflateEncoding)
+            .contentType(MediaType.ApplicationJson)
+            .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
+            .header(Header.userAgent(operaUserAgent))
+            .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
+            .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
+            .header("origin", "https://www.mainlinemenswear.co.uk")
+            .header("referrer", "https://www.mainlinemenswear.co.uk")
             .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
             .body(SearchRequest(page, criteria.query).toJson)
-            .headers(defaultHeaders ++ config.headers.filter(_._1.toLowerCase != "authorization"))
+            .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
             .response(asJson[SearchResponse])
         }
       }
@@ -104,10 +113,18 @@ final private class LiveMainlineMenswearClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchReqWithAuth(config.proxied) {
-          basicRequest
+          emptyRequest
+            .acceptEncoding(gzipDeflateEncoding)
+            .contentType(MediaType.ApplicationJson)
+            .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
+            .header(Header.userAgent(operaUserAgent))
+            .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
+            .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
+            .header("origin", "https://www.mainlinemenswear.co.uk")
+            .header("referrer", "https://www.mainlinemenswear.co.uk")
             .post(uri"${config.baseUri}/app/mmw/m/product/${pp.productID}")
             .body(ProductRequest.toJson)
-            .headers(defaultHeaders ++ config.headers.filter(_._1.toLowerCase != "authorization"))
+            .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
             .response(asJson[ProductResponse])
         }
       }
@@ -139,7 +156,7 @@ final private class LiveMainlineMenswearClient[F[_]](
     }
 
   private def refreshAccessToken: F[Unit] =
-    dispatch(basicRequest.get(uri"https://www.mainlinemenswear.co.uk"))
+    dispatch(emptyRequest.get(uri"https://www.mainlinemenswear.co.uk"))
       .map { res =>
         res.headers
           .find(_.value.startsWith("access_token="))

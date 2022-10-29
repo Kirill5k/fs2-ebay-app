@@ -6,7 +6,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
+import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, selfridgesClothingMapper}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{ConfigProvider, Logger}
@@ -16,7 +16,8 @@ import fs2.Stream
 import io.circe.Decoder
 import sttp.client3.*
 import sttp.client3.circe.asJson
-import sttp.model.{StatusCode, Uri}
+import sttp.model.headers.CacheDirective
+import sttp.model.{Header, MediaType, StatusCode, Uri}
 
 import scala.concurrent.duration.*
 
@@ -101,9 +102,13 @@ final private class LiveSelfridgesClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
-          basicRequest
+          emptyRequest
+            .contentType(MediaType.ApplicationJson)
+            .acceptEncoding(gzipDeflateEncoding)
+            .header(Header.userAgent(postmanUserAgent))
+            .header(Header.cacheControl(CacheDirective.NoCache))
             .get(fullUri(config.baseUri))
-            .headers(defaultHeaders ++ config.headers)
+            .headers(config.headers)
             .response(asJson[A])
         }
       }

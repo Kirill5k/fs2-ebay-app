@@ -66,6 +66,7 @@ data:
           "api-key": ${?SELFRIDGES_API_KEY}
           "referer": "https://www.selfridges.com"
           "X-Reroute-To": "https://www.selfridges.com"
+          "X-Accept-Encoding": "application/json"
         }
       }
   
@@ -106,8 +107,6 @@ data:
         base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         headers: {
           "X-Reroute-To": "https://api.nvidia.partners"
-          "User-Agent": "PostmanRuntime/7.29.2"
-          "Accept-Encoding": "application/json"
         }
       }
   
@@ -138,6 +137,7 @@ data:
         base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         headers {
           "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
+          "Accept-Encoding": "application/json"
           "X-Accept-Encoding": "application/json"
         }
       }
@@ -241,12 +241,12 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 12m
         monitoring-requests: [
-          {search-criteria: {query: "moschino"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "ea7 emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss bodywear"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss athleisure"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "boss casual"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "moschino"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "ea7 emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "boss bodywear"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "boss athleisure"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "boss casual"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {exclude: ["size xxl", "size xl", "size l"], min-discount: 54}
       }
