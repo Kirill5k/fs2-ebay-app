@@ -2,13 +2,13 @@ package ebayapp.core.tasks
 
 import cats.effect.kernel.Outcome.Errored
 import cats.effect.IO
-import ebayapp.core.CatsSpec
+import ebayapp.core.IOWordSpec
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Error, Logger}
 
 import scala.concurrent.duration.*
 
-class ErrorsNotifierSpec extends CatsSpec {
+class ErrorsNotifierSpec extends IOWordSpec {
 
   "An ErrorsNotifier" should {
 

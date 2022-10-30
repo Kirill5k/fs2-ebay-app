@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{CatsSpec, MockConfigProvider}
+import ebayapp.core.{IOWordSpec, MockConfigProvider}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
@@ -13,7 +13,7 @@ import org.mockito.Mockito.times
 
 import scala.concurrent.duration.*
 
-class DealsServiceSpec extends CatsSpec {
+class DealsServiceSpec extends IOWordSpec {
 
   val game1 = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
   val game2 = ResellableItemBuilder.videoGame("Battlefield 1", sellPrice = None)

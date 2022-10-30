@@ -1,11 +1,11 @@
 package ebayapp.core.common
 
 import cats.effect.IO
-import ebayapp.core.CatsSpec
+import ebayapp.core.IOWordSpec
 
 import scala.concurrent.duration.*
 
-class CacheSpec extends CatsSpec {
+class CacheSpec extends IOWordSpec {
 
   "A RefbasedCache" should {
 

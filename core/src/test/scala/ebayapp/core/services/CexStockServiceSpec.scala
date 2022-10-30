@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{CatsSpec, MockConfigProvider}
+import ebayapp.core.{IOWordSpec, MockConfigProvider}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
@@ -13,7 +13,7 @@ import org.mockito.Mockito.atLeast as atLeastTimes
 import java.time.Instant
 import scala.concurrent.duration.*
 
-class CexStockServiceSpec extends CatsSpec {
+class CexStockServiceSpec extends IOWordSpec {
 
   val req1               = StockMonitorRequest(SearchCriteria("macbook"), true, true)
   val req2               = StockMonitorRequest(SearchCriteria("iphone"), true, true)

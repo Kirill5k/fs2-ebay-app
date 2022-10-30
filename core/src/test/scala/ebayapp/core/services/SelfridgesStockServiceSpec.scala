@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{CatsSpec, MockConfigProvider}
+import ebayapp.core.{IOWordSpec, MockConfigProvider}
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.ConfigProvider
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
@@ -13,7 +13,7 @@ import org.mockito.Mockito
 
 import scala.concurrent.duration.*
 
-class SelfridgesStockServiceSpec extends CatsSpec {
+class SelfridgesStockServiceSpec extends IOWordSpec {
 
   val scLimits           = Filters(Some(50), Some(List("SC-IGNORE", "SC-SKIP")), None)
   val criteria           = SearchCriteria("foo", filters = Some(scLimits))

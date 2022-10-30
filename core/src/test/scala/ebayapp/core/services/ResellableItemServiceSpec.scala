@@ -1,11 +1,11 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.CatsSpec
+import ebayapp.core.IOWordSpec
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItemBuilder}
 import ebayapp.core.repositories.{SearchParams, ResellableItemRepository}
 
-class ResellableItemServiceSpec extends CatsSpec {
+class ResellableItemServiceSpec extends IOWordSpec {
 
   val videoGame = ResellableItemBuilder.videoGame("super mario 3")
   val summary = ItemSummary(

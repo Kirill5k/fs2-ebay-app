@@ -1,11 +1,11 @@
 package ebayapp.core.tasks
 
 import cats.effect.IO
-import ebayapp.core.CatsSpec
+import ebayapp.core.IOWordSpec
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 
-class DealsFinderSpec extends CatsSpec {
+class DealsFinderSpec extends IOWordSpec {
 
   "A DealsFinder" should {
 

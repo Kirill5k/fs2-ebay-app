@@ -1,13 +1,13 @@
 package ebayapp.core.common
 
-import ebayapp.core.CatsSpec
+import ebayapp.core.IOWordSpec
 import ebayapp.core.common.config.{AppConfig, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.core.domain.Retailer
 
 import scala.concurrent.duration.*
 
-class AppConfigSpec extends CatsSpec {
+class AppConfigSpec extends IOWordSpec {
   "An AppConfig" should {
 
     "load itself from application.conf file" in {

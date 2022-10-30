@@ -12,9 +12,8 @@ import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.Future
 
-trait CatsSpec extends AsyncWordSpec with Matchers with MockitoSugar with MockitoMatchers {
+trait IOWordSpec extends AsyncWordSpec with Matchers with MockitoSugar with MockitoMatchers {
 
-  given rt: IORuntime      = IORuntime.global
   given logger: Logger[IO] = MockLogger.make[IO]
 
   def servicesMock: Services[IO] = new Services[IO] {
@@ -25,6 +24,8 @@ trait CatsSpec extends AsyncWordSpec with Matchers with MockitoSugar with Mockit
   }
 
   extension[A] (io: IO[A])
+    def throws(error: Throwable): Future[Assertion] =
+      io.attempt.asserting(_ mustBe Left(error))
     def asserting(f: A => Assertion): Future[Assertion] =
       io.map(f).unsafeToFuture()(IORuntime.global)
 }

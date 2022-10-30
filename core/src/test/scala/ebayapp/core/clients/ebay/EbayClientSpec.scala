@@ -3,7 +3,7 @@ package ebayapp.core.clients.ebay
 import cats.effect.IO
 import cats.syntax.applicative.*
 import cats.syntax.option.*
-import ebayapp.core.{CatsSpec, MockConfigProvider}
+import ebayapp.core.{IOWordSpec, MockConfigProvider}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
@@ -18,7 +18,7 @@ import java.util.UUID
 import scala.concurrent.duration.*
 import scala.jdk.CollectionConverters.*
 
-class EbayClientSpec extends CatsSpec {
+class EbayClientSpec extends IOWordSpec {
 
   val accessToken = "access-token"
   val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame), category = Some("games-xbox"))
