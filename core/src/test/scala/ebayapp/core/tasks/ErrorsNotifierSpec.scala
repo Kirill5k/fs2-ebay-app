@@ -1,7 +1,7 @@
 package ebayapp.core.tasks
 
 import cats.effect.kernel.Outcome.Errored
-import cats.effect.{IO, Temporal}
+import cats.effect.IO
 import ebayapp.core.CatsSpec
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Error, Logger}
@@ -15,14 +15,16 @@ class ErrorsNotifierSpec extends CatsSpec {
     "send alerts on critical errors" in {
       val services = servicesMock
       when(services.notification.alert(any[Error])).thenReturn(IO.unit)
-      val res = for {
-        logger          <- Logger.make[IO]
-        notifier        <- ErrorsNotifier.make[IO](services)(Temporal[IO], logger)
-        notifierProcess <- notifier.run.interruptAfter(1.seconds).compile.drain.start
-        _               <- logger.error("omg, error")
-        _               <- logger.error("omg, error")
-        _               <- notifierProcess.join
-      } yield ()
+
+      val res = Logger.make[IO].flatMap { implicit logger =>
+        for
+          notifier        <- ErrorsNotifier.make[IO](services)
+          notifierProcess <- notifier.run.interruptAfter(2.seconds).compile.drain.start
+          _               <- logger.error("omg, error")
+          _               <- logger.error("omg, error")
+          _               <- notifierProcess.join
+        yield ()
+      }
 
       res.asserting { r =>
         verify(services.notification).alert(any[Error])
@@ -32,13 +34,15 @@ class ErrorsNotifierSpec extends CatsSpec {
 
     "send termination signal on critical errors" in {
       val services = servicesMock
-      val res = for {
-        logger          <- Logger.make[IO]
-        notifier        <- ErrorsNotifier.make[IO](services)(Temporal[IO], logger)
-        notifierProcess <- notifier.run.interruptWhen(logger.awaitSigTerm).compile.drain.start
-        _               <- logger.critical("omg, critical error")
-        error           <- notifierProcess.join.attempt
-      } yield error
+      val res = Logger.make[IO].flatMap { implicit logger =>
+        for {
+          logger          <- Logger.make[IO]
+          notifier        <- ErrorsNotifier.make[IO](services)
+          notifierProcess <- notifier.run.interruptWhen(logger.awaitSigTerm).compile.drain.start
+          _               <- logger.critical("omg, critical error")
+          error           <- notifierProcess.join.attempt
+        } yield error
+      }
 
       res.asserting { r =>
         r mustBe Right(Errored(AppError.Critical("omg, critical error")))
