@@ -23,7 +23,7 @@ private[mappers] object GameDetailsMapper {
     s"(?<=.{10})$CONSOLE_REGEX_PATTERN(?s).*",
     "(console )?\\bday\\b (one|1|zero|0)( (edition|\\be(d)?(i)?(t)?(i)?\\b))?(?s).*$",
     // remove edition and preceding word
-    "(\\bVR\\b|\\bHD\\b|Fire Fades|Higgs Variant|steel case|n(e)?xt l(e)?v(e)?l|headline|\\bel\\b \\w+|standar|nuketown|wild run|Lenticular Sleeve|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th|ten year)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|((super|digital) )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
+    "(\\bVR\\b|\\bHD\\b|Legion Of Dawn|Fire Fades|Fully Loaded|Cross Gen|Higgs Variant|steel case|n(e)?xt l(e)?v(e)?l|headline|\\bel\\b \\w+|standar|nuketown|wild run|Lenticular Sleeve|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th|ten year)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|((super|digital) )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
     "(?<=.{5})((new|pristine|\\binc\\b) )?(super|cheap( )?)?(free|fast|quick)?( )?(super( )?)?(prompt|free|fast|quick|(next|same|1|one) day|tracked|recorded|speedy|worldwide|bargain|\\bsc\\b|\\bfc\\b).{0,20}(dispatch|ship(ping)?|post(age)?|delivery|p( )?p).*$",
     "(?<=.{15})((brand )?new.{0,15})?(still )?((not |factory |un)?sealed|unopened|shrink( )?wrap)(?s).*$",
     "(?<=.{10})\\b(kids( \\w+)?|hack slash|single player|open world|Family Fun|basketball|((action|fun) )?adventure|console single|tactical|3rd person|(action )?rpg|fps|survival|action|racing|role|wrestling|(octagon)? fighting|multi( )?player)\\b.{0,20}game(?s).*"
@@ -44,7 +44,7 @@ private[mappers] object GameDetailsMapper {
     "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
-    "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|LucasArt(s)?)( (presents|publishing))?",
+    "((from|by) )?(Disney(s)?( )?Pixar(s)?|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
     "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b",
     "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?",
@@ -82,7 +82,7 @@ private[mappers] object GameDetailsMapper {
     "Harley Quinn DLC",
     "(s|c)ellophane wrapped", "free\\s+upgrade", "(official )?Strategy Combat( guide)?",
     "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
-    "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football)",
+    "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football( soccer)?)",
     "football soccer( sim(ulator)?)?", "action (stealth|thriller)", "(car|motorcycles|rally) (Driving|Racing)",
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer",
     "(Multi|Single)( )?Player", "life simulation", "racing rally",
@@ -106,7 +106,7 @@ private[mappers] object GameDetailsMapper {
     "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids", 
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", 
     "essentials", "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?",
-    "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very) rare", "award winning",
+    "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very|mega) rare", "award winning",
     "Instruction(s)? Book", "works perfectly( fine)?", "Unwanted Gift", "limited (release|quantity)",
     "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", 
     "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b", "must see", "see (pictures|photos|pics)", "Refurbished",
@@ -126,7 +126,7 @@ private[mappers] object GameDetailsMapper {
   ).mkString("(?i)", "|", "")
 
   private val EDGE_WORDS_REPLACEMENTS = List(
-    "Playstation( \\d)?\\s+(?=PS)", "^genuine ", "^bnwt ", "^(brand|condition) new ", 
+    "Playstation( \\d)?\\s+(?=PS)", "^genuine ", "^bnwt ", "^(brand|condition) new ", "^Pristine",
     "^\\w+ condition ", "^(((brand )?NEW|BNIB|Factory) )?(UN)?SEALED( in Packaging)?( )?", 
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN", "Standart$", "^SALE", "((condition|brand) )?new$", 
     "^(UN)?BOXED", "^NEW", "^best", "^software", "^un( )?opened", "un( )?opened$", 
