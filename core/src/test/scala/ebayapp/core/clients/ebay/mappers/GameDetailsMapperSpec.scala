@@ -366,7 +366,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "FIFA 21 Xbox one 2021"                              -> "FIFA 21",
           "Resident Evil 7 Biohazard"                          -> "Resident Evil 7",
           "pga tour 2k21 golf fun"                             -> "pga tour 2k21",
-          "Super Meat Boy"                                     -> "Super MeatBoy",
+          "Super Meat Boy"                                     -> "Super Meat",
           "GTA 5 Xbox Series X / Xbox One"                     -> "Grand Theft Auto 5",
           "Switch-LEGO HARRY POTTER YEARS 1-7 GAME NEW"        -> "LEGO HARRY POTTER",
           "F1 manager 22"                                      -> "F1 manager 2022"
