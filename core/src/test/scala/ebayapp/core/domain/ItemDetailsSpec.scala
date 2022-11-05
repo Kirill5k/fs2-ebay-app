@@ -1,9 +1,9 @@
 package ebayapp.core.domain
 
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class ItemDetailsSpec extends AsyncWordSpec with Matchers {
+class ItemDetailsSpec extends AnyWordSpec with Matchers {
 
   "A VideoGame" should {
     val game = ResellableItemBuilder.videoGame("super mario 3", platform = Some("SWITCH"))

@@ -70,7 +70,7 @@ final private class SimpleStockService[F[_]](
   private def preloadCache(confFilters: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)))
+      .filter(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)(_))
       .evalMap(item => cache.put(item.key, item))
       .drain
 
@@ -86,7 +86,7 @@ final private class SimpleStockService[F[_]](
   private def getUpdates(confFilters: Filters, req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
     client
       .search(req.searchCriteria)
-      .through(withFiltersApplied(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)))
+      .filter(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)(_))
       .evalMap(item => cache.get(item.key).map(_ -> item))
       .evalMap {
         case (None, currItem) =>
@@ -102,14 +102,6 @@ final private class SimpleStockService[F[_]](
       .unNone
       .handleErrorWith { error =>
         Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confFilters, req)
-      }
-
-  private def withFiltersApplied(filters: Filters): Pipe[F, ResellableItem, ResellableItem] =
-    _.filter(_.itemDetails.fullName.isDefined)
-      .filter(ri => filters.minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)))
-      .filter { ri =>
-        filters.excludeRegex.fold(true)(filter => !ri.key.matches(filter)) &&
-        filters.includeRegex.fold(true)(filter => ri.key.matches(filter))
       }
 
   extension (config: StockMonitorConfig)

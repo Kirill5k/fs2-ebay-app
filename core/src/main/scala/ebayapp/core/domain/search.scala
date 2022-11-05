@@ -29,6 +29,13 @@ object search {
         exclude = mergeOptWith(exclude, anotherLimit.exclude, _ ::: _),
         include = mergeOptWith(include, anotherLimit.include, _ ::: _)
       )
+
+    def apply(ri: ResellableItem): Boolean = {
+      val name = ri.itemDetails.fullName
+      name.isDefined &&
+        minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)) &&
+        (excludeRegex.fold(true)(filter => !name.get.matches(filter)) || includeRegex.fold(false)(filter => name.get.matches(filter)))
+    }
   }
 
   final case class SearchCriteria(
