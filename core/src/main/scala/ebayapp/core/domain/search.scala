@@ -34,7 +34,8 @@ object search {
       val name = ri.itemDetails.fullName
       name.isDefined &&
         minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)) &&
-        (excludeRegex.fold(true)(filter => !name.get.matches(filter)) || includeRegex.fold(false)(filter => name.get.matches(filter)))
+        excludeRegex.fold(true)(filter => !name.get.matches(filter)) &&
+        includeRegex.fold(true)(filter => name.get.matches(filter))
     }
   }
 
