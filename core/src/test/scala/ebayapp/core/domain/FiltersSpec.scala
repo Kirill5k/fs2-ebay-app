@@ -41,7 +41,7 @@ class FiltersSpec extends AnyWordSpec with Matchers {
     "return false when item has excluded name and include filter is present" in {
       val game = ResellableItemBuilder.videoGame("super mario 3")
 
-      Filters(exclude = Some(List("mario 3")), include = Some(List("mario 3"))).apply(game) mustBe false
+      Filters(exclude = Some(List("super")), include = Some(List("mario 3"))).apply(game) mustBe false
     }
   }
 }

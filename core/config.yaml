@@ -141,8 +141,8 @@ data:
       cex {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {include: ["WiFi A"]}, monitor-stock-change: true, monitor-price-change: true}
-          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {include: ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
+          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
