@@ -52,7 +52,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal)(?s).*", "(?<=FIFA) (soccer|football)",
     "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling",
     "(?<=(FIFA|NHL|Madden|MotoGP) )20(?=\\d\\d)", "(?<=F1)\\s+(Formula( )?(one|1)?)( racing)?", "(?<=20\\d\\d).*formula(?s).*",
-    "(?<=Fifa 21.*) (NXT LVL|Next level)", "(?<=PGA Tour.*) golf.*", "(?<=Super meat)( )?boy",
+    "(?<=Fifa 21.*) (NXT LVL|Next level)", "(?<=PGA Tour.*) golf.*", "(?<=Super meat)( )?(?=boy)",
     "(?<=harry potter).*years.*", "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Mario) Plus(?= Rabbid)",
     "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*", "\\bGT(S|\\d)?\\b .*(?=gran turismo)",
     "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)", "bandicoot( CTR)? (?=team racing)",
