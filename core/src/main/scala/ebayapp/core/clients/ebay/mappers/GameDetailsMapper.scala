@@ -26,7 +26,7 @@ private[mappers] object GameDetailsMapper {
     "(\\bVR\\b|\\bHD\\b|Michael Jordan|Legion Of Dawn|Fire Fades|Fully Loaded|Cross Gen|Higgs Variant|steel case|n(e)?xt l(e)?v(e)?l|headline|\\bel\\b \\w+|standar|nuketown|wild run|Lenticular Sleeve|lost|essential|exclusive|special|limited collectors|definitive|atlas|platinum|complete|std|classic(s)?|(\\d+th|ten year)? anniversary|remastered|elite|\\beu\\b|coll(ector(s)?)?|ltd|goty|(action )?game of|legacy( pro)?|(un)?limited|premium|((super|digital) )?deluxe|(\\w+)?ultimat).{0,20}(\\bCE\\b|\\bcoll(ection)?\\b|edn|edit(i)?on(s)?|\\be(d)?(i)?(t)?(i)?\\b)(?s).*$",
     "(?<=.{5})((new|pristine|\\binc\\b) )?(super|cheap( )?)?(free|fast|quick)?( )?(super( )?)?(prompt|free|fast|quick|(next|same|1|one) day|tracked|recorded|speedy|worldwide|bargain|\\bsc\\b|\\bfc\\b).{0,20}(dispatch|ship(ping)?|post(age)?|delivery|p( )?p).*$",
     "(?<=.{15})((brand )?new.{0,15})?(still )?((not |factory |un)?sealed|unopened|shrink( )?wrap)(?s).*$",
-    "(?<=.{10})\\b(kids( \\w+)?|hack slash|single player|open world|Family Fun|basketball|((action|fun) )?adventure|console single|tactical|3rd person|(action )?rpg|fps|survival|action|racing|role|wrestling|(octagon)? fighting|multi( )?player)\\b.{0,20}game(?s).*"
+    "(?<=.{10})\\b(kids( \\w+)?|hack slash|single player|open world|Family Fun|basketball|((action|fun) )?adventure|console single|tactical|3rd person|(action )?rpg|fps|survival|action|racing|role|wrestling|(octagon|ultimate)? fighting|multi( )?player)\\b.{0,20}game(?s).*"
   ).mkString("(?i)", "|", "")
 
   private val LEVEL2_TITLE_WORDS_REPLACEMENTS = List(
@@ -54,7 +54,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=(FIFA|NHL|Madden|MotoGP) )20(?=\\d\\d)", "(?<=F1)\\s+(Formula( )?(one|1)?)( racing)?", "(?<=20\\d\\d).*formula(?s).*",
     "(?<=Fifa 21.*) (NXT LVL|Next level)", "(?<=PGA Tour.*) golf.*", "(?<=Super meat)( )?(?=boy)",
     "(?<=harry potter).*years.*", "(?<=Gran)d(?= turismo)", "(?<=No Mans Sky) Beyond", "(?<=Mario) Plus(?= Rabbid)",
-    "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*", "\\bGT(S|\\d)?\\b .*(?=gran turismo)",
+    "(?<=Grand Theft Auto (\\d|\\b[VI]{1,2}\\b)).*map.*", "\\bGT(S|\\d)?\\b .*(?=gran turismo)", "(?<=MX) (?=GP)",
     "(?<=Turismo( (\\d|sport))?) \\bGT(\\d|S)?\\b", "(?<=gears) of war(?= 5)", "bandicoot( CTR)? (?=team racing)",
     "(?<=cyber) (?=punk)", "(?<=Warhammer) (40k|40( )?000)", "Formula (1|One)\\s+(?=F1)", "zero dawn.*(?=forbidden)",
     "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))", "(?<=Sonic) Hedgehog", "Formula (1|One)\\s+(?=F1)",
@@ -79,7 +79,7 @@ private[mappers] object GameDetailsMapper {
     // removes the word SEALED
     "(new )?(still )?((factory) )?(un)?sealed( in packaging)?",
     // removes DLCs
-    "Harley Quinn DLC",
+    "(Harley Quinn)? DLC",
     "(s|c)ellophane wrapped", "free\\s+upgrade", "(official )?Strategy Combat( guide)?",
     "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football( soccer)?)",
