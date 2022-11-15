@@ -73,7 +73,7 @@ data:
       }
   
       jdsports {
-        base-uri: "https://fs2-proxy.herokuapp.com"
+        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         headers {
           "X-Reroute-To": "https://www.jdsports.co.uk"
           "X-Reload-On-403": "true"
@@ -91,7 +91,7 @@ data:
       }
   
       tessuti {
-        base-uri: "https://fs2-proxy.herokuapp.com"
+        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         headers {
           "X-Reroute-To": "https://www.tessuti.co.uk"
           "X-Reload-On-403": "true"
@@ -115,7 +115,7 @@ data:
       }
   
       harvey-nichols {
-        base-uri: "https://fs2-proxy.herokuapp.com"
+        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         delay-between-individual-requests: 15s
         headers {
           "X-Reroute-To": "https://www.harveynichols.com"
