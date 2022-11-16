@@ -58,6 +58,7 @@ final private class LiveMainlineMenswearClient[F[_]](
         }
       }
       .flatMap(Stream.emits)
+      .filter(_.previousPrice > BigDecimal(0))
       .map(mainlineMenswearClothingMapper.toDomain(criteria))
       .handleErrorWith(e => Stream.logError(e)(e.getMessage))
 
