@@ -82,7 +82,7 @@ data:
       }
   
       scotts {
-        base-uri: "https://request-follower-kirill5k.koyeb.app"
+        base-uri: "https://fs2-proxy.herokuapp.com"
         headers {
           "X-Reroute-To": "https://www.scottsmenswear.com"
           "X-Reload-On-403": "true"
@@ -91,7 +91,7 @@ data:
       }
   
       tessuti {
-        base-uri: "https://request-follower-kirill5k.koyeb.app"
+        base-uri: "https://fs2-proxy.herokuapp.com"
         headers {
           "X-Reroute-To": "https://www.tessuti.co.uk"
           "X-Reload-On-403": "true"
@@ -172,7 +172,6 @@ data:
           {search-criteria: {category: "men", query: "calvin-klein-jeans", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Tommy Hilfiger", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Stone Island"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
@@ -183,7 +182,6 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {query: "EA7"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
