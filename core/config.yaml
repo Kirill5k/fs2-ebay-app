@@ -73,7 +73,7 @@ data:
       }
   
       jdsports {
-        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://fs2-proxy.herokuapp.com"
         headers {
           "X-Reroute-To": "https://www.jdsports.co.uk"
           "X-Reload-On-403": "true"
@@ -82,7 +82,7 @@ data:
       }
   
       scotts {
-        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://request-follower-kirill5k.koyeb.app"
         headers {
           "X-Reroute-To": "https://www.scottsmenswear.com"
           "X-Reload-On-403": "true"
@@ -91,7 +91,7 @@ data:
       }
   
       tessuti {
-        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://request-follower-kirill5k.koyeb.app"
         headers {
           "X-Reroute-To": "https://www.tessuti.co.uk"
           "X-Reload-On-403": "true"
