@@ -137,7 +137,7 @@ final private class LiveMainlineMenswearClient[F[_]](
             logger.error(s"$name-product/json-error: ${error.getMessage}") *>
               F.pure(None)
           case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.Unauthorized =>
-            logger.error(s"$name-product/$s-critical") *>
+            logger.warn(s"$name-product/$s-critical") *>
               F.sleep(3.second) *> refreshAccessToken *> getCompleteProduct(pp)
           case Left(HttpError(_, status)) if status.isClientError =>
             logger.error(s"$name-product/$status-error") *>
