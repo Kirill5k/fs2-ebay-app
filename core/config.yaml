@@ -82,7 +82,7 @@ data:
       }
   
       scotts {
-        base-uri: "https://fs2-proxy.herokuapp.com"
+        base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.scottsmenswear.com"
           "X-Reload-On-403": "true"
