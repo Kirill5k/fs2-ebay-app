@@ -54,18 +54,19 @@ final private class SimpleStockService[F[_]](
     yield upd
 
   private def itemStockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates] =
-    Stream
-      .emits(config.monitoringRequests.zipWithIndex)
-      .map { (req, index) =>
-        preloadCache(config.filtersOrDefault, req).delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
-          Stream
-            .awakeDelay(config.monitoringFrequency)
-            .flatMap(_ => getUpdates(config.filtersOrDefault, req))
-            .pauseWhen(isPaused)
-      }
-      .parJoinUnbounded
-      .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
-      .onFinalize(cache.clear >> logger.info(s"reloading ${retailer.name}-stock-monitor stream"))
+    Stream.logInfo(s"starting ${retailer.name}-stock-monitor stream") ++
+      Stream
+        .emits(config.monitoringRequests.zipWithIndex)
+        .map { (req, index) =>
+          preloadCache(config.filtersOrDefault, req).delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
+            Stream
+              .awakeDelay(config.monitoringFrequency)
+              .flatMap(_ => getUpdates(config.filtersOrDefault, req))
+              .pauseWhen(isPaused)
+        }
+        .parJoinUnbounded
+        .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
+        .onFinalize(cache.clear >> logger.info(s"closing ${retailer.name}-stock-monitor stream"))
 
   private def preloadCache(confFilters: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
     client
