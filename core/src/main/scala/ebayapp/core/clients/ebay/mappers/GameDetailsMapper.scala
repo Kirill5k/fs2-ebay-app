@@ -5,7 +5,7 @@ import ebayapp.core.domain.ItemDetails.VideoGame
 import ebayapp.core.domain.search.ListingDetails
 
 private[mappers] object GameDetailsMapper {
-
+  // format: off
   private val CONSOLE_REGEX_PATTERN = List(
     "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
     "\\bPS(-| )?\\d\\b",
@@ -144,6 +144,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=PES)(?=20\\d\\d)", "(?<=MICRO)(?=MACHINES)", "(?<=PLAYER)(?=UNKNOWN)", "(?<=ARK)(?=PARK)",
     "(?<=Dragon)(?=Ball)"
   ).mkString("(?i)", "|", "")
+  // format: on
 
   private val PLATFORMS_MATCH_REGEX = List(
     "PS( )?[1-5]",
