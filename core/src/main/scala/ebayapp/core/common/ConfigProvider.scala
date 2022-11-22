@@ -73,28 +73,31 @@ final private class LiveConfigProvider[F[_]](
 }
 
 object ConfigProvider:
+  private def loadConfigFromMount[F[_]](using F: Async[F]): F[AppConfig] =
+    F.blocking(AppConfig.loadFromMount)
+  private def loadDefaultConfig[F[_]](using F: Async[F]): F[AppConfig] =
+    F.blocking(AppConfig.loadDefault)
+  private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
+    F.blocking(Paths.get(AppConfig.mountedConfigPath).toFile.lastModified())
 
   def make[F[_]](checkEvery: FiniteDuration)(using F: Async[F], logger: Logger[F]): F[ConfigProvider[F]] = {
     def reloadConfigWhenUpdated(state: Ref[F, AppConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
-      val process = mountedConfigModifiedTs.flatMap { modifiedTs =>
-        F.ifTrueOrElse(previousLastModifiedTs.isEmpty || previousLastModifiedTs.contains(modifiedTs))(
-          F.pure(modifiedTs),
-          logger.info("reloading updated config from volume mount") >> F.blocking(AppConfig.loadFromMount).flatMap(state.set).as(modifiedTs)
-        )
-      }
+      val process = for
+        modifiedTs <- mountedConfigModifiedTs
+        isUpdated = previousLastModifiedTs.nonEmpty && previousLastModifiedTs.exists(_ != modifiedTs)
+        _ <- F.whenA(isUpdated)(logger.info("reloading updated config from volume mount") >> loadConfigFromMount.flatMap(state.set))
+      yield modifiedTs
+
       F.sleep(checkEvery) >> process.flatMap(ts => reloadConfigWhenUpdated(state, Some(ts)))
     }
 
-    F
-      .blocking(AppConfig.loadFromMount)
-      .flatMap(c => logger.info("loaded config from a configmap volume mount") >> Ref.of(c))
+    loadConfigFromMount
+      .flatTap(_ => logger.info("loaded config from a configmap volume mount"))
+      .flatMap(Ref.of)
       .flatTap(s => reloadConfigWhenUpdated(s, None).start.void)
       .handleErrorWith { e =>
-        logger.warn(s"error loading config from a configmap mount, will try resources: ${e.getMessage}") >>
-          F.blocking(AppConfig.loadDefault).flatMap(Ref.of)
+        logger.warn(s"error loading config from a configmap volume mount, will use default: ${e.getMessage}") >>
+          loadDefaultConfig.flatMap(Ref.of)
       }
       .map(LiveConfigProvider(_, checkEvery))
   }
-
-  private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
-    F.delay(Paths.get(AppConfig.mountedConfigPath).toFile.lastModified())
