@@ -36,7 +36,7 @@ object Resources:
       .build
 
   private def makeJdkHttpClient[F[_]: Async](config: ClientConfig): Resource[F, Client[F]] =
-    Resource.eval(defaultHttpClient[F](config)).flatMap(JdkHttpClient(_))
+    Resource.eval(defaultHttpClient[F](config)).map(JdkHttpClient(_))
 
   private def defaultHttpClient[F[_]](config: ClientConfig)(implicit F: Sync[F]): F[HttpClient] =
     F.delay {

@@ -7,10 +7,10 @@ object Dependencies {
     val circe           = "0.14.3"
     val sttp            = "3.8.3"
     val http4s          = "0.23.16"
-    val http4sJdkClient = "0.7.0"
-    val logback         = "1.4.4"
+    val http4sJdkClient = "0.8.0"
+    val logback         = "1.4.5"
     val log4cats        = "2.5.0"
-    val tapir           = "1.1.3"
+    val tapir           = "1.2.2"
     val courier         = "3.2.0"
 
     val scalaTest    = "3.2.14"
@@ -50,7 +50,7 @@ object Dependencies {
     object sttp {
       val core        = "com.softwaremill.sttp.client3" %% "core"  % Versions.sttp
       val circe       = "com.softwaremill.sttp.client3" %% "circe" % Versions.sttp
-      val catsBackend = "com.softwaremill.sttp.client3" %% "fs2"    % Versions.sttp
+      val catsBackend = "com.softwaremill.sttp.client3" %% "fs2"   % Versions.sttp
 
       val all = Seq(core, circe, catsBackend)
     }
