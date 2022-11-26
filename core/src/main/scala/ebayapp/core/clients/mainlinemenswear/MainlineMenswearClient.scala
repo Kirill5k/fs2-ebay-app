@@ -96,7 +96,7 @@ final private class LiveMainlineMenswearClient[F[_]](
             logger.error(s"$name-search/json-error: ${error.getMessage}") *>
               F.pure(Nil)
           case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.Unauthorized =>
-            logger.error(s"$name-search/$s-critical") *>
+            logger.warn(s"$name-search/$s-critical") *>
               F.sleep(3.second) *> refreshAccessToken *> sendSearchQuery(criteria, page)
           case Left(HttpError(_, status)) if status.isClientError =>
             logger.error(s"$name-search/$status-error") *>
