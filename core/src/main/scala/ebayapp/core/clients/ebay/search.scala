@@ -63,6 +63,7 @@ private[ebay] object search {
         "priceCurrency:GBP," +
         "itemLocationCountry:GB,"
 
+      // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot",
         "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)", "(memory|trading|post)( )?card", "stickers",
@@ -98,14 +99,19 @@ private[ebay] object search {
         "fallout(?s).* (ammo|damage|tesla|weapon|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",
         "fifa(?s).* (\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa(?s)",
         "borderlands(?s).* (artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
-        "elden ring(?s).*(rune|million|level)",
+        "elden ring(?s).*(rune|million|level)", "Pokemon Scarlet Violet",
         "\\bTBC\\b",
         "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "XBOX( )?360", "nintendo (ds|wii)",
       ).mkString("^.*?(?i)(", "|", ").*$").r
+      // format: on
 
       private val LISTING_DESCRIPTION_TRIGGER_WORDS = List(
-        "shared.*account", "playable worldwide", "will get ACCESS", "send.*instructions", "download code"
+        "shared.*account",
+        "playable worldwide",
+        "will get ACCESS",
+        "send.*instructions",
+        "download code"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       override val categoryId: Int = 139973

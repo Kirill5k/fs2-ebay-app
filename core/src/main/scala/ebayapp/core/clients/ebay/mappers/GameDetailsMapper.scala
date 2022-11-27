@@ -283,7 +283,7 @@ private[mappers] object GameDetailsMapper {
       str
         .replaceAll("&#\\d+;", "")
         .replaceAll("100%$", "")
-        .replaceAll("(?i)(\\bAND\\b|\\bA\\b(?!\\.)|\\bTHE\\b)", "")
+        .replaceAll("(?i)(\\bAND\\b| \\bA\\b(?!\\.)|\\bTHE\\b)", "")
         .replaceAll("£\\d+(\\.\\d+)?", "")
         .replaceAll("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]", " ")
         .replaceAll("[\uD83C-\uDBFF\uDC00-\uDFFF]", " ")

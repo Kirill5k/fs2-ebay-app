@@ -370,7 +370,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "Horizon Zero Dawn Forbidden West"                   -> "Horizon Forbidden West",
           "GTA 5 Xbox Series X / Xbox One"                     -> "Grand Theft Auto 5",
           "Switch-LEGO HARRY POTTER YEARS 1-7 GAME NEW"        -> "LEGO HARRY POTTER",
-          "F1 manager 22"                                      -> "F1 manager 2022"
+          "F1 manager 22"                                      -> "F1 manager 2022",
+          "L.A. Noire"                                         -> "LA Noire"
         )
       ) { (title, expected) =>
         val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map.empty))
