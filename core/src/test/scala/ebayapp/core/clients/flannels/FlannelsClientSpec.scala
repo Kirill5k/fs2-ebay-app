@@ -20,7 +20,7 @@ class FlannelsClientSpec extends SttpClientSpec {
 
   "FlannelsClient" should {
     "return stream of items based on provided search criteria" in {
-      val args = Map("categoryId" -> "FLAN_TMSTONEISLAND", "pathName" -> "%2Fstone-island%2Fmen", "sortOption" -> "discountvalue_desc")
+      val args = Map("categoryId" -> "FLAN_TMSTONEISLAND", "pathName" -> "/stone-island/men", "sortOption" -> "discountvalue_desc")
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
