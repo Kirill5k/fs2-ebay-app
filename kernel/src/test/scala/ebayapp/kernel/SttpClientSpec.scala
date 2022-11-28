@@ -15,7 +15,7 @@ import sttp.model.{Header, HeaderNames, MediaType, Method}
 import scala.concurrent.Future
 
 trait SttpClientSpec extends AsyncWordSpec with Matchers {
-  
+
   def backendStub: SttpBackendStub[IO, Any] =
     HttpClientFs2Backend.stub[IO]
 

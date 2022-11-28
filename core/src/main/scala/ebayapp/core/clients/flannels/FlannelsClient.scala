@@ -44,7 +44,6 @@ final private class LiveFlannelsClient[F[_]](
           }
           .map(flannelsClothingMapper.toDomain(criteria))
       }
-      .evalTap(ri => logger.info(ri.itemDetails.fullName.getOrElse("oh")))
 
   private def getItems(sc: SearchCriteria)(page: Int = 1): F[(List[FlannelsProduct], Option[Int])] =
     configProvider()
@@ -61,7 +60,7 @@ final private class LiveFlannelsClient[F[_]](
         )
         dispatchWithProxy(config.proxied) {
           emptyRequest
-            .contentType(MediaType.ApplicationJson)
+            .maxRedirects(0)
             .acceptEncoding(gzipDeflateEncoding)
             .header(Header.accept(MediaType.ApplicationJson, MediaType.TextJavascript))
             .header(Header.userAgent(operaUserAgent))
