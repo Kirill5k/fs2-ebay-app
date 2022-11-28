@@ -49,7 +49,7 @@ final private class LiveFlannelsClient[F[_]](
     configProvider()
       .flatMap { config =>
         val args = Map(
-          "categoryId" -> s"FLAN_TM${sc.query.capitalize.replaceAll("[ -]", "")}",
+          "categoryId" -> s"FLAN_TM${sc.query.toUpperCase.replaceAll("[ -]", "")}",
           "page" -> page.toString,
           "productsPerPage" -> "100",
           "sortOption" -> "discountvalue_desc",
