@@ -91,11 +91,10 @@ final private class LiveFlannelsClient[F[_]](
       }
 }
 
-object FlannelsClient {
+object FlannelsClient:
   def make[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFlannelsClient[F](() => configProvider.flannels, backend, proxyBackend))
-}

@@ -20,6 +20,7 @@ object MockConfigProvider {
       tessutiConfig: Option[GenericRetailerConfig] = None,
       nvidiaConfig: Option[GenericRetailerConfig] = None,
       scanConfig: Option[GenericRetailerConfig] = None,
+      flannelsConfig: Option[GenericRetailerConfig] = None,
       harveyNicholsConfig: Option[GenericRetailerConfig] = None,
       mainlineMenswearConfig: Option[GenericRetailerConfig] = None,
       stockMonitorConfigs: Map[Retailer, StockMonitorConfig] = Map.empty,
@@ -41,6 +42,7 @@ object MockConfigProvider {
     override def scan: F[GenericRetailerConfig]                   = fromOpt(scanConfig, "scan")
     override def harveyNichols: F[GenericRetailerConfig]          = fromOpt(harveyNicholsConfig, "harvey-nichols")
     override def mainlineMenswear: F[GenericRetailerConfig]       = fromOpt(mainlineMenswearConfig, "mainline-menswear")
+    override def flannels: F[GenericRetailerConfig]               = fromOpt(flannelsConfig, "flannels")
     override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = Stream(stockMonitorConfigs.get(retailer)).unNone
     override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = Stream(dealsFinderConfigs.get(retailer)).unNone
 }

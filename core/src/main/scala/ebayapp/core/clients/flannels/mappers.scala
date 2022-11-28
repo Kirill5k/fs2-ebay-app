@@ -20,7 +20,7 @@ private[flannels] object mappers {
 
     override def toDomain(foundWith: search.SearchCriteria)(item: FlannelsItem): ResellableItem =
       ResellableItem.clothing(
-        ItemDetails.Clothing(s"${item.product.imageAltText} (${item.product.colour})", item.product.brand, item.size),
+        ItemDetails.Clothing(s"${item.product.name} (${item.product.colour})", item.product.brand, item.size),
         ListingDetails(
           s"https://flannels.com${item.product.url}",
           item.product.imageAltText,
