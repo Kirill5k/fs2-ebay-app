@@ -14,6 +14,7 @@ enum Retailer(val name: String):
   case Scan             extends Retailer("scan")
   case HarveyNichols    extends Retailer("harvey-nichols")
   case MainlineMenswear extends Retailer("mainline-menswear")
+  case Flannels         extends Retailer("flannels")
 
 object Retailer:
   def from(name: String): Either[AppError, Retailer] =

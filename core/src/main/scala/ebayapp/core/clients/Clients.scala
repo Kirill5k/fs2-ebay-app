@@ -5,6 +5,7 @@ import cats.syntax.apply.*
 import ebayapp.core.clients.argos.ArgosClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
+import ebayapp.core.clients.flannels.FlannelsClient
 import ebayapp.core.clients.harveynichols.HarveyNicholsClient
 import ebayapp.core.clients.jdsports.JdsportsClient
 import ebayapp.core.clients.mainlinemenswear.MainlineMenswearClient
@@ -15,6 +16,7 @@ import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.common.{ConfigProvider, Logger, Resources}
 import ebayapp.core.common.config.AppConfig
 import ebayapp.core.domain.Retailer
+import ebayapp.core.domain.Retailer.Flannels
 
 trait Clients[F[_]]:
   def cex: CexClient[F]
@@ -38,8 +40,9 @@ object Clients:
       NvidiaClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       ScanClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
-      MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-    ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC, mmC) =>
+      MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      FlannelsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
+    ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC, mmC, flC) =>
       new Clients[F] {
         def cex: CexClient[F]             = cexC
         def messenger: MessengerClient[F] = telC
@@ -56,5 +59,6 @@ object Clients:
             case Retailer.Scan             => scanC
             case Retailer.HarveyNichols    => harNichC
             case Retailer.MainlineMenswear => mmC
+            case Retailer.Flannels         => flC
       }
     }

@@ -30,6 +30,7 @@ trait ConfigProvider[F[_]]:
   def scan: F[GenericRetailerConfig]
   def harveyNichols: F[GenericRetailerConfig]
   def mainlineMenswear: F[GenericRetailerConfig]
+  def flannels: F[GenericRetailerConfig]
   def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig]
   def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]
 
@@ -52,6 +53,7 @@ final private class LiveConfigProvider[F[_]](
   override def scan: F[GenericRetailerConfig]                                  = config.map(_.retailer.scan)
   override def harveyNichols: F[GenericRetailerConfig]                         = config.map(_.retailer.harveyNichols)
   override def mainlineMenswear: F[GenericRetailerConfig]                      = config.map(_.retailer.mainlineMenswear)
+  override def flannels: F[GenericRetailerConfig]                              = config.map(_.retailer.flannels)
   override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = streamUpdates(config.map(_.stockMonitor.get(retailer)))
   override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = streamUpdates(config.map(_.dealsFinder.get(retailer)))
 

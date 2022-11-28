@@ -72,7 +72,8 @@ object config {
       mainlineMenswear: GenericRetailerConfig,
       nvidia: GenericRetailerConfig,
       scan: GenericRetailerConfig,
-      cex: GenericRetailerConfig
+      cex: GenericRetailerConfig,
+      flannels: GenericRetailerConfig
   ) derives ConfigReader
 
   final case class DealsFinderConfig(
