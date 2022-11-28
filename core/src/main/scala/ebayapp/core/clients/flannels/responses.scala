@@ -17,7 +17,7 @@ private[flannels] object responses {
       imageAltText: String,
   ) derives Codec.AsObject:
     def isOnSale: Boolean = discountPercentage.exists(_ > 5) && sizes.nonEmpty
-    def colour: String = colourName.replaceFirst(" V\\d+", "")
+    def colour: String = colourName.replaceFirst(" V[ 0-9]+", "")
 
   final case class FlannelsSearchResponse(products: List[FlannelsProduct]) derives Codec.AsObject
 }
