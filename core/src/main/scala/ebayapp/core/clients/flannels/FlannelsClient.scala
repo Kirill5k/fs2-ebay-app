@@ -44,6 +44,7 @@ final private class LiveFlannelsClient[F[_]](
           }
           .map(flannelsClothingMapper.toDomain(criteria))
       }
+      .evalTap(ri => logger.info(ri.itemDetails.fullName.getOrElse("oh")))
 
   private def getItems(sc: SearchCriteria)(page: Int = 1): F[(List[FlannelsProduct], Option[Int])] =
     configProvider()
@@ -55,7 +56,7 @@ final private class LiveFlannelsClient[F[_]](
           "sortOption" -> "discountvalue_desc",
           "isSearch" -> "false",
           "clearFilters" -> "false",
-          "pathName" -> s"%2F${sc.query.replaceAll(" ", "-")}${sc.category.fold("")(c => s"%2F$c")}",
+          "pathName" -> s"/${sc.query.replaceAll(" ", "-")}${sc.category.fold("")(c => s"/$c")}",
           "selectedCurrency" -> "GBP"
         )
         dispatchWithProxy(config.proxied) {
@@ -86,7 +87,7 @@ final private class LiveFlannelsClient[F[_]](
             logger.error(s"$name-search/$s-critical") >>
               F.sleep(10.second) >> getItems(sc)(page)
           case Left(error) =>
-            logger.error(s"$name-search/error-${r.code.code}: ${error.getMessage}") >>
+            logger.warn(s"$name-search/error-${r.code.code}: ${error.getMessage}") >>
               F.sleep(5.second) >> getItems(sc)(page)
       }
 }
