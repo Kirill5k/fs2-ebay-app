@@ -23,24 +23,22 @@ class FlannelsClientSpec extends SttpClientSpec {
       val args = Map("categoryId" -> "FLAN_TMSTONEISLAND", "pathName" -> "%2Fstone-island%2Fmen", "sortOption" -> "discountvalue_desc")
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) =>
-            Response.ok(json("flannels/search-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) =>
-            Response.ok(json("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) =>
-            Response.ok(json("flannels/search-page3.json"))
-          case r => throw new RuntimeException(r.uri.toString)
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-page3.json"))
+          case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
-      val client = FlannelsClient.make[IO](config, testingBackend)
+      FlannelsClient
+        .make[IO](config, testingBackend)
+        .flatMap(_.search(sc).compile.toList)
+        .asserting { items =>
+          items must have size 17
+          val item = items.head
 
-      client.flatMap(_.search(sc).compile.toList).asserting { items =>
-        items must have size 17
-        val item = items.head
-
-        item.itemDetails mustBe Clothing("Garment Dyed Leather Gilet (Olive)", "STONE ISLAND", "M")
-        item.buyPrice mustBe BuyPrice(1, 899.00, Some(69))
-      }
+          item.itemDetails mustBe Clothing("Garment Dyed Leather Gilet (Olive)", "STONE ISLAND", "M")
+          item.buyPrice mustBe BuyPrice(1, 899.00, Some(69))
+        }
     }
   }
 }
