@@ -5,6 +5,7 @@ import cats.effect.unsafe.IORuntime
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
+import org.typelevel.log4cats.Logger
 import sttp.client3
 import sttp.client3.*
 import sttp.client3.httpclient.fs2.HttpClientFs2Backend
@@ -14,7 +15,7 @@ import sttp.model.{Header, HeaderNames, MediaType, Method}
 import scala.concurrent.Future
 
 trait SttpClientSpec extends AsyncWordSpec with Matchers {
-
+  
   def backendStub: SttpBackendStub[IO, Any] =
     HttpClientFs2Backend.stub[IO]
 

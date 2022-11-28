@@ -1,0 +1,571 @@
+{
+  "products": [],
+  "filters": [
+    {
+      "key": "ABRA",
+      "title": "Designers",
+      "isActive": false,
+      "filters": [
+        {
+          "group": "ABRA",
+          "key": "Stone Island",
+          "label": "Stone Island",
+          "active": false,
+          "count": 398
+        }
+      ],
+      "isCollapsedByDefault": false,
+      "type": "DEINDEXED",
+      "urlOrder": 1
+    },
+    {
+      "key": "AFLOR",
+      "title": "Gender",
+      "isActive": false,
+      "filters": [
+        {
+          "group": "AFLOR",
+          "key": "Mens",
+          "label": "Mens",
+          "active": false,
+          "count": 398
+        }
+      ],
+      "isCollapsedByDefault": false,
+      "type": "DEINDEXED",
+      "urlOrder": 2
+    },
+    {
+      "key": "1147_726918",
+      "title": "Product Type",
+      "isActive": false,
+      "filters": [
+        {
+          "group": "1147_726918",
+          "key": "Coats and Jackets",
+          "label": "Coats and Jackets",
+          "active": false,
+          "count": 141
+        },
+        {
+          "group": "1147_726918",
+          "key": "Hoodies and Sweatshirts",
+          "label": "Hoodies and Sweatshirts",
+          "active": false,
+          "count": 93
+        },
+        {
+          "group": "1147_726918",
+          "key": "Tops and T-Shirts",
+          "label": "Tops and T-Shirts",
+          "active": false,
+          "count": 66
+        },
+        {
+          "group": "1147_726918",
+          "key": "Trousers",
+          "label": "Trousers",
+          "active": false,
+          "count": 44
+        },
+        {
+          "group": "1147_726918",
+          "key": "Knitwear",
+          "label": "Knitwear",
+          "active": false,
+          "count": 17
+        },
+        {
+          "group": "1147_726918",
+          "key": "Trainers",
+          "label": "Trainers",
+          "active": false,
+          "count": 10
+        },
+        {
+          "group": "1147_726918",
+          "key": "Shorts",
+          "label": "Shorts",
+          "active": false,
+          "count": 7
+        },
+        {
+          "group": "1147_726918",
+          "key": "Shirts",
+          "label": "Shirts",
+          "active": false,
+          "count": 5
+        },
+        {
+          "group": "1147_726918",
+          "key": "Swimwear",
+          "label": "Swimwear",
+          "active": false,
+          "count": 4
+        },
+        {
+          "group": "1147_726918",
+          "key": "Hats and Caps",
+          "label": "Hats and Caps",
+          "active": false,
+          "count": 4
+        },
+        {
+          "group": "1147_726918",
+          "key": "Bags",
+          "label": "Bags",
+          "active": false,
+          "count": 2
+        },
+        {
+          "group": "1147_726918",
+          "key": "Belts",
+          "label": "Belts",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "1147_726918",
+          "key": "Gloves",
+          "label": "Gloves",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "1147_726918",
+          "key": "Handbag Accessories",
+          "label": "Handbag Accessories",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "1147_726918",
+          "key": "Handbags",
+          "label": "Handbags",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "1147_726918",
+          "key": "Scarves",
+          "label": "Scarves",
+          "active": false,
+          "count": 1
+        }
+      ],
+      "isCollapsedByDefault": false,
+      "type": "DEINDEXED",
+      "urlOrder": 3
+    },
+    {
+      "key": "ACOL",
+      "title": "Colour",
+      "isActive": false,
+      "filters": [
+        {
+          "group": "ACOL",
+          "key": "Beige",
+          "label": "Beige",
+          "active": false,
+          "count": 6
+        },
+        {
+          "group": "ACOL",
+          "key": "Black",
+          "label": "Black",
+          "active": false,
+          "count": 85
+        },
+        {
+          "group": "ACOL",
+          "key": "Blue",
+          "label": "Blue",
+          "active": false,
+          "count": 90
+        },
+        {
+          "group": "ACOL",
+          "key": "Brown",
+          "label": "Brown",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "ACOL",
+          "key": "Cream",
+          "label": "Cream",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "ACOL",
+          "key": "Green",
+          "label": "Green",
+          "active": false,
+          "count": 42
+        },
+        {
+          "group": "ACOL",
+          "key": "Grey",
+          "label": "Grey",
+          "active": false,
+          "count": 53
+        },
+        {
+          "group": "ACOL",
+          "key": "Multi",
+          "label": "Multi",
+          "active": false,
+          "count": 7
+        },
+        {
+          "group": "ACOL",
+          "key": "Orange",
+          "label": "Orange",
+          "active": false,
+          "count": 7
+        },
+        {
+          "group": "ACOL",
+          "key": "Pink",
+          "label": "Pink",
+          "active": false,
+          "count": 49
+        },
+        {
+          "group": "ACOL",
+          "key": "Purple",
+          "label": "Purple",
+          "active": false,
+          "count": 4
+        },
+        {
+          "group": "ACOL",
+          "key": "Red",
+          "label": "Red",
+          "active": false,
+          "count": 6
+        },
+        {
+          "group": "ACOL",
+          "key": "White",
+          "label": "White",
+          "active": false,
+          "count": 34
+        },
+        {
+          "group": "ACOL",
+          "key": "Yellow",
+          "label": "Yellow",
+          "active": false,
+          "count": 13
+        }
+      ],
+      "isCollapsedByDefault": false,
+      "type": "DEINDEXED",
+      "urlOrder": 4
+    },
+    {
+      "key": "46262",
+      "title": "Size",
+      "isActive": false,
+      "filters": [
+        {
+          "group": "46262",
+          "key": "5",
+          "label": "5",
+          "active": false,
+          "count": 6
+        },
+        {
+          "group": "46262",
+          "key": "6",
+          "label": "6",
+          "active": false,
+          "count": 6
+        },
+        {
+          "group": "46262",
+          "key": "6.5",
+          "label": "6.5",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "46262",
+          "key": "10",
+          "label": "10",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "46262",
+          "key": "2XS",
+          "label": "2XS",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "46262",
+          "key": "XS",
+          "label": "XS",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "46262",
+          "key": "S",
+          "label": "S",
+          "active": false,
+          "count": 307
+        },
+        {
+          "group": "46262",
+          "key": "M",
+          "label": "M",
+          "active": false,
+          "count": 262
+        },
+        {
+          "group": "46262",
+          "key": "L",
+          "label": "L",
+          "active": false,
+          "count": 238
+        },
+        {
+          "group": "46262",
+          "key": "L-XL",
+          "label": "L-XL",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "46262",
+          "key": "XL",
+          "label": "XL",
+          "active": false,
+          "count": 191
+        },
+        {
+          "group": "46262",
+          "key": "2XL",
+          "label": "2XL",
+          "active": false,
+          "count": 151
+        },
+        {
+          "group": "46262",
+          "key": "3XL",
+          "label": "3XL",
+          "active": false,
+          "count": 85
+        },
+        {
+          "group": "46262",
+          "key": "28 R",
+          "label": "28 R",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "46262",
+          "key": "30 R",
+          "label": "30 R",
+          "active": false,
+          "count": 2
+        },
+        {
+          "group": "46262",
+          "key": "One Size",
+          "label": "One Size",
+          "active": false,
+          "count": 6
+        },
+        {
+          "group": "46262",
+          "key": "Mens",
+          "label": "Mens",
+          "active": false,
+          "count": 2
+        }
+      ],
+      "isCollapsedByDefault": false,
+      "type": "DEINDEXED",
+      "urlOrder": 5
+    },
+    {
+      "key": "APRI",
+      "title": "Price",
+      "isActive": false,
+      "filters": [
+        {
+          "group": "APRI",
+          "key": "£20 to £50",
+          "label": "20 to 50",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "APRI",
+          "key": "£50 to £100",
+          "label": "50 to 100",
+          "active": false,
+          "count": 4
+        },
+        {
+          "group": "APRI",
+          "key": "£100 to £250",
+          "label": "100 to 250",
+          "active": false,
+          "count": 142
+        },
+        {
+          "group": "APRI",
+          "key": "£250 to £500",
+          "label": "250 to 500",
+          "active": false,
+          "count": 161
+        },
+        {
+          "group": "APRI",
+          "key": "£500 to £1000",
+          "label": "500 to 1000",
+          "active": false,
+          "count": 71
+        },
+        {
+          "group": "APRI",
+          "key": "£1000+",
+          "label": "£1000+",
+          "active": false,
+          "count": 19
+        }
+      ],
+      "isCollapsedByDefault": false,
+      "type": "DEINDEXED",
+      "urlOrder": 6
+    },
+    {
+      "key": "RATING",
+      "title": "Avg. Customer Review",
+      "isActive": false,
+      "filters": [
+        {
+          "group": "RATING",
+          "key": "4+",
+          "label": "4+",
+          "active": false,
+          "count": 127
+        },
+        {
+          "group": "RATING",
+          "key": "1-2",
+          "label": "1-2",
+          "active": false,
+          "count": 4
+        },
+        {
+          "group": "RATING",
+          "key": "2-3",
+          "label": "2-3",
+          "active": false,
+          "count": 1
+        },
+        {
+          "group": "RATING",
+          "key": "3-4",
+          "label": "3-4",
+          "active": false,
+          "count": 1
+        }
+      ],
+      "isCollapsedByDefault": false,
+      "type": "DEINDEXED",
+      "urlOrder": 7
+    }
+  ],
+  "currnentPriceFilterLower": null,
+  "currentPriceFilterUpper": null,
+  "priceFilterMin": 50.00,
+  "priceFilterMax": 4830.00,
+  "availableSortOptions": [
+    "rank",
+    "recent",
+    "discountvalue_desc",
+    "discountpercent_desc",
+    "price_asc",
+    "price_desc",
+    "brand_asc",
+    "brand_desc"
+  ],
+  "currentSortOption": "discountvalue_desc",
+  "numberOfPages": 40,
+  "currentPage": 41,
+  "numberOfProducts": 398,
+  "relatedCategories": [],
+  "childCategories": [],
+  "showChildCategories": false,
+  "meta": {
+    "filterMetaKey": null,
+    "title": "Stone Island Men | Flannels",
+    "h1": "Men's Stone Island",
+    "h2": null,
+    "description": "Stamped with the iconic Stone Island compass badge, our range includes jackets, jumpers, tracksuits, T-shirts and sweatshirts that are built to perform. Shop online at Flannels.",
+    "copy": "<div class=\"catTemplate readMoreLessDesktopEnabled\">\r\n  <div class=\"topSection\">\r\n    <div class=\"textDesc\">\r\nCult Italian brand, <a href=\"/stone-island\">Stone Island</a> is the forefront of men's fashion, experimenting with the latest high-tech fabrics in sustainable designs. The best-selling urban-street style jackets are adored by sports fans, with outerwear designs featuring reflective and heat-responsive elements. Stamped with the iconic Stone Island compass badge, dive in this season with a range of uniquely dyed shorts and t-shirts, with everyday jumpers and jeans to save you on unpredictable chilly days.\r\n    </div>\r\n  </div>\r\n</div>\r\n<style>\r\n.flanProdList.flan20PLP .topheadbox {\r\n    background-image: url(\"/images/marketing/plp-banner-d.jpg\");\r\n}\r\n\r\n@media (max-width: 767px) {\r\n  .flanProdList.flan20PLP .topheadbox {\r\n    background-image: url(\"/images/marketing/plp-banner-m.jpg\");\r\n  }\r\n\r\n  .Browse #lblCategoryCopy {\r\n    display: block;\r\n  }\r\n}\r\n</style>",
+    "noIndex": false
+  },
+  "siteCoBrand": null,
+  "coBrandClass": null,
+  "paginationItems": [
+    {
+      "ellipsis": false,
+      "currentPage": false,
+      "previousButton": true,
+      "nextButton": false,
+      "previousPage": false,
+      "nextPage": false,
+      "pageNumber": 40,
+      "showQueryStringInHref": true,
+      "isRootPage": false
+    },
+    {
+      "ellipsis": false,
+      "currentPage": false,
+      "previousButton": false,
+      "nextButton": false,
+      "previousPage": true,
+      "nextPage": false,
+      "pageNumber": 1,
+      "showQueryStringInHref": true,
+      "isRootPage": true
+    },
+    {
+      "ellipsis": true,
+      "currentPage": false,
+      "previousButton": false,
+      "nextButton": false,
+      "previousPage": false,
+      "nextPage": false,
+      "pageNumber": 1,
+      "showQueryStringInHref": true,
+      "isRootPage": true
+    },
+    {
+      "ellipsis": false,
+      "currentPage": false,
+      "previousButton": false,
+      "nextButton": false,
+      "previousPage": true,
+      "nextPage": false,
+      "pageNumber": 40,
+      "showQueryStringInHref": true,
+      "isRootPage": false
+    }
+  ],
+  "showFinance": false,
+  "headerHtml": null,
+  "headerReference": null,
+  "searchIndex": null,
+  "searchQueryId": null
+}
