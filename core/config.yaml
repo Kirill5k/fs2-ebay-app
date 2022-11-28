@@ -135,6 +135,13 @@ data:
           "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
         }
       }
+    
+      flannels {
+        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        headers: {
+          "X-Reroute-To": "https://www.flannels.com"
+        }
+      }
     }
 
     stock-monitor {
@@ -218,6 +225,16 @@ data:
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"]}
+      }
+    
+      flannels {
+        delay-between-requests: 30s
+        monitoring-frequency: 6m
+        monitoring-requests: [
+          {search-criteria: {query: "stone-island", category: men}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "kenzo", category: men}, monitor-stock-change: false, monitor-price-change: true}
+        ]
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 30}
       }
 
       harvey-nichols {
