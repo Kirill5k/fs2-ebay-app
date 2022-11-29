@@ -106,14 +106,14 @@ final private class SimpleStockService[F[_]](
       }
 
   extension (config: StockMonitorConfig)
-    def filtersOrDefault: Filters                     = config.filters.getOrElse(Filters())
-    def delayBetweenRequestsOrDefault: FiniteDuration = config.delayBetweenRequests.getOrElse(Duration.Zero)
+    private def filtersOrDefault: Filters                     = config.filters.getOrElse(Filters())
+    private def delayBetweenRequestsOrDefault: FiniteDuration = config.delayBetweenRequests.getOrElse(Duration.Zero)
 
-  extension (sc: SearchCriteria) def filtersOrDefault: Filters = sc.filters.getOrElse(Filters())
+  extension (sc: SearchCriteria) private def filtersOrDefault: Filters = sc.filters.getOrElse(Filters())
 
   extension (item: ResellableItem)
-    def key: String = item.itemDetails.fullName.get
-    def isPostedAfter(otherItem: ResellableItem): Boolean =
+    private def key: String = s"${item.listingDetails.url}-${item.itemDetails.fullName.getOrElse("unknown")}"
+    private def isPostedAfter(otherItem: ResellableItem): Boolean =
       item.listingDetails.datePosted.isAfter(otherItem.listingDetails.datePosted)
 }
 
