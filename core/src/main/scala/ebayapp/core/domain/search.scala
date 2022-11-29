@@ -11,7 +11,8 @@ object search {
   final case class Filters(
       minDiscount: Option[Int] = None,
       exclude: Option[List[String]] = None,
-      include: Option[List[String]] = None
+      include: Option[List[String]] = None,
+      maxPrice: Option[BigDecimal] = None
   ) derives ConfigReader, Codec.AsObject {
     val excludeRegex: Option[String] = exclude.map(_.mkString("(?i).*(", "|", ").*"))
     val includeRegex: Option[String] = include.map(_.mkString("(?i).*(", "|", ").*"))
@@ -33,6 +34,7 @@ object search {
     def apply(ri: ResellableItem): Boolean = {
       val name = ri.itemDetails.fullName
       name.isDefined &&
+        maxPrice.fold(true)(max => ri.buyPrice.rrp < max) &&
         minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)) &&
         excludeRegex.fold(true)(filter => !name.get.matches(filter)) &&
         includeRegex.fold(true)(filter => name.get.matches(filter))
