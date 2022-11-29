@@ -232,7 +232,7 @@ data:
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "stone-island", category: men}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "kenzo", category: men, filters: {exclude: min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "kenzo", category: men, filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {exclude: ["size (((\\d)?x)?l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 30, max-price: 350}
       }
