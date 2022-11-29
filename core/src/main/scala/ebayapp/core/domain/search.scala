@@ -29,7 +29,7 @@ object search {
         minDiscount = mergeOptWith(minDiscount, anotherLimit.minDiscount, math.max),
         exclude = mergeOptWith(exclude, anotherLimit.exclude, _ ::: _),
         include = mergeOptWith(include, anotherLimit.include, _ ::: _),
-        maxPrice = mergeOptWith(maxPrice, anotherLimit.maxPrice, math.min)
+        maxPrice = mergeOptWith(maxPrice, anotherLimit.maxPrice, _.min(_))
       )
 
     def apply(ri: ResellableItem): Boolean = {
