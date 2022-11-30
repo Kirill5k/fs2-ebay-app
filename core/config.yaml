@@ -58,7 +58,7 @@ data:
       }
   
       selfridges {
-        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://request-follower.fly.dev"
         delay-between-individual-requests: 2s
         headers: {
           "api-key": ${?SELFRIDGES_API_KEY}
