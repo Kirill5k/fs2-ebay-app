@@ -67,8 +67,8 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
     // removes the word GAME
-    "((new|all) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|(limited|LTD) run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( (\\d+|in one))?( new)?",
-    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|puzzle|extreme sport(s)?|soccer|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike|driving) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( (for kids|series|film|racing|good|boxed|collection|console|of (year|olympic(s)?|movie)))?( 20\\d\\d)?",
+    "((new|all) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|(limited|LTD) run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( )?(\\d+|in one)?( new)?",
+    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|puzzle|extreme sport(s)?|soccer|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike|driving) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( )?(for kids|series|film|racing|good|box(ed)?|watch|collection|console|of (year|olympic(s)?|movie))?( 20\\d\\d)?",
     "real driving simulator",
     // removes the word USED
     "((barely|condition|never|hardly|dlc|only) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
@@ -89,7 +89,7 @@ private[mappers] object GameDetailsMapper {
     "\\bpegi( \\d+)?\\b(?s).*$",
     "((\\d+|ten)th|(10|20|ten))( year(s)?)? (anniversary|celebration)",
     "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b", "free gift",
-    "\\d \\d players", "1 ONE", "flash sale", "Fun Kids Play( Console)?", "with all extras",
+    "\\d \\d players", "1 ONE", "(flash|xmas|christmas) sale", "Fun Kids Play( Console)?", "with all extras",
     "deleted title", "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "ebays cheapest",
     "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)( )?(X|S)?\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
