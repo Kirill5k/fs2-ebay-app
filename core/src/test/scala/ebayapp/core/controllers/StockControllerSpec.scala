@@ -29,8 +29,8 @@ class StockControllerSpec extends ControllerSpec {
         val expectedResponse =
           s"""[
              |  {
-             |    "kind" : "clothing",
              |    "itemDetails" : {
+             |      "kind" : "clothing",
              |      "name" : "selfridges item",
              |      "brand" : "Foo-bar",
              |      "size" : "XXL"
@@ -57,8 +57,8 @@ class StockControllerSpec extends ControllerSpec {
              |    "foundWith" : "item"
              |  },
              |  {
-             |    "kind" : "clothing",
              |    "itemDetails" : {
+             |      "kind" : "clothing",
              |      "name" : "scotts item",
              |      "brand" : "Foo-bar",
              |      "size" : "XXL"
@@ -103,8 +103,8 @@ class StockControllerSpec extends ControllerSpec {
         val expectedResponse =
           s"""[
              |  {
-             |    "kind" : "clothing",
              |    "itemDetails" : {
+             |      "kind" : "clothing",
              |      "name" : "selfridges item",
              |      "brand" : "Foo-bar",
              |      "size" : "XXL"
@@ -169,8 +169,8 @@ class StockControllerSpec extends ControllerSpec {
         val expectedResponse =
           s"""[
              |  {
-             |    "kind" : "clothing",
              |    "itemDetails" : {
+             |      "kind" : "clothing",
              |      "name" : "scotts item",
              |      "brand" : "Foo-bar",
              |      "size" : "XXL"

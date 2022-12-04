@@ -40,8 +40,8 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val expected =
         """[{
-          |"kind": "video-game",
           |"itemDetails":{
+          |"kind": "video-game",
           |"name":"super mario 3",
           |"platform":"XBOX ONE",
           |"releaseYear":"2019",
@@ -68,8 +68,8 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |},
           |"foundWith" : "item"
           |},{
-          |"kind": "video-game",
           |"itemDetails":{
+          |"kind": "video-game",
           |"name":"Battlefield 1",
           |"platform":"XBOX ONE",
           |"releaseYear":"2019",
