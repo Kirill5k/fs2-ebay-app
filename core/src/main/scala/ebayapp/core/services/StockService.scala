@@ -7,6 +7,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
 import ebayapp.kernel.common.stream.*
+import ebayapp.kernel.common.option.*
 import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, Retailer}
@@ -93,8 +94,8 @@ final private class SimpleStockService[F[_]](
         case (None, currItem) =>
           cache.put(currItem.key, currItem).as(Some(ItemStockUpdates(currItem, List(StockUpdate.New))))
         case (Some(prevItem), currItem) if currItem.isPostedAfter(prevItem) =>
-          val upd1    = if req.monitorPriceChange then StockUpdate.priceChanged(prevItem.buyPrice, currItem.buyPrice).toList else Nil
-          val upd2    = if req.monitorStockChange then StockUpdate.quantityChanged(prevItem.buyPrice, currItem.buyPrice).toList else Nil
+          val upd1    = Option.flatWhen(req.monitorPriceChange)(StockUpdate.priceChanged(prevItem.buyPrice, currItem.buyPrice)).toList
+          val upd2    = Option.flatWhen(req.monitorStockChange)(StockUpdate.quantityChanged(prevItem.buyPrice, currItem.buyPrice)).toList
           val updates = upd1 ++ upd2
           cache.put(currItem.key, currItem).as(Option.when(updates.nonEmpty)(ItemStockUpdates(currItem, updates)))
         case _ =>

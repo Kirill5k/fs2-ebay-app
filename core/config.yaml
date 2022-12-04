@@ -115,17 +115,17 @@ data:
       }
   
       harvey-nichols {
-        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://request-follower.fly.dev"
         delay-between-individual-requests: 15s
         headers {
           "X-Reroute-To": "https://www.harveynichols.com"
           "X-Reload-On-403": "true"
-          "Accept": "application/json, text/javascript, */*; q=0.01"
+          "Accept": "application/json, text/javascript"
           "Cache-Control": "no-cache"
           "x-requested-with": "XMLHttpRequest"
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36 OPR/82.0.4227.33"
           "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8"
-          "Accept-Encoding": "gzip, deflate, br"
+          "Accept-Encoding": "gzip, deflate"
         }
       }
   
@@ -241,6 +241,7 @@ data:
         delay-between-requests: 2m
         monitoring-frequency: 12m
         monitoring-requests: [
+          {search-criteria: {query: "Moncler Maya navy quilted shell jacket"}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "gucci", filters: {min-discount: 24}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "off-white", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "boss", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}

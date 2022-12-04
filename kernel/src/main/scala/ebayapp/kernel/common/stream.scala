@@ -6,8 +6,7 @@ import org.typelevel.log4cats.Logger
 
 import scala.concurrent.duration.FiniteDuration
 
-object stream {
-
+object stream:
   extension (S: Stream.type)
     def logError[F[_]](error: Throwable)(message: String)(using logger: Logger[F]): Stream[F, Nothing] =
       S.eval(logger.error(error)(message)).drain
@@ -28,5 +27,3 @@ object stream {
           case (_, (_, _))    => None
         }
         .unNone
-
-}
