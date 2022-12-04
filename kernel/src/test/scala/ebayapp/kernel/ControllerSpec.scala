@@ -10,7 +10,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
 trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with MockitoMatchers {
-  
+
   def verifyJsonResponse(
       response: IO[Response[IO]],
       expectedStatus: Status,
@@ -32,4 +32,8 @@ trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with Mo
         }
       }
       .unsafeRunSync()(IORuntime.global)
+
+  extension (res: IO[Response[IO]])
+    def mustHaveStatus(expectedStatus: Status, expectedBody: Option[String] = None): Assertion =
+      verifyJsonResponse(res, expectedStatus, expectedBody)
 }

@@ -14,7 +14,7 @@ class ErrorsNotifierSpec extends IOWordSpec {
 
     "send alerts on critical errors" in {
       val services = servicesMock
-      when(services.notification.alert(any[Error])).thenReturn(IO.unit)
+      when(services.notification.alert(any[Error])).thenReturnUnit
 
       val res = Logger.make[IO].flatMap { implicit logger =>
         for
@@ -35,13 +35,13 @@ class ErrorsNotifierSpec extends IOWordSpec {
     "send termination signal on critical errors" in {
       val services = servicesMock
       val res = Logger.make[IO].flatMap { implicit logger =>
-        for {
+        for
           logger          <- Logger.make[IO]
           notifier        <- ErrorsNotifier.make[IO](services)
           notifierProcess <- notifier.run.interruptWhen(logger.awaitSigTerm).compile.drain.start
           _               <- logger.critical("omg, critical error")
           error           <- notifierProcess.join.attempt
-        } yield error
+        yield error
       }
 
       res.asserting { r =>

@@ -1,5 +1,6 @@
 package ebayapp.kernel.syntax
 
+import java.time.temporal.ChronoUnit
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.concurrent.duration.*
 import scala.util.Try
@@ -14,6 +15,7 @@ object time:
       Try(Instant.parse(localDate)).toEither
       
   extension (ts: Instant)
+    def truncatedToSeconds: Instant = ts.truncatedTo(ChronoUnit.SECONDS)
     def durationBetween(otherTs: Instant): FiniteDuration =
       math.abs(ts.toEpochMilli - otherTs.toEpochMilli).millis
 

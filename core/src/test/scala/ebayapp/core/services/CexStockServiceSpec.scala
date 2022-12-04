@@ -4,7 +4,7 @@ import cats.effect.IO
 import ebayapp.core.{IOWordSpec, MockConfigProvider}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
+import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder as Builder, Retailer}
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.Stream
@@ -15,24 +15,21 @@ import scala.concurrent.duration.*
 
 class CexStockServiceSpec extends IOWordSpec {
 
-  val req1               = StockMonitorRequest(SearchCriteria("macbook"), true, true)
-  val req2               = StockMonitorRequest(SearchCriteria("iphone"), true, true)
+  val req1 = StockMonitorRequest(SearchCriteria("macbook"), true, true)
+  val req2 = StockMonitorRequest(SearchCriteria("iphone"), true, true)
 
-  def config(req: StockMonitorRequest*)             = MockConfigProvider.make[IO](
-    stockMonitorConfigs = Map(Retailer.Cex -> StockMonitorConfig(1.seconds, req.toList))
-  )
+  def config(req: StockMonitorRequest*) =
+    MockConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Cex -> StockMonitorConfig(1.seconds, req.toList)))
 
-  val ts = Instant.now()
-
-  val mb1 =
-    ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0, datePosted = ts)
-  val mb2 = ResellableItemBuilder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B", datePosted = ts)
+  val ts  = Instant.now()
+  val mb1 = Builder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0, datePosted = ts)
+  val mb2 = Builder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B", datePosted = ts)
 
   "A GenericStatefulCexStockService" should {
 
     "monitor multiple requests concurrently" in {
       val client = mock[CexClient[IO]]
-      when(client.search(any[SearchCriteria])).thenReturn(Stream.empty)
+      when(client.search(any[SearchCriteria])).thenReturnEmptyStream
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1, req2), client)
@@ -54,8 +51,8 @@ class CexStockServiceSpec extends IOWordSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.empty)
-        .thenReturn(Stream.emit(mb1))
+        .thenReturnEmptyStream
+        .thenStream(mb1)
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1), client)
@@ -70,8 +67,8 @@ class CexStockServiceSpec extends IOWordSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(1, 1950.0), ts.minusSeconds(1))))
-        .thenReturn(Stream.emit(mb1))
+        .thenStream(mb1.withPrice(BuyPrice(1, 1950.0), ts.minusSeconds(1)))
+        .thenStream(mb1)
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1), client)
@@ -86,8 +83,8 @@ class CexStockServiceSpec extends IOWordSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(3, 1950.0), ts.minusSeconds(1))))
-        .thenReturn(Stream.emit(mb1))
+        .thenStream(mb1.withPrice(BuyPrice(3, 1950.0), ts.minusSeconds(1)))
+        .thenStream(mb1)
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1), client)
@@ -102,8 +99,8 @@ class CexStockServiceSpec extends IOWordSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(3, 1950.0), ts.minusSeconds(1))))
-        .thenReturn(Stream.emit(mb1))
+        .thenStream(mb1.withPrice(BuyPrice(3, 1950.0), ts.minusSeconds(1)))
+        .thenStream(mb1)
 
       val result = StockService
         .make[IO](Retailer.Cex, config((req1.copy(monitorStockChange = false))), client)
@@ -122,8 +119,8 @@ class CexStockServiceSpec extends IOWordSpec {
     "return price increase update if price increase" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 950.0), ts.minusSeconds(1))))
-        .thenReturn(Stream.emit(mb1))
+        .thenStream(mb1.withPrice(BuyPrice(2, 950.0), ts.minusSeconds(1)))
+        .thenStream(mb1)
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1), client)
@@ -137,8 +134,8 @@ class CexStockServiceSpec extends IOWordSpec {
     "return price drop update if price decrease" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 2950.0), ts.minusSeconds(1))))
-        .thenReturn(Stream.emit(mb1))
+        .thenStream(mb1.withPrice(BuyPrice(2, 2950.0), ts.minusSeconds(1)))
+        .thenStream(mb1)
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1), client)
@@ -152,10 +149,10 @@ class CexStockServiceSpec extends IOWordSpec {
     "return multiple price drop updates" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 4950.0), ts.minusSeconds(3))))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 3950.0), ts.minusSeconds(2))))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 2950.0), ts.minusSeconds(1))))
-        .thenReturn(Stream.emit(mb1))
+        .thenStream(mb1.withPrice(BuyPrice(2, 4950.0), ts.minusSeconds(3)))
+        .thenStream(mb1.withPrice(BuyPrice(2, 3950.0), ts.minusSeconds(2)))
+        .thenStream(mb1.withPrice(BuyPrice(2, 2950.0), ts.minusSeconds(1)))
+        .thenStream(mb1)
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1), client)
@@ -169,8 +166,8 @@ class CexStockServiceSpec extends IOWordSpec {
     "non return anything if monitor is disabled for price" in {
       val client = mock[CexClient[IO]]
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emit(mb1.withPrice(BuyPrice(2, 2950.0))))
-        .thenReturn(Stream.emit(mb1.withDatePosted(ts.minusSeconds(1))))
+        .thenStream(mb1.withPrice(BuyPrice(2, 2950.0)))
+        .thenStream(mb1.withDatePosted(ts.minusSeconds(1)))
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1.copy(monitorPriceChange = false, monitorStockChange = false)), client)
@@ -190,8 +187,8 @@ class CexStockServiceSpec extends IOWordSpec {
       val client = mock[CexClient[IO]]
 
       when(client.search(req1.searchCriteria))
-        .thenReturn(Stream.emits(List(mb1.withPrice(BuyPrice(3, 3000.0)), mb2.withPrice(BuyPrice(3, 3000.0)))))
-        .thenReturn(Stream.emits(List(mb1.withDatePosted(ts.plusSeconds(1)), mb2.withDatePosted(ts.plusSeconds(1)))))
+        .thenStream(mb1.withPrice(BuyPrice(3, 3000.0)), mb2.withPrice(BuyPrice(3, 3000.0)))
+        .thenStream(mb1.withDatePosted(ts.plusSeconds(1)), mb2.withDatePosted(ts.plusSeconds(1)))
 
       val result = StockService
         .make[IO](Retailer.Cex, config(req1), client)

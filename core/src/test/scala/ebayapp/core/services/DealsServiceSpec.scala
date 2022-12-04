@@ -27,20 +27,18 @@ class DealsServiceSpec extends IOWordSpec {
 
     "search ebay for new deals" in {
       val (searchClient, cexClient, repo) = mockDependecies
-
-      when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.emits(List(game1, game2)))
-
+      when(searchClient.search(any[SearchCriteria])).thenStream(game1, game2)
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
-      when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
+      when(repo.save(any[ResellableItem])).thenReturnUnit
 
       doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
-      val result = for {
+      val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
-      } yield items
+      yield items
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
@@ -56,14 +54,13 @@ class DealsServiceSpec extends IOWordSpec {
 
     "ignore items that are not new" in {
       val (searchClient, cexClient, repo) = mockDependecies
-
-      when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.emits(List(game1, game2)))
+      when(searchClient.search(any[SearchCriteria])).thenStream(game1, game2)
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
-      val result = for {
+      val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
-      } yield items
+      yield items
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
@@ -78,19 +75,18 @@ class DealsServiceSpec extends IOWordSpec {
     "ignore items that have too much quantity" in {
       val (searchClient, cexClient, repo) = mockDependecies
 
-      when(searchClient.search(any[SearchCriteria]))
-        .thenReturn(Stream.emits(List(game1, game2).map(_.copy(buyPrice = BuyPrice(100, BigDecimal(10))))))
+      when(searchClient.search(any[SearchCriteria])).thenStream(List(game1, game2).map(_.copy(buyPrice = BuyPrice(100, BigDecimal(10)))))
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
-      when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
+      when(repo.save(any[ResellableItem])).thenReturnUnit
 
       doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
-      val result = for {
+      val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
-      } yield items
+      yield items
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
@@ -105,18 +101,18 @@ class DealsServiceSpec extends IOWordSpec {
     "ignore items without resell price" in {
       val (searchClient, cexClient, repo) = mockDependecies
 
-      when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.emits(List(game1, game2)))
+      when(searchClient.search(any[SearchCriteria])).thenStream(game1, game2)
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
-      when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
+      when(repo.save(any[ResellableItem])).thenReturnUnit
 
       doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1)))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
-      val result = for {
+      val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
-      } yield items
+      yield items
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
@@ -133,18 +129,18 @@ class DealsServiceSpec extends IOWordSpec {
     "ignore items that are not profitable" in {
       val (searchClient, cexClient, repo) = mockDependecies
 
-      when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.emits(List(game1, game2)))
+      when(searchClient.search(any[SearchCriteria])).thenStream(game1, game2)
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
-      when(repo.save(any[ResellableItem])).thenReturn(IO.unit)
+      when(repo.save(any[ResellableItem])).thenReturnUnit
 
       doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
         .when(cexClient)
         .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
 
-      val result = for {
+      val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(1.seconds).compile.toList
-      } yield items
+      yield items
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
@@ -160,9 +156,9 @@ class DealsServiceSpec extends IOWordSpec {
     "process multiple requests in parallel continuously" in {
       val (searchClient, cexClient, repo) = mockDependecies
 
-      when(searchClient.search(any[SearchCriteria])).thenReturn(Stream.empty)
+      when(searchClient.search(any[SearchCriteria])).thenReturnEmptyStream
 
-      val result = for {
+      val result = for
         service <- DealsService.make(
           Retailer.Ebay,
           config(DealsFinderConfig(2.seconds, List(request1, request2))),
@@ -171,7 +167,7 @@ class DealsServiceSpec extends IOWordSpec {
           repo
         )
         items <- service.newDeals.interruptAfter(5.seconds).compile.toList
-      } yield items
+      yield items
 
       result.asserting { items =>
         verify(searchClient, times(3)).search(request1.searchCriteria)
@@ -183,17 +179,13 @@ class DealsServiceSpec extends IOWordSpec {
 
     "handle errors gracefully" in {
       val (searchClient, cexClient, repo) = mockDependecies
-
-      when(searchClient.search(any[SearchCriteria]))
-        .thenReturn(Stream.raiseError[IO](new RuntimeException("foo")))
-        .thenReturn(Stream.emit(game1))
-
+      when(searchClient.search(any[SearchCriteria])).thenFailStream(new RuntimeException("foo")).thenStream(game1)
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(true))
 
-      val result = for {
+      val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
         items   <- service.newDeals.interruptAfter(3.seconds).compile.toList
-      } yield items
+      yield items
 
       result.asserting { items =>
         verify(searchClient, times(2)).search(request1.searchCriteria)

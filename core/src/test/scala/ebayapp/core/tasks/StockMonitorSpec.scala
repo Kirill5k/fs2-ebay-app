@@ -17,15 +17,15 @@ class StockMonitorSpec extends IOWordSpec {
     "get stock updates from various outlets" in {
       val services = servicesMock
 
-      when(services.stock.head.stockUpdates).thenReturn(Stream.empty)
+      when(services.stock.head.stockUpdates).thenReturnEmptyStream
       when(services.stock.drop(1).head.stockUpdates).thenReturn(Stream.sleep[IO](2.hours).drain)
-      when(services.stock.drop(2).head.stockUpdates).thenReturn(Stream.emit(updateClothing))
-      when(services.notification.stockUpdate(any[ResellableItem], any[StockUpdate])).thenReturn(IO.unit)
+      when(services.stock.drop(2).head.stockUpdates).thenStream(updateClothing)
+      when(services.notification.stockUpdate(any[ResellableItem], any[StockUpdate])).thenReturnUnit
 
-      val result = for {
+      val result = for
         stockMonitor <- StockMonitor.make[IO](services)
         _            <- stockMonitor.run.interruptAfter(2.seconds).compile.drain
-      } yield ()
+      yield ()
 
       result.asserting { res =>
         verify(services.stock.head).stockUpdates

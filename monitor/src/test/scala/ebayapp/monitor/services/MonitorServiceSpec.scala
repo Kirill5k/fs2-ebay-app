@@ -29,7 +29,7 @@ class MonitorServiceSpec extends IOWordSpec {
 
     "update monitor" in {
       val (dispatcher, repo) = mocks
-      when(repo.update(any[Monitor])).thenReturn(IO.unit)
+      when(repo.update(any[Monitor])).thenReturnUnit
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)
@@ -61,7 +61,7 @@ class MonitorServiceSpec extends IOWordSpec {
 
     "delete monitor by id" in {
       val (dispatcher, repo) = mocks
-      when(repo.delete(any[Monitor.Id])).thenReturn(IO.unit)
+      when(repo.delete(any[Monitor.Id])).thenReturnUnit
 
       val result = for
         svc <- MonitorService.make[IO](dispatcher, repo)
@@ -94,7 +94,7 @@ class MonitorServiceSpec extends IOWordSpec {
 
     "activate monitor" in {
       val (dispatcher, repo) = mocks
-      when(repo.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.unit)
+      when(repo.activate(any[Monitor.Id], any[Boolean])).thenReturnUnit
 
       val res = for
         svc <- MonitorService.make[IO](dispatcher, repo)

@@ -16,7 +16,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
     "DELETE /monitors/:id" should {
       "delete a monitor and return 204" in {
         val (monSvc, meSvc) = mocks
-        when(monSvc.delete(any[Monitor.Id])).thenReturn(IO.unit)
+        when(monSvc.delete(any[Monitor.Id])).thenReturnUnit
 
         val controller = new LiveMonitorController[IO](monSvc, meSvc)
 
@@ -44,7 +44,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
       "activate monitor and return 204" in {
         val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
-        when(monSvc.update(any[Monitor])).thenReturn(IO.unit)
+        when(monSvc.update(any[Monitor])).thenReturnUnit
 
         val controller = new LiveMonitorController[IO](monSvc, meSvc)
 
@@ -112,7 +112,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
       "activate monitor and return 204" in {
         val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
-        when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.unit)
+        when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturnUnit
 
         val controller = new LiveMonitorController[IO](monSvc, meSvc)
 

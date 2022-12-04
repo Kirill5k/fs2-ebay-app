@@ -30,7 +30,16 @@ final case class ResellableItem(
     buyPrice: BuyPrice,
     sellPrice: Option[SellPrice],
     foundWith: SearchCriteria
-)
+) {
+  def summary: ItemSummary =
+    ItemSummary(
+      itemDetails.fullName,
+      listingDetails.title,
+      listingDetails.url,
+      buyPrice.rrp,
+      sellPrice.map(_.credit)
+    )
+}
 
 object ResellableItem {
   def generic(

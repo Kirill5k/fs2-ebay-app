@@ -23,7 +23,7 @@ class StockControllerSpec extends ControllerSpec {
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request = Request[IO](uri = uri"/stock", method = Method.GET)
+        val request  = Request[IO](uri = uri"/stock", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
         val expectedResponse =
@@ -86,10 +86,8 @@ class StockControllerSpec extends ControllerSpec {
              |  }
              |]""".stripMargin
 
-        verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
-        services.foreach { (_, svc) =>
-          verify(svc).cachedItems
-        }
+        response mustHaveStatus (Status.Ok, Some(expectedResponse))
+        services.foreach((_, svc) => verify(svc).cachedItems)
       }
 
       "filter items by query" in {
@@ -97,7 +95,7 @@ class StockControllerSpec extends ControllerSpec {
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request = Request[IO](uri = uri"/stock?query=selfridges", method = Method.GET)
+        val request  = Request[IO](uri = uri"/stock?query=selfridges", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
         val expectedResponse =
@@ -132,10 +130,8 @@ class StockControllerSpec extends ControllerSpec {
              |  }
              |]""".stripMargin
 
-        verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
-        services.foreach { (_, svc) =>
-          verify(svc).cachedItems
-        }
+        response mustHaveStatus (Status.Ok, Some(expectedResponse))
+        services.foreach((_, svc) => verify(svc).cachedItems)
       }
     }
 
@@ -143,19 +139,19 @@ class StockControllerSpec extends ControllerSpec {
       "return error when provided unrecognised retailer" in {
         val controller = new StockController[IO](Nil)
 
-        val request = Request[IO](uri = uri"/stock/foo", method = Method.GET)
+        val request  = Request[IO](uri = uri"/stock/foo", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
-        verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"unrecognized retailer foo"}"""))
+        response mustHaveStatus (Status.UnprocessableEntity, Some("""{"message":"unrecognized retailer foo"}"""))
       }
 
       "return error when retailer is not monitored" in {
         val controller = new StockController[IO](Nil)
 
-        val request = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
+        val request  = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
-        verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"Scotts is not being monitored"}"""))
+        response mustHaveStatus (Status.UnprocessableEntity, Some("""{"message":"Scotts is not being monitored"}"""))
       }
 
       "return items for a specific retailer" in {
@@ -163,7 +159,7 @@ class StockControllerSpec extends ControllerSpec {
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
+        val request  = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
         val expectedResponse =
@@ -198,7 +194,7 @@ class StockControllerSpec extends ControllerSpec {
              |  }
              |]""".stripMargin
 
-        verifyJsonResponse(response, Status.Ok, Some(expectedResponse))
+        response mustHaveStatus (Status.Ok, Some(expectedResponse))
         verify(services(Retailer.Scotts)).retailer
         verify(services(Retailer.Scotts)).cachedItems
         verify(services(Retailer.Selfridges), Mockito.never()).cachedItems
@@ -211,10 +207,10 @@ class StockControllerSpec extends ControllerSpec {
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request = Request[IO](uri = uri"/stock/scotts/pause", method = Method.PUT)
+        val request  = Request[IO](uri = uri"/stock/scotts/pause", method = Method.PUT)
         val response = controller.routes.orNotFound.run(request)
 
-        verifyJsonResponse(response, Status.NoContent, None)
+        response mustHaveStatus (Status.NoContent, None)
         verify(services(Retailer.Scotts)).pause
         verify(services(Retailer.Scotts)).retailer
         verifyNoMoreInteractions(services(Retailer.Scotts))
@@ -228,10 +224,10 @@ class StockControllerSpec extends ControllerSpec {
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request = Request[IO](uri = uri"/stock/scotts/resume", method = Method.PUT)
+        val request  = Request[IO](uri = uri"/stock/scotts/resume", method = Method.PUT)
         val response = controller.routes.orNotFound.run(request)
 
-        verifyJsonResponse(response, Status.NoContent, None)
+        response mustHaveStatus (Status.NoContent, None)
         verify(services(Retailer.Scotts)).resume
         verify(services(Retailer.Scotts)).retailer
         verifyNoMoreInteractions(services(Retailer.Scotts))
@@ -242,12 +238,12 @@ class StockControllerSpec extends ControllerSpec {
 
   def mocks(retailers: Retailer*): Map[Retailer, StockService[IO]] =
     retailers.map { r =>
-      val svc = mock[StockService[IO]]
+      val svc  = mock[StockService[IO]]
       val item = ResellableItemBuilder.clothing(s"${r.name} item", retailer = r, datePosted = ts)
       when(svc.retailer).thenReturn(r)
-      when(svc.pause).thenReturn(IO.unit)
-      when(svc.resume).thenReturn(IO.unit)
-      when(svc.cachedItems).thenReturn(IO.pure(List(item)))
+      when(svc.pause).thenReturnUnit
+      when(svc.resume).thenReturnUnit
+      when(svc.cachedItems).thenReturnIO(List(item))
       r -> svc
     }.toMap
 }

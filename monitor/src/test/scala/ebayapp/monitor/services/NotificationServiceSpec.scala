@@ -19,7 +19,7 @@ class NotificationServiceSpec extends IOWordSpec {
   "A NotificationService" should {
     "email monitor is UP notification" in {
       val emailClient = mock[EmailClient[IO]]
-      when(emailClient.send(any[EmailMessage])).thenReturn(IO.unit)
+      when(emailClient.send(any[EmailMessage])).thenReturnUnit
 
       val result = for
         svc <- NotificationService.make[IO](emailClient)
@@ -37,7 +37,7 @@ class NotificationServiceSpec extends IOWordSpec {
 
     "email monitor is DOWN notification" in {
       val emailClient = mock[EmailClient[IO]]
-      when(emailClient.send(any[EmailMessage])).thenReturn(IO.unit)
+      when(emailClient.send(any[EmailMessage])).thenReturnUnit
 
       val result = for
         svc <- NotificationService.make[IO](emailClient)

@@ -19,11 +19,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
   val game2 = ResellableItemBuilder.videoGame("Battlefield 1", postedTs, sellPrice = None)
   val game3 = ResellableItemBuilder.videoGame("Battlefield 1", postedTs, sellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5))))
 
-  val summaries = List(
-    ItemSummary(game1.itemDetails.fullName, game1.listingDetails.title, game1.listingDetails.url, game1.buyPrice.rrp, game1.sellPrice.map(_.credit)),
-    ItemSummary(game2.itemDetails.fullName, game2.listingDetails.title, game2.listingDetails.url, game2.buyPrice.rrp, game2.sellPrice.map(_.credit)),
-    ItemSummary(game3.itemDetails.fullName, game3.listingDetails.title, game3.listingDetails.url, game3.buyPrice.rrp, game3.sellPrice.map(_.credit))
-  )
+  val summaries = List(game1, game2, game3).map(_.summary)
 
   val searchFilters = SearchParams(ItemKind.VideoGame, None, None, None)
 
@@ -31,7 +27,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "return list of video games" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[SearchParams])).thenReturn(IO.pure(List(game1, game2)))
+      when(service.search(any[SearchParams])).thenReturnIO(List(game1, game2))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -96,13 +92,13 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |},
           |"foundWith" : "item"
           |}]""".stripMargin
-      verifyJsonResponse(response, Status.Ok, Some(expected))
+      response mustHaveStatus (Status.Ok, Some(expected))
       verify(service).search(searchFilters)
     }
 
     "return summary of video games" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.summaries(any[SearchParams])).thenReturn(IO.pure(summaries))
+      when(service.summaries(any[SearchParams])).thenReturnIO(summaries)
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
@@ -116,20 +112,20 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |"profitable":{"total":1,"items":[{"name":"super mario 3 XBOX ONE","title":"super mario 3","url":"https://www.ebay.co.uk/itm/super-mario-3","buyPrice":32.99,"exchangePrice":80}]},
           |"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":5}]}
           |}""".stripMargin
-      verifyJsonResponse(response, Status.Ok, Some(expected))
+      response mustHaveStatus (Status.Ok, Some(expected))
       verify(service).summaries(searchFilters)
     }
 
     "parse optional query params" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      verifyJsonResponse(response, Status.Ok, Some("""[]"""))
+      response mustHaveStatus (Status.Ok, Some("""[]"""))
       verify(service).search(
         searchFilters.copy(
           limit = Some(100),
@@ -141,14 +137,14 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "parse date query params" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?from=2020-01-01&to=2020-01-01T00:00:01", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      verifyJsonResponse(response, Status.Ok, Some("""[]"""))
+      response mustHaveStatus (Status.Ok, Some("""[]"""))
       verify(service).search(
         searchFilters.copy(from = Some(Instant.parse("2020-01-01T00:00:00Z")), to = Some(Instant.parse("2020-01-01T00:00:01Z")))
       )
@@ -156,44 +152,40 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "return error on date query param parsing failure" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?from=foo", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      verifyJsonResponse(response, Status.BadRequest, Some("""{"message":"Invalid value for: query parameter from"}"""))
+      response mustHaveStatus (Status.BadRequest, Some("""{"message":"Invalid value for: query parameter from"}"""))
       verifyNoInteractions(service)
     }
 
     "parse search query params" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[SearchParams])).thenReturn(IO.pure(Nil))
+      when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games?limit=100&query=foo-bar", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      verifyJsonResponse(response, Status.Ok, Some("""[]"""))
+      response mustHaveStatus (Status.Ok, Some("""[]"""))
       verify(service).search(searchFilters.copy(limit = Some(100), query = Some("foo-bar")))
     }
 
     "return error" in {
       val service = mock[ResellableItemService[IO]]
-      when(service.search(any[SearchParams]))
-        .thenReturn(IO.raiseError(new RuntimeException("bad request")))
+      when(service.search(any[SearchParams])).thenRaiseError(new RuntimeException("bad request"))
 
       val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
 
       val request  = Request[IO](uri = uri"/video-games", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      verifyJsonResponse(response, Status.InternalServerError, Some("""{"message":"bad request"}"""))
+      response mustHaveStatus (Status.InternalServerError, Some("""{"message":"bad request"}"""))
     }
   }
-
-  def stream(games: ResellableItem*): fs2.Stream[IO, ResellableItem] =
-    fs2.Stream.emits(games).covary[IO]
 }

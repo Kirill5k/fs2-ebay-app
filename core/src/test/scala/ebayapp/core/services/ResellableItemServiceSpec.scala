@@ -3,7 +3,7 @@ package ebayapp.core.services
 import cats.effect.IO
 import ebayapp.core.IOWordSpec
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItemBuilder}
-import ebayapp.core.repositories.{SearchParams, ResellableItemRepository}
+import ebayapp.core.repositories.{ResellableItemRepository, SearchParams}
 
 class ResellableItemServiceSpec extends IOWordSpec {
 
@@ -21,7 +21,7 @@ class ResellableItemServiceSpec extends IOWordSpec {
 
     "get latest items from db" in {
       val repository = mock[ResellableItemRepository[IO]]
-      when(repository.search(any[SearchParams])).thenReturn(IO.pure(List(videoGame)))
+      when(repository.search(any[SearchParams])).thenReturnIO(List(videoGame))
 
       val latestResult = ResellableItemService.make(repository).flatMap(_.search(searchFilters))
 
@@ -33,7 +33,7 @@ class ResellableItemServiceSpec extends IOWordSpec {
 
     "get item summaries from db" in {
       val repository = mock[ResellableItemRepository[IO]]
-      when(repository.summaries(any[SearchParams])).thenReturn(IO.pure(List(summary)))
+      when(repository.summaries(any[SearchParams])).thenReturnIO(List(summary))
 
       val result = ResellableItemService.make(repository).flatMap(_.summaries(searchFilters))
 

@@ -173,7 +173,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
   ): Future[Assertion] = {
     val monitor            = Monitors.monitor
     val (disp, repo, http) = mocks
-    when(repo.save(any[MonitoringEvent])).thenReturn(IO.unit)
+    when(repo.save(any[MonitoringEvent])).thenReturnUnit
     when(http.status(any[Monitor.Connection.Http])).thenReturn(IO.pure(currentStatusCheck))
 
     val result = for
@@ -201,7 +201,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
   ): Future[Assertion] = {
     val monitor            = Monitors.monitor.copy(active = false)
     val (disp, repo, http) = mocks
-    when(repo.save(any[MonitoringEvent])).thenReturn(IO.unit)
+    when(repo.save(any[MonitoringEvent])).thenReturnUnit
 
     val result = for
       svc <- MonitoringEventService.make[IO](disp, repo, http)

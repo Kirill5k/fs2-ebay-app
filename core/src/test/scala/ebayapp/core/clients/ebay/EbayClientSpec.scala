@@ -73,7 +73,7 @@ class EbayClientSpec extends IOWordSpec {
       val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
-      when(authClient.switchAccount()).thenReturn(IO.unit)
+      when(authClient.switchAccount()).thenReturnUnit
       when(browseClient.search(any[String], any[Map[String, String]])).thenReturn(IO.raiseError(AppError.Auth("Too many requests")))
 
       val itemsResponse = videoGameSearchClient.search(criteria)

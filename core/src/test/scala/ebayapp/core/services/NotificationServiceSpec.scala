@@ -19,7 +19,7 @@ class NotificationServiceSpec extends IOWordSpec {
     "alerting" should {
       "send alerts on errors" in {
         val client = mock[MessengerClient[IO]]
-        when(client.send(any[Notification])).thenReturn(IO.unit)
+        when(client.send(any[Notification])).thenReturnUnit
 
         val error  = Error("very serious error", Instant.parse("2021-01-01T00:10:00Z"))
         val result = NotificationService.make(client).flatMap(_.alert(error))
@@ -34,7 +34,7 @@ class NotificationServiceSpec extends IOWordSpec {
     "cheap items" should {
       "send cheap item notification message" in {
         val client = mock[MessengerClient[IO]]
-        when(client.send(any[Notification])).thenReturn(IO.unit)
+        when(client.send(any[Notification])).thenReturnUnit
         val videoGame = ResellableItemBuilder.videoGame("super mario 3", platform = Some("SWITCH"))
 
         val result = NotificationService.make(client).flatMap(_.cheapItem(videoGame))
@@ -50,7 +50,7 @@ class NotificationServiceSpec extends IOWordSpec {
     "stock updates" should {
       "stock update notification message" in {
         val client = mock[MessengerClient[IO]]
-        when(client.send(any[Notification])).thenReturn(IO.unit)
+        when(client.send(any[Notification])).thenReturnUnit
 
         val item   = ResellableItemBuilder.generic("macbook pro", price = 50.0, discount = Some(25))
         val update = StockUpdate.PriceDrop(BigDecimal(100.0), BigDecimal(50.0))
@@ -65,7 +65,7 @@ class NotificationServiceSpec extends IOWordSpec {
 
       "not send identical messages" in {
         val client = mock[MessengerClient[IO]]
-        when(client.send(any[Notification])).thenReturn(IO.unit)
+        when(client.send(any[Notification])).thenReturnUnit
 
         val item = ResellableItemBuilder.generic("macbook pro")
         val result = NotificationService

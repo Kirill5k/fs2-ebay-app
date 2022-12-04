@@ -109,8 +109,8 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
         )
 
       val client = mock[SearchClient[IO]]
-      when(client.search(criteria)).thenReturn(Stream.empty)
-      when(client.search(anotherCriteria)).thenReturn(Stream.empty)
+      when(client.search(criteria)).thenReturnEmptyStream
+      when(client.search(anotherCriteria)).thenReturnEmptyStream
       when(client.search(yetAnotherCriteria)).thenReturn(Stream.empty, Stream.emits(items))
 
       val result = StockService
