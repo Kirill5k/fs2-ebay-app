@@ -228,13 +228,14 @@ data:
       }
     
       flannels {
-        delay-between-requests: 30s
-        monitoring-frequency: 6m
+        delay-between-requests: 3m
+        monitoring-frequency: 12m
         monitoring-requests: [
           {search-criteria: {query: "stone-island", category: men}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "off-white", category: men, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", category: men, filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (((\\d)?x)?l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 30, max-price: 350}
+        filters: {exclude: ["size (((\\d)?x)?l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 30, max-price: 250}
       }
 
       harvey-nichols {
