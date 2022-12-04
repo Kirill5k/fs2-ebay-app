@@ -3,7 +3,7 @@ package ebayapp.core.domain
 import cats.syntax.functor.*
 import cats.syntax.traverse.*
 import cats.syntax.apply.*
-import io.circe.{Codec, Decoder, Encoder}
+import io.circe.{Codec, Decoder, Encoder, Json}
 import io.circe.syntax.*
 
 sealed trait ItemDetails(val kind: ItemKind):
@@ -46,10 +46,10 @@ object ItemDetails {
     val fullName: Option[String] = (name, platform).mapN((n, p) => s"$n $p")
 
   given Encoder[ItemDetails] = Encoder.instance {
-    case details: Generic   => details.asJson
-    case details: Phone     => details.asJson
-    case details: VideoGame => details.asJson
-    case details: Clothing  => details.asJson
+    case d: Generic   => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: Phone     => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: VideoGame => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: Clothing  => d.asJson.deepMerge(Json.obj("kind" := d.kind))
   }
 
   given Decoder[ItemDetails] =

@@ -1,5 +1,7 @@
 package ebayapp.core.domain
 
+import io.circe.syntax.*
+import io.circe.parser.*
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -16,6 +18,14 @@ class ItemDetailsSpec extends AnyWordSpec with Matchers {
     "return none is some of the parameters are missing" in {
       val query = game.itemDetails.asInstanceOf[ItemDetails.VideoGame].copy(platform = None).fullName
       query mustBe None
+    }
+
+    "have codecs for json marshalling" in {
+      val json: String      = """{"kind":"video-game","name":"super mario 3","platform":"SWITCH","releaseYear":null,"genre":null}"""
+      val game: ItemDetails = ItemDetails.VideoGame(Some("super mario 3"), Some("SWITCH"), None, None)
+
+      decode[ItemDetails](json) mustBe Right(game)
+      game.asJson.noSpaces mustBe json
     }
   }
 
