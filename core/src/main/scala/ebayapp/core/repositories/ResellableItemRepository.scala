@@ -93,9 +93,10 @@ final private class ResellableItemMongoRepository[F[_]](
   }
 
   extension (sp: SearchParams)
-    def toFilter: Filter = postedDateRangeSelector(sp.from, sp.to) &&
-      Filter.eq(Field.Kind, sp.kind) &&
-      sp.query.fold(Filter.empty)(Filter.text)
+    def toFilter: Filter =
+      postedDateRangeSelector(sp.from, sp.to) &&
+        Filter.eq(Field.Kind, sp.kind) &&
+        sp.query.fold(Filter.empty)(Filter.text)
 }
 
 object ResellableItemRepository:
