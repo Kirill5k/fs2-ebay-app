@@ -40,6 +40,7 @@ final private class ResellableItemMongoRepository[F[_]](
 
   private object Field:
     val Kind       = "kind"
+    val ItemKind   = "itemDetails.kind"
     val DatePosted = "listingDetails.datePosted"
     val Url        = "listingDetails.url"
 
@@ -95,7 +96,7 @@ final private class ResellableItemMongoRepository[F[_]](
   extension (sp: SearchParams)
     def toFilter: Filter =
       postedDateRangeSelector(sp.from, sp.to) &&
-        Filter.eq(Field.Kind, sp.kind) &&
+        (Filter.eq(Field.Kind, sp.kind) || Filter.eq(Field.ItemKind, sp.kind)) &&
         sp.query.fold(Filter.empty)(Filter.text)
 }
 

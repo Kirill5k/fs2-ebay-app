@@ -18,6 +18,8 @@ import scala.concurrent.Future
 
 class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
+  override val mongoPort: Int = 12346
+
   given logger: Logger[IO] = MockLogger.make[IO]
 
   val timestamp = Instant.now().`with`(MILLI_OF_SECOND, 0)
@@ -163,9 +165,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
   }
 
   def withEmbeddedMongoClient[A](test: MongoDatabase[IO] => IO[A]): Future[A] =
-    withRunningEmbeddedMongo("localhost", 12346) {
+    withRunningEmbeddedMongo("localhost", mongoPort) {
       MongoClient
-        .fromConnectionString[IO]("mongodb://localhost:12346")
+        .fromConnectionString[IO](s"mongodb://localhost:$mongoPort")
         .evalMap(_.getDatabase("ebay-app"))
         .use(test)
     }.unsafeToFuture()(IORuntime.global)
