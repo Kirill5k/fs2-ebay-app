@@ -6,7 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.flatMap.*
 import ebayapp.core.common.Logger
 import ebayapp.kernel.errors.AppError
-import ebayapp.kernel.common.effects.*
+import ebayapp.kernel.syntax.effects.*
 import sttp.client3.{Request, Response, SttpBackend}
 import sttp.model.HeaderNames
 

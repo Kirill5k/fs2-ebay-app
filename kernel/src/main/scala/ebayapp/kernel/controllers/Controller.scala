@@ -6,7 +6,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.either.*
 import cats.syntax.applicativeError.*
-import ebayapp.kernel.common.time.*
+import ebayapp.kernel.syntax.time.*
 import ebayapp.kernel.controllers.views.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode

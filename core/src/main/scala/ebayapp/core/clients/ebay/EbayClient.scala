@@ -11,7 +11,7 @@ import ebayapp.core.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.search.EbaySearchParams
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig}
-import ebayapp.kernel.common.predicates.*
+import ebayapp.kernel.syntax.predicates.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria

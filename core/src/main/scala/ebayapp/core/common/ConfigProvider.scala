@@ -7,8 +7,8 @@ import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
 import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
-import ebayapp.kernel.common.stream.*
-import ebayapp.kernel.common.effects.*
+import ebayapp.kernel.syntax.stream.*
+import ebayapp.kernel.syntax.effects.*
 import ebayapp.core.domain.Retailer
 import fs2.Stream
 

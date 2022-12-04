@@ -1,4 +1,4 @@
-package ebayapp.kernel.common
+package ebayapp.kernel.syntax
 
 import cats.Applicative
 

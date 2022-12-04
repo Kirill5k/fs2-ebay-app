@@ -6,7 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
-import ebayapp.kernel.common.time.*
+import ebayapp.kernel.syntax.time.*
 import ebayapp.proxy.common.config.InterrupterConfig
 import org.typelevel.log4cats.Logger
 

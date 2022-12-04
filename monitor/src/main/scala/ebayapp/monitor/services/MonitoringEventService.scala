@@ -9,8 +9,8 @@ import ebayapp.monitor.clients.HttpClient
 import ebayapp.monitor.domain.Monitor.Connection
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.MonitoringEventRepository
-import ebayapp.kernel.common.time.*
-import ebayapp.kernel.common.effects.*
+import ebayapp.kernel.syntax.time.*
+import ebayapp.kernel.syntax.effects.*
 
 import java.time.Instant
 import scala.concurrent.duration.*

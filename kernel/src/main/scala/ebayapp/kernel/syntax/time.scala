@@ -1,4 +1,4 @@
-package ebayapp.kernel.common
+package ebayapp.kernel.syntax
 
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.concurrent.duration.*

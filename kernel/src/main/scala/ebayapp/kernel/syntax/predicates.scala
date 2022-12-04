@@ -1,4 +1,4 @@
-package ebayapp.kernel.common
+package ebayapp.kernel.syntax
 
 object predicates:
   extension [A](predicate: A => Boolean)
