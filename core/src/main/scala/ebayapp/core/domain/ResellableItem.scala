@@ -25,7 +25,6 @@ final case class ItemSummary(
 ) derives Codec.AsObject
 
 final case class ResellableItem(
-    kind: ItemKind,
     itemDetails: ItemDetails,
     listingDetails: ListingDetails,
     buyPrice: BuyPrice,
@@ -42,7 +41,6 @@ object ResellableItem {
       foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
-      ItemKind.Generic,
       itemDetails,
       listingDetails,
       buyPrice,
@@ -58,7 +56,6 @@ object ResellableItem {
       foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
-      ItemKind.VideoGame,
       itemDetails,
       listingDetails,
       buyPrice,
@@ -74,7 +71,6 @@ object ResellableItem {
       foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
-      ItemKind.Clothing,
       itemDetails,
       listingDetails,
       buyPrice,
@@ -90,7 +86,6 @@ object ResellableItem {
       foundWith: SearchCriteria
   ): ResellableItem =
     ResellableItem(
-      ItemKind.MobilePhone,
       itemDetails,
       listingDetails,
       buyPrice,

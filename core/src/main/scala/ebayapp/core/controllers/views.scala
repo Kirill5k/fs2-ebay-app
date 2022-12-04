@@ -1,6 +1,6 @@
 package ebayapp.core.controllers
 
-import ebayapp.core.domain.{ItemDetails, ItemKind, ItemSummary, ResellableItem}
+import ebayapp.core.domain.{ItemDetails, ItemSummary, ResellableItem}
 import ebayapp.core.domain.search.ListingDetails
 import io.circe.{Encoder, Codec}
 
@@ -45,7 +45,6 @@ object views {
   ) derives Codec.AsObject
 
   final case class ResellableItemView(
-      kind: ItemKind,
       itemDetails: ItemDetails,
       listingDetails: ListingDetails,
       price: ItemPrice,
@@ -55,7 +54,6 @@ object views {
   object ResellableItemView {
     def from(item: ResellableItem): ResellableItemView =
       ResellableItemView(
-        item.kind,
         item.itemDetails,
         item.listingDetails,
         ItemPrice(
