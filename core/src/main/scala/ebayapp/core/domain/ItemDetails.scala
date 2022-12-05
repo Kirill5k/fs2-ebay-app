@@ -45,18 +45,29 @@ object ItemDetails {
       derives Codec.AsObject:
     val fullName: Option[String] = (name, platform).mapN((n, p) => s"$n $p")
 
-  given Encoder[ItemDetails] = Encoder.instance {
+  inline given Encoder[ItemDetails] = Encoder.instance {
     case d: Generic   => d.asJson.deepMerge(Json.obj("kind" := d.kind))
     case d: Phone     => d.asJson.deepMerge(Json.obj("kind" := d.kind))
     case d: VideoGame => d.asJson.deepMerge(Json.obj("kind" := d.kind))
     case d: Clothing  => d.asJson.deepMerge(Json.obj("kind" := d.kind))
   }
 
-  given Decoder[ItemDetails] =
-    List[Decoder[ItemDetails]](
-      Decoder[Clothing].widen,
-      Decoder[VideoGame].widen,
-      Decoder[Phone].widen,
-      Decoder[Generic].widen
-    ).reduceLeft(_ or _)
+  inline given Decoder[ItemDetails] = Decoder
+    .instance { cursor =>
+      cursor.get[ItemKind]("kind").flatMap {
+        case ItemKind.Generic     => cursor.as[Generic]
+        case ItemKind.VideoGame   => cursor.as[VideoGame]
+        case ItemKind.MobilePhone => cursor.as[Phone]
+        case ItemKind.Clothing    => cursor.as[Clothing]
+      }
+    }
+    .or(oldItemDetailsDecoder)
+
+  // TODO: remove in 2023
+  private val oldItemDetailsDecoder = List[Decoder[ItemDetails]](
+    Decoder[Clothing].widen,
+    Decoder[VideoGame].widen,
+    Decoder[Phone].widen,
+    Decoder[Generic].widen
+  ).reduceLeft(_ or _)
 }

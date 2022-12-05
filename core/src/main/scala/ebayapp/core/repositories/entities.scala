@@ -17,7 +17,7 @@ private[repositories] object entities {
   ) derives Codec.AsObject
 
   final case class ResellableItemEntity(
-      _id: ObjectId,
+      fullName: Option[String],
       itemDetails: ItemDetails,
       listingDetails: ListingDetails,
       price: ItemPrice,
@@ -35,7 +35,7 @@ private[repositories] object entities {
   object ResellableItemEntity:
     def from(item: ResellableItem): ResellableItemEntity =
       ResellableItemEntity(
-        ObjectId(),
+        item.itemDetails.fullName,
         item.itemDetails,
         item.listingDetails,
         ItemPrice(
