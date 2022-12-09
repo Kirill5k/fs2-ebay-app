@@ -158,7 +158,10 @@ final private class LiveMainlineMenswearClient[F[_]](
     }
 
   private def refreshAccessToken: F[Unit] =
-    dispatch(emptyRequest.get(uri"https://www.mainlinemenswear.co.uk").followRedirects(true))
+    configProvider()
+      .flatMap { config =>
+        dispatch(emptyRequest.get(uri"${config.baseUri}").headers(config.headers))
+      }
       .flatTap { res =>
         logger.info(s"$name-access-token-refresh/${res.code}\n${res.cookies}\n${res.headers}")
       }
