@@ -172,7 +172,7 @@ final private class LiveMainlineMenswearClient[F[_]](
           }
       }
       .flatMap {
-        case None              => F.raiseError(AppError.Auth("Unable to obtain access token"))
+        case None              => logger.error(s"$name-error-obtaining-access-token") *> F.sleep(10.seconds) *> refreshAccessToken
         case Some(accessToken) => token.set(Some(accessToken))
       }
 }
