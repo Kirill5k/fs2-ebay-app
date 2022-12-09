@@ -8,13 +8,14 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
-import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, mainlineMenswearClothingMapper}
+import ebayapp.core.clients.mainlinemenswear.mappers.{mainlineMenswearClothingMapper, MainlineMenswearItem}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
+import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import sttp.client3.*
 import sttp.client3.circe.asJson
@@ -157,13 +158,20 @@ final private class LiveMainlineMenswearClient[F[_]](
     }
 
   private def refreshAccessToken: F[Unit] =
-    dispatch(emptyRequest.get(uri"https://www.mainlinemenswear.co.uk"))
-      .map { res =>
-        res.headers
-          .find(_.value.startsWith("access_token="))
-          .flatMap(_.value.replace("access_token=", "").split(";").headOption)
+    dispatch(emptyRequest.get(uri"https://www.mainlinemenswear.co.uk").followRedirects(true))
+      .flatTap { res =>
+        logger.info(s"$name-access-token-refresh/${res.code}\n${res.cookies}\n${res.headers}")
       }
-      .flatMap(accessToken => logger.info(s"$name access token $accessToken") *> token.set(accessToken))
+      .map { res =>
+        res.cookies
+          .collectFirst {
+            case Right(cookie) if cookie.name == "access_token" => cookie.value
+          }
+      }
+      .flatMap {
+        case None              => F.raiseError(AppError.Auth("Unable to obtain access token"))
+        case Some(accessToken) => token.set(Some(accessToken))
+      }
 }
 
 object MainlineMenswearClient:
