@@ -36,6 +36,17 @@ final private class LiveMainlineMenswearClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
+  private val mainPageUrl = "https://www.mainlinemenswear.co.uk"
+  private val baseRequest = emptyRequest
+    .acceptEncoding(gzipDeflateEncoding)
+    .contentType(MediaType.ApplicationJson)
+    .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
+    .header(Header.userAgent(operaUserAgent))
+    .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
+    .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
+    .header("origin", mainPageUrl)
+    .header("referrer", mainPageUrl)
+
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     searchForItems(criteria)
       .filter(_.isOnSale)
@@ -74,15 +85,7 @@ final private class LiveMainlineMenswearClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchReqWithAuth(config.proxied) {
-          emptyRequest
-            .acceptEncoding(gzipDeflateEncoding)
-            .contentType(MediaType.ApplicationJson)
-            .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
-            .header(Header.userAgent(operaUserAgent))
-            .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
-            .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
-            .header("origin", "https://www.mainlinemenswear.co.uk")
-            .header("referrer", "https://www.mainlinemenswear.co.uk")
+          baseRequest
             .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
             .body(SearchRequest(page, criteria.query).toJson)
             .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
@@ -115,15 +118,7 @@ final private class LiveMainlineMenswearClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchReqWithAuth(config.proxied) {
-          emptyRequest
-            .acceptEncoding(gzipDeflateEncoding)
-            .contentType(MediaType.ApplicationJson)
-            .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
-            .header(Header.userAgent(operaUserAgent))
-            .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
-            .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
-            .header("origin", "https://www.mainlinemenswear.co.uk")
-            .header("referrer", "https://www.mainlinemenswear.co.uk")
+          baseRequest
             .post(uri"${config.baseUri}/app/mmw/m/product/${pp.productID}")
             .body(ProductRequest.toJson)
             .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
@@ -159,20 +154,11 @@ final private class LiveMainlineMenswearClient[F[_]](
 
   private def refreshAccessToken: F[Unit] =
     configProvider()
-      .flatMap { config =>
-        dispatch(emptyRequest.get(uri"${config.baseUri}").headers(config.headers))
-      }
-      .flatTap { res =>
-        logger.info(s"$name-access-token-refresh/${res.code}\n${res.cookies}\n${res.headers}")
-      }
-      .map { res =>
-        res.cookies
-          .collectFirst {
-            case Right(cookie) if cookie.name == "access_token" => cookie.value
-          }
-      }
+      .flatMap(config => dispatch(baseRequest.get(uri"${config.baseUri}").header("X-Reroute-To", mainPageUrl)))
+      .flatTap(res => logger.info(s"$name-access-token-refresh/${res.code}\n${res.cookies}\n${res.headers}"))
+      .map(res => res.cookies.collectFirst { case Right(cookie) if cookie.name == "access_token" => cookie.value })
       .flatMap {
-        case None              => logger.error(s"$name-error-obtaining-access-token") *> F.sleep(10.seconds) *> refreshAccessToken
+        case None              => logger.error(s"$name-error-obtaining-access-token")
         case Some(accessToken) => token.set(Some(accessToken))
       }
 }
