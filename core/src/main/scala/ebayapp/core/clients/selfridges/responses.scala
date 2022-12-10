@@ -1,5 +1,6 @@
 package ebayapp.core.clients.selfridges
 
+import cats.kernel.Semigroup
 import io.circe.Codec
 
 private[selfridges] object responses {
@@ -21,6 +22,13 @@ private[selfridges] object responses {
       `Stock Quantity Available to Purchase`: Int,
       key: String
   ) derives Codec.AsObject
+
+  object ItemStock:
+    given Semigroup[ItemStock] with
+      override def combine(x: ItemStock, y: ItemStock): ItemStock =
+        val combinedValue = List(x.value, y.value).flatten.mkString(" - ")
+        val quantity      = math.max(x.`Stock Quantity Available to Purchase`, y.`Stock Quantity Available to Purchase`)
+        ItemStock(x.SKUID, Option.when(combinedValue.nonEmpty)(combinedValue), quantity, s"${x.key}-${y.key}")
 
   final case class SelfridgesItemStockResponse(
       stocks: Option[List[ItemStock]]

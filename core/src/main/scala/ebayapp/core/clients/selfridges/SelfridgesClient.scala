@@ -5,8 +5,9 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
+import cats.syntax.semigroup.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, selfridgesClothingMapper}
+import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{ConfigProvider, Logger}
@@ -72,16 +73,9 @@ final private class LiveSelfridgesClient[F[_]](
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
       .mapN { (stock, prices) =>
-        val stockGrouped = stock
-          .groupBy(_.SKUID)
-          .values
-          .map { s =>
-            s.sortBy(_.key).reduce((s1, s2) => s1.copy(value = s1.value.flatMap(v => s2.value.map(v + " - " + _))))
-          }
-          .toList
+        val mergedStock   = stock.groupBy(_.SKUID).values.map(s => s.sortBy(_.key).reduce(_ |+| _)).toList
         val pricesBySkuid = prices.groupBy(_.SKUID)
-
-        stockGrouped.map(s => (s, pricesBySkuid.get(s.SKUID).flatMap(_.headOption)))
+        mergedStock.map(s => (s, pricesBySkuid.get(s.SKUID).flatMap(_.headOption)))
       }
 
   private def searchForItems(criteria: SearchCriteria)(page: Int): F[(List[CatalogItem], Option[Int])] =

@@ -1,5 +1,6 @@
 package ebayapp.core.domain
 
+import cats.kernel.Semigroup
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 import io.circe.Codec
@@ -41,7 +42,7 @@ object search {
         includeRegex.fold(true)(filter => name.get.matches(filter))
     }
   }
-
+  
   final case class SearchCriteria(
       query: String,
       category: Option[String] = None,
