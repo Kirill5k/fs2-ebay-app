@@ -72,8 +72,16 @@ final private class LiveSelfridgesClient[F[_]](
   private def getItemDetails(item: CatalogItem): F[List[(ItemStock, Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
       .mapN { (stock, prices) =>
+        val stockGrouped = stock
+          .groupBy(_.SKUID)
+          .values
+          .map { s =>
+            s.sortBy(_.key).reduce((s1, s2) => s1.copy(value = s1.value.flatMap(v => s2.value.map(v + " - " + _))))
+          }
+          .toList
         val pricesBySkuid = prices.groupBy(_.SKUID)
-        stock.map(s => (s, pricesBySkuid.get(s.SKUID).flatMap(_.headOption)))
+
+        stockGrouped.map(s => (s, pricesBySkuid.get(s.SKUID).flatMap(_.headOption)))
       }
 
   private def searchForItems(criteria: SearchCriteria)(page: Int): F[(List[CatalogItem], Option[Int])] =

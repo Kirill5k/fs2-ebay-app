@@ -55,7 +55,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
         items must have size 16
         val item = items.head
 
-        item.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XS")
+        item.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XL")
 
         items.map(_.buyPrice).distinct mustBe List(
           BuyPrice(1, BigDecimal(20.0), Some(86)),

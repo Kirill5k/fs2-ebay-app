@@ -18,7 +18,8 @@ private[selfridges] object responses {
   final case class ItemStock(
       SKUID: String,
       value: Option[String],
-      `Stock Quantity Available to Purchase`: Int
+      `Stock Quantity Available to Purchase`: Int,
+      key: String
   ) derives Codec.AsObject
 
   final case class SelfridgesItemStockResponse(
