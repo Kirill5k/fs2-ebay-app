@@ -336,6 +336,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "Call of Duty: Infinite Warfare comes with both manuals",
           "Call of Duty: Infinite Warfare with both manuals",
           "Call of Duty: Infinite Warfare VideoGames",
+          "Call of Duty: Infinite Warfare boxed for PS4",
           "official & genuine Call of Duty: Infinite Warfare VideoGames",
           "genuine brand new sealed Call of Duty: Infinite Warfare The game",
           "brand new Call of Duty: Infinite Warfare For ages 18+",
@@ -372,6 +373,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "GTA 5 Xbox Series X / Xbox One"                     -> "Grand Theft Auto 5",
           "Switch-LEGO HARRY POTTER YEARS 1-7 GAME NEW"        -> "LEGO HARRY POTTER",
           "F1 manager 22"                                      -> "F1 manager 2022",
+          "FIFA 22 soccer"                                     -> "FIFA 22",
           "L.A. Noire"                                         -> "LA Noire"
         )
       ) { (title, expected) =>
