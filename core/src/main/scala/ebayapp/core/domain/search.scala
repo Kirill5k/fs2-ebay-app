@@ -1,6 +1,5 @@
 package ebayapp.core.domain
 
-import cats.kernel.Semigroup
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 import io.circe.Codec

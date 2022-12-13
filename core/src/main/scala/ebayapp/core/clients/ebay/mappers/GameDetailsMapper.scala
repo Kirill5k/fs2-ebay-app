@@ -10,7 +10,7 @@ private[mappers] object GameDetailsMapper {
     "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
     "\\bPS(-| )?\\d\\b",
     "(nintendo )?(switch|\\bwii( u)?\\b)",
-    "((m(i)?(c)?(r)?(o)?soft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d+|sx)\\b"
+    "((m(i)?(c)?(r)?(o)?soft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d{1,3}|sx)\\b"
   ).mkString(
     "((new|rare|cheapest|excellent|official|select|enhanced) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
     "|",
