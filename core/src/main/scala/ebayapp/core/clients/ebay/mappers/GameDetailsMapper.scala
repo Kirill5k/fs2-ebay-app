@@ -38,7 +38,7 @@ private[mappers] object GameDetailsMapper {
     "(royal mail )?(1st|2nd|first) class.*$",
     "(?<=\\w+ )((all|fully) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$", "cleaned( )?(fully )?tested",
-    "(\\bW\\b|with| inc(ludes)?|including|contain|(\\d )?bonus|plus).{0,20}(insert|guide|dlc|pass|level|content|bonus|pack)(?s).*$",
+    "(\\bW\\b|with| inc(ludes)?|including|contain|(\\d )?bonus|plus).{0,20}(game|insert|guide|dlc|pass|level|content|bonus|pack)(?s).*$",
     "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
     "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
@@ -80,7 +80,7 @@ private[mappers] object GameDetailsMapper {
     "(new )?(still )?((factory) )?(un)?sealed( in packaging)?",
     // removes DLCs
     "(Harley Quinn)? DLC",
-    "(s|c)ellophane wrapped", "free\\s+upgrade", "(official )?Strategy Combat( guide)?",
+    "(s|c)ellophane wrapped", "free\\s+upgrade", "(official )?Strategy Combat( guide)?", "upgrade available",
     "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football( soccer)?)",
     "football soccer( sim(ulator)?)?", "action (stealth|thriller)", "(car|motorcycles|rally) (Driving|Racing)",
