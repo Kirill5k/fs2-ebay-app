@@ -182,7 +182,7 @@ data:
           {search-criteria: {category: "men", query: "Kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 29}
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)", "mini crossbody"], min-discount: 29}
       }
 
       scotts {
@@ -194,7 +194,7 @@ data:
           {search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio-armani-loungewear", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 49}
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)", "mini crossbody"], min-discount: 49}
       }
 
       jdsports {
@@ -208,7 +208,7 @@ data:
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "tommy-hilfiger", filters: {min-discount: 64}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 49}
+        filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)", "mini crossbody"], min-discount: 49}
       }
 
       selfridges {
