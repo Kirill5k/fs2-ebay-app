@@ -45,11 +45,22 @@ private[selfridges] object responses {
       partNumber: String,
       seoKey: String,
       imageName: String,
-      name: String,
+      name: Option[String],
       brandName: String,
       price: List[CatalogItemPrice]
-  ) derives Codec.AsObject:
-    def isOnSale: Boolean = price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined)
+  ) derives Codec.AsObject {
+    private def deriveNameFromSeoKey: String =
+      seoKey.toUpperCase
+        .replaceAll("-|_", " ")
+        .replaceFirst(brandName.toUpperCase, "")
+        .replaceFirst(partNumber.toUpperCase, "")
+        .trim
+        .toLowerCase
+        .capitalize
+
+    val isOnSale: Boolean = price.exists(p => p.lowestWasPrice.isDefined || p.lowestWasWasPrice.isDefined)
+    val fullName: String  = name.getOrElse(deriveNameFromSeoKey)
+  }
 
   final case class SelfridgesSearchResponse(
       noOfPages: Int,

@@ -53,9 +53,11 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items must have size 16
-        val item = items.head
+        val firstItem = items.head
+        val secondItem = items.drop(6).head
 
-        item.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XL")
+        firstItem.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XL")
+        secondItem.itemDetails mustBe Clothing("Brand print cotton blend jersey sweatshirt", "EA7 ARMANI", "S")
 
         items.map(_.buyPrice).distinct mustBe List(
           BuyPrice(1, BigDecimal(20.0), Some(86)),

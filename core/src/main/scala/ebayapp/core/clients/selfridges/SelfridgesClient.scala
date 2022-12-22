@@ -58,7 +58,7 @@ final private class LiveSelfridgesClient[F[_]](
           .unfoldLoopEval(1)(searchForItems(criteria))
           .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
           .flatMap(Stream.emits)
-          .filter(!_.name.matches(filters))
+          .filter(!_.fullName.matches(filters))
           .filter(_.isOnSale)
           .flatMap { item =>
             Stream

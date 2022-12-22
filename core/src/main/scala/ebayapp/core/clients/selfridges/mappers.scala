@@ -31,7 +31,7 @@ private[selfridges] object mappers {
 
     private def itemDetails(item: CatalogItem, stock: ItemStock): ItemDetails.Clothing =
       Clothing(
-        item.name,
+        item.fullName,
         item.brandName,
         stock.value.getOrElse("ONE SIZE")
       )
@@ -54,7 +54,7 @@ private[selfridges] object mappers {
     private def listingDetails(item: CatalogItem): ListingDetails =
       ListingDetails(
         s"https://www.selfridges.com/GB/en/cat/${item.seoKey}",
-        item.name,
+        item.fullName,
         None,
         None,
         None,
