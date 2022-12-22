@@ -28,7 +28,7 @@ private[selfridges] object responses {
       override def combine(x: ItemStock, y: ItemStock): ItemStock =
         val combinedValue = List(x.value, y.value).flatten.mkString(" - ")
         val quantity      = math.max(x.`Stock Quantity Available to Purchase`, y.`Stock Quantity Available to Purchase`)
-        ItemStock(x.SKUID, Option.when(combinedValue.nonEmpty)(combinedValue), quantity, s"${x.key}-${y.key}")
+        ItemStock(x.SKUID, Option.when(combinedValue.nonEmpty)(combinedValue), quantity, s"${x.key} / ${y.key}")
 
   final case class SelfridgesItemStockResponse(
       stocks: Option[List[ItemStock]]
@@ -47,7 +47,8 @@ private[selfridges] object responses {
       imageName: String,
       name: Option[String],
       brandName: String,
-      price: List[CatalogItemPrice]
+      price: List[CatalogItemPrice],
+      shortDescription: Option[String]
   ) derives Codec.AsObject {
     private def deriveNameFromSeoKey: String =
       seoKey.toUpperCase

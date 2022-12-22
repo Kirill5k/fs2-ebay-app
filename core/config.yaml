@@ -252,15 +252,15 @@ data:
       }
     
       mainline-menswear {
-        delay-between-requests: 30s
+        delay-between-requests: 1m
         monitoring-frequency: 12m
         monitoring-requests: [
-          //{search-criteria: {query: "moschino"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "ea7 emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "boss bodywear"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "boss athleisure"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "boss casual"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "moschino"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "ea7 emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss bodywear"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss athleisure"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "boss casual"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {exclude: ["size xxl", "size xl", "size l"], min-discount: 51}
       }

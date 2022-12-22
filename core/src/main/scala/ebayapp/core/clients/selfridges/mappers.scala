@@ -23,7 +23,7 @@ private[selfridges] object mappers {
     override def toDomain(foundWith: SearchCriteria)(si: SelfridgesItem): ResellableItem =
       ResellableItem.clothing(
         itemDetails(si.item, si.stock),
-        listingDetails(si.item),
+        listingDetails(si.item, si.stock, si.price),
         buyPrice(si.item, si.stock, si.price),
         None,
         foundWith
@@ -51,18 +51,23 @@ private[selfridges] object mappers {
       )
     }
 
-    private def listingDetails(item: CatalogItem): ListingDetails =
+    private def listingDetails(item: CatalogItem, stock: ItemStock, price: Option[ItemPrice]): ListingDetails =
       ListingDetails(
         s"https://www.selfridges.com/GB/en/cat/${item.seoKey}",
         item.fullName,
         None,
-        None,
+        item.shortDescription,
         None,
         Some(s"https://images.selfridges.com/is/image/selfridges/${item.imageName}"),
-        s"NEW",
+        "NEW",
         Instant.now,
         "SELFRIDGES",
-        Map.empty
+        List(
+          Some("stockKeys" -> stock.key),
+          price.map(_.`Current Retail Price`).map(p => "currentPrice" -> p.toString),
+          price.flatMap(_.`Was Retail Price`).map(p => "wasPrice" -> p.toString),
+          price.flatMap(_.`Was Was Retail Price`).map(p => "wasWasPrice" -> p.toString)
+        ).flatten.toMap
       )
   }
 }
