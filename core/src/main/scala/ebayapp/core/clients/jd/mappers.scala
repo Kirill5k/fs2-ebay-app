@@ -1,4 +1,4 @@
-package ebayapp.core.clients.jdsports
+package ebayapp.core.clients.jd
 
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.domain.ItemDetails.Clothing
@@ -7,7 +7,7 @@ import ebayapp.core.domain.{ItemDetails, ResellableItem}
 
 import java.time.Instant
 
-private[jdsports] object mappers {
+private[jd] object mappers {
 
   final case class JdsportsItem(
       id: String,

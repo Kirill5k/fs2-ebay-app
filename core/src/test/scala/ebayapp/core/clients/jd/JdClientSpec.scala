@@ -1,4 +1,4 @@
-package ebayapp.core.clients.jdsports
+package ebayapp.core.clients.jd
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
@@ -11,7 +11,7 @@ import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
-class JdsportsClientSpec extends SttpClientSpec {
+class JdClientSpec extends SttpClientSpec {
 
   given logger: Logger[IO] = MockLogger.make[IO]
 
@@ -35,7 +35,7 @@ class JdsportsClientSpec extends SttpClientSpec {
           case r => throw new RuntimeException(r.uri.toString())
         }
 
-      val client = JdsportsClient.jd[IO](config, testingBackend)
+      val client = JdClient.jdsports[IO](config, testingBackend)
 
       client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items.map(_.itemDetails) mustBe List(
@@ -65,7 +65,7 @@ class JdsportsClientSpec extends SttpClientSpec {
           case _ => Response("n/a", StatusCode.NotFound)
         }
 
-      val client = JdsportsClient.tessuti[IO](config, testingBackend)
+      val client = JdClient.tessuti[IO](config, testingBackend)
 
       client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items mustBe Nil

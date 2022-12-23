@@ -1,4 +1,4 @@
-package ebayapp.core.clients.jdsports
+package ebayapp.core.clients.jd
 
 import cats.Monad
 import cats.effect.Temporal
@@ -6,8 +6,8 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.jdsports.mappers.{jdsportsClothingMapper, JdsportsItem}
-import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, ResponseParser}
+import ebayapp.core.clients.jd.mappers.{jdsportsClothingMapper, JdsportsItem}
+import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.syntax.stream.*
@@ -19,7 +19,7 @@ import sttp.model.{HeaderNames, StatusCode}
 
 import scala.concurrent.duration.*
 
-final private class LiveJdsportsClient[F[_]](
+final private class LiveJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val name: String,
     override val httpBackend: SttpBackend[F, Any],
@@ -157,25 +157,25 @@ final private class LiveJdsportsClient[F[_]](
   extension (c: GenericRetailerConfig) def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri) + "/"
 }
 
-object JdsportsClient {
-  def jd[F[_]: Temporal: Logger](
+object JdClient {
+  def jdsports[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.jdsports, "jdsports", backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, "jdsports", backend, proxyBackend))
 
   def tessuti[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.tessuti, "tessuti", backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.tessuti, "tessuti", backend, proxyBackend))
 
   def scotts[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdsportsClient[F](() => configProvider.scotts, "scotts", backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.scotts, "scotts", backend, proxyBackend))
 }

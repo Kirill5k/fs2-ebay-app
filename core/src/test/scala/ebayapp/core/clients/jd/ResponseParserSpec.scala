@@ -1,8 +1,8 @@
-package ebayapp.core.clients.jdsports
+package ebayapp.core.clients.jd
 
 import cats.syntax.either.*
 import cats.syntax.option.*
-import ebayapp.core.clients.jdsports.parsers.{JdCatalogItem, JdProduct, JdProductDetails, ResponseParser}
+import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, JdProductDetails, ResponseParser}
 import ebayapp.kernel.FileReader
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec

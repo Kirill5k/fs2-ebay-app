@@ -7,7 +7,7 @@ import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
 import ebayapp.core.clients.flannels.FlannelsClient
 import ebayapp.core.clients.harveynichols.HarveyNicholsClient
-import ebayapp.core.clients.jdsports.JdsportsClient
+import ebayapp.core.clients.jd.JdClient
 import ebayapp.core.clients.mainlinemenswear.MainlineMenswearClient
 import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.scan.ScanClient
@@ -34,9 +34,9 @@ object Clients:
       EbayClient.make[F](configProvider, resources.httpClientBackend),
       SelfridgesClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       ArgosClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
-      JdsportsClient.jd[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
-      JdsportsClient.scotts[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
-      JdsportsClient.tessuti[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      JdClient.jdsports[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      JdClient.scotts[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      JdClient.tessuti[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       NvidiaClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       ScanClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),

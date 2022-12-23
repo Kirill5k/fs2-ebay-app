@@ -1,11 +1,11 @@
-package ebayapp.core.clients.jdsports
+package ebayapp.core.clients.jd
 
 import cats.syntax.either.*
 import ebayapp.kernel.errors.AppError
 import io.circe.Codec
 import io.circe.parser.*
 
-private[jdsports] object parsers {
+private[jd] object parsers {
 
   final case class JdCatalogItem(
       plu: String,

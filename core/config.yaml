@@ -223,6 +223,7 @@ data:
           {search-criteria: {query: "polo ralph lauren", filters: {min-discount: 59}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "hugo", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "diesel", filters: {min-discount: 48, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {exclude: ["size (xl|xxl|l|xs|\\b[1-7]\\b|\\d+Y)"]}
       }
