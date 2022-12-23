@@ -87,7 +87,9 @@ object ConfigProvider:
       val process = for
         modifiedTs <- mountedConfigModifiedTs
         isUpdated = previousLastModifiedTs.nonEmpty && previousLastModifiedTs.exists(_ != modifiedTs)
-        _ <- F.whenA(isUpdated)(logger.info("config from volume mount has been updated") >> loadConfigFromMount.flatMap(state.set))
+        _ <- F
+          .whenA(isUpdated)(logger.info("config from volume mount has been updated") >> loadConfigFromMount.flatMap(state.set))
+          .handleErrorWith(e => logger.error(e)("error reloading updated config"))
       yield modifiedTs
 
       F.sleep(checkEvery) >> process.flatMap(ts => reloadConfigWhenUpdated(state, Some(ts)))
