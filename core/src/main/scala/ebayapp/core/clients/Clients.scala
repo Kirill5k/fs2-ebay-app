@@ -29,7 +29,7 @@ object Clients:
       resources: Resources[F]
   ): F[Clients[F]] =
     (
-      CexClient.standard[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      CexClient.graphql[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       TelegramClient.make[F](configProvider, resources.httpClientBackend),
       EbayClient.make[F](configProvider, resources.httpClientBackend),
       SelfridgesClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),

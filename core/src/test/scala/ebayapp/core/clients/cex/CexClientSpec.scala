@@ -18,8 +18,17 @@ import scala.concurrent.duration.*
 class CexClientSpec extends SttpClientSpec {
   given Logger[IO] = MockLogger.make[IO]
 
-  val cexConfig = GenericRetailerConfig("http://cex.com", cache = Some(CacheConfig(3.seconds, 1.second)))
-  val config = MockConfigProvider.make[IO](cexConfig = Some(cexConfig))
+  val cexConfig = GenericRetailerConfig(
+    "http://cex.com",
+    cache = Some(CacheConfig(3.seconds, 1.second)),
+    queryParameters = Map(
+      "x-algolia-agent" -> "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)",
+      "x-algolia-api-key" -> "api-key",
+      "x-algolia-application-id" -> "app-id"
+    )
+  )
+
+  val config    = MockConfigProvider.make[IO](cexConfig = Some(cexConfig))
 
   "CexClient" should {
 
@@ -258,7 +267,11 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-one-series-x"))(item))
 
       result.attempt.asserting { price =>
-        price mustBe Left(AppError.Json("cex-search/json-error: Got value '\"foo-bar\"' with wrong type, expecting array: DownField(boxes),DownField(data),DownField(response)"))
+        price mustBe Left(
+          AppError.Json(
+            "cex-search/json-error: Got value '\"foo-bar\"' with wrong type, expecting array: DownField(boxes),DownField(data),DownField(response)"
+          )
+        )
       }
     }
 
@@ -280,7 +293,7 @@ class CexClientSpec extends SttpClientSpec {
       }
     }
 
-    "retry on others http errors" in {
+    "retry on other http errors" in {
       val item = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
@@ -304,12 +317,6 @@ class CexClientSpec extends SttpClientSpec {
 
   "CexGraphqlClient" should {
     "find items" in {
-      val params = Map(
-        "x-algolia-agent" -> "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)",
-        "x-algolia-api-key" -> "07aa231df2da5ac18bd9b1385546e963",
-        "x-algolia-application-id" -> "LNNFEEWZVA"
-      )
-
       val reqBody =
         """{"requests":[
           |{
@@ -318,12 +325,11 @@ class CexClientSpec extends SttpClientSpec {
           |}
           |]}""".stripMargin.replaceAll("\n", "")
 
-
       val criteria = SearchCriteria("gta 5 xbox")
 
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasBody(reqBody) && r.hasParams(params) =>
+          case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasBody(reqBody) && r.hasParams(cexConfig.queryParameters) =>
             Response.ok(json("cex/search-graphql-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
@@ -333,7 +339,12 @@ class CexClientSpec extends SttpClientSpec {
       val result = cexClient.flatMap(_.search(criteria).compile.toList)
 
       result.asserting { items =>
-        items must not be empty
+        items.flatMap(_.itemDetails.fullName) mustBe List(
+          "Grand Theft Auto V (5)",
+          "Grand Theft Auto V (5) *2 Disc*",
+          "Grand Theft Auto V (2 Disc)",
+          "Grand Theft Auto V (5) Collector's Ed."
+        )
       }
     }
   }

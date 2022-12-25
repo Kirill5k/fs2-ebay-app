@@ -156,7 +156,7 @@ final private class CexGraphqlClient[F[_]](
             .header("Referrer", "https://uk.webuy.com/")
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
             .header("Accept", "application/json")
-            .post(uri"${config.baseUri}/1/indexes/*/queries?$requestParams")
+            .post(uri"${config.baseUri}/1/indexes/*/queries?${config.queryParameters}")
             .body(
               CexGraphqlSearchRequest(
                 List(
