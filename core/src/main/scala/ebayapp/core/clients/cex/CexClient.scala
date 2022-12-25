@@ -39,13 +39,7 @@ final private class CexApiClient[F[_]](
 
   override protected val name: String = "cex"
 
-  private inline def categoriesMap: Map[String, String] = Map(
-    "games-ps3"               -> List(808),
-    "games-xbox-360"          -> List(782),
-    "games-xbox-one-series-x" -> List(1000, 1146, 1147),
-    "games-ps4-ps5"           -> List(1003, 1141),
-    "games-switch"            -> List(1064)
-  ).map((k, v) => (k, v.mkString("[", ",", "]")))
+  private inline def categoriesMap: Map[String, String] = CexClient.categories.map((k, v) => (k, v.mkString("[", ",", "]")))
 
   override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] =
     item.itemDetails.fullName match {
@@ -128,12 +122,6 @@ final private class CexGraphqlClient[F[_]](
 
   override protected val name: String = "cex-graphql"
 
-  private val requestParams = Map(
-    "x-algolia-agent" -> "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)",
-    "x-algolia-api-key"        -> "07aa231df2da5ac18bd9b1385546e963",
-    "x-algolia-application-id" -> "LNNFEEWZVA"
-  )
-
   override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] = ???
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
@@ -192,6 +180,14 @@ final private class CexGraphqlClient[F[_]](
 }
 
 object CexClient:
+  val categories: Map[String, Set[Int]] = Map(
+    "games-ps3"               -> Set(808),
+    "games-xbox-360"          -> Set(782),
+    "games-xbox-one-series-x" -> Set(1000, 1146, 1147),
+    "games-ps4-ps5"           -> Set(1003, 1141),
+    "games-switch"            -> Set(1064)
+  )
+
   private def mkCache[F[_]: Temporal](configProvider: ConfigProvider[F]): F[Cache[F, String, Option[SellPrice]]] =
     for
       config      <- configProvider.cex
