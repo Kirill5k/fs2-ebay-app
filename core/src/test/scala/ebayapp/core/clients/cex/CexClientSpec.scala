@@ -1,6 +1,7 @@
 package ebayapp.core.clients.cex
 
 import cats.effect.IO
+import cats.syntax.option.*
 import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
@@ -25,7 +26,7 @@ class CexClientSpec extends SttpClientSpec {
       "x-algolia-agent" -> "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)",
       "x-algolia-api-key" -> "api-key",
       "x-algolia-application-id" -> "app-id"
-    )
+    ).some
   )
 
   val config    = MockConfigProvider.make[IO](cexConfig = Some(cexConfig))
@@ -329,7 +330,7 @@ class CexClientSpec extends SttpClientSpec {
 
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasBody(reqBody) && r.hasParams(cexConfig.queryParameters) =>
+          case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasBody(reqBody) && r.hasParams(cexConfig.queryParameters.get) =>
             Response.ok(json("cex/search-graphql-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }

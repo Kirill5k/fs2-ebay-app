@@ -51,7 +51,7 @@ object config {
       proxied: Option[Boolean] = None,
       cache: Option[CacheConfig] = None,
       delayBetweenIndividualRequests: Option[FiniteDuration] = None,
-      queryParameters: Map[String, String] = Map.empty
+      queryParameters: Option[Map[String, String]] = None
   ) derives ConfigReader
 
   final case class TelegramConfig(
