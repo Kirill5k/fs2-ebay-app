@@ -122,7 +122,35 @@ final private class CexGraphqlClient[F[_]](
 
   override protected val name: String = "cex-graphql"
 
-  override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] = ???
+  override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] =
+    item.itemDetails.fullName match {
+      case None =>
+        logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
+      case Some(name) =>
+        findSellPrice(name, category).map(sp => item.copy(sellPrice = sp))
+    }
+
+  private def findSellPrice(query: String, category: Option[String]): F[Option[SellPrice]] =
+    resellPriceCache.evalPutIfNew(query) {
+      dispatchSearchRequest(query)
+        .map(filterByCategory(category))
+        .map(getMinResellPrice)
+        .flatMap { rp =>
+          if (rp.isEmpty && category.isDefined) findSellPrice(query, None)
+          else F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F]
+        }
+    }
+
+  private def filterByCategory(category: Option[String])(response: CexGraphqlSearchResponse): List[CexGraphqlItem] = {
+    val items = response.results.getOrElse(Nil).flatMap(_.hits)
+    val cats = category.flatMap(c => CexClient.categories.get(c))
+    if (cats.isEmpty) items else items.filter(i => cats.get.contains(i.categoryId))
+  }
+
+  private def getMinResellPrice(items: List[CexGraphqlItem]): Option[SellPrice] =
+    items
+      .minByOption(_.exchangePriceCalculated)
+      .map(c => SellPrice(c.cashPriceCalculated, c.exchangePriceCalculated))
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
