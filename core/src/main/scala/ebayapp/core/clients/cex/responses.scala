@@ -22,7 +22,7 @@ private[cex] object responses {
 
   final case class GraphqlSearchResult(hits: List[CexGraphqlItem]) derives Codec.AsObject
 
-  final case class CexGraphqlSearchResponse(results: List[GraphqlSearchResult]) derives Codec.AsObject
+  final case class CexGraphqlSearchResponse(results: Option[List[GraphqlSearchResult]]) derives Codec.AsObject
 
   final case class CexItem(
       boxId: String,

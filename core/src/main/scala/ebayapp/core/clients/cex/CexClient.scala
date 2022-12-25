@@ -7,7 +7,8 @@ import cats.syntax.flatMap.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.cex.mappers.cexGenericItemMapper
+import ebayapp.core.clients.cex.mappers.{cexGenericItemMapper, cexGraphqlGenericItemMapper}
+import ebayapp.core.clients.cex.requests.{CexGraphqlSearchRequest, GraphqlSearchRequest}
 import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.errors.AppError
@@ -15,7 +16,8 @@ import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
-import sttp.client3.circe.asJson
+import io.circe.syntax.*
+import sttp.client3.circe.*
 import sttp.client3.*
 import sttp.model.headers.CacheDirective
 import sttp.model.{Header, MediaType, StatusCode, Uri}
@@ -101,8 +103,8 @@ final private class CexApiClient[F[_]](
             logger.warn(s"$name-search/exhausted input") *>
               F.sleep(1.second) *> dispatchSearchRequest(fullUri)
           case Left(DeserializationException(body, error)) =>
-            logger.warn(s"$name-search/json-error: ${error.getMessage}\n$body") *>
-              AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError[F, CexSearchResponse]
+            logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
+              F.raiseError(AppError.Json(s"$name-search/json-error: ${error.getMessage}"))
           case Left(HttpError(_, StatusCode.Forbidden)) =>
             logger.error(s"$name-search/403-critical") *> F.sleep(5.seconds) *> dispatchSearchRequest(fullUri)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
@@ -134,10 +136,49 @@ final private class CexGraphqlClient[F[_]](
 
   override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] = ???
 
-  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] = ???
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
+    Stream
+      .eval(dispatchSearchRequest(criteria.query))
+      .map(_.results.getOrElse(List.empty))
+      .flatMap(Stream.emits)
+      .map(_.hits)
+      .flatMap(Stream.emits)
+      .map(cexGraphqlGenericItemMapper.toDomain(criteria))
 
-
-  private def dispatchSearchRequest(fullUri: String => Uri): F[CexGraphqlSearchResponse] = ???
+  private def dispatchSearchRequest(query: String): F[CexGraphqlSearchResponse] =
+    configProvider()
+      .flatMap { config =>
+        dispatchWithProxy(config.proxied) {
+          emptyRequest
+            .contentType(MediaType.ApplicationXWwwFormUrlencoded)
+            .acceptEncoding(gzipDeflateEncoding)
+            .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
+            .header("Referrer", "https://uk.webuy.com/")
+            .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
+            .post(uri"${config.baseUri}/1/indexes/*/queries?${requestParams}")
+            .body(CexGraphqlSearchRequest(List(GraphqlSearchRequest("prod_cex_uk", s"query=${query}&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"))))
+            .headers(config.headers)
+            .response(asJson[CexGraphqlSearchResponse])
+        }
+      }
+      .flatMap { r =>
+        r.body match {
+          case Right(response) =>
+            response.pure[F]
+          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+            logger.warn(s"$name-search/exhausted input") *>
+              F.sleep(1.second) *> dispatchSearchRequest(query)
+          case Left(DeserializationException(body, error)) =>
+            logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
+              F.raiseError(AppError.Json(s"$name-search/json-error: ${error.getMessage}"))
+          case Left(HttpError(_, StatusCode.Forbidden)) =>
+            logger.error(s"$name-search/403-critical") *> F.sleep(30.seconds) *> dispatchSearchRequest(query)
+          case Left(HttpError(_, StatusCode.TooManyRequests)) =>
+            logger.warn(s"$name-search/429-retry") *> F.sleep(10.seconds) *> dispatchSearchRequest(query)
+          case Left(error) =>
+            logger.warn(s"$name-search/${r.code}-error\n$error") *> F.sleep(5.second) *> dispatchSearchRequest(query)
+        }
+      }
 }
 
 object CexClient:

@@ -3,11 +3,40 @@ package ebayapp.core.clients.cex
 import ebayapp.core.clients.ItemMapper
 
 import java.time.Instant
-import ebayapp.core.clients.cex.responses.CexItem
+import ebayapp.core.clients.cex.responses.{CexGraphqlItem, CexItem}
 import ebayapp.core.domain.{ItemDetails, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria, SellPrice}
 
 private[cex] object mappers {
+
+  type CexGraphqlItemMapper = ItemMapper[CexGraphqlItem]
+
+  val cexGraphqlGenericItemMapper: CexGraphqlItemMapper = new CexGraphqlItemMapper {
+    override def toDomain(foundWith: SearchCriteria)(item: CexGraphqlItem): ResellableItem =
+      ResellableItem.generic(
+        ItemDetails.Generic(item.boxName),
+        ListingDetails(
+          s"https://uk.webuy.com/product-detail/?id=${item.boxId}",
+          item.boxName,
+          Some(item.categoryFriendlyName),
+          None,
+          None,
+          None,
+          s"USED / ${item.boxName.last}",
+          Instant.now,
+          "CEX",
+          Map(
+            "exchangePerc"     -> item.exchangePerc.toString,
+            "firstPrice"       -> item.firstPrice.toString,
+            "previousPrice"    -> item.previousPrice.toString,
+            "priceLastChanged" -> item.priceLastChanged
+          )
+        ),
+        BuyPrice(item.ecomQuantity, item.sellPrice),
+        Some(SellPrice(item.cashPriceCalculated, item.exchangePriceCalculated)),
+        foundWith
+      )
+  }
 
   type CexItemMapper = ItemMapper[CexItem]
 
