@@ -129,7 +129,7 @@ final private class CexGraphqlClient[F[_]](
   override protected val name: String = "cex-graphql"
 
   private val requestParams = Map(
-    "x-algolia-agent" -> "Algolia%20for%20JavaScript%20(4.13.1)%3B%20Browser%20(lite)%3B%20instantsearch.js%20(4.41.1)%3B%20Vue%20(2.6.14)%3B%20Vue%20InstantSearch%20(4.3.3)%3B%20JS%20Helper%20(3.8.2)",
+    "x-algolia-agent" -> "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)",
     "x-algolia-api-key"        -> "07aa231df2da5ac18bd9b1385546e963",
     "x-algolia-application-id" -> "LNNFEEWZVA"
   )
@@ -150,13 +150,23 @@ final private class CexGraphqlClient[F[_]](
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
           emptyRequest
-            .contentType(MediaType.ApplicationXWwwFormUrlencoded)
+            .contentType(MediaType.ApplicationJson)
             .acceptEncoding(gzipDeflateEncoding)
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
             .header("Referrer", "https://uk.webuy.com/")
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
-            .post(uri"${config.baseUri}/1/indexes/*/queries?${requestParams}")
-            .body(CexGraphqlSearchRequest(List(GraphqlSearchRequest("prod_cex_uk", s"query=${query}&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"))))
+            .header("Accept", "application/json")
+            .post(uri"${config.baseUri}/1/indexes/*/queries?$requestParams")
+            .body(
+              CexGraphqlSearchRequest(
+                List(
+                  GraphqlSearchRequest(
+                    "prod_cex_uk",
+                    s"query=${query}&userToken=ecf31216f1ec463fac30a91a1f0a0dc3&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
+                  )
+                )
+              )
+            )
             .headers(config.headers)
             .response(asJson[CexGraphqlSearchResponse])
         }
@@ -182,13 +192,25 @@ final private class CexGraphqlClient[F[_]](
 }
 
 object CexClient:
-  def make[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
-  ): F[CexClient[F]] =
+  private def mkCache[F[_]: Temporal](configProvider: ConfigProvider[F]): F[Cache[F, String, Option[SellPrice]]] =
     for
       config      <- configProvider.cex
       cacheConfig <- Temporal[F].fromOption(config.cache, AppError.Critical("missing cache settings for cex client"))
       cache       <- Cache.make[F, String, Option[SellPrice]](cacheConfig.expiration, cacheConfig.validationPeriod)
-    yield CexApiClient[F](() => configProvider.cex, cache, backend, proxyBackend)
+    yield cache
+
+  def standard[F[_]: Temporal: Logger](
+      configProvider: ConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
+  ): F[CexClient[F]] =
+    mkCache(configProvider)
+      .map(cache => CexApiClient[F](() => configProvider.cex, cache, backend, proxyBackend))
+
+  def graphql[F[_]: Temporal: Logger](
+      configProvider: ConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
+  ): F[CexClient[F]] =
+    mkCache(configProvider)
+      .map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend, proxyBackend))

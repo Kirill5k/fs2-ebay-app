@@ -12,15 +12,16 @@ import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
+import scala.collection.immutable.Map
 import scala.concurrent.duration.*
 
 class CexClientSpec extends SttpClientSpec {
   given Logger[IO] = MockLogger.make[IO]
 
-  "CexClient" should {
+  val cexConfig = GenericRetailerConfig("http://cex.com", cache = Some(CacheConfig(3.seconds, 1.second)))
+  val config = MockConfigProvider.make[IO](cexConfig = Some(cexConfig))
 
-    val cexConfig = GenericRetailerConfig("http://cex.com", cache = Some(CacheConfig(3.seconds, 1.second)))
-    val config = MockConfigProvider.make[IO](cexConfig = Some(cexConfig))
+  "CexClient" should {
 
     "find items" in {
       val criteria = SearchCriteria("macbook pro 16,1")
@@ -31,7 +32,7 @@ class CexClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.search(criteria).compile.toList)
 
@@ -105,7 +106,7 @@ class CexClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
@@ -123,7 +124,7 @@ class CexClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-ps4-ps5"))(item))
 
@@ -141,7 +142,7 @@ class CexClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-360"))(item))
 
@@ -159,7 +160,7 @@ class CexClientSpec extends SttpClientSpec {
         )
 
       val result = for {
-        cexClient <- CexClient.make[IO](config, testingBackend)
+        cexClient <- CexClient.standard[IO](config, testingBackend)
         _         <- cexClient.withUpdatedSellPrice(None)(item)
         rp        <- cexClient.withUpdatedSellPrice(None)(item)
       } yield rp
@@ -176,7 +177,7 @@ class CexClientSpec extends SttpClientSpec {
           throw new RuntimeException()
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
@@ -194,7 +195,7 @@ class CexClientSpec extends SttpClientSpec {
         )
 
       val result = for {
-        cexClient <- CexClient.make[IO](config, testingBackend)
+        cexClient <- CexClient.standard[IO](config, testingBackend)
         _         <- cexClient.withUpdatedSellPrice(None)(item)
         _         <- IO.sleep(4.seconds)
         rp        <- cexClient.withUpdatedSellPrice(None)(item)
@@ -216,7 +217,7 @@ class CexClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-switch"))(item))
 
@@ -234,7 +235,7 @@ class CexClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-switch"))(item))
 
@@ -252,7 +253,7 @@ class CexClientSpec extends SttpClientSpec {
           case r => throw new RuntimeException(r.uri.toString())
         }
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(Some("games-xbox-one-series-x"))(item))
 
@@ -270,7 +271,7 @@ class CexClientSpec extends SttpClientSpec {
           Response.ok(json("cex/search-iphone-success-response.json"))
         )
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
@@ -288,7 +289,7 @@ class CexClientSpec extends SttpClientSpec {
           Response.ok(json("cex/search-iphone-success-response.json"))
         )
 
-      val cexClient = CexClient.make[IO](config, testingBackend)
+      val cexClient = CexClient.standard[IO](config, testingBackend)
 
       val result = cexClient.flatMap(_.withUpdatedSellPrice(None)(item))
 
@@ -299,5 +300,41 @@ class CexClientSpec extends SttpClientSpec {
 
     def isQueryRequest(req: client3.Request[_, _], params: Map[String, String]): Boolean =
       req.isGet && req.isGoingTo("cex.com/v3/boxes") && req.hasParams(params)
+  }
+
+  "CexGraphqlClient" should {
+    "find items" in {
+      val params = Map(
+        "x-algolia-agent" -> "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)",
+        "x-algolia-api-key" -> "07aa231df2da5ac18bd9b1385546e963",
+        "x-algolia-application-id" -> "LNNFEEWZVA"
+      )
+
+      val reqBody =
+        """{"requests":[
+          |{
+          |"indexName":"prod_cex_uk",
+          |"params":"query=gta 5 xbox&userToken=ecf31216f1ec463fac30a91a1f0a0dc3&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
+          |}
+          |]}""".stripMargin.replaceAll("\n", "")
+
+
+      val criteria = SearchCriteria("gta 5 xbox")
+
+      val testingBackend: SttpBackend[IO, Any] = backendStub
+        .whenRequestMatchesPartial {
+          case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasBody(reqBody) && r.hasParams(params) =>
+            Response.ok(json("cex/search-graphql-success-response.json"))
+          case r => throw new RuntimeException(r.uri.toString)
+        }
+
+      val cexClient = CexClient.graphql[IO](config, testingBackend)
+
+      val result = cexClient.flatMap(_.search(criteria).compile.toList)
+
+      result.asserting { items =>
+        items must not be empty
+      }
+    }
   }
 }
