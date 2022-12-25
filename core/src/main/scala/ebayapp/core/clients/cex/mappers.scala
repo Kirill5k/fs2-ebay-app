@@ -22,7 +22,7 @@ private[cex] object mappers {
           None,
           None,
           None,
-          s"USED / ${item.boxName.last}",
+          s"USED${item.Grade.flatMap(_.headOption).map(g => s" / ${g}").getOrElse("")}",
           Instant.now,
           "CEX",
           Map(

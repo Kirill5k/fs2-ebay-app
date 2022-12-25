@@ -17,7 +17,8 @@ private[cex] object responses {
       sellPrice: BigDecimal,
       cashPriceCalculated: BigDecimal,
       exchangePriceCalculated: BigDecimal,
-      webBuyAllowed: Int
+      webBuyAllowed: Int,
+      Grade: Option[List[String]]
   ) derives Codec.AsObject
 
   final case class GraphqlSearchResult(hits: List[CexGraphqlItem]) derives Codec.AsObject
