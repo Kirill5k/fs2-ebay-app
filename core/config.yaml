@@ -30,14 +30,15 @@ data:
     
     retailer {
       cex {
-        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "https://request-follower.fly.dev"
+        base-uri: "https://wss2.cex.uk.webuy.io"
         cache {
           expiration: 24h
           validation-period: 1h
         }
         headers {
           "X-Reroute-To": "https://wss2.cex.uk.webuy.io"
-          "X-Reload-On-403": "true"
         }
       }
   
@@ -148,9 +149,9 @@ data:
       cex {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {"include": ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
-          {search-criteria: {query: "ipad pro 11 4th gen wifi space 128gb", filters: {"include": ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {"include": ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
+          //{search-criteria: {query: "ipad pro 11 4th gen wifi space 128gb", filters: {"include": ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
@@ -285,11 +286,11 @@ data:
       ebay {
         search-frequency: 60s
         search-requests: [
-          {search-criteria: {query: "PS4", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 45, max-quantity: 10}
-          {search-criteria: {query: "XBOX ONE", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 45, max-quantity: 10}
-          {search-criteria: {query: "PS5", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 45, max-quantity: 10}
-          {search-criteria: {query: "XBOX SERIES", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 45, max-quantity: 10}
-          {search-criteria: {query: "SWITCH", item-kind: "video-game", category: "games-switch"}, min-margin: 45, max-quantity: 10}
+          //{search-criteria: {query: "PS4", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 45, max-quantity: 10}
+          //{search-criteria: {query: "XBOX ONE", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 45, max-quantity: 10}
+          //{search-criteria: {query: "PS5", item-kind: "video-game", category: "games-ps4-ps5"}, min-margin: 45, max-quantity: 10}
+          //{search-criteria: {query: "XBOX SERIES", item-kind: "video-game", category: "games-xbox-one-series-x"}, min-margin: 45, max-quantity: 10}
+          //{search-criteria: {query: "SWITCH", item-kind: "video-game", category: "games-switch"}, min-margin: 45, max-quantity: 10}
         ]
         delay-between-requests: 5s
       }
