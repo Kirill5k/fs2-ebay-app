@@ -20,7 +20,7 @@ private[selfridges] object responses {
       SKUID: String,
       value: Option[String],
       `Stock Quantity Available to Purchase`: Int,
-      key: String
+      key: Option[String]
   ) derives Codec.AsObject
 
   object ItemStock:
@@ -28,7 +28,7 @@ private[selfridges] object responses {
       override def combine(x: ItemStock, y: ItemStock): ItemStock =
         val combinedValue = List(x.value, y.value).flatten.mkString(" - ")
         val quantity      = math.max(x.`Stock Quantity Available to Purchase`, y.`Stock Quantity Available to Purchase`)
-        ItemStock(x.SKUID, Option.when(combinedValue.nonEmpty)(combinedValue), quantity, s"${x.key} / ${y.key}")
+        ItemStock(x.SKUID, Option.when(combinedValue.nonEmpty)(combinedValue), quantity, Some(s"${x.key.getOrElse("kx")} / ${y.key.getOrElse("ky")}"))
 
   final case class SelfridgesItemStockResponse(
       stocks: Option[List[ItemStock]]

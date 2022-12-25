@@ -63,7 +63,7 @@ private[selfridges] object mappers {
         Instant.now,
         "SELFRIDGES",
         List(
-          Some("stockKeys" -> stock.key),
+          Some("stockKeys" -> stock.key.getOrElse("undefined")),
           price.map(_.`Current Retail Price`).map(p => "currentPrice" -> p.toString),
           price.flatMap(_.`Was Retail Price`).map(p => "wasPrice" -> p.toString),
           price.flatMap(_.`Was Was Retail Price`).map(p => "wasWasPrice" -> p.toString)
