@@ -2,7 +2,28 @@ package ebayapp.core.clients.cex
 
 import io.circe.Codec
 
-object responses {
+private[cex] object responses {
+
+  final case class CexGraphqlItem(
+      boxId: String,
+      boxName: String,
+      categoryId: Int,
+      categoryFriendlyName: String,
+      firstPrice: BigDecimal,
+      previousPrice: BigDecimal,
+      ecomQuantity: Int,
+      exchangePerc: BigDecimal,
+      priceLastChanged: String,
+      sellPrice: BigDecimal,
+      cashPriceCalculated: BigDecimal,
+      exchangePriceCalculated: BigDecimal,
+      webBuyAllowed: Int
+  ) derives Codec.AsObject
+
+  final case class GraphqlSearchResult(hits: List[CexGraphqlItem]) derives Codec.AsObject
+
+  final case class CexGraphqlSearchResponse(results: List[GraphqlSearchResult]) derives Codec.AsObject
+
   final case class CexItem(
       boxId: String,
       boxName: String,

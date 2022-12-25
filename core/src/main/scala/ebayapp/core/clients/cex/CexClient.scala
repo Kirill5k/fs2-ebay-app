@@ -25,7 +25,7 @@ import scala.concurrent.duration.*
 trait CexClient[F[_]] extends SearchClient[F]:
   def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem]
 
-final class CexApiClient[F[_]](
+final private class CexApiClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
     override val httpBackend: SttpBackend[F, Any],
@@ -55,7 +55,7 @@ final class CexApiClient[F[_]](
 
   private def findSellPrice(query: String, categories: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
-      search(baseUri => uri"$baseUri/v3/boxes?q=$query&categoryIds=$categories")
+      dispatchSearchRequest(baseUri => uri"$baseUri/v3/boxes?q=$query&categoryIds=$categories")
         .map(getMinResellPrice)
         .flatMap { rp =>
           if (rp.isEmpty && categories.isDefined) findSellPrice(query, None)
@@ -73,12 +73,12 @@ final class CexApiClient[F[_]](
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
-      .eval(search(baseUri => uri"$baseUri/v3/boxes?q=${criteria.query}&inStock=1&inStockOnline=1"))
+      .eval(dispatchSearchRequest(baseUri => uri"$baseUri/v3/boxes?q=${criteria.query}&inStock=1&inStockOnline=1"))
       .map(_.response.data.fold(List.empty[CexItem])(_.boxes))
       .flatMap(Stream.emits)
       .map(cexGenericItemMapper.toDomain(criteria))
 
-  private def search(fullUri: String => Uri): F[CexSearchResponse] =
+  private def dispatchSearchRequest(fullUri: String => Uri): F[CexSearchResponse] =
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
@@ -99,19 +99,45 @@ final class CexApiClient[F[_]](
             response.pure[F]
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-search/exhausted input") *>
-              F.sleep(1.second) *> search(fullUri)
+              F.sleep(1.second) *> dispatchSearchRequest(fullUri)
           case Left(DeserializationException(body, error)) =>
             logger.warn(s"$name-search/json-error: ${error.getMessage}\n$body") *>
               AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError[F, CexSearchResponse]
           case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.error(s"$name-search/403-critical") *> F.sleep(5.seconds) *> search(fullUri)
+            logger.error(s"$name-search/403-critical") *> F.sleep(5.seconds) *> dispatchSearchRequest(fullUri)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"$name-search/429-retry") *> F.sleep(5.seconds) *> search(fullUri)
+            logger.warn(s"$name-search/429-retry") *> F.sleep(5.seconds) *> dispatchSearchRequest(fullUri)
           case Left(error) =>
             logger.warn(s"$name-search/${r.code}-error\n$error") *>
-              F.sleep(5.second) *> search(fullUri)
+              F.sleep(5.second) *> dispatchSearchRequest(fullUri)
         }
       }
+}
+
+final private class CexGraphqlClient[F[_]](
+    private val configProvider: () => F[GenericRetailerConfig],
+    private val resellPriceCache: Cache[F, String, Option[SellPrice]],
+    override val httpBackend: SttpBackend[F, Any],
+    override val proxyBackend: Option[SttpBackend[F, Any]]
+)(using
+    F: Temporal[F],
+    logger: Logger[F]
+) extends CexClient[F] with HttpClient[F] {
+
+  override protected val name: String = "cex-graphql"
+
+  private val requestParams = Map(
+    "x-algolia-agent" -> "Algolia%20for%20JavaScript%20(4.13.1)%3B%20Browser%20(lite)%3B%20instantsearch.js%20(4.41.1)%3B%20Vue%20(2.6.14)%3B%20Vue%20InstantSearch%20(4.3.3)%3B%20JS%20Helper%20(3.8.2)",
+    "x-algolia-api-key"        -> "07aa231df2da5ac18bd9b1385546e963",
+    "x-algolia-application-id" -> "LNNFEEWZVA"
+  )
+
+  override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] = ???
+
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] = ???
+
+
+  private def dispatchSearchRequest(fullUri: String => Uri): F[CexGraphqlSearchResponse] = ???
 }
 
 object CexClient:
