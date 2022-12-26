@@ -30,7 +30,7 @@ final class TelegramNotificationService[F[_]: Monad](
   override def cheapItem(item: ResellableItem): F[Unit] =
     item.cheapItemNotification match
       case Some(notification) =>
-        logger.info(s"""sending "$notification"""") *>
+        logger.info(s"""sending "${notification.message}"""") *>
           messengerClient.send(notification)
       case None =>
         logger.warn(s"not enough details for sending cheap item notification $item")
@@ -39,7 +39,7 @@ final class TelegramNotificationService[F[_]: Monad](
     item.stockUpdateNotification(update) match
       case Some(notification) =>
         sentMessages.evalPutIfNew(base64(notification.message)) {
-          logger.info(s"""sending "$notification" from ${item.listingDetails.seller}""") *>
+          logger.info(s"""sending "${notification.message}" from ${item.listingDetails.seller}""") *>
             messengerClient.send(notification)
         }
       case None =>
