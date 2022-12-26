@@ -36,7 +36,7 @@ data:
           validation-period: 1h
         }
         headers {
-          "X-Reroute-To": "https://wss2.cex.uk.webuy.io"
+          "X-Reroute-To": "https://lnnfeewzva-dsn.algolia.net"
         }
         query-parameters {
           "x-algolia-agent": "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)"
@@ -150,11 +150,12 @@ data:
 
     stock-monitor {
       cex {
+        delay-between-requests: 30s
         monitoring-frequency: 10m
         monitoring-requests: [
-          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {"include": ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
-          //{search-criteria: {query: "ipad pro 11 4th gen wifi space 128gb", filters: {"include": ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {"include": ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
+          {search-criteria: {query: "ipad pro 11 4th gen wifi space 128gb", filters: {"include": ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 

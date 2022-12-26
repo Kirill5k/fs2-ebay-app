@@ -132,7 +132,7 @@ final private class CexGraphqlClient[F[_]](
 
   private def findSellPrice(query: String, category: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
-      dispatchSearchRequest(query)
+      dispatchSearchRequest(query, false)
         .map(filterByCategory(category))
         .map(getMinResellPrice)
         .flatMap { rp =>
@@ -143,7 +143,7 @@ final private class CexGraphqlClient[F[_]](
 
   private def filterByCategory(category: Option[String])(response: CexGraphqlSearchResponse): List[CexGraphqlItem] = {
     val items = response.results.getOrElse(Nil).flatMap(_.hits)
-    val cats = category.flatMap(c => CexClient.categories.get(c))
+    val cats  = category.flatMap(c => CexClient.categories.get(c))
     if (cats.isEmpty) items else items.filter(i => cats.get.contains(i.categoryId))
   }
 
@@ -161,7 +161,10 @@ final private class CexGraphqlClient[F[_]](
       .flatMap(Stream.emits)
       .map(cexGraphqlGenericItemMapper.toDomain(criteria))
 
-  private def dispatchSearchRequest(query: String): F[CexGraphqlSearchResponse] =
+  private def dispatchSearchRequest(query: String, inStock: Boolean = true): F[CexGraphqlSearchResponse] = {
+    val faceFilters =
+      if (inStock) "&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
+      else ""
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
@@ -175,12 +178,7 @@ final private class CexGraphqlClient[F[_]](
             .post(uri"${config.baseUri}/1/indexes/*/queries?${config.queryParameters.getOrElse(Map.empty)}")
             .body(
               CexGraphqlSearchRequest(
-                List(
-                  GraphqlSearchRequest(
-                    "prod_cex_uk",
-                    s"query=${query}&userToken=ecf31216f1ec463fac30a91a1f0a0dc3&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
-                  )
-                )
+                List(GraphqlSearchRequest("prod_cex_uk", s"query=${query}&userToken=ecf31216f1ec463fac30a91a1f0a0dc3$faceFilters"))
               )
             )
             .headers(config.headers)
@@ -205,6 +203,7 @@ final private class CexGraphqlClient[F[_]](
             logger.warn(s"$name-search/${r.code}-error\n$error") *> F.sleep(5.second) *> dispatchSearchRequest(query)
         }
       }
+  }
 }
 
 object CexClient:
