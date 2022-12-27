@@ -35,7 +35,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
       gameDetails.name mustBe Some("Call of Duty Modern Warfare 2")
-      gameDetails.platform mustBe Some("PLAYSTATION4")
+      gameDetails.platform mustBe Some("PS4")
       gameDetails.releaseYear mustBe Some("2019")
       gameDetails.genre mustBe Some("Action")
     }
@@ -43,13 +43,13 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     "map uncommon platform spellings" in {
       forAll(
         Map(
-          "PS-4"                      -> "PLAYSTATION4",
-          "PS4"                       -> "PLAYSTATION4",
-          "PS2"                       -> "PLAYSTATION2",
-          "PS5"                       -> "PLAYSTATION5",
-          "PLAYSTATION4"              -> "PLAYSTATION4",
-          "PLAYSTATION 4"             -> "PLAYSTATION4",
-          "PLAYSTATION 3"             -> "PLAYSTATION3",
+          "PS-4"                      -> "PS4",
+          "PS4"                       -> "PS4",
+          "PS2"                       -> "PS2",
+          "PS5"                       -> "PS5",
+          "PLAYSTATION4"              -> "PS4",
+          "PLAYSTATION 4"             -> "PS4",
+          "PLAYSTATION 3"             -> "PS3",
           "XBONE"                     -> "XBOX ONE",
           "XB ONE"                    -> "XBOX ONE",
           "XB 1"                      -> "XBOX ONE",
@@ -64,8 +64,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "XBOX SERIES X"             -> "XBOX",
           "XBOX SX"                   -> "XBOX",
           "Xbox-Live-Xbox-One"        -> "XBOX",
-          "Play Station 4, 2020"      -> "PLAYSTATION4",
-          "Sony Playstation 2016 PS3" -> "PLAYSTATION3"
+          "Play Station 4, 2020"      -> "PS4",
+          "Sony Playstation 2016 PS3" -> "PS3"
         )
       ) { (exp, act) =>
         val details = GameDetailsMapper.from(testListing.copy(title = s"Call of Duty: Infinite Warfare $exp", properties = Map.empty))
@@ -96,7 +96,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val gameDetails = GameDetailsMapper.from(listingDetails)
 
       gameDetails.name mustBe (Some("Call of Duty WWII"))
-      gameDetails.platform mustBe Some("PLAYSTATION4")
+      gameDetails.platform mustBe Some("PS4")
     }
 
     "get details from title if properties are missing" in {
@@ -160,7 +160,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val gameDetails    = GameDetailsMapper.from(listingDetails)
 
       gameDetails.name mustBe Some("job lot 5")
-      gameDetails.platform mustBe Some("PLAYSTATION4")
+      gameDetails.platform mustBe Some("PS4")
     }
 
     "keep collection if there is just 1 word" in {
@@ -244,7 +244,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val gameDetails    = GameDetailsMapper.from(listingDetails)
 
       gameDetails.name mustBe Some("Far cry 2")
-      gameDetails.platform mustBe Some("PLAYSTATION4")
+      gameDetails.platform mustBe Some("PS4")
     }
 
     "remove noise words from title" in {
