@@ -149,6 +149,7 @@ final private class CexGraphqlClient[F[_]](
 
   private def getMinResellPrice(items: List[CexGraphqlItem]): Option[SellPrice] =
     items
+      .filter(_.exchangePriceCalculated > 0)
       .minByOption(_.exchangePriceCalculated)
       .map(c => SellPrice(c.cashPriceCalculated, c.exchangePriceCalculated))
 
