@@ -25,12 +25,12 @@ private[cex] object mappers {
           s"USED${item.Grade.flatMap(_.headOption).map(g => s" / ${g}").getOrElse("")}",
           Instant.now,
           "CEX",
-          Map(
-            "exchangePerc"     -> item.exchangePerc.toString,
-            "firstPrice"       -> item.firstPrice.toString,
-            "previousPrice"    -> item.previousPrice.toString,
-            "priceLastChanged" -> item.priceLastChanged
-          )
+          List(
+            Some("exchangePerc" -> item.exchangePerc.toString),
+            item.firstPrice.map(fp => "firstPrice" -> fp.toString()),
+            item.previousPrice.map(pp => "previousPrice" -> pp.toString()),
+            item.priceLastChanged.map(plc => "priceLastChanged" -> plc)
+          ).flatten.toMap
         ),
         BuyPrice(item.ecomQuantity, item.sellPrice),
         Some(SellPrice(item.cashPriceCalculated, item.exchangePriceCalculated)),
