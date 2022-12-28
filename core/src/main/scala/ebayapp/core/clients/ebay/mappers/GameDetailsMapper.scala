@@ -229,7 +229,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(resident evil (8|\\bVIII\\b))", "Resident Evil Village")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
       .replaceAll("(?i)(Read Dead Redemption)", "Red Dead Redemption")
-      .replaceAll("(?i)(W2K)", "WWE 2k")
+      .replaceAll("(?i)(?<!WWE )(W2K)", "WWE 2k")
       .replaceAll("(?i)(\\bR6\\b)", "Rainbow Six")
       .replaceAll("(?i)Mortal Comba(t|r)", "Mortal Kombat")
       .replaceAll("(?i)(Hello Neighbour)", "Hello Neighbor")
