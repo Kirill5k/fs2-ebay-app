@@ -32,9 +32,8 @@ private[ebay] object responses {
       itemGroupType: Option[String],
       buyingOptions: Set[String],
       shortDescription: Option[String], // This field is returned by the search method only when fieldgroups = EXTENDED.
-      categories: List[ItemCategory]
-  ) derives Codec.AsObject:
-    val categoryIds: Set[String] = categories.map(_.categoryId).toSet
+      leafCategoryIds: Option[Set[String]]
+  ) derives Codec.AsObject
 
   final case class ItemAvailabilities(
       availabilityThreshold: Option[Int],

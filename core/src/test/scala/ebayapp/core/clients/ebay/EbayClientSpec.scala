@@ -277,7 +277,7 @@ class EbayClientSpec extends IOWordSpec {
       itemGroup,
       buyingOptions.toSet,
       shortDescription,
-      List(ItemCategory(categoryId.toString))
+      Some(Set(categoryId.toString))
     )
 
   def ebayItem: EbayItem =
