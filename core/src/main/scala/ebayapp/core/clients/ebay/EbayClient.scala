@@ -30,7 +30,7 @@ final private[ebay] class LiveEbayClient[F[_]](
     val logger: Logger[F]
 ) extends SearchClient[F] {
 
-  private def now: F[Instant] = F.realTime.map(_.toMillis).map(Instant.ofEpochMilli)
+  private def now: F[Instant] = F.realTimeInstant
 
   def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     for
@@ -38,8 +38,10 @@ final private[ebay] class LiveEbayClient[F[_]](
       time         <- Stream.eval(now.map(_.minusMillis(searchConfig.maxListingDuration.toMillis)))
       mapper       <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params       <- Stream.fromEither[F](EbaySearchParams.get(criteria))
+      catId = params.categoryId.toString
       items <- Stream
-        .evalSeq(searchForItems(params.requestArgs(time, criteria.query), params.filter and hasTrustedSeller(searchConfig)))
+        .evalSeq(searchForItems(params.queryParams(time, criteria.query), params.filter and hasTrustedSeller(searchConfig)))
+        .filter(i => i.leafCategoryIds.contains(catId))
         .evalMap(getCompleteItem)
         .unNone
         .map(mapper.toDomain(criteria))

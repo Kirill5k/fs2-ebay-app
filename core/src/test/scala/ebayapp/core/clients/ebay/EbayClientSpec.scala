@@ -8,7 +8,7 @@ import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses.*
-import ebayapp.core.common.config.{EbayConfig, OAuthCredentials, EbaySearchConfig}
+import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.ArgumentCaptor
@@ -55,7 +55,7 @@ class EbayClientSpec extends IOWordSpec {
         verify(authClient).accessToken
         verify(browseClient).search(eqTo(accessToken), searchParamsCaptor.capture())
         searchParamsCaptor.getAllValues.asScala must have size 2
-        searchParamsCaptor.getValue() must contain allElementsOf Map(
+        searchParamsCaptor.getValue must contain allElementsOf Map(
           "q"            -> "xbox",
           "fieldgroups"  -> "EXTENDED",
           "limit"        -> "200",
@@ -232,9 +232,9 @@ class EbayClientSpec extends IOWordSpec {
         verify(authClient, times(2)).accessToken
         verify(browseClient).search(eqTo(accessToken), any[Map[String, String]])
         verify(browseClient).getItem(eqTo(accessToken), any[String])
-        items.map(_.itemDetails) mustBe (List(
+        items.map(_.itemDetails) mustBe List(
           ItemDetails.VideoGame(Some("call of duty modern warfare"), Some("XBOX ONE"), Some("2019"), Some("Action"))
-        ))
+        )
       }
     }
 
@@ -266,10 +266,12 @@ class EbayClientSpec extends IOWordSpec {
       feedbackPercentage: Int = 150,
       itemGroup: Option[String] = None,
       buyingOptions: List[String] = List("FIXED_PRICE"),
-      shortDescription: Option[String] = None
+      shortDescription: Option[String] = None,
+      categoryId: Int = 139973
   ): EbayItemSummary =
     EbayItemSummary(
       id,
+      Set(categoryId.toString),
       name,
       Some(ItemPrice(BigDecimal.valueOf(30.00), "GBP")),
       ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore)),

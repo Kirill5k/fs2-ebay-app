@@ -25,6 +25,7 @@ private[ebay] object responses {
 
   final case class EbayItemSummary(
       itemId: String,
+      leafCategoryIds: Set[String],
       title: String,
       price: Option[ItemPrice],
       seller: ItemSeller,

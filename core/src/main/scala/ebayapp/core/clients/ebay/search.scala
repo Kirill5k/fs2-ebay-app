@@ -9,12 +9,12 @@ import java.time.temporal.ChronoUnit
 
 private[ebay] object search {
   trait EbaySearchParams {
-    protected def categoryId: Int
+    def categoryId: Int
     protected def searchFilterTemplate: String
 
     def filter: EbayItemSummary => Boolean
 
-    def requestArgs(from: Instant, query: String): Map[String, String] =
+    def queryParams(from: Instant, query: String): Map[String, String] =
       Map(
         "fieldgroups"  -> "EXTENDED",
         "category_ids" -> categoryId.toString,
@@ -66,7 +66,7 @@ private[ebay] object search {
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot",
-        "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)", "(memory|trading|post)( )?card", "stickers",
+        "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)", "(memory|trading|post|sd)( )?card", "stickers",
         "(demo|game)( )?(code|disc|key|cart|pass)", "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|no)( )?(redeem )?(\\bDL\\b|avatar|game|code|key)",
         "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo) only",
         "(case|variety|accessor(ies|y)|storage|charge|robot) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "switch.*(alu|unicorn).*\\bcase\\b",
@@ -90,7 +90,7 @@ private[ebay] object search {
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|pve|reaper|lvl)", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell",
-        "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|recipe|fossil|dino|egg|gold)",
+        "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|ticket|recipe|fossil|dino|egg|gold)",
         "(gta|grand theft)(?s).* (acc|lvl|fast run|bogdan|glitch|heist|character|cars|boost|cash|money|online|mill)",
         "(cod|of duty|mw2)(?s).* (items|points|boost|unlock|warzone|skin|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king","heatsink",
         "Temperature Sensor", "RGB LED", "powerstand", "not duped", "amiibo (mini )?card", "DIY material",
@@ -100,7 +100,7 @@ private[ebay] object search {
         "fifa(?s).* (\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa(?s)",
         "borderlands(?s).* (artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon.*(Scarlet|Violet).*(Violet|Scarlet)",
-        "\\bTBC\\b", "windows( )?(\\d|xp)",
+        "\\bTBC\\b", "windows( )?(\\d|xp|vista)",
         "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "XBOX( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"
       ).mkString("^.*?(?i)(", "|", ").*$").r
