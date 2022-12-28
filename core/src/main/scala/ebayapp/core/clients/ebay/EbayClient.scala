@@ -41,7 +41,7 @@ final private[ebay] class LiveEbayClient[F[_]](
       catId = params.categoryId.toString
       items <- Stream
         .evalSeq(searchForItems(params.queryParams(time, criteria.query), params.filter and hasTrustedSeller(searchConfig)))
-        .filter(i => i.leafCategoryIds.contains(catId))
+        .filter(i => i.categoryIds.contains(catId))
         .evalMap(getCompleteItem)
         .unNone
         .map(mapper.toDomain(criteria))

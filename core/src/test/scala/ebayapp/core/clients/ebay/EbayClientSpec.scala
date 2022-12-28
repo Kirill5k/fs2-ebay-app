@@ -271,13 +271,13 @@ class EbayClientSpec extends IOWordSpec {
   ): EbayItemSummary =
     EbayItemSummary(
       id,
-      Set(categoryId.toString),
       name,
       Some(ItemPrice(BigDecimal.valueOf(30.00), "GBP")),
       ItemSeller(Some("168.robinhood"), Some(feedbackPercentage.toDouble), Some(feedbackScore)),
       itemGroup,
       buyingOptions.toSet,
-      shortDescription
+      shortDescription,
+      List(ItemCategory(categoryId.toString))
     )
 
   def ebayItem: EbayItem =

@@ -4,7 +4,7 @@ import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.common.Logger
-import ebayapp.core.common.config.{EbayConfig, OAuthCredentials, EbaySearchConfig}
+import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
@@ -34,11 +34,13 @@ class EbayBrowseClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
-      val foundItems       = ebaySearchClient.flatMap(_.search(accessToken, searchQueryParams))
+      val result = for
+        client <- EbayBrowseClient.make[IO](config, testingBackend)
+        res    <- client.search(accessToken, searchQueryParams)
+      yield res
 
-      foundItems.asserting { items =>
-        items.map(_.itemId) mustBe (List("item-1", "item-2", "item-3", "item-4", "item-5"))
+      result.asserting { items =>
+        items.map(_.itemId) mustBe List("item-1", "item-2", "item-3", "item-4", "item-5")
       }
     }
 

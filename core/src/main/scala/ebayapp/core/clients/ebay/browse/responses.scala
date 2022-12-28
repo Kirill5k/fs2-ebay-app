@@ -20,19 +20,21 @@ private[ebay] object responses {
   
   final case class ItemImage(imageUrl: String) derives Codec.AsObject
   final case class ItemPrice(value: BigDecimal, currency: String) derives Codec.AsObject
+  final case class ItemCategory(categoryId: String) derives Codec.AsObject
   final case class ShippingCost(value: BigDecimal, currency: String) derives Codec.AsObject
   final case class ItemShippingOption(shippingServiceCode: String, shippingCost: ShippingCost) derives Codec.AsObject
 
   final case class EbayItemSummary(
       itemId: String,
-      leafCategoryIds: Set[String],
       title: String,
       price: Option[ItemPrice],
       seller: ItemSeller,
       itemGroupType: Option[String],
       buyingOptions: Set[String],
-      shortDescription: Option[String] // This field is returned by the search method only when fieldgroups = EXTENDED.
-  ) derives Codec.AsObject
+      shortDescription: Option[String], // This field is returned by the search method only when fieldgroups = EXTENDED.
+      categories: List[ItemCategory]
+  ) derives Codec.AsObject:
+    val categoryIds: Set[String] = categories.map(_.categoryId).toSet
 
   final case class ItemAvailabilities(
       availabilityThreshold: Option[Int],
