@@ -225,13 +225,11 @@ object CexClient:
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[CexClient[F]] =
-    mkCache(configProvider)
-      .map(cache => CexApiClient[F](() => configProvider.cex, cache, backend, proxyBackend))
+    mkCache(configProvider).map(cache => CexApiClient[F](() => configProvider.cex, cache, backend, proxyBackend))
 
   def graphql[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[CexClient[F]] =
-    mkCache(configProvider)
-      .map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend, proxyBackend))
+    mkCache(configProvider).map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend, proxyBackend))
