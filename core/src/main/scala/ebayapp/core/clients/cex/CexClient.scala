@@ -135,10 +135,7 @@ final private class CexGraphqlClient[F[_]](
       dispatchSearchRequest(query, false)
         .map(filterByCategory(category))
         .map(getMinResellPrice)
-        .flatMap { rp =>
-          if (rp.isEmpty && category.isDefined) findSellPrice(query, None)
-          else F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F]
-        }
+        .flatMap(rp => F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F])
     }
 
   private def filterByCategory(category: Option[String])(response: CexGraphqlSearchResponse): List[CexGraphqlItem] = {
