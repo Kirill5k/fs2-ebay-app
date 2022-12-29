@@ -147,7 +147,7 @@ private[mappers] object GameDetailsMapper {
   // format: on
 
   private val PLATFORMS_MATCH_REGEX = List(
-    "PS( )?[1-5]",
+    "(?<![a-zA-Z])PS( )?[1-5]",
     "PLAY( )?STATION(\\s+)?([1-5](?!\\d+)|one)",
     "PSVR",
     "NINTENDO SWITCH",

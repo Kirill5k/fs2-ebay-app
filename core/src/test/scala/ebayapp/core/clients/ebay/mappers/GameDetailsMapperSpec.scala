@@ -229,7 +229,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       val listingDetails = testListing.copy(title = "WWE 2k19 Wrestling")
       val gameDetails    = GameDetailsMapper.from(listingDetails)
 
-      gameDetails.name mustBe (Some("WWE 2k19"))
+      gameDetails.name mustBe Some("WWE 2k19")
     }
 
     "should keep A if used in acronym" in {
@@ -395,6 +395,14 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map.empty))
         details.name mustBe Some(expected)
       }
+    }
+
+    "correctly parse PS platform" in {
+      val listingDetails = testListing.copy(title = "Call Of Duty Black Ops 3 (PS4)")
+      val gameDetails = GameDetailsMapper.from(listingDetails)
+
+      gameDetails.name mustBe Some("Call Of Duty Black Ops 3")
+      gameDetails.platform mustBe Some("PS4")
     }
 
     "quick test" in {

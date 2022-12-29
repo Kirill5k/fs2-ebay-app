@@ -268,7 +268,7 @@ data:
           {search-criteria: {query: "boss casual"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio armani"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size xxl", "size xl", "size l"], min-discount: 51}
+        filters: {exclude: ["size xxl", "size xl", "size l"], min-discount: 58}
       }
 
       scan {
