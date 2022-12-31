@@ -22,8 +22,12 @@ class HealthControllerSpec extends ControllerSpec {
       val response = controller.routes.orNotFound.run(request)
 
       val responseBody =
-        s"""{"startupTime":"$ts","appVersion":"v0.0.1","requestMetadata":{"uri":"/health/status","headers":{"foo":"bar"},"serverAddress":null}}"""
-      verifyJsonResponse(response, Status.Ok, Some(responseBody))
+        s"""{
+           |"startupTime":"$ts",
+           |"appVersion":"v0.0.1",
+           |"requestMetadata":{"uri":"/health/status","headers":{"foo":"bar"},"serverAddress":null}
+           |}""".stripMargin
+      response mustHaveStatus (Status.Ok, Some(responseBody))
     }
   }
 }

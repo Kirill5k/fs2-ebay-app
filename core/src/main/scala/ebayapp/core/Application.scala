@@ -13,7 +13,6 @@ import ebayapp.core.tasks.Tasks
 import scala.concurrent.duration.*
 
 object Application extends IOApp.Simple:
-  System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection,content-length,expect,host,referer")
   override val run: IO[Unit] =
     Logger.make[IO].flatMap { implicit logger =>
       for

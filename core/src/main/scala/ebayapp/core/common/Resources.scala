@@ -3,6 +3,7 @@ package ebayapp.core.common
 import cats.effect.{Async, Resource}
 import cats.syntax.option.*
 import cats.syntax.apply.*
+import cats.syntax.flatMap.*
 import ebayapp.kernel.config.MongoConfig
 import ebayapp.core.common.config.{AppConfig, ClientConfig}
 import mongo4cats.client.MongoClient
@@ -47,15 +48,16 @@ object Resources {
       .build()
     MongoClient.create[F](settings).evalMap(_.getDatabase(config.dbName))
 
-  def make[F[_]: Async](config: AppConfig): Resource[F, Resources[F]] =
-    (
-      mkHttpClientBackend[F](config.client.connectTimeout, None),
-      mkProxyClientBackend[F](config.client),
-      mkMongoDatabase[F](config.mongo)
-    ).mapN { (http, proxy, mongo) =>
-      new Resources[F]:
-        def httpClientBackend: SttpBackend[F, Any]          = http
-        def proxyClientBackend: Option[SttpBackend[F, Any]] = proxy
-        def database: MongoDatabase[F]                      = mongo
-    }
+  def make[F[_]](config: AppConfig)(using F: Async[F]): Resource[F, Resources[F]] =
+    Resource.eval(F.delay(System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection,content-length,expect,host,referer"))) >>
+      (
+        mkHttpClientBackend[F](config.client.connectTimeout, None),
+        mkProxyClientBackend[F](config.client),
+        mkMongoDatabase[F](config.mongo)
+      ).mapN { (http, proxy, mongo) =>
+        new Resources[F]:
+          def httpClientBackend: SttpBackend[F, Any]          = http
+          def proxyClientBackend: Option[SttpBackend[F, Any]] = proxy
+          def database: MongoDatabase[F]                      = mongo
+      }
 }
