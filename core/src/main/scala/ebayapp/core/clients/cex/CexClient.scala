@@ -206,6 +206,7 @@ final private class CexGraphqlClient[F[_]](
 
 object CexClient:
   val categories: Map[String, Set[Int]] = Map(
+    "games-console"           -> Set(1000, 1146, 1147, 1003, 1141, 1064),
     "games-ps3"               -> Set(808),
     "games-xbox-360"          -> Set(782),
     "games-xbox-one-series-x" -> Set(1000, 1146, 1147),
