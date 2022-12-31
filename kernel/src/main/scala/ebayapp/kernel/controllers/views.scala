@@ -22,7 +22,7 @@ object views {
       case e: Throwable         => InternalError(e.getMessage)
     }
 
-    inline given encodeError: Encoder[ErrorResponse] = Encoder.instance {
+    inline given Encoder[ErrorResponse] = Encoder.instance {
       case e: UnprocessableEntity => e.asJson
       case e: BadRequest          => e.asJson
       case e: InternalError       => e.asJson
