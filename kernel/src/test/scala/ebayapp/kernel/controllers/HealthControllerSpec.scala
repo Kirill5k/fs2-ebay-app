@@ -16,13 +16,13 @@ class HealthControllerSpec extends ControllerSpec {
   "A HealthController" should {
 
     "return status on the app" in {
-      val controller = Ref.of[IO, Instant](ts).map(t => new HealthController[IO](t))
+      val controller = new HealthController[IO](ts, Some("v0.0.1"))
 
       val request  = Request[IO](uri = uri"/health/status", method = Method.GET, headers = Headers(Raw(CIString("foo"), "bar")))
-      val response = controller.flatMap(_.routes.orNotFound.run(request))
+      val response = controller.routes.orNotFound.run(request)
 
       val responseBody =
-        s"""{"startupTime":"$ts","requestMetadata":{"uri":"/health/status","headers":{"foo":"bar"},"serverAddress":null}}"""
+        s"""{"startupTime":"$ts","appVersion":"v0.0.1","requestMetadata":{"uri":"/health/status","headers":{"foo":"bar"},"serverAddress":null}}"""
       verifyJsonResponse(response, Status.Ok, Some(responseBody))
     }
   }

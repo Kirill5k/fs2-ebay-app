@@ -3,6 +3,7 @@ package ebayapp.kernel.controllers
 import cats.effect.{Async, Ref, Temporal}
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
+import cats.syntax.apply.*
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.*
@@ -26,10 +27,15 @@ object Metadata:
       request.server.map(_.host.toString)
     )
 
-final case class AppStatus(startupTime: Instant, requestMetadata: Metadata) derives Codec.AsObject
+final case class AppStatus(
+    startupTime: Instant,
+    appVersion: Option[String],
+    requestMetadata: Metadata
+) derives Codec.AsObject
 
 private[controllers] class HealthController[F[_]: Async](
-    private val startupTime: Ref[F, Instant]
+    private val startupTime: Instant,
+    private val appVersion: Option[String]
 ) extends Controller[F] {
 
   given statusSchema: Schema[AppStatus] = Schema.string
@@ -39,11 +45,14 @@ private[controllers] class HealthController[F[_]: Async](
       .in(extractFromRequest(identity))
       .in("health" / "status")
       .out(jsonBody[AppStatus])
-      .serverLogicSuccess(req => startupTime.get.map(t => AppStatus(t, Metadata.from[F](req.underlying.asInstanceOf[Request[F]]))))
+      .serverLogicPure { req =>
+        Right(AppStatus(startupTime, appVersion, Metadata.from[F](req.underlying.asInstanceOf[Request[F]])))
+      }
 
   override def routes: HttpRoutes[F] = Http4sServerInterpreter[F]().toRoutes(statusEndpoint)
 }
 
 object HealthController:
-  def make[F[_]: Async]: F[Controller[F]] =
-    Temporal[F].realTimeInstant.flatMap(ts => Ref.of(ts).map(ref => new HealthController[F](ref)))
+  def make[F[_]](using F: Async[F]): F[Controller[F]] =
+    (F.realTimeInstant, F.delay(sys.env.get("VERSION")))
+      .mapN((time, version) => new HealthController[F](time, version))
