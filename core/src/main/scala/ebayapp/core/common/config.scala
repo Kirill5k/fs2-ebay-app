@@ -6,7 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import ebayapp.core.domain.{ItemKind, Retailer}
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
-import ebayapp.kernel.config.{MongoConfig, ServerConfig}
+import ebayapp.kernel.config.{MongoConfig, ServerConfig, ClientConfig}
 import pureconfig.ConfigConvert.catchReadError
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
@@ -16,12 +16,6 @@ import java.io.File
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
 object config {
-
-  final case class ClientConfig(
-      connectTimeout: FiniteDuration,
-      proxyHost: Option[String],
-      proxyPort: Option[Int]
-  ) derives ConfigReader
 
   final case class OAuthCredentials(
       clientId: String,

@@ -4,8 +4,8 @@ import cats.effect.{Async, Resource}
 import cats.syntax.option.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
-import ebayapp.kernel.config.MongoConfig
-import ebayapp.core.common.config.{AppConfig, ClientConfig}
+import ebayapp.kernel.config.{ClientConfig, MongoConfig}
+import ebayapp.core.common.config.AppConfig
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import mongo4cats.models.client.{ConnectionString, MongoClientSettings}

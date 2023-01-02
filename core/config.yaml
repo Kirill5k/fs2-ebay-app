@@ -248,7 +248,7 @@ data:
         delay-between-requests: 2m
         monitoring-frequency: 12m
         monitoring-requests: [
-          {search-criteria: {query: "Moncler Maya navy quilted shell jacket"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Moncler Maya navy quilted shell jacket"}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "gucci", filters: {min-discount: 24}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "off-white", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "boss", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}

@@ -2,7 +2,10 @@ package ebayapp.proxy.common
 
 import cats.effect.{Async, Resource, Sync}
 import cats.syntax.apply.*
-import ebayapp.proxy.common.config.{AppConfig, ClientConfig}
+import cats.syntax.flatMap.*
+import ebayapp.kernel.config.ClientConfig
+import ebayapp.kernel.errors.AppError
+import ebayapp.proxy.common.config.AppConfig
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.client.middleware.FollowRedirect
@@ -38,17 +41,18 @@ object Resources:
   private def makeJdkHttpClient[F[_]: Async](config: ClientConfig): Resource[F, Client[F]] =
     Resource.eval(defaultHttpClient[F](config)).map(JdkHttpClient(_))
 
-  private def defaultHttpClient[F[_]](config: ClientConfig)(implicit F: Sync[F]): F[HttpClient] =
-    F.delay {
-      val builder = HttpClient.newBuilder()
-      // workaround for https://github.com/http4s/http4s-jdk-http-client/issues/200
-      if (Runtime.version().feature() == 11) {
-        val params = javax.net.ssl.SSLContext.getDefault.getDefaultSSLParameters
-        params.setProtocols(params.getProtocols.filter(_ != "TLSv1.3"))
-        builder.sslParameters(params)
+  private def defaultHttpClient[F[_]](config: ClientConfig)(using F: Sync[F]): F[HttpClient] =
+    F.raiseWhen(config.proxyPort.isEmpty || config.proxyHost.isEmpty)(AppError.Critical("Missing proxy config")) >>
+      F.delay {
+        val builder = HttpClient.newBuilder()
+        // workaround for https://github.com/http4s/http4s-jdk-http-client/issues/200
+        if (Runtime.version().feature() == 11) {
+          val params = javax.net.ssl.SSLContext.getDefault.getDefaultSSLParameters
+          params.setProtocols(params.getProtocols.filter(_ != "TLSv1.3"))
+          builder.sslParameters(params)
+        }
+        builder
+          .proxy(ProxySelector.of(new InetSocketAddress(config.proxyHost.get, config.proxyPort.get)))
+          .connectTimeout(JDuration.ofMillis(config.connectTimeout.toMillis))
+          .build()
       }
-      builder
-        .proxy(ProxySelector.of(new InetSocketAddress(config.proxyHost, config.proxyPort)))
-        .connectTimeout(JDuration.ofMillis(config.connectTimeout.toMillis))
-        .build()
-    }
