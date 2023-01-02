@@ -16,7 +16,7 @@ class AppConfigSpec extends AsyncWordSpec with Matchers {
     "load from application.conf" in {
       AppConfig.load[IO].unsafeToFuture().map { conf =>
         conf.server.host mustBe "0.0.0.0"
-        conf.client.proxyHost mustBe "my.proxy.com"
+        conf.client.proxyHost mustBe Some("my.proxy.com")
         conf.interrupter.initialDelay mustBe 30.minutes
       }
     }
