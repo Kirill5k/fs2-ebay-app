@@ -61,13 +61,4 @@ object ItemDetails {
         case ItemKind.Clothing    => cursor.as[Clothing]
       }
     }
-    .or(oldItemDetailsDecoder)
-
-  // TODO: remove in 2023
-  private val oldItemDetailsDecoder = List[Decoder[ItemDetails]](
-    Decoder[Clothing].widen,
-    Decoder[VideoGame].widen,
-    Decoder[Phone].widen,
-    Decoder[Generic].widen
-  ).reduceLeft(_ or _)
 }
