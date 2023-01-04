@@ -28,7 +28,6 @@ final case class SearchParams(
 trait ResellableItemRepository[F[_]]:
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: ResellableItem): F[Unit]
-  def saveAll(items: Seq[ResellableItem]): F[Unit]
   def search(params: SearchParams): F[List[ResellableItem]]
   def summaries(params: SearchParams): F[List[ItemSummary]]
 
@@ -62,9 +61,6 @@ final private class ResellableItemMongoRepository[F[_]](
         case e: MongoWriteException if e.getError.getCode == 11000 => F.unit
         case e                                                     => e.raiseError[F, Unit]
       }
-
-  def saveAll(items: Seq[ResellableItem]): F[Unit] =
-    mongoCollection.insertMany(items.map(ResellableItemEntity.from)).void
 
   def search(params: SearchParams): F[List[ResellableItem]] =
     mongoCollection.find

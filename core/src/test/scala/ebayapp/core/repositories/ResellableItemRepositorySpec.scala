@@ -2,6 +2,7 @@ package ebayapp.core.repositories
 
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
+import cats.syntax.traverse.*
 import ebayapp.core.MockLogger
 import ebayapp.core.common.Logger
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
@@ -163,6 +164,10 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       }
     }
   }
+
+  extension (repo: ResellableItemRepository[IO])
+    def saveAll(items: List[ResellableItem]): IO[Unit] =
+      items.traverse(repo.save).void
 
   def withEmbeddedMongoClient[A](test: MongoDatabase[IO] => IO[A]): Future[A] =
     withRunningEmbeddedMongo("localhost", mongoPort) {
