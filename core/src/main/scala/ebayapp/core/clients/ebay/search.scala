@@ -91,7 +91,7 @@ private[ebay] object search {
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch (ps|xbox|legendary|origins|game of the)",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|material|ticket|recipe|fossil|dino|egg|gold)",
-        "(gta|grand theft)(?s).* (acc|lvl|fast run|bogdan|glitch|heist|billion|full stat|trillion|character|cars|boost|cash|money|online|mill)",
+        "(gta|grand theft)(?s).* (acc|lvl|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
         "(cod|of duty|mw2)(?s).*(items|points|boost|unlock|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king","heatsink",
         "Temperature Sensor", "RGB LED", "powerstand", "not duped", "amiibo (mini )?card", "DIY material",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor) Switch", "Switching Sack",

@@ -113,7 +113,7 @@ private[mappers] object GameDetailsMapper {
     "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included",
     "(still )?in( (plastic|cellophane))? wrap(p)?(ing|er)", "\\brated \\d+\\b", "\\d supplied",
     "((region|europe) )?((R2( )?)?\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?",
-    "\\ben\\b", "\\bcr\\b", "\\bnc\\b", "\\bfr\\b", "\\bes\\b", "\\ban\\b", "\\bLTD\\b", "\\bREF \\d+\\b",
+    "\\ben\\b", "\\bcr\\b", "\\bnc\\b", "\\bfr\\b", "\\bes\\b", "\\ban\\b", "\\bLTD\\b", "\\bREF (\\w)?( )?\\d+\\b",
     "\\b\\w+VG(C)?\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b", "\\bnsw\\b", "\\bsft\\b", "uac pack",
     "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", 
     "\\bWAR L\\d+\\b", "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", 
