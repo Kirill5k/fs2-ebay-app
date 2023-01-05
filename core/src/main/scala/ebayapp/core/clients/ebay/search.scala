@@ -99,8 +99,8 @@ private[ebay] object search {
         "fallout(?s).* (ammo|damage|tesla|weapon|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",
         "fifa(?s).* (\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa(?s)",
         "borderlands(?s).* (artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
-        "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon.*(Scarlet|Violet).*(Violet|Scarlet)",
-        "dying light(?s).*(tier|legendary)",
+        "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon.*(Scarlet|Violet).*(Violet|Scarlet)",
+        "dying light(?s).*(tier|legendary)", "ACNH.*(tool|ticket)",
         "\\bTBC\\b", "windows( )?(\\d|xp|vista)",
         "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "XBOX( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"

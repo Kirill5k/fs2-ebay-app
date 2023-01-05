@@ -25,7 +25,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
 
   val timestamp = Instant.now.truncatedTo(ChronoUnit.SECONDS)
 
-  val videoGames: List[ResellableItem] = List(
+  val videoGames = List(
     ResellableItemBuilder.videoGame("GTA 5", timestamp.minusSeconds(1000)),
     ResellableItemBuilder.videoGame("Call of Duty WW2", timestamp, sellPrice = None),
     ResellableItemBuilder.videoGame("Super Mario 3", timestamp.plusSeconds(1000), platform = None)

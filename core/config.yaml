@@ -77,7 +77,8 @@ data:
       }
   
       jdsports {
-        base-uri: "https://request-follower.fly.dev"
+        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.jdsports.co.uk"
           "X-Reload-On-403": "true"
@@ -86,7 +87,8 @@ data:
       }
   
       scotts {
-        base-uri: "https://request-follower.fly.dev"
+        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.scottsmenswear.com"
           "X-Reload-On-403": "true"
@@ -95,7 +97,8 @@ data:
       }
   
       tessuti {
-        base-uri: "https://request-follower.fly.dev"
+        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.tessuti.co.uk"
           "X-Reload-On-403": "true"
@@ -190,7 +193,7 @@ data:
       }
 
       scotts {
-        delay-between-requests: 30s
+        delay-between-requests: 1m
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true}
@@ -202,7 +205,7 @@ data:
       }
 
       jdsports {
-        delay-between-requests: 30s
+        delay-between-requests: 45s
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true}
