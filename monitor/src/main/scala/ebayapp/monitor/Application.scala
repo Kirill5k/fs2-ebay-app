@@ -16,7 +16,7 @@ object Application extends IOApp.Simple:
   given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
   override val run: IO[Unit] =
     for
-      _      <- logger.info("starting ebay-app-monitor")
+      _      <- logger.info(s"starting ebay-app-monitor ${sys.env.getOrElse("VERSION", "")}")
       config <- logger.info("loading config") *> AppConfig.load[IO]
       _ <- Resources.make[IO](config, runtime.compute).use { resources =>
         for
