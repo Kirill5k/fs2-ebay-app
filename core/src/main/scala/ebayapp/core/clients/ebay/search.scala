@@ -89,6 +89,7 @@ private[ebay] object search {
         "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( )?CD", "\\n digit code",
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|pve|reaper|lvl)", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch (ps|xbox|legendary|origins|game of the)",
+        "(rune|items).*diablo", "diablo.*(rune|items)",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|million|diy|material|ticket|recipe|fossil|dino|egg|gold)",
         "(gta|grand theft)(?s).* (acc|lvl|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
