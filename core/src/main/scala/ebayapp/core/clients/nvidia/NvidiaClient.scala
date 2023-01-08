@@ -37,9 +37,12 @@ final private class LiveNvidiaClient[F[_]](
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .evalSeq(searchProducts(criteria))
-      .flatMap { p =>
-        Stream.emits(p.retailers.filter(_.isAvailable).map(r => NvidiaItem(p.displayName, p.imageURL, p.category, r)))
+      .map { p =>
+        p.retailers
+          .filter(_.isAvailable)
+          .map(r => NvidiaItem(p.displayName, p.imageURL, p.category, r))
       }
+      .flatMap(Stream.emits)
       .map(nvidiaGenericItemMapper.toDomain(criteria))
 
   private def searchProducts(c: SearchCriteria): F[List[Product]] =

@@ -15,8 +15,6 @@ private[nvidia] object responses {
 
   final private[nvidia] case class ProductRetailer(
       isAvailable: Boolean,
-      productId: Long,
-      productTitle: String,
       salePrice: BigDecimal,
       purchaseLink: String,
       directPurchaseLink: Option[String],
@@ -28,16 +26,17 @@ private[nvidia] object responses {
 
   final private[nvidia] case class Product(
       displayName: String,
-      productTitle: String,
-      productID: Long,
       imageURL: String,
-      prdStatus: String,
-      productPrice: String,
       category: String,
       retailers: List[ProductRetailer]
   ) derives Codec.AsObject
 
-  final private[nvidia] case class SearchedProducts(featuredProduct: Option[Product], productDetails: List[Product]) derives Codec.AsObject
+  final private[nvidia] case class SearchedProducts(
+      featuredProduct: Option[Product],
+      productDetails: List[Product]
+  ) derives Codec.AsObject
 
-  final private[nvidia] case class NvidiaSearchResponse(searchedProducts: SearchedProducts) derives Codec.AsObject
+  final private[nvidia] case class NvidiaSearchResponse(
+      searchedProducts: SearchedProducts
+  ) derives Codec.AsObject
 }
