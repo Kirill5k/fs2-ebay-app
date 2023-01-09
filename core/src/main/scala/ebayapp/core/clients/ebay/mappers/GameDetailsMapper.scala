@@ -19,7 +19,7 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL1_TITLE_WORDS_REPLACEMENTS = List(
     "(gold )?((greatest|playstation|ps) )?\\bhits\\b( (series|range|edition))?",
-    "nintendo selects",
+    "nintendo (selects|presents)",
     s"(?<=.{10})$CONSOLE_REGEX_PATTERN(?s).*",
     "(console )?\\bday\\b (one|1|zero|0)( (edition|\\be(d)?(i)?(t)?(i)?\\b))?(?s).*$",
     // remove edition and preceding word
