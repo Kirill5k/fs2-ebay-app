@@ -79,6 +79,7 @@ data:
       jdsports {
         //base-uri: "https://request-follower-kirill5k.koyeb.app"
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "http://mdrhnkozaf.eu08.qoddiapp.com"
         base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.jdsports.co.uk"
@@ -90,7 +91,8 @@ data:
       scotts {
         //base-uri: "https://request-follower-kirill5k.koyeb.app"
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        base-uri: "https://request-follower.fly.dev"
+        base-uri: "http://mdrhnkozaf.eu08.qoddiapp.com"
+        //base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.scottsmenswear.com"
           "X-Reload-On-403": "true"
@@ -101,6 +103,7 @@ data:
       tessuti {
         //base-uri: "https://request-follower-kirill5k.koyeb.app"
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "http://mdrhnkozaf.eu08.qoddiapp.com"
         base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.tessuti.co.uk"
@@ -192,7 +195,7 @@ data:
           {search-criteria: {category: "men", query: "Kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (xl|xxl|xxxl|l|xs|\\b[1-7]\\b|\\d+Y)", "mini crossbody"], min-discount: 29}
+        filters: {exclude: ["size (3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 29}
       }
 
       scotts {
@@ -204,7 +207,7 @@ data:
           {search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio-armani-loungewear", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (xl|xxl|xxxl|l|xs|\\b[1-7]\\b|\\d+Y)", "mini crossbody"], min-discount: 49}
+        filters: {exclude: ["size (3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
       }
 
       jdsports {
@@ -218,7 +221,7 @@ data:
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "tommy-hilfiger", filters: {min-discount: 64}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (xl|xxl|xxxl|l|xs|\\b[1-7]\\b|\\d+Y)", "mini crossbody"], min-discount: 49}
+        filters: {exclude: ["size (3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
       }
 
       selfridges {
@@ -235,7 +238,7 @@ data:
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "diesel", filters: {min-discount: 48, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (xl|xxl|xxxl|l|xs|\\b[1-7]\\b|\\d+Y)"]}
+        filters: {exclude: ["size (3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)"]}
       }
     
       flannels {
@@ -246,7 +249,7 @@ data:
           {search-criteria: {query: "off-white", category: men, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", category: men, filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (((\\d)?x)?l|xs|\\b[1-7]\\b|\\d+Y)"], min-discount: 30, max-price: 250}
+        filters: {exclude: ["size (((\\d)?x)?l|xs|\\b[1-8]\\b|1\\d|\\d+Y)"], min-discount: 30, max-price: 250}
       }
 
       harvey-nichols {
