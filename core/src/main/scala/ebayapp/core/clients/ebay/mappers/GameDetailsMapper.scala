@@ -47,7 +47,7 @@ private[mappers] object GameDetailsMapper {
     "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
     "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b",
-    "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?",
+    "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "xbox()?(original)?",
     "\\d games in (one|1)",
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal)(?s).*", "(?<=FIFA( \\d\\d)?) (soccer|football)",
     "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling",
