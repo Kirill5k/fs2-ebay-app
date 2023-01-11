@@ -8,7 +8,7 @@ private[mappers] object GameDetailsMapper {
   // format: off
   private val CONSOLE_REGEX_PATTERN = List(
     "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
-    "\\bPS(-| )?\\d\\b",
+    "\\bPS(-| )?(\\d|one)\\b",
     "(nintendo )?(switch|\\bwii( u)?\\b)",
     "((m(i)?(c)?(r)?(o)?soft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d{1,3}|sx)\\b"
   ).mkString(
@@ -171,6 +171,7 @@ private[mappers] object GameDetailsMapper {
     "PS3"                    -> "PS3",
     "PS2"                    -> "PS2",
     "PS"                     -> "PS",
+    "PSONE"                  -> "PS",
     "PSVR"                   -> "PS",
     "SONYPLAYSTATION5"       -> "PS5",
     "SONYPLAYSTATION4"       -> "PS4",
