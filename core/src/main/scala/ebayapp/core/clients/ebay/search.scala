@@ -86,13 +86,13 @@ private[ebay] object search {
         "samsung", "huawei", "iphone", "\\bipad\\b", "sandisk", "server", "wireless", "Tempered Glass", "Early Access", "beta test",
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
         "arabic", "slovakian", "czech", "NTSC USA", "to be updated", "(ps\\d|xbox( one)?) digital", "Dreamcast",
-        "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( )?CD", "\\n digit code",
+        "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( |-)?(CD|DVD)", "\\n digit code",
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|pve|reaper|lvl)", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch( -)? (ps|xbox|legendary|origins|game of the)",
-        "(rune|items).*diablo", "diablo.*(rune|items)",
+        "(rune|items).*diablo", "diablo.*(rune|items)", "nexigo", "fan cooling", "Eve Valkyrie",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|mil|diy|material|ticket|recipe|fossil|dino|egg|gold)",
-        "(gta|grand theft)(?s).* (acc|lvl|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
+        "(gta|grand theft)(?s).*(acc|lvl|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
         "(cod|of duty|mw2)(?s).*(items|camo|points|boost|unlock|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king","heatsink",
         "Temperature Sensor", "RGB LED", "powerstand", "not duped", "amiibo (mini )?card", "DIY material",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor) Switch", "Switching Sack",
@@ -101,10 +101,10 @@ private[ebay] object search {
         "fifa(?s).* (\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa(?s)",
         "borderlands(?s).* (artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon.*(Scarlet|Violet).*(Violet|Scarlet)",
-        "dying light(?s).*(tier|legendary)", "ACNH.*(tool|ticket)",
+        "dying light(?s).*(tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun",
         "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b3DS\\b",
         "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
-        "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "XBOX( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"
+        "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "X(BOX)?( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
 
