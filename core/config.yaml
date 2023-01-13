@@ -195,7 +195,7 @@ data:
           {search-criteria: {category: "men", query: "Kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 29}
+        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 29}
       }
 
       scotts {
@@ -207,7 +207,7 @@ data:
           {search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio-armani-loungewear", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
+        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
       }
 
       jdsports {
@@ -221,7 +221,7 @@ data:
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "tommy-hilfiger", filters: {min-discount: 64}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
+        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
       }
 
       selfridges {
@@ -238,7 +238,7 @@ data:
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "diesel", filters: {min-discount: 48, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (3[1-9]R|xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)"]}
+        filters: {exclude: ["size (3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)"]}
       }
     
       flannels {
