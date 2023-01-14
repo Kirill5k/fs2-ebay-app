@@ -55,11 +55,14 @@ val core = project
 val proxy = project
   .in(file("proxy"))
   .dependsOn(kernel % "test->test;compile->compile")
-  .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
+  .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin, NativeImagePlugin)
   .settings(docker)
   .settings(
     name                 := "fs2-ebay-app-proxy",
     moduleName           := "fs2-ebay-app-proxy",
+    Compile / mainClass  := Some("ebayapp.proxy.Application"),
+    nativeImageJvm := "graalvm-java17",
+    nativeImageVersion := "22.3.0",
     Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
     libraryDependencies ++= Dependencies.proxy
   )
