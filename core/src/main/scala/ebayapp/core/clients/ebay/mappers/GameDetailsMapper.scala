@@ -115,7 +115,7 @@ private[mappers] object GameDetailsMapper {
     "((region|europe) )?((R2( )?)?\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?",
     "\\ben\\b", "\\bcr\\b", "\\bnc\\b", "\\bfr\\b", "\\bes\\b", "\\ban\\b", "\\bLTD\\b", "\\bREF (\\w)?( )?\\d+\\b",
     "\\b\\w+VG(C)?\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b", "\\bnsw\\b", "\\bsft\\b", "uac pack",
-    "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG\\b(( )?\\d+)?", 
+    "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG(( )?\\d+)?\\b",
     "\\bWAR L\\d+\\b", "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", 
     "(ultra )?\\b(u)?hd(r)?\\b", "(\\b4k\\b|\\bone x\\b)( enhanced)?", "\\buns\\b", "\\bx360\\b", 
     "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b", 

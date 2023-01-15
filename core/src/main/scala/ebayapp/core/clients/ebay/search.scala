@@ -102,9 +102,10 @@ private[ebay] object search {
         "borderlands(?s).* (artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon.*(Scarlet|Violet).*(Violet|Scarlet)",
         "dying light(?s).*(tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun",
-        "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b3DS\\b",
+        "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b3DS\\b", "Master System", "\\bWII U\\b",
         "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
-        "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(psp|1|2|3)\\b", "X(BOX)?( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"
+        "\\bPS( vita|P|1|2|3)\\b", "\\bPlaystation( )?(vita|psp|1|2|3)\\b",
+        "X(BOX)?( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
 
