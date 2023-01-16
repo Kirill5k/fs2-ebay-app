@@ -1,0 +1,17 @@
+FROM --platform=linux/amd64 amazoncorretto:19-al2-jdk
+
+USER root
+
+RUN rm -f /etc/yum.repos.d/bintray-rpm.repo
+RUN curl -L https://www.scala-sbt.org/sbt-rpm.repo > sbt-rpm.repo
+RUN mv sbt-rpm.repo /etc/yum.repos.d/
+RUN yum install sbt -y
+RUN yum install git -y
+
+WORKDIR /app
+ADD . /app
+
+RUN sbt proxy/nativeImage
+
+
+

@@ -1,0 +1,6 @@
+target/
+.bsp
+.idea
+.github
+.gitignore
+README.md
