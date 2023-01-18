@@ -65,7 +65,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "XBOX SX"                   -> "XBOX",
           "Xbox-Live-Xbox-One"        -> "XBOX",
           "Play Station 4, 2020"      -> "PS4",
-          "Sony Playstation 2016 PS3" -> "PS3"
+          "Sony Playstation 2016 PS3" -> "PS3",
+          "(XBOX, 2020)"              -> "XBOX"
         )
       ) { (exp, act) =>
         val details = GameDetailsMapper.from(testListing.copy(title = s"Call of Duty: Infinite Warfare $exp", properties = Map.empty))
@@ -401,7 +402,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
     "correctly parse PS platform" in {
       val listingDetails = testListing.copy(title = "Call Of Duty Black Ops 3 (PS4)")
-      val gameDetails = GameDetailsMapper.from(listingDetails)
+      val gameDetails    = GameDetailsMapper.from(listingDetails)
 
       gameDetails.name mustBe Some("Call Of Duty Black Ops 3")
       gameDetails.platform mustBe Some("PS4")
