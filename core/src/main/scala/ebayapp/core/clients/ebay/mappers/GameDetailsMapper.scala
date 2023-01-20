@@ -12,7 +12,7 @@ private[mappers] object GameDetailsMapper {
     "(nintendo )?(switch|\\bwii( u)?\\b)",
     "((m(i)?(c)?(r)?(o)?soft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d{1,3}|sx)\\b"
   ).mkString(
-    "((new|rare|cheapest|excellent|official|select|enhanced) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
+    "((new|(super )?rare|cheapest|excellent|official|select|enhanced|Officially Licensed) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
     "|",
     ")( )?(game(s)?)?( )?(promo|classics|platform|lot|only|shooter|basketball|exclusive|console|edition|version|action|wrestling|football)?( game(s)?)?( new)?( )?(20\\d\\d)?"
   )
@@ -44,7 +44,7 @@ private[mappers] object GameDetailsMapper {
     "(in )?((absolutely|near) )?(great|(very )?good|incredible|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
-    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (presents|publishing))?",
+    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
     "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b",
     "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "xbox()?(original)?",
