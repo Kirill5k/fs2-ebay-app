@@ -87,7 +87,7 @@ private[ebay] object search {
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
         "arabic", "slovakian", "czech", "NTSC USA", "to be updated", "(ps\\d|xbox( one)?) digital", "Dreamcast",
         "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( |-)?(game|CD|DVD)", "\\n digit code",
-        "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|pve|reaper|lvl|Tek)", "Code(-| )?in(-| )?(a)?(-| )?Box",
+        "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|breeding|deadpool|pve|reaper|lvl|Tek)", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch( -)? (ps|xbox|legendary|origins|game)",
         "(rune|items).*diablo", "diablo.*(rune|items)", "nexigo", "fan cooling", "Eve Valkyrie",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell",
