@@ -86,7 +86,7 @@ private[ebay] object search {
         "samsung", "huawei", "iphone", "\\bipad\\b", "sandisk", "server", "wireless", "Tempered Glass", "Early Access", "beta test",
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
         "arabic", "slovakian", "czech", "NTSC USA", "to be updated", "(ps\\d|xbox( one)?) digital", "Dreamcast",
-        "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( |-)?(CD|DVD)", "\\n digit code",
+        "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( |-)?(game|CD|DVD)", "\\n digit code",
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|pve|reaper|lvl|Tek)", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch( -)? (ps|xbox|legendary|origins|game)",
         "(rune|items).*diablo", "diablo.*(rune|items)", "nexigo", "fan cooling", "Eve Valkyrie",
@@ -103,7 +103,8 @@ private[ebay] object search {
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon.*(Scarlet|Violet).*(Violet|Scarlet)",
         "dying light(?s).*(tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
         "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b3DS\\b", "Master System", "\\bWII U\\b", "Sega Master System",
-        "rocket l(?s).* (paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
+        "forza.*Wheelspin",
+        "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( vita|P|1|2|3)\\b", "\\bPlay( )?station( )?(vita|psp|1|2|3)\\b",
         "X(BOX)?( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"
       ).mkString("^.*?(?i)(", "|", ").*$").r
