@@ -93,7 +93,7 @@ private[ebay] object search {
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell",
         "villager(?s).*animal crossing", "animal crossing(?s).* (bell|mil|diy|material|ticket|recipe|fossil|dino|egg|gold)",
         "(gta|grand theft)(?s).*(acc|lvl|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
-        "(cod|of duty|mw2|warzone)(?s).*(code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king","heatsink",
+        "(cod|of duty|mw2|warzone)(?s).*(code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king","heatsink", "Destiny the coll",
         "Temperature Sensor", "RGB LED", "powerstand", "not duped", "amiibo (mini )?card", "DIY material",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor) Switch", "Switching Sack",
         "(ammo|damage|weapon|tesla|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
@@ -105,8 +105,8 @@ private[ebay] object search {
         "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b3DS\\b", "Master System", "\\bWII U\\b", "Sega Master System",
         "forza.*Wheelspin",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
-        "\\bPS( vita|P|1|2|3)\\b", "\\bPlay( )?station( )?(vita|psp|1|2|3)\\b",
-        "X(BOX)?( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube"
+        "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(vita|psp|1|2|3)\\b",
+        "X(BOX)?( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube", "\\bN64\\b"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
 
