@@ -164,6 +164,7 @@ data:
         monitoring-requests: [
           //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {"include": ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
           //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "Watch Series Ultra (Cel) NO STRAP, Titanium", filters: {"include": ["49mm, A"]}}, monitor-stock-change: true, monitor-price-change: true}
         ]
       }
 
@@ -189,8 +190,6 @@ data:
           {search-criteria: {category: "men", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "calvin-klein-jeans", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Tommy Hilfiger", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
@@ -215,11 +214,9 @@ data:
         monitoring-frequency: 6m
         monitoring-requests: [
           {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Calvin Klein", filters: {min-discount: 59}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "boss-loungewear"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "tommy-hilfiger", filters: {min-discount: 64}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
       }
@@ -228,12 +225,10 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {query: "stone-island", filters: {min-discount: 39}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "stone-island", filters: {min-discount: 29}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio armani", filters: {min-discount: 44}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "moncler", filters: {min-discount: 10}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "tommy hilfiger", filters: {min-discount: 59}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "polo ralph lauren", filters: {min-discount: 59}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "hugo", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "diesel", filters: {min-discount: 48, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
