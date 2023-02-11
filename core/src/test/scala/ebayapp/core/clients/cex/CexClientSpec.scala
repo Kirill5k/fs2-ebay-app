@@ -270,7 +270,7 @@ class CexClientSpec extends SttpClientSpec {
       result.attempt.asserting { price =>
         price mustBe Left(
           AppError.Json(
-            "cex-search/json-error: Got value '\"foo-bar\"' with wrong type, expecting array: DownField(boxes),DownField(data),DownField(response)"
+            "cex-search/json-error: DecodingFailure at .response.data.boxes: Got value '\"foo-bar\"' with wrong type, expecting array"
           )
         )
       }
