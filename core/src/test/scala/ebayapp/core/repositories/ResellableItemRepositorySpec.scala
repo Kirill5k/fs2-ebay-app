@@ -170,7 +170,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       items.traverse(repo.save).void
 
   def withEmbeddedMongoClient[A](test: MongoDatabase[IO] => IO[A]): Future[A] =
-    withRunningEmbeddedMongo("localhost", mongoPort) {
+    withRunningEmbeddedMongo(mongoPort) {
       MongoClient
         .fromConnectionString[IO](s"mongodb://localhost:$mongoPort")
         .evalMap(_.getDatabase("ebay-app"))

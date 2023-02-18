@@ -145,7 +145,7 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
   }
 
   def withEmbeddedMongoClient[A](test: MongoDatabase[IO] => IO[A]): Future[A] =
-    withRunningEmbeddedMongo("localhost", 12246) {
+    withRunningEmbeddedMongo(12246) {
       MongoClient
         .fromConnectionString[IO]("mongodb://localhost:12246")
         .evalMap(_.getDatabase("ebay-app"))
