@@ -16,7 +16,11 @@ class AppConfigSpec extends IOWordSpec {
       conf.mongo.dbName mustBe "ebay-app"
       conf.server.host mustBe "0.0.0.0"
       conf.retailer.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
-      conf.retailer.selfridges.headers mustBe Map("X-Reroute-To" -> "https://www.selfridges.com", "api-key" -> "key")
+      conf.retailer.selfridges.headers mustBe Map(
+        "X-Reroute-To"    -> "https://www.selfridges.com",
+        "api-key"         -> "key",
+        "Accept-Encoding" -> "*/*"
+      )
       conf.retailer.argos.proxied mustBe Some(true)
       conf.retailer.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
 
