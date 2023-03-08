@@ -106,7 +106,7 @@ final private class LiveSelfridgesClient[F[_]](
         dispatchWithProxy(config.proxied) {
           emptyRequest
             .contentType(MediaType.ApplicationJson)
-            .acceptEncoding(gzipDeflateEncoding)
+            .acceptEncoding(acceptAnything)
             .header(Header.userAgent(postmanUserAgent))
             .header(Header.cacheControl(CacheDirective.NoCache))
             .get(fullUri(config.baseUri))

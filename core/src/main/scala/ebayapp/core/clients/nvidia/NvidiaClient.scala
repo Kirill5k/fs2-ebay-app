@@ -50,7 +50,7 @@ final private class LiveNvidiaClient[F[_]](
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
           emptyRequest
-            .acceptEncoding(gzipDeflateEncoding)
+            .acceptEncoding(acceptAnything)
             .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
             .header(Header.userAgent(postmanUserAgent))

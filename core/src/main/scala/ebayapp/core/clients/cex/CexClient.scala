@@ -80,7 +80,7 @@ final private class CexApiClient[F[_]](
         dispatchWithProxy(config.proxied) {
           emptyRequest
             .contentType(MediaType.ApplicationXWwwFormUrlencoded)
-            .acceptEncoding(gzipDeflateEncoding)
+            .acceptEncoding(acceptAnything)
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
             .header("Referrer", "https://uk.webuy.com/")
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
@@ -168,7 +168,7 @@ final private class CexGraphqlClient[F[_]](
         dispatchWithProxy(config.proxied) {
           emptyRequest
             .contentType(MediaType.ApplicationJson)
-            .acceptEncoding(gzipDeflateEncoding)
+            .acceptEncoding(acceptAnything)
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
             .header("Referrer", "https://uk.webuy.com/")
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")

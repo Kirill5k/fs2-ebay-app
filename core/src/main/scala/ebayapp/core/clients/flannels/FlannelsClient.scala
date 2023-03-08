@@ -61,7 +61,7 @@ final private class LiveFlannelsClient[F[_]](
         dispatchWithProxy(config.proxied) {
           emptyRequest
             .maxRedirects(0)
-            .acceptEncoding(gzipDeflateEncoding)
+            .acceptEncoding(acceptAnything)
             .header(Header.accept(MediaType.ApplicationJson, MediaType.TextJavascript))
             .header(Header.userAgent(operaUserAgent))
             .header(Header.cacheControl(CacheDirective.NoCache))

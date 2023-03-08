@@ -32,7 +32,7 @@ final private class LiveJdClient[F[_]](
   private val getBrandHeaders = Map(
     HeaderNames.Cookie -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
     HeaderNames.Accept -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-    HeaderNames.AcceptEncoding  -> "gzip, deflate, br",
+    HeaderNames.AcceptEncoding  -> "*/*",
     HeaderNames.AcceptLanguage  -> "en-GB,en;q=0.9",
     HeaderNames.UserAgent       -> operaUserAgent,
     HeaderNames.ContentType     -> "application/json",
@@ -48,7 +48,7 @@ final private class LiveJdClient[F[_]](
 
   private val getStockHeaders = Map(
     HeaderNames.Accept         -> "*/*",
-    HeaderNames.AcceptEncoding -> "gzip, deflate, br",
+    HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
     HeaderNames.ContentType    -> "application/json",
     HeaderNames.XRequestedWith -> "XMLHttpRequest",

@@ -38,7 +38,7 @@ final private class LiveMainlineMenswearClient[F[_]](
 
   private val mainPageUrl = "https://www.mainlinemenswear.co.uk"
   private val baseRequest = emptyRequest
-    .acceptEncoding(gzipDeflateEncoding)
+    .acceptEncoding(acceptAnything)
     .contentType(MediaType.ApplicationJson)
     .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
     .header(Header.userAgent(operaUserAgent))
