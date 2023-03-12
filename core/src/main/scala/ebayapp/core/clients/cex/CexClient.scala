@@ -193,6 +193,8 @@ final private class CexGraphqlClient[F[_]](
           case Left(DeserializationException(body, error)) =>
             logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
               F.raiseError(AppError.Json(s"$name-search/json-error: ${error.getMessage}"))
+          case Left(HttpError(res, StatusCode.BadRequest)) =>
+            logger.error(s"$name-search/400-bad-request: $res") *> CexGraphqlSearchResponse.empty.pure[F]
           case Left(HttpError(_, StatusCode.Forbidden)) =>
             logger.error(s"$name-search/403-critical") *> F.sleep(30.seconds) *> dispatchSearchRequest(query)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>

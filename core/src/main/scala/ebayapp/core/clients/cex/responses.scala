@@ -25,6 +25,10 @@ private[cex] object responses {
 
   final case class CexGraphqlSearchResponse(results: Option[List[GraphqlSearchResult]]) derives Codec.AsObject
 
+  object CexGraphqlSearchResponse {
+    val empty = CexGraphqlSearchResponse(Some(Nil))
+  }
+
   final case class CexItem(
       boxId: String,
       boxName: String,
