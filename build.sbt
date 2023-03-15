@@ -60,12 +60,6 @@ val proxy = project
   .settings(
     name                 := "fs2-ebay-app-proxy",
     moduleName           := "fs2-ebay-app-proxy",
-    Compile / mainClass  := Some("ebayapp.proxy.Application"),
-    nativeImageJvm := "graalvm-java19",
-    nativeImageVersion := "22.3.0",
-    nativeImageOptions += s"-H:ReflectionConfigurationFiles=${target.value / "native-image-configs" / "reflect-config.json"}",
-    nativeImageOptions += s"-H:ConfigurationFileDirectories=${target.value / "native-image-configs" }",
-    nativeImageOptions +="-H:+JNI",
     Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
     libraryDependencies ++= Dependencies.proxy
   )
