@@ -25,6 +25,7 @@ class HealthControllerSpec extends ControllerSpec {
         s"""{
            |"startupTime":"$ts",
            |"appVersion":"v0.0.1",
+           |"serverIpAddress" : "127.0.0.1",
            |"requestMetadata":{"uri":"/health/status","headers":{"foo":"bar"},"serverAddress":null}
            |}""".stripMargin
       response mustHaveStatus (Status.Ok, Some(responseBody))

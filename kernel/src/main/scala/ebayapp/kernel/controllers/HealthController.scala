@@ -4,6 +4,7 @@ import cats.effect.{Async, Ref, Temporal}
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.apply.*
+import cats.syntax.either.*
 import ebayapp.kernel.controllers.HealthController.{AppStatus, Metadata}
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
@@ -15,6 +16,7 @@ import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.model.ServerRequest
 
+import java.net.InetAddress
 import java.time.Instant
 
 final private[controllers] class HealthController[F[_]: Async](
@@ -24,7 +26,14 @@ final private[controllers] class HealthController[F[_]: Async](
 
   private val statusEndpoint: ServerEndpoint[Fs2Streams[F], F] =
     HealthController.statusEndpoint
-      .serverLogicPure(req => Right(AppStatus(startupTime, appVersion, req.metadata)))
+      .serverLogicPure { req =>
+        AppStatus(
+          startupTime,
+          appVersion,
+          InetAddress.getLocalHost.getHostAddress,
+          req.metadata
+        ).asRight
+      }
 
   override def routes: HttpRoutes[F] = Http4sServerInterpreter[F]().toRoutes(statusEndpoint)
 
@@ -50,6 +59,7 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
   final case class AppStatus(
       startupTime: Instant,
       appVersion: Option[String],
+      serverIpAddress: String,
       requestMetadata: Metadata
   ) derives Codec.AsObject
 
