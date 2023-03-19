@@ -21,6 +21,7 @@ import java.time.Instant
 
 final private[controllers] class HealthController[F[_]: Async](
     private val startupTime: Instant,
+    private val ipAddress: String,
     private val appVersion: Option[String]
 ) extends Controller[F] {
 
@@ -30,7 +31,7 @@ final private[controllers] class HealthController[F[_]: Async](
         AppStatus(
           startupTime,
           appVersion,
-          InetAddress.getLocalHost.getHostAddress,
+          ipAddress,
           req.metadata
         ).asRight
       }
@@ -69,6 +70,6 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
     .out(jsonBody[AppStatus])
 
   def make[F[_]](using F: Async[F]): F[Controller[F]] =
-    (F.realTimeInstant, F.delay(sys.env.get("VERSION")))
-      .mapN((time, version) => new HealthController[F](time, version))
+    (F.realTimeInstant, F.delay(InetAddress.getLocalHost.getHostAddress), F.delay(sys.env.get("VERSION")))
+      .mapN((time, ip, version) => new HealthController[F](time, ip, version))
 }
