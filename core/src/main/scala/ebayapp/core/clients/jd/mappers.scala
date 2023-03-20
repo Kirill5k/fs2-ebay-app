@@ -35,12 +35,14 @@ private[jd] object mappers {
     override def toDomain(foundWith: SearchCriteria)(jdi: JdsportsItem): ResellableItem =
       ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None, foundWith)
 
-    private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing =
+    private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing = {
+      val id = if (jdi.colour.isBlank) jdi.id else s"${jdi.colour}, ${jdi.id}"
       Clothing(
-        s"${jdi.name} (${jdi.colour}, ${jdi.id})",
+        s"${jdi.name} ($id)",
         jdi.brand,
         jdi.size
       )
+    }
 
     private def buyPrice(jdi: JdsportsItem): BuyPrice = {
       val current  = jdi.currentPrice
