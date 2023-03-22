@@ -107,7 +107,7 @@ private[mappers] object GameDetailsMapper {
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", 
     "essentials", "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?",
     "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very|mega) rare", "award winning",
-    "Instruction(s)? Book", "works perfectly( fine)?", "Unwanted Gift", "limited (release|quantity)",
+    "Instruction(s)? Book", "works (great|perfectly( fine)?)", "Unwanted Gift", "limited (release|quantity)",
     "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", 
     "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b", "must see", "see (pictures|photos|pics)", "Refurbished",
     "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included",
