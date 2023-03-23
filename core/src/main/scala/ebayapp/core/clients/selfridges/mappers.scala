@@ -58,7 +58,7 @@ private[selfridges] object mappers {
         None,
         item.shortDescription,
         None,
-        Some(s"https://images.selfridges.com/is/image/selfridges/${item.imageName}"),
+        item.imageName.map(in => s"https://images.selfridges.com/is/image/selfridges/$in"),
         "NEW",
         Instant.now,
         "SELFRIDGES",

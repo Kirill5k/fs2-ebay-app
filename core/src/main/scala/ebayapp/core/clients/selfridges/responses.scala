@@ -44,7 +44,7 @@ private[selfridges] object responses {
   final case class CatalogItem(
       partNumber: String,
       seoKey: String,
-      imageName: String,
+      imageName: Option[String],
       name: Option[String],
       brandName: String,
       price: List[CatalogItemPrice],
