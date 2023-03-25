@@ -39,7 +39,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=\\w+ )((all|fully) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$", "cleaned( )?(fully )?tested",
     "((\\bC\\b )?\\bW\\b|with| inc(ludes)?|including|contain|((\\d|no) )?bonus|plus).{0,20}(game|insert|guide|dlc|pass|level|content|bonus|pack)(?s).*$",
-    "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
+    "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
     "(in )?((absolutely|near) )?(great|(very )?good|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",

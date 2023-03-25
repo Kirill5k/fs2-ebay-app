@@ -91,7 +91,7 @@ private[ebay] object search {
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|SMALLTRIBE|breeding|deadpool|pve|reaper|lvl|Tek)", "Code(-| )?in(-| )?(a)?(-| )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch( -)? (ps|xbox|legendary|origins|game)",
         "(rune|items).*diablo", "diablo.*(rune|items)", "nexigo", "fan cooling", "Eve Valkyrie", "invaders plush", "xbox original",
-        "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "touchpad", "Make Your Selection",
+        "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "touchpad", "Touch( )?Screen", "Make Your Selection",
         "villager(?s).*animal crossing", "animal crossing(?s).* (item|cafe|park|bell|mil|diy|material|ticket|recipe|fossil|dino|egg|gold)",
         "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
         "(cod|of duty|mw2|warzone)(?s).*(code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king","heatsink", "Destiny the coll",
