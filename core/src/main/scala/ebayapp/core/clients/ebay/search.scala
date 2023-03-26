@@ -75,7 +75,7 @@ private[ebay] object search {
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging) (dock|station|stand)", "download",
         "credits", "instant delivery", "official (server|magazin)", "damaged", "Option File", "offline", "unlock all", "online", "mini dock", "credit(?s).*accoun",
         "coin", "skins", "collectors box", "soundtrack", "poster", "protection accessor", "PLAYSTAND", "Press Release", "starlink(?s).*pack",
-        "(no|protective|foreign|case|silicone|phone|style|\\bUS\\b|miss(ing)?) cover(s)?", "promotional game", "starter pack", "Microphone", "KontrolFreek",
+        "(no|protective|foreign|case|slip|silicone|phone|style|\\bUS\\b|miss(ing)?) cover(s)?", "promotional game", "starter pack", "Microphone", "KontrolFreek",
         "sniper thumbs", "(game|skin|thumb|Silicone|floating) grip", "thumb( )?stick", "(screen|grip) (protector|combat|stick)", "leg strap", "Cleaning Cloth",
         "dual( )?(shock|charge)", "efigs", "gamepad", "(toy|joy|ring)(\\s+)?con", "controller", "(card|stand) holder", "(Spa|messenger)?( )?Bag", "keyring",
         "headset", "\\bhdmi\\b", "\\bUSB\\b", "\\bhdd\\b", "(nintendo|switch) labo", "(steering|racing|driving|official|nintendo|wii|race) wheel", "wristband",
@@ -103,11 +103,11 @@ private[ebay] object search {
         "borderlands(?s).*(artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "Hogwarts Legacy(?s).*(onyx|potion|shop)", "DYING LIGHT(?s).*(EGG-SPLOSIVE|THROWABLE)",
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon",
-        "dying light(?s).*(tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
+        "dying light(?s).*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
         "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b3DS\\b", "Master System", "\\bWII U\\b", "Sega Master System",
         "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", "\\(DS\\)", "Roblox",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
-        "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(vita|psp|1|2|3)\\b",
+        "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b",
         "X(BOX)?( )?360", "nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube", "\\bN64\\b", "\\bDS\\b game"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
