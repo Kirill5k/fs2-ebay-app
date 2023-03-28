@@ -10,7 +10,7 @@ import scala.concurrent.duration.FiniteDuration
 
 opaque type Url = java.net.URL
 object Url:
-  def apply(host: String): Url = new java.net.URL(host)
+  def apply(host: String): Url = java.net.URI.create(host).toURL
 
 enum HttpMethod:
   case GET, POST, PUT, DELETE, PATCH, HEAD
