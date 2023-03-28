@@ -17,13 +17,13 @@ import scala.concurrent.duration.*
 
 class HttpClientSpec extends SttpClientSpec {
 
-  val url = Url("http://foo.bar")
+  val url = Url("http://foo.bar/health")
 
   "A HttpClient" should {
     "return status Up on success" in {
       val backend = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.uri == uri"${url.toString}" && r.hasHeader("foo", "bar") =>
+          case r if r.isGet && r.uri == uri"http://foo.bar/health" && r.hasHeader("foo", "bar") =>
             Response.ok("success")
           case r =>
             throw new RuntimeException()
