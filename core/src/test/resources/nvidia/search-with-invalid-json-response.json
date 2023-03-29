@@ -1,0 +1,21 @@
+{
+  "filterGroups": [
+    {
+      "displayName": "geforce_group",
+      "filterField": "geforce_group_filter",
+      "displayMaxValues": "0",
+      "fieldType": "checkbox",
+      "selectedMinRangeVal": null,
+      "selectedMaxRangeVal": null,
+      "defaultMinRangeVal": null,
+      "defaultMaxRangeVal": null,
+      "unitsOfMeasure": null,
+      "checked": null,
+      "units": 81,
+      "filterValues": [],
+      "dataType": null,
+      "showCount": null,
+      "filterDisplayOrder": null
+    }
+  ]
+}

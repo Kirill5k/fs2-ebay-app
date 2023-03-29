@@ -15,6 +15,7 @@ import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
+import io.circe.DecodingFailure
 import sttp.client3.circe.asJson
 import sttp.client3.*
 import sttp.model.{Header, MediaType}
@@ -67,7 +68,8 @@ final private class LiveNvidiaClient[F[_]](
           case Right(response) =>
             F.pure(response.searchedProducts.featuredProduct.toList ::: response.searchedProducts.productDetails)
           case Left(DeserializationException(body, error)) =>
-            logger.error(s"$name-search/parsing-error: ${error.getMessage}, \n$body") *>
+            val circeError = error.asInstanceOf[DecodingFailure]
+            logger.error(s"$name-search/parsing-error: ${circeError.getMessage} (${circeError.pathToRootString})\n$body") *>
               List.empty[Product].pure[F]
           case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
             logger.warn(s"$name-search/$status-error, \n$body") *>
