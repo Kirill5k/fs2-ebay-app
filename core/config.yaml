@@ -30,7 +30,8 @@ data:
     
     retailer {
       cex {
-        base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://reqfol.fly.dev"
         cache {
           expiration: 24h
           validation-period: 1h

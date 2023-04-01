@@ -19,7 +19,7 @@ trait NotificationService[F[_]]:
   def cheapItem(item: ResellableItem): F[Unit]
   def stockUpdate(item: ResellableItem, update: StockUpdate): F[Unit]
 
-final class TelegramNotificationService[F[_]: Monad](
+final private class LiveNotificationService[F[_]: Monad](
     private val messengerClient: MessengerClient[F],
     private val sentMessages: Cache[F, String, Unit]
 )(using
@@ -30,7 +30,7 @@ final class TelegramNotificationService[F[_]: Monad](
   override def cheapItem(item: ResellableItem): F[Unit] =
     item.cheapItemNotification match
       case Some(notification) =>
-        logger.info(s"""sending "${notification.message}"""") *>
+        logger.info(s"""sending ${notification.message}""") *>
           messengerClient.send(notification)
       case None =>
         logger.warn(s"not enough details for sending cheap item notification $item")
@@ -39,7 +39,7 @@ final class TelegramNotificationService[F[_]: Monad](
     item.stockUpdateNotification(update) match
       case Some(notification) =>
         sentMessages.evalPutIfNew(base64(notification.message)) {
-          logger.info(s"""sending "${notification.message}" from ${item.listingDetails.seller}""") *>
+          logger.info(s"""sending ${notification.message} from ${item.listingDetails.seller}""") *>
             messengerClient.send(notification)
         }
       case None =>
@@ -82,5 +82,5 @@ object NotificationService {
   def make[F[_]: Temporal: Logger](client: MessengerClient[F]): F[NotificationService[F]] =
     Cache
       .make[F, String, Unit](1.hour, 5.minutes)
-      .map(cache => TelegramNotificationService[F](client, cache))
+      .map(cache => LiveNotificationService[F](client, cache))
 }
