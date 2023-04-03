@@ -105,7 +105,7 @@ private[ebay] object search {
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon",
         "dying light(?s).*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
         "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b(2|3)DS\\b", "Master System", "\\bWII U\\b", "Sega Master System",
-        "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", "[(]DS[)]", "Roblox",
+        "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", "\\(WII\\)", "[(]DS[)]", "Roblox",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b", "\bSNES\\b",
         "X(BOX)?( )?360", "(super )?nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube", "\\bN64\\b", "\\bDS\\b game",

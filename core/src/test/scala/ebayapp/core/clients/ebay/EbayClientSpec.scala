@@ -148,6 +148,7 @@ class EbayClientSpec extends IOWordSpec {
       val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       val badItems = List(
+        "super mario bros 3ds",
         "overwatch - game of the Year Edition",
         "overwatch game of the Year Edition",
         "Starlink Weapons Pack x 2  PS4 XBox Switch - Hailstorm & Iron Fist",
