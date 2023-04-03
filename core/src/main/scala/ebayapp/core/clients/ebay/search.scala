@@ -89,12 +89,12 @@ private[ebay] object search {
         "arabic", "slovakian", "czech", "NTSC USA", "to be updated", "(ps\\d|xbox( one)?) digital", "Dreamcast",
         "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( |-)?(win|game|CD|DVD)", "\\n digit code",
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|SMALLTRIBE|breeding|deadpool|pve|reaper|lvl|Tek)", "Code(-| )?in(-| )?(a)?(-| )?Box",
-        "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch( -)? (ps|xbox|legendary|origins|game)",
+        "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch[ -]{1,3}(ps|xbox|legendary|origins|game)",
         "(rune|items).*diablo", "diablo.*(rune|items)", "nexigo", "fan cooling", "Eve Valkyrie", "invaders plush", "xbox original",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "touchpad", "Touch( )?Screen", "Make Your Selection",
         "villager(?s).*animal crossing", "animal crossing(?s).* (item|cafe|park|bell|mil|diy|material|ticket|recipe|fossil|dino|egg|gold)",
         "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
-        "(cod|of duty|mw2|warzone)(?s).*(code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king","heatsink", "Destiny the coll",
+        "(cod|of duty|mw2|warzone)(?s).*(code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king", "heatsink", "Destiny( -)? the coll",
         "Temperature Sensor", "RGB LED", "powerstand", "not duped", "amiibo", "DIY material",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor) Switch", "Switching Sack",
         "(ammo|damage|weapon|tesla|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
@@ -104,11 +104,12 @@ private[ebay] object search {
         "Hogwarts Legacy(?s).*(onyx|potion|shop)", "DYING LIGHT(?s).*(EGG-SPLOSIVE|THROWABLE)",
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon",
         "dying light(?s).*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
-        "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b3DS\\b", "Master System", "\\bWII U\\b", "Sega Master System",
-        "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", "\\(DS\\)", "Roblox",
+        "\\bTBC\\b", "windows( )?(\\d|xp|vista)", "\\b(2|3)DS\\b", "Master System", "\\bWII U\\b", "Sega Master System",
+        "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", "[(]DS[)]", "Roblox",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b", "\bSNES\\b",
-        "X(BOX)?( )?360", "(super )?nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube", "\\bN64\\b", "\\bDS\\b game"
+        "X(BOX)?( )?360", "(super )?nintendo ((3)?ds|wii)", "\\b(3)?DS\\b nintento", "gamecube", "\\bN64\\b", "\\bDS\\b game",
+        "PlayStation 3.?PS3", "PlayStation 2.?PS2"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
 

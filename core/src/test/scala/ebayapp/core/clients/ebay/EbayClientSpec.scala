@@ -12,6 +12,7 @@ import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredential
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.{never, times}
 
 import java.util.UUID
@@ -147,15 +148,15 @@ class EbayClientSpec extends IOWordSpec {
       val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
 
       val badItems = List(
-        "Super Mario Bros (DS)",
-        "Overwatch - Game of the Year Edition",
+        "overwatch - game of the Year Edition",
+        "overwatch game of the Year Edition",
         "Starlink Weapons Pack x 2  PS4 XBox Switch - Hailstorm & Iron Fist",
         "switch amazing aluminium case",
-        "switch console mario kart case",
+        "fallout 4 PlayStation 2/PS2",
         "fallout 4 disc only",
         "COD MW2 GHILLIE Skin 4x Jack Links Codes [COMPLETE SET] + 2 Hours 2XP",
         "fallout 4 disc only",
-        "fallout taken king full game",
+        "destiny taken king full game",
         "fallout 76 blah damage blah blah blah",
         "call of duty digital code",
         "lego worlds read description",
@@ -177,14 +178,17 @@ class EbayClientSpec extends IOWordSpec {
         """borderlands 4 promotional copy"""
       )
 
-      val response = badItems.map(name => ebayItemSummary(UUID.randomUUID().toString, name = name)).pure[IO]
+      val response = badItems.map(name => ebayItemSummary(UUID.randomUUID().toString, name = name))
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
-      when(browseClient.search(any[String], any[Map[String, String]])).thenReturn(response)
+      when(browseClient.search(any[String], any[Map[String, String]])).thenReturn(IO.pure(response))
 
       val itemsResponse = videoGameSearchClient.search(criteria)
 
-      itemsResponse.compile.toList.asserting(_ mustBe Nil)
+      itemsResponse.compile.toList.asserting { res =>
+        verify(browseClient, never()).getItem(anyString(), anyString())
+        res mustBe Nil
+      }
     }
 
     "filter out items that are not buy it now" in {
