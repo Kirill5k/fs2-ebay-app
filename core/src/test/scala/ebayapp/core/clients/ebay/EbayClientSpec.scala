@@ -154,7 +154,7 @@ class EbayClientSpec extends IOWordSpec {
         "Starlink Weapons Pack x 2  PS4 XBox Switch - Hailstorm & Iron Fist",
         "switch amazing aluminium case",
         "fallout 4 PlayStation 2/PS2",
-        "fallout 4 disc only",
+        "fallout 4 preorder",
         "COD MW2 GHILLIE Skin 4x Jack Links Codes [COMPLETE SET] + 2 Hours 2XP",
         "fallout 4 disc only",
         "destiny taken king full game",
@@ -179,7 +179,7 @@ class EbayClientSpec extends IOWordSpec {
         """borderlands 4 promotional copy"""
       )
 
-      val response = badItems.map(name => ebayItemSummary(UUID.randomUUID().toString, name = name))
+      val response = badItems.map(name => ebayItemSummary(name, name = name))
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], any[Map[String, String]])).thenReturn(IO.pure(response))
