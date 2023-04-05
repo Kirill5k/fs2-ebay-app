@@ -149,6 +149,7 @@ class EbayClientSpec extends IOWordSpec {
 
       val badItems = List(
         "super mario bros 3ds",
+        "destiny - the collection",
         "overwatch - game of the Year Edition",
         "overwatch game of the Year Edition",
         "Starlink Weapons Pack x 2  PS4 XBox Switch - Hailstorm & Iron Fist",
