@@ -297,8 +297,8 @@ private[mappers] object GameDetailsMapper {
         .replaceAll("é", "e")
         .replaceAll("\\P{Print}", "")
         .replaceAll("\\\\x\\p{XDigit}{2}", "")
-        .replaceAll("[@~+%\"{}?_;`—–“”!•£&#’'*|.\\[\\]]", "")
-        .replaceAll("[\\\\()/,:-]", " ")
+        .replaceAll("[@~+%\"{}?_;`—–“”!•£#’'*|.\\[\\]]", "")
+        .replaceAll("[\\\\()/&,:-]", " ")
         .replaceAll(" +", " ")
         .trim
 }
