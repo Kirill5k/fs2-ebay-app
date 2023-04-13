@@ -9,20 +9,28 @@ import java.time.Instant
 
 private[frasers] object mappers {
 
-  final case class FlannelsItem(
+  final case class FrasersItem(
       product: FlannelsProduct,
-      size: String
+      size: String,
+      websiteUri: String,
+      retailer: String
   )
 
-  type FlannelsItemMapper = ItemMapper[FlannelsItem]
+  type FrasersItemMapper = ItemMapper[FrasersItem]
 
-  inline def flannelsClothingMapper: FlannelsItemMapper = new FlannelsItemMapper {
+  inline def frasers: FrasersItemMapper = new FrasersItemMapper {
 
-    override def toDomain(foundWith: search.SearchCriteria)(item: FlannelsItem): ResellableItem =
+    private def formatSize(size: String): String =
+      size
+        .replaceAll("(?i)medium", "M")
+        .replaceAll("(?i)small", "S")
+        .replaceAll("(?i)large", "L")
+
+    override def toDomain(foundWith: search.SearchCriteria)(item: FrasersItem): ResellableItem =
       ResellableItem.clothing(
-        ItemDetails.Clothing(s"${item.product.name} (${item.product.colour})", item.product.brand, item.size),
+        ItemDetails.Clothing(s"${item.product.name} (${item.product.colour})", item.product.brand, formatSize(item.size)),
         ListingDetails(
-          s"https://flannels.com${item.product.url}",
+          s"${item.websiteUri}${item.product.url}",
           item.product.imageAltText,
           None,
           None,
@@ -30,7 +38,7 @@ private[frasers] object mappers {
           item.product.imageLarge,
           "NEW",
           Instant.now,
-          "FLANNELS",
+          item.retailer.toUpperCase,
           Map.empty
         ),
         BuyPrice(1, item.product.priceUnFormatted, item.product.discountPercentage.map(_.toInt)),

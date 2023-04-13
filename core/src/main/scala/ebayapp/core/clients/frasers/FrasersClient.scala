@@ -4,7 +4,7 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.frasers.mappers.{flannelsClothingMapper, FlannelsItem}
+import ebayapp.core.clients.frasers.mappers.{frasers, FrasersItem}
 import ebayapp.core.clients.frasers.responses.{FlannelsProduct, FlannelsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -31,7 +31,7 @@ final private class LiveFrasersClient[F[_]](
 
   override protected val name: String = retailer.name
 
-  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri) + "/"
+  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri)
 
   private val groupIdPrefix: String = retailer match
     case Retailer.Flannels => "FLAN_TM"
@@ -48,9 +48,9 @@ final private class LiveFrasersClient[F[_]](
           .flatMap(Stream.emits)
           .filter(_.isOnSale)
           .flatMap { product =>
-            Stream.emits(product.sizes.split(", ").toList.map(s => FlannelsItem(product, s)))
+            Stream.emits(product.sizes.split(", ").toList.map(s => FrasersItem(product, s, config.websiteUri, name)))
           }
-          .map(flannelsClothingMapper.toDomain(criteria))
+          .map(frasers.toDomain(criteria))
       }
 
   private def getItems(sc: SearchCriteria)(page: Int = 1): F[(List[FlannelsProduct], Option[Int])] =
