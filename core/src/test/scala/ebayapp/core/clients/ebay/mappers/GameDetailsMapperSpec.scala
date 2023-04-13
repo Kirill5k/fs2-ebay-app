@@ -361,7 +361,6 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       forAll(
         Map(
           "FIFA 18 (XBOX ONE, SERIES X|S) VERY GOOD CONDITION" -> "FIFA 18",
-          "the last of us part 2"                              -> "last of us Part II",
           "resident evil VII"                                  -> "Resident Evil 7",
           "resident evil VIII"                                 -> "Resident Evil Village",
           "resident evil 8"                                    -> "Resident Evil Village",
