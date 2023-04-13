@@ -1,13 +1,13 @@
-package ebayapp.core.clients.flannels
+package ebayapp.core.clients.frasers
 
 import ebayapp.core.clients.ItemMapper
-import ebayapp.core.clients.flannels.responses.FlannelsProduct
+import ebayapp.core.clients.frasers.responses.FlannelsProduct
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 import ebayapp.core.domain.{search, ItemDetails, ResellableItem}
 
 import java.time.Instant
 
-private[flannels] object mappers {
+private[frasers] object mappers {
 
   final case class FlannelsItem(
       product: FlannelsProduct,

@@ -1,4 +1,4 @@
-package ebayapp.core.clients.flannels
+package ebayapp.core.clients.frasers
 
 import cats.effect.IO
 import ebayapp.core.{MockConfigProvider, MockLogger}
@@ -9,7 +9,7 @@ import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
 
-class FlannelsClientSpec extends SttpClientSpec {
+class FrasersClientSpec extends SttpClientSpec {
 
   given logger: Logger[IO] = MockLogger.make[IO]
 
@@ -29,8 +29,8 @@ class FlannelsClientSpec extends SttpClientSpec {
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
-      FlannelsClient
-        .make[IO](config, testingBackend)
+      FrasersClient
+        .flannels[IO](config, testingBackend)
         .flatMap(_.search(sc).compile.toList)
         .asserting { items =>
           items must have size 17

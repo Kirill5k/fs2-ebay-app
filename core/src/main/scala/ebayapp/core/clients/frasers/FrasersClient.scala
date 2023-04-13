@@ -1,11 +1,11 @@
-package ebayapp.core.clients.flannels
+package ebayapp.core.clients.frasers
 
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.flannels.mappers.{FlannelsItem, flannelsClothingMapper}
-import ebayapp.core.clients.flannels.responses.{FlannelsProduct, FlannelsSearchResponse}
+import ebayapp.core.clients.frasers.mappers.{FlannelsItem, flannelsClothingMapper}
+import ebayapp.core.clients.frasers.responses.{FlannelsProduct, FlannelsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{ConfigProvider, Logger}
@@ -91,8 +91,8 @@ final private class LiveFlannelsClient[F[_]](
       }
 }
 
-object FlannelsClient:
-  def make[F[_]: Temporal: Logger](
+object FrasersClient:
+  def flannels[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

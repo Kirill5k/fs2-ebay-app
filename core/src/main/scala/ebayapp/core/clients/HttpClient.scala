@@ -19,16 +19,16 @@ trait HttpClient[F[_]] {
 
   protected val delayBetweenFailures: FiniteDuration = 10.seconds
 
-  protected val operaUserAgent =
+  protected val operaUserAgent: String =
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 OPR/89.0.4447.83"
 
-  protected val postmanUserAgent = "PostmanRuntime/7.28.3"
+  protected val postmanUserAgent: String = "PostmanRuntime/7.28.3"
 
-  protected val acceptAnything = "*/*"
+  protected val acceptAnything: String = "*/*"
 
-  protected val defaultHeaders = Map(
-    HeaderNames.Accept         -> "*/*",
-    HeaderNames.AcceptEncoding -> "*/*",
+  protected val defaultHeaders: Map[String, String] = Map(
+    HeaderNames.Accept         -> acceptAnything,
+    HeaderNames.AcceptEncoding -> acceptAnything,
     HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
     HeaderNames.CacheControl   -> "no-store, max-age=0",
     HeaderNames.ContentType    -> "application/json",

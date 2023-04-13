@@ -10,6 +10,7 @@ import ebayapp.core.clients.jd.mappers.{jdsportsClothingMapper, JdsportsItem}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
+import ebayapp.core.domain.Retailer
 import ebayapp.kernel.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
@@ -163,19 +164,19 @@ object JdClient {
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, "jdsports", backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports.name, backend, proxyBackend))
 
   def tessuti[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.tessuti, "tessuti", backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.tessuti, Retailer.Tessuti.name, backend, proxyBackend))
 
   def scotts[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.scotts, "scotts", backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.scotts, Retailer.Scotts.name, backend, proxyBackend))
 }

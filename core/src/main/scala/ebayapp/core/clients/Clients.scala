@@ -5,7 +5,7 @@ import cats.syntax.apply.*
 import ebayapp.core.clients.argos.ArgosClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.ebay.EbayClient
-import ebayapp.core.clients.flannels.FlannelsClient
+import ebayapp.core.clients.frasers.FrasersClient
 import ebayapp.core.clients.harveynichols.HarveyNicholsClient
 import ebayapp.core.clients.jd.JdClient
 import ebayapp.core.clients.mainlinemenswear.MainlineMenswearClient
@@ -41,7 +41,7 @@ object Clients:
       ScanClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
-      FlannelsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
+      FrasersClient.flannels[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
     ).mapN { (cexC, telC, ebayC, selfridgesC, argosC, jdC, scottsC, tessutiC, nvidiaC, scanC, harNichC, mmC, flC) =>
       new Clients[F] {
         def cex: CexClient[F]             = cexC

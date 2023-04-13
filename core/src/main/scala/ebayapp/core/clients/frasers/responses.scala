@@ -1,8 +1,8 @@
-package ebayapp.core.clients.flannels
+package ebayapp.core.clients.frasers
 
 import io.circe.Codec
 
-private[flannels] object responses {
+private[frasers] object responses {
 
   final case class FlannelsProduct(
       url: String,
