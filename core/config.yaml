@@ -187,6 +187,7 @@ data:
         monitoring-frequency: 6m
         monitoring-requests: [
           //{search-criteria: {category: "men", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "men", query: "ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "men", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "men", query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}

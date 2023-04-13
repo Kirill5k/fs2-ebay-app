@@ -11,10 +11,10 @@ import sttp.client3.{Response, SttpBackend}
 
 class FrasersClientSpec extends SttpClientSpec {
 
-  val flannelsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
-  val config         = MockConfigProvider.make[IO](flannelsConfig = Some(flannelsConfig))
-
   "FrasersClient for flannels" should {
+    val flannelsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
+    val config = MockConfigProvider.make[IO](flannelsConfig = Some(flannelsConfig))
+
     val sc = SearchCriteria("stone island", Some("men"))
 
     "return stream of items based on provided search criteria" in {
@@ -41,6 +41,9 @@ class FrasersClientSpec extends SttpClientSpec {
   }
 
   "FrasersClient for tessuti" should {
+    val tessutiConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
+    val config = MockConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
+
     val sc = SearchCriteria("emporio armani", Some("men"))
 
     "return stream of items based on provided search criteria" in {
@@ -61,6 +64,9 @@ class FrasersClientSpec extends SttpClientSpec {
   }
 
   "FrasersClient for scotts" should {
+    val scottsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
+    val config = MockConfigProvider.make[IO](scottsConfig = Some(scottsConfig))
+
     val sc = SearchCriteria("hugo", Some("men"))
 
     "return stream of items based on provided search criteria" in {

@@ -112,11 +112,11 @@ object FrasersClient:
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Tessuti))
+    Monad[F].pure(LiveFrasersClient[F](() => configProvider.tessuti, backend, proxyBackend, Retailer.Tessuti))
 
   def scotts[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Scotts))
+    Monad[F].pure(LiveFrasersClient[F](() => configProvider.scotts, backend, proxyBackend, Retailer.Scotts))
