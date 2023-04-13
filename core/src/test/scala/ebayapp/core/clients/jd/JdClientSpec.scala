@@ -51,25 +51,4 @@ class JdClientSpec extends SttpClientSpec {
       }
     }
   }
-
-  "A TessutiClient" should {
-    val tessutiConfig = GenericRetailerConfig("http://tessuti.com")
-    val config        = MockConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
-    val criteria      = SearchCriteria("Emporio Armani", category = Some("men"))
-
-    "return items on sale" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
-        .whenRequestMatchesPartial {
-          case r if r.isGoingTo("tessuti.com/men/brand/emporio-armani") && r.hasParams(Map("from" -> "0")) =>
-            Response.ok(json("tessuti/search-by-brand.html"))
-          case _ => Response("n/a", StatusCode.NotFound)
-        }
-
-      val client = JdClient.tessuti[IO](config, testingBackend)
-
-      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
-        items mustBe Nil
-      }
-    }
-  }
 }

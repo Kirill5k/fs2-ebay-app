@@ -62,6 +62,8 @@ final private class LiveJdClient[F[_]](
     "sec-fetch-site"           -> "same-origin"
   )
 
+  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri) + "/"
+
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
       brands(criteria)
@@ -154,29 +156,20 @@ final private class LiveJdClient[F[_]](
             logger.error(s"$name-get-stock: $error") *> F.sleep(1.second) *> getProductStock(ci)
         }
       }
-
-  extension (c: GenericRetailerConfig) def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri) + "/"
 }
 
-object JdClient {
+object JdClient:
   def jdsports[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports.name, backend, proxyBackend))
-
-  def tessuti[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
-  ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.tessuti, Retailer.Tessuti.name, backend, proxyBackend))
-
+  
   def scotts[F[_]: Temporal: Logger](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.scotts, Retailer.Scotts.name, backend, proxyBackend))
-}
+

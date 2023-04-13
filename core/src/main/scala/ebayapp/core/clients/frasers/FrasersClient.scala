@@ -31,11 +31,11 @@ final private class LiveFrasersClient[F[_]](
 
   override protected val name: String = retailer.name
 
-  extension (c: GenericRetailerConfig) def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri) + "/"
+  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri) + "/"
 
-  val groupIdPrefix: String = retailer match
+  private val groupIdPrefix: String = retailer match
     case Retailer.Flannels => "FLAN_TM"
-    case Retailer.Tessuti  => "TESS_BR"
+    case Retailer.Tessuti  => "TESS_BRA"
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
@@ -105,3 +105,10 @@ object FrasersClient:
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Flannels))
+
+  def tessuti[F[_]: Temporal: Logger](
+      configProvider: ConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
+  ): F[SearchClient[F]] =
+    Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Tessuti))

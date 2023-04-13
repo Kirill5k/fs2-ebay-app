@@ -36,7 +36,7 @@ object Clients:
       ArgosClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       JdClient.jdsports[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       JdClient.scotts[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
-      JdClient.tessuti[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
+      FrasersClient.tessuti[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       NvidiaClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       ScanClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
       HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend),
