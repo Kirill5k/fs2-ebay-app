@@ -145,12 +145,12 @@ class EbayBrowseClientSpec extends SttpClientSpec {
           Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
         )
 
-      val result = for {
+      val result = for
         client <- EbayBrowseClient.make[IO](config, testingBackend)
         item1  <- client.getItem(accessToken, itemId)
         item2  <- client.getItem(accessToken, itemId)
         item3  <- client.getItem(accessToken, itemId)
-      } yield List(item1, item2, item3)
+      yield List(item1, item2, item3)
 
       result.asserting { items =>
         items must have size 3

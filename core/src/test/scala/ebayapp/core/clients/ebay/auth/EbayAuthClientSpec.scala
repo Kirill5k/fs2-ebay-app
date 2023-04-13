@@ -65,11 +65,11 @@ class EbayAuthClientSpec extends SttpClientSpec {
           case _ => throw new RuntimeException()
         }
 
-      val result = for {
+      val result = for 
         client <- EbayAuthClient.make[IO](config, testingBackend)
         _      <- client.switchAccount()
         token  <- client.accessToken
-      } yield token
+      yield token
 
       result.asserting { token =>
         token mustBe "KTeE7V9J5VTzdfKpn/nnrkj4+nbtl/fDD92Vctbbalh37c1X3fvEt7u7/uLZ93emB1uu/i5eOz3o8MfJuV7288dzu48BEAAA=="

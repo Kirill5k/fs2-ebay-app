@@ -168,11 +168,11 @@ class CexClientSpec extends SttpClientSpec {
           Response(json("cex/search-error-response.json"), StatusCode.InternalServerError)
         )
 
-      val result = for {
+      val result = for
         cexClient <- CexClient.standard[IO](config, testingBackend)
         _         <- cexClient.withUpdatedSellPrice(None)(item)
         rp        <- cexClient.withUpdatedSellPrice(None)(item)
-      } yield rp
+      yield rp
 
       result.asserting { updatedItem =>
         updatedItem.sellPrice mustBe Some(SellPrice(BigDecimal(108), BigDecimal(153)))
@@ -203,12 +203,12 @@ class CexClientSpec extends SttpClientSpec {
           Response.ok(json("cex/search-noresults-response.json"))
         )
 
-      val result = for {
+      val result = for
         cexClient <- CexClient.standard[IO](config, testingBackend)
         _         <- cexClient.withUpdatedSellPrice(None)(item)
         _         <- IO.sleep(4.seconds)
         rp        <- cexClient.withUpdatedSellPrice(None)(item)
-      } yield rp
+      yield rp
 
       result.asserting { res =>
         res.sellPrice mustBe None
