@@ -22,7 +22,7 @@ import scala.concurrent.duration.*
 
 final private class LiveJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val name: String,
+    private val retailer: Retailer.Jdsports.type,
     override val httpBackend: SttpBackend[F, Any],
     override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
@@ -30,6 +30,8 @@ final private class LiveJdClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] with HttpClient[F] {
 
+  override protected val name: String = retailer.name
+  
   private val getBrandHeaders = Map(
     HeaderNames.Cookie -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
     HeaderNames.Accept -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -164,12 +166,5 @@ object JdClient:
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports.name, backend, proxyBackend))
-  
-  def scotts[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
-  ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.scotts, Retailer.Scotts.name, backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend, proxyBackend))
 

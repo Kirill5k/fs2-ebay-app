@@ -59,4 +59,24 @@ class FrasersClientSpec extends SttpClientSpec {
         .asserting(_ must have size 17)
     }
   }
+
+  "FrasersClient for scotts" should {
+    val sc = SearchCriteria("hugo", Some("men"))
+
+    "return stream of items based on provided search criteria" in {
+      val args = Map("categoryId" -> "SCOT_BRAHUGO", "pathName" -> "/hugo/men", "sortOption" -> "discountvalue_desc")
+      val testingBackend: SttpBackend[IO, Any] = backendStub
+        .whenRequestMatchesPartial {
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-page3.json"))
+          case r => throw new RuntimeException(r.uri.toString)
+        }
+
+      FrasersClient
+        .scotts[IO](config, testingBackend)
+        .flatMap(_.search(sc).compile.toList)
+        .asserting(_ must have size 17)
+    }
+  }
 }

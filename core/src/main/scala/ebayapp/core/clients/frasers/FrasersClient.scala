@@ -23,7 +23,7 @@ final private class LiveFrasersClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val httpBackend: SttpBackend[F, Any],
     override val proxyBackend: Option[SttpBackend[F, Any]],
-    private val retailer: Retailer.Flannels.type | Retailer.Tessuti.type
+    private val retailer: Retailer.Flannels.type | Retailer.Tessuti.type | Retailer.Scotts.type
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -36,6 +36,7 @@ final private class LiveFrasersClient[F[_]](
   private val groupIdPrefix: String = retailer match
     case Retailer.Flannels => "FLAN_TM"
     case Retailer.Tessuti  => "TESS_BRA"
+    case Retailer.Scotts   => "SCOT_BRA"
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
@@ -112,3 +113,10 @@ object FrasersClient:
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Tessuti))
+
+  def scotts[F[_]: Temporal: Logger](
+      configProvider: ConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
+  ): F[SearchClient[F]] =
+    Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Scotts))
