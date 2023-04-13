@@ -3,8 +3,6 @@ package ebayapp.core.repositories
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.traverse.*
-import ebayapp.core.MockLogger
-import ebayapp.core.common.Logger
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
@@ -20,8 +18,6 @@ import scala.concurrent.Future
 class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
 
   override val mongoPort: Int = 12346
-
-  given logger: Logger[IO] = MockLogger.make[IO]
 
   val timestamp = Instant.now.truncatedTo(ChronoUnit.SECONDS)
 
