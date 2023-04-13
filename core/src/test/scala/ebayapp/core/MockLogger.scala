@@ -1,11 +1,12 @@
 package ebayapp.core
 
-import cats.effect.Sync
+import cats.effect.{IO, Sync}
 import ebayapp.core.common.{Error, Logger}
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import fs2.Stream
 
 object MockLogger {
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   def make[F[_]: Sync]: Logger[F] = new Logger[F] {
     private val l = Slf4jLogger.getLogger[F]

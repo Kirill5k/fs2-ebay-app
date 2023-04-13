@@ -1,18 +1,14 @@
 package ebayapp.core.clients.nvidia
 
 import cats.effect.IO
-import cats.effect.unsafe.implicits.global
-import ebayapp.core.{MockConfigProvider, MockLogger}
+import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
-import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import sttp.client3.*
 import ebayapp.kernel.SttpClientSpec
 
-class
-NvidiaClientSpec extends SttpClientSpec {
-
-  given logger: Logger[IO] = MockLogger.make[IO]
+class NvidiaClientSpec extends SttpClientSpec {
 
   "A NvidiaClient" should {
 

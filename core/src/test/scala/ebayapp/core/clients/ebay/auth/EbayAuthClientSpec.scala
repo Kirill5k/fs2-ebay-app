@@ -3,9 +3,9 @@ package ebayapp.core.clients.ebay.auth
 import cats.effect.IO
 import cats.effect.Ref
 import cats.syntax.apply.*
-import ebayapp.core.{MockConfigProvider, MockLogger}
+import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockLogger.given
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.OAuthToken
-import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3
@@ -16,7 +16,6 @@ import java.time.Instant
 import scala.concurrent.duration.*
 
 class EbayAuthClientSpec extends SttpClientSpec {
-  given logger: Logger[IO] = MockLogger.make[IO]
 
   val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))
   val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))

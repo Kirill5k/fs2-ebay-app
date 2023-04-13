@@ -2,8 +2,8 @@ package ebayapp.core.clients.cex
 
 import cats.effect.IO
 import cats.syntax.option.*
-import ebayapp.core.{MockConfigProvider, MockLogger}
-import ebayapp.core.common.Logger
+import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.search.*
@@ -17,7 +17,6 @@ import scala.collection.immutable.Map
 import scala.concurrent.duration.*
 
 class CexClientSpec extends SttpClientSpec {
-  given Logger[IO] = MockLogger.make[IO]
 
   val cexConfig = GenericRetailerConfig(
     "http://cex.com",

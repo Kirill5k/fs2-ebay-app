@@ -1,9 +1,8 @@
 package ebayapp.core.clients.harveynichols
 
 import cats.effect.IO
-import cats.effect.unsafe.implicits.global
-import ebayapp.core.{MockConfigProvider, MockLogger}
-import ebayapp.core.common.Logger
+import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
@@ -13,8 +12,6 @@ import sttp.client3.{Response, SttpBackend}
 import sttp.model.Method
 
 class HarveyNicholsClientSpec extends SttpClientSpec {
-
-  given logger: Logger[IO] = MockLogger.make[IO]
 
   "A HarveyNicholsClient" should {
 

@@ -1,16 +1,14 @@
 package ebayapp.core.clients.argos
 
 import cats.effect.IO
-import ebayapp.core.{MockConfigProvider, MockLogger}
+import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
-import ebayapp.core.common.Logger
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3.{Response, SttpBackend}
 
 class ArgosClientSpec extends SttpClientSpec {
-
-  given logger: Logger[IO] = MockLogger.make[IO]
 
   "An ArgosClient" should {
 
