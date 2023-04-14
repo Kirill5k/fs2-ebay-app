@@ -89,26 +89,6 @@ data:
         delay-between-individual-requests: 2s
       }
   
-      scotts {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        base-uri: "https://request-follower.fly.dev"
-        headers {
-          "X-Reroute-To": "https://www.scottsmenswear.com"
-          "X-Reload-On-403": "true"
-        }
-        delay-between-individual-requests: 2s
-      }
-  
-      tessuti {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        base-uri: "https://request-follower.fly.dev"
-        headers {
-          "X-Reroute-To": "https://www.tessuti.co.uk"
-          "X-Reload-On-403": "true"
-        }
-        delay-between-individual-requests: 2s
-      }
-  
       nvidia {
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         base-uri: "https://reqfol.fly.dev"
@@ -154,6 +134,26 @@ data:
           "X-Reroute-To": "https://www.flannels.com"
         }
       }
+    
+      tessuti {
+        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://reqfol.fly.dev"
+        headers {
+          "X-Reroute-To": "https://www.tessuti.co.uk"
+          "X-Reload-On-403": "true"
+        }
+        delay-between-individual-requests: 2s
+      }
+    
+      scotts {
+        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
+        base-uri: "https://reqfol.fly.dev"
+        headers {
+          "X-Reroute-To": "https://www.scottsmenswear.com"
+          "X-Reload-On-403": "true"
+        }
+        delay-between-individual-requests: 2s
+      }
     }
 
     stock-monitor {
@@ -186,14 +186,17 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          //{search-criteria: {category: "men", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "men", query: "ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "men", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "men", query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 29}
+        filters: {
+          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "\\bcap\\b", "\\bBRA\\b"], 
+          min-discount: 29
+        }
       }
 
       scotts {
