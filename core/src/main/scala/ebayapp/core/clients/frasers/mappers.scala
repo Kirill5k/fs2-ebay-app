@@ -22,9 +22,10 @@ private[frasers] object mappers {
 
     private def formatSize(size: String): String =
       size
-        .replaceAll("(?i)medium", "M")
-        .replaceAll("(?i)small", "S")
-        .replaceAll("(?i)large", "L")
+        .replaceFirst("(?i)medium", "M")
+        .replaceFirst("(?i)small", "S")
+        .replaceFirst("(?i)large", "L")
+        .replaceFirst("(?i)^X ", "X")
 
     override def toDomain(foundWith: search.SearchCriteria)(item: FrasersItem): ResellableItem =
       ResellableItem.clothing(
