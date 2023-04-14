@@ -25,7 +25,7 @@ private[frasers] object mappers {
         .replaceFirst("(?i)medium", "M")
         .replaceFirst("(?i)small", "S")
         .replaceFirst("(?i)large", "L")
-        .replaceFirst("(?i)^X ", "X")
+        .replaceFirst("(?i)(?<=^([X]+|\\dX)) ", "")
 
     override def toDomain(foundWith: search.SearchCriteria)(item: FrasersItem): ResellableItem =
       ResellableItem.clothing(
