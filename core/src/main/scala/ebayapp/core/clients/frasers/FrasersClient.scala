@@ -31,8 +31,6 @@ final private class LiveFrasersClient[F[_]](
 
   override protected val name: String = retailer.name
 
-  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri)
-
   private val groupIdPrefix: String = retailer match
     case Retailer.Flannels => "FLAN_TM"
     case Retailer.Tessuti  => "TESS_BRA"

@@ -31,7 +31,7 @@ final private class LiveJdClient[F[_]](
 ) extends SearchClient[F] with HttpClient[F] {
 
   override protected val name: String = retailer.name
-  
+
   private val getBrandHeaders = Map(
     HeaderNames.Cookie -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
     HeaderNames.Accept -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -63,8 +63,6 @@ final private class LiveJdClient[F[_]](
     "sec-fetch-mode"           -> "cors",
     "sec-fetch-site"           -> "same-origin"
   )
-
-  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri)
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
@@ -167,4 +165,3 @@ object JdClient:
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend, proxyBackend))
-

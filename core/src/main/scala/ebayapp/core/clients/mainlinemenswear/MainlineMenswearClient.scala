@@ -154,7 +154,7 @@ final private class LiveMainlineMenswearClient[F[_]](
 
   private def refreshAccessToken: F[Unit] =
     configProvider()
-      .flatMap(config => dispatch(baseRequest.get(uri"${config.baseUri}").header("X-Reroute-To", mainPageUrl)))
+      .flatMap(config => dispatch(baseRequest.get(uri"${config.baseUri}").header(XRerouteToHeader, mainPageUrl)))
       .flatTap(res => logger.info(s"$name-access-token-refresh/${res.code}\n${res.cookies}\n${res.headers}"))
       .map(res => res.cookies.collectFirst { case Right(cookie) if cookie.name == "access_token" => cookie.value })
       .flatMap {
