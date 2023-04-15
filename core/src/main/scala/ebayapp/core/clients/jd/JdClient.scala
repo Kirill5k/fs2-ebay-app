@@ -64,7 +64,7 @@ final private class LiveJdClient[F[_]](
     "sec-fetch-site"           -> "same-origin"
   )
 
-  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri) + "/"
+  extension (c: GenericRetailerConfig) private def websiteUri = c.headers.getOrElse("X-Reroute-To", c.baseUri)
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
@@ -110,7 +110,7 @@ final private class LiveJdClient[F[_]](
           val brand = criteria.query.toLowerCase.replace(" ", "-")
           emptyRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
-            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> config.websiteUri))
+            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + "/")))
         }
       }
       .flatMap { r =>
@@ -136,7 +136,7 @@ final private class LiveJdClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
-          val referrer = config.websiteUri + s"product/${ci.fullName}/${ci.plu}/"
+          val referrer = config.websiteUri + s"/product/${ci.fullName}/${ci.plu}/"
           emptyRequest
             .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
             .headers(getStockHeaders ++ config.headers + (HeaderNames.Referer -> referrer))

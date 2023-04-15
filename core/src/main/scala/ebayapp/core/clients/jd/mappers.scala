@@ -53,7 +53,7 @@ private[jd] object mappers {
 
     private def listingDetails(jdi: JdsportsItem): ListingDetails =
       ListingDetails(
-        s"${jdi.storeUrl}product/${jdi.fullName}/${jdi.id}/",
+        s"${jdi.storeUrl}/product/${jdi.fullName}/${jdi.id}/",
         s"${jdi.name} (${jdi.colour} / ${jdi.size})",
         Some(jdi.category),
         None,
