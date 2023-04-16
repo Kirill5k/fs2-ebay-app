@@ -1,13 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { App, Layout, Menu, ConfigProvider, theme } from 'antd';
+import Home from './containers/Home';
+import Stock from './containers/Stock';
+
+
+const { Header, Footer } = Layout;
+
+const items1 = ['1', '2', '3'].map((key) => ({key, label: `nav ${key}`}));
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ConfigProvider theme={theme.compactAlgorithm} >
+      <App>
+        <Layout>
+          <Header className="header">
+            <div className="logo" />
+            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} items={items1} />
+          </Header>
+          <Home />
+          <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+        </Layout>
+      </App>
+    </ConfigProvider>
   </React.StrictMode>
 );
 
