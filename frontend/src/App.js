@@ -1,47 +1,66 @@
-import { App as AntdApp, Button, Space, ConfigProvider, theme } from 'antd';
 import './App.css';
+import React from 'react';
+import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
+import { App as AntdApp, Breadcrumb, Layout, Menu, ConfigProvider, theme } from 'antd';
 
-const MyPage = () => {
-  const { message, notification, modal } = AntdApp.useApp();
-  const showMessage = () => {
-    message.success('Success!');
-  };
+const { Header, Content, Footer, Sider } = Layout;
 
-  const showModal = () => {
-    modal.warning({
-      title: 'This is a warning message',
-      content: 'some messages...some messages...',
-    });
-  };
+const items1 = ['1', '2', '3'].map((key) => ({key, label: `nav ${key}`}));
 
-  const showNotification = () => {
-    notification.info({
-      message: `Notification topLeft`,
-      description: 'Hello, Ant Design!!',
-      placement: 'topLeft',
-    });
-  };
+const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
+    (icon, index) => {
+      const key = String(index + 1);
 
-  return (
-      <Space>
-        <Button type="primary" onClick={showMessage}>
-          Open message
-        </Button>
-        <Button type="primary" onClick={showModal}>
-          Open modal
-        </Button>
-        <Button type="primary" onClick={showNotification}>
-          Open notification
-        </Button>
-      </Space>
-  );
-};
+      return {
+        key: `sub${key}`,
+        icon: React.createElement(icon),
+        label: `subnav ${key}`,
 
-function App() {
+        children: new Array(4).fill(null).map((_, j) => {
+          const subKey = index * 4 + j + 1;
+          return {
+            key: subKey,
+            label: `option${subKey}`,
+          };
+        }),
+      };
+    },
+);
+
+const App = () => {
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+
   return (
       <ConfigProvider theme={theme.compactAlgorithm} >
         <AntdApp>
-          <MyPage />
+          <Layout>
+            <Header className="header">
+              <div className="logo" />
+              <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} items={items1} />
+            </Header>
+            <Content style={{ padding: '0 50px' }}>
+              <Breadcrumb style={{ margin: '16px 0' }}>
+                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>List</Breadcrumb.Item>
+                <Breadcrumb.Item>App</Breadcrumb.Item>
+              </Breadcrumb>
+              <Layout style={{ padding: '24px 0', background: colorBgContainer }}>
+                <Sider style={{ background: colorBgContainer }} width={200}>
+                  <Menu
+                      mode="inline"
+                      defaultSelectedKeys={['1']}
+                      defaultOpenKeys={['sub1']}
+                      style={{ height: '100%' }}
+                      items={items2}
+                  />
+                </Sider>
+                <Content style={{ padding: '0 24px', minHeight: 280 }}>Content</Content>
+              </Layout>
+            </Content>
+            <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+          </Layout>
         </AntdApp>
       </ConfigProvider>
   );
