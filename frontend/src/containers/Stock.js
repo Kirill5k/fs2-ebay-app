@@ -50,7 +50,7 @@ const Stock = () => {
                 items={menuItems}
             />
           </Sider>
-          <Content style={{ padding: '0 24px', minHeight: 280 }}>Home page content</Content>
+          <Content style={{ padding: '0 24px', minHeight: 280 }}>Stock page content</Content>
         </Layout>
       </Content>
   );
