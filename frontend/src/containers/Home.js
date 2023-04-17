@@ -1,30 +1,5 @@
-import { Layout, Menu, theme } from "antd";
+import { theme } from "antd";
 import React from "react";
-import {
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined
-} from "@ant-design/icons";
-
-const menuItems = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-    (icon, index) => {
-      const key = String(index + 1);
-
-      return {
-        key: `sub${key}`,
-        icon: React.createElement(icon),
-        label: `subnav ${key}`,
-
-        children: new Array(4).fill(null).map((_, j) => {
-          const subKey = index * 4 + j + 1;
-          return {
-            key: subKey,
-            label: `option${subKey}`,
-          };
-        }),
-      };
-    },
-);
 
 const Home = () => {
   const {
@@ -32,20 +7,9 @@ const Home = () => {
   } = theme.useToken();
 
   return (
-      <Layout style={{ padding: '24px 0', margin: '16px 50px', background: colorBgContainer }}>
-        <Layout.Sider style={{ background: colorBgContainer }} width={200}>
-          <Menu
-              mode="inline"
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
-              style={{ height: '100%' }}
-              items={menuItems}
-          />
-        </Layout.Sider>
-        <Layout.Content style={{ padding: '0 24px', minHeight: 280 }}>
-          Home page content
-        </Layout.Content>
-      </Layout>
+      <div style={{ padding: '24px 24px', margin: '16px 50px', background: colorBgContainer }}>
+        <p>Home page content</p>
+      </div>
   );
 }
 
