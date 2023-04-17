@@ -4,14 +4,12 @@ import Home from './containers/Home';
 import Stock from './containers/Stock';
 import './App.css';
 
-const { Header, Footer, Content } = Layout;
-
 const App = () => {
 
   return (
       <Router>
         <Layout>
-          <Header className="header">
+          <Layout.Header className="header">
             <div className="logo" />
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
               <Menu.Item key="0" title="Home">
@@ -21,14 +19,16 @@ const App = () => {
                 <Link to="/stock">Stock</Link>
               </Menu.Item>
             </Menu>
-          </Header>
-          <Content style={{ padding: '0 50px' }}>
+          </Layout.Header>
+          <Layout.Content style={{ padding: '0 50px' }}>
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path="/stock" element={<Stock />} />
             </Routes>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+          </Layout.Content>
+          <Layout.Footer style={{ textAlign: 'center' }}>
+            Ant Design ©2023 Created by Ant UED
+          </Layout.Footer>
         </Layout>
       </Router>
   );

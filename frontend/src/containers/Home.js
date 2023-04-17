@@ -6,8 +6,6 @@ import {
   UserOutlined
 } from "@ant-design/icons";
 
-const { Content, Sider } = Layout;
-
 const menuItems = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
     (icon, index) => {
       const key = String(index + 1);
@@ -35,7 +33,7 @@ const Home = () => {
 
   return (
       <Layout style={{ padding: '24px 0', margin: '16px 50px', background: colorBgContainer }}>
-        <Sider style={{ background: colorBgContainer }} width={200}>
+        <Layout.Sider style={{ background: colorBgContainer }} width={200}>
           <Menu
               mode="inline"
               defaultSelectedKeys={['1']}
@@ -43,8 +41,10 @@ const Home = () => {
               style={{ height: '100%' }}
               items={menuItems}
           />
-        </Sider>
-        <Content style={{ padding: '0 24px', minHeight: 280 }}>Home page content</Content>
+        </Layout.Sider>
+        <Layout.Content style={{ padding: '0 24px', minHeight: 280 }}>
+          Home page content
+        </Layout.Content>
       </Layout>
   );
 }
