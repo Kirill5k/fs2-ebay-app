@@ -1,7 +1,7 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { Layout, Menu } from 'antd';
-import Home from './containers/Home';
-import Stock from './containers/Stock';
+import Home from './home';
+import Stock from './stock';
 import './App.css';
 
 const App = () => {
