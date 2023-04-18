@@ -36,8 +36,8 @@ class JdClientSpec extends SttpClientSpec {
 
       client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items.map(_.itemDetails) mustBe List(
-          Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "S"),
-          Clothing("Men's Emporio Armani EA7 Tape 2 T-Shirt (black, 16022719)", "Emporio Armani EA7", "M")
+          Clothing("Men's Tape 2 T-Shirt (Black, 16022719)", "Emporio Armani EA7", "S"),
+          Clothing("Men's Tape 2 T-Shirt (Black, 16022719)", "Emporio Armani EA7", "M")
         )
         items.map(_.listingDetails.url) mustBe List(
           "http://jdsports.com/proxy/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/",

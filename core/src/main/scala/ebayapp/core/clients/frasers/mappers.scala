@@ -29,7 +29,11 @@ private[frasers] object mappers {
 
     override def toDomain(foundWith: search.SearchCriteria)(item: FrasersItem): ResellableItem =
       ResellableItem.clothing(
-        ItemDetails.Clothing(s"${item.product.name} (${item.product.colour})", item.product.brand, formatSize(item.size)),
+        ItemDetails.Clothing(
+          s"${item.product.name.replaceAll("(?i)" + item.product.brand, "").trimmed} (${item.product.colour})",
+          item.product.brand,
+          formatSize(item.size)
+        ),
         ListingDetails(
           s"${item.websiteUri}${item.product.url}",
           item.product.imageAltText,

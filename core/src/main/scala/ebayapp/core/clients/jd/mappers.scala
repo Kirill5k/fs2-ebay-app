@@ -36,9 +36,9 @@ private[jd] object mappers {
       ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None, foundWith)
 
     private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing = {
-      val id = if (jdi.colour.isBlank) jdi.id else s"${jdi.colour}, ${jdi.id}"
+      val id = if (jdi.colour.isBlank) jdi.id else s"${jdi.colour.capitalize}, ${jdi.id}"
       Clothing(
-        s"${jdi.name} ($id)",
+        s"${jdi.name.replaceAll("(?i)" + jdi.brand, "").trimmed} ($id)",
         jdi.brand,
         jdi.size
       )
