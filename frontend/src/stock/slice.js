@@ -10,6 +10,7 @@ const initialState = {
   status: 'idle',
   items: [],
   filters: {
+    kinds: [],
     retailers: [],
     brands: [],
     sizes: [],
@@ -36,6 +37,7 @@ const stockSlice = createSlice({
         .addCase(getStock.fulfilled, (state, action) => {
           state.status = 'succeeded'
           state.items = action.payload
+          state.filters.kinds = distinct(action.payload.map(i => i.itemDetails.kind))
           state.filters.brands = distinct(action.payload.map(i => i.itemDetails.brand))
           state.filters.sizes = distinct(action.payload.map(i => i.itemDetails.sizes))
           state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller))
