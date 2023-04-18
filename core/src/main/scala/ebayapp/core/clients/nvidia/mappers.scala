@@ -24,7 +24,7 @@ private[nvidia] object mappers {
           Some(item.imageURL),
           "NEW",
           Instant.now(),
-          s"NVIDIA/${item.retailer.retailerName}",
+          "NVIDIA",
           Map.empty[String, String]
         ),
         BuyPrice(item.retailer.stock + 1, item.retailer.salePrice),
