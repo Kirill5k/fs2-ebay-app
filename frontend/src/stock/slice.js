@@ -1,4 +1,5 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import {distinct} from "../common/collections";
 
 export const getStock = createAsyncThunk('stock/get', async () => {
   // TODO: get stock
@@ -35,9 +36,9 @@ const stockSlice = createSlice({
         .addCase(getStock.fulfilled, (state, action) => {
           state.status = 'succeeded'
           state.items = action.payload
-          state.filters.brands = action.payload.map(i => i.itemDetails.brand).distinct()
-          state.filters.sizes = action.payload.map(i => i.itemDetails.sizes).distinct()
-          state.filters.retailers = action.payload.map(i => i.listingDetails.seller).distinct()
+          state.filters.brands = distinct(action.payload.map(i => i.itemDetails.brand))
+          state.filters.sizes = distinct(action.payload.map(i => i.itemDetails.sizes))
+          state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller))
         })
         .addCase(getStock.rejected, (state, action) => {
           state.status = 'failed'
@@ -47,17 +48,6 @@ const stockSlice = createSlice({
 })
 
 export default stockSlice.reducer
-
-
-Array.prototype.distinct = function() {
-  const arr = [];
-  for (let i = 0; i < this.length; i++) {
-    if (this[i]) {
-      arr.push(this[i]);
-    }
-  }
-  return [...new Set(arr)];
-}
 
 const testItems = [
   {

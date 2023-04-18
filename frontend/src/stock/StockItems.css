@@ -10,6 +10,10 @@
   padding-top: 10px;
 }
 
+.stock-items .ant-list-pagination {
+  margin-top: 0;
+}
+
 .stock-item .image {
   padding: 1px;
 }
