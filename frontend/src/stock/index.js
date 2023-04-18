@@ -1,10 +1,12 @@
-import { Layout, Menu, theme } from "antd";
-import React from "react";
+import {Layout, Menu} from "antd"
+import React, {useEffect} from "react"
+import {useSelector, useDispatch} from 'react-redux'
 import {
   LaptopOutlined,
   NotificationOutlined,
   UserOutlined
-} from "@ant-design/icons";
+} from "@ant-design/icons"
+import {getStock} from './slice'
 
 const menuItems = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
     (icon, index) => {
@@ -24,29 +26,34 @@ const menuItems = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
         }),
       };
     },
-);
+)
 
-const Stock = () => {
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+const Stock = ({backgroundColor}) => {
+  const dispatch = useDispatch()
+  const stockStatus = useSelector(state => state.stock.status)
+
+  useEffect(() => {
+    if (stockStatus === 'idle') {
+      dispatch(getStock())
+    }
+  }, [stockStatus, dispatch])
 
   return (
-      <Layout style={{ padding: '24px 0', background: colorBgContainer }}>
-        <Layout.Sider style={{ background: colorBgContainer }} width={200}>
+      <Layout style={{padding: '24px 0', background: backgroundColor}}>
+        <Layout.Sider style={{background: backgroundColor}} width={200}>
           <Menu
               mode="inline"
               defaultSelectedKeys={['1']}
               defaultOpenKeys={['sub1']}
-              style={{ height: '100%' }}
+              style={{height: '100%'}}
               items={menuItems}
           />
         </Layout.Sider>
-        <Layout.Content style={{ padding: '0 24px', minHeight: 280 }}>
+        <Layout.Content style={{padding: '0 24px', minHeight: 280}}>
           Stock page content
         </Layout.Content>
       </Layout>
-  );
+  )
 }
 
 export default Stock;

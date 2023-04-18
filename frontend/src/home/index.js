@@ -1,16 +1,11 @@
-import { theme } from "antd";
-import React from "react";
+import React from "react"
 
-const Home = () => {
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
+const Home = ({backgroundColor}) => {
   return (
-      <div style={{ padding: '24px 24px', background: colorBgContainer }}>
+      <div style={{padding: '24px 24px', background: backgroundColor}}>
         <p>Home page content</p>
       </div>
-  );
+  )
 }
 
-export default Home;
+export default Home
