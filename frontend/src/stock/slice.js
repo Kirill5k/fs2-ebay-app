@@ -7,7 +7,20 @@ export const getStock = createAsyncThunk('stock/get', async () => {
 
 const initialState = {
   status: 'idle',
-  items: []
+  items: [],
+  filters: {
+    retailers: [],
+    brands: [],
+    sizes: [],
+    price: {
+      min: 0,
+      max: 10000,
+    },
+    discount: {
+      min: 0,
+      max: 100
+    }
+  }
 }
 
 const stockSlice = createSlice({
@@ -21,9 +34,10 @@ const stockSlice = createSlice({
         })
         .addCase(getStock.fulfilled, (state, action) => {
           state.status = 'succeeded'
-          console.log('received stock', action)
-          // Add any fetched posts to the array
           state.items = action.payload
+          state.filters.brands = [...new Set(action.payload.map(i => i.itemDetails.brand))]
+          state.filters.sizes = [...new Set(action.payload.map(i => i.itemDetails.sizes))]
+          state.filters.retailers = [...new Set(action.payload.map(i => i.listingDetails.seller))]
         })
         .addCase(getStock.rejected, (state, action) => {
           state.status = 'failed'

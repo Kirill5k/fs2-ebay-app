@@ -33,6 +33,7 @@ const Stock = ({backgroundColor}) => {
   const dispatch = useDispatch()
   const stockStatus = useSelector(state => state.stock.status)
   const items = useSelector(state => state.stock.items)
+  const filters = useSelector(state => state.stock.filters)
 
   useEffect(() => {
     if (stockStatus === 'idle') {
