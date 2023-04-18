@@ -195,7 +195,8 @@ data:
         ]
         filters: {
           exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b", "\\bBRA\\b"], 
-          min-discount: 29
+          min-discount: 29,
+          max-price: 80
         }
       }
 
@@ -211,7 +212,8 @@ data:
         ]
         filters: {
           exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b", "\\bbra\\b"], 
-          min-discount: 49
+          min-discount: 49,
+          max-price: 80
         }
       }
 
