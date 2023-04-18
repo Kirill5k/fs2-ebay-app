@@ -31,8 +31,8 @@ private[mainlinemenswear] object mappers {
     private def itemDetails(mmi: MainlineMenswearItem): ItemDetails.Clothing =
       Clothing(
         mmi.name,
-        mmi.brand,
-        mmi.size
+        mmi.brand.toUpperCase,
+        formatSize(mmi.size)
       )
 
     private def buyPrice(mmi: MainlineMenswearItem): BuyPrice = {

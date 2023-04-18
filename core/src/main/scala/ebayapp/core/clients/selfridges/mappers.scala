@@ -32,8 +32,8 @@ private[selfridges] object mappers {
     private def itemDetails(item: CatalogItem, stock: ItemStock): ItemDetails.Clothing =
       Clothing(
         item.fullName,
-        item.brandName,
-        stock.value.getOrElse("ONE SIZE")
+        item.brandName.toUpperCase,
+        formatSize(stock.value.getOrElse("ONE SIZE"))
       )
 
     private def buyPrice(item: CatalogItem, stock: ItemStock, price: Option[ItemPrice]): BuyPrice = {

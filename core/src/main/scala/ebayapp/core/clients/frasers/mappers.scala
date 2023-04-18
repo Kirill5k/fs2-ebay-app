@@ -20,18 +20,11 @@ private[frasers] object mappers {
 
   inline def frasers: FrasersItemMapper = new FrasersItemMapper {
 
-    private def formatSize(size: String): String =
-      size
-        .replaceFirst("(?i)medium", "M")
-        .replaceFirst("(?i)small", "S")
-        .replaceFirst("(?i)large", "L")
-        .replaceFirst("(?i)(?<=^([X]+|\\dX)) ", "")
-
     override def toDomain(foundWith: search.SearchCriteria)(item: FrasersItem): ResellableItem =
       ResellableItem.clothing(
         ItemDetails.Clothing(
           s"${item.product.name.replaceAll("(?i)" + item.product.brand, "").trimmed} (${item.product.colour})",
-          item.product.brand,
+          item.product.brand.toUpperCase,
           formatSize(item.size)
         ),
         ListingDetails(

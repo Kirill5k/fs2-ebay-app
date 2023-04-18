@@ -26,7 +26,11 @@ private[harveynichols] object mappers {
 
     override def toDomain(foundWith: SearchCriteria)(hni: HarveyNicholsItem): ResellableItem =
       ResellableItem.clothing(
-        Clothing(hni.name, hni.brand, hni.size),
+        Clothing(
+          hni.name.replaceAll("(?i)" + hni.brand, "").trimmed,
+          hni.brand.toUpperCase,
+          formatSize(hni.size)
+        ),
         listingDetails(hni),
         BuyPrice(1, BigDecimal(hni.currentPrice), hni.discount.map(_.toInt)),
         None,
