@@ -5,8 +5,8 @@ import Stock from './stock';
 import './App.css';
 
 const App = () => {
-  const {token: {colorBgContainer}} = theme.useToken();
-  const location = useLocation();
+  const {token: {colorBgContainer}} = theme.useToken()
+  const location = useLocation()
 
   return (
       <Layout>
@@ -43,7 +43,7 @@ const App = () => {
           Ant Design ©2023 Created by Ant UED
         </Layout.Footer>
       </Layout>
-  );
+  )
 }
 
-export default App;
+export default App

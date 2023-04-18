@@ -56,4 +56,4 @@ const Stock = ({backgroundColor}) => {
   )
 }
 
-export default Stock;
+export default Stock
