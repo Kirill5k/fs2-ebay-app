@@ -1,5 +1,13 @@
-.stock-item {
+.stock-items .ant-pagination {
+  font-size: 12px;
+}
 
+.stock-items .ant-select-selection-item {
+  font-size: 12px;
+}
+
+.stock-items .ant-spin-container {
+  padding-top: 10px;
 }
 
 .stock-item .image {

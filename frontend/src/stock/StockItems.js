@@ -11,8 +11,8 @@ const grid = {
   xxl: 5,
 }
 
-const StockItem = (item) => {
-  if (item.itemDetails.kind == 'clothing') {
+const StockItem = ({item}) => {
+  if (item.itemDetails.kind === 'clothing') {
     return (
         <List.Item className="stock-item">
           <Card
@@ -53,9 +53,11 @@ const StockItem = (item) => {
 const StockItems = ({items}) => {
   return (
       <List
+          className="stock-items"
+          pagination={{ position: 'both', align: 'center' }}
           grid={grid}
           dataSource={items}
-          renderItem={(item) => StockItem(item)}
+          renderItem={(item) => <StockItem item={item}/> }
       />
   )
 }
