@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux'
 import {App as AntdApp, ConfigProvider, theme} from 'antd';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
+import store from './store'
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -11,7 +13,9 @@ root.render(
   <React.StrictMode>
     <ConfigProvider theme={theme.compactAlgorithm} >
       <AntdApp>
-        <App/>
+        <Provider store={store}>
+          <App/>
+        </Provider>
       </AntdApp>
     </ConfigProvider>
   </React.StrictMode>
