@@ -19,13 +19,13 @@ const App = () => {
               </Menu.Item>
             </Menu>
           </Layout.Header>
-          <Layout.Content style={{ padding: '0 50px' }}>
+          <Layout.Content className="content">
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path="/stock" element={<Stock />} />
             </Routes>
           </Layout.Content>
-          <Layout.Footer style={{ textAlign: 'center' }}>
+          <Layout.Footer className="footer">
             Ant Design ©2023 Created by Ant UED
           </Layout.Footer>
         </Layout>

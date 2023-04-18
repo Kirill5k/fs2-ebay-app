@@ -7,7 +7,7 @@ const Home = () => {
   } = theme.useToken();
 
   return (
-      <div style={{ padding: '24px 24px', margin: '16px 50px', background: colorBgContainer }}>
+      <div style={{ padding: '24px 24px', background: colorBgContainer }}>
         <p>Home page content</p>
       </div>
   );

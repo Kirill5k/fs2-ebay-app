@@ -17,3 +17,12 @@
   float: right;
   margin: 16px 0 16px 24px;
 }
+
+.content {
+  padding: 0 50px;
+  margin: 16px 50px;
+}
+
+.footer {
+  text-align: center;
+}

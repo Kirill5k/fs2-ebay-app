@@ -1,4 +1,4 @@
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Layout, Menu, theme } from "antd";
 import React from "react";
 import {
   LaptopOutlined,
@@ -32,27 +32,20 @@ const Stock = () => {
   } = theme.useToken();
 
   return (
-      <div style={{ padding: '0 50px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
-        <Layout style={{ padding: '24px 0', background: colorBgContainer }}>
-          <Layout.Sider style={{ background: colorBgContainer }} width={200}>
-            <Menu
-                mode="inline"
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
-                style={{ height: '100%' }}
-                items={menuItems}
-            />
-          </Layout.Sider>
-          <Layout.Content style={{ padding: '0 24px', minHeight: 280 }}>
-            Stock page content
-          </Layout.Content>
-        </Layout>
-      </div>
+      <Layout style={{ padding: '24px 0', background: colorBgContainer }}>
+        <Layout.Sider style={{ background: colorBgContainer }} width={200}>
+          <Menu
+              mode="inline"
+              defaultSelectedKeys={['1']}
+              defaultOpenKeys={['sub1']}
+              style={{ height: '100%' }}
+              items={menuItems}
+          />
+        </Layout.Sider>
+        <Layout.Content style={{ padding: '0 24px', minHeight: 280 }}>
+          Stock page content
+        </Layout.Content>
+      </Layout>
   );
 }
 
