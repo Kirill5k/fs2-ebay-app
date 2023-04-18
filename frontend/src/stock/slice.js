@@ -35,9 +35,9 @@ const stockSlice = createSlice({
         .addCase(getStock.fulfilled, (state, action) => {
           state.status = 'succeeded'
           state.items = action.payload
-          state.filters.brands = [...new Set(action.payload.map(i => i.itemDetails.brand))]
-          state.filters.sizes = [...new Set(action.payload.map(i => i.itemDetails.sizes))]
-          state.filters.retailers = [...new Set(action.payload.map(i => i.listingDetails.seller))]
+          state.filters.brands = action.payload.map(i => i.itemDetails.brand).distinct()
+          state.filters.sizes = action.payload.map(i => i.itemDetails.sizes).distinct()
+          state.filters.retailers = action.payload.map(i => i.listingDetails.seller).distinct()
         })
         .addCase(getStock.rejected, (state, action) => {
           state.status = 'failed'
@@ -48,6 +48,16 @@ const stockSlice = createSlice({
 
 export default stockSlice.reducer
 
+
+Array.prototype.distinct = function() {
+  const arr = [];
+  for (let i = 0; i < this.length; i++) {
+    if (this[i]) {
+      arr.push(this[i]);
+    }
+  }
+  return [...new Set(arr)];
+}
 
 const testItems = [
   {
