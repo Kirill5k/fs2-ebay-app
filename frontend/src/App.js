@@ -1,21 +1,20 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { Layout, Menu } from 'antd';
 import Home from './containers/Home';
 import Stock from './containers/Stock';
 import './App.css';
 
 const App = () => {
-
+  const location = useLocation();
   return (
-      <Router>
         <Layout>
           <Layout.Header className="header">
             <div className="logo" />
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['0']}>
-              <Menu.Item key="0" title="Home">
+            <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
+              <Menu.Item key="/" title="Home">
                 <Link to="/">Home</Link>
               </Menu.Item>
-              <Menu.Item key="1" title="Stock">
+              <Menu.Item key="/stock" title="Stock">
                 <Link to="/stock">Stock</Link>
               </Menu.Item>
             </Menu>
@@ -30,7 +29,6 @@ const App = () => {
             Ant Design ©2023 Created by Ant UED
           </Layout.Footer>
         </Layout>
-      </Router>
   );
 }
 
