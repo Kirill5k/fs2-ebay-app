@@ -7,6 +7,7 @@ import {
   UserOutlined
 } from "@ant-design/icons"
 import {getStock} from './slice'
+import StockItems from './StockItems'
 
 const menuItems = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
     (icon, index) => {
@@ -31,6 +32,7 @@ const menuItems = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
 const Stock = ({backgroundColor}) => {
   const dispatch = useDispatch()
   const stockStatus = useSelector(state => state.stock.status)
+  const items = useSelector(state => state.stock.items)
 
   useEffect(() => {
     if (stockStatus === 'idle') {
@@ -50,7 +52,9 @@ const Stock = ({backgroundColor}) => {
           />
         </Layout.Sider>
         <Layout.Content style={{padding: '0 24px', minHeight: 280}}>
-          Stock page content
+          <StockItems
+              items={items}
+          />
         </Layout.Content>
       </Layout>
   )
