@@ -1,16 +1,6 @@
 import {Card, List, Descriptions} from 'antd';
 import './StockItems.css'
 
-const grid = {
-  gutter: 16,
-  xs: 1,
-  sm: 2,
-  md: 2,
-  lg: 3,
-  xl: 4,
-  xxl: 5,
-}
-
 const StockItem = ({item}) => {
   if (item.itemDetails.kind === 'clothing') {
     return (
@@ -52,11 +42,27 @@ const StockItem = ({item}) => {
 }
 
 const StockItems = ({items}) => {
+  const grid = {
+    gutter: 16,
+    xs: 1,
+    sm: 2,
+    md: 2,
+    lg: 3,
+    xl: 4,
+    xxl: 5,
+  }
+
+  const pagination = {
+    position: 'both',
+    align: 'center',
+    defaultPageSize: 50,
+    pageSizeOptions: [25, 50, 100, 250]
+  }
   return (
       <List
           className="stock-items"
-          pagination={{ position: 'both', align: 'center' }}
           grid={grid}
+          pagination={pagination}
           dataSource={items}
           renderItem={(item) => <StockItem item={item}/> }
       />
