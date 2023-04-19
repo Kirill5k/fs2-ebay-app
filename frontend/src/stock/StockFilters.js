@@ -36,17 +36,16 @@ const StockFilters = ({options, selections, onChange}) => {
             placeHolder="Brands"
             onChange={brands => onChange({...selections, brands})}
         />
-        <Form.Item name="discount" label="Discount">
-          <Slider
-              range
-              step={5}
-              min={options.discount.min}
-              max={options.discount.max}
-              defaultValue={[options.discount.min, options.discount.max]}
-              value={[selections.discount.min, selections.discount.max]}
-              onChange={d => onChange({...selections, discount: { min: d[0], max: d[1]}})}
-          />
-        </Form.Item>
+        <Slider
+            marks={{0: '0%', 100: '100%'}}
+            range
+            step={5}
+            min={options.discount.min}
+            max={options.discount.max}
+            defaultValue={[options.discount.min, options.discount.max]}
+            value={[selections.discount.min, selections.discount.max]}
+            onChange={d => onChange({...selections, discount: { min: d[0], max: d[1]}})}
+        />
       </Space>
   )
 }

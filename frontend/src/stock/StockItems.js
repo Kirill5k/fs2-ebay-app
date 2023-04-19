@@ -16,6 +16,7 @@ const StockItem = ({item}) => {
     return (
         <List.Item className="stock-item">
           <Card
+              onClick={() => window.open(item.listingDetails.url, "_blank")}
               style={{ width: '200px' }}
               hoverable
               cover={
