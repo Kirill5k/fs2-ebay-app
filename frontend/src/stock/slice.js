@@ -45,8 +45,9 @@ const stockSlice = createSlice({
         const bySize = filters.sizes.length > 0 ? filters.sizes.includes(i.itemDetails.size) : true
         const byDiscount = currentDiscount >= filters.discount.min && currentDiscount < filters.discount.max
         const byPrice = currentPrice >= filters.price.min && currentPrice < filters.price.max
+        const byKind = filters.kinds.length > 0 ? filters.kinds.includes(i.itemDetails.kind) : true
 
-        return byRetailer && byBrand && bySize && byDiscount && byPrice
+        return byRetailer && byBrand && bySize && byDiscount && byPrice && byKind
       })
     }
   },

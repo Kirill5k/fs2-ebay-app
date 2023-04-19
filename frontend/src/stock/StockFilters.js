@@ -25,6 +25,12 @@ const StockFilters = ({options, selections, onChange}) => {
   return (
       <Space className="stock-filters" direction="vertical">
         <StockSelectFilter
+            items={options.kinds}
+            value={selections.kinds}
+            placeHolder="Item types"
+            onChange={kinds => onChange({...selections, kinds})}
+        />
+        <StockSelectFilter
             items={options.retailers}
             value={selections.retailers}
             placeHolder="Retailers"
