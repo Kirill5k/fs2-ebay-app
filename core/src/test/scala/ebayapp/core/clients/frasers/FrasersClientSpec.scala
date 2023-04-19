@@ -32,6 +32,8 @@ class FrasersClientSpec extends SttpClientSpec {
         .flatMap(_.search(sc).compile.toList)
         .asserting { items =>
           items must have size 17
+          items.map(_.listingDetails.seller).toSet mustBe Set("Flannels")
+
           val item = items.head
 
           item.itemDetails mustBe Clothing("Garment Dyed Leather Gilet (Olive)", "STONE ISLAND", "M")

@@ -39,7 +39,7 @@ private[jd] object mappers {
       val id = if (jdi.colour.isBlank) jdi.id else s"${jdi.colour.capitalize}, ${jdi.id}"
       Clothing(
         s"${jdi.name.replaceAll("(?i)" + jdi.brand, "").trimmed} ($id)",
-        jdi.brand.toUpperCase,
+        jdi.brand.capitalizeAll,
         formatSize(jdi.size)
       )
     }
@@ -61,7 +61,7 @@ private[jd] object mappers {
         Some(jdi.image),
         "NEW",
         Instant.now,
-        jdi.storeName.toUpperCase,
+        jdi.storeName.capitalizeAll,
         Map.empty
       )
   }

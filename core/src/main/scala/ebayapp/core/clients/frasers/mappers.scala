@@ -24,7 +24,7 @@ private[frasers] object mappers {
       ResellableItem.clothing(
         ItemDetails.Clothing(
           s"${item.product.name.cut(item.product.brand)} (${item.product.colour})",
-          item.product.brand.toUpperCase,
+          item.product.brand.capitalizeAll,
           formatSize(item.size)
         ),
         ListingDetails(
@@ -36,7 +36,7 @@ private[frasers] object mappers {
           item.product.imageLarge,
           "NEW",
           Instant.now,
-          item.retailer.toUpperCase,
+          item.retailer.capitalizeAll,
           Map.empty
         ),
         BuyPrice(1, item.product.priceUnFormatted, item.product.discountPercentage.map(_.toInt)),

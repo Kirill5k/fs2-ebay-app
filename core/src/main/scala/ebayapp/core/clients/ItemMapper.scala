@@ -19,8 +19,8 @@ private[clients] trait ItemMapper[I] {
 
   extension (s: String)
     def capitalizeAll: String =
-      s.split(" |-").map(_.toLowerCase.capitalize).mkString(" ")
-      
+      s.split(" |-").map(i => if (i.length > 3) i.toLowerCase.capitalize else i.toUpperCase).mkString(" ")
+
     def cut(replace: String) =
       s.replaceAll("(?i)" + replace, "").trimmed
 

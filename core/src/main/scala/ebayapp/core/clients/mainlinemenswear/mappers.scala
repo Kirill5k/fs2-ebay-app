@@ -31,7 +31,7 @@ private[mainlinemenswear] object mappers {
     private def itemDetails(mmi: MainlineMenswearItem): ItemDetails.Clothing =
       Clothing(
         mmi.name,
-        mmi.brand.toUpperCase,
+        mmi.brand.capitalizeAll,
         formatSize(mmi.size)
       )
 
@@ -52,7 +52,7 @@ private[mainlinemenswear] object mappers {
         Some(s"https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/${mmi.image}"),
         "NEW",
         Instant.now,
-        "mainlinemenswear",
+        "Mainline Menswear",
         Map.empty
       )
   }

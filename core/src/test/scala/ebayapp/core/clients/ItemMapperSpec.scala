@@ -21,9 +21,9 @@ class ItemMapperSpec extends AnyWordSpec with Matchers {
     }
 
     "capitalise strings" in {
-      val strings = List("harvey-nichols", "selfridges")
+      val strings = List("harvey-nichols", "selfridges", "EMPORIO ARMANI EA7")
 
-      strings.map(_.capitalizeAll) mustBe List("Harvey Nichols", "Selfridges")
+      strings.map(_.capitalizeAll) mustBe List("Harvey Nichols", "Selfridges", "Emporio Armani EA7")
     }
   }
 }

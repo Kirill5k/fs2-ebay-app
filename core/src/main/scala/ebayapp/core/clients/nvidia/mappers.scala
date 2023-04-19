@@ -24,7 +24,7 @@ private[nvidia] object mappers {
           Some(item.imageURL),
           "NEW",
           Instant.now(),
-          "NVIDIA",
+          "Nvidia",
           Map("retailer" -> item.retailer.retailerName)
         ),
         BuyPrice(item.retailer.stock + 1, item.retailer.salePrice),

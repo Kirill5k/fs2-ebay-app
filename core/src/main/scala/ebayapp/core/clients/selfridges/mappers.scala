@@ -32,7 +32,7 @@ private[selfridges] object mappers {
     private def itemDetails(item: CatalogItem, stock: ItemStock): ItemDetails.Clothing =
       Clothing(
         item.fullName,
-        item.brandName.toUpperCase,
+        item.brandName.capitalizeAll,
         formatSize(stock.value.getOrElse("ONE SIZE"))
       )
 
@@ -61,7 +61,7 @@ private[selfridges] object mappers {
         item.imageName.map(in => s"https://images.selfridges.com/is/image/selfridges/$in"),
         "NEW",
         Instant.now,
-        "SELFRIDGES",
+        "Selfridges",
         List(
           Some("stockKeys" -> stock.key.getOrElse("undefined")),
           price.map(_.`Current Retail Price`).map(p => "currentPrice" -> p.toString),

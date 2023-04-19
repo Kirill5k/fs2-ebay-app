@@ -25,7 +25,7 @@ private[argos] object mappers {
           None,
           "NEW",
           Instant.now,
-          "ARGOS",
+          "Argos",
           Map()
         ),
         BuyPrice(1, data.attributes.price),

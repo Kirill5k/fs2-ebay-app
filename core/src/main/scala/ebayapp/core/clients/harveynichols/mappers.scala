@@ -28,7 +28,7 @@ private[harveynichols] object mappers {
       ResellableItem.clothing(
         Clothing(
           hni.name.replaceAll("(?i)" + hni.brand, "").trimmed,
-          hni.brand.toUpperCase,
+          hni.brand.capitalizeAll,
           formatSize(hni.size)
         ),
         listingDetails(hni),
@@ -47,7 +47,7 @@ private[harveynichols] object mappers {
         Some(hni.imageUrl),
         s"NEW",
         Instant.now,
-        "HARVEY-NICHOLS",
+        "Harvey Nichols",
         Map.empty
       )
   }
