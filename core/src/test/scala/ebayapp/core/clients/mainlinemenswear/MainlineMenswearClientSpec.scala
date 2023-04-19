@@ -47,7 +47,7 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
         items must have size 4
         val item = items.head
 
-        item.itemDetails mustBe Clothing("Emporio Armani Crew Neck Logo T Shirt Black", "ARMANI", "M")
+        item.itemDetails mustBe Clothing("Emporio Armani Crew Neck Logo T Shirt Black", "Armani", "M")
         item.listingDetails.url mustBe "https://www.mainlinemenswear.co.uk/product/emporio-armani-crew-neck-logo-t-shirt-black/149663"
         item.listingDetails.image mustBe Some("https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/shopimages/products/149663/Mainimage.jpg")
 

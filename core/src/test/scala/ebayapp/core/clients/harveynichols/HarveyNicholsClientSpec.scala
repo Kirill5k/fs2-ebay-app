@@ -36,7 +36,7 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
         items must have size 102
 
         val item = items.head
-        item.itemDetails mustBe Clothing("Black cotton-blend shorts", "KENZO", "M")
+        item.itemDetails mustBe Clothing("Black cotton-blend shorts", "Kenzo", "M")
         item.buyPrice mustBe BuyPrice(1, BigDecimal(90), Some(50))
         item.listingDetails.url mustBe "https://www.harveynichols.com/brand/kenzo-kids/449414-black-cotton-blend-shorts/p4077689/"
         item.listingDetails.image mustBe Some("https://m.hng.io/catalog/product/8/5/857602_black_1.jpg?io=1&width=490&canvas=1:1")

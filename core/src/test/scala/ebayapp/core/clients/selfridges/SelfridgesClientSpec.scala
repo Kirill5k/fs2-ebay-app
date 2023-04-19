@@ -53,8 +53,8 @@ class SelfridgesClientSpec extends SttpClientSpec {
         val firstItem = items.head
         val secondItem = items.drop(6).head
 
-        firstItem.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 ARMANI", "XL")
-        secondItem.itemDetails mustBe Clothing("Brand print cotton blend jersey sweatshirt", "EA7 ARMANI", "S")
+        firstItem.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 Armani", "XL")
+        secondItem.itemDetails mustBe Clothing("Brand print cotton blend jersey sweatshirt", "EA7 Armani", "S")
 
         items.map(_.buyPrice).distinct mustBe List(
           BuyPrice(1, BigDecimal(20.0), Some(86)),

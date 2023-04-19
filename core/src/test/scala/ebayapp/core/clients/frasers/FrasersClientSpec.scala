@@ -36,7 +36,7 @@ class FrasersClientSpec extends SttpClientSpec {
 
           val item = items.head
 
-          item.itemDetails mustBe Clothing("Garment Dyed Leather Gilet (Olive)", "STONE ISLAND", "M")
+          item.itemDetails mustBe Clothing("Garment Dyed Leather Gilet (Olive)", "Stone Island", "M")
           item.buyPrice mustBe BuyPrice(1, 899.00, Some(69))
         }
     }
