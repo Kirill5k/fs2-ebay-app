@@ -13,7 +13,7 @@ const initialFilters = {
   sizes: [],
   price: {
     min: 0,
-    max: 10000,
+    max: 5000,
   },
   discount: {
     min: 0,
@@ -37,11 +37,16 @@ const stockSlice = createSlice({
       const filters = {...action.payload}
       state.selectedFilters = filters
       state.selectedItems = state.items.filter(i => {
+        const currentDiscount = i.price.discount || 0
+        const currentPrice = i.price.buy || 0
+
         const byRetailer = filters.retailers.length > 0 ? filters.retailers.includes(i.listingDetails.seller) : true
         const byBrand = filters.brands.length > 0 ? filters.brands.includes(i.itemDetails.brand) : true
         const bySize = filters.sizes.length > 0 ? filters.sizes.includes(i.itemDetails.size) : true
+        const byDiscount = currentDiscount >= filters.discount.min && currentDiscount < filters.discount.max
+        const byPrice = currentPrice >= filters.price.min && currentPrice < filters.price.max
 
-        return byRetailer && byBrand && bySize
+        return byRetailer && byBrand && bySize && byDiscount && byPrice
       })
     }
   },
