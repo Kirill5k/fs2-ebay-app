@@ -19,5 +19,11 @@ class ItemMapperSpec extends AnyWordSpec with Matchers {
 
       sizes.map(formatSize) mustBe List("M", "9", "UK42", "54", "S", "9.5", "8 S", "32W R", "UK52")
     }
+
+    "capitalise strings" in {
+      val strings = List("harvey-nichols", "selfridges")
+
+      strings.map(_.capitalizeAll) mustBe List("Harvey Nichols", "Selfridges")
+    }
   }
 }
