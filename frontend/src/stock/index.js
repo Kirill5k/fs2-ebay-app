@@ -1,7 +1,7 @@
 import {Layout} from "antd"
 import React, {useEffect} from "react"
 import {useSelector, useDispatch} from 'react-redux'
-import {getStock} from './slice'
+import {getStock, filter} from './slice'
 import StockItems from './StockItems'
 import StockFilters from "./StockFilters"
 
@@ -9,8 +9,9 @@ import StockFilters from "./StockFilters"
 const Stock = ({backgroundColor}) => {
   const dispatch = useDispatch()
   const stockStatus = useSelector(state => state.stock.status)
-  const items = useSelector(state => state.stock.items)
+  const selectedItems = useSelector(state => state.stock.selectedItems)
   const filters = useSelector(state => state.stock.filters)
+  const selectedFilters = useSelector(state => state.stock.selectedFilters)
 
   useEffect(() => {
     if (stockStatus === 'idle') {
@@ -25,12 +26,14 @@ const Stock = ({backgroundColor}) => {
             width={200}
         >
           <StockFilters
-            filters={filters}
+            options={filters}
+            selections={selectedFilters}
+            onChange={f => dispatch(filter(f))}
           />
         </Layout.Sider>
         <Layout.Content style={{paddingLeft: '24px', minHeight: 280}}>
           <StockItems
-              items={items}
+              items={selectedItems}
           />
         </Layout.Content>
       </Layout>

@@ -6,29 +6,37 @@ export const getStock = createAsyncThunk('stock/get', async () => {
   return testItems;
 })
 
+const initialFilters = {
+  kinds: [],
+  retailers: [],
+  brands: [],
+  sizes: [],
+  price: {
+    min: 0,
+    max: 10000,
+  },
+  discount: {
+    min: 0,
+    max: 100
+  }
+}
+
 const initialState = {
   status: 'idle',
   items: [],
-  filters: {
-    kinds: [],
-    retailers: [],
-    brands: [],
-    sizes: [],
-    price: {
-      min: 0,
-      max: 10000,
-    },
-    discount: {
-      min: 0,
-      max: 100
-    }
-  }
+  selectedItems: [],
+  filters: initialFilters,
+  selectedFilters: initialFilters
 }
 
 const stockSlice = createSlice({
   name: 'stock',
   initialState,
-  reducers: {},
+  reducers: {
+    filter: (state, action) => {
+      state.selectedFilters = {...action.payload}
+    }
+  },
   extraReducers: builder => {
     builder
         .addCase(getStock.pending, (state, action) => {
@@ -37,10 +45,12 @@ const stockSlice = createSlice({
         .addCase(getStock.fulfilled, (state, action) => {
           state.status = 'succeeded'
           state.items = action.payload
+          state.selectedItems = action.payload
           state.filters.kinds = distinct(action.payload.map(i => i.itemDetails.kind))
           state.filters.brands = distinct(action.payload.map(i => i.itemDetails.brand))
           state.filters.sizes = distinct(action.payload.map(i => i.itemDetails.sizes))
           state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller))
+          state.selectedFilters = {...state.filters}
         })
         .addCase(getStock.rejected, (state, action) => {
           state.status = 'failed'
@@ -49,70 +59,15 @@ const stockSlice = createSlice({
   }
 })
 
+export const { filter } = stockSlice.actions
 export default stockSlice.reducer
 
 const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Kenzo Flower Trk Pnt Sn21 (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kenzo-flower-trk-pnt-sn21-488128#colcode=48812803",
-      "title": "KENZO - Kenzo Flower Trk Pnt Sn21",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48812803_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.384599842Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 72.00,
-      "discount": 80,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kenzo Flower Trk Pnt Sn21 (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kenzo-flower-trk-pnt-sn21-488128#colcode=48812803",
-      "title": "KENZO - Kenzo Flower Trk Pnt Sn21",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48812803_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.384602497Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 72.00,
-      "discount": 80,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
       "name": "Dolidorix Shorts (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -123,7 +78,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47240403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.365419181Z",
+      "datePosted": "2023-04-19T06:44:05.805049927Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -140,8 +95,8 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Pocket Square (Medium Grey)",
-      "brand": "Boss",
-      "size": "One Size"
+      "brand": "BOSS",
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.scottsmenswear.com/boss-pocket-square-768388#colcode=76838802",
@@ -151,7 +106,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/76838802_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.331983897Z",
+      "datePosted": "2023-04-19T06:43:17.422396648Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -167,35 +122,7 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Lukas Check Shirt (Dark Blue 402)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-lukas-check-shirt-558808#colcode=55880818",
-      "title": "Boss - Lukas Check Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55880818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.332134534Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 16.00,
-      "discount": 79,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "HUGO Doak Square Track Pants (black, 16048050)",
+      "name": " Doak Square Track Pants (Black, 16048050)",
       "brand": "HUGO",
       "size": "S"
     },
@@ -207,7 +134,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_381286_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:46.450312904Z",
+      "datePosted": "2023-04-19T06:41:37.206789797Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -219,62 +146,6 @@ const testItems = [
       "credit": null
     },
     "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Lightweight Rain Jacket (Mid Blue)",
-      "brand": "STONE ISLAND",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/stone-island-lightweight-rain-jacket-619307#colcode=61930719",
-      "title": "STONE ISLAND - Lightweight Rain Jacket",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/61930719_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.512090863Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 195.00,
-      "discount": 70,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "stone-island"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Lightweight Rain Jacket (Mid Blue)",
-      "brand": "STONE ISLAND",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/stone-island-lightweight-rain-jacket-619307#colcode=61930719",
-      "title": "STONE ISLAND - Lightweight Rain Jacket",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/61930719_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T09:18:25.633862947Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 195.00,
-      "discount": 70,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "stone-island"
   },
   {
     "itemDetails": {
@@ -291,7 +162,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49805404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.939444459Z",
+      "datePosted": "2023-04-19T06:43:02.059325824Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -319,7 +190,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49805404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.939449541Z",
+      "datePosted": "2023-04-19T06:43:02.059338212Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -347,7 +218,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/57910202_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.938939476Z",
+      "datePosted": "2023-04-19T06:43:02.058227822Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -375,7 +246,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49804308_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.940657001Z",
+      "datePosted": "2023-04-19T06:43:02.153620230Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -403,7 +274,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49804308_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.940661598Z",
+      "datePosted": "2023-04-19T06:43:02.153634612Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -431,7 +302,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49804318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.940480756Z",
+      "datePosted": "2023-04-19T06:43:02.152836330Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -447,372 +318,8 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Sport Monogram Fleece (Ink 78)",
-      "brand": "Kenzo",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-monogram-fleece-554286#colcode=55428618",
-      "title": "Kenzo - Sport Monogram Fleece",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55428618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.384217201Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 135.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport Monogram Fleece (Ink 78)",
-      "brand": "Kenzo",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-monogram-fleece-554286#colcode=55428618",
-      "title": "Kenzo - Sport Monogram Fleece",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55428618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.384220410Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 135.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Cord Trousers (Sand 08)",
-      "brand": "Kenzo",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-cord-trousers-510952#colcode=51095204",
-      "title": "Kenzo - Cord Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/51095204_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387031564Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 75.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Zip Logo Cardigan (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-zip-logo-cardigan-559003#colcode=55900303",
-      "title": "KENZO - Zip Logo Cardigan",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55900303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387133257Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 70.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Crest Jumper (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-crest-jumper-559897#colcode=55989703",
-      "title": "KENZO - Tiger Crest Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55989703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387167558Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 70.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tech Tracksuit Bottoms (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tech-tracksuit-bottoms-511047#colcode=51104703",
-      "title": "KENZO - Tech Tracksuit Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/51104703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386281942Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 82.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tech Tracksuit Bottoms (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tech-tracksuit-bottoms-511047#colcode=51104703",
-      "title": "KENZO - Tech Tracksuit Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/51104703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386285378Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 82.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Monogram Joggers (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-monogram-joggers-483545#colcode=48354503",
-      "title": "KENZO - Monogram Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48354503_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385790077Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 88.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kourt 80 Sneakers (White 01)",
-      "brand": "KENZO",
-      "size": "9 (43)"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kourt-80-sneakers-117295#colcode=11729501",
-      "title": "KENZO - Kourt 80 Sneakers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/11729501_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386221187Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 82.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kenzo Patchwork Shir Sn21 (Green 56)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kenzo-patchwork-shir-sn21-557747#colcode=55774715",
-      "title": "KENZO - Kenzo Patchwork Shir Sn21",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55774715_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385014492Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 119.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kenzo Patchwork Shir Sn21 (Green 56)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kenzo-patchwork-shir-sn21-557747#colcode=55774715",
-      "title": "KENZO - Kenzo Patchwork Shir Sn21",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55774715_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385017089Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 119.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Elasticated Waist Belt Shorts (Glacier 62)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-elasticated-waist-belt-shorts-478256#colcode=47825602",
-      "title": "KENZO - Elasticated Waist Belt Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/47825602_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386752658Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 75.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Elasticated Waist Belt Shorts (Glacier 62)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-elasticated-waist-belt-shorts-478256#colcode=47825602",
-      "title": "KENZO - Elasticated Waist Belt Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/47825602_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386756112Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 75.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
       "name": "Vin Waistcoat (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "UK52"
     },
     "listingDetails": {
@@ -823,7 +330,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.261467455Z",
+      "datePosted": "2023-04-19T06:44:09.454511955Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -840,7 +347,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Vin Waistcoat (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "UK50"
     },
     "listingDetails": {
@@ -851,7 +358,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.261463832Z",
+      "datePosted": "2023-04-19T06:44:09.454504052Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -868,7 +375,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Vin Waistcoat (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "UK48"
     },
     "listingDetails": {
@@ -879,7 +386,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.261460964Z",
+      "datePosted": "2023-04-19T06:44:09.454496391Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -896,7 +403,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Vin Waistcoat (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "UK46"
     },
     "listingDetails": {
@@ -907,40 +414,12 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.261457554Z",
+      "datePosted": "2023-04-19T06:44:09.454483143Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 33.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Vidal Shirt (Dark Red)",
-      "brand": "Hugo",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-vidal-shirt-329957#colcode=32995708",
-      "title": "Hugo - Vidal Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32995708_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.246653935Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 24.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -952,7 +431,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Rip Tapered Jeans (Medium Blue 420)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W L"
     },
     "listingDetails": {
@@ -963,7 +442,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65970918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.277155184Z",
+      "datePosted": "2023-04-19T06:44:07.465101419Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -980,7 +459,35 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Rip Tapered Jeans (Medium Blue 420)",
-      "brand": "Hugo",
+      "brand": "HUGO",
+      "size": "32W L"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-rip-tapered-jeans-659709#colcode=65970918",
+      "title": "Hugo - Rip Tapered Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65970918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.465094130Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Rip Tapered Jeans (Medium Blue 420)",
+      "brand": "HUGO",
       "size": "30W R"
     },
     "listingDetails": {
@@ -991,7 +498,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65970918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.277151026Z",
+      "datePosted": "2023-04-19T06:44:07.465084959Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1008,7 +515,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Kenno Shirt (Blue 413)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "38(15)"
     },
     "listingDetails": {
@@ -1019,7 +526,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55919718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.246403828Z",
+      "datePosted": "2023-04-19T06:44:11.365376178Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1035,372 +542,8 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Hugo Zaff Scarf Womens (Black 001)",
-      "brand": "Hugo",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-zaff-scarf-womens-902151#colcode=90215103",
-      "title": "Hugo - Hugo Zaff Scarf Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/90215103_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.262797002Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Monogram Robe Sn24 (Mscellaneous961)",
-      "brand": "Hugo",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-monogram-robe-sn24-421047#colcode=42104708",
-      "title": "Hugo - Hugo Monogram Robe Sn24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/42104708_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.275215425Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Gayang Logo Jeans Womens (Turquoise)",
-      "brand": "Hugo",
-      "size": "30W L32"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-gayang-logo-jeans-womens-659828#colcode=65982818",
-      "title": "Hugo - Hugo Gayang Logo Jeans Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65982818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.275283366Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Gatora Slim Ld24 (Navy 415)",
-      "brand": "Hugo",
-      "size": "30 L32"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
-      "title": "Hugo - Hugo Gatora Slim Ld24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.277551566Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Gatora Slim Ld24 (Navy 415)",
-      "brand": "Hugo",
-      "size": "29 L32"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
-      "title": "Hugo - Hugo Gatora Slim Ld24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.277546202Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Gatora Slim Ld24 (Navy 415)",
-      "brand": "Hugo",
-      "size": "28 L32"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
-      "title": "Hugo - Hugo Gatora Slim Ld24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.277515349Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Gatora Slim Ld24 (Navy 415)",
-      "brand": "Hugo",
-      "size": "27 L32"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
-      "title": "Hugo - Hugo Gatora Slim Ld24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.277511035Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Gatora Slim Ld24 (Navy 415)",
-      "brand": "Hugo",
-      "size": "26 L32"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
-      "title": "Hugo - Hugo Gatora Slim Ld24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.277506063Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo EthonCamoBckPck Sn24 (Mcellaneous960)",
-      "brand": "Hugo",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-ethoncamobckpck-sn24-715342#colcode=71534215",
-      "title": "Hugo - Hugo EthonCamoBckPck Sn24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/71534215_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.278064820Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Duzu Jog Sn24 (Natural 108)",
-      "brand": "Hugo",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-duzu-jog-sn24-483914#colcode=48391401",
-      "title": "Hugo - Hugo Duzu Jog Sn24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48391401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274340641Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Duzu Jog Sn24 (Natural 108)",
-      "brand": "Hugo",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-duzu-jog-sn24-483914#colcode=48391401",
-      "title": "Hugo - Hugo Duzu Jog Sn24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48391401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274346022Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Boss Zula Belt 3.5cm Womens (Pastel Pink)",
-      "brand": "Hugo",
-      "size": "85 (10 M)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-boss-zula-belt-35cm-womens-945255#colcode=94525506",
-      "title": "Hugo - Hugo Boss Zula Belt 3.5cm Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94525506_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.264431678Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 27.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Boss Zula Belt 3.5cm Womens (Pastel Pink)",
-      "brand": "Hugo",
-      "size": "80 (8 S)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-boss-zula-belt-35cm-womens-945255#colcode=94525506",
-      "title": "Hugo - Hugo Boss Zula Belt 3.5cm Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94525506_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.264427513Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 27.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
       "name": "Howard214 Trousers (Light Beige 272)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "40W R"
     },
     "listingDetails": {
@@ -1411,7 +554,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272285689Z",
+      "datePosted": "2023-04-19T06:44:07.458676294Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1428,7 +571,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard214 Trousers (Light Beige 272)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "38W R"
     },
     "listingDetails": {
@@ -1439,7 +582,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272282648Z",
+      "datePosted": "2023-04-19T06:44:07.458667748Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1456,7 +599,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard214 Trousers (Light Beige 272)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W R"
     },
     "listingDetails": {
@@ -1467,7 +610,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272279471Z",
+      "datePosted": "2023-04-19T06:44:07.458658985Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1484,7 +627,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard214 Trousers (Light Beige 272)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -1495,7 +638,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272272897Z",
+      "datePosted": "2023-04-19T06:44:07.458649988Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1512,7 +655,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard214 Trousers (Light Beige 272)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -1523,7 +666,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272269541Z",
+      "datePosted": "2023-04-19T06:44:07.458641153Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1540,7 +683,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard214 Trousers (Dark Blue 405)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "38W R"
     },
     "listingDetails": {
@@ -1551,7 +694,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.366079760Z",
+      "datePosted": "2023-04-19T06:44:07.457915063Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1568,7 +711,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard214 Trousers (Dark Blue 405)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -1579,7 +722,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.366075650Z",
+      "datePosted": "2023-04-19T06:44:07.457906764Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1596,7 +739,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard214 Trousers (Dark Blue 405)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -1607,7 +750,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.366071331Z",
+      "datePosted": "2023-04-19T06:44:07.457892845Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1624,7 +767,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard Trousers (DGreen 306)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -1635,7 +778,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51415215_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.364973396Z",
+      "datePosted": "2023-04-19T06:44:05.710736942Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1652,7 +795,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Howard Trousers (DGreen 306)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -1663,7 +806,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51415215_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.364969788Z",
+      "datePosted": "2023-04-19T06:44:05.710729843Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1680,35 +823,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (DBlue 401)",
-      "brand": "Hugo",
-      "size": "38W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hetons-trousers-514139#colcode=51413918",
-      "title": "Hugo - Hetons Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T09:18:29.225401256Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hetons Trousers (DBlue 401)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W R"
     },
     "listingDetails": {
@@ -1719,7 +834,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.362986303Z",
+      "datePosted": "2023-04-19T06:44:05.641508867Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1736,7 +851,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (DBlue 401)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -1747,7 +862,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.362979732Z",
+      "datePosted": "2023-04-19T06:44:05.641492548Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1764,7 +879,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (DBlue 401)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W L"
     },
     "listingDetails": {
@@ -1775,7 +890,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.362982802Z",
+      "datePosted": "2023-04-19T06:44:05.641500829Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1792,7 +907,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (DBlue 401)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W L"
     },
     "listingDetails": {
@@ -1803,7 +918,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.362975724Z",
+      "datePosted": "2023-04-19T06:44:05.641484014Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1820,7 +935,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (DBlue 401)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "30W R"
     },
     "listingDetails": {
@@ -1831,7 +946,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.362972354Z",
+      "datePosted": "2023-04-19T06:44:05.641475217Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1848,7 +963,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W R"
     },
     "listingDetails": {
@@ -1859,7 +974,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.363335359Z",
+      "datePosted": "2023-04-19T06:44:05.695354797Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1876,7 +991,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -1887,7 +1002,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.363322717Z",
+      "datePosted": "2023-04-19T06:44:05.695337813Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1904,7 +1019,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W L"
     },
     "listingDetails": {
@@ -1915,7 +1030,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.363326277Z",
+      "datePosted": "2023-04-19T06:44:05.695346962Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1932,7 +1047,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hetons Trousers (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -1943,35 +1058,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.363319100Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hetons Trousers (Black 001)",
-      "brand": "Hugo",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hetons-trousers-514139#colcode=51413903",
-      "title": "Hugo - Hetons Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.363314361Z",
+      "datePosted": "2023-04-19T06:44:05.695316033Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1988,7 +1075,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Harlys Trousers (DBeige 251)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W R (52)"
     },
     "listingDetails": {
@@ -1999,7 +1086,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950804_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272531023Z",
+      "datePosted": "2023-04-19T06:44:07.459405807Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2016,7 +1103,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Harlys Trousers (DBeige 251)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "30W R (46)"
     },
     "listingDetails": {
@@ -2027,7 +1114,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950804_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272526332Z",
+      "datePosted": "2023-04-19T06:44:07.459393158Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2044,8 +1131,8 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "HBH Reborn Tab Xbdy Ld21 (Black 001)",
-      "brand": "Hugo",
-      "size": "One Size"
+      "brand": "HUGO",
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.scottsmenswear.com/hugo-hbh-reborn-tab-xbdy-ld21-712484#colcode=71248403",
@@ -2055,7 +1142,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/71248403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.263458935Z",
+      "datePosted": "2023-04-19T06:44:09.467096901Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2072,7 +1159,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Gimberly Straight Jeans (Bright Blue)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "31W L32"
     },
     "listingDetails": {
@@ -2083,7 +1170,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.275038944Z",
+      "datePosted": "2023-04-19T06:44:07.463489089Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2100,7 +1187,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Gimberly Straight Jeans (Bright Blue)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "30W L32"
     },
     "listingDetails": {
@@ -2111,7 +1198,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.275035656Z",
+      "datePosted": "2023-04-19T06:44:07.463478226Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2128,7 +1215,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Gimberly Straight Jeans (Bright Blue)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "29W L32"
     },
     "listingDetails": {
@@ -2139,7 +1226,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.275032204Z",
+      "datePosted": "2023-04-19T06:44:07.463468138Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2156,7 +1243,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Gimberly Straight Jeans (Bright Blue)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "28W L32"
     },
     "listingDetails": {
@@ -2167,7 +1254,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.275028161Z",
+      "datePosted": "2023-04-19T06:44:07.463454462Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2184,7 +1271,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin212 Trousers (DarkBlueChck402)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "40W R"
     },
     "listingDetails": {
@@ -2195,7 +1282,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57913918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.364166219Z",
+      "datePosted": "2023-04-19T06:44:05.696716158Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2212,7 +1299,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin212 Trousers (DarkBlueChck402)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -2223,7 +1310,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57913918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.364163258Z",
+      "datePosted": "2023-04-19T06:44:05.696709808Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2240,7 +1327,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin212 Trousers (DarkBlueChck402)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -2251,7 +1338,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57913918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.364159064Z",
+      "datePosted": "2023-04-19T06:44:05.696702353Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2268,7 +1355,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin Suit Trousers (Charcoal 016)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "40W R (56)"
     },
     "listingDetails": {
@@ -2279,7 +1366,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273755370Z",
+      "datePosted": "2023-04-19T06:44:07.461874110Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2296,7 +1383,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin Suit Trousers (Charcoal 016)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "38W R (54)"
     },
     "listingDetails": {
@@ -2307,7 +1394,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273751280Z",
+      "datePosted": "2023-04-19T06:44:07.461863651Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2324,7 +1411,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin Suit Trousers (Charcoal 016)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W R (52)"
     },
     "listingDetails": {
@@ -2335,7 +1422,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273747345Z",
+      "datePosted": "2023-04-19T06:44:07.461853250Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2352,7 +1439,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin Suit Trousers (Charcoal 016)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R (50)"
     },
     "listingDetails": {
@@ -2363,7 +1450,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273743173Z",
+      "datePosted": "2023-04-19T06:44:07.461820653Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2380,7 +1467,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Getlin Suit Trousers (Charcoal 016)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R (48)"
     },
     "listingDetails": {
@@ -2391,7 +1478,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273735884Z",
+      "datePosted": "2023-04-19T06:44:07.461804589Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2408,7 +1495,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Ganeva Logo Jeggings (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "26 R"
     },
     "listingDetails": {
@@ -2419,7 +1506,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/67914503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.262497198Z",
+      "datePosted": "2023-04-19T06:44:09.459444393Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2436,7 +1523,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Fivan222 Shorts (Light Beige 272)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -2447,7 +1534,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55057804_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274989208Z",
+      "datePosted": "2023-04-19T06:44:07.463365520Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2464,7 +1551,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Enalu 10234784 01 (Open Blue 461)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -2475,7 +1562,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60810818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.364641587Z",
+      "datePosted": "2023-04-19T06:44:05.710225915Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2492,7 +1579,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Enalu 10234784 01 (Open Blue 461)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "M"
     },
     "listingDetails": {
@@ -2503,7 +1590,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60810818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.364645442Z",
+      "datePosted": "2023-04-19T06:44:05.710233756Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2520,7 +1607,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Duscly Fleece Joggers (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "M"
     },
     "listingDetails": {
@@ -2531,7 +1618,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48360403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272048654Z",
+      "datePosted": "2023-04-19T06:44:07.458276141Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2548,7 +1635,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Drowin Jogging Pants (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -2559,7 +1646,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48271903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274220293Z",
+      "datePosted": "2023-04-19T06:44:07.462311511Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2576,7 +1663,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Dolidorio Shorts (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -2587,7 +1674,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/43038003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274936453Z",
+      "datePosted": "2023-04-19T06:44:07.463263957Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2604,7 +1691,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "DenergyX OTH Hoodie (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -2615,7 +1702,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/53519003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272486514Z",
+      "datePosted": "2023-04-19T06:44:07.459247916Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2632,7 +1719,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Dechi Track Pants (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -2643,7 +1730,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48348203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.365914584Z",
+      "datePosted": "2023-04-19T06:44:07.457288698Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2660,7 +1747,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Dechi Track Pants (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "M"
     },
     "listingDetails": {
@@ -2671,12 +1758,40 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48348203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.365919525Z",
+      "datePosted": "2023-04-19T06:44:07.457343694Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Datheltic Zip Jacket (Black 001)",
+      "brand": "HUGO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-datheltic-zip-jacket-554846#colcode=55484603",
+      "title": "Hugo - Datheltic Zip Jacket",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55484603_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:05.711004780Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 52.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -2688,7 +1803,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Dagile T Shirt (Open Yellow 755)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -2699,7 +1814,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32312813_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:45.264241986Z",
+      "datePosted": "2023-04-19T06:44:09.472668807Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2716,7 +1831,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "708 Rip Slim Jeans (Blue 440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W S"
     },
     "listingDetails": {
@@ -2727,7 +1842,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273058921Z",
+      "datePosted": "2023-04-19T06:44:07.461178822Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2744,7 +1859,35 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "708 Rip Slim Jeans (Blue 440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
+      "size": "36W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-708-rip-slim-jeans-654911#colcode=65491115",
+      "title": "Hugo - 708 Rip Slim Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.461187372Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "708 Rip Slim Jeans (Blue 440)",
+      "brand": "HUGO",
       "size": "34W S"
     },
     "listingDetails": {
@@ -2755,7 +1898,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273053163Z",
+      "datePosted": "2023-04-19T06:44:07.461160392Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2772,7 +1915,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "708 Rip Slim Jeans (Blue 440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -2783,7 +1926,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273056050Z",
+      "datePosted": "2023-04-19T06:44:07.461169434Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2800,7 +1943,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "708 Rip Slim Jeans (Blue 440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -2811,7 +1954,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273047225Z",
+      "datePosted": "2023-04-19T06:44:07.461138750Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2828,7 +1971,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "708 Rip Slim Jeans (Blue 440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W L"
     },
     "listingDetails": {
@@ -2839,7 +1982,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273050292Z",
+      "datePosted": "2023-04-19T06:44:07.461147105Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2856,7 +1999,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "708 Rip Slim Jeans (Blue 440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "30W S"
     },
     "listingDetails": {
@@ -2867,7 +2010,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273041029Z",
+      "datePosted": "2023-04-19T06:44:07.461116528Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2884,7 +2027,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "708 Rip Slim Jeans (Blue 440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "30W R"
     },
     "listingDetails": {
@@ -2895,7 +2038,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.273044240Z",
+      "datePosted": "2023-04-19T06:44:07.461130362Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2911,36 +2054,8 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "634/2 Tapered Jeans (Pastel Blue 450)",
-      "brand": "Hugo",
-      "size": "36W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-634/2-tapered-jeans-659166#colcode=65916618",
-      "title": "Hugo - 634/2 Tapered Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65916618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.365502227Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
       "name": "634 Rip Repair Jeans (Pastel Blue 450)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "38W R"
     },
     "listingDetails": {
@@ -2951,7 +2066,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274616372Z",
+      "datePosted": "2023-04-19T06:44:07.462857137Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2968,7 +2083,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 Rip Repair Jeans (Pastel Blue 450)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W R"
     },
     "listingDetails": {
@@ -2979,7 +2094,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274613153Z",
+      "datePosted": "2023-04-19T06:44:07.462848293Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2996,7 +2111,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 Rip Repair Jeans (Pastel Blue 450)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -3007,7 +2122,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274605604Z",
+      "datePosted": "2023-04-19T06:44:07.462802071Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3024,7 +2139,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 Rip Repair Jeans (Pastel Blue 450)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W L"
     },
     "listingDetails": {
@@ -3035,7 +2150,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274610045Z",
+      "datePosted": "2023-04-19T06:44:07.462808858Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3052,7 +2167,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 Rip Repair Jeans (Pastel Blue 450)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -3063,7 +2178,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274600915Z",
+      "datePosted": "2023-04-19T06:44:07.462793934Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3080,7 +2195,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 Rip Repair Jeans (Pastel Blue 450)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "30W S"
     },
     "listingDetails": {
@@ -3091,7 +2206,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.274594161Z",
+      "datePosted": "2023-04-19T06:44:07.462781592Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3108,7 +2223,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 Jeans (Turquoise440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "34W R"
     },
     "listingDetails": {
@@ -3119,7 +2234,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65597318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.272676397Z",
+      "datePosted": "2023-04-19T06:44:07.460039530Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3136,7 +2251,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 GD Jeans (Medium Grey 033)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "31W R"
     },
     "listingDetails": {
@@ -3147,7 +2262,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65419302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.365169536Z",
+      "datePosted": "2023-04-19T06:44:05.797898236Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3164,7 +2279,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "634 GD Jeans (Medium Grey 033)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "30W R"
     },
     "listingDetails": {
@@ -3175,7 +2290,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65419302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.365166162Z",
+      "datePosted": "2023-04-19T06:44:05.797886410Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3191,8 +2306,64 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
+      "name": "3 Pack Trunks (White 100)",
+      "brand": "HUGO",
+      "size": "XS"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-3-pack-trunks-422769#colcode=42276901",
+      "title": "Hugo - 3 Pack Trunks",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/42276901_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:19.401071969Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 11.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "3 Pack Trunks (Navy 410)",
+      "brand": "HUGO",
+      "size": "XS"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-3-pack-trunks-422769#colcode=42276922",
+      "title": "Hugo - 3 Pack Trunks",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/42276922_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:19.403098478Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 11.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
       "name": "076 Denim Jacket (Turquoise440)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -3203,7 +2374,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60270218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.363741088Z",
+      "datePosted": "2023-04-19T06:44:05.696044782Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3219,8 +2390,316 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
+      "name": " Zaff Scarf Womens (Black 001)",
+      "brand": "HUGO",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-zaff-scarf-womens-902151#colcode=90215103",
+      "title": "Hugo - Hugo Zaff Scarf Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/90215103_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:09.466269979Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Gayang Logo Jeans Womens (Turquoise)",
+      "brand": "HUGO",
+      "size": "30W L32"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-gayang-logo-jeans-womens-659828#colcode=65982818",
+      "title": "Hugo - Hugo Gayang Logo Jeans Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65982818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.464193694Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Gatora Slim Ld24 (Navy 415)",
+      "brand": "HUGO",
+      "size": "30 L32"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
+      "title": "Hugo - Hugo Gatora Slim Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.465631115Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Gatora Slim Ld24 (Navy 415)",
+      "brand": "HUGO",
+      "size": "29 L32"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
+      "title": "Hugo - Hugo Gatora Slim Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.465618502Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Gatora Slim Ld24 (Navy 415)",
+      "brand": "HUGO",
+      "size": "28 L32"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
+      "title": "Hugo - Hugo Gatora Slim Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.465607622Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Gatora Slim Ld24 (Navy 415)",
+      "brand": "HUGO",
+      "size": "27 L32"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
+      "title": "Hugo - Hugo Gatora Slim Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.465598197Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Gatora Slim Ld24 (Navy 415)",
+      "brand": "HUGO",
+      "size": "26 L32"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-gatora-slim-ld24-658143#colcode=65814319",
+      "title": "Hugo - Hugo Gatora Slim Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.465588322Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Duzu Jog Sn24 (Natural 108)",
+      "brand": "HUGO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-duzu-jog-sn24-483914#colcode=48391401",
+      "title": "Hugo - Hugo Duzu Jog Sn24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48391401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.462525236Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Duzu Jog Sn24 (Natural 108)",
+      "brand": "HUGO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-duzu-jog-sn24-483914#colcode=48391401",
+      "title": "Hugo - Hugo Duzu Jog Sn24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48391401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:07.462535520Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Boss Zula Belt 3.5cm Womens (Pastel Pink)",
+      "brand": "HUGO",
+      "size": "85 (10 M)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-boss-zula-belt-35cm-womens-945255#colcode=94525506",
+      "title": "Hugo - Hugo Boss Zula Belt 3.5cm Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94525506_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:09.473230984Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 27.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Boss Zula Belt 3.5cm Womens (Pastel Pink)",
+      "brand": "HUGO",
+      "size": "80 (8 S)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-boss-zula-belt-35cm-womens-945255#colcode=94525506",
+      "title": "Hugo - Hugo Boss Zula Belt 3.5cm Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94525506_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:09.473219993Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 27.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
       "name": "Zolcon Jacket (Black)",
-      "brand": "Boss",
+      "brand": "BOSS",
       "size": "S"
     },
     "listingDetails": {
@@ -3231,7 +2710,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32404603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311291968Z",
+      "datePosted": "2023-04-19T06:43:07.349620341Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3248,7 +2727,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Zip Sweatshirt (Navy 410)",
-      "brand": "Boss",
+      "brand": "BOSS",
       "size": "S"
     },
     "listingDetails": {
@@ -3259,7 +2738,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55463719_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235024261Z",
+      "datePosted": "2023-04-19T06:43:09.449763113Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3276,7 +2755,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Zip Sweatshirt (Black 001)",
-      "brand": "Boss",
+      "brand": "BOSS",
       "size": "S"
     },
     "listingDetails": {
@@ -3287,3456 +2766,12 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55463703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252405817Z",
+      "datePosted": "2023-04-19T06:43:11.291257169Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Trollflash T Shirt (Dark Orange)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-trollflash-t-shirt-587032#colcode=58703212",
-      "title": "Boss - Trollflash T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/58703212_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.586847513Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Throbtino1 Tank Top (Open Green)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-throbtino1-tank-top-593245#colcode=59324515",
-      "title": "Boss - Throbtino1 Tank Top",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/59324515_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.228421784Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Thias T Shirt (Dark Blue)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-thias-t-shirt-593420#colcode=59342018",
-      "title": "Boss - Thias T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/59342018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.254257064Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Thias T Shirt (Dark Blue)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-thias-t-shirt-593420#colcode=59342018",
-      "title": "Boss - Thias T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/59342018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.254263792Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tessler 173 T-shirt (Dark Blue)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-tessler-173-t-shirt-323354#colcode=32335418",
-      "title": "Boss - Tessler 173 T-shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32335418_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.332277556Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 27.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Teo Knit T Shirt (Beige 131)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-teo-knit-t-shirt-595369#colcode=59536901",
-      "title": "Boss - Teo Knit T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/59536901_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310259839Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tatum Tape Jeans Mens (Dark Blue 405)",
-      "brand": "Boss",
-      "size": "34W L"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-tatum-tape-jeans-mens-639067#colcode=63906718",
-      "title": "Boss - Tatum Tape Jeans Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.256048417Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tatum Tape Jeans Mens (Dark Blue 405)",
-      "brand": "Boss",
-      "size": "32W S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-tatum-tape-jeans-mens-639067#colcode=63906718",
-      "title": "Boss - Tatum Tape Jeans Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.256043095Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 39.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "T-Perry Short Sleeve Polo Shirt (Light Pink)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-t-perry-short-sleeve-polo-shirt-543624#colcode=54362406",
-      "title": "Boss - T-Perry Short Sleeve Polo Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/54362406_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.232468106Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "T-Delaware 3 Jeans (Bright Blue 434)",
-      "brand": "Boss",
-      "size": "36W S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-t-delaware-3-jeans-654616#colcode=65461618",
-      "title": "Boss - T-Delaware 3 Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65461618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.308714483Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 70.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Stanino Slim Fit Smart Stretch Trousers (Blue 402)",
-      "brand": "Boss",
-      "size": "54 (64)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-stanino-slim-fit-smart-stretch-trousers-519346#colcode=51934618",
-      "title": "Boss - Stanino Slim Fit Smart Stretch Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.253554590Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Stanino Slim Fit Smart Stretch Trousers (Blue 402)",
-      "brand": "Boss",
-      "size": "52 (62)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-stanino-slim-fit-smart-stretch-trousers-519346#colcode=51934618",
-      "title": "Boss - Stanino Slim Fit Smart Stretch Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.253549216Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Stanino Slim Fit Smart Stretch Trousers (Blue 402)",
-      "brand": "Boss",
-      "size": "46 (56)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-stanino-slim-fit-smart-stretch-trousers-519346#colcode=51934618",
-      "title": "Boss - Stanino Slim Fit Smart Stretch Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.253542640Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Spectre Slim Trousers (Open Blue 489)",
-      "brand": "Boss",
-      "size": "54 (XXL)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
-      "title": "Boss - Spectre Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235297344Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Spectre Slim Trousers (Open Blue 489)",
-      "brand": "Boss",
-      "size": "52 (XL)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
-      "title": "Boss - Spectre Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235291331Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Spectre Slim Trousers (Open Blue 489)",
-      "brand": "Boss",
-      "size": "48 (M)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
-      "title": "Boss - Spectre Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235284755Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Spectre Slim Trousers (Open Blue 489)",
-      "brand": "Boss",
-      "size": "46 (S)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
-      "title": "Boss - Spectre Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235277201Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Skeefast Logo Joggers (Gold)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-skeefast-logo-joggers-483666#colcode=48366610",
-      "title": "Boss - Skeefast Logo Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48366610_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252741099Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sidney 11 Fleece Jacket (Black)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-sidney-11-fleece-jacket-550662#colcode=55066203",
-      "title": "Boss - Sidney 11 Fleece Jacket",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55066203_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.254787309Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sefade Fleece Shorts (Pastel Red 630)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231508",
-      "title": "Boss - Sefade Fleece Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/47231508_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.585576388Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sefade Fleece Shorts (Open Grey 080)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231502",
-      "title": "Boss - Sefade Fleece Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/47231502_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.584971305Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sefade Fleece Shorts (Open Grey 080)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231502",
-      "title": "Boss - Sefade Fleece Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/47231502_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.584976647Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sefade Fleece Shorts (Medium Blue 424)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231518",
-      "title": "Boss - Sefade Fleece Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/47231518_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.585432580Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Ronni_F 10241263 01 (Light Beige 275)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-ronnif-10241263-01-558727#colcode=55872704",
-      "title": "Boss - Ronni_F 10241263 01",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55872704_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.330661528Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Roan Shirt (Dark Blue 404)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-roan-shirt-558661#colcode=55866118",
-      "title": "Boss - Roan Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55866118_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.332213079Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 27.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Rikki 53 Shirt (Light Blue 450)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-rikki-53-shirt-557755#colcode=55775518",
-      "title": "Boss - Rikki 53 Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55775518_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:59.494637689Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 24.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Polston 19 Shirt (Black)",
-      "brand": "Boss",
-      "size": "N/A"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-polston-19-shirt-543943#colcode=54394303",
-      "title": "Boss - Polston 19 Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/54394303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235779412Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Peo Crew Neck Jumper (Open Blue)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-peo-crew-neck-jumper-324000#colcode=32400018",
-      "title": "Boss - Peo Crew Neck Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32400018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234648738Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Peo Crew Neck Jumper (Open Blue)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-peo-crew-neck-jumper-324000#colcode=32400018",
-      "title": "Boss - Peo Crew Neck Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32400018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234656006Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Padas Quarter Zip Jumper (Open Blue)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-padas-quarter-zip-jumper-323991#colcode=32399118",
-      "title": "Boss - Padas Quarter Zip Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32399118_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311426657Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Padas Quarter Zip Jumper (Medium Grey)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-padas-quarter-zip-jumper-323991#colcode=32399102",
-      "title": "Boss - Padas Quarter Zip Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32399102_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.229207556Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "My Soft Shirt (White 100)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-my-soft-shirt-558430#colcode=55843001",
-      "title": "Boss - My Soft Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55843001_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.332394473Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 27.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Maine Regular Jeans (Black 002)",
-      "brand": "Boss",
-      "size": "40W S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-maine-regular-jeans-649060#colcode=64906003",
-      "title": "Boss - Maine Regular Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318653937Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 33.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Maine Regular Jeans (Black 002)",
-      "brand": "Boss",
-      "size": "40W L"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-maine-regular-jeans-649060#colcode=64906003",
-      "title": "Boss - Maine Regular Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318658008Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 33.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Maine Regular Jeans (Black 002)",
-      "brand": "Boss",
-      "size": "30W L"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-maine-regular-jeans-649060#colcode=64906003",
-      "title": "Boss - Maine Regular Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318645919Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 33.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Magneton Shirt (Bright Red)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-magneton-shirt-329722#colcode=32972208",
-      "title": "Boss - Magneton Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32972208_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:59.494739879Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 24.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "MODERN WIDE 2.0 10243080 01 (Turquoise)",
-      "brand": "Boss",
-      "size": "29W L30"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-modern-wide-20-10243080-01-659767#colcode=65976718",
-      "title": "Boss - MODERN WIDE 2.0 10243080 01",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.232997020Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "MODERN WIDE 2.0 10243080 01 (Turquoise)",
-      "brand": "Boss",
-      "size": "28W L30"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-modern-wide-20-10243080-01-659767#colcode=65976718",
-      "title": "Boss - MODERN WIDE 2.0 10243080 01",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.232989670Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "MODERN WIDE 2.0 10243080 01 (Turquoise)",
-      "brand": "Boss",
-      "size": "27W L30"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-modern-wide-20-10243080-01-659767#colcode=65976718",
-      "title": "Boss - MODERN WIDE 2.0 10243080 01",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.232981322Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "MM Waistcoat (Navy 419)",
-      "brand": "Boss",
-      "size": "48 (58)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-mm-waistcoat-566004#colcode=56600418",
-      "title": "Boss - MM Waistcoat",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231055037Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "MM Waistcoat (Navy 419)",
-      "brand": "Boss",
-      "size": "46 (56)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-mm-waistcoat-566004#colcode=56600418",
-      "title": "Boss - MM Waistcoat",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231048423Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "MM Waistcoat (Navy 419)",
-      "brand": "Boss",
-      "size": "44 (54)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-mm-waistcoat-566004#colcode=56600418",
-      "title": "Boss - MM Waistcoat",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231039973Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Lukas 53 Long Sleeve Shirt (Dark Blue 402)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-lukas-53-long-sleeve-shirt-558747#colcode=55874718",
-      "title": "Boss - Lukas 53 Long Sleeve Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55874718_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:59.494781245Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 24.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Loflash 101 Shirt (Dark Blue)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-loflash-101-shirt-559474#colcode=55947418",
-      "title": "Boss - Loflash 101 Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55947418_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234946531Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Locky Long Sleeve Shirt (Open White 131)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-locky-long-sleeve-shirt-556494#colcode=55649401",
-      "title": "Boss - Locky Long Sleeve Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55649401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.253921067Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Locky Long Sleeve Shirt (Open White 131)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-locky-long-sleeve-shirt-556494#colcode=55649401",
-      "title": "Boss - Locky Long Sleeve Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55649401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.253924770Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Lamont 62 Joggers (Black 001)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-lamont-62-joggers-482403#colcode=48240303",
-      "title": "Boss - Lamont 62 Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48240303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231687943Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Lamont 62 Joggers (Black 001)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-lamont-62-joggers-482403#colcode=48240303",
-      "title": "Boss - Lamont 62 Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48240303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231693181Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaitol Slim Trousers (Dark Blue 404)",
-      "brand": "Boss",
-      "size": "54 (XXL)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
-      "title": "Boss - Kaitol Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252213025Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaitol Slim Trousers (Dark Blue 404)",
-      "brand": "Boss",
-      "size": "52 (XL)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
-      "title": "Boss - Kaitol Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252209204Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaitol Slim Trousers (Dark Blue 404)",
-      "brand": "Boss",
-      "size": "50 (L)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
-      "title": "Boss - Kaitol Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252205625Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaitol Slim Trousers (Dark Blue 404)",
-      "brand": "Boss",
-      "size": "48 (M)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
-      "title": "Boss - Kaitol Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252201796Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaitol Slim Trousers (Dark Blue 404)",
-      "brand": "Boss",
-      "size": "46 (S)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
-      "title": "Boss - Kaitol Slim Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252196676Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaito Trousers (Open White 131)",
-      "brand": "Boss",
-      "size": "54 (XXL)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
-      "title": "Boss - Kaito Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252894079Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaito Trousers (Open White 131)",
-      "brand": "Boss",
-      "size": "52 (XL)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
-      "title": "Boss - Kaito Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252888237Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaito Trousers (Open White 131)",
-      "brand": "Boss",
-      "size": "50 (L)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
-      "title": "Boss - Kaito Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252882417Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaito Trousers (Open White 131)",
-      "brand": "Boss",
-      "size": "48 (M)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
-      "title": "Boss - Kaito Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252877459Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kaito Trousers (Open White 131)",
-      "brand": "Boss",
-      "size": "46 (S)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
-      "title": "Boss - Kaito Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252869921Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Julios Knit T Shirt (Dark Blue)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-julios-knit-t-shirt-329924#colcode=32992418",
-      "title": "Boss - Julios Knit T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32992418_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252672568Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Julios Knit T Shirt (Bright Orange)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-julios-knit-t-shirt-733598#colcode=73359801",
-      "title": "Boss - Julios Knit T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/73359801_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.251740497Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Julios Knit T Shirt (Bright Orange)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-julios-knit-t-shirt-733598#colcode=73359801",
-      "title": "Boss - Julios Knit T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/73359801_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.251737752Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Joy Shirt (White)",
-      "brand": "Boss",
-      "size": "40(15.7)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-joy-shirt-329889#colcode=32988901",
-      "title": "Boss - Joy Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32988901_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252612542Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hapron 5 Trousers (Navy 410)",
-      "brand": "Boss",
-      "size": "38 (54)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-hapron-5-trousers-362019#colcode=36201922",
-      "title": "Boss - Hapron 5 Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/36201922_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252708124Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hadiko X Jogging Bottoms (Pastel Pink 682)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-hadiko-x-jogging-bottoms-482085#colcode=48208506",
-      "title": "Boss - Hadiko X Jogging Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48208506_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318965757Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 33.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hadiko X Jogging Bottoms (Pastel Pink 682)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-hadiko-x-jogging-bottoms-482085#colcode=48208506",
-      "title": "Boss - Hadiko X Jogging Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48208506_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318973249Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 33.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "H Lenon Trousers (DBlue 401)",
-      "brand": "Boss",
-      "size": "40W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
-      "title": "Boss - H Lenon Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310573493Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "H Lenon Trousers (DBlue 401)",
-      "brand": "Boss",
-      "size": "38W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
-      "title": "Boss - H Lenon Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310570297Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "H Lenon Trousers (DBlue 401)",
-      "brand": "Boss",
-      "size": "36W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
-      "title": "Boss - H Lenon Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310567328Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "H Lenon Trousers (DBlue 401)",
-      "brand": "Boss",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
-      "title": "Boss - H Lenon Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310563841Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "H Genius Trousers (DBlue 401)",
-      "brand": "Boss",
-      "size": "32W L"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-h-genius-trousers-514135#colcode=51413518",
-      "title": "Boss - H Genius Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51413518_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310514174Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Genius Trousers (DBlue 402)",
-      "brand": "Boss",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-genius-trousers-579496#colcode=57949618",
-      "title": "Boss - Genius Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57949618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311703739Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Genius Drawstring Trousers (Medium Beige260)",
-      "brand": "Boss",
-      "size": "40W R (56)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
-      "title": "Boss - Genius Drawstring Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310695365Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Genius Drawstring Trousers (Medium Beige260)",
-      "brand": "Boss",
-      "size": "38W R (54)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
-      "title": "Boss - Genius Drawstring Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310691390Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Genius Drawstring Trousers (Medium Beige260)",
-      "brand": "Boss",
-      "size": "36W R (52)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
-      "title": "Boss - Genius Drawstring Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310687390Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Genius Drawstring Trousers (Medium Beige260)",
-      "brand": "Boss",
-      "size": "34W R (50)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
-      "title": "Boss - Genius Drawstring Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310683330Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Genius Drawstring Trousers (Medium Beige260)",
-      "brand": "Boss",
-      "size": "32W R (48)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
-      "title": "Boss - Genius Drawstring Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310678988Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Genius Drawstring Trousers (Medium Beige260)",
-      "brand": "Boss",
-      "size": "30W R (46)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
-      "title": "Boss - Genius Drawstring Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310674696Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Dilio Crew Neck Jumper (Open Green)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-dilio-crew-neck-jumper-323960#colcode=32396015",
-      "title": "Boss - Dilio Crew Neck Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32396015_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310415959Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Dilio Crew Neck Jumper (Open Green)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-dilio-crew-neck-jumper-323960#colcode=32396015",
-      "title": "Boss - Dilio Crew Neck Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32396015_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310418965Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Delaware Jeans (Rust)",
-      "brand": "Boss",
-      "size": "33W L"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-delaware-jeans-656780#colcode=65678008",
-      "title": "Boss - Delaware Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65678008_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252037227Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Delaware Jeans (Rust)",
-      "brand": "Boss",
-      "size": "31W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-delaware-jeans-656780#colcode=65678008",
-      "title": "Boss - Delaware Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65678008_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.252028482Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Delaware 3-1 Edge Jeans (Navy)",
-      "brand": "Boss",
-      "size": "33W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
-      "title": "Boss - Delaware 3-1 Edge Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.308003437Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 72.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Delaware 3-1 Edge Jeans (Navy)",
-      "brand": "Boss",
-      "size": "32W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
-      "title": "Boss - Delaware 3-1 Edge Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.308000266Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 72.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Delaware 3-1 Edge Jeans (Navy)",
-      "brand": "Boss",
-      "size": "31W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
-      "title": "Boss - Delaware 3-1 Edge Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.307997114Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 72.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Delaware 3-1 Edge Jeans (Navy)",
-      "brand": "Boss",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
-      "title": "Boss - Delaware 3-1 Edge Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.307992669Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 72.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Damin Jumper (Open Grey)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-damin-jumper-323954#colcode=32395402",
-      "title": "Boss - Damin Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32395402_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235174685Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "C-Leon Trousers (DBlue 404)",
-      "brand": "Boss",
-      "size": "32W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-c-leon-trousers-513266#colcode=51326618",
-      "title": "Boss - C-Leon Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51326618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.253359487Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "C-Leon Trousers (DBlue 404)",
-      "brand": "Boss",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-c-leon-trousers-513266#colcode=51326618",
-      "title": "Boss - C-Leon Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51326618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.253352476Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Brem Trousers (Navy 410)",
-      "brand": "Boss",
-      "size": "S (46)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-brem-trousers-554890#colcode=55489018",
-      "title": "Boss - Brem Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55489018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.232610700Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Brem Trousers (Navy 410)",
-      "brand": "Boss",
-      "size": "M (48)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-brem-trousers-554890#colcode=55489018",
-      "title": "Boss - Brem Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55489018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.232619220Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Zalava Ld24 (Black 001)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-zalava-ld24-722759#colcode=72275903",
-      "title": "Boss - Boss Zalava Ld24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/72275903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.332438928Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 27.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss T-Tie 6 cm knit Sn99 (Medium Beige)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-t-tie-6-cm-knit-sn99-738603#colcode=73860304",
-      "title": "Boss - Boss T-Tie 6 cm knit Sn99",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/73860304_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.251456129Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss T-Perry Short Sleeve Polo Shirt Mens (Dark Blue)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-t-perry-short-sleeve-polo-shirt-mens-327364#colcode=32736418",
-      "title": "Boss - Boss T-Perry Short Sleeve Polo Shirt Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32736418_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311532260Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss T-Loren-Ar_Sz30 Sn99 (Dark Grey)",
-      "brand": "Boss",
-      "size": "95"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-t-loren-arsz30-sn99-738023#colcode=73802302",
-      "title": "Boss - Boss T-Loren-Ar_Sz30 Sn99",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/73802302_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.228719430Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss T-Loren-Ar_Sz30 Sn99 (Dark Grey)",
-      "brand": "Boss",
-      "size": "85"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-t-loren-arsz30-sn99-738023#colcode=73802302",
-      "title": "Boss - Boss T-Loren-Ar_Sz30 Sn99",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/73802302_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.228716042Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Skinny Jeans Womens (Medium Blue)",
-      "brand": "Boss",
-      "size": "26 L30"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-skinny-jeans-womens-636073#colcode=63607318",
-      "title": "Boss - Boss Skinny Jeans Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/63607318_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.254418149Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Short Sleeve Shirt Mens (Open Blue 489)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-short-sleeve-shirt-mens-556296#colcode=55629618",
-      "title": "Boss - Boss Short Sleeve Shirt Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55629618_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.585983916Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Ronni_53F 10227 Sn99 (Black)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-ronni53f-10227-sn99-329720#colcode=32972003",
-      "title": "Boss - Boss Ronni_53F 10227 Sn99",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32972003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.332339502Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 27.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Reid Check Shirt (Open Green360)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-reid-check-shirt-559363#colcode=55936315",
-      "title": "Boss - Boss Reid Check Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55936315_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.586700314Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Pocket Square (Bright Red)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-pocket-square-772976#colcode=77297608",
-      "title": "Boss - Boss Pocket Square",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/77297608_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:07.648483019Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 17.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Lyaran Scarf Womens (Black 001)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-lyaran-scarf-womens-902603#colcode=90260303",
-      "title": "Boss - Boss Lyaran Scarf Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/90260303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.254646909Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Lyara Scarf Womens (Black)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-lyara-scarf-womens-901147#colcode=90114703",
-      "title": "Boss - Boss Lyara Scarf Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/90114703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.254513248Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 42.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Long Sleeve Shirt Mens (White 100)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-long-sleeve-shirt-mens-558126#colcode=55812601",
-      "title": "Boss - Boss Long Sleeve Shirt Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55812601_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.586534964Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Lamont 69 Pant (Black 001)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-lamont-69-pant-483339#colcode=48333903",
-      "title": "Boss - Boss Lamont 69 Pant",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48333903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.230888610Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Knitted Tie Mens (Dark Blue 404)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-knitted-tie-mens-756062#colcode=75606218",
-      "title": "Boss - Boss Knitted Tie Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/75606218_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:55.586134770Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Hover Fleece Jogging Bottoms Mens (Black 001)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-hover-fleece-jogging-bottoms-mens-483750#colcode=48375003",
-      "title": "Boss - Boss Hover Fleece Jogging Bottoms Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48375003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.235521816Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss First Backpack Mens (Black)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-first-backpack-mens-716759#colcode=71675918",
-      "title": "Boss - Boss First Backpack Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/71675918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.308540216Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 72.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Crosstown Phone Wallet Mens (Black)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-crosstown-phone-wallet-mens-887140#colcode=88714003",
-      "title": "Boss - Boss Crosstown Phone Wallet Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/88714003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311119700Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 58.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Banks Trousers (DBlue 402)",
-      "brand": "Boss",
-      "size": "36W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
-      "title": "Boss - Boss Banks Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.233286692Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Banks Trousers (DBlue 402)",
-      "brand": "Boss",
-      "size": "34W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
-      "title": "Boss - Boss Banks Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.233280401Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Banks Trousers (DBlue 402)",
-      "brand": "Boss",
-      "size": "32W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
-      "title": "Boss - Boss Banks Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.233273712Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Banks Trousers (DBlue 402)",
-      "brand": "Boss",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
-      "title": "Boss - Boss Banks Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.233265241Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Ben Trousers (Navy 417)",
-      "brand": "Boss",
-      "size": "38W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-ben-trousers-579510#colcode=57951018",
-      "title": "Boss - Ben Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311797068Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Ben Trousers (Navy 417)",
-      "brand": "Boss",
-      "size": "32W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-ben-trousers-579510#colcode=57951018",
-      "title": "Boss - Ben Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311791928Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Ben Trousers (Navy 417)",
-      "brand": "Boss",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-ben-trousers-579510#colcode=57951018",
-      "title": "Boss - Ben Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.311785975Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Bank SPWZ Trousers (DBlue 402)",
-      "brand": "Boss",
-      "size": "30W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412818",
-      "title": "Boss - Bank SPWZ Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231567176Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Bank SPWZ Trousers (DBlue 402)",
-      "brand": "Boss",
-      "size": "28W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412818",
-      "title": "Boss - Bank SPWZ Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231558944Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Bank SPWZ Trousers (Black 001)",
-      "brand": "Boss",
-      "size": "38W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412803",
-      "title": "Boss - Bank SPWZ Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412803_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231405799Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Bank SPWZ Trousers (Black 001)",
-      "brand": "Boss",
-      "size": "36W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412803",
-      "title": "Boss - Bank SPWZ Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51412803_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.231396685Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Authentic Jogging Bottoms (Medium Grey 039)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-authentic-jogging-bottoms-488275#colcode=48827526",
-      "title": "Boss - Authentic Jogging Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48827526_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:01.340953507Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 23.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Authentic Jogging Bottoms (Medium Grey 039)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-authentic-jogging-bottoms-488275#colcode=48827526",
-      "title": "Boss - Authentic Jogging Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48827526_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:01.340956872Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 23.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Atipok Sweater (Open White)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-atipok-sweater-323950#colcode=32395001",
-      "title": "Boss - Atipok Sweater",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32395001_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318434331Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 33.00,
-      "discount": 69,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Atipok Sweater (Open White)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-atipok-sweater-323950#colcode=32395001",
-      "title": "Boss - Atipok Sweater",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32395001_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318437806Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 33.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -6759,7 +2794,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234143159Z",
+      "datePosted": "2023-04-19T06:43:09.447222180Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6787,7 +2822,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234134100Z",
+      "datePosted": "2023-04-19T06:43:09.447211119Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6815,7 +2850,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234127942Z",
+      "datePosted": "2023-04-19T06:43:09.447199955Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6843,7 +2878,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234121502Z",
+      "datePosted": "2023-04-19T06:43:09.447188751Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6871,7 +2906,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234112999Z",
+      "datePosted": "2023-04-19T06:43:09.447176885Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6887,24 +2922,332 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Tatum Tapered Fit Jeans (Medium Blue 426)",
+      "name": "Trollflash T Shirt (Dark Orange)",
       "brand": "BOSS",
-      "size": "32W S"
+      "size": "S"
     },
     "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-tatum-tapered-fit-jeans-659189#colcode=65918918",
-      "title": "BOSS - Tatum Tapered Fit Jeans",
+      "url": "https://www.scottsmenswear.com/boss-trollflash-t-shirt-587032#colcode=58703212",
+      "title": "Boss - Trollflash T Shirt",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65918918_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/58703212_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.234001153Z",
+      "datePosted": "2023-04-19T06:43:17.400288932Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
-      "buy": 45.00,
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Titanium-R_Slid_rb 10243417 01 (Black 007)",
+      "brand": "BOSS",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-titanium-rslidrb-10243417-01-124022#colcode=12402203",
+      "title": "Boss - Titanium-R_Slid_rb 10243417 01",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/12402203_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.521964248Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Throbtino1 Tank Top (Open Green)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-throbtino1-tank-top-593245#colcode=59324515",
+      "title": "Boss - Throbtino1 Tank Top",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/59324515_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.352171063Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Thias T Shirt (Dark Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-thias-t-shirt-593420#colcode=59342018",
+      "title": "Boss - Thias T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/59342018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.349134991Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Thias T Shirt (Dark Blue)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-thias-t-shirt-593420#colcode=59342018",
+      "title": "Boss - Thias T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/59342018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.350189866Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tessler 173 T-shirt (Dark Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-tessler-173-t-shirt-323354#colcode=32335418",
+      "title": "Boss - Tessler 173 T-shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32335418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:17.424573926Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 27.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Teo Knit T Shirt (Beige 131)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-teo-knit-t-shirt-595369#colcode=59536901",
+      "title": "Boss - Teo Knit T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/59536901_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.343494224Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tatum Tape Jeans Mens (Dark Blue 405)",
+      "brand": "BOSS",
+      "size": "34W S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-tatum-tape-jeans-mens-639067#colcode=63906718",
+      "title": "Boss - Tatum Tape Jeans Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.369341765Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tatum Tape Jeans Mens (Dark Blue 405)",
+      "brand": "BOSS",
+      "size": "34W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-tatum-tape-jeans-mens-639067#colcode=63906718",
+      "title": "Boss - Tatum Tape Jeans Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.369354278Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tatum Tape Jeans Mens (Dark Blue 405)",
+      "brand": "BOSS",
+      "size": "34W L"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-tatum-tape-jeans-mens-639067#colcode=63906718",
+      "title": "Boss - Tatum Tape Jeans Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.369366565Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tatum Tape Jeans Mens (Dark Blue 405)",
+      "brand": "BOSS",
+      "size": "32W S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-tatum-tape-jeans-mens-639067#colcode=63906718",
+      "title": "Boss - Tatum Tape Jeans Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.369310924Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tatum Tape Jeans Mens (Dark Blue 405)",
+      "brand": "BOSS",
+      "size": "32W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-tatum-tape-jeans-mens-639067#colcode=63906718",
+      "title": "Boss - Tatum Tape Jeans Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.369330691Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -6927,12 +3270,292 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51315019_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:51.251481864Z",
+      "datePosted": "2023-04-19T06:43:11.286663342Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "T-Perry Short Sleeve Polo Shirt (Light Pink)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-t-perry-short-sleeve-polo-shirt-543624#colcode=54362406",
+      "title": "Boss - T-Perry Short Sleeve Polo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/54362406_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371417131Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "T-Delaware 3 Jeans (Bright Blue 434)",
+      "brand": "BOSS",
+      "size": "36W S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-t-delaware-3-jeans-654616#colcode=65461618",
+      "title": "Boss - T-Delaware 3 Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65461618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.339516580Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 70.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Stanino Slim Fit Smart Stretch Trousers (Blue 402)",
+      "brand": "BOSS",
+      "size": "54 (64)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-stanino-slim-fit-smart-stretch-trousers-519346#colcode=51934618",
+      "title": "Boss - Stanino Slim Fit Smart Stretch Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.299700522Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Stanino Slim Fit Smart Stretch Trousers (Blue 402)",
+      "brand": "BOSS",
+      "size": "52 (62)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-stanino-slim-fit-smart-stretch-trousers-519346#colcode=51934618",
+      "title": "Boss - Stanino Slim Fit Smart Stretch Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.299684211Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Stanino Slim Fit Smart Stretch Trousers (Blue 402)",
+      "brand": "BOSS",
+      "size": "46 (56)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-stanino-slim-fit-smart-stretch-trousers-519346#colcode=51934618",
+      "title": "Boss - Stanino Slim Fit Smart Stretch Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.299659444Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Spectre Slim Trousers (Open Blue 489)",
+      "brand": "BOSS",
+      "size": "54 (XXL)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
+      "title": "Boss - Spectre Slim Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.450377556Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Spectre Slim Trousers (Open Blue 489)",
+      "brand": "BOSS",
+      "size": "52 (XL)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
+      "title": "Boss - Spectre Slim Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.450365920Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Spectre Slim Trousers (Open Blue 489)",
+      "brand": "BOSS",
+      "size": "48 (M)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
+      "title": "Boss - Spectre Slim Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.450353635Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Spectre Slim Trousers (Open Blue 489)",
+      "brand": "BOSS",
+      "size": "46 (S)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-spectre-slim-trousers-360402#colcode=36040219",
+      "title": "Boss - Spectre Slim Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.450340199Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Slim Delaware Jeans (Dark Blue 402)",
+      "brand": "BOSS",
+      "size": "36W L"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-slim-delaware-jeans-649128#colcode=64912851",
+      "title": "Boss - Slim Delaware Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/64912851_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.455180025Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -6955,7 +3578,483 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55425803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.318340338Z",
+      "datePosted": "2023-04-19T06:43:13.451934591Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Skeefast Logo Joggers (Gold)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-skeefast-logo-joggers-483666#colcode=48366610",
+      "title": "Boss - Skeefast Logo Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48366610_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.292887899Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sidney 11 Fleece Jacket (Black)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-sidney-11-fleece-jacket-550662#colcode=55066203",
+      "title": "Boss - Sidney 11 Fleece Jacket",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55066203_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.360585483Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sefade Fleece Shorts (Pastel Red 630)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231508",
+      "title": "Boss - Sefade Fleece Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/47231508_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.517007975Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sefade Fleece Shorts (Open Grey 080)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231502",
+      "title": "Boss - Sefade Fleece Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/47231502_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.467538102Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sefade Fleece Shorts (Open Grey 080)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231502",
+      "title": "Boss - Sefade Fleece Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/47231502_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.467553435Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sefade Fleece Shorts (Medium Blue 424)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-sefade-fleece-shorts-472315#colcode=47231518",
+      "title": "Boss - Sefade Fleece Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/47231518_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.468547116Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Ronnie Shirt (Medium Blue 425)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-ronnie-shirt-556488#colcode=55648818",
+      "title": "Boss - Ronnie Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55648818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:17.405622475Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Rikki 53 Shirt (Light Blue 450)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-rikki-53-shirt-557755#colcode=55775518",
+      "title": "Boss - Rikki 53 Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55775518_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:19.369307115Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 24.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Polston 19 Shirt (Black)",
+      "brand": "BOSS",
+      "size": "N/A"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-polston-19-shirt-543943#colcode=54394303",
+      "title": "Boss - Polston 19 Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/54394303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.451521677Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Peo Crew Neck Jumper (Open Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-peo-crew-neck-jumper-324000#colcode=32400018",
+      "title": "Boss - Peo Crew Neck Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32400018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.448614122Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Peo Crew Neck Jumper (Open Blue)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-peo-crew-neck-jumper-324000#colcode=32400018",
+      "title": "Boss - Peo Crew Neck Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32400018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.448625632Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Padas Quarter Zip Jumper (Open Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-padas-quarter-zip-jumper-323991#colcode=32399118",
+      "title": "Boss - Padas Quarter Zip Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32399118_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.350010647Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Padas Quarter Zip Jumper (Medium Grey)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-padas-quarter-zip-jumper-323991#colcode=32399102",
+      "title": "Boss - Padas Quarter Zip Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32399102_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.362253845Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "My Soft Shirt (White 100)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-my-soft-shirt-558430#colcode=55843001",
+      "title": "Boss - My Soft Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55843001_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:17.425247434Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 27.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Maine Regular Jeans (Black 002)",
+      "brand": "BOSS",
+      "size": "40W S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-maine-regular-jeans-649060#colcode=64906003",
+      "title": "Boss - Maine Regular Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.453458631Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Maine Regular Jeans (Black 002)",
+      "brand": "BOSS",
+      "size": "40W L"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-maine-regular-jeans-649060#colcode=64906003",
+      "title": "Boss - Maine Regular Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.453474096Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Maine Regular Jeans (Black 002)",
+      "brand": "BOSS",
+      "size": "30W L"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-maine-regular-jeans-649060#colcode=64906003",
+      "title": "Boss - Maine Regular Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.453437267Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6983,12 +4082,264 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55740422_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:57.332175379Z",
+      "datePosted": "2023-04-19T06:43:17.424135164Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 27.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Magneton Shirt (Bright Red)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-magneton-shirt-329722#colcode=32972208",
+      "title": "Boss - Magneton Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32972208_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:19.369722536Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 24.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "MODERN WIDE 2.0 10243080 01 (Turquoise)",
+      "brand": "BOSS",
+      "size": "29W L30"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-modern-wide-20-10243080-01-659767#colcode=65976718",
+      "title": "Boss - MODERN WIDE 2.0 10243080 01",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371901769Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "MODERN WIDE 2.0 10243080 01 (Turquoise)",
+      "brand": "BOSS",
+      "size": "28W L30"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-modern-wide-20-10243080-01-659767#colcode=65976718",
+      "title": "Boss - MODERN WIDE 2.0 10243080 01",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371894582Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "MODERN WIDE 2.0 10243080 01 (Turquoise)",
+      "brand": "BOSS",
+      "size": "27W L30"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-modern-wide-20-10243080-01-659767#colcode=65976718",
+      "title": "Boss - MODERN WIDE 2.0 10243080 01",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371881133Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "MODERN MOM 2.0 10235838 03 (Bright Blue)",
+      "brand": "BOSS",
+      "size": "28W L30"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-modern-mom-20-10235838-03-323192#colcode=32319218",
+      "title": "Boss - MODERN MOM 2.0 10235838 03",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32319218_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.372152911Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "MM Waistcoat (Navy 419)",
+      "brand": "BOSS",
+      "size": "48 (58)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-mm-waistcoat-566004#colcode=56600418",
+      "title": "Boss - MM Waistcoat",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.370029094Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "MM Waistcoat (Navy 419)",
+      "brand": "BOSS",
+      "size": "46 (56)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-mm-waistcoat-566004#colcode=56600418",
+      "title": "Boss - MM Waistcoat",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.370018475Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "MM Waistcoat (Navy 419)",
+      "brand": "BOSS",
+      "size": "44 (54)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-mm-waistcoat-566004#colcode=56600418",
+      "title": "Boss - MM Waistcoat",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.370006517Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Lukas 53 Long Sleeve Shirt (Dark Blue 402)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-lukas-53-long-sleeve-shirt-558747#colcode=55874718",
+      "title": "Boss - Lukas 53 Long Sleeve Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55874718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:19.370035568Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 24.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -7011,12 +4362,96 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60893504_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310123864Z",
+      "datePosted": "2023-04-19T06:43:07.343161483Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Loflash 101 Shirt (Dark Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-loflash-101-shirt-559474#colcode=55947418",
+      "title": "Boss - Loflash 101 Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55947418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.449125166Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Locky Long Sleeve Shirt (Open White 131)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-locky-long-sleeve-shirt-556494#colcode=55649401",
+      "title": "Boss - Locky Long Sleeve Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55649401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.348306127Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Locky Long Sleeve Shirt (Open White 131)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-locky-long-sleeve-shirt-556494#colcode=55649401",
+      "title": "Boss - Locky Long Sleeve Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55649401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.348334326Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -7039,7 +4474,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60845418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.310026608Z",
+      "datePosted": "2023-04-19T06:43:07.342842586Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7055,9 +4490,65 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
+      "name": "Lamont 62 Joggers (Black 001)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-lamont-62-joggers-482403#colcode=48240303",
+      "title": "Boss - Lamont 62 Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48240303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371119139Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Lamont 62 Joggers (Black 001)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-lamont-62-joggers-482403#colcode=48240303",
+      "title": "Boss - Lamont 62 Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48240303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371132156Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
       "name": "Katlin Bumbag-Tp 10228801 01 (Black)",
       "brand": "BOSS",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.scottsmenswear.com/boss-katlin-bumbag-tp-10228801-01-707792#colcode=70779203",
@@ -7067,7 +4558,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/70779203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.229638150Z",
+      "datePosted": "2023-04-19T06:43:09.363166740Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7083,24 +4574,24 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Boss Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "name": "Kaitol Slim Trousers (Dark Blue 404)",
       "brand": "BOSS",
-      "size": "30W"
+      "size": "54 (XXL)"
     },
     "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
-      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
+      "title": "Boss - Kaitol Slim Trousers",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.309732694Z",
+      "datePosted": "2023-04-19T06:43:11.288093601Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
-      "buy": 60.00,
+      "buy": 42.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -7111,24 +4602,24 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Boss Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "name": "Kaitol Slim Trousers (Dark Blue 404)",
       "brand": "BOSS",
-      "size": "29W"
+      "size": "52 (XL)"
     },
     "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
-      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
+      "title": "Boss - Kaitol Slim Trousers",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.309729296Z",
+      "datePosted": "2023-04-19T06:43:11.288081966Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
-      "buy": 60.00,
+      "buy": 42.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -7139,24 +4630,24 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Boss Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "name": "Kaitol Slim Trousers (Dark Blue 404)",
       "brand": "BOSS",
-      "size": "28W"
+      "size": "50 (L)"
     },
     "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
-      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
+      "title": "Boss - Kaitol Slim Trousers",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.309726341Z",
+      "datePosted": "2023-04-19T06:43:11.288070846Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
-      "buy": 60.00,
+      "buy": 42.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -7167,24 +4658,24 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Boss Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "name": "Kaitol Slim Trousers (Dark Blue 404)",
       "brand": "BOSS",
-      "size": "27W"
+      "size": "48 (M)"
     },
     "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
-      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
+      "title": "Boss - Kaitol Slim Trousers",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.309723094Z",
+      "datePosted": "2023-04-19T06:43:11.288059633Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
-      "buy": 60.00,
+      "buy": 42.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -7195,19 +4686,859 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Addison Shopper (Beige SMU)",
+      "name": "Kaitol Slim Trousers (Dark Blue 404)",
       "brand": "BOSS",
-      "size": "One Size"
+      "size": "46 (S)"
     },
     "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-addison-shopper-707618#colcode=70761869",
-      "title": "BOSS - Addison Shopper",
+      "url": "https://www.scottsmenswear.com/boss-kaitol-slim-trousers-514119#colcode=51411918",
+      "title": "Boss - Kaitol Slim Trousers",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/70761869_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.304347861Z",
+      "datePosted": "2023-04-19T06:43:11.288040756Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Kaito Trousers (Open White 131)",
+      "brand": "BOSS",
+      "size": "54 (XXL)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
+      "title": "Boss - Kaito Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.293257028Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Kaito Trousers (Open White 131)",
+      "brand": "BOSS",
+      "size": "52 (XL)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
+      "title": "Boss - Kaito Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.293240945Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Kaito Trousers (Open White 131)",
+      "brand": "BOSS",
+      "size": "50 (L)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
+      "title": "Boss - Kaito Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.293229623Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Kaito Trousers (Open White 131)",
+      "brand": "BOSS",
+      "size": "48 (M)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
+      "title": "Boss - Kaito Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.293218222Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Kaito Trousers (Open White 131)",
+      "brand": "BOSS",
+      "size": "46 (S)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-kaito-trousers-510304#colcode=51030401",
+      "title": "Boss - Kaito Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.293204227Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Julios Knit T Shirt (Dark Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-julios-knit-t-shirt-329924#colcode=32992418",
+      "title": "Boss - Julios Knit T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32992418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.292535982Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Julios Knit T Shirt (Bright Orange)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-julios-knit-t-shirt-733598#colcode=73359801",
+      "title": "Boss - Julios Knit T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/73359801_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.287231192Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Julios Knit T Shirt (Bright Orange)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-julios-knit-t-shirt-733598#colcode=73359801",
+      "title": "Boss - Julios Knit T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/73359801_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.287221182Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Joy Shirt (White)",
+      "brand": "BOSS",
+      "size": "40(15.7)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-joy-shirt-329889#colcode=32988901",
+      "title": "Boss - Joy Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32988901_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.292267534Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Jersey Polo Shirt (Dark Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-jersey-polo-shirt-331188#colcode=33118818",
+      "title": "Boss - Jersey Polo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/33118818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.455439784Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Hapron 5 Trousers (Navy 410)",
+      "brand": "BOSS",
+      "size": "38 (54)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-hapron-5-trousers-362019#colcode=36201922",
+      "title": "Boss - Hapron 5 Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/36201922_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.292697914Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Hadiko X Jogging Bottoms (Pastel Pink 682)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-hadiko-x-jogging-bottoms-482085#colcode=48208506",
+      "title": "Boss - Hadiko X Jogging Bottoms",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48208506_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.455672412Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Hadiko X Jogging Bottoms (Pastel Pink 682)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-hadiko-x-jogging-bottoms-482085#colcode=48208506",
+      "title": "Boss - Hadiko X Jogging Bottoms",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48208506_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.455691495Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "H Lenon Trousers (DBlue 401)",
+      "brand": "BOSS",
+      "size": "40W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
+      "title": "Boss - H Lenon Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348168199Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "H Lenon Trousers (DBlue 401)",
+      "brand": "BOSS",
+      "size": "38W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
+      "title": "Boss - H Lenon Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348157772Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "H Lenon Trousers (DBlue 401)",
+      "brand": "BOSS",
+      "size": "36W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
+      "title": "Boss - H Lenon Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348146976Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "H Lenon Trousers (DBlue 401)",
+      "brand": "BOSS",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-h-lenon-trousers-579501#colcode=57950118",
+      "title": "Boss - H Lenon Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348127224Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "H Genius Trousers (DBlue 401)",
+      "brand": "BOSS",
+      "size": "32W L"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-h-genius-trousers-514135#colcode=51413518",
+      "title": "Boss - H Genius Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51413518_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.347765560Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Genius Trousers (DBlue 402)",
+      "brand": "BOSS",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-genius-trousers-579496#colcode=57949618",
+      "title": "Boss - Genius Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57949618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.350559481Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Genius Drawstring Trousers (Medium Beige260)",
+      "brand": "BOSS",
+      "size": "40W R (56)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
+      "title": "Boss - Genius Drawstring Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348693134Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Genius Drawstring Trousers (Medium Beige260)",
+      "brand": "BOSS",
+      "size": "38W R (54)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
+      "title": "Boss - Genius Drawstring Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348680857Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Genius Drawstring Trousers (Medium Beige260)",
+      "brand": "BOSS",
+      "size": "36W R (52)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
+      "title": "Boss - Genius Drawstring Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348668095Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Genius Drawstring Trousers (Medium Beige260)",
+      "brand": "BOSS",
+      "size": "34W R (50)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
+      "title": "Boss - Genius Drawstring Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348655602Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Genius Drawstring Trousers (Medium Beige260)",
+      "brand": "BOSS",
+      "size": "32W R (48)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
+      "title": "Boss - Genius Drawstring Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348641378Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Genius Drawstring Trousers (Medium Beige260)",
+      "brand": "BOSS",
+      "size": "30W R (46)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-genius-drawstring-trousers-579534#colcode=57953404",
+      "title": "Boss - Genius Drawstring Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.348620123Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Dilio Crew Neck Jumper (Open Green)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-dilio-crew-neck-jumper-323960#colcode=32396015",
+      "title": "Boss - Dilio Crew Neck Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32396015_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.347206059Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Dilio Crew Neck Jumper (Open Green)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-dilio-crew-neck-jumper-323960#colcode=32396015",
+      "title": "Boss - Dilio Crew Neck Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32396015_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.347223219Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Delaware Jeans (Rust)",
+      "brand": "BOSS",
+      "size": "33W L"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-delaware-jeans-656780#colcode=65678008",
+      "title": "Boss - Delaware Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65678008_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.287695521Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Delaware Jeans (Rust)",
+      "brand": "BOSS",
+      "size": "31W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-delaware-jeans-656780#colcode=65678008",
+      "title": "Boss - Delaware Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65678008_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.287676939Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Delaware 3-1 Edge Jeans (Navy)",
+      "brand": "BOSS",
+      "size": "33W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
+      "title": "Boss - Delaware 3-1 Edge Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.338085301Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7223,36 +5554,1240 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Rolled Cuff Jeans (Dark Blue 76)",
-      "brand": "KENZO",
-      "size": "28W R"
+      "name": "Delaware 3-1 Edge Jeans (Navy)",
+      "brand": "BOSS",
+      "size": "32W R"
     },
     "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-rolled-cuff-jeans-648001#colcode=64800122",
-      "title": "KENZO - Rolled Cuff Jeans",
+      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
+      "title": "Boss - Delaware 3-1 Edge Jeans",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://images.flannels.com/images/products/64800122_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388435289Z",
-      "seller": "FLANNELS",
+      "datePosted": "2023-04-19T06:43:07.338074359Z",
+      "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
-      "buy": 55.00,
-      "discount": 68,
+      "buy": 72.00,
+      "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
       "credit": null
     },
-    "foundWith": "kenzo"
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Delaware 3-1 Edge Jeans (Navy)",
+      "brand": "BOSS",
+      "size": "31W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
+      "title": "Boss - Delaware 3-1 Edge Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.338067403Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 72.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Delaware 3-1 Edge Jeans (Navy)",
+      "brand": "BOSS",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-delaware-3-1-edge-jeans-656642#colcode=65664218",
+      "title": "Boss - Delaware 3-1 Edge Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.338059243Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 72.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Damin Jumper (Open Grey)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-damin-jumper-323954#colcode=32395402",
+      "title": "Boss - Damin Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32395402_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.450122057Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "C-Leon Trousers (DBlue 404)",
+      "brand": "BOSS",
+      "size": "32W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-c-leon-trousers-513266#colcode=51326618",
+      "title": "Boss - C-Leon Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51326618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.299272801Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "C-Leon Trousers (DBlue 404)",
+      "brand": "BOSS",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-c-leon-trousers-513266#colcode=51326618",
+      "title": "Boss - C-Leon Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51326618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.299246094Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Brem Trousers (Navy 410)",
+      "brand": "BOSS",
+      "size": "S (46)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-brem-trousers-554890#colcode=55489018",
+      "title": "Boss - Brem Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55489018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371567973Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Brem Trousers (Navy 410)",
+      "brand": "BOSS",
+      "size": "M (48)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-brem-trousers-554890#colcode=55489018",
+      "title": "Boss - Brem Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55489018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.371581415Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Ben Trousers (Navy 417)",
+      "brand": "BOSS",
+      "size": "38W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-ben-trousers-579510#colcode=57951018",
+      "title": "Boss - Ben Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.350780643Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Ben Trousers (Navy 417)",
+      "brand": "BOSS",
+      "size": "32W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-ben-trousers-579510#colcode=57951018",
+      "title": "Boss - Ben Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.350769407Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Ben Trousers (Navy 417)",
+      "brand": "BOSS",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-ben-trousers-579510#colcode=57951018",
+      "title": "Boss - Ben Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.350751635Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Bank SPWZ Trousers (DBlue 402)",
+      "brand": "BOSS",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412818",
+      "title": "Boss - Bank SPWZ Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.370806956Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Bank SPWZ Trousers (DBlue 402)",
+      "brand": "BOSS",
+      "size": "28W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412818",
+      "title": "Boss - Bank SPWZ Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.370787296Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Bank SPWZ Trousers (Black 001)",
+      "brand": "BOSS",
+      "size": "38W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412803",
+      "title": "Boss - Bank SPWZ Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412803_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.370526341Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Bank SPWZ Trousers (Black 001)",
+      "brand": "BOSS",
+      "size": "36W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-bank-spwz-trousers-514128#colcode=51412803",
+      "title": "Boss - Bank SPWZ Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412803_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.370505958Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Authentic Jogging Bottoms (Medium Grey 039)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-authentic-jogging-bottoms-488275#colcode=48827526",
+      "title": "Boss - Authentic Jogging Bottoms",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48827526_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:21.353001932Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 23.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Atipok Sweater (Open White)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-atipok-sweater-323950#colcode=32395001",
+      "title": "Boss - Atipok Sweater",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32395001_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.452640560Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Atipok Sweater (Open White)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-atipok-sweater-323950#colcode=32395001",
+      "title": "Boss - Atipok Sweater",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32395001_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.452663780Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 33.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Addison Shopper (Beige SMU)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-addison-shopper-707618#colcode=70761869",
+      "title": "BOSS - Addison Shopper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/70761869_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.337321387Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 72.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Zalava Ld24 (Black 001)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-zalava-ld24-722759#colcode=72275903",
+      "title": "Boss - Boss Zalava Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/72275903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:17.425433501Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 27.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " T-Tie 6 cm knit Sn99 (Medium Beige)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-t-tie-6-cm-knit-sn99-738603#colcode=73860304",
+      "title": "Boss - Boss T-Tie 6 cm knit Sn99",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/73860304_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.451916763Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " T-Perry Short Sleeve Polo Shirt Mens (Dark Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-t-perry-short-sleeve-polo-shirt-mens-327364#colcode=32736418",
+      "title": "Boss - Boss T-Perry Short Sleeve Polo Shirt Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32736418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.350197397Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " T-Loren-Ar_Sz30 Sn99 (Dark Grey)",
+      "brand": "BOSS",
+      "size": "95"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-t-loren-arsz30-sn99-738023#colcode=73802302",
+      "title": "Boss - Boss T-Loren-Ar_Sz30 Sn99",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/73802302_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.361442640Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " T-Loren-Ar_Sz30 Sn99 (Dark Grey)",
+      "brand": "BOSS",
+      "size": "85"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-t-loren-arsz30-sn99-738023#colcode=73802302",
+      "title": "Boss - Boss T-Loren-Ar_Sz30 Sn99",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/73802302_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.361425852Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Skinny Jeans Womens (Medium Blue)",
+      "brand": "BOSS",
+      "size": "26 L30"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-skinny-jeans-womens-636073#colcode=63607318",
+      "title": "Boss - Boss Skinny Jeans Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/63607318_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.350674414Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Short Sleeve Shirt Mens (Open Blue 489)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-short-sleeve-shirt-mens-556296#colcode=55629618",
+      "title": "Boss - Boss Short Sleeve Shirt Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55629618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.541820474Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Ronni_53F 10227 Sn99 (Black)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-ronni53f-10227-sn99-329720#colcode=32972003",
+      "title": "Boss - Boss Ronni_53F 10227 Sn99",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32972003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:17.424879723Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 27.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Reid Check Shirt (Open Green360)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-reid-check-shirt-559363#colcode=55936315",
+      "title": "Boss - Boss Reid Check Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55936315_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.543440124Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Pocket Square (Bright Red)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-pocket-square-772976#colcode=77297608",
+      "title": "Boss - Boss Pocket Square",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/77297608_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:27.337442289Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 17.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "brand": "BOSS",
+      "size": "30W"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
+      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.341945950Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 60.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "brand": "BOSS",
+      "size": "29W"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
+      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.341939083Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 60.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "brand": "BOSS",
+      "size": "28W"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
+      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.341931641Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 60.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Modrn WdeLg Jns Ld24 (Bright Blue 433)",
+      "brand": "BOSS",
+      "size": "27W"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-modrn-wdelg-jns-ld24-653228#colcode=65322818",
+      "title": "BOSS - Boss Modrn WdeLg Jns Ld24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.341919808Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 60.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Lyaran Scarf Womens (Black 001)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-lyaran-scarf-womens-902603#colcode=90260303",
+      "title": "Boss - Boss Lyaran Scarf Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/90260303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.356167170Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Lyara Scarf Womens (Black)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-lyara-scarf-womens-901147#colcode=90114703",
+      "title": "Boss - Boss Lyara Scarf Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/90114703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.350948265Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Knitted Tie Mens (Dark Blue 404)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-knitted-tie-mens-756062#colcode=75606218",
+      "title": "Boss - Boss Knitted Tie Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/75606218_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:15.542203696Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Jason 10230062 Sn99 (Bright Blue)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-jason-10230062-sn99-327274#colcode=32727418",
+      "title": "Boss - Boss Jason 10230062 Sn99",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32727418_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:11.291979417Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Hover Fleece Jogging Bottoms Mens (Black 001)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-hover-fleece-jogging-bottoms-mens-483750#colcode=48375003",
+      "title": "Boss - Boss Hover Fleece Jogging Bottoms Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48375003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.450806649Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " First Backpack Mens (Black)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-first-backpack-mens-716759#colcode=71675918",
+      "title": "Boss - Boss First Backpack Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/71675918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.338997244Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 72.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Crosstown Phone Wallet Mens (Black)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-crosstown-phone-wallet-mens-887140#colcode=88714003",
+      "title": "Boss - Boss Crosstown Phone Wallet Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/88714003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.349307507Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Banks Trousers (DBlue 402)",
+      "brand": "BOSS",
+      "size": "36W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
+      "title": "Boss - Boss Banks Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.372311725Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Banks Trousers (DBlue 402)",
+      "brand": "BOSS",
+      "size": "34W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
+      "title": "Boss - Boss Banks Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.372304821Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Banks Trousers (DBlue 402)",
+      "brand": "BOSS",
+      "size": "32W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
+      "title": "Boss - Boss Banks Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.372298567Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Banks Trousers (DBlue 402)",
+      "brand": "BOSS",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-banks-trousers-514129#colcode=51412918",
+      "title": "Boss - Boss Banks Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:09.372290642Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
   },
   {
     "itemDetails": {
       "kind": "clothing",
       "name": "Smati Turtleneck Jumper (Dark Blue)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -7263,7 +6798,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32403418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279411163Z",
+      "datePosted": "2023-04-19T06:44:07.553209221Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7280,7 +6815,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Smati Turtleneck Jumper (Dark Blue)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "M"
     },
     "listingDetails": {
@@ -7291,7 +6826,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32403418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279414775Z",
+      "datePosted": "2023-04-19T06:44:07.553229667Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7307,120 +6842,8 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Hugo EthonNSzip Sn24 (Mscellaneous960)",
-      "brand": "Hugo",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-ethonnszip-sn24-702894#colcode=70289415",
-      "title": "Hugo - Hugo EthonNSzip Sn24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/70289415_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.236762295Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 22.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Allie Belt 3.5cm Womens (Miscellaneous)",
-      "brand": "Hugo",
-      "size": "90 (12 L)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-allie-belt-35cm-womens-945247#colcode=94524703",
-      "title": "Hugo - Hugo Allie Belt 3.5cm Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.251525224Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 22.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Allie Belt 3.5cm Womens (Miscellaneous)",
-      "brand": "Hugo",
-      "size": "85 (10 M)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-allie-belt-35cm-womens-945247#colcode=94524703",
-      "title": "Hugo - Hugo Allie Belt 3.5cm Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.251520816Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 22.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hugo Allie Belt 3.5cm Womens (Miscellaneous)",
-      "brand": "Hugo",
-      "size": "80 (8 S)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/hugo-hugo-allie-belt-35cm-womens-945247#colcode=94524703",
-      "title": "Hugo - Hugo Allie Belt 3.5cm Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:49.251515991Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 22.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
       "name": "Heston Trousers (Pastel Blue 459)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "40W R"
     },
     "listingDetails": {
@@ -7431,7 +6854,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279715802Z",
+      "datePosted": "2023-04-19T06:44:07.558464826Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7448,7 +6871,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Heston Trousers (Pastel Blue 459)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "38W R"
     },
     "listingDetails": {
@@ -7459,7 +6882,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279712722Z",
+      "datePosted": "2023-04-19T06:44:07.558456746Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7476,7 +6899,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Heston Trousers (Pastel Blue 459)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36W R"
     },
     "listingDetails": {
@@ -7487,7 +6910,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279709551Z",
+      "datePosted": "2023-04-19T06:44:07.558448113Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7504,7 +6927,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Heston Trousers (Pastel Blue 459)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "32W R"
     },
     "listingDetails": {
@@ -7515,7 +6938,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279706159Z",
+      "datePosted": "2023-04-19T06:44:07.558438206Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7532,7 +6955,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Hesten 182 Trousers (BBlue 438)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "28W R"
     },
     "listingDetails": {
@@ -7543,7 +6966,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51414818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.280112961Z",
+      "datePosted": "2023-04-19T06:44:07.559341548Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7560,7 +6983,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Gyte Trousers (Medium Grey 030)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "48 (M)"
     },
     "listingDetails": {
@@ -7571,7 +6994,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51297202_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279603661Z",
+      "datePosted": "2023-04-19T06:44:07.557841619Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7588,7 +7011,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Gyte Trousers (Medium Grey 030)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "46 (S)"
     },
     "listingDetails": {
@@ -7599,7 +7022,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51297202_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279599791Z",
+      "datePosted": "2023-04-19T06:44:07.557807875Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7616,7 +7039,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Double Logo Socks (Pastel Pink)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "36-42"
     },
     "listingDetails": {
@@ -7627,7 +7050,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/80301606_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:01.233600879Z",
+      "datePosted": "2023-04-19T06:44:25.385266875Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7644,7 +7067,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Doldberg Jogging Pants (Dark Green 304)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -7655,7 +7078,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48335415_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:43.279974717Z",
+      "datePosted": "2023-04-19T06:44:07.559160665Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7672,7 +7095,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Brenon Jacket (Black 001)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "XS"
     },
     "listingDetails": {
@@ -7683,7 +7106,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/61909003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:41.362559309Z",
+      "datePosted": "2023-04-19T06:44:05.568043490Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7699,8 +7122,120 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
+      "name": " EthonNSzip Sn24 (Mscellaneous960)",
+      "brand": "HUGO",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-ethonnszip-sn24-702894#colcode=70289415",
+      "title": "Hugo - Hugo EthonNSzip Sn24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/70289415_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:13.315034622Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Allie Belt 3.5cm Womens (Miscellaneous)",
+      "brand": "HUGO",
+      "size": "90 (12 L)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-allie-belt-35cm-womens-945247#colcode=94524703",
+      "title": "Hugo - Hugo Allie Belt 3.5cm Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:13.315412460Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Allie Belt 3.5cm Womens (Miscellaneous)",
+      "brand": "HUGO",
+      "size": "85 (10 M)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-allie-belt-35cm-womens-945247#colcode=94524703",
+      "title": "Hugo - Hugo Allie Belt 3.5cm Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:13.315406794Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Allie Belt 3.5cm Womens (Miscellaneous)",
+      "brand": "HUGO",
+      "size": "80 (8 S)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-allie-belt-35cm-womens-945247#colcode=94524703",
+      "title": "Hugo - Hugo Allie Belt 3.5cm Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:13.315400367Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
       "name": "Weevo Crew Sweatshirt (Navy 404)",
-      "brand": "Boss",
+      "brand": "BOSS",
       "size": "S"
     },
     "listingDetails": {
@@ -7711,7 +7246,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/52242720_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316463241Z",
+      "datePosted": "2023-04-19T06:43:13.390393104Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7728,7 +7263,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Super Skinny Crop Jeans (Dark Blue 406)",
-      "brand": "Boss",
+      "brand": "BOSS",
       "size": "27 L30"
     },
     "listingDetails": {
@@ -7739,7 +7274,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65072818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.317225020Z",
+      "datePosted": "2023-04-19T06:43:13.399094374Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7756,7 +7291,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Super Skinny Crop Jeans (Dark Blue 406)",
-      "brand": "Boss",
+      "brand": "BOSS",
       "size": "26 L30"
     },
     "listingDetails": {
@@ -7767,735 +7302,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65072818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.317221272Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Schino Tapered Cord Trousers (Open Green)",
-      "brand": "Boss",
-      "size": "33W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-schino-tapered-cord-trousers-552431#colcode=55243115",
-      "title": "Boss - Schino Tapered Cord Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55243115_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.317094546Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Schino Tapered Cord Trousers (Open Green)",
-      "brand": "Boss",
-      "size": "31W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-schino-tapered-cord-trousers-552431#colcode=55243115",
-      "title": "Boss - Schino Tapered Cord Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/55243115_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.317090975Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Pocket Square (Open Grey)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-pocket-square-747384#colcode=74738402",
-      "title": "Boss - Pocket Square",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/74738402_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:03.285150763Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 22.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Pocket Square (Dark Brown)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-pocket-square-747384#colcode=74738405",
-      "title": "Boss - Pocket Square",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/74738405_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:03.285207123Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 22.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Parlay Polo Shirt (Black 001)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-parlay-polo-shirt-543286#colcode=54328603",
-      "title": "Boss - Parlay Polo Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/54328603_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316757981Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Parlay Polo Shirt (Black 001)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-parlay-polo-shirt-543286#colcode=54328603",
-      "title": "Boss - Parlay Polo Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/54328603_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316761824Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Parlay 97 Polo Shirt (Black)",
-      "brand": "Boss",
-      "size": "N/A"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-parlay-97-polo-shirt-543928#colcode=54392803",
-      "title": "Boss - Parlay 97 Polo Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/54392803_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316984638Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Paoli Hoodie (Medium Grey)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-paoli-hoodie-323998#colcode=32399802",
-      "title": "Boss - Paoli Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32399802_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.308990624Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 68.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Lukas 53 Shirt (Light Blue 450)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-lukas-53-shirt-325366#colcode=32536619",
-      "title": "Boss - Lukas 53 Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/32536619_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316576716Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Locky 1 Long Sleeve Shirt (Open White 131)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-locky-1-long-sleeve-shirt-608486#colcode=60848601",
-      "title": "Boss - Locky 1 Long Sleeve Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/60848601_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.315700692Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hadiko 1 Joggers (Open Blue 481)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-hadiko-1-joggers-483479#colcode=48347918",
-      "title": "Boss - Hadiko 1 Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48347918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316305532Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hadiko 1 Joggers (Open Blue 481)",
-      "brand": "Boss",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-hadiko-1-joggers-483479#colcode=48347918",
-      "title": "Boss - Hadiko 1 Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48347918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316308880Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Hadiko 1 Joggers (Navy)",
-      "brand": "Boss",
-      "size": "XS"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-hadiko-1-joggers-483584#colcode=48358419",
-      "title": "Boss - Hadiko 1 Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/48358419_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.315955718Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "H-Pocket Square (Open White)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-h-pocket-square-758821#colcode=75882101",
-      "title": "Boss - H-Pocket Square",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/75882101_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:09.283996305Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 14.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "C-Leon Trousers (OBlue 464)",
-      "brand": "Boss",
-      "size": "28W R"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-c-leon-trousers-513270#colcode=51327018",
-      "title": "Boss - C-Leon Trousers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/51327018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316685075Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss TChrsto LS Shrt Sn99 (Medium Pink)",
-      "brand": "Boss",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-tchrsto-ls-shrt-sn99-331208#colcode=33120806",
-      "title": "Boss - Boss TChrsto LS Shrt Sn99",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/33120806_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.309080251Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 68.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss TChrsto LS Shrt Sn99 (Medium Pink)",
-      "brand": "Boss",
-      "size": "41(16)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-tchrsto-ls-shrt-sn99-331208#colcode=33120806",
-      "title": "Boss - Boss TChrsto LS Shrt Sn99",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/33120806_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.309084202Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 68.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss T-Pocket Square 33x33cm Mens (Dark Red)",
-      "brand": "Boss",
-      "size": "PCS."
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-t-pocket-square-33x33cm-mens-731811#colcode=73181101",
-      "title": "Boss - Boss T-Pocket Square 33x33cm Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/73181101_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:03.285015587Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 22.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Crosstown Wallet Mens (Light Beige)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-crosstown-wallet-mens-887138#colcode=88713804",
-      "title": "Boss - Boss Crosstown Wallet Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/88713804_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:47.309181404Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 68.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Bold Belt Womens (Rust)",
-      "brand": "Boss",
-      "size": "85 (10 M)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-bold-belt-womens-945568#colcode=94556805",
-      "title": "Boss - Boss Bold Belt Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316066500Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Bold Belt Womens (Rust)",
-      "brand": "Boss",
-      "size": "80 (8 S)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-bold-belt-womens-945568#colcode=94556805",
-      "title": "Boss - Boss Bold Belt Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316062743Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss Bold Belt Womens (Rust)",
-      "brand": "Boss",
-      "size": "75 (6 XS)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-bold-belt-womens-945568#colcode=94556805",
-      "title": "Boss - Boss Bold Belt Womens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.316057826Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boss AOP Pocket Square Mens (White 100)",
-      "brand": "Boss",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-boss-aop-pocket-square-mens-757001#colcode=75700101",
-      "title": "Boss - Boss AOP Pocket Square Mens",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/75700101_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:09.284129180Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 14.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Amber Belt 15cm 10199089 01 (Pastel Pink)",
-      "brand": "Boss",
-      "size": "90 (12 L)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-amber-belt-15cm-10199089-01-945548#colcode=94554806",
-      "title": "Boss - Amber Belt 15cm 10199089 01",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.317436634Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Amber Belt 15cm 10199089 01 (Pastel Pink)",
-      "brand": "Boss",
-      "size": "85 (10 M)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-amber-belt-15cm-10199089-01-945548#colcode=94554806",
-      "title": "Boss - Amber Belt 15cm 10199089 01",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.317431821Z",
-      "seller": "SCOTTS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 37.00,
-      "discount": 68,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "Boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Amber Belt 15cm 10199089 01 (Pastel Pink)",
-      "brand": "Boss",
-      "size": "80 (8 S)"
-    },
-    "listingDetails": {
-      "url": "https://www.scottsmenswear.com/boss-amber-belt-15cm-10199089-01-945548#colcode=94554806",
-      "title": "Boss - Amber Belt 15cm 10199089 01",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.317426126Z",
+      "datePosted": "2023-04-19T06:43:13.399081420Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8523,7 +7330,259 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48373703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:53.315534164Z",
+      "datePosted": "2023-04-19T06:43:13.388309738Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Schino Tapered Cord Trousers (Open Green)",
+      "brand": "BOSS",
+      "size": "31W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-schino-tapered-cord-trousers-552431#colcode=55243115",
+      "title": "Boss - Schino Tapered Cord Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55243115_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.398728143Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Pocket Square (Open Grey)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-pocket-square-747384#colcode=74738402",
+      "title": "Boss - Pocket Square",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/74738402_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:23.362015865Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Pocket Square (Dark Brown)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-pocket-square-747384#colcode=74738405",
+      "title": "Boss - Pocket Square",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/74738405_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:23.362263074Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Parlay Polo Shirt (Black 001)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-parlay-polo-shirt-543286#colcode=54328603",
+      "title": "Boss - Parlay Polo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/54328603_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.398067064Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Parlay Polo Shirt (Black 001)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-parlay-polo-shirt-543286#colcode=54328603",
+      "title": "Boss - Parlay Polo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/54328603_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.398092270Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Parlay 97 Polo Shirt (Black)",
+      "brand": "BOSS",
+      "size": "N/A"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-parlay-97-polo-shirt-543928#colcode=54392803",
+      "title": "Boss - Parlay 97 Polo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/54392803_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.398460735Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Paoli Hoodie (Medium Grey)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-paoli-hoodie-323998#colcode=32399802",
+      "title": "Boss - Paoli Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32399802_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.340068331Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 68.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Lukas 53 Shirt (Light Blue 450)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-lukas-53-shirt-325366#colcode=32536619",
+      "title": "Boss - Lukas 53 Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32536619_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.390613964Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Locky 1 Long Sleeve Shirt (Open White 131)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-locky-1-long-sleeve-shirt-608486#colcode=60848601",
+      "title": "Boss - Locky 1 Long Sleeve Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/60848601_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.388734541Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8551,7 +7610,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60226622_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:09.283566619Z",
+      "datePosted": "2023-04-19T06:43:29.662612481Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8567,8 +7626,652 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
+      "name": "Hicon Gym Shorts (Black 001)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-hicon-gym-shorts-472800#colcode=47280003",
+      "title": "Boss - Hicon Gym Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/47280003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.397515404Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Headlow 2 Shorts (Black 001)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-headlow-2-shorts-472799#colcode=47279903",
+      "title": "Boss - Headlow 2 Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/47279903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.397041479Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Hadiko 1 Joggers (Open Blue 481)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-hadiko-1-joggers-483479#colcode=48347918",
+      "title": "Boss - Hadiko 1 Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48347918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.390087208Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Hadiko 1 Joggers (Open Blue 481)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-hadiko-1-joggers-483479#colcode=48347918",
+      "title": "Boss - Hadiko 1 Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48347918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.390104950Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Hadiko 1 Joggers (Navy)",
+      "brand": "BOSS",
+      "size": "XS"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-hadiko-1-joggers-483584#colcode=48358419",
+      "title": "Boss - Hadiko 1 Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/48358419_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.389319853Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "H-Pocket Square (Open White)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-h-pocket-square-758821#colcode=75882101",
+      "title": "Boss - H-Pocket Square",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/75882101_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:29.663520640Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 14.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "C-Leon Trousers (OBlue 464)",
+      "brand": "BOSS",
+      "size": "28W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-c-leon-trousers-513270#colcode=51327018",
+      "title": "Boss - C-Leon Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/51327018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.397770870Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Amber Belt 15cm 10199089 01 (Pastel Pink)",
+      "brand": "BOSS",
+      "size": "90 (12 L)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-amber-belt-15cm-10199089-01-945548#colcode=94554806",
+      "title": "Boss - Amber Belt 15cm 10199089 01",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.399353843Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Amber Belt 15cm 10199089 01 (Pastel Pink)",
+      "brand": "BOSS",
+      "size": "85 (10 M)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-amber-belt-15cm-10199089-01-945548#colcode=94554806",
+      "title": "Boss - Amber Belt 15cm 10199089 01",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.399324787Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Amber Belt 15cm 10199089 01 (Pastel Pink)",
+      "brand": "BOSS",
+      "size": "80 (8 S)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-amber-belt-15cm-10199089-01-945548#colcode=94554806",
+      "title": "Boss - Amber Belt 15cm 10199089 01",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.399308348Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " TChrsto LS Shrt Sn99 (Medium Pink)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-tchrsto-ls-shrt-sn99-331208#colcode=33120806",
+      "title": "Boss - Boss TChrsto LS Shrt Sn99",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/33120806_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.340219672Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 68.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " TChrsto LS Shrt Sn99 (Medium Pink)",
+      "brand": "BOSS",
+      "size": "41(16)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-tchrsto-ls-shrt-sn99-331208#colcode=33120806",
+      "title": "Boss - Boss TChrsto LS Shrt Sn99",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/33120806_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.340229906Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 68.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " T-Pocket Square 33x33cm Mens (Dark Red)",
+      "brand": "BOSS",
+      "size": "PCS."
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-t-pocket-square-33x33cm-mens-731811#colcode=73181101",
+      "title": "Boss - Boss T-Pocket Square 33x33cm Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/73181101_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:23.361654903Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Rudolf Belt Mens (Black 001)",
+      "brand": "BOSS",
+      "size": "95"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-rudolf-belt-mens-700754#colcode=70075403",
+      "title": "Boss - Boss Rudolf Belt Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/70075403_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:23.361114773Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 22.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Crosstown Wallet Mens (Light Beige)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-crosstown-wallet-mens-887138#colcode=88713804",
+      "title": "Boss - Boss Crosstown Wallet Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/88713804_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:07.340508561Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 68.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Bold Belt Womens (Rust)",
+      "brand": "BOSS",
+      "size": "85 (10 M)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-bold-belt-womens-945568#colcode=94556805",
+      "title": "Boss - Boss Bold Belt Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.389567015Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Bold Belt Womens (Rust)",
+      "brand": "BOSS",
+      "size": "80 (8 S)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-bold-belt-womens-945568#colcode=94556805",
+      "title": "Boss - Boss Bold Belt Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.389552595Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Bold Belt Womens (Rust)",
+      "brand": "BOSS",
+      "size": "75 (6 XS)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-bold-belt-womens-945568#colcode=94556805",
+      "title": "Boss - Boss Bold Belt Womens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:13.389533390Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " AOP Pocket Square Mens (White 100)",
+      "brand": "BOSS",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-boss-aop-pocket-square-mens-757001#colcode=75700101",
+      "title": "Boss - Boss AOP Pocket Square Mens",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/75700101_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:29.664109146Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 14.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "3 Pack Briefs (Black 001)",
+      "brand": "HUGO",
+      "size": "XS"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-3-pack-briefs-422770#colcode=42277003",
+      "title": "Hugo - 3 Pack Briefs",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/42277003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:19.405477666Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 11.00,
+      "discount": 67,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "3 Pack Briefs (Black 001)",
+      "brand": "HUGO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-3-pack-briefs-422770#colcode=42277003",
+      "title": "Hugo - 3 Pack Briefs",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/42277003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:19.405488873Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 11.00,
+      "discount": 67,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "2 Pack Of Stretch Cotton Jersey Trunks (White 100)",
+      "brand": "HUGO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-2-pack-of-stretch-cotton-jersey-trunks-422181#colcode=42218101",
+      "title": "HUGO - 2 Pack Of Stretch Cotton Jersey Trunks",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/42218101_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:44:21.313725240Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 9.00,
+      "discount": 67,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Three Pack Of Briefs (Blk)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-three-pack-of-briefs-422306#colcode=42230699",
+      "title": "Boss - Three Pack Of Briefs",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/42230699_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:43:33.962055087Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 11.00,
+      "discount": 67,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
       "name": "AOP Trunks (Open Red 642)",
-      "brand": "Hugo",
+      "brand": "HUGO",
       "size": "S"
     },
     "listingDetails": {
@@ -8579,7 +8282,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42341308_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:59.492557851Z",
+      "datePosted": "2023-04-19T06:44:21.347637367Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8595,75 +8298,103 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Emporio Armani Underwear Knit Trunks (Navy 00135)",
-      "brand": "Emporio Armani",
-      "size": "S"
+      "name": " Small Lpgo 2 Pack Crew Socks (Drk Grey 012)",
+      "brand": "HUGO",
+      "size": "MENS 3-4.5"
     },
     "listingDetails": {
-      "url": "https://www.scottsmenswear.com/emporio-armani-emporio-armani-underwear-knit-trunks-422985#colcode=42298501",
-      "title": "Emporio Armani - Emporio Armani Underwear Knit Trunks",
+      "url": "https://www.scottsmenswear.com/hugo-hugo-small-lpgo-2-pack-crew-socks-411247#colcode=41124702",
+      "title": "Hugo - Hugo Small Lpgo 2 Pack Crew Socks",
       "category": null,
       "shortDescription": null,
       "description": null,
-      "image": "https://www.scottsmenswear.com/images/products/42298501_l.jpg",
+      "image": "https://www.scottsmenswear.com/images/products/41124702_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.775114236Z",
+      "datePosted": "2023-04-19T06:44:25.390185791Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
-      "buy": 9.00,
+      "buy": 4.00,
       "discount": 66,
       "quantityAvailable": 1,
       "sell": null,
       "credit": null
     },
-    "foundWith": "Emporio Armani"
+    "foundWith": "Hugo"
   },
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Emporio Armani Underwear Knit Trunks (Navy 00135)",
-      "brand": "Emporio Armani",
-      "size": "S"
+      "name": " Enalu Overshirt (Brown, 16586467)",
+      "brand": "HUGO",
+      "size": "M"
     },
     "listingDetails": {
-      "url": "https://www.tessuti.co.uk/emporio-armani-emporio-armani-underwear-knit-trunks-422985#colcode=42298501",
-      "title": "Emporio Armani - Emporio Armani Underwear Knit Trunks",
-      "category": null,
+      "url": "https://www.jdsports.co.uk/product/brown-hugo-enalu-overshirt/16586467/",
+      "title": "HUGO Enalu Overshirt (brown / M)",
+      "category": "men",
       "shortDescription": null,
       "description": null,
-      "image": "https://www.tessuti.co.uk/images/products/42298501_l.jpg",
+      "image": "https://i8.amplience.net/i/jpl/jd_572944_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.796063341Z",
-      "seller": "TESSUTI",
+      "datePosted": "2023-04-19T06:41:44.299482977Z",
+      "seller": "JDSPORTS",
       "properties": {      }
     },
     "price": {
-      "buy": 9.00,
-      "discount": 66,
+      "buy": 50.00,
+      "discount": 62,
       "quantityAvailable": 1,
       "sell": null,
       "credit": null
     },
-    "foundWith": "Emporio Armani"
+    "foundWith": "Hugo"
   },
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "BOSS Hadiko Joggers (grey, 16606838)",
+      "name": " Pirol Polo Shirt (Black, 16580249)",
       "brand": "BOSS",
       "size": "M"
     },
     "listingDetails": {
+      "url": "https://www.jdsports.co.uk/product/black-boss-pirol-polo-shirt/16580249/",
+      "title": "BOSS Pirol Polo Shirt (black / M)",
+      "category": "men",
+      "shortDescription": null,
+      "description": null,
+      "image": "https://i8.amplience.net/i/jpl/jd_574210_a?qlt=92",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:41:03.851982862Z",
+      "seller": "JDSPORTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 40.00,
+      "discount": 60,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Hadiko Joggers (Grey, 16606838)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
       "url": "https://www.jdsports.co.uk/product/grey-boss-hadiko-joggers/16606838/",
-      "title": "BOSS Hadiko Joggers (grey / M)",
+      "title": "BOSS Hadiko Joggers (grey / S)",
       "category": "men",
       "shortDescription": null,
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_578136_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-18T07:28:41.019721495Z",
+      "datePosted": "2023-04-19T06:41:15.722551661Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -8679,7 +8410,73 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "HUGO Breaker Overhead Jacket (red, 18546115)",
+      "name": "Branded-taping recycled-polyester bomber jacket",
+      "brand": "EMPORIO ARMANI",
+      "size": "44 - NERO"
+    },
+    "listingDetails": {
+      "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-branded-taping-recycled-polyester-bomber-jacket_R04097175",
+      "title": "Branded-taping recycled-polyester bomber jacket",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.selfridges.com/is/image/selfridges/R04097175_NERO_M",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:41:40.722953024Z",
+      "seller": "SELFRIDGES",
+      "properties": {
+        "stockKeys": "SizeCode / SupplierColourName",
+        "currentPrice": "200.00",
+        "wasPrice": "250.00",
+        "wasWasPrice": "420.00"
+      }
+    },
+    "price": {
+      "buy": 200.00,
+      "discount": 53,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "emporio armani"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Branded-taping recycled-polyester bomber jacket",
+      "brand": "EMPORIO ARMANI",
+      "size": "40 - NERO"
+    },
+    "listingDetails": {
+      "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-branded-taping-recycled-polyester-bomber-jacket_R04097175",
+      "title": "Branded-taping recycled-polyester bomber jacket",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.selfridges.com/is/image/selfridges/R04097175_NERO_M",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:41:44.174749083Z",
+      "seller": "SELFRIDGES",
+      "properties": {
+        "stockKeys": "SizeCode / SupplierColourName",
+        "currentPrice": "200.00",
+        "wasPrice": "250.00",
+        "wasWasPrice": "420.00"
+      }
+    },
+    "price": {
+      "buy": 200.00,
+      "discount": 53,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "emporio armani"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Breaker Overhead Jacket (Red, 18546115)",
       "brand": "HUGO",
       "size": "M"
     },
@@ -8691,7 +8488,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_613416_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:07:04.245145538Z",
+      "datePosted": "2023-04-19T06:42:06.227691790Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -8719,7 +8516,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:00:00.130967913Z",
+      "datePosted": "2023-04-19T06:41:02.166799460Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8752,7 +8549,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:00:04.131001253Z",
+      "datePosted": "2023-04-19T06:41:06.173552636Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8785,7 +8582,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:14.557208493Z",
+      "datePosted": "2023-04-19T06:42:02.695031076Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8818,7 +8615,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:44.130022854Z",
+      "datePosted": "2023-04-19T06:40:56.163479703Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8851,7 +8648,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:07:08.815200853Z",
+      "datePosted": "2023-04-19T06:41:50.952712636Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8884,7 +8681,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:00:06.131015934Z",
+      "datePosted": "2023-04-19T06:41:08.165633602Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8917,7 +8714,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:20.127915388Z",
+      "datePosted": "2023-04-19T06:42:08.249767262Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8950,7 +8747,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:36.622067648Z",
+      "datePosted": "2023-04-19T06:40:48.774028909Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8983,7 +8780,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:07:16.392074819Z",
+      "datePosted": "2023-04-19T06:41:58.262245346Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9016,7 +8813,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:58.613144063Z",
+      "datePosted": "2023-04-19T06:41:00.754081457Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9049,7 +8846,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:16.127904959Z",
+      "datePosted": "2023-04-19T06:42:04.249443570Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9082,7 +8879,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:38.130067806Z",
+      "datePosted": "2023-04-19T06:40:50.254282428Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9115,7 +8912,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:07:10.391266070Z",
+      "datePosted": "2023-04-19T06:41:52.249330358Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9148,7 +8945,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:18.127862759Z",
+      "datePosted": "2023-04-19T06:42:06.251299520Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9181,7 +8978,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:42.130061842Z",
+      "datePosted": "2023-04-19T06:40:54.162223237Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9214,7 +9011,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:07:12.391183951Z",
+      "datePosted": "2023-04-19T06:41:54.249272926Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9235,42 +9032,9 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Panelled embossed-branding faux-leather running trainers",
-      "brand": "HUGO",
-      "size": "EUR 39 / 5 UK MEN - BLACK"
-    },
-    "listingDetails": {
-      "url": "https://www.selfridges.com/GB/en/cat/hugo-panelled-embossed-branding-faux-leather-running-trainers_R03870815",
-      "title": "Panelled embossed-branding faux-leather running trainers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.selfridges.com/is/image/selfridges/R03870815_BLACK_M",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:02:09.722968739Z",
-      "seller": "SELFRIDGES",
-      "properties": {
-        "stockKeys": "SizeCode / SupplierColourName",
-        "currentPrice": "99.00",
-        "wasPrice": "109.00",
-        "wasWasPrice": "199.00"
-      }
-    },
-    "price": {
-      "buy": 99.00,
-      "discount": 51,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "hugo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
       "name": "Quilted leather jacket",
       "brand": "EMPORIO ARMANI",
-      "size": "44 - Black"
+      "size": "44 - BLACK"
     },
     "listingDetails": {
       "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-quilted-leather-jacket_R03990242",
@@ -9280,7 +9044,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990242_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:59:48.609495295Z",
+      "datePosted": "2023-04-19T06:42:24.719902125Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9303,7 +9067,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Logo-badge reversible down shell jacket",
       "brand": "EMPORIO ARMANI",
-      "size": "46 - Navy"
+      "size": "46 - NAVY"
     },
     "listingDetails": {
       "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-logo-badge-reversible-down-shell-jacket_R03990217",
@@ -9313,7 +9077,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990217_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:00:30.211078947Z",
+      "datePosted": "2023-04-19T06:42:48.269294Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9336,7 +9100,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Logo-badge reversible down shell jacket",
       "brand": "EMPORIO ARMANI",
-      "size": "44 - Navy"
+      "size": "44 - NAVY"
     },
     "listingDetails": {
       "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-logo-badge-reversible-down-shell-jacket_R03990217",
@@ -9346,7 +9110,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990217_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:00:28.735442124Z",
+      "datePosted": "2023-04-19T06:42:46.816668727Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9369,7 +9133,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Logo-badge reversible down shell jacket",
       "brand": "EMPORIO ARMANI",
-      "size": "42 - Navy"
+      "size": "42 - NAVY"
     },
     "listingDetails": {
       "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-logo-badge-reversible-down-shell-jacket_R03990217",
@@ -9379,7 +9143,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990217_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:00:34.211078459Z",
+      "datePosted": "2023-04-19T06:42:52.264908701Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9392,39 +9156,6 @@ const testItems = [
       "buy": 300.00,
       "discount": 51,
       "quantityAvailable": 6,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "emporio armani"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo-badge reversible down shell jacket",
-      "brand": "EMPORIO ARMANI",
-      "size": "40 - Navy"
-    },
-    "listingDetails": {
-      "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-logo-badge-reversible-down-shell-jacket_R03990217",
-      "title": "Logo-badge reversible down shell jacket",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.selfridges.com/is/image/selfridges/R03990217_NAVY_M",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:00:36.211036402Z",
-      "seller": "SELFRIDGES",
-      "properties": {
-        "stockKeys": "SizeCode / SupplierColourName",
-        "currentPrice": "300.00",
-        "wasPrice": "350.00",
-        "wasWasPrice": "601.00"
-      }
-    },
-    "price": {
-      "buy": 300.00,
-      "discount": 51,
-      "quantityAvailable": 1,
       "sell": null,
       "credit": null
     },
@@ -9435,7 +9166,7 @@ const testItems = [
       "kind": "clothing",
       "name": "High-neck longline shell-down jacket",
       "brand": "EMPORIO ARMANI",
-      "size": "38 - Navy"
+      "size": "38 - NAVY"
     },
     "listingDetails": {
       "url": "https://www.selfridges.com/GB/en/cat/emporio-armani-high-neck-longline-shell-down-jacket_R03990218",
@@ -9445,7 +9176,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990218_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:07:22.391498527Z",
+      "datePosted": "2023-04-19T06:41:14.171278957Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9457,7 +9188,7 @@ const testItems = [
     "price": {
       "buy": 300.00,
       "discount": 51,
-      "quantityAvailable": 2,
+      "quantityAvailable": 1,
       "sell": null,
       "credit": null
     },
@@ -9478,7 +9209,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:52.389993858Z",
+      "datePosted": "2023-04-19T06:41:34.172305378Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9511,7 +9242,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:50.390075342Z",
+      "datePosted": "2023-04-19T06:41:32.173355050Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9544,7 +9275,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:42.812469333Z",
+      "datePosted": "2023-04-19T06:41:24.674060881Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9577,7 +9308,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:54.389975226Z",
+      "datePosted": "2023-04-19T06:41:36.175446512Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9589,7 +9320,7 @@ const testItems = [
     "price": {
       "buy": 320.00,
       "discount": 51,
-      "quantityAvailable": 3,
+      "quantityAvailable": 2,
       "sell": null,
       "credit": null
     },
@@ -9598,9 +9329,9 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Taschen Virgil Abloh. Nike. ICONS (Nike Ablo)",
-      "brand": "Taschen",
-      "size": "One Size"
+      "name": " Virgil Abloh. Nike. ICONS (Nike Ablo)",
+      "brand": "TASCHEN",
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/taschen-taschen-virgil-abloh-nike-icons-942231#colcode=94223199",
@@ -9610,7 +9341,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/94223199_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.442311417Z",
+      "datePosted": "2023-04-19T06:43:02.890251513Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9638,7 +9369,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48842003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942880317Z",
+      "datePosted": "2023-04-19T06:43:02.248310898Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9666,7 +9397,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48842003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942886056Z",
+      "datePosted": "2023-04-19T06:43:02.248328425Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9684,7 +9415,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Scribble Flyers Baseball Cap (Blk)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-scribble-flyers-baseball-cap-393244#colcode=39324403",
@@ -9694,7 +9425,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/39324403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.434936433Z",
+      "datePosted": "2023-04-19T06:43:02.879268511Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9722,7 +9453,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941902284Z",
+      "datePosted": "2023-04-19T06:43:02.174227908Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9750,7 +9481,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941908581Z",
+      "datePosted": "2023-04-19T06:43:02.175037230Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9778,7 +9509,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941754334Z",
+      "datePosted": "2023-04-19T06:43:02.169728491Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9806,7 +9537,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941760036Z",
+      "datePosted": "2023-04-19T06:43:02.169779255Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9834,7 +9565,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/12262102_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.944507991Z",
+      "datePosted": "2023-04-19T06:43:02.256108953Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9862,7 +9593,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32490901_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.434093521Z",
+      "datePosted": "2023-04-19T06:43:02.261247878Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9890,7 +9621,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32490903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.433974907Z",
+      "datePosted": "2023-04-19T06:43:02.261011507Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9918,7 +9649,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53628003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942731738Z",
+      "datePosted": "2023-04-19T06:43:02.247566799Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9946,7 +9677,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/59844924_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.943503612Z",
+      "datePosted": "2023-04-19T06:43:02.253258925Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9974,7 +9705,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/59844924_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.943509693Z",
+      "datePosted": "2023-04-19T06:43:02.253274717Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10002,7 +9733,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.945265965Z",
+      "datePosted": "2023-04-19T06:43:02.258279180Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10030,7 +9761,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.945272152Z",
+      "datePosted": "2023-04-19T06:43:02.258294384Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10048,7 +9779,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Industrial Belt Stripe Socks (White 0118)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-industrial-belt-stripe-socks-412270#colcode=41227001",
@@ -10058,7 +9789,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41227001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.441810675Z",
+      "datePosted": "2023-04-19T06:43:02.888996640Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10076,7 +9807,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Industrial Belt Stripe Socks (Black 1018)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-industrial-belt-stripe-socks-412270#colcode=41227003",
@@ -10086,7 +9817,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41227003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.442130806Z",
+      "datePosted": "2023-04-19T06:43:02.889560285Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10114,7 +9845,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49806303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942243235Z",
+      "datePosted": "2023-04-19T06:43:02.176718590Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10142,7 +9873,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49806303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942249681Z",
+      "datePosted": "2023-04-19T06:43:02.176737319Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10170,7 +9901,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52625603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942046175Z",
+      "datePosted": "2023-04-19T06:43:02.175782478Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10198,7 +9929,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52625603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942053210Z",
+      "datePosted": "2023-04-19T06:43:02.175802121Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10226,7 +9957,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55499808_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941159910Z",
+      "datePosted": "2023-04-19T06:43:02.161110427Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10254,7 +9985,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55499818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941295747Z",
+      "datePosted": "2023-04-19T06:43:02.161582132Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10282,7 +10013,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55499818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941299633Z",
+      "datePosted": "2023-04-19T06:43:02.161592893Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10300,7 +10031,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Arrow Monogram Calf Socks (Camel 6210)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-arrow-monogram-calf-socks-412740#colcode=41274005",
@@ -10310,7 +10041,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41274005_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.442022172Z",
+      "datePosted": "2023-04-19T06:43:02.889311321Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10326,653 +10057,9 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Wave Boots (Black 99)",
-      "brand": "KENZO",
-      "size": "9 (43)"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-wave-boots-110740#colcode=11074003",
-      "title": "KENZO - Wave Boots",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/11074003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385237122Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 239.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Varsity Hoodie (Mid Blue 77)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-varsity-hoodie-536899#colcode=53689918",
-      "title": "KENZO - Varsity Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53689918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385448260Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 239.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Varsity Hoodie (Mid Blue 77)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-varsity-hoodie-536899#colcode=53689918",
-      "title": "KENZO - Varsity Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53689918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385451701Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 239.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Zip Hoodie (Dark Khaki 51)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485915",
-      "title": "KENZO - Tiger Zip Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55485915_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387544728Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Zip Hoodie (Dark Khaki 51)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485915",
-      "title": "KENZO - Tiger Zip Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55485915_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387547461Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Zip Hoodie (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485903",
-      "title": "KENZO - Tiger Zip Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55485903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387405842Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Zip Hoodie (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485903",
-      "title": "KENZO - Tiger Zip Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55485903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387408334Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Crest Jumper (Navy 76)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-crest-jumper-559897#colcode=55989722",
-      "title": "KENZO - Tiger Crest Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55989722_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388524393Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 115.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Crest Jumper (Dove Grey 95)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-crest-jumper-559897#colcode=55989702",
-      "title": "KENZO - Tiger Crest Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55989702_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388494766Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 115.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Logo Oversized Hoodie (Ink 78)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459018",
-      "title": "KENZO - Sport X Logo Oversized Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53459018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387480717Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Logo Oversized Hoodie (Ink 78)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459018",
-      "title": "KENZO - Sport X Logo Oversized Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53459018_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387483342Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Paris Card Holder (Black 99)",
-      "brand": "KENZO",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-paris-card-holder-717715#colcode=71771503",
-      "title": "KENZO - Paris Card Holder",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/71771503_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807248196Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Paris Cap (Black 99)",
-      "brand": "KENZO",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-paris-cap-393236#colcode=39323603",
-      "title": "KENZO - Paris Cap",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/39323603_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807130189Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 55.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Monogram Track Pant (Black 99J)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-monogram-track-pant-488430#colcode=48843003",
-      "title": "KENZO - Monogram Track Pant",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48843003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386080866Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 189.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Monogram Track Pant (Black 99J)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-monogram-track-pant-488430#colcode=48843003",
-      "title": "KENZO - Monogram Track Pant",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48843003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386083824Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 189.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Monogram Track Jacket (Black 99J)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-monogram-track-jacket-554590#colcode=55459003",
-      "title": "KENZO - Monogram Track Jacket",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55459003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385664752Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 205.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Monogram Track Jacket (Black 99J)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-monogram-track-jacket-554590#colcode=55459003",
-      "title": "KENZO - Monogram Track Jacket",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55459003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385668699Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 205.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo T Shirt (Elect Blue 74)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-logo-t-shirt-599813#colcode=59981320",
-      "title": "KENZO - Logo T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/59981320_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807321050Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 50.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo Hoodie (Mid Blue 77)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245918",
-      "title": "KENZO - Logo Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53245918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388106129Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 135.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo Hoodie (Mid Blue 77)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245918",
-      "title": "KENZO - Logo Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53245918_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388109580Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 135.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo Hoodie (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245903",
-      "title": "KENZO - Logo Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53245903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388238456Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 125.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo Hoodie (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245903",
-      "title": "KENZO - Logo Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53245903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388241026Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 125.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kenzo Turtleneck Jumper (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kenzo-turtleneck-jumper-559546#colcode=55954603",
-      "title": "KENZO - Kenzo Turtleneck Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55954603_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388329726Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 125.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
       "name": "K POPPY floral-print woven single fitted sheet 90cm x 200cm",
       "brand": "KENZO",
-      "size": "Super King - MULTICOLOURED"
+      "size": "SUPER KING - MULTICOLOURED"
     },
     "listingDetails": {
       "url": "https://www.selfridges.com/GB/en/cat/kenzo-k-poppy-floral-print-woven-single-fitted-sheet-90cm-x-200cm_R03920834",
@@ -10982,7 +10069,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03920834_MULTICOLOURED_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:25.401634237Z",
+      "datePosted": "2023-04-19T06:43:26.753809865Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -11004,7 +10091,7 @@ const testItems = [
       "kind": "clothing",
       "name": "K POPPY floral-print woven single fitted sheet 90cm x 200cm",
       "brand": "KENZO",
-      "size": "Single - MULTICOLOURED"
+      "size": "SINGLE - MULTICOLOURED"
     },
     "listingDetails": {
       "url": "https://www.selfridges.com/GB/en/cat/kenzo-k-poppy-floral-print-woven-single-fitted-sheet-90cm-x-200cm_R03920834",
@@ -11014,7 +10101,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03920834_MULTICOLOURED_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:23.919464287Z",
+      "datePosted": "2023-04-19T06:43:25.351722392Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -11034,236 +10121,64 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "K POPPY floral-print woven single duvet cover 140cm x 200cm",
-      "brand": "KENZO",
-      "size": "Standard - MULTICOLOURED"
-    },
-    "listingDetails": {
-      "url": "https://www.selfridges.com/GB/en/cat/kenzo-k-poppy-floral-print-woven-single-duvet-cover-140cm-x-200cm_R03920833",
-      "title": "K POPPY floral-print woven single duvet cover 140cm x 200cm",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.selfridges.com/is/image/selfridges/R03920833_MULTICOLOURED_M",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:05:17.255517241Z",
-      "seller": "SELFRIDGES",
-      "properties": {
-        "stockKeys": "SizeCode / SupplierColourName",
-        "currentPrice": "32.50",
-        "wasPrice": "65.00"
-      }
-    },
-    "price": {
-      "buy": 32.50,
-      "discount": 50,
-      "quantityAvailable": 3,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Icon Tiger Jumper (Olive 49)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-icon-tiger-jumper-322324#colcode=32232404",
-      "title": "KENZO - Icon Tiger Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/32232404_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386568440Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 169.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Flower Socks (Black 99)",
-      "brand": "KENZO",
-      "size": "42-45"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-flower-socks-410313#colcode=41031303",
-      "title": "KENZO - Flower Socks",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/41031303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807831877Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Flower Socks (Black 99)",
-      "brand": "KENZO",
-      "size": "39-41"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-flower-socks-410313#colcode=41031303",
-      "title": "KENZO - Flower Socks",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/41031303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807810303Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Flower Socks (Black 99)",
-      "brand": "KENZO",
-      "size": "36-38"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-flower-socks-410313#colcode=41031303",
-      "title": "KENZO - Flower Socks",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/41031303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807805421Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 30.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Cable Knit Wool Jumper (Off White 02)",
-      "brand": "KENZO",
+      "name": " Dyssop Embroidered Square Joggers (Green, 17253236)",
+      "brand": "HUGO",
       "size": "M"
     },
     "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-cable-knit-wool-jumper-324608#colcode=32460801",
-      "title": "KENZO - Cable Knit Wool Jumper",
-      "category": null,
+      "url": "https://www.jdsports.co.uk/product/green-hugo-dyssop-embroidered-square-joggers/17253236/",
+      "title": "HUGO Dyssop Embroidered Square Joggers (green / M)",
+      "category": "men",
       "shortDescription": null,
       "description": null,
-      "image": "https://images.flannels.com/images/products/32460801_l.jpg",
+      "image": "https://i8.amplience.net/i/jpl/jd_572912_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385336573Z",
-      "seller": "FLANNELS",
+      "datePosted": "2023-04-19T06:41:46.219692432Z",
+      "seller": "JDSPORTS",
       "properties": {      }
     },
     "price": {
-      "buy": 239.00,
+      "buy": 50.00,
       "discount": 50,
       "quantityAvailable": 1,
       "sell": null,
       "credit": null
     },
-    "foundWith": "kenzo"
+    "foundWith": "Hugo"
   },
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Boke Intarsia Crew Sweater (Mid Grey 96)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-boke-intarsia-crew-sweater-324607#colcode=32460702",
-      "title": "KENZO - Boke Intarsia Crew Sweater",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/32460702_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385931010Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 189.00,
-      "discount": 50,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boke Intarsia Crew Sweater (Mid Grey 96)",
-      "brand": "KENZO",
+      "name": " Doak Square Logo Joggers (Grey, 16539609)",
+      "brand": "HUGO",
       "size": "M"
     },
     "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-boke-intarsia-crew-sweater-324607#colcode=32460702",
-      "title": "KENZO - Boke Intarsia Crew Sweater",
-      "category": null,
+      "url": "https://www.jdsports.co.uk/product/grey-hugo-doak-square-logo-joggers/16539609/",
+      "title": "HUGO Doak Square Logo Joggers (grey / M)",
+      "category": "men",
       "shortDescription": null,
       "description": null,
-      "image": "https://images.flannels.com/images/products/32460702_l.jpg",
+      "image": "https://i8.amplience.net/i/jpl/jd_549720_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.385933984Z",
-      "seller": "FLANNELS",
+      "datePosted": "2023-04-19T06:41:42.217497514Z",
+      "seller": "JDSPORTS",
       "properties": {      }
     },
     "price": {
-      "buy": 189.00,
+      "buy": 50.00,
       "discount": 50,
       "quantityAvailable": 1,
       "sell": null,
       "credit": null
     },
-    "foundWith": "kenzo"
+    "foundWith": "Hugo"
   },
   {
     "itemDetails": {
       "kind": "clothing",
-      "name": "Emporio Armani EA7 Colour Block Joggers (grey, 16541993)",
-      "brand": "Emporio Armani EA7",
+      "name": " Colour Block Joggers (Grey, 16541993)",
+      "brand": "EMPORIO ARMANI EA7",
       "size": "XS"
     },
     "listingDetails": {
@@ -11274,7 +10189,35 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_551973_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:04:35.956759960Z",
+      "datePosted": "2023-04-19T06:40:26.917869284Z",
+      "seller": "JDSPORTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 50.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Emporio Armani EA7"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Colour Block Joggers (Grey, 16541993)",
+      "brand": "EMPORIO ARMANI EA7",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.jdsports.co.uk/product/grey-emporio-armani-ea7-colour-block-joggers/16541993/",
+      "title": "Emporio Armani EA7 Colour Block Joggers (grey / M)",
+      "category": "men",
+      "shortDescription": null,
+      "description": null,
+      "image": "https://i8.amplience.net/i/jpl/jd_551973_a?qlt=92",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T06:40:26.918086374Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -11291,7 +10234,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Terry Shorts (Blue)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -11302,7 +10245,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.773606209Z",
+      "datePosted": "2023-04-19T06:40:09.646546543Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11319,7 +10262,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Terry Shorts (Blue)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -11330,7 +10273,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.794397786Z",
+      "datePosted": "2023-04-19T06:40:05.762980483Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11347,7 +10290,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Terry Shorts (Blue)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -11358,7 +10301,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.773610453Z",
+      "datePosted": "2023-04-19T06:40:09.646668346Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11375,7 +10318,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Terry Shorts (Blue)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -11386,7 +10329,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.794400670Z",
+      "datePosted": "2023-04-19T06:40:05.763132960Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11403,7 +10346,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Shiny Eagle T-shirt (Black00020)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -11414,7 +10357,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.774593802Z",
+      "datePosted": "2023-04-19T06:40:09.946804252Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11431,7 +10374,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Shiny Eagle T-shirt (Black00020)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -11442,7 +10385,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.795500795Z",
+      "datePosted": "2023-04-19T06:40:05.955635025Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11459,7 +10402,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Shiny Eagle T-shirt (Black00020)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -11470,7 +10413,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.774596576Z",
+      "datePosted": "2023-04-19T06:40:09.946876177Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11487,7 +10430,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Shiny Eagle T-shirt (Black00020)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -11498,7 +10441,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.795503719Z",
+      "datePosted": "2023-04-19T06:40:05.955755982Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11515,7 +10458,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Flame M583)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9.5 (43.5)"
     },
     "listingDetails": {
@@ -11526,7 +10469,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:09.142734292Z",
+      "datePosted": "2023-04-19T06:40:10.146382189Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11543,7 +10486,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Flame M583)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9.5 (43.5)"
     },
     "listingDetails": {
@@ -11554,7 +10497,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.797217163Z",
+      "datePosted": "2023-04-19T06:40:06.557026243Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11571,7 +10514,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Flame M583)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9 (43)"
     },
     "listingDetails": {
@@ -11582,7 +10525,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:09.142730189Z",
+      "datePosted": "2023-04-19T06:40:10.146332585Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11599,7 +10542,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Flame M583)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9 (43)"
     },
     "listingDetails": {
@@ -11610,7 +10553,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.797210849Z",
+      "datePosted": "2023-04-19T06:40:06.556965750Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11627,7 +10570,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Cobalt 00087)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9.5 (43.5)"
     },
     "listingDetails": {
@@ -11638,7 +10581,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:09.143157404Z",
+      "datePosted": "2023-04-19T06:40:13.153320763Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11655,7 +10598,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Cobalt 00087)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9.5 (43.5)"
     },
     "listingDetails": {
@@ -11666,7 +10609,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.797515176Z",
+      "datePosted": "2023-04-19T06:40:06.569077779Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11683,7 +10626,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Cobalt 00087)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9 (43)"
     },
     "listingDetails": {
@@ -11694,7 +10637,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:09.143153403Z",
+      "datePosted": "2023-04-19T06:40:13.153300345Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11711,7 +10654,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Logo Flip Flops (Cobalt 00087)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "9 (43)"
     },
     "listingDetails": {
@@ -11722,7 +10665,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.797508185Z",
+      "datePosted": "2023-04-19T06:40:06.569003765Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11750,7 +10693,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48122118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513470264Z",
+      "datePosted": "2023-04-19T06:40:07.948598203Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11778,7 +10721,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48122118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513473503Z",
+      "datePosted": "2023-04-19T06:40:07.948700050Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11806,7 +10749,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51828304_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513683584Z",
+      "datePosted": "2023-04-19T06:40:08.562600692Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11834,7 +10777,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51828304_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513687598Z",
+      "datePosted": "2023-04-19T06:40:08.562670174Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11862,7 +10805,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51848318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513255725Z",
+      "datePosted": "2023-04-19T06:40:07.856745928Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11890,7 +10833,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51848318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513258669Z",
+      "datePosted": "2023-04-19T06:40:07.856840697Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11918,7 +10861,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55784001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941594302Z",
+      "datePosted": "2023-04-19T06:43:02.168855909Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11946,7 +10889,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55784001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.941599870Z",
+      "datePosted": "2023-04-19T06:43:02.168908058Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11964,7 +10907,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Off Diag Wallet Sn24 (Black 1001)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-off-diag-wallet-sn24-719555#colcode=71955503",
@@ -11974,7 +10917,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71955503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.946063434Z",
+      "datePosted": "2023-04-19T06:43:02.260391620Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11992,7 +10935,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Off Diag CH Sn24 (Black 1001)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-off-diag-ch-sn24-719553#colcode=71955303",
@@ -12002,40 +10945,12 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71955303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.440252789Z",
+      "datePosted": "2023-04-19T06:43:02.880074391Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
     "price": {
       "buy": 88.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "off-white"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Neen Arrow Sweatshirt (Black 1001)",
-      "brand": "OFF WHITE",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/off-white-neen-arrow-sweatshirt-520713#colcode=52071303",
-      "title": "OFF WHITE - Neen Arrow Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52071303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942566894Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 235.00,
       "discount": 49,
       "quantityAvailable": 1,
       "sell": null,
@@ -12058,7 +10973,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52071303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942572674Z",
+      "datePosted": "2023-04-19T06:43:02.246891133Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -12076,7 +10991,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Monogram Baseball Cap (Camel)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-monogram-baseball-cap-392536#colcode=39253605",
@@ -12086,7 +11001,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/39253605_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.434766931Z",
+      "datePosted": "2023-04-19T06:43:02.878907580Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -12114,40 +11029,12 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/58733301_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.944812339Z",
+      "datePosted": "2023-04-19T06:43:02.257013638Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
     "price": {
       "buy": 169.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "off-white"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Metal Arrow Sweatshirt (White1039)",
-      "brand": "OFF WHITE",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/off-white-metal-arrow-sweatshirt-520939#colcode=52093903",
-      "title": "OFF WHITE - Metal Arrow Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52093903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.942451220Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 235.00,
       "discount": 49,
       "quantityAvailable": 1,
       "sell": null,
@@ -12170,7 +11057,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52265515_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:51.943933697Z",
+      "datePosted": "2023-04-19T06:43:02.254201366Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -12188,7 +11075,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Arrow Bucket Hat (Black 1001)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-arrow-bucket-hat-393214#colcode=39321403",
@@ -12198,7 +11085,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/39321403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.434278379Z",
+      "datePosted": "2023-04-19T06:43:02.878023576Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -12210,1098 +11097,6 @@ const testItems = [
       "credit": null
     },
     "foundWith": "off-white"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "School Low Sneakers (Noir 99)",
-      "brand": "Kenzo",
-      "size": "9 (43)"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-school-low-sneakers-125460#colcode=12546003",
-      "title": "Kenzo - School Low Sneakers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/12546003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388183071Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 135.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kenzo Straight Jean Sn24 (Noir 99)",
-      "brand": "Kenzo",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kenzo-straight-jean-sn24-655754#colcode=65575403",
-      "title": "Kenzo - Kenzo Straight Jean Sn24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/65575403_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387963754Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Kenzo Straight Jean Sn24 (Noir 99)",
-      "brand": "Kenzo",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-kenzo-straight-jean-sn24-655754#colcode=65575403",
-      "title": "Kenzo - Kenzo Straight Jean Sn24",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/65575403_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387966640Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Joggers (Dove Grey 95)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-joggers-482596#colcode=48259602",
-      "title": "KENZO - Tiger Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48259602_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.389230565Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 98.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Joggers (Dove Grey 95)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-joggers-482596#colcode=48259602",
-      "title": "KENZO - Tiger Joggers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48259602_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.389234351Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 98.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger High Top Sneakers (Black 99)",
-      "brand": "KENZO",
-      "size": "9 (43)"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-high-top-sneakers-110579#colcode=11057903",
-      "title": "KENZO - Tiger High Top Sneakers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/11057903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387908887Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Crest Sweatshirt (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-crest-sweatshirt-524929#colcode=52492903",
-      "title": "KENZO - Tiger Crest Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52492903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388950262Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Crest Sweatshirt (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-crest-sweatshirt-524929#colcode=52492903",
-      "title": "KENZO - Tiger Crest Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52492903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388954723Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Crest Logo Shirt (Navy 76)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-crest-logo-shirt-558541#colcode=55854122",
-      "title": "KENZO - Tiger Crest Logo Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55854122_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.390170626Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 78.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Tiger Crest Logo Shirt (Navy 76)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-tiger-crest-logo-shirt-558541#colcode=55854122",
-      "title": "KENZO - Tiger Crest Logo Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/55854122_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.390173531Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 78.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Swing Sneakers (White 01)",
-      "brand": "KENZO",
-      "size": "9 (43)"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-swing-sneakers-111164#colcode=11116401",
-      "title": "KENZO - Swing Sneakers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/11116401_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386677507Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 175.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Swing Low Profile Sneakers (Black 99)",
-      "brand": "KENZO",
-      "size": "9 (43)"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-swing-low-profile-sneakers-111159#colcode=11115903",
-      "title": "KENZO - Swing Low Profile Sneakers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/11115903_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386953026Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 175.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Shorts (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-shorts-472386#colcode=47238603",
-      "title": "KENZO - Sport X Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/47238603_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.389899495Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 88.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Shorts (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-shorts-472386#colcode=47238603",
-      "title": "KENZO - Sport X Shorts",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/47238603_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.389902630Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 88.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Oversized Sweatshirt (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-oversized-sweatshirt-524282#colcode=52428203",
-      "title": "KENZO - Sport X Oversized Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52428203_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388617920Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Oversized Sweatshirt (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-oversized-sweatshirt-524282#colcode=52428203",
-      "title": "KENZO - Sport X Oversized Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52428203_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388620909Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Logo Oversized Hoodie (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459003",
-      "title": "KENZO - Sport X Logo Oversized Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53459003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388029937Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 139.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Logo Oversized Hoodie (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459003",
-      "title": "KENZO - Sport X Logo Oversized Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53459003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388032750Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 139.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Jogging Bottoms (Ink 78)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-jogging-bottoms-482348#colcode=48234818",
-      "title": "KENZO - Sport X Jogging Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48234818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.389349366Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 98.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport X Jogging Bottoms (Ink 78)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-x-jogging-bottoms-482348#colcode=48234818",
-      "title": "KENZO - Sport X Jogging Bottoms",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/48234818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.389352956Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 98.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Sport Cap (Black 99)",
-      "brand": "KENZO",
-      "size": "One Size"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-sport-cap-392057#colcode=39205703",
-      "title": "KENZO - Sport Cap",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/39205703_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807573850Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 45.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Skinny Jeans (Black 99)",
-      "brand": "KENZO",
-      "size": "28W R"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-skinny-jeans-640053#colcode=64005303",
-      "title": "KENZO - Skinny Jeans",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/64005303_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.389731353Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 88.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "School High Top Sneakers (Cream 04)",
-      "brand": "KENZO",
-      "size": "9 (43)"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-school-high-top-sneakers-110385#colcode=11038501",
-      "title": "KENZO - School High Top Sneakers",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/11038501_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387796020Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Relaxed Tailored Pants (Mid Blue 77)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-relaxed-tailored-pants-670378#colcode=67037818",
-      "title": "KENZO - Relaxed Tailored Pants",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/67037818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387320372Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 159.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Paris Sweater (Med Red 21)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-paris-sweater-523893#colcode=52389308",
-      "title": "KENZO - Paris Sweater",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52389308_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387666768Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Paris Sweater (Med Red 21)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-paris-sweater-523893#colcode=52389308",
-      "title": "KENZO - Paris Sweater",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52389308_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387669942Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Long Sleeve Flower T Shirt (Black 99J)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-long-sleeve-flower-t-shirt-587451#colcode=58745103",
-      "title": "KENZO - Long Sleeve Flower T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/58745103_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388776210Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Long Sleeve Flower T Shirt (Black 99J)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-long-sleeve-flower-t-shirt-587451#colcode=58745103",
-      "title": "KENZO - Long Sleeve Flower T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/58745103_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388779321Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo Hoodie (Kahki 51A)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245915",
-      "title": "KENZO - Logo Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53245915_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387738080Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Logo Hoodie (Kahki 51A)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245915",
-      "title": "KENZO - Logo Hoodie",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/53245915_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387741116Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Knit Monogram T Shirt (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-knit-monogram-t-shirt-322331#colcode=32233103",
-      "title": "KENZO - Knit Monogram T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/32233103_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388691986Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Knit Monogram T Shirt (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-knit-monogram-t-shirt-322331#colcode=32233103",
-      "title": "KENZO - Knit Monogram T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/32233103_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.388694592Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 109.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Icon Tiger T Shirt (Grey 95 (2))",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-icon-tiger-t-shirt-598352#colcode=59835226",
-      "title": "KENZO - Icon Tiger T Shirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/59835226_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.807407502Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 48.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boke Jumper (Black 99)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-boke-jumper-324610#colcode=32461003",
-      "title": "KENZO - Boke Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/32461003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386427212Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 185.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Boke Jumper (Black 99)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-boke-jumper-324610#colcode=32461003",
-      "title": "KENZO - Boke Jumper",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/32461003_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.386430095Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 185.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Big Flower Sweatshirt (Mid Blue 77)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-big-flower-sweatshirt-523408#colcode=52340818",
-      "title": "KENZO - Big Flower Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52340818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387600998Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Big Flower Sweatshirt (Mid Blue 77)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-big-flower-sweatshirt-523408#colcode=52340818",
-      "title": "KENZO - Big Flower Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52340818_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387604010Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 145.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Back Flower Sweatshirt (Grass Green 57)",
-      "brand": "KENZO",
-      "size": "S"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-back-flower-sweatshirt-523768#colcode=52376815",
-      "title": "KENZO - Back Flower Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52376815_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387208195Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 159.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "Back Flower Sweatshirt (Grass Green 57)",
-      "brand": "KENZO",
-      "size": "M"
-    },
-    "listingDetails": {
-      "url": "https://www.flannels.com/kenzo-back-flower-sweatshirt-523768#colcode=52376815",
-      "title": "KENZO - Back Flower Sweatshirt",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.flannels.com/images/products/52376815_l.jpg",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T10:58:42.387211068Z",
-      "seller": "FLANNELS",
-      "properties": {      }
-    },
-    "price": {
-      "buy": 159.00,
-      "discount": 49,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "kenzo"
   },
   {
     "itemDetails": {
@@ -13318,7 +11113,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03963154_OPENMISCELLANEOUS_M",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:52:01.102658652Z",
+      "datePosted": "2023-04-19T06:44:25.558926313Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -13340,7 +11135,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Underwear Set (Marine00135)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -13351,7 +11146,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.773089926Z",
+      "datePosted": "2023-04-19T06:40:09.570801629Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -13368,7 +11163,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Underwear Set (Marine00135)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -13379,7 +11174,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.794150777Z",
+      "datePosted": "2023-04-19T06:40:05.752187675Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -13396,7 +11191,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Underwear Set (Marine00135)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -13407,7 +11202,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.773093591Z",
+      "datePosted": "2023-04-19T06:40:09.572970505Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -13424,7 +11219,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Underwear Set (Marine00135)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -13435,7 +11230,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.794154293Z",
+      "datePosted": "2023-04-19T06:40:05.752407430Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -13452,8 +11247,8 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Emporio Eagle Towel Sn22 (Navy 06935)",
-      "brand": "Emporio Armani",
-      "size": "One Size"
+      "brand": "EMPORIO ARMANI",
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.scottsmenswear.com/emporio-armani-emporio-eagle-towel-sn22-797010#colcode=79701003",
@@ -13463,7 +11258,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/79701003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.773898621Z",
+      "datePosted": "2023-04-19T06:40:09.847735844Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -13480,8 +11275,8 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Emporio Eagle Towel Sn22 (Navy 06935)",
-      "brand": "Emporio Armani",
-      "size": "One Size"
+      "brand": "EMPORIO ARMANI",
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.tessuti.co.uk/emporio-armani-emporio-eagle-towel-sn22-797010#colcode=79701003",
@@ -13491,7 +11286,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/79701003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.794608374Z",
+      "datePosted": "2023-04-19T06:40:05.768493500Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -13508,7 +11303,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Eagle Label T-shirt (Dark Grey06749)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -13519,7 +11314,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.774295267Z",
+      "datePosted": "2023-04-19T06:40:09.861074413Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -13536,7 +11331,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Eagle Label T-shirt (Dark Grey06749)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "S"
     },
     "listingDetails": {
@@ -13547,7 +11342,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.795188806Z",
+      "datePosted": "2023-04-19T06:40:05.860319685Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -13564,7 +11359,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Eagle Label T-shirt (Dark Grey06749)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -13575,7 +11370,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.774298424Z",
+      "datePosted": "2023-04-19T06:40:09.861156163Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -13592,7 +11387,7 @@ const testItems = [
     "itemDetails": {
       "kind": "clothing",
       "name": "Eagle Label T-shirt (Dark Grey06749)",
-      "brand": "Emporio Armani",
+      "brand": "EMPORIO ARMANI",
       "size": "M"
     },
     "listingDetails": {
@@ -13603,7 +11398,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:03:07.795192326Z",
+      "datePosted": "2023-04-19T06:40:05.860519222Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -13631,7 +11426,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/54399312_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513749109Z",
+      "datePosted": "2023-04-19T06:40:08.571061233Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13649,7 +11444,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Thunder Beanie (Black)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-thunder-beanie-907655#colcode=90765503",
@@ -13659,7 +11454,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/90765503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.435015909Z",
+      "datePosted": "2023-04-19T06:43:02.879380536Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13677,7 +11472,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Scribble Flyer Socks (Blk)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-scribble-flyer-socks-410496#colcode=41049603",
@@ -13687,7 +11482,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41049603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.441607437Z",
+      "datePosted": "2023-04-19T06:43:02.888501356Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13705,7 +11500,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Scribble Arrow Socks (Wht)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-scribble-arrow-socks-410330#colcode=41033001",
@@ -13715,7 +11510,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41033001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.441384996Z",
+      "datePosted": "2023-04-19T06:43:02.888055208Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13733,7 +11528,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Joseph Square Frame Sunglasses (Red 2507)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-joseph-square-frame-sunglasses-719714#colcode=71971408",
@@ -13743,7 +11538,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71971408_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.434454227Z",
+      "datePosted": "2023-04-19T06:43:02.878390281Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13761,7 +11556,7 @@ const testItems = [
       "kind": "clothing",
       "name": "Joseph Square Frame Sunglasses (Blue 4507)",
       "brand": "OFF WHITE",
-      "size": "One Size"
+      "size": "ONE SIZE"
     },
     "listingDetails": {
       "url": "https://www.flannels.com/off-white-joseph-square-frame-sunglasses-719714#colcode=71971418",
@@ -13771,7 +11566,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71971418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T10:56:52.434663205Z",
+      "datePosted": "2023-04-19T06:43:02.878576473Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13783,98 +11578,6 @@ const testItems = [
       "credit": null
     },
     "foundWith": "off-white"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "BOSS x NBA Lakers cotton-blend hoody",
-      "brand": "BOSS",
-      "size": "S - OPEN GREEN"
-    },
-    "listingDetails": {
-      "url": "https://www.selfridges.com/GB/en/cat/boss-boss-x-nba-lakers-cotton-blend-hoody_R03963041",
-      "title": "BOSS x NBA Lakers cotton-blend hoody",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.selfridges.com/is/image/selfridges/R03963041_BLACK_M",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:28.284416217Z",
-      "seller": "SELFRIDGES",
-      "properties": {
-        "stockKeys": "SizeCode / SupplierColourName"
-      }
-    },
-    "price": {
-      "buy": 89.00,
-      "discount": 48,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "BOSS x NBA Lakers cotton-blend hoody",
-      "brand": "BOSS",
-      "size": "S - BLACK"
-    },
-    "listingDetails": {
-      "url": "https://www.selfridges.com/GB/en/cat/boss-boss-x-nba-lakers-cotton-blend-hoody_R03963041",
-      "title": "BOSS x NBA Lakers cotton-blend hoody",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.selfridges.com/is/image/selfridges/R03963041_BLACK_M",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:14.284389353Z",
-      "seller": "SELFRIDGES",
-      "properties": {
-        "stockKeys": "SizeCode / SupplierColourName",
-        "currentPrice": "89.00",
-        "wasPrice": "169.00"
-      }
-    },
-    "price": {
-      "buy": 89.00,
-      "discount": 48,
-      "quantityAvailable": 1,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "boss"
-  },
-  {
-    "itemDetails": {
-      "kind": "clothing",
-      "name": "BOSS x NBA Lakers cotton-blend hoody",
-      "brand": "BOSS",
-      "size": "M - OPEN GREEN"
-    },
-    "listingDetails": {
-      "url": "https://www.selfridges.com/GB/en/cat/boss-boss-x-nba-lakers-cotton-blend-hoody_R03963041",
-      "title": "BOSS x NBA Lakers cotton-blend hoody",
-      "category": null,
-      "shortDescription": null,
-      "description": null,
-      "image": "https://images.selfridges.com/is/image/selfridges/R03963041_BLACK_M",
-      "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:36.284417760Z",
-      "seller": "SELFRIDGES",
-      "properties": {
-        "stockKeys": "SizeCode / SupplierColourName"
-      }
-    },
-    "price": {
-      "buy": 89.00,
-      "discount": 48,
-      "quantityAvailable": 3,
-      "sell": null,
-      "credit": null
-    },
-    "foundWith": "boss"
   },
   {
     "itemDetails": {
@@ -13891,7 +11594,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53185303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513903334Z",
+      "datePosted": "2023-04-19T06:40:08.581263818Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13919,7 +11622,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53185303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:53.513908362Z",
+      "datePosted": "2023-04-19T06:40:08.581328623Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13947,7 +11650,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/54012486_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:54.065041866Z",
+      "datePosted": "2023-04-19T06:40:12.158647578Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -13975,7 +11678,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53186106_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:06:54.064010765Z",
+      "datePosted": "2023-04-19T06:40:12.046324561Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -14001,7 +11704,7 @@ const testItems = [
       "description": null,
       "image": null,
       "condition": "USED / A",
-      "datePosted": "2023-04-18T11:03:40.228416099Z",
+      "datePosted": "2023-04-19T06:40:03.651948613Z",
       "seller": "CEX",
       "properties": {
         "exchangePerc": "75",
@@ -14013,7 +11716,7 @@ const testItems = [
     "price": {
       "buy": 590,
       "discount": null,
-      "quantityAvailable": 100,
+      "quantityAvailable": 99,
       "sell": 383,
       "credit": 442
     },
@@ -14032,8 +11735,8 @@ const testItems = [
       "description": null,
       "image": "https://assets.nvidia.partners/images/png/GeForce-RTX4090-Back.png",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:04:26.506470284Z",
-      "seller": "NVIDIA/https://www.scan.co.uk/",
+      "datePosted": "2023-04-19T06:40:03.651686717Z",
+      "seller": "NVIDIA",
       "properties": {      }
     },
     "price": {
@@ -14058,8 +11761,8 @@ const testItems = [
       "description": null,
       "image": "https://assets.nvidia.partners/images/png/GeForce-ADA-RTX4070-Back.png",
       "condition": "NEW",
-      "datePosted": "2023-04-18T11:04:26.506690058Z",
-      "seller": "NVIDIA/https://www.scan.co.uk/",
+      "datePosted": "2023-04-19T06:40:03.758892466Z",
+      "seller": "NVIDIA",
       "properties": {      }
     },
     "price": {
