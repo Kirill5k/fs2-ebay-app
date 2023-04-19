@@ -7,7 +7,7 @@ const grid = {
   sm: 2,
   md: 2,
   lg: 3,
-  xl: 3,
+  xl: 4,
   xxl: 5,
 }
 

@@ -21,8 +21,20 @@ const StockFilters = ({options, selections, onChange}) => {
         <StockSelectFilter
             items={options.retailers}
             value={selections.retailers}
-            placeHolder="Select retailer"
+            placeHolder="Retailers"
             onChange={retailers => onChange({...selections, retailers})}
+        />
+        <StockSelectFilter
+            items={options.sizes}
+            value={selections.sizes}
+            placeHolder="Sizes"
+            onChange={sizes => onChange({...selections, sizes})}
+        />
+        <StockSelectFilter
+            items={options.brands}
+            value={selections.brands}
+            placeHolder="Brands"
+            onChange={brands => onChange({...selections, brands})}
         />
       </Space>
   )

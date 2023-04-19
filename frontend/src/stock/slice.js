@@ -34,7 +34,15 @@ const stockSlice = createSlice({
   initialState,
   reducers: {
     filter: (state, action) => {
-      state.selectedFilters = {...action.payload}
+      const filters = {...action.payload}
+      state.selectedFilters = filters
+      state.selectedItems = state.items.filter(i => {
+        const byRetailer = filters.retailers.length > 0 ? filters.retailers.includes(i.listingDetails.seller) : true
+        const byBrand = filters.brands.length > 0 ? filters.brands.includes(i.itemDetails.brand) : true
+        const bySize = filters.sizes.length > 0 ? filters.sizes.includes(i.itemDetails.size) : true
+
+        return byRetailer && byBrand && bySize
+      })
     }
   },
   extraReducers: builder => {
@@ -48,9 +56,8 @@ const stockSlice = createSlice({
           state.selectedItems = action.payload
           state.filters.kinds = distinct(action.payload.map(i => i.itemDetails.kind))
           state.filters.brands = distinct(action.payload.map(i => i.itemDetails.brand))
-          state.filters.sizes = distinct(action.payload.map(i => i.itemDetails.sizes))
+          state.filters.sizes = distinct(action.payload.map(i => i.itemDetails.size))
           state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller))
-          state.selectedFilters = {...state.filters}
         })
         .addCase(getStock.rejected, (state, action) => {
           state.status = 'failed'
@@ -66,6 +73,62 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
+      "name": " Flower Trk Pnt Sn21 (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kenzo-flower-trk-pnt-sn21-488128#colcode=48812803",
+      "title": "KENZO - Kenzo Flower Trk Pnt Sn21",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48812803_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361649545Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 72.00,
+      "discount": 80,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Flower Trk Pnt Sn21 (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kenzo-flower-trk-pnt-sn21-488128#colcode=48812803",
+      "title": "KENZO - Kenzo Flower Trk Pnt Sn21",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48812803_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361655339Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 72.00,
+      "discount": 80,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
       "name": "Dolidorix Shorts (Black 001)",
       "brand": "HUGO",
       "size": "S"
@@ -78,7 +141,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47240403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.805049927Z",
+      "datePosted": "2023-04-19T10:31:53.539501149Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -106,12 +169,40 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/76838802_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.422396648Z",
+      "datePosted": "2023-04-19T10:33:43.313924300Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 16.00,
+      "discount": 79,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Kedno Pole Shorts (OWhite 118)",
+      "brand": "BOSS",
+      "size": "28W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-kedno-pole-shorts-325342#colcode=32534201",
+      "title": "Boss - Kedno Pole Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/32534201_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:33:35.399001785Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
       "discount": 79,
       "quantityAvailable": 1,
       "sell": null,
@@ -134,7 +225,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_381286_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:37.206789797Z",
+      "datePosted": "2023-04-19T10:31:52.885257139Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -162,7 +253,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49805404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.059325824Z",
+      "datePosted": "2023-04-19T10:31:49.225053091Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -190,7 +281,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49805404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.059338212Z",
+      "datePosted": "2023-04-19T10:31:49.225057521Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -218,7 +309,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/57910202_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.058227822Z",
+      "datePosted": "2023-04-19T10:31:49.224639748Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -246,7 +337,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49804308_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.153620230Z",
+      "datePosted": "2023-04-19T10:31:49.225791522Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -274,7 +365,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49804308_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.153634612Z",
+      "datePosted": "2023-04-19T10:31:49.225795511Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -302,7 +393,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49804318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.152836330Z",
+      "datePosted": "2023-04-19T10:31:49.225651025Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -314,6 +405,426 @@ const testItems = [
       "credit": null
     },
     "foundWith": "off-white"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Zip Logo Cardigan (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-zip-logo-cardigan-559003#colcode=55900303",
+      "title": "KENZO - Zip Logo Cardigan",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55900303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366570254Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 70.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Denim Shirt (Navy)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-denim-shirt-642038#colcode=64203822",
+      "title": "KENZO - Tiger Denim Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/64203822_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372624085Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 44.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Crest Jumper (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-crest-jumper-559897#colcode=55989703",
+      "title": "KENZO - Tiger Crest Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55989703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366632057Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 70.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Cap (Black 99H)",
+      "brand": "KENZO",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-cap-391011#colcode=39101141",
+      "title": "KENZO - Tiger Cap",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/39101141_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.872316532Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 26.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tech Tracksuit Bottoms (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tech-tracksuit-bottoms-511047#colcode=51104703",
+      "title": "KENZO - Tech Tracksuit Bottoms",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/51104703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362579947Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 82.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tech Tracksuit Bottoms (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tech-tracksuit-bottoms-511047#colcode=51104703",
+      "title": "KENZO - Tech Tracksuit Bottoms",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/51104703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362586350Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 82.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport Monogram Fleece (Ink 78)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-monogram-fleece-554286#colcode=55428618",
+      "title": "Kenzo - Sport Monogram Fleece",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55428618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361469754Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 135.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport Monogram Fleece (Ink 78)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-monogram-fleece-554286#colcode=55428618",
+      "title": "Kenzo - Sport Monogram Fleece",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55428618_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361476968Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 135.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Monogram Joggers (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-monogram-joggers-483545#colcode=48354503",
+      "title": "KENZO - Monogram Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48354503_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362247752Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 88.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Kourt 80 Sneakers (White 01)",
+      "brand": "KENZO",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kourt-80-sneakers-117295#colcode=11729501",
+      "title": "KENZO - Kourt 80 Sneakers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/11729501_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362529145Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 82.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Elasticated Waist Belt Shorts (Glacier 62)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-elasticated-waist-belt-shorts-478256#colcode=47825602",
+      "title": "KENZO - Elasticated Waist Belt Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/47825602_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366156565Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 75.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Elasticated Waist Belt Shorts (Glacier 62)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-elasticated-waist-belt-shorts-478256#colcode=47825602",
+      "title": "KENZO - Elasticated Waist Belt Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/47825602_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366163998Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 75.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Cord Trousers (Sand 08)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-cord-trousers-510952#colcode=51095204",
+      "title": "Kenzo - Cord Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/51095204_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366396862Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 75.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Patchwork Shir Sn21 (Green 56)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kenzo-patchwork-shir-sn21-557747#colcode=55774715",
+      "title": "KENZO - Kenzo Patchwork Shir Sn21",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55774715_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361782281Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 119.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Patchwork Shir Sn21 (Green 56)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kenzo-patchwork-shir-sn21-557747#colcode=55774715",
+      "title": "KENZO - Kenzo Patchwork Shir Sn21",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55774715_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361787511Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 119.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
   },
   {
     "itemDetails": {
@@ -330,7 +841,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.454511955Z",
+      "datePosted": "2023-04-19T10:31:57.474099748Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -358,7 +869,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.454504052Z",
+      "datePosted": "2023-04-19T10:31:57.474094386Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -386,7 +897,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.454496391Z",
+      "datePosted": "2023-04-19T10:31:57.474089276Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -414,7 +925,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60673203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.454483143Z",
+      "datePosted": "2023-04-19T10:31:57.474083708Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -442,7 +953,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65970918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465101419Z",
+      "datePosted": "2023-04-19T10:31:55.550158956Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -470,7 +981,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65970918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465094130Z",
+      "datePosted": "2023-04-19T10:31:55.550152968Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -498,7 +1009,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65970918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465084959Z",
+      "datePosted": "2023-04-19T10:31:55.550146691Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -526,7 +1037,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55919718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:11.365376178Z",
+      "datePosted": "2023-04-19T10:31:59.401274313Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -554,7 +1065,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.458676294Z",
+      "datePosted": "2023-04-19T10:31:55.485885266Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -582,7 +1093,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.458667748Z",
+      "datePosted": "2023-04-19T10:31:55.485878627Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -610,7 +1121,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.458658985Z",
+      "datePosted": "2023-04-19T10:31:55.485872201Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -638,7 +1149,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.458649988Z",
+      "datePosted": "2023-04-19T10:31:55.485865329Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -666,7 +1177,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227204_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.458641153Z",
+      "datePosted": "2023-04-19T10:31:55.485858167Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -694,7 +1205,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.457915063Z",
+      "datePosted": "2023-04-19T10:31:55.485512733Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -722,7 +1233,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.457906764Z",
+      "datePosted": "2023-04-19T10:31:55.485505334Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -750,7 +1261,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51227218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.457892845Z",
+      "datePosted": "2023-04-19T10:31:55.485496822Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -778,7 +1289,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51415215_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.710736942Z",
+      "datePosted": "2023-04-19T10:31:53.538837566Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -806,7 +1317,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51415215_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.710729843Z",
+      "datePosted": "2023-04-19T10:31:53.538831398Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -834,7 +1345,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.641508867Z",
+      "datePosted": "2023-04-19T10:31:53.535426868Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -862,7 +1373,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.641492548Z",
+      "datePosted": "2023-04-19T10:31:53.535415857Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -890,7 +1401,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.641500829Z",
+      "datePosted": "2023-04-19T10:31:53.535421445Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -918,7 +1429,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.641484014Z",
+      "datePosted": "2023-04-19T10:31:53.535410349Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -946,7 +1457,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.641475217Z",
+      "datePosted": "2023-04-19T10:31:53.535404199Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -974,7 +1485,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.695354797Z",
+      "datePosted": "2023-04-19T10:31:53.535891966Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1002,7 +1513,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.695337813Z",
+      "datePosted": "2023-04-19T10:31:53.535870269Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1030,7 +1541,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.695346962Z",
+      "datePosted": "2023-04-19T10:31:53.535879880Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1058,7 +1569,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.695316033Z",
+      "datePosted": "2023-04-19T10:31:53.535851897Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1086,7 +1597,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950804_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.459405807Z",
+      "datePosted": "2023-04-19T10:31:55.486232144Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1114,7 +1625,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950804_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.459393158Z",
+      "datePosted": "2023-04-19T10:31:55.486224249Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1142,7 +1653,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/71248403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.467096901Z",
+      "datePosted": "2023-04-19T10:31:57.486141101Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1170,7 +1681,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.463489089Z",
+      "datePosted": "2023-04-19T10:31:55.549339856Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1198,7 +1709,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.463478226Z",
+      "datePosted": "2023-04-19T10:31:55.549333808Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1226,7 +1737,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.463468138Z",
+      "datePosted": "2023-04-19T10:31:55.549327677Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1254,7 +1765,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63321018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.463454462Z",
+      "datePosted": "2023-04-19T10:31:55.549320448Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1282,7 +1793,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57913918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.696716158Z",
+      "datePosted": "2023-04-19T10:31:53.536748308Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1310,7 +1821,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57913918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.696709808Z",
+      "datePosted": "2023-04-19T10:31:53.536741380Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1338,7 +1849,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57913918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.696702353Z",
+      "datePosted": "2023-04-19T10:31:53.536733777Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1366,7 +1877,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461874110Z",
+      "datePosted": "2023-04-19T10:31:55.493761658Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1394,7 +1905,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461863651Z",
+      "datePosted": "2023-04-19T10:31:55.493753489Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1422,7 +1933,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461853250Z",
+      "datePosted": "2023-04-19T10:31:55.493744824Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1450,7 +1961,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461820653Z",
+      "datePosted": "2023-04-19T10:31:55.493735227Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1478,12 +1989,40 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461804589Z",
+      "datePosted": "2023-04-19T10:31:55.493717614Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 42.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Ganeva Logo Jeggings (Black 001)",
+      "brand": "HUGO",
+      "size": "27 R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-ganeva-logo-jeggings-679145#colcode=67914503",
+      "title": "Hugo - Ganeva Logo Jeggings",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/67914503_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:31:57.485063833Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -1506,7 +2045,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/67914503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.459444393Z",
+      "datePosted": "2023-04-19T10:31:57.485055897Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1534,7 +2073,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55057804_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.463365520Z",
+      "datePosted": "2023-04-19T10:31:55.549271690Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1562,7 +2101,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60810818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.710225915Z",
+      "datePosted": "2023-04-19T10:31:53.538418117Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1590,12 +2129,40 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60810818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.710233756Z",
+      "datePosted": "2023-04-19T10:31:53.538424675Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 52.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Elpy Relaxed Fit Short Sleeve Shirt (Black 001)",
+      "brand": "HUGO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-elpy-relaxed-fit-short-sleeve-shirt-557190#colcode=55719003",
+      "title": "Hugo - Elpy Relaxed Fit Short Sleeve Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/55719003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:31:57.485286972Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -1618,7 +2185,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48360403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.458276141Z",
+      "datePosted": "2023-04-19T10:31:55.485639821Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1646,7 +2213,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48271903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462311511Z",
+      "datePosted": "2023-04-19T10:31:55.494064375Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1674,7 +2241,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/43038003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.463263957Z",
+      "datePosted": "2023-04-19T10:31:55.549197389Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1702,7 +2269,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/53519003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.459247916Z",
+      "datePosted": "2023-04-19T10:31:55.486174935Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1730,7 +2297,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48348203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.457288698Z",
+      "datePosted": "2023-04-19T10:31:55.485255215Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1758,7 +2325,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48348203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.457343694Z",
+      "datePosted": "2023-04-19T10:31:55.485268757Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1786,7 +2353,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55484603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.711004780Z",
+      "datePosted": "2023-04-19T10:31:53.539016196Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1814,7 +2381,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32312813_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.472668807Z",
+      "datePosted": "2023-04-19T10:31:57.495735302Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1842,7 +2409,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461178822Z",
+      "datePosted": "2023-04-19T10:31:55.487095128Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1870,7 +2437,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461187372Z",
+      "datePosted": "2023-04-19T10:31:55.487101868Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1898,7 +2465,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461160392Z",
+      "datePosted": "2023-04-19T10:31:55.487081611Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1926,7 +2493,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461169434Z",
+      "datePosted": "2023-04-19T10:31:55.487088296Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1954,7 +2521,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461138750Z",
+      "datePosted": "2023-04-19T10:31:55.487068606Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -1982,7 +2549,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461147105Z",
+      "datePosted": "2023-04-19T10:31:55.487074998Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2010,7 +2577,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461116528Z",
+      "datePosted": "2023-04-19T10:31:55.487055141Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2038,7 +2605,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65491115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.461130362Z",
+      "datePosted": "2023-04-19T10:31:55.487061800Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2066,7 +2633,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462857137Z",
+      "datePosted": "2023-04-19T10:31:55.494338657Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2094,7 +2661,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462848293Z",
+      "datePosted": "2023-04-19T10:31:55.494331620Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2122,7 +2689,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462802071Z",
+      "datePosted": "2023-04-19T10:31:55.494316888Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2150,7 +2717,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462808858Z",
+      "datePosted": "2023-04-19T10:31:55.494324522Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2178,7 +2745,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462793934Z",
+      "datePosted": "2023-04-19T10:31:55.494309625Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2206,7 +2773,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65705518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462781592Z",
+      "datePosted": "2023-04-19T10:31:55.494301419Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2234,7 +2801,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65597318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.460039530Z",
+      "datePosted": "2023-04-19T10:31:55.486497011Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2262,7 +2829,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65419302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.797898236Z",
+      "datePosted": "2023-04-19T10:31:53.539221356Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2290,7 +2857,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65419302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.797886410Z",
+      "datePosted": "2023-04-19T10:31:53.539214795Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2318,7 +2885,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42276901_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:19.401071969Z",
+      "datePosted": "2023-04-19T10:32:07.577529588Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2346,7 +2913,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42276922_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:19.403098478Z",
+      "datePosted": "2023-04-19T10:32:07.577851005Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2374,7 +2941,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60270218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.696044782Z",
+      "datePosted": "2023-04-19T10:31:53.536264768Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2402,7 +2969,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/90215103_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.466269979Z",
+      "datePosted": "2023-04-19T10:31:57.485578706Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2430,7 +2997,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65982818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.464193694Z",
+      "datePosted": "2023-04-19T10:31:55.549598603Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2458,7 +3025,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465631115Z",
+      "datePosted": "2023-04-19T10:31:55.550386746Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2486,7 +3053,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465618502Z",
+      "datePosted": "2023-04-19T10:31:55.550380365Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2514,7 +3081,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465607622Z",
+      "datePosted": "2023-04-19T10:31:55.550374159Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2542,7 +3109,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465598197Z",
+      "datePosted": "2023-04-19T10:31:55.550367837Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2570,7 +3137,35 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65814319_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.465588322Z",
+      "datePosted": "2023-04-19T10:31:55.550361114Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 39.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " EthonCamoBckPck Sn24 (Mcellaneous960)",
+      "brand": "HUGO",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-hugo-ethoncamobckpck-sn24-715342#colcode=71534215",
+      "title": "Hugo - Hugo EthonCamoBckPck Sn24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/71534215_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:31:55.550600032Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2598,7 +3193,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48391401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462525236Z",
+      "datePosted": "2023-04-19T10:31:55.494169672Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2626,7 +3221,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48391401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.462535520Z",
+      "datePosted": "2023-04-19T10:31:55.494177030Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2654,7 +3249,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94525506_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.473230984Z",
+      "datePosted": "2023-04-19T10:31:57.496192322Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2682,7 +3277,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94525506_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:09.473219993Z",
+      "datePosted": "2023-04-19T10:31:57.496179331Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2710,7 +3305,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32404603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.349620341Z",
+      "datePosted": "2023-04-19T10:33:33.377083969Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2738,7 +3333,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55463719_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.449763113Z",
+      "datePosted": "2023-04-19T10:33:35.409260571Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2766,7 +3361,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55463703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.291257169Z",
+      "datePosted": "2023-04-19T10:33:37.401688688Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2794,7 +3389,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.447222180Z",
+      "datePosted": "2023-04-19T10:33:35.408586498Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2822,7 +3417,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.447211119Z",
+      "datePosted": "2023-04-19T10:33:35.408578947Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2850,7 +3445,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.447199955Z",
+      "datePosted": "2023-04-19T10:33:35.408571485Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2878,7 +3473,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.447188751Z",
+      "datePosted": "2023-04-19T10:33:35.408563772Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2906,7 +3501,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60268302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.447176885Z",
+      "datePosted": "2023-04-19T10:33:35.408556289Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2934,7 +3529,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/58703212_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.400288932Z",
+      "datePosted": "2023-04-19T10:33:43.311783158Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2962,7 +3557,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/12402203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.521964248Z",
+      "datePosted": "2023-04-19T10:33:41.347065286Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -2990,7 +3585,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59324515_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.352171063Z",
+      "datePosted": "2023-04-19T10:33:33.377578333Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3018,7 +3613,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59342018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.349134991Z",
+      "datePosted": "2023-04-19T10:33:37.403391547Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3046,7 +3641,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59342018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.350189866Z",
+      "datePosted": "2023-04-19T10:33:37.403397738Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3074,7 +3669,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32335418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.424573926Z",
+      "datePosted": "2023-04-19T10:33:43.314185812Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3102,12 +3697,40 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59536901_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.343494224Z",
+      "datePosted": "2023-04-19T10:33:33.375752051Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 58.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tatum Tapered Fit Jeans (Medium Blue 426)",
+      "brand": "BOSS",
+      "size": "36W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-tatum-tapered-fit-jeans-659189#colcode=65918918",
+      "title": "BOSS - Tatum Tapered Fit Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/65918918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:33:35.408478876Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -3130,7 +3753,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.369341765Z",
+      "datePosted": "2023-04-19T10:33:37.404788076Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3158,7 +3781,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.369354278Z",
+      "datePosted": "2023-04-19T07:19:11.330603700Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3186,7 +3809,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.369366565Z",
+      "datePosted": "2023-04-19T10:33:37.404795677Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3214,7 +3837,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.369310924Z",
+      "datePosted": "2023-04-19T10:33:37.404771655Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3242,7 +3865,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63906718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.369330691Z",
+      "datePosted": "2023-04-19T10:33:37.404780374Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3270,7 +3893,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51315019_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.286663342Z",
+      "datePosted": "2023-04-19T10:33:37.400945769Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3298,7 +3921,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/54362406_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371417131Z",
+      "datePosted": "2023-04-19T10:33:35.404224284Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3326,7 +3949,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65461618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.339516580Z",
+      "datePosted": "2023-04-19T10:33:33.369080730Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3354,7 +3977,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.299700522Z",
+      "datePosted": "2023-04-19T10:33:37.403063055Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3382,7 +4005,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.299684211Z",
+      "datePosted": "2023-04-19T10:33:37.403051073Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3410,7 +4033,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51934618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.299659444Z",
+      "datePosted": "2023-04-19T10:33:37.403041834Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3438,7 +4061,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.450377556Z",
+      "datePosted": "2023-04-19T10:33:35.409429884Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3466,7 +4089,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.450365920Z",
+      "datePosted": "2023-04-19T10:33:35.409421696Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3494,7 +4117,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.450353635Z",
+      "datePosted": "2023-04-19T10:33:35.409410034Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3522,7 +4145,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/36040219_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.450340199Z",
+      "datePosted": "2023-04-19T10:33:35.409402054Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3550,7 +4173,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/64912851_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.455180025Z",
+      "datePosted": "2023-04-19T10:33:39.433882075Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3578,7 +4201,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55425803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.451934591Z",
+      "datePosted": "2023-04-19T10:33:39.433445895Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3606,7 +4229,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48366610_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.292887899Z",
+      "datePosted": "2023-04-19T10:33:37.402476890Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3634,7 +4257,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55066203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.360585483Z",
+      "datePosted": "2023-04-19T10:33:37.403646626Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3662,7 +4285,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47231508_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.517007975Z",
+      "datePosted": "2023-04-19T10:33:41.346719875Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3690,7 +4313,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47231502_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.467538102Z",
+      "datePosted": "2023-04-19T10:33:41.346303247Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3718,7 +4341,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47231502_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.467553435Z",
+      "datePosted": "2023-04-19T10:33:41.346312529Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3746,7 +4369,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47231518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.468547116Z",
+      "datePosted": "2023-04-19T10:33:41.346607935Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3774,7 +4397,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55648818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.405622475Z",
+      "datePosted": "2023-04-19T10:33:43.312250920Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3802,7 +4425,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55775518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:19.369307115Z",
+      "datePosted": "2023-04-19T10:33:45.490658012Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3830,7 +4453,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/54394303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.451521677Z",
+      "datePosted": "2023-04-19T10:33:35.409792201Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3858,7 +4481,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32400018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.448614122Z",
+      "datePosted": "2023-04-19T10:33:35.409048902Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3886,12 +4509,68 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32400018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.448625632Z",
+      "datePosted": "2023-04-19T10:33:35.409055477Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 45.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Parlay 155 Polo Shirt (Dark Blue 404)",
+      "brand": "BOSS",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-parlay-155-polo-shirt-544245#colcode=54424518",
+      "title": "BOSS - Parlay 155 Polo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/54424518_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:33:41.345569757Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 69,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Parkour Running Trainers (Red 640)",
+      "brand": "BOSS",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/boss-parkour-running-trainers-119854#colcode=11985408",
+      "title": "Boss - Parkour Running Trainers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/11985408_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:33:35.399235147Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 52.00,
       "discount": 69,
       "quantityAvailable": 1,
       "sell": null,
@@ -3914,7 +4593,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32399118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.350010647Z",
+      "datePosted": "2023-04-19T10:33:33.377194178Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3942,7 +4621,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32399102_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.362253845Z",
+      "datePosted": "2023-04-19T10:33:35.398643038Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3970,7 +4649,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55843001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.425247434Z",
+      "datePosted": "2023-04-19T10:33:43.314487353Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -3998,7 +4677,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.453458631Z",
+      "datePosted": "2023-04-19T10:33:39.433677890Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4026,7 +4705,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.453474096Z",
+      "datePosted": "2023-04-19T10:33:39.433685856Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4054,7 +4733,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/64906003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.453437267Z",
+      "datePosted": "2023-04-19T10:33:39.433668749Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4082,7 +4761,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55740422_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.424135164Z",
+      "datePosted": "2023-04-19T10:33:43.314049546Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4110,7 +4789,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32972208_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:19.369722536Z",
+      "datePosted": "2023-04-19T10:33:45.504071791Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4138,7 +4817,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371901769Z",
+      "datePosted": "2023-04-19T10:33:35.407576389Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4166,7 +4845,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371894582Z",
+      "datePosted": "2023-04-19T10:33:35.407568630Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4194,7 +4873,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65976718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371881133Z",
+      "datePosted": "2023-04-19T10:33:35.407560255Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4222,7 +4901,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32319218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.372152911Z",
+      "datePosted": "2023-04-19T10:33:35.407742113Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4250,7 +4929,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.370029094Z",
+      "datePosted": "2023-04-19T10:33:35.403591647Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4278,7 +4957,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.370018475Z",
+      "datePosted": "2023-04-19T10:33:35.403585379Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4306,7 +4985,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/56600418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.370006517Z",
+      "datePosted": "2023-04-19T10:33:35.403578688Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4334,7 +5013,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55874718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:19.370035568Z",
+      "datePosted": "2023-04-19T10:33:45.504171635Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4362,7 +5041,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60893504_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.343161483Z",
+      "datePosted": "2023-04-19T10:33:33.375423927Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4390,7 +5069,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55947418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.449125166Z",
+      "datePosted": "2023-04-19T10:33:35.409211771Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4418,7 +5097,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55649401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.348306127Z",
+      "datePosted": "2023-04-19T10:33:37.403218175Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4446,7 +5125,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55649401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.348334326Z",
+      "datePosted": "2023-04-19T10:33:37.403225456Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4474,7 +5153,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60845418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.342842586Z",
+      "datePosted": "2023-04-19T10:33:33.375193101Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4502,7 +5181,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48240303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371119139Z",
+      "datePosted": "2023-04-19T10:33:35.404026530Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4530,7 +5209,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48240303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371132156Z",
+      "datePosted": "2023-04-19T10:33:35.404034074Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4558,7 +5237,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/70779203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.363166740Z",
+      "datePosted": "2023-04-19T10:33:35.399084133Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4586,7 +5265,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.288093601Z",
+      "datePosted": "2023-04-19T10:33:37.401485750Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4614,7 +5293,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.288081966Z",
+      "datePosted": "2023-04-19T10:33:37.401476250Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4642,7 +5321,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.288070846Z",
+      "datePosted": "2023-04-19T10:33:37.401467811Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4670,7 +5349,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.288059633Z",
+      "datePosted": "2023-04-19T10:33:37.401459623Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4698,7 +5377,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51411918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.288040756Z",
+      "datePosted": "2023-04-19T10:33:37.401450636Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4726,7 +5405,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.293257028Z",
+      "datePosted": "2023-04-19T10:33:37.402643928Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4754,7 +5433,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.293240945Z",
+      "datePosted": "2023-04-19T10:33:37.402635089Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4782,7 +5461,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.293229623Z",
+      "datePosted": "2023-04-19T10:33:37.402626079Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4810,7 +5489,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.293218222Z",
+      "datePosted": "2023-04-19T10:33:37.402617362Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4838,7 +5517,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51030401_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.293204227Z",
+      "datePosted": "2023-04-19T10:33:37.402608079Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4866,7 +5545,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32992418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.292535982Z",
+      "datePosted": "2023-04-19T10:33:37.402355374Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4894,7 +5573,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/73359801_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.287231192Z",
+      "datePosted": "2023-04-19T10:33:37.401152157Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4922,7 +5601,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/73359801_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.287221182Z",
+      "datePosted": "2023-04-19T10:33:37.401145514Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4950,7 +5629,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32988901_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.292267534Z",
+      "datePosted": "2023-04-19T10:33:37.402214996Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -4978,7 +5657,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/33118818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.455439784Z",
+      "datePosted": "2023-04-19T10:33:39.433947667Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5006,7 +5685,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/36201922_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.292697914Z",
+      "datePosted": "2023-04-19T10:33:37.402417212Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5034,7 +5713,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48208506_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.455672412Z",
+      "datePosted": "2023-04-19T10:33:39.434027923Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5062,7 +5741,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48208506_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.455691495Z",
+      "datePosted": "2023-04-19T10:33:39.434037729Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5090,7 +5769,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348168199Z",
+      "datePosted": "2023-04-19T10:33:33.376453727Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5118,7 +5797,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348157772Z",
+      "datePosted": "2023-04-19T10:33:33.376446834Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5146,7 +5825,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348146976Z",
+      "datePosted": "2023-04-19T10:33:33.376439829Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5174,7 +5853,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57950118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348127224Z",
+      "datePosted": "2023-04-19T10:33:33.376432465Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5202,7 +5881,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51413518_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.347765560Z",
+      "datePosted": "2023-04-19T10:33:33.376352241Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5230,7 +5909,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57949618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.350559481Z",
+      "datePosted": "2023-04-19T10:33:33.377392304Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5258,7 +5937,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348693134Z",
+      "datePosted": "2023-04-19T10:33:33.376659952Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5286,7 +5965,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348680857Z",
+      "datePosted": "2023-04-19T10:33:33.376651417Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5314,7 +5993,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348668095Z",
+      "datePosted": "2023-04-19T10:33:33.376643016Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5342,7 +6021,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348655602Z",
+      "datePosted": "2023-04-19T10:33:33.376633469Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5370,7 +6049,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348641378Z",
+      "datePosted": "2023-04-19T10:33:33.376624894Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5398,7 +6077,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57953404_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.348620123Z",
+      "datePosted": "2023-04-19T10:33:33.376614943Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5426,7 +6105,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32396015_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.347206059Z",
+      "datePosted": "2023-04-19T10:33:33.376158675Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5454,7 +6133,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32396015_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.347223219Z",
+      "datePosted": "2023-04-19T10:33:33.376166433Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5482,7 +6161,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65678008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.287695521Z",
+      "datePosted": "2023-04-19T10:33:37.401298658Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5510,7 +6189,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65678008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.287676939Z",
+      "datePosted": "2023-04-19T10:33:37.401291181Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5538,7 +6217,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.338085301Z",
+      "datePosted": "2023-04-19T10:33:33.360392267Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5566,7 +6245,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.338074359Z",
+      "datePosted": "2023-04-19T10:33:33.360386077Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5594,7 +6273,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.338067403Z",
+      "datePosted": "2023-04-19T10:33:33.360380478Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5622,7 +6301,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65664218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.338059243Z",
+      "datePosted": "2023-04-19T10:33:33.360373104Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5650,7 +6329,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32395402_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.450122057Z",
+      "datePosted": "2023-04-19T10:33:35.409328619Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5678,7 +6357,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51326618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.299272801Z",
+      "datePosted": "2023-04-19T10:33:37.402949589Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5706,7 +6385,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51326618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.299246094Z",
+      "datePosted": "2023-04-19T10:33:37.402941388Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5734,7 +6413,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55489018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371567973Z",
+      "datePosted": "2023-04-19T10:33:35.407308485Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5762,7 +6441,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55489018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.371581415Z",
+      "datePosted": "2023-04-19T10:33:35.407320253Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5790,7 +6469,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.350780643Z",
+      "datePosted": "2023-04-19T10:33:33.377459686Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5818,7 +6497,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.350769407Z",
+      "datePosted": "2023-04-19T10:33:33.377451375Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5846,7 +6525,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57951018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.350751635Z",
+      "datePosted": "2023-04-19T10:33:33.377444146Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5874,7 +6553,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.370806956Z",
+      "datePosted": "2023-04-19T10:33:35.403928336Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5902,7 +6581,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.370787296Z",
+      "datePosted": "2023-04-19T10:33:35.403921177Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5930,7 +6609,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.370526341Z",
+      "datePosted": "2023-04-19T10:33:35.403798491Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5958,7 +6637,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.370505958Z",
+      "datePosted": "2023-04-19T10:33:35.403790683Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -5986,7 +6665,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48827526_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:21.353001932Z",
+      "datePosted": "2023-04-19T10:33:47.345239950Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6014,7 +6693,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32395001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.452640560Z",
+      "datePosted": "2023-04-19T10:33:39.433533325Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6042,7 +6721,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32395001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.452663780Z",
+      "datePosted": "2023-04-19T10:33:39.433538738Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6070,7 +6749,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/70761869_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.337321387Z",
+      "datePosted": "2023-04-19T10:33:33.360015762Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6098,7 +6777,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/72275903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.425433501Z",
+      "datePosted": "2023-04-19T10:33:43.314610590Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6126,7 +6805,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/73860304_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.451916763Z",
+      "datePosted": "2023-04-19T10:33:35.414628546Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6154,7 +6833,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32736418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.350197397Z",
+      "datePosted": "2023-04-19T10:33:33.377244996Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6182,7 +6861,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/73802302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.361442640Z",
+      "datePosted": "2023-04-19T10:33:35.398356038Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6210,7 +6889,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/73802302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.361425852Z",
+      "datePosted": "2023-04-19T10:33:35.398348926Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6238,7 +6917,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/63607318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.350674414Z",
+      "datePosted": "2023-04-19T10:33:37.403471922Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6266,7 +6945,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55629618_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.541820474Z",
+      "datePosted": "2023-04-19T10:33:41.347247620Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6294,7 +6973,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32972003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:17.424879723Z",
+      "datePosted": "2023-04-19T10:33:43.314313371Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6322,7 +7001,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55936315_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.543440124Z",
+      "datePosted": "2023-04-19T10:33:43.311529813Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6350,7 +7029,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/77297608_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:27.337442289Z",
+      "datePosted": "2023-04-19T10:33:53.383095149Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6378,7 +7057,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.341945950Z",
+      "datePosted": "2023-04-19T10:33:33.371059694Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6406,7 +7085,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.341939083Z",
+      "datePosted": "2023-04-19T10:33:33.371047185Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6434,7 +7113,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.341931641Z",
+      "datePosted": "2023-04-19T10:33:33.371038409Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6462,7 +7141,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65322818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.341919808Z",
+      "datePosted": "2023-04-19T10:33:33.371029481Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6490,7 +7169,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/90260303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.356167170Z",
+      "datePosted": "2023-04-19T10:33:37.403563833Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6518,7 +7197,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/90114703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.350948265Z",
+      "datePosted": "2023-04-19T10:33:37.403517237Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6546,7 +7225,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/75606218_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:15.542203696Z",
+      "datePosted": "2023-04-19T10:33:41.347317371Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6574,7 +7253,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32727418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:11.291979417Z",
+      "datePosted": "2023-04-19T10:33:37.402007671Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6602,7 +7281,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48375003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.450806649Z",
+      "datePosted": "2023-04-19T10:33:35.409587253Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6630,7 +7309,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/71675918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.338997244Z",
+      "datePosted": "2023-04-19T10:33:33.360685129Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6658,7 +7337,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/88714003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.349307507Z",
+      "datePosted": "2023-04-19T10:33:33.376933615Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6686,7 +7365,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.372311725Z",
+      "datePosted": "2023-04-19T10:33:35.407867958Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6714,7 +7393,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.372304821Z",
+      "datePosted": "2023-04-19T10:33:35.407861950Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6742,7 +7421,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.372298567Z",
+      "datePosted": "2023-04-19T10:33:35.407855628Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6770,7 +7449,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51412918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:09.372290642Z",
+      "datePosted": "2023-04-19T10:33:35.407847141Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6782,6 +7461,34 @@ const testItems = [
       "credit": null
     },
     "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Rolled Cuff Jeans (Dark Blue 76)",
+      "brand": "KENZO",
+      "size": "28W R"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-rolled-cuff-jeans-648001#colcode=64800122",
+      "title": "KENZO - Rolled Cuff Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/64800122_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368701920Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
   },
   {
     "itemDetails": {
@@ -6798,7 +7505,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32403418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.553209221Z",
+      "datePosted": "2023-04-19T10:31:55.553807075Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6826,7 +7533,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32403418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.553229667Z",
+      "datePosted": "2023-04-19T10:31:55.553838891Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6854,7 +7561,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.558464826Z",
+      "datePosted": "2023-04-19T10:31:55.554306741Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6882,7 +7589,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.558456746Z",
+      "datePosted": "2023-04-19T10:31:55.554300355Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6910,7 +7617,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.558448113Z",
+      "datePosted": "2023-04-19T10:31:55.554294296Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6938,7 +7645,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/57920718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.558438206Z",
+      "datePosted": "2023-04-19T10:31:55.554287784Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6966,7 +7673,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51414818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.559341548Z",
+      "datePosted": "2023-04-19T10:31:55.554708581Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -6994,7 +7701,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51297202_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.557841619Z",
+      "datePosted": "2023-04-19T10:31:55.554115338Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7022,7 +7729,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51297202_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.557807875Z",
+      "datePosted": "2023-04-19T10:31:55.554108571Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7050,7 +7757,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/80301606_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:25.385266875Z",
+      "datePosted": "2023-04-19T10:32:13.458091964Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7078,7 +7785,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48335415_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:07.559160665Z",
+      "datePosted": "2023-04-19T10:31:55.554598502Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7106,12 +7813,40 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/61909003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:05.568043490Z",
+      "datePosted": "2023-04-19T10:31:53.534785220Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
     "price": {
       "buy": 68.00,
+      "discount": 68,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "634 Taper Jeans (Bright Blue 430)",
+      "brand": "HUGO",
+      "size": "30W R"
+    },
+    "listingDetails": {
+      "url": "https://www.scottsmenswear.com/hugo-634-taper-jeans-649043#colcode=64904318",
+      "title": "Hugo - 634 Taper Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://www.scottsmenswear.com/images/products/64904318_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:31:55.555018955Z",
+      "seller": "SCOTTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 37.00,
       "discount": 68,
       "quantityAvailable": 1,
       "sell": null,
@@ -7134,7 +7869,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/70289415_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:13.315034622Z",
+      "datePosted": "2023-04-19T10:32:01.500805522Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7162,7 +7897,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:13.315412460Z",
+      "datePosted": "2023-04-19T10:32:01.501281765Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7190,7 +7925,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:13.315406794Z",
+      "datePosted": "2023-04-19T10:32:01.501276457Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7218,7 +7953,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94524703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:13.315400367Z",
+      "datePosted": "2023-04-19T10:32:01.501269849Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7246,7 +7981,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/52242720_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.390393104Z",
+      "datePosted": "2023-04-19T10:33:39.430858004Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7274,7 +8009,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65072818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.399094374Z",
+      "datePosted": "2023-04-19T10:33:39.432021499Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7302,7 +8037,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/65072818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.399081420Z",
+      "datePosted": "2023-04-19T10:33:39.432011482Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7330,7 +8065,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48373703_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.388309738Z",
+      "datePosted": "2023-04-19T10:33:39.429707175Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7358,7 +8093,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/55243115_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.398728143Z",
+      "datePosted": "2023-04-19T10:33:39.431783551Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7386,7 +8121,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/74738402_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:23.362015865Z",
+      "datePosted": "2023-04-19T10:33:49.346351117Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7414,7 +8149,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/74738405_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:23.362263074Z",
+      "datePosted": "2023-04-19T10:33:49.346388367Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7442,7 +8177,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/54328603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.398067064Z",
+      "datePosted": "2023-04-19T10:33:39.431440067Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7470,7 +8205,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/54328603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.398092270Z",
+      "datePosted": "2023-04-19T10:33:39.431449202Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7498,7 +8233,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/54392803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.398460735Z",
+      "datePosted": "2023-04-19T10:33:39.431624450Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7526,7 +8261,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32399802_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.340068331Z",
+      "datePosted": "2023-04-19T10:33:33.369568327Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7554,7 +8289,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/32536619_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.390613964Z",
+      "datePosted": "2023-04-19T10:33:39.431027560Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7582,7 +8317,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60848601_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.388734541Z",
+      "datePosted": "2023-04-19T10:33:39.429960047Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7610,7 +8345,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/60226622_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:29.662612481Z",
+      "datePosted": "2023-04-19T10:26:43.381977512Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7638,7 +8373,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47280003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.397515404Z",
+      "datePosted": "2023-04-19T10:33:39.431325947Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7666,7 +8401,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47279903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.397041479Z",
+      "datePosted": "2023-04-19T10:33:39.431229248Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7694,7 +8429,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48347918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.390087208Z",
+      "datePosted": "2023-04-19T10:33:39.430601195Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7722,7 +8457,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48347918_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.390104950Z",
+      "datePosted": "2023-04-19T10:33:39.430613230Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7750,7 +8485,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/48358419_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.389319853Z",
+      "datePosted": "2023-04-19T10:33:39.430152397Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7778,7 +8513,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/75882101_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:29.663520640Z",
+      "datePosted": "2023-04-19T10:26:43.382284681Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7806,7 +8541,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/51327018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.397770870Z",
+      "datePosted": "2023-04-19T10:33:39.431384784Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7834,7 +8569,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.399353843Z",
+      "datePosted": "2023-04-19T10:33:39.432199650Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7862,7 +8597,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.399324787Z",
+      "datePosted": "2023-04-19T10:33:39.432189162Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7890,7 +8625,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94554806_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.399308348Z",
+      "datePosted": "2023-04-19T10:33:39.432176312Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7918,7 +8653,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/33120806_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.340219672Z",
+      "datePosted": "2023-04-19T10:33:33.369690745Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7946,7 +8681,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/33120806_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.340229906Z",
+      "datePosted": "2023-04-19T10:33:33.369700393Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -7974,7 +8709,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/73181101_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:23.361654903Z",
+      "datePosted": "2023-04-19T10:33:49.346310504Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8002,7 +8737,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/70075403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:23.361114773Z",
+      "datePosted": "2023-04-19T10:33:49.346145986Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8030,7 +8765,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/88713804_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:07.340508561Z",
+      "datePosted": "2023-04-19T10:33:33.369936033Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8058,7 +8793,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.389567015Z",
+      "datePosted": "2023-04-19T10:33:39.430299508Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8086,7 +8821,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.389552595Z",
+      "datePosted": "2023-04-19T10:33:39.430286935Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8114,7 +8849,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/94556805_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:13.389533390Z",
+      "datePosted": "2023-04-19T10:33:39.430274698Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8142,7 +8877,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/75700101_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:29.664109146Z",
+      "datePosted": "2023-04-19T10:26:43.382415414Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8170,7 +8905,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42277003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:19.405477666Z",
+      "datePosted": "2023-04-19T10:32:07.584879707Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8198,7 +8933,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42277003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:19.405488873Z",
+      "datePosted": "2023-04-19T10:32:07.584886397Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8226,7 +8961,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42218101_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:21.313725240Z",
+      "datePosted": "2023-04-19T10:32:09.478773218Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8254,7 +8989,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42230699_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:33.962055087Z",
+      "datePosted": "2023-04-19T10:26:49.337248924Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8282,7 +9017,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42341308_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:21.347637367Z",
+      "datePosted": "2023-04-19T10:32:11.413375692Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8310,7 +9045,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/41124702_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:25.390185791Z",
+      "datePosted": "2023-04-19T10:32:13.463468764Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -8338,7 +9073,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_572944_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:44.299482977Z",
+      "datePosted": "2023-04-19T08:26:59.753772465Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -8366,7 +9101,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_574210_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:03.851982862Z",
+      "datePosted": "2023-04-19T08:06:22.650449615Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -8394,7 +9129,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_578136_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:15.722551661Z",
+      "datePosted": "2023-04-19T10:33:07.821686762Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -8422,7 +9157,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R04097175_NERO_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:40.722953024Z",
+      "datePosted": "2023-04-19T10:26:44.601549301Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8455,7 +9190,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R04097175_NERO_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:44.174749083Z",
+      "datePosted": "2023-04-19T10:26:48.134166851Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8488,7 +9223,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_613416_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:06.227691790Z",
+      "datePosted": "2023-04-19T10:32:21.708170356Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -8516,7 +9251,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:02.166799460Z",
+      "datePosted": "2023-04-19T10:26:06.133115204Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8549,7 +9284,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:06.173552636Z",
+      "datePosted": "2023-04-19T10:26:10.131127822Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8582,7 +9317,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:02.695031076Z",
+      "datePosted": "2023-04-19T10:27:06.654396537Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8615,7 +9350,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:56.163479703Z",
+      "datePosted": "2023-04-19T10:26:00.130161574Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8648,7 +9383,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:50.952712636Z",
+      "datePosted": "2023-04-19T10:26:54.656249507Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8681,7 +9416,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:08.165633602Z",
+      "datePosted": "2023-04-19T10:26:12.130259627Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8714,7 +9449,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:08.249767262Z",
+      "datePosted": "2023-04-19T10:27:12.136077220Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8747,7 +9482,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:48.774028909Z",
+      "datePosted": "2023-04-19T10:25:52.602535043Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8780,7 +9515,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:58.262245346Z",
+      "datePosted": "2023-04-19T10:27:02.135199572Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8813,7 +9548,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990229_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:00.754081457Z",
+      "datePosted": "2023-04-19T10:26:04.574344299Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8846,7 +9581,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:04.249443570Z",
+      "datePosted": "2023-04-19T10:27:08.135306004Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8879,7 +9614,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:50.254282428Z",
+      "datePosted": "2023-04-19T10:25:54.129600471Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8912,7 +9647,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:52.249330358Z",
+      "datePosted": "2023-04-19T10:26:56.135138128Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8945,7 +9680,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990228_GREEN_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:06.251299520Z",
+      "datePosted": "2023-04-19T10:27:10.135272281Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -8978,7 +9713,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990227_BURGUNDY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:54.162223237Z",
+      "datePosted": "2023-04-19T10:25:58.131108305Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9011,7 +9746,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990230_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:54.249272926Z",
+      "datePosted": "2023-04-19T10:26:58.137037768Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9032,6 +9767,67 @@ const testItems = [
   {
     "itemDetails": {
       "kind": "clothing",
+      "name": " Pixel Full Zip Tracksuit (Black, 16606836)",
+      "brand": "BOSS",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.jdsports.co.uk/product/black-boss-pixel-full-zip-tracksuit/16606836/",
+      "title": "BOSS Pixel Full Zip Tracksuit (black / M)",
+      "category": "men",
+      "shortDescription": null,
+      "description": null,
+      "image": "https://i8.amplience.net/i/jpl/jd_578128_a?qlt=92",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T09:16:54.338691482Z",
+      "seller": "JDSPORTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 125.00,
+      "discount": 52,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Panelled embossed-branding faux-leather running trainers",
+      "brand": "HUGO",
+      "size": "EUR 39 / 5 UK MEN - BLACK"
+    },
+    "listingDetails": {
+      "url": "https://www.selfridges.com/GB/en/cat/hugo-panelled-embossed-branding-faux-leather-running-trainers_R03870815",
+      "title": "Panelled embossed-branding faux-leather running trainers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.selfridges.com/is/image/selfridges/R03870815_BLACK_M",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:33:52.903076331Z",
+      "seller": "SELFRIDGES",
+      "properties": {
+        "stockKeys": "SizeCode / SupplierColourName",
+        "currentPrice": "99.00",
+        "wasPrice": "109.00",
+        "wasWasPrice": "199.00"
+      }
+    },
+    "price": {
+      "buy": 99.00,
+      "discount": 51,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "hugo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
       "name": "Quilted leather jacket",
       "brand": "EMPORIO ARMANI",
       "size": "44 - BLACK"
@@ -9044,7 +9840,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990242_BLACK_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:24.719902125Z",
+      "datePosted": "2023-04-19T10:27:28.609989181Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9077,7 +9873,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990217_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:48.269294Z",
+      "datePosted": "2023-04-19T10:27:52.140119977Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9110,7 +9906,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990217_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:46.816668727Z",
+      "datePosted": "2023-04-19T10:27:50.622365034Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9143,7 +9939,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990217_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:42:52.264908701Z",
+      "datePosted": "2023-04-19T10:27:56.140567340Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9176,7 +9972,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03990218_NAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:14.171278957Z",
+      "datePosted": "2023-04-19T10:26:18.133128248Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9209,7 +10005,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:34.172305378Z",
+      "datePosted": "2023-04-19T10:26:38.135147367Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9242,7 +10038,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:32.173355050Z",
+      "datePosted": "2023-04-19T10:26:36.133696706Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9275,7 +10071,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:24.674060881Z",
+      "datePosted": "2023-04-19T10:26:28.621357707Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9308,7 +10104,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03981581_BLUNAVY_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:36.175446512Z",
+      "datePosted": "2023-04-19T10:26:40.133750716Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -9341,7 +10137,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/94223199_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.890251513Z",
+      "datePosted": "2023-04-19T10:31:49.743865766Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9353,6 +10149,34 @@ const testItems = [
       "credit": null
     },
     "foundWith": "off-white"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Off Dye Knit Sweater (Bluette)",
+      "brand": "STONE ISLAND",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/stone-island-off-dye-knit-sweater-322587#colcode=32258718",
+      "title": "STONE ISLAND - Off Dye Knit Sweater",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32258718_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:29:12.705973076Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 159.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "stone-island"
   },
   {
     "itemDetails": {
@@ -9369,7 +10193,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48842003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.248310898Z",
+      "datePosted": "2023-04-19T10:31:49.227268414Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9397,7 +10221,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48842003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.248328425Z",
+      "datePosted": "2023-04-19T10:31:49.227272840Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9425,7 +10249,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/39324403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.879268511Z",
+      "datePosted": "2023-04-19T10:31:49.741674887Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9453,7 +10277,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.174227908Z",
+      "datePosted": "2023-04-19T10:31:49.226620690Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9481,7 +10305,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.175037230Z",
+      "datePosted": "2023-04-19T10:31:49.226626427Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9509,7 +10333,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.169728491Z",
+      "datePosted": "2023-04-19T10:31:49.226516696Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9537,7 +10361,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689803_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.169779255Z",
+      "datePosted": "2023-04-19T10:31:49.226522102Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9565,7 +10389,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/12262102_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.256108953Z",
+      "datePosted": "2023-04-19T10:31:49.227918587Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9593,7 +10417,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32490901_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.261247878Z",
+      "datePosted": "2023-04-19T10:31:49.740948348Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9621,7 +10445,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32490903_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.261011507Z",
+      "datePosted": "2023-04-19T10:31:49.228918352Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9649,7 +10473,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53628003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.247566799Z",
+      "datePosted": "2023-04-19T10:31:49.227163094Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9677,7 +10501,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/59844924_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.253258925Z",
+      "datePosted": "2023-04-19T10:31:49.227460327Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9705,7 +10529,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/59844924_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.253274717Z",
+      "datePosted": "2023-04-19T10:31:49.227464594Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9733,7 +10557,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.258279180Z",
+      "datePosted": "2023-04-19T10:31:49.228268755Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9761,7 +10585,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/32689503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.258294384Z",
+      "datePosted": "2023-04-19T10:31:49.228272496Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9789,7 +10613,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41227001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.888996640Z",
+      "datePosted": "2023-04-19T10:31:49.743470759Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9817,7 +10641,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41227003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.889560285Z",
+      "datePosted": "2023-04-19T10:31:49.743681823Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9845,7 +10669,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49806303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.176718590Z",
+      "datePosted": "2023-04-19T10:31:49.226868762Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9873,7 +10697,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/49806303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.176737319Z",
+      "datePosted": "2023-04-19T10:31:49.226873731Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9901,7 +10725,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52625603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.175782478Z",
+      "datePosted": "2023-04-19T10:31:49.226721825Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9929,7 +10753,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52625603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.175802121Z",
+      "datePosted": "2023-04-19T10:31:49.226726821Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9957,7 +10781,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55499808_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.161110427Z",
+      "datePosted": "2023-04-19T10:31:49.226086838Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -9985,7 +10809,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55499818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.161582132Z",
+      "datePosted": "2023-04-19T10:31:49.226148141Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10013,7 +10837,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55499818_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.161592893Z",
+      "datePosted": "2023-04-19T10:31:49.226151821Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10041,7 +10865,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41274005_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.889311321Z",
+      "datePosted": "2023-04-19T10:31:49.743581531Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10053,6 +10877,622 @@ const testItems = [
       "credit": null
     },
     "foundWith": "off-white"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Wave Boots (Black 99)",
+      "brand": "KENZO",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-wave-boots-110740#colcode=11074003",
+      "title": "KENZO - Wave Boots",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/11074003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362013254Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 239.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Varsity Hoodie (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-varsity-hoodie-536899#colcode=53689918",
+      "title": "KENZO - Varsity Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53689918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361916440Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 239.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Varsity Hoodie (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-varsity-hoodie-536899#colcode=53689918",
+      "title": "KENZO - Varsity Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53689918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.361925437Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 239.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Zip Hoodie (Dark Khaki 51)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485915",
+      "title": "KENZO - Tiger Zip Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55485915_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367276832Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Zip Hoodie (Dark Khaki 51)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485915",
+      "title": "KENZO - Tiger Zip Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55485915_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367283858Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Zip Hoodie (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485903",
+      "title": "KENZO - Tiger Zip Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55485903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367004292Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Zip Hoodie (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-zip-hoodie-554859#colcode=55485903",
+      "title": "KENZO - Tiger Zip Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55485903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367010457Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Crest Jumper (Navy 76)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-crest-jumper-559897#colcode=55989722",
+      "title": "KENZO - Tiger Crest Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55989722_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.370227173Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 115.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Crest Jumper (Dove Grey 95)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-crest-jumper-559897#colcode=55989702",
+      "title": "KENZO - Tiger Crest Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55989702_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.370106059Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 115.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Logo Oversized Hoodie (Ink 78)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459018",
+      "title": "KENZO - Sport X Logo Oversized Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53459018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367147333Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Logo Oversized Hoodie (Ink 78)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459018",
+      "title": "KENZO - Sport X Logo Oversized Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53459018_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367155389Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Paris Card Holder (Black 99)",
+      "brand": "KENZO",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-paris-card-holder-717715#colcode=71771503",
+      "title": "KENZO - Paris Card Holder",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/71771503_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.873043109Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Paris Cap (Black 99)",
+      "brand": "KENZO",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-paris-cap-393236#colcode=39323603",
+      "title": "KENZO - Paris Cap",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/39323603_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.872869370Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 55.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Monogram Track Pant (Black 99J)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-monogram-track-pant-488430#colcode=48843003",
+      "title": "KENZO - Monogram Track Pant",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48843003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362437119Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 189.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Monogram Track Pant (Black 99J)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-monogram-track-pant-488430#colcode=48843003",
+      "title": "KENZO - Monogram Track Pant",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48843003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362443007Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 189.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Monogram Track Jacket (Black 99J)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-monogram-track-jacket-554590#colcode=55459003",
+      "title": "KENZO - Monogram Track Jacket",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55459003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362159386Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 205.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Monogram Track Jacket (Black 99J)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-monogram-track-jacket-554590#colcode=55459003",
+      "title": "KENZO - Monogram Track Jacket",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55459003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362165425Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 205.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo T Shirt (Elect Blue 74)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-t-shirt-599813#colcode=59981320",
+      "title": "KENZO - Logo T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/59981320_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.873192012Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 50.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo Hoodie (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245918",
+      "title": "KENZO - Logo Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53245918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368152499Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 135.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo Hoodie (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245918",
+      "title": "KENZO - Logo Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53245918_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368158922Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 135.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo Hoodie (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245903",
+      "title": "KENZO - Logo Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53245903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368389064Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 125.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo Hoodie (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245903",
+      "title": "KENZO - Logo Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53245903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368394170Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 125.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
   },
   {
     "itemDetails": {
@@ -10069,7 +11509,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03920834_MULTICOLOURED_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:26.753809865Z",
+      "datePosted": "2023-04-19T10:33:50.404622220Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -10101,7 +11541,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03920834_MULTICOLOURED_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:25.351722392Z",
+      "datePosted": "2023-04-19T10:33:48.936188280Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -10111,6 +11551,230 @@ const testItems = [
     },
     "price": {
       "buy": 54.50,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Icon Tiger Jumper (Olive 49)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-icon-tiger-jumper-322324#colcode=32232404",
+      "title": "KENZO - Icon Tiger Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32232404_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362808310Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 169.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Flower Socks (Black 99)",
+      "brand": "KENZO",
+      "size": "42-45"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-flower-socks-410313#colcode=41031303",
+      "title": "KENZO - Flower Socks",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/41031303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.874098748Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Flower Socks (Black 99)",
+      "brand": "KENZO",
+      "size": "39-41"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-flower-socks-410313#colcode=41031303",
+      "title": "KENZO - Flower Socks",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/41031303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.874091756Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Flower Socks (Black 99)",
+      "brand": "KENZO",
+      "size": "36-38"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-flower-socks-410313#colcode=41031303",
+      "title": "KENZO - Flower Socks",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/41031303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.874084743Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 30.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Cable Knit Wool Jumper (Off White 02)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-cable-knit-wool-jumper-324608#colcode=32460801",
+      "title": "KENZO - Cable Knit Wool Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32460801_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362067813Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 239.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Boke Intarsia Crew Sweater (Mid Grey 96)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-boke-intarsia-crew-sweater-324607#colcode=32460702",
+      "title": "KENZO - Boke Intarsia Crew Sweater",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32460702_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362335995Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 189.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Boke Intarsia Crew Sweater (Mid Grey 96)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-boke-intarsia-crew-sweater-324607#colcode=32460702",
+      "title": "KENZO - Boke Intarsia Crew Sweater",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32460702_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362341544Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 189.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Turtleneck Jumper (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kenzo-turtleneck-jumper-559546#colcode=55954603",
+      "title": "KENZO - Kenzo Turtleneck Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55954603_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368531438Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 125.00,
       "discount": 50,
       "quantityAvailable": 1,
       "sell": null,
@@ -10133,7 +11797,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_572912_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:46.219692432Z",
+      "datePosted": "2023-04-19T10:32:01.728406585Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -10161,7 +11825,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_549720_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:41:42.217497514Z",
+      "datePosted": "2023-04-19T10:31:57.712057693Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -10189,7 +11853,35 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_551973_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:26.917869284Z",
+      "datePosted": "2023-04-19T10:27:53.665281715Z",
+      "seller": "JDSPORTS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 50.00,
+      "discount": 50,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "Emporio Armani EA7"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Colour Block Joggers (Grey, 16541993)",
+      "brand": "EMPORIO ARMANI EA7",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.jdsports.co.uk/product/grey-emporio-armani-ea7-colour-block-joggers/16541993/",
+      "title": "Emporio Armani EA7 Colour Block Joggers (grey / S)",
+      "category": "men",
+      "shortDescription": null,
+      "description": null,
+      "image": "https://i8.amplience.net/i/jpl/jd_551973_a?qlt=92",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:27:53.665310153Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -10217,7 +11909,7 @@ const testItems = [
       "description": null,
       "image": "https://i8.amplience.net/i/jpl/jd_551973_a?qlt=92",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:26.918086374Z",
+      "datePosted": "2023-04-19T08:38:21.839102178Z",
       "seller": "JDSPORTS",
       "properties": {      }
     },
@@ -10245,7 +11937,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.646546543Z",
+      "datePosted": "2023-04-19T10:28:19.400503818Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10273,7 +11965,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.762980483Z",
+      "datePosted": "2023-04-19T10:28:17.769897238Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10301,7 +11993,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.646668346Z",
+      "datePosted": "2023-04-19T10:28:19.400507746Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10329,7 +12021,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/47064318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.763132960Z",
+      "datePosted": "2023-04-19T10:28:17.769904924Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10357,7 +12049,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.946804252Z",
+      "datePosted": "2023-04-19T10:28:19.401402455Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10385,7 +12077,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.955635025Z",
+      "datePosted": "2023-04-19T10:28:17.771515204Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10413,7 +12105,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.946876177Z",
+      "datePosted": "2023-04-19T10:28:19.401418763Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10441,7 +12133,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637203_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.955755982Z",
+      "datePosted": "2023-04-19T10:28:17.771520969Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10469,7 +12161,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:10.146382189Z",
+      "datePosted": "2023-04-19T10:28:19.402413478Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10497,7 +12189,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:06.557026243Z",
+      "datePosted": "2023-04-19T10:28:17.777598626Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10525,7 +12217,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:10.146332585Z",
+      "datePosted": "2023-04-19T10:28:19.402408519Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10553,7 +12245,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252008_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:06.556965750Z",
+      "datePosted": "2023-04-19T10:28:17.777591487Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10581,7 +12273,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:13.153320763Z",
+      "datePosted": "2023-04-19T10:28:19.402540367Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10609,7 +12301,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:06.569077779Z",
+      "datePosted": "2023-04-19T10:28:17.779414959Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10637,7 +12329,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:13.153300345Z",
+      "datePosted": "2023-04-19T10:28:19.402535536Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -10665,7 +12357,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/22252018_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:06.569003765Z",
+      "datePosted": "2023-04-19T10:28:17.779408007Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -10693,7 +12385,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48122118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:07.948598203Z",
+      "datePosted": "2023-04-19T10:29:12.706715858Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10721,12 +12413,40 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/48122118_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:07.948700050Z",
+      "datePosted": "2023-04-19T10:29:12.706723139Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
     "price": {
       "buy": 129.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "stone-island"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Cargo Trousers (Navy)",
+      "brand": "STONE ISLAND",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/stone-island-cargo-trousers-518283#colcode=51828318",
+      "title": "STONE ISLAND - Cargo Trousers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/51828318_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:29:12.711357511Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 119.00,
       "discount": 49,
       "quantityAvailable": 1,
       "sell": null,
@@ -10749,7 +12469,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51828304_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:08.562600692Z",
+      "datePosted": "2023-04-19T10:29:12.711464757Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10777,7 +12497,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51828304_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:08.562670174Z",
+      "datePosted": "2023-04-19T10:29:12.711471275Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10805,7 +12525,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51848318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:07.856745928Z",
+      "datePosted": "2023-04-19T10:29:12.706374186Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10833,7 +12553,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/51848318_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:07.856840697Z",
+      "datePosted": "2023-04-19T10:29:12.706380793Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10861,7 +12581,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55784001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.168855909Z",
+      "datePosted": "2023-04-19T10:31:49.226328994Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10889,7 +12609,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/55784001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.168908058Z",
+      "datePosted": "2023-04-19T10:31:49.226337628Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10917,7 +12637,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71955503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.260391620Z",
+      "datePosted": "2023-04-19T10:31:49.228705919Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10945,7 +12665,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71955303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.880074391Z",
+      "datePosted": "2023-04-19T10:31:49.742177364Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -10973,7 +12693,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52071303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.246891133Z",
+      "datePosted": "2023-04-19T10:31:49.227080992Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11001,7 +12721,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/39253605_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.878907580Z",
+      "datePosted": "2023-04-19T10:31:49.741417706Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11029,12 +12749,40 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/58733301_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.257013638Z",
+      "datePosted": "2023-04-19T10:31:49.228067702Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
     "price": {
       "buy": 169.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "off-white"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Metal Arrow Sweatshirt (White1039)",
+      "brand": "OFF WHITE",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/off-white-metal-arrow-sweatshirt-520939#colcode=52093903",
+      "title": "OFF WHITE - Metal Arrow Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52093903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:31:49.227010986Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 235.00,
       "discount": 49,
       "quantityAvailable": 1,
       "sell": null,
@@ -11057,7 +12805,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/52265515_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.254201366Z",
+      "datePosted": "2023-04-19T10:31:49.227598504Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11085,7 +12833,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/39321403_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.878023576Z",
+      "datePosted": "2023-04-19T10:31:49.741209136Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11097,6 +12845,1154 @@ const testItems = [
       "credit": null
     },
     "foundWith": "off-white"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Joggers (Dove Grey 95)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-joggers-482596#colcode=48259602",
+      "title": "KENZO - Tiger Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48259602_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372712665Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 98.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Joggers (Dove Grey 95)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-joggers-482596#colcode=48259602",
+      "title": "KENZO - Tiger Joggers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48259602_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372718987Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 98.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger High Top Sneakers (Black 99)",
+      "brand": "KENZO",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-high-top-sneakers-110579#colcode=11057903",
+      "title": "KENZO - Tiger High Top Sneakers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/11057903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367803081Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Crest Sweatshirt (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-crest-sweatshirt-524929#colcode=52492903",
+      "title": "KENZO - Tiger Crest Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52492903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372337781Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Crest Sweatshirt (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-crest-sweatshirt-524929#colcode=52492903",
+      "title": "KENZO - Tiger Crest Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52492903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372345410Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Crest Logo Shirt (Navy 76)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-crest-logo-shirt-558541#colcode=55854122",
+      "title": "KENZO - Tiger Crest Logo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55854122_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.373847442Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 78.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Tiger Crest Logo Shirt (Navy 76)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-tiger-crest-logo-shirt-558541#colcode=55854122",
+      "title": "KENZO - Tiger Crest Logo Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/55854122_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.373854502Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 78.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Swing Sneakers (White 01)",
+      "brand": "KENZO",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-swing-sneakers-111164#colcode=11116401",
+      "title": "KENZO - Swing Sneakers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/11116401_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366029475Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 175.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Swing Low Profile Sneakers (Black 99)",
+      "brand": "KENZO",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-swing-low-profile-sneakers-111159#colcode=11115903",
+      "title": "KENZO - Swing Low Profile Sneakers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/11115903_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366285298Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 175.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Shorts (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-shorts-472386#colcode=47238603",
+      "title": "KENZO - Sport X Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/47238603_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.373468754Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 88.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Shorts (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-shorts-472386#colcode=47238603",
+      "title": "KENZO - Sport X Shorts",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/47238603_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.373475414Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 88.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Oversized Sweatshirt (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-oversized-sweatshirt-524282#colcode=52428203",
+      "title": "KENZO - Sport X Oversized Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52428203_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.370476083Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Oversized Sweatshirt (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-oversized-sweatshirt-524282#colcode=52428203",
+      "title": "KENZO - Sport X Oversized Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52428203_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.370484027Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Logo Oversized Hoodie (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459003",
+      "title": "KENZO - Sport X Logo Oversized Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53459003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368016714Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 139.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Logo Oversized Hoodie (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-logo-oversized-hoodie-534590#colcode=53459003",
+      "title": "KENZO - Sport X Logo Oversized Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53459003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368022971Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 139.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Jogging Bottoms (Ink 78)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-jogging-bottoms-482348#colcode=48234818",
+      "title": "KENZO - Sport X Jogging Bottoms",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48234818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372890687Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 98.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport X Jogging Bottoms (Ink 78)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-x-jogging-bottoms-482348#colcode=48234818",
+      "title": "KENZO - Sport X Jogging Bottoms",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/48234818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372898941Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 98.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Sport Cap (Black 99)",
+      "brand": "KENZO",
+      "size": "ONE SIZE"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-sport-cap-392057#colcode=39205703",
+      "title": "KENZO - Sport Cap",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/39205703_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.873682566Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 45.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Skinny Jeans (Black 99)",
+      "brand": "KENZO",
+      "size": "28W R"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-skinny-jeans-640053#colcode=64005303",
+      "title": "KENZO - Skinny Jeans",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/64005303_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.373312497Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 88.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "School Low Sneakers (Noir 99)",
+      "brand": "KENZO",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-school-low-sneakers-125460#colcode=12546003",
+      "title": "Kenzo - School Low Sneakers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/12546003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.368277554Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 135.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "School High Top Sneakers (Cream 04)",
+      "brand": "KENZO",
+      "size": "9 (43)"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-school-high-top-sneakers-110385#colcode=11038501",
+      "title": "KENZO - School High Top Sneakers",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/11038501_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367702896Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Relaxed Tailored Pants (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-relaxed-tailored-pants-670378#colcode=67037818",
+      "title": "KENZO - Relaxed Tailored Pants",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/67037818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366856239Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 159.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Paris Sweater (Med Red 21)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-paris-sweater-523893#colcode=52389308",
+      "title": "KENZO - Paris Sweater",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52389308_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367487767Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Paris Sweater (Med Red 21)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-paris-sweater-523893#colcode=52389308",
+      "title": "KENZO - Paris Sweater",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52389308_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367494324Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Long Sleeve Flower T Shirt (Black 99J)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-long-sleeve-flower-t-shirt-587451#colcode=58745103",
+      "title": "KENZO - Long Sleeve Flower T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/58745103_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372119313Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Long Sleeve Flower T Shirt (Black 99J)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-long-sleeve-flower-t-shirt-587451#colcode=58745103",
+      "title": "KENZO - Long Sleeve Flower T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/58745103_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.372132063Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo T Shirt (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-t-shirt-599813#colcode=59981319",
+      "title": "KENZO - Logo T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/59981319_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.873562671Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo Hoodie (Kahki 51A)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245915",
+      "title": "KENZO - Logo Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53245915_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367605293Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Logo Hoodie (Kahki 51A)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-logo-hoodie-532459#colcode=53245915",
+      "title": "KENZO - Logo Hoodie",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/53245915_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367611575Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Knit Monogram T Shirt (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-knit-monogram-t-shirt-322331#colcode=32233103",
+      "title": "KENZO - Knit Monogram T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32233103_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.370656331Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Knit Monogram T Shirt (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-knit-monogram-t-shirt-322331#colcode=32233103",
+      "title": "KENZO - Knit Monogram T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32233103_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.370663636Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 109.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Icon Tiger T Shirt (Grey 95 (2))",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-icon-tiger-t-shirt-598352#colcode=59835226",
+      "title": "KENZO - Icon Tiger T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/59835226_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.873354031Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Icon Tiger T Shirt (Grey 95 (2))",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-icon-tiger-t-shirt-598352#colcode=59835226",
+      "title": "KENZO - Icon Tiger T Shirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/59835226_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.873361714Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 48.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Boke Jumper (Black 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-boke-jumper-324610#colcode=32461003",
+      "title": "KENZO - Boke Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32461003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362721276Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 185.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Boke Jumper (Black 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-boke-jumper-324610#colcode=32461003",
+      "title": "KENZO - Boke Jumper",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/32461003_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.362726295Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 185.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Big Flower Sweatshirt (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-big-flower-sweatshirt-523408#colcode=52340818",
+      "title": "KENZO - Big Flower Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52340818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367376115Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Big Flower Sweatshirt (Mid Blue 77)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-big-flower-sweatshirt-523408#colcode=52340818",
+      "title": "KENZO - Big Flower Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52340818_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367384899Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Back Flower Sweatshirt (Grass Green 57)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-back-flower-sweatshirt-523768#colcode=52376815",
+      "title": "KENZO - Back Flower Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52376815_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366700245Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 159.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "Back Flower Sweatshirt (Grass Green 57)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-back-flower-sweatshirt-523768#colcode=52376815",
+      "title": "KENZO - Back Flower Sweatshirt",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/52376815_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.366707242Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 159.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Straight Jean Sn24 (Noir 99)",
+      "brand": "KENZO",
+      "size": "S"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kenzo-straight-jean-sn24-655754#colcode=65575403",
+      "title": "Kenzo - Kenzo Straight Jean Sn24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/65575403_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367908762Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": " Straight Jean Sn24 (Noir 99)",
+      "brand": "KENZO",
+      "size": "M"
+    },
+    "listingDetails": {
+      "url": "https://www.flannels.com/kenzo-kenzo-straight-jean-sn24-655754#colcode=65575403",
+      "title": "Kenzo - Kenzo Straight Jean Sn24",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.flannels.com/images/products/65575403_l.jpg",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:22:29.367915812Z",
+      "seller": "FLANNELS",
+      "properties": {      }
+    },
+    "price": {
+      "buy": 145.00,
+      "discount": 49,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "kenzo"
   },
   {
     "itemDetails": {
@@ -11113,7 +14009,7 @@ const testItems = [
       "description": null,
       "image": "https://images.selfridges.com/is/image/selfridges/R03963154_OPENMISCELLANEOUS_M",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:44:25.558926313Z",
+      "datePosted": "2023-04-19T10:21:38.419703515Z",
       "seller": "SELFRIDGES",
       "properties": {
         "stockKeys": "SizeCode / SupplierColourName",
@@ -11146,7 +14042,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.570801629Z",
+      "datePosted": "2023-04-19T10:28:19.400337272Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11174,7 +14070,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.752187675Z",
+      "datePosted": "2023-04-19T10:28:17.769546821Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11202,7 +14098,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.572970505Z",
+      "datePosted": "2023-04-19T10:28:19.400340935Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11230,7 +14126,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/42178718_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.752407430Z",
+      "datePosted": "2023-04-19T10:28:17.769553817Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11258,7 +14154,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/79701003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.847735844Z",
+      "datePosted": "2023-04-19T07:17:09.240443835Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11286,7 +14182,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/79701003_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.768493500Z",
+      "datePosted": "2023-04-19T07:17:07.283178096Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11314,7 +14210,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.861074413Z",
+      "datePosted": "2023-04-19T10:28:19.401110414Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11342,7 +14238,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.860319685Z",
+      "datePosted": "2023-04-19T10:28:17.770989974Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11370,7 +14266,7 @@ const testItems = [
       "description": null,
       "image": "https://www.scottsmenswear.com/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:09.861156163Z",
+      "datePosted": "2023-04-19T10:28:19.401114756Z",
       "seller": "SCOTTS",
       "properties": {      }
     },
@@ -11398,7 +14294,7 @@ const testItems = [
       "description": null,
       "image": "https://www.tessuti.co.uk/images/products/59637302_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:05.860519222Z",
+      "datePosted": "2023-04-19T10:28:17.770997747Z",
       "seller": "TESSUTI",
       "properties": {      }
     },
@@ -11426,7 +14322,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/54399312_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:08.571061233Z",
+      "datePosted": "2023-04-19T10:29:12.711547990Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11454,7 +14350,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/90765503_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.879380536Z",
+      "datePosted": "2023-04-19T10:31:49.741798501Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11482,7 +14378,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41049603_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.888501356Z",
+      "datePosted": "2023-04-19T10:31:49.743297653Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11510,7 +14406,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/41033001_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.888055208Z",
+      "datePosted": "2023-04-19T10:31:49.743134061Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11538,7 +14434,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71971408_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.878390281Z",
+      "datePosted": "2023-04-19T10:31:49.741265685Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11566,7 +14462,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/71971418_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:43:02.878576473Z",
+      "datePosted": "2023-04-19T10:31:49.741305703Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11578,6 +14474,98 @@ const testItems = [
       "credit": null
     },
     "foundWith": "off-white"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "BOSS x NBA Lakers cotton-blend hoody",
+      "brand": "BOSS",
+      "size": "S - OPEN GREEN"
+    },
+    "listingDetails": {
+      "url": "https://www.selfridges.com/GB/en/cat/boss-boss-x-nba-lakers-cotton-blend-hoody_R03963041",
+      "title": "BOSS x NBA Lakers cotton-blend hoody",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.selfridges.com/is/image/selfridges/R03963041_BLACK_M",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:32:59.415049645Z",
+      "seller": "SELFRIDGES",
+      "properties": {
+        "stockKeys": "SizeCode / SupplierColourName"
+      }
+    },
+    "price": {
+      "buy": 89.00,
+      "discount": 48,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "BOSS x NBA Lakers cotton-blend hoody",
+      "brand": "BOSS",
+      "size": "S - BLACK"
+    },
+    "listingDetails": {
+      "url": "https://www.selfridges.com/GB/en/cat/boss-boss-x-nba-lakers-cotton-blend-hoody_R03963041",
+      "title": "BOSS x NBA Lakers cotton-blend hoody",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.selfridges.com/is/image/selfridges/R03963041_BLACK_M",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:32:45.417367926Z",
+      "seller": "SELFRIDGES",
+      "properties": {
+        "stockKeys": "SizeCode / SupplierColourName",
+        "currentPrice": "89.00",
+        "wasPrice": "169.00"
+      }
+    },
+    "price": {
+      "buy": 89.00,
+      "discount": 48,
+      "quantityAvailable": 1,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "boss"
+  },
+  {
+    "itemDetails": {
+      "kind": "clothing",
+      "name": "BOSS x NBA Lakers cotton-blend hoody",
+      "brand": "BOSS",
+      "size": "M - OPEN GREEN"
+    },
+    "listingDetails": {
+      "url": "https://www.selfridges.com/GB/en/cat/boss-boss-x-nba-lakers-cotton-blend-hoody_R03963041",
+      "title": "BOSS x NBA Lakers cotton-blend hoody",
+      "category": null,
+      "shortDescription": null,
+      "description": null,
+      "image": "https://images.selfridges.com/is/image/selfridges/R03963041_BLACK_M",
+      "condition": "NEW",
+      "datePosted": "2023-04-19T10:33:07.414947005Z",
+      "seller": "SELFRIDGES",
+      "properties": {
+        "stockKeys": "SizeCode / SupplierColourName"
+      }
+    },
+    "price": {
+      "buy": 89.00,
+      "discount": 48,
+      "quantityAvailable": 3,
+      "sell": null,
+      "credit": null
+    },
+    "foundWith": "boss"
   },
   {
     "itemDetails": {
@@ -11594,7 +14582,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53185303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:08.581263818Z",
+      "datePosted": "2023-04-19T10:29:12.711680086Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11622,7 +14610,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53185303_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:08.581328623Z",
+      "datePosted": "2023-04-19T10:29:12.711686498Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11650,7 +14638,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/54012486_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:12.158647578Z",
+      "datePosted": "2023-04-19T10:29:13.231729606Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11678,7 +14666,7 @@ const testItems = [
       "description": null,
       "image": "https://images.flannels.com/images/products/53186106_l.jpg",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:12.046324561Z",
+      "datePosted": "2023-04-19T10:29:13.229854951Z",
       "seller": "FLANNELS",
       "properties": {      }
     },
@@ -11704,7 +14692,7 @@ const testItems = [
       "description": null,
       "image": null,
       "condition": "USED / A",
-      "datePosted": "2023-04-19T06:40:03.651948613Z",
+      "datePosted": "2023-04-19T10:30:11.176122336Z",
       "seller": "CEX",
       "properties": {
         "exchangePerc": "75",
@@ -11735,7 +14723,7 @@ const testItems = [
       "description": null,
       "image": "https://assets.nvidia.partners/images/png/GeForce-RTX4090-Back.png",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:03.651686717Z",
+      "datePosted": "2023-04-19T10:30:27.904731156Z",
       "seller": "NVIDIA",
       "properties": {      }
     },
@@ -11761,7 +14749,7 @@ const testItems = [
       "description": null,
       "image": "https://assets.nvidia.partners/images/png/GeForce-ADA-RTX4070-Back.png",
       "condition": "NEW",
-      "datePosted": "2023-04-19T06:40:03.758892466Z",
+      "datePosted": "2023-04-19T10:30:27.904954643Z",
       "seller": "NVIDIA",
       "properties": {      }
     },
