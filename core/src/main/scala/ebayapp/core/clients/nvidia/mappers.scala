@@ -25,7 +25,7 @@ private[nvidia] object mappers {
           "NEW",
           Instant.now(),
           "NVIDIA",
-          Map.empty[String, String]
+          Map("retailer" -> item.retailer.retailerName)
         ),
         BuyPrice(item.retailer.stock + 1, item.retailer.salePrice),
         None,
