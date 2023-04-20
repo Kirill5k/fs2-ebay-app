@@ -225,7 +225,10 @@ data:
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], min-discount: 49}
+        filters: {
+          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], 
+          min-discount: 49
+        }
       }
 
       selfridges {
