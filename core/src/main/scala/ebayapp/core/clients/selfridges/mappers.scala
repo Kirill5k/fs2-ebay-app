@@ -12,9 +12,16 @@ private[selfridges] object mappers {
 
   final case class SelfridgesItem(
       item: CatalogItem,
-      stock: ItemStock,
+      stock: List[ItemStock],
       price: Option[ItemPrice]
-  )
+  ) {
+    val size: String         = stock.find(_.key.exists(_ == "SizeCode")).flatMap(_.value).getOrElse("ONE SIZE")
+    val quantity: Int        = stock.map(_.`Stock Quantity Available to Purchase`).maxOption.getOrElse(0)
+    val otherDetails: String = {
+      val od = stock.filterNot(_.key.exists(_ == "SizeCode")).flatMap(_.value)
+      if (od.isEmpty) "" else od.mkString(" (", ",", ")")
+    }
+  }
 
   type SelfridgesItemMapper = ItemMapper[SelfridgesItem]
 
@@ -22,51 +29,51 @@ private[selfridges] object mappers {
 
     override def toDomain(foundWith: SearchCriteria)(si: SelfridgesItem): ResellableItem =
       ResellableItem.clothing(
-        itemDetails(si.item, si.stock),
-        listingDetails(si.item, si.stock, si.price),
-        buyPrice(si.item, si.stock, si.price),
+        itemDetails(si),
+        listingDetails(si),
+        buyPrice(si),
         None,
         foundWith
       )
 
-    private def itemDetails(item: CatalogItem, stock: ItemStock): ItemDetails.Clothing =
+    private def itemDetails(si: SelfridgesItem): ItemDetails.Clothing =
       Clothing(
-        item.fullName,
-        item.brandName.capitalizeAll,
-        formatSize(stock.value.getOrElse("ONE SIZE"))
+        s"${si.item.fullName}${si.otherDetails}",
+        si.item.brandName.capitalizeAll,
+        formatSize(si.size)
       )
 
-    private def buyPrice(item: CatalogItem, stock: ItemStock, price: Option[ItemPrice]): BuyPrice = {
-      val current = price.map(_.`Current Retail Price`).getOrElse(item.price.map(_.lowestPrice).min)
-      val rrp = price
+    private def buyPrice(si: SelfridgesItem): BuyPrice = {
+      val current = si.price.map(_.`Current Retail Price`).getOrElse(si.item.price.map(_.lowestPrice).min)
+      val rrp = si.price
         .flatMap(_.`Was Was Retail Price`)
-        .orElse(price.flatMap(_.`Was Retail Price`))
-        .orElse(item.price.flatMap(p => p.lowestWasWasPrice.orElse(p.lowestWasPrice)).maxOption)
+        .orElse(si.price.flatMap(_.`Was Retail Price`))
+        .orElse(si.item.price.flatMap(p => p.lowestWasWasPrice.orElse(p.lowestWasPrice)).maxOption)
       val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
 
       BuyPrice(
-        stock.`Stock Quantity Available to Purchase`,
+        si.quantity,
         current,
         discount
       )
     }
 
-    private def listingDetails(item: CatalogItem, stock: ItemStock, price: Option[ItemPrice]): ListingDetails =
+    private def listingDetails(si: SelfridgesItem): ListingDetails =
       ListingDetails(
-        s"https://www.selfridges.com/GB/en/cat/${item.seoKey}",
-        item.fullName,
+        s"https://www.selfridges.com/GB/en/cat/${si.item.seoKey}",
+        s"${si.item.fullName}${si.otherDetails}",
         None,
-        item.shortDescription,
+        si.item.shortDescription,
         None,
-        item.imageName.map(in => s"https://images.selfridges.com/is/image/selfridges/$in"),
+        si.item.imageName.map(in => s"https://images.selfridges.com/is/image/selfridges/$in"),
         "NEW",
         Instant.now,
         "Selfridges",
         List(
-          Some("stockKeys" -> stock.key.getOrElse("undefined")),
-          price.map(_.`Current Retail Price`).map(p => "currentPrice" -> p.toString),
-          price.flatMap(_.`Was Retail Price`).map(p => "wasPrice" -> p.toString),
-          price.flatMap(_.`Was Was Retail Price`).map(p => "wasWasPrice" -> p.toString)
+          Some("stockKeys" -> si.stock.flatMap(_.key).mkString(", ")),
+          si.price.map(_.`Current Retail Price`).map(p => "currentPrice" -> p.toString),
+          si.price.flatMap(_.`Was Retail Price`).map(p => "wasPrice" -> p.toString),
+          si.price.flatMap(_.`Was Was Retail Price`).map(p => "wasWasPrice" -> p.toString)
         ).flatten.toMap
       )
   }
