@@ -13,7 +13,7 @@ const StockSelectFilter = ({items, value, placeHolder, onChange}) => {
           onChange={onChange}
       >
         {items.map(i => (
-            <Select.Option value={i} label={i}>
+            <Select.Option key={i} value={i} label={i}>
               <Space className="select-option">{i}</Space>
             </Select.Option>
         ))}
