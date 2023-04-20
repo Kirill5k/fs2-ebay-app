@@ -15,9 +15,9 @@ class ItemMapperSpec extends AnyWordSpec with Matchers {
     import itemMapper.*
 
     "map sizes" in {
-      val sizes = List("Medium", "9 (43)", "UK42(EU52)", "54(64)", "46 (S)", "9.5 (43.5)", "80 (8 S)", "32W R", "UK52")
+      val sizes = List("Medium", "9 (43)", "UK42(EU52)", "54(64)", "46 (S)", "9.5 (43.5)", "80 (8 S)", "32W R", "UK52", "S (58)", "size")
 
-      sizes.map(formatSize) mustBe List("M", "9", "UK42", "54", "S", "9.5", "8 S", "32W R", "UK52")
+      sizes.map(formatSize) mustBe List("M", "9", "UK42", "54", "S", "9.5", "8 S", "32W R", "UK52", "S", "ONE SIZE")
     }
 
     "capitalise strings" in {
