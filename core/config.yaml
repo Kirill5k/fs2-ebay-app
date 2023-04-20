@@ -194,7 +194,7 @@ data:
           {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
-          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b", "\\bBRA\\b"], 
+          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "bikini", "shoulder bag", "\\bcap\\b", "\\bBRA\\b"], 
           min-discount: 29,
           max-price: 80
         }
@@ -211,7 +211,7 @@ data:
           {search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
-          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b", "\\bbra\\b"], 
+          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "bikini", "shoulder bag", "\\bcap\\b", "\\bbra\\b"], 
           min-discount: 49,
           max-price: 80
         }
@@ -251,7 +251,11 @@ data:
           {search-criteria: {query: "off-white", category: men, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", category: men, filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (((\\d)?x)?( )?l|x( )?s|\\b[1-8]\\b|1\\d|3[2-9]W|\\bmask\\b|socks|formal pants|olive|\\d+Y)"], min-discount: 30, max-price: 250}
+        filters: {
+          exclude: ["size (((\\d)?x)?( )?l|x( )?s|\\b[1-8]\\b|1\\d|3[2-9]W|\\d+Y)", "\\bmask\\b", "socks|formal pants|olive"], 
+          min-discount: 30, 
+          max-price: 250
+        }
       }
 
       harvey-nichols {

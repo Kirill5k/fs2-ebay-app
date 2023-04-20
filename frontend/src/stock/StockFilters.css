@@ -4,6 +4,6 @@
 
 .select-option {
   font-size: 10px;
-  vertical-align: middle;
+  vertical-align: text-top;
   text-transform: capitalize;
 }
