@@ -65,6 +65,7 @@ const StockItems = ({items}) => {
           pagination={pagination}
           dataSource={items}
           renderItem={(item) => <StockItem item={item}/> }
+          locale={{emptyText: 'No Items in Stock'}}
       />
   )
 }

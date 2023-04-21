@@ -1,10 +1,9 @@
-import {Layout} from "antd"
+import {Layout, Spin} from "antd"
 import React, {useEffect} from "react"
 import {useSelector, useDispatch} from 'react-redux'
 import {getStock, filter} from './slice'
 import StockItems from './StockItems'
 import StockFilters from "./StockFilters"
-
 
 const Stock = ({backgroundColor}) => {
   const dispatch = useDispatch()
@@ -26,15 +25,22 @@ const Stock = ({backgroundColor}) => {
             width={200}
         >
           <StockFilters
-            options={filters}
-            selections={selectedFilters}
-            onChange={f => dispatch(filter(f))}
+              options={filters}
+              selections={selectedFilters}
+              onChange={f => dispatch(filter(f))}
           />
         </Layout.Sider>
         <Layout.Content style={{paddingLeft: '24px', minHeight: 280}}>
-          <StockItems
-              items={selectedItems}
-          />
+          {stockStatus === 'loading' &&
+              <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <Spin size="large" tip="Loading" />
+              </div>
+          }
+          {stockStatus === 'succeeded' &&
+              <StockItems
+                  items={selectedItems}
+              />
+          }
         </Layout.Content>
       </Layout>
   )
