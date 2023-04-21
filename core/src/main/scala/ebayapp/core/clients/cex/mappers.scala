@@ -21,7 +21,7 @@ private[cex] object mappers {
           Some(item.categoryFriendlyName),
           None,
           None,
-          None,
+          item.imageUrl,
           s"USED${item.Grade.flatMap(_.headOption).map(g => s" / ${g}").getOrElse("")}",
           Instant.now,
           "CEX",

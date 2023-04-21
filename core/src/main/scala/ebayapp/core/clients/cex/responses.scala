@@ -1,6 +1,6 @@
 package ebayapp.core.clients.cex
 
-import io.circe.Codec
+import io.circe.{Codec, JsonObject}
 
 private[cex] object responses {
 
@@ -18,8 +18,16 @@ private[cex] object responses {
       cashPriceCalculated: BigDecimal,
       exchangePriceCalculated: BigDecimal,
       webBuyAllowed: Int,
-      Grade: Option[List[String]]
-  ) derives Codec.AsObject
+      Grade: Option[List[String]],
+      imageUrls: Option[JsonObject]
+  ) derives Codec.AsObject {
+    def imageUrl: Option[String] =
+      imageUrls
+        .flatMap(_("medium"))
+        .flatMap(_.asString)
+        .orElse(imageUrls.flatMap(_("large")).flatMap(_.asString))
+        .orElse(imageUrls.flatMap(_("small")).flatMap(_.asString))
+  }
 
   final case class GraphqlSearchResult(hits: List[CexGraphqlItem]) derives Codec.AsObject
 
