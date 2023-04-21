@@ -186,7 +186,7 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {category: "men", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "men", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "men", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
@@ -204,11 +204,11 @@ data:
         delay-between-requests: 1m
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "EA7"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
           exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "bikini", "shoulder bag", "\\bcap\\b", "\\bbra\\b"], 
