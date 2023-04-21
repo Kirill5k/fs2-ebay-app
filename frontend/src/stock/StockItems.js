@@ -1,44 +1,67 @@
 import {Card, List, Descriptions} from 'antd';
 import './StockItems.css'
 
+const StockItemBase = ({item, children}) => (
+    <List.Item className="stock-item">
+      <Card
+          onClick={() => window.open(item.listingDetails.url, "_blank")}
+          style={{width: '200px'}}
+          hoverable
+          cover={
+            <img
+                className="image"
+                alt={item.listingDetails.title}
+                src={item.listingDetails.image}
+            />
+          }
+      >
+        <Descriptions
+            title={item.itemDetails.name}
+            column={1}
+            size="small"
+            labelStyle={{fontSize: '10px'}}
+            contentStyle={{fontSize: '10px'}}
+        >
+          {children}
+          <Descriptions.Item label="Price">
+            £{item.price.buy}
+            {item.price.discount
+                ? <span className="discount">{`(-${item.price.discount}%)`}</span>
+                : ''
+            }
+          </Descriptions.Item>
+          <Descriptions.Item label="Quantity">
+            {item.price.quantityAvailable}
+          </Descriptions.Item>
+          <Descriptions.Item label="Retailer">
+            {item.listingDetails.seller}
+          </Descriptions.Item>
+          <Descriptions.Item label="Name">
+            {item.itemDetails.name}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
+    </List.Item>
+)
+
 const StockItem = ({item}) => {
   if (item.itemDetails.kind === 'clothing') {
     return (
-        <List.Item className="stock-item">
-          <Card
-              onClick={() => window.open(item.listingDetails.url, "_blank")}
-              style={{ width: '200px' }}
-              hoverable
-              cover={
-                <img
-                    className="image"
-                    alt={item.listingDetails.title}
-                    src={item.listingDetails.image}
-                />
-              }
-          >
-            <Descriptions
-                title={item.itemDetails.name}
-                column={1}
-                size="small"
-                labelStyle={{ fontSize: '10px' }}
-                contentStyle={{ fontSize: '10px' }}
-            >
-              <Descriptions.Item label="Brand">{item.itemDetails.brand}</Descriptions.Item>
-              <Descriptions.Item label="Size">{item.itemDetails.size}</Descriptions.Item>
-              <Descriptions.Item label="Price">
-                £{item.price.buy}
-                {item.price.discount ? <span className="discount">{`(-${item.price.discount}%)`}</span> : ''}
-              </Descriptions.Item>
-              <Descriptions.Item label="Quantity">{item.price.quantityAvailable}</Descriptions.Item>
-              <Descriptions.Item label="Retailer">{item.listingDetails.seller}</Descriptions.Item>
-            </Descriptions>
-          </Card>
-        </List.Item>
+        <StockItemBase item={item}>
+          <Descriptions.Item label="Brand">
+            {item.itemDetails.brand}
+          </Descriptions.Item>
+          <Descriptions.Item label="Size">
+            {item.itemDetails.size}
+          </Descriptions.Item>
+        </StockItemBase>
     )
   }
 
-  return null;
+  return (
+      <StockItemBase item={item}>
+      </StockItemBase>
+  )
 }
 
 const StockItems = ({items}) => {
@@ -64,7 +87,7 @@ const StockItems = ({items}) => {
           grid={grid}
           pagination={pagination}
           dataSource={items}
-          renderItem={(item) => <StockItem item={item}/> }
+          renderItem={(item) => <StockItem item={item}/>}
           locale={{emptyText: 'No Items in Stock'}}
       />
   )
