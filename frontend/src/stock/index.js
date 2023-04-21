@@ -1,9 +1,10 @@
-import {Layout, Spin} from "antd"
-import React, {useEffect} from "react"
+import {Layout, Spin, Alert, Space} from 'antd'
+import React, {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {getStock, filter} from './slice'
 import StockItems from './StockItems'
 import StockFilters from "./StockFilters"
+import Container from '../common/components/Container'
 
 const Stock = ({backgroundColor}) => {
   const dispatch = useDispatch()
@@ -11,6 +12,7 @@ const Stock = ({backgroundColor}) => {
   const selectedItems = useSelector(state => state.stock.selectedItems)
   const filters = useSelector(state => state.stock.filters)
   const selectedFilters = useSelector(state => state.stock.selectedFilters)
+  const errorMessage = useSelector(state => state.stock.error)
 
   useEffect(() => {
     if (stockStatus === 'idle') {
@@ -32,14 +34,24 @@ const Stock = ({backgroundColor}) => {
         </Layout.Sider>
         <Layout.Content style={{paddingLeft: '24px', minHeight: 280}}>
           {stockStatus === 'loading' &&
-              <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Container>
                 <Spin size="large" tip="Loading" />
-              </div>
+              </Container>
           }
           {stockStatus === 'succeeded' &&
               <StockItems
                   items={selectedItems}
               />
+          }
+          {stockStatus === 'failed' &&
+              <Container>
+                <Alert
+                    message="Failed to Fetch Current Stock"
+                    description={errorMessage}
+                    type="error"
+                    showIcon
+                />
+              </Container>
           }
         </Layout.Content>
       </Layout>

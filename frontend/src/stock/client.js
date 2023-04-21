@@ -1,4 +1,4 @@
-import { defaultRequestParams, reject } from "../common/http";
+import { defaultRequestParams, reject } from '../common/functions/http'
 
 const StockClient = {
   getAll: () => fetch('/api/stock', defaultRequestParams)

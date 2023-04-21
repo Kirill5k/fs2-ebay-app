@@ -1,5 +1,5 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {distinct} from "../common/collections";
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
+import {distinct} from '../common/functions/collections'
 import StockClient from './client'
 
 export const getStock = createAsyncThunk('stock/get', StockClient.getAll)
