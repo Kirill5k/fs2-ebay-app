@@ -1,10 +1,18 @@
-import React from "react"
+import React from 'react'
+import {DatePicker} from 'antd'
+import Container from '../common/components/Container'
 
 const Home = ({backgroundColor}) => {
   return (
-      <div style={{padding: '24px 24px', background: backgroundColor}}>
+      <Container
+          column
+          style={{
+            padding: '24px 24px',
+            background: backgroundColor,
+          }}>
+        <DatePicker.RangePicker showTime/>
         <p>Home page content</p>
-      </div>
+      </Container>
   )
 }
 

@@ -1,4 +1,4 @@
-import {Layout, Spin, Alert, Space} from 'antd'
+import {Layout, Spin, Alert} from 'antd'
 import React, {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {getStock, filter} from './slice'
