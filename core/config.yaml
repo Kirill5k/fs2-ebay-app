@@ -182,41 +182,6 @@ data:
         ]
       }
 
-      tessuti {
-        delay-between-requests: 30s
-        monitoring-frequency: 6m
-        monitoring-requests: [
-          //{search-criteria: {category: "men", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "men", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {category: "men", query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
-        ]
-        filters: {
-          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "bikini", "shoulder bag", "\\bcap\\b", "\\bBRA\\b"], 
-          min-discount: 29,
-          max-price: 80
-        }
-      }
-
-      scotts {
-        delay-between-requests: 1m
-        monitoring-frequency: 6m
-        monitoring-requests: [
-          //{search-criteria: {query: "Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "EA7"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "Kenzo"}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-        ]
-        filters: {
-          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "bikini", "shoulder bag", "\\bcap\\b", "\\bbra\\b"], 
-          min-discount: 49,
-          max-price: 80
-        }
-      }
-
       jdsports {
         delay-between-requests: 45s
         monitoring-frequency: 6m
@@ -250,14 +215,50 @@ data:
         delay-between-requests: 3m
         monitoring-frequency: 12m
         monitoring-requests: [
-          {search-criteria: {query: "stone-island", category: men}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "off-white", category: men, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "palm-angels", category: men, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "kenzo", category: men, filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "stone-island", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "off-white", category: mens, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "palm-angels", category: mens, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "kenzo", category: mens, filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
           exclude: ["size (((\\d)?x)?( )?l|x( )?s|\\b[1-8]\\b|1\\d|3[2-9]W|\\d+Y)", "\\bmask\\b", "socks|formal pants|olive"], 
           min-discount: 30, 
+          max-price: 250
+        }
+      }
+    
+      tessuti {
+        delay-between-requests: 30s
+        monitoring-frequency: 6m
+        monitoring-requests: [
+          {search-criteria: {category: "mens", query: "Emporio Armani", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "mens", query: "ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "mens", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "mens", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "mens", query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "mens", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
+        ]
+        filters: {
+          exclude: ["size (\\d+(l|s)|3[1-9](W|R)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"], 
+          min-discount: 29,
+          max-price: 80
+        }
+      }
+
+      scotts {
+        delay-between-requests: 1m
+        monitoring-frequency: 6m
+        monitoring-requests: [
+          {search-criteria: {query: "Emporio Armani", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "EA7", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Kenzo", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Boss", category: mens, filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Hugo", category: mens, filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "diesel", category: mens, filters: {min-discount: 60, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
+        ]
+        filters: {
+          exclude: ["size (\\d+(l|s)|3[1-9](R|W)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"], 
+          min-discount: 49,
           max-price: 250
         }
       }
