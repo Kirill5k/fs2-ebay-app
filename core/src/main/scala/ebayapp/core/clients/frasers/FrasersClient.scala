@@ -36,6 +36,11 @@ final private class LiveFrasersClient[F[_]](
     case Retailer.Tessuti  => "TESS_BRA"
     case Retailer.Scotts   => "SCOT_BRA"
 
+  private val categoryFiltersKey: String = retailer match
+    case Retailer.Flannels => "AFLOR"
+    case Retailer.Tessuti  => "390_4098650"
+    case Retailer.Scotts   => "390_4098464"
+
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
       .eval(configProvider())
@@ -61,8 +66,8 @@ final private class LiveFrasersClient[F[_]](
           "sortOption"       -> "discountvalue_desc",
           "isSearch"         -> "false",
           "clearFilters"     -> "false",
-          "pathName"         -> s"/${sc.query.replaceAll(" ", "-")}${sc.category.fold("")(c => s"/$c")}",
-          "selectedCurrency" -> "GBP"
+          "selectedCurrency" -> "GBP",
+          "selectedFilters"  -> sc.category.map(_.toLowerCase.capitalize).fold("")(c => s"$categoryFiltersKey^$c")
         )
         dispatchWithProxy(config.proxied) {
           emptyRequest

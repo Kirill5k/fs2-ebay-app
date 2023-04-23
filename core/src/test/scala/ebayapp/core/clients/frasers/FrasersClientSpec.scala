@@ -15,10 +15,14 @@ class FrasersClientSpec extends SttpClientSpec {
     val flannelsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
     val config = MockConfigProvider.make[IO](flannelsConfig = Some(flannelsConfig))
 
-    val sc = SearchCriteria("stone island", Some("men"))
+    val sc = SearchCriteria("stone island", Some("Mens"))
 
     "return stream of items based on provided search criteria" in {
-      val args = Map("categoryId" -> "FLAN_TMSTONEISLAND", "pathName" -> "/stone-island/men", "sortOption" -> "discountvalue_desc")
+      val args = Map(
+        "categoryId" -> "FLAN_TMSTONEISLAND",
+        "sortOption" -> "discountvalue_desc",
+        "selectedFilters" -> "AFLOR^Mens"
+      )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
@@ -46,10 +50,14 @@ class FrasersClientSpec extends SttpClientSpec {
     val tessutiConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
     val config = MockConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
 
-    val sc = SearchCriteria("emporio armani", Some("men"))
+    val sc = SearchCriteria("emporio armani", Some("MENS"))
 
     "return stream of items based on provided search criteria" in {
-      val args = Map("categoryId" -> "TESS_BRAEMPORIOARMANI", "pathName" -> "/emporio-armani/men", "sortOption" -> "discountvalue_desc")
+      val args = Map(
+        "categoryId" -> "TESS_BRAEMPORIOARMANI",
+        "selectedFilters" -> "390_4098650^Mens",
+        "sortOption" -> "discountvalue_desc"
+      )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
@@ -69,10 +77,14 @@ class FrasersClientSpec extends SttpClientSpec {
     val scottsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
     val config = MockConfigProvider.make[IO](scottsConfig = Some(scottsConfig))
 
-    val sc = SearchCriteria("hugo", Some("men"))
+    val sc = SearchCriteria("hugo", Some("mens"))
 
     "return stream of items based on provided search criteria" in {
-      val args = Map("categoryId" -> "SCOT_BRAHUGO", "pathName" -> "/hugo/men", "sortOption" -> "discountvalue_desc")
+      val args = Map(
+        "categoryId" -> "SCOT_BRAHUGO",
+        "selectedFilters" -> "390_4098464^Mens",
+        "sortOption" -> "discountvalue_desc"
+      )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
