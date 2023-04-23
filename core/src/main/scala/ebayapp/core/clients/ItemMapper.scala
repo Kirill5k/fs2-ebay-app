@@ -15,6 +15,10 @@ private[clients] trait ItemMapper[I] {
       .replaceFirst("(?i)(?<=^([X]+|\\dX)) ", "")
       .replaceFirst("(?<=^UK\\d+)( )?\\(.*\\)", "")
       .replaceFirst("\\d+ (?=[()SMLX]+)", "")
+      .replaceFirst("(?i)^XX(?=(S|L))", "2X")
+      .replaceFirst("(?i)^XXX(?=(S|L))", "3X")
+      .replaceFirst("(?i)^XXXX(?=(S|L))", "4X")
+      .replaceFirst("(?i)(?<=\\d+)W (?=[a-zA-Z])", "")
       .trimmed
       .toUpperCase
 
