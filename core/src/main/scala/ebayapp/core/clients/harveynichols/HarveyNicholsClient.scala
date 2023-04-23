@@ -84,7 +84,7 @@ final private class LiveHarveyNicholsClient[F[_]](
         dispatchWithProxy(config.proxied) {
           emptyRequest
             .get(fullUri(config.baseUri))
-            .headers(config.headers)
+            .headers(defaultHeaders ++ config.headers)
             .response(asJson[A])
         }
       }
