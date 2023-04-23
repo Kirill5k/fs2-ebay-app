@@ -18,7 +18,7 @@ const Home = ({backgroundColor}) => {
           }}>
         <DatePicker.RangePicker
             defaultValue={[startOfDay, endOfDay]}
-            onChange={(v) => console.log(v)}
+            onChange={(v) => console.log(v.map(d => d.format()))}
             showTime
         />
         <p>Home page content</p>

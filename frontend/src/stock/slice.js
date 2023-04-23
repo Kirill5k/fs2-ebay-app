@@ -82,9 +82,9 @@ const stockSlice = createSlice({
           state.items = action.payload
           state.selectedItems = action.payload
           state.filters.kinds = distinct(action.payload.map(i => i.itemDetails.kind))
-          state.filters.brands = distinct(action.payload.map(i => i.itemDetails.brand))
+          state.filters.brands = distinct(action.payload.map(i => i.itemDetails.brand)).sort()
           state.filters.sizes = sortSizes(distinct(action.payload.map(i => i.itemDetails.size)))
-          state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller))
+          state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller)).sort()
         })
         .addCase(getStock.rejected, (state, action) => {
           state.status = 'failed'
