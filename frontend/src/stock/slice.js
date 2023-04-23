@@ -4,6 +4,27 @@ import StockClient from './client'
 
 export const getStock = createAsyncThunk('stock/get', StockClient.getAll)
 
+const commonSizes = {
+  'ONE SIZE': -100,
+  '4XS': -95,
+  '3XS': -90,
+  '2XS': -85,
+  'XS': -80,
+  'S': -75,
+  'M': -70,
+  'L': -65,
+  'XL': -60,
+  '2XL': -55,
+  '3XL': -50,
+  '4XL': -45,
+}
+
+const sortSizes = (sizes) => {
+  const common = sizes.filter(s => commonSizes[`${s}`]).sort((s1, s2) => commonSizes[`${s1}`] - commonSizes[`${s2}`])
+  const rest = sizes.filter(s => !commonSizes[`${s}`]).sort()
+  return [...common, ...rest]
+}
+
 const initialFilters = {
   kinds: [],
   retailers: [],
@@ -62,7 +83,7 @@ const stockSlice = createSlice({
           state.selectedItems = action.payload
           state.filters.kinds = distinct(action.payload.map(i => i.itemDetails.kind))
           state.filters.brands = distinct(action.payload.map(i => i.itemDetails.brand))
-          state.filters.sizes = distinct(action.payload.map(i => i.itemDetails.size))
+          state.filters.sizes = sortSizes(distinct(action.payload.map(i => i.itemDetails.size)))
           state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller))
         })
         .addCase(getStock.rejected, (state, action) => {
