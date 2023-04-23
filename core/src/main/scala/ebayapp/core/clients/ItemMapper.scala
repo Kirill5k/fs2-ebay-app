@@ -7,11 +7,11 @@ private[clients] trait ItemMapper[I] {
 
   def formatSize(size: String): String =
     size
+      .replaceFirst("(?i)^(1 )?size$","ONE SIZE")
       .replaceFirst("( )?\\([.0-9]+\\)", "")
       .replaceFirst("(?i)medium", "M")
       .replaceFirst("(?i)small", "S")
       .replaceFirst("(?i)large", "L")
-      .replaceFirst("(?i)^size$","ONE SIZE")
       .replaceFirst("(?i)(?<=^([X]+|\\dX)) ", "")
       .replaceFirst("(?<=^UK\\d+)( )?\\(.*\\)", "")
       .replaceFirst("\\d+ (?=[()SMLX]+)", "")
