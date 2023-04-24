@@ -217,7 +217,7 @@ data:
           {search-criteria: {query: "kenzo", category: mens, filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
-          exclude: ["size (((\\d)?x)?( )?l|x( )?s|\\b[1-8]\\b|1\\d|3[2-9]W|\\d+Y)", "\\bmask\\b", "socks|formal pants|olive"], 
+          exclude: ["size (\\dX(S|L)|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants|olive"], 
           min-discount: 30, 
           max-price: 250
         }
