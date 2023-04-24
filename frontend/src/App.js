@@ -2,6 +2,7 @@ import {Routes, Route, Link, useLocation} from "react-router-dom";
 import {Layout, Menu, theme} from 'antd';
 import Home from './home';
 import Stock from './stock';
+import Deals from './deals';
 import './App.css';
 
 const App = () => {
@@ -23,6 +24,9 @@ const App = () => {
             <Menu.Item key="/stock" title="Stock">
               <Link to="/stock">Stock</Link>
             </Menu.Item>
+            <Menu.Item key="/deals" title="Deals">
+              <Link to="/deals">Deals</Link>
+            </Menu.Item>
           </Menu>
         </Layout.Header>
         <Layout.Content className="content">
@@ -36,6 +40,11 @@ const App = () => {
                 exact
                 path="/stock"
                 element={<Stock backgroundColor={colorBgContainer}/>}
+            />
+            <Route
+                exact
+                path="/deals"
+                element={<Deals backgroundColor={colorBgContainer}/>}
             />
           </Routes>
         </Layout.Content>
