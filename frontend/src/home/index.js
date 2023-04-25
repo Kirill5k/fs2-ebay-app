@@ -25,7 +25,7 @@ const Home = ({backgroundColor}) => {
               <Descriptions.Item label="Without exchange price">
                 {dealsItems.unrecognized.total}
               </Descriptions.Item>
-              <Descriptions.Item label="With sell price smaller than exchange">
+              <Descriptions.Item label="With buy price smaller than exchange">
                 {dealsItems.profitable.total}
               </Descriptions.Item>
             </Descriptions>
