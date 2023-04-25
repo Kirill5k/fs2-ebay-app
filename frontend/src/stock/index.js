@@ -1,7 +1,6 @@
 import {Layout, Spin, Alert} from 'antd'
-import React, {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {getStock, filter} from './slice'
+import {filter} from './slice'
 import StockItems from './StockItems'
 import StockFilters from "./StockFilters"
 import Container from '../common/components/Container'
@@ -13,12 +12,6 @@ const Stock = ({backgroundColor}) => {
   const filters = useSelector(state => state.stock.filters)
   const selectedFilters = useSelector(state => state.stock.selectedFilters)
   const errorMessage = useSelector(state => state.stock.error)
-
-  useEffect(() => {
-    if (stockStatus === 'idle') {
-      dispatch(getStock())
-    }
-  }, [stockStatus, dispatch])
 
   return (
       <Layout style={{padding: '24px 0', background: backgroundColor}}>
