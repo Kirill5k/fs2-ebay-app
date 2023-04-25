@@ -1,9 +1,13 @@
 import React from 'react'
-import {DatePicker} from 'antd'
+import {useSelector} from 'react-redux'
+import {DatePicker, Descriptions, List, Card} from 'antd'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import Container from '../common/components/Container'
 import {endOfToday, startOfToday} from '../common/functions/dates'
 
 const Deals = ({backgroundColor}) => {
+
+  const items = useSelector(state => state.deals.items)
 
   return (
       <Container
@@ -17,7 +21,36 @@ const Deals = ({backgroundColor}) => {
             onChange={(v) => console.log(v.map(d => d.toDate().toISOString()))}
             showTime
         />
-        <p>Deals page content</p>
+        <InfiniteScroll
+            dataLength={items.unrecognized.total}
+            hasMore={false}
+            loader={<h4>Loading...</h4>}
+            endMessage={<span></span>}
+            height={300}
+        >
+          <List
+              dataSource={items.unrecognized.items}
+              renderItem={(item) => (
+                  <Card key={item.url} size="small">
+                    <Descriptions
+                        size="small"
+                        column={1}
+                    >
+                      <Descriptions.Item label="Name">
+                        {item.name}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Listing Title">
+                        {item.title}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Price">
+                        {item.buyPrice} (Buy) {item.exchangePrice ? `/ ${item.exchangePrice} (Sell)` : ''}
+                      </Descriptions.Item>
+                    </Descriptions>
+                  </Card>
+              )}
+          />
+
+        </InfiniteScroll>
       </Container>
   )
 }

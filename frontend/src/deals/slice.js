@@ -7,6 +7,16 @@ export const getTodayDeals =
 const initialState = {
   status: 'idle',
   error: null,
+  todayItems: {
+    unrecognized: {total: 0, items: []},
+    profitable: {total: 0, items: []},
+    rest: {total: 0, items: []}
+  },
+  items: {
+    unrecognized: {total: 0, items: []},
+    profitable: {total: 0, items: []},
+    rest: {total: 0, items: []}
+  }
 }
 
 const dealsSlice = createSlice({
