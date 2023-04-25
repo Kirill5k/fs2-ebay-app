@@ -1,4 +1,4 @@
-import {Card, List, Descriptions} from 'antd';
+import {Card, List, Descriptions} from 'antd'
 import './StockItems.css'
 
 const StockItemBase = ({item, children}) => (

@@ -1,7 +1,8 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import DealsClient from './client'
 
-export const getTodayDeals = createAsyncThunk('deals/today', DealsClient.getSummariesForToday)
+export const getTodayDeals =
+    createAsyncThunk('deals/today', DealsClient.getSummariesForToday)
 
 const initialState = {
   status: 'idle',
@@ -23,6 +24,7 @@ const dealsSlice = createSlice({
           state.todayItems = action.payload
         })
         .addCase(getTodayDeals.rejected, (state, action) => {
+          console.log(action.error)
           state.status = 'failed'
           state.error = action.error.message
         })

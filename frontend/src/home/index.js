@@ -17,17 +17,27 @@ const Home = ({backgroundColor}) => {
             padding: '24px 24px',
             background: backgroundColor
           }}>
-        { dealsStatus === 'succeeded' && (
+        {dealsStatus === 'succeeded' && (
             <Descriptions title="Deals">
-              <Descriptions.Item label="Total for today">{dealsItems.total}</Descriptions.Item>
-              <Descriptions.Item label="Without exchange price">{dealsItems.unrecognized.total}</Descriptions.Item>
-              <Descriptions.Item label="With sell price smaller than exchange">{dealsItems.profitable.total}</Descriptions.Item>
+              <Descriptions.Item label="Total for today">
+                {dealsItems.total}
+              </Descriptions.Item>
+              <Descriptions.Item label="Without exchange price">
+                {dealsItems.unrecognized.total}
+              </Descriptions.Item>
+              <Descriptions.Item label="With sell price smaller than exchange">
+                {dealsItems.profitable.total}
+              </Descriptions.Item>
             </Descriptions>
         )}
-        { stockStatus === 'succeeded' && (
+        {stockStatus === 'succeeded' && (
             <Descriptions title="Stock">
-              <Descriptions.Item label="Total">{stockItems.length}</Descriptions.Item>
-              <Descriptions.Item label="Tracked retailers">{stockRetailers.join(', ')}</Descriptions.Item>
+              <Descriptions.Item label="Total">
+                {stockItems.length}
+              </Descriptions.Item>
+              <Descriptions.Item label="Tracked retailers">
+                {stockRetailers.join(', ')}
+              </Descriptions.Item>
             </Descriptions>
         )}
       </Container>

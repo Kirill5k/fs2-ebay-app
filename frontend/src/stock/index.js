@@ -28,7 +28,7 @@ const Stock = ({backgroundColor}) => {
         <Layout.Content style={{paddingLeft: '24px', minHeight: 280}}>
           {stockStatus === 'loading' &&
               <Container>
-                <Spin size="large" tip="Loading" />
+                <Spin size="large" tip="Loading"/>
               </Container>
           }
           {stockStatus === 'succeeded' &&

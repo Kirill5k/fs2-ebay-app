@@ -7,7 +7,7 @@ import Stock from './stock'
 import {getStock} from './stock/slice'
 import Deals from './deals'
 import {getTodayDeals} from './deals/slice'
-import './App.css';
+import './App.css'
 
 const App = () => {
   const dispatch = useDispatch()
