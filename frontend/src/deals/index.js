@@ -1,13 +1,9 @@
 import React from 'react'
-import dayjs from 'dayjs'
 import {DatePicker} from 'antd'
 import Container from '../common/components/Container'
+import {endOfToday, startOfToday} from '../common/functions/dates'
 
 const Deals = ({backgroundColor}) => {
-
-  const now = dayjs()
-  const startOfDay = now.startOf('day')
-  const endOfDay = now.endOf('day')
 
   return (
       <Container
@@ -17,8 +13,8 @@ const Deals = ({backgroundColor}) => {
             background: backgroundColor
           }}>
         <DatePicker.RangePicker
-            defaultValue={[startOfDay, endOfDay]}
-            onChange={(v) => console.log(v.map(d => d.format()))}
+            defaultValue={[startOfToday(), endOfToday()]}
+            onChange={(v) => console.log(v.map(d => d.toDate().toISOString()))}
             showTime
         />
         <p>Deals page content</p>

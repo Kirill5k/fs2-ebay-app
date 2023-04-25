@@ -6,6 +6,7 @@ import Home from './home'
 import Stock from './stock'
 import {getStock} from './stock/slice'
 import Deals from './deals'
+import {getTodayDeals} from './deals/slice'
 import './App.css';
 
 const App = () => {
@@ -14,10 +15,17 @@ const App = () => {
   const {token: {colorBgContainer}} = theme.useToken()
 
   const stockStatus = useSelector(state => state.stock.status)
+  const dealsStatus = useSelector(state => state.deals.status)
 
   useEffect(() => {
     if (stockStatus === 'idle') {
       dispatch(getStock())
+    }
+  }, [stockStatus, dispatch])
+
+  useEffect(() => {
+    if (dealsStatus === 'idle') {
+      dispatch(getTodayDeals())
     }
   }, [stockStatus, dispatch])
 
