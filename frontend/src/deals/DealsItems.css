@@ -1,0 +1,7 @@
+.deals-item {
+  margin-bottom: 10px;
+}
+
+.deals-item .ant-descriptions-item {
+  padding-bottom: 0 !important;
+}

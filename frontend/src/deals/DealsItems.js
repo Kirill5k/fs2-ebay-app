@@ -1,5 +1,6 @@
 import InfiniteScroll from 'react-infinite-scroll-component'
 import {Card, Descriptions, List} from 'antd'
+import './DealsItems.css'
 
 const DealsItems = ({items}) => (
     <InfiniteScroll
@@ -12,7 +13,7 @@ const DealsItems = ({items}) => (
       <List
           dataSource={items.items}
           renderItem={(item) => (
-              <Card key={item.url} size="small">
+              <Card key={item.url} size="small" className="deals-item">
                 <Descriptions
                     size="small"
                     column={1}

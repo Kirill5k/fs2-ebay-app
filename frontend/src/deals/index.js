@@ -1,6 +1,6 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-import {DatePicker} from 'antd'
+import {DatePicker, Collapse} from 'antd'
 import Container from '../common/components/Container'
 import {endOfToday, startOfToday} from '../common/functions/dates'
 import DealsItems from './DealsItems'
@@ -22,7 +22,17 @@ const Deals = ({backgroundColor}) => {
             onChange={(v) => console.log(v.map(d => d.toDate().toISOString()))}
             showTime
         />
-        <DealsItems items={items.unrecognized}/>
+        <Collapse defaultActiveKey={['1']} style={{width: '600px'}}>
+          <Collapse.Panel header="Without sell price" key="1">
+            <DealsItems items={items.unrecognized}/>
+          </Collapse.Panel>
+          <Collapse.Panel header="Profitable to resell" key="2">
+            <DealsItems items={items.profitable}/>
+          </Collapse.Panel>
+          <Collapse.Panel header="Rest" key="3">
+            <DealsItems items={items.rest}/>
+          </Collapse.Panel>
+        </Collapse>
       </Container>
   )
 }
