@@ -22,6 +22,9 @@ const StockItemBase = ({item, children}) => (
             labelStyle={{fontSize: '10px'}}
             contentStyle={{fontSize: '10px'}}
         >
+          <Descriptions.Item label="Name">
+            {item.itemDetails.name}
+          </Descriptions.Item>
           {children}
           <Descriptions.Item label="Price">
             £{item.price.buy}
@@ -35,9 +38,6 @@ const StockItemBase = ({item, children}) => (
           </Descriptions.Item>
           <Descriptions.Item label="Retailer">
             {item.listingDetails.seller}
-          </Descriptions.Item>
-          <Descriptions.Item label="Name">
-            {item.itemDetails.name}
           </Descriptions.Item>
         </Descriptions>
       </Card>

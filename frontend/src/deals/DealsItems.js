@@ -1,16 +1,8 @@
-import InfiniteScroll from 'react-infinite-scroll-component'
 import {Card, Collapse, Descriptions, List, Tag} from 'antd'
 import './DealsItems.css'
-import React from "react";
 
 const DealsItemList = ({items}) => (
-    <InfiniteScroll
-        dataLength={items.total}
-        hasMore={false}
-        loader={<h4>Loading...</h4>}
-        endMessage={<span></span>}
-        height={300}
-    >
+    <div style={{maxHeight: 300, overflow: 'auto'}}>
       <List
           dataSource={items.items}
           renderItem={(item) => (
@@ -32,13 +24,14 @@ const DealsItemList = ({items}) => (
                     {item.title}
                   </Descriptions.Item>
                   <Descriptions.Item label="Price">
-                    £{item.buyPrice} (Buy) {item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}
+                    £{item.buyPrice} (Buy) {item.exchangePrice
+                      ? `/ £${item.exchangePrice} (Sell)` : ''}
                   </Descriptions.Item>
                 </Descriptions>
               </Card>
           )}
       />
-    </InfiniteScroll>
+    </div>
 )
 
 const DealsItems = ({items}) => (
