@@ -22,14 +22,19 @@ const Deals = ({backgroundColor}) => {
             onChange={(v) => console.log(v.map(d => d.toDate().toISOString()))}
             showTime
         />
-        <Collapse defaultActiveKey={['1']} style={{width: '600px'}}>
-          <Collapse.Panel header="Without sell price" key="1">
+        <Collapse
+            defaultActiveKey={['1']}
+            style={{width: '600px'}}
+            size="small"
+            accordion
+        >
+          <Collapse.Panel header={`Without sell price (${items.unrecognized.total})`} key="1">
             <DealsItems items={items.unrecognized}/>
           </Collapse.Panel>
-          <Collapse.Panel header="Profitable to resell" key="2">
+          <Collapse.Panel header={`Profitable to resell (${items.profitable.total})`} key="2">
             <DealsItems items={items.profitable}/>
           </Collapse.Panel>
-          <Collapse.Panel header="Rest" key="3">
+          <Collapse.Panel header={`Remaining (${items.rest.total})`} key="3">
             <DealsItems items={items.rest}/>
           </Collapse.Panel>
         </Collapse>

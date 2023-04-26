@@ -25,7 +25,7 @@ const DealsItems = ({items}) => (
                     {item.title}
                   </Descriptions.Item>
                   <Descriptions.Item label="Price">
-                    {item.buyPrice} (Buy) {item.exchangePrice ? `/ ${item.exchangePrice} (Sell)` : ''}
+                    £{item.buyPrice} (Buy) {item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}
                   </Descriptions.Item>
                 </Descriptions>
               </Card>
