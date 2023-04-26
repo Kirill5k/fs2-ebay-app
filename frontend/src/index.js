@@ -12,15 +12,23 @@ const root = ReactDOM.createRoot(document.getElementById('root'))
 
 root.render(
     <React.StrictMode>
-      <Provider store={store}>
-        <Router>
-          <ConfigProvider theme={theme.compactAlgorithm}>
-            <AntdApp>
+      <ConfigProvider
+          componentSize="small"
+          theme={{
+            algorithm: [theme.compactAlgorithm],
+            token: {
+              fontSize: 14
+            }
+          }}
+      >
+        <AntdApp>
+          <Provider store={store}>
+            <Router>
               <App/>
-            </AntdApp>
-          </ConfigProvider>
-        </Router>
-      </Provider>
+            </Router>
+          </Provider>
+        </AntdApp>
+      </ConfigProvider>
     </React.StrictMode>
 )
 
