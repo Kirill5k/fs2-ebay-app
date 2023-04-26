@@ -1,6 +1,6 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-import {DatePicker, Collapse} from 'antd'
+import {DatePicker, Collapse, Tag} from 'antd'
 import Container from '../common/components/Container'
 import {endOfToday, startOfToday} from '../common/functions/dates'
 import DealsItems from './DealsItems'
@@ -23,18 +23,32 @@ const Deals = ({backgroundColor}) => {
             showTime
         />
         <Collapse
+            className="test"
             defaultActiveKey={['1']}
-            style={{width: '600px'}}
             size="small"
             accordion
+            ghost
+            style={{width: '660px'}}
         >
-          <Collapse.Panel header={`Without sell price (${items.unrecognized.total})`} key="1">
+          <Collapse.Panel
+              header="Without sell price"
+              extra={<Tag>{items.unrecognized.total}</Tag>}
+              key="1"
+          >
             <DealsItems items={items.unrecognized}/>
           </Collapse.Panel>
-          <Collapse.Panel header={`Profitable to resell (${items.profitable.total})`} key="2">
+          <Collapse.Panel
+              header="Profitable to resell"
+              extra={<Tag>{items.profitable.total}</Tag>}
+              key="2"
+          >
             <DealsItems items={items.profitable}/>
           </Collapse.Panel>
-          <Collapse.Panel header={`Remaining (${items.rest.total})`} key="3">
+          <Collapse.Panel
+              header="Remaining"
+              extra={<Tag>{items.rest.total}</Tag>}
+              key="3"
+          >
             <DealsItems items={items.rest}/>
           </Collapse.Panel>
         </Collapse>
