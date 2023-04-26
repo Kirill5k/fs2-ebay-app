@@ -1,8 +1,9 @@
 import InfiniteScroll from 'react-infinite-scroll-component'
-import {Card, Descriptions, List} from 'antd'
+import {Card, Collapse, Descriptions, List, Tag} from 'antd'
 import './DealsItems.css'
+import React from "react";
 
-const DealsItems = ({items}) => (
+const DealsItemList = ({items}) => (
     <InfiniteScroll
         dataLength={items.total}
         hasMore={false}
@@ -13,7 +14,13 @@ const DealsItems = ({items}) => (
       <List
           dataSource={items.items}
           renderItem={(item) => (
-              <Card key={item.url} size="small" className="deals-item">
+              <Card
+                  key={item.url}
+                  size="small"
+                  className="deals-item"
+                  hoverable
+                  onClick={() => window.open(item.url, "_blank")}
+              >
                 <Descriptions
                     size="small"
                     column={1}
@@ -32,6 +39,39 @@ const DealsItems = ({items}) => (
           )}
       />
     </InfiniteScroll>
+)
+
+const DealsItems = ({items}) => (
+    <Collapse
+        className="test"
+        defaultActiveKey={['1']}
+        size="small"
+        accordion
+        ghost
+        style={{width: '660px'}}
+    >
+      <Collapse.Panel
+          header="Without sell price"
+          extra={<Tag>{items.unrecognized.total}</Tag>}
+          key="1"
+      >
+        <DealsItemList items={items.unrecognized}/>
+      </Collapse.Panel>
+      <Collapse.Panel
+          header="Profitable to resell"
+          extra={<Tag>{items.profitable.total}</Tag>}
+          key="2"
+      >
+        <DealsItemList items={items.profitable}/>
+      </Collapse.Panel>
+      <Collapse.Panel
+          header="Remaining"
+          extra={<Tag>{items.rest.total}</Tag>}
+          key="3"
+      >
+        <DealsItemList items={items.rest}/>
+      </Collapse.Panel>
+    </Collapse>
 )
 
 export default DealsItems

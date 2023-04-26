@@ -1,13 +1,13 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-import {DatePicker, Collapse, Tag} from 'antd'
+import {DatePicker, Spin} from 'antd'
 import Container from '../common/components/Container'
 import {endOfToday, startOfToday} from '../common/functions/dates'
 import DealsItems from './DealsItems'
 
-
 const Deals = ({backgroundColor}) => {
 
+  const dealsStatus = useSelector(state => state.deals.status)
   const items = useSelector(state => state.deals.items)
 
   return (
@@ -22,36 +22,14 @@ const Deals = ({backgroundColor}) => {
             onChange={(v) => console.log(v.map(d => d.toDate().toISOString()))}
             showTime
         />
-        <Collapse
-            className="test"
-            defaultActiveKey={['1']}
-            size="small"
-            accordion
-            ghost
-            style={{width: '660px'}}
-        >
-          <Collapse.Panel
-              header="Without sell price"
-              extra={<Tag>{items.unrecognized.total}</Tag>}
-              key="1"
-          >
-            <DealsItems items={items.unrecognized}/>
-          </Collapse.Panel>
-          <Collapse.Panel
-              header="Profitable to resell"
-              extra={<Tag>{items.profitable.total}</Tag>}
-              key="2"
-          >
-            <DealsItems items={items.profitable}/>
-          </Collapse.Panel>
-          <Collapse.Panel
-              header="Remaining"
-              extra={<Tag>{items.rest.total}</Tag>}
-              key="3"
-          >
-            <DealsItems items={items.rest}/>
-          </Collapse.Panel>
-        </Collapse>
+        {dealsStatus === 'loading' &&
+            <Container>
+              <Spin size="large" tip="Loading" style={{padding: '40px'}}/>
+            </Container>
+        }
+        {dealsStatus === 'succeeded' &&
+            <DealsItems items={items}/>
+        }
       </Container>
   )
 }
