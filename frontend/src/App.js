@@ -27,7 +27,7 @@ const App = () => {
     if (dealsStatus === 'idle') {
       dispatch(getTodayDeals())
     }
-  }, [stockStatus, dispatch])
+  }, [dealsStatus, dispatch])
 
   return (
       <Layout>
