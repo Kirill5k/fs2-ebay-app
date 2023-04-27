@@ -40,6 +40,18 @@ const dealsSlice = createSlice({
           state.status = 'failed'
           state.error = action.error.message
         })
+        .addCase(getDealsByDate.pending, (state) => {
+          state.error = null
+          state.status = 'loading'
+        })
+        .addCase(getDealsByDate.fulfilled, (state, action) => {
+          state.status = 'succeeded'
+          state.items = action.payload
+        })
+        .addCase(getDealsByDate.rejected, (state, action) => {
+          state.status = 'failed'
+          state.error = action.error.message
+        })
   }
 })
 

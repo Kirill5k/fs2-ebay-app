@@ -17,7 +17,11 @@ const Deals = ({backgroundColor}) => {
   const items = useSelector(state => state.deals.items)
 
   useEffect(() => {
-    console.log(dateFrom.toDate().toISOString(), dateTo.toDate().toISOString())
+    const dateRange = {
+      from: dateFrom.toDate().toISOString(),
+      to: dateTo.toDate().toISOString()
+    }
+    dispatch(getDealsByDate(dateRange))
   }, [dateFrom, dispatch])
 
   return (
