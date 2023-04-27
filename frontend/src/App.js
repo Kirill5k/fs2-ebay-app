@@ -68,8 +68,10 @@ const App = () => {
             />
           </Routes>
         </Layout.Content>
-        <Layout.Footer className="footer">
-          Ant Design ©2023 Created by Ant UED
+        <Layout.Footer
+            className="footer"
+        >
+          eBay app
         </Layout.Footer>
       </Layout>
   )
