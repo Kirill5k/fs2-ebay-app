@@ -1,14 +1,24 @@
 import React from 'react'
-import {useSelector} from 'react-redux'
+import {useEffect, useState} from 'react'
+import {useSelector, useDispatch} from 'react-redux'
 import {DatePicker, Spin} from 'antd'
+import {getDealsByDate} from './slice'
 import Container from '../common/components/Container'
 import {endOfToday, startOfToday} from '../common/functions/dates'
 import DealsItems from './DealsItems'
 
 const Deals = ({backgroundColor}) => {
+  const dispatch = useDispatch()
+
+  const [dateFrom, setDateFrom] = useState(startOfToday());
+  const [dateTo, setDateTo] = useState(endOfToday());
 
   const dealsStatus = useSelector(state => state.deals.status)
   const items = useSelector(state => state.deals.items)
+
+  useEffect(() => {
+    console.log(dateFrom.toDate().toISOString(), dateTo.toDate().toISOString())
+  }, [dateFrom, dispatch])
 
   return (
       <Container
@@ -18,8 +28,11 @@ const Deals = ({backgroundColor}) => {
             background: backgroundColor
           }}>
         <DatePicker.RangePicker
-            defaultValue={[startOfToday(), endOfToday()]}
-            onChange={(v) => console.log(v.map(d => d.toDate().toISOString()))}
+            value={[dateFrom, dateTo]}
+            onChange={([df, dt]) => {
+              setDateFrom(df)
+              setDateTo(dt)
+            }}
             showTime
         />
         {dealsStatus === 'loading' &&

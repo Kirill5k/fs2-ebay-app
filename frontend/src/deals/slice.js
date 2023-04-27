@@ -4,6 +4,9 @@ import DealsClient from './client'
 export const getTodayDeals =
     createAsyncThunk('deals/today', DealsClient.getSummariesForToday)
 
+export const getDealsByDate =
+    createAsyncThunk('deals/by-date', DealsClient.getSummaries)
+
 const initialState = {
   status: 'idle',
   error: null,
@@ -24,7 +27,7 @@ const dealsSlice = createSlice({
   initialState,
   extraReducers: builder => {
     builder
-        .addCase(getTodayDeals.pending, (state, action) => {
+        .addCase(getTodayDeals.pending, (state) => {
           state.error = null
           state.status = 'loading'
         })
@@ -34,7 +37,6 @@ const dealsSlice = createSlice({
           state.todayItems = action.payload
         })
         .addCase(getTodayDeals.rejected, (state, action) => {
-          console.log(action.error)
           state.status = 'failed'
           state.error = action.error.message
         })
