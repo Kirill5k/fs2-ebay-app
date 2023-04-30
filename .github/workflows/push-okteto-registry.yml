@@ -29,3 +29,11 @@ jobs:
           java-version: amazon-corretto@1.17
       - name: Build and push Docker images
         run: sbt docker:publish
+
+      - name: Build and push Frontend Docker image
+        env:
+          DOCKER_REPO_URL: ${DOCKER_REPO_URI}/${DOCKER_USERNAME}/fs2-ebay-app-frontend
+        run: |-
+          echo $DOCKER_REPO_URL
+          docker build -t ${DOCKER_REPO_URI}/${DOCKER_USERNAME}/fs2-ebay-app-frontend:latest -t ${DOCKER_REPO_URI}/${DOCKER_USERNAME}/fs2-ebay-app-frontend:${GITHUB_SHA::8} frontend/
+          docker push -a ${DOCKER_REPO_URI}/${DOCKER_USERNAME}/fs2-ebay-app-frontend
