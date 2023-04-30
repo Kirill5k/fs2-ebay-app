@@ -1,11 +1,11 @@
-FROM node:16.0.0 as build-stage
+FROM node:16.19.1-alpine as build-stage
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install
+COPY package.json package-lock.json ./
+RUN npm install
 COPY ./ .
-RUN yarn run build
+RUN npm run build
 
 FROM nginx as production-stage
 RUN mkdir /app
-COPY --from=build-stage /app/dist /app
+COPY --from=build-stage /app/build /app
 COPY nginx.conf /etc/nginx/nginx.conf
