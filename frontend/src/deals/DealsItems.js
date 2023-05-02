@@ -4,8 +4,8 @@ import './DealsItems.css'
 const DealsItemList = ({items}) => (
     <div style={{maxHeight: 300, overflow: 'auto'}}>
       <List
-          dataSource={items.items}
-          renderItem={(item) => (
+          dataSource={Array.from(items.items.entries())}
+          renderItem={([i, item]) => (
               <Card
                   key={item.url}
                   size="small"
@@ -19,6 +19,7 @@ const DealsItemList = ({items}) => (
                 >
                   <Descriptions.Item label="Name">
                     {item.name}
+                    <Tag bordered={false}>{i+1}</Tag>
                   </Descriptions.Item>
                   <Descriptions.Item label="Listing Title">
                     {item.title}

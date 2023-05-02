@@ -6,3 +6,7 @@
 .deals-item .ant-descriptions-item {
   padding-bottom: 0 !important;
 }
+
+.deals-item .ant-descriptions-item-content {
+  justify-content: space-between;
+}
