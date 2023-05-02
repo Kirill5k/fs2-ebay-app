@@ -71,7 +71,7 @@ const App = () => {
         <Layout.Footer
             className="footer"
         >
-          eBay app
+          Deals Tracker
         </Layout.Footer>
       </Layout>
   )
