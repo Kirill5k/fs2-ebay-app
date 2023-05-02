@@ -37,7 +37,7 @@ const DealsItemList = ({items}) => (
 const DealsItems = ({items}) => (
     <Collapse
         className="test"
-        defaultActiveKey={['1']}
+        defaultActiveKey="1"
         size="small"
         accordion
         ghost
