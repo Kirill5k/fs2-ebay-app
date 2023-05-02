@@ -8,15 +8,11 @@ const DealsItemList = ({items}) => (
           renderItem={([i, item]) => (
               <Card
                   key={item.url}
-                  size="small"
                   className="deals-item"
                   hoverable
                   onClick={() => window.open(item.url, "_blank")}
               >
-                <Descriptions
-                    size="small"
-                    column={1}
-                >
+                <Descriptions column={1}>
                   <Descriptions.Item label="Name">
                     {item.name}
                     <Tag bordered={false}>{i+1}</Tag>
@@ -25,8 +21,7 @@ const DealsItemList = ({items}) => (
                     {item.title}
                   </Descriptions.Item>
                   <Descriptions.Item label="Price">
-                    £{item.buyPrice} (Buy) {item.exchangePrice
-                      ? `/ £${item.exchangePrice} (Sell)` : ''}
+                    £{item.buyPrice} (Buy) {item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}
                   </Descriptions.Item>
                 </Descriptions>
               </Card>
@@ -39,7 +34,6 @@ const DealsItems = ({items}) => (
     <Collapse
         className="test"
         defaultActiveKey="1"
-        size="small"
         accordion
         ghost
         style={{width: '660px'}}
