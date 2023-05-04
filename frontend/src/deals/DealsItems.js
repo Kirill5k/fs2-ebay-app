@@ -14,7 +14,7 @@ const DealsItemList = ({items}) => (
               >
                 <Descriptions column={1}>
                   <Descriptions.Item label="Name">
-                    {item.name}
+                    <span>{item.name}</span>
                     <Tag bordered={false}>{i+1}</Tag>
                   </Descriptions.Item>
                   <Descriptions.Item label="Listing Title">
