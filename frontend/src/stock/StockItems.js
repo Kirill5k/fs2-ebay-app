@@ -5,11 +5,11 @@ const StockItemBase = ({item, children}) => (
     <List.Item className="stock-item">
       <Card
           onClick={() => window.open(item.listingDetails.url, "_blank")}
-          style={{width: '200px'}}
+          style={{width: '180px'}}
           hoverable
           cover={
             <img
-                className="image"
+                style={{padding: '1px'}}
                 alt={item.listingDetails.title}
                 src={item.listingDetails.image}
             />
@@ -29,7 +29,7 @@ const StockItemBase = ({item, children}) => (
           <Descriptions.Item label="Price">
             £{item.price.buy}
             {item.price.discount
-                ? <span className="discount">{`(-${item.price.discount}%)`}</span>
+                ? <span style={{paddingLeft: '4px'}}>{`(-${item.price.discount}%)`}</span>
                 : ''
             }
           </Descriptions.Item>
@@ -66,9 +66,9 @@ const StockItem = ({item}) => {
 
 const StockItems = ({items}) => {
   const grid = {
-    gutter: 16,
+    gutter: 0,
     xs: 1,
-    sm: 2,
+    sm: 1,
     md: 2,
     lg: 3,
     xl: 4,
