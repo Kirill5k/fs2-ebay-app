@@ -67,7 +67,7 @@ final private class LiveFrasersClient[F[_]](
           "isSearch"         -> "false",
           "clearFilters"     -> "false",
           "selectedCurrency" -> "GBP",
-          "selectedFilters"  -> sc.category.map(_.toLowerCase.capitalize).fold("")(c => s"$categoryFiltersKey^$c")
+          "selectedFilters"  -> sc.formattedCategory
         )
         dispatchWithProxy(config.proxied) {
           emptyRequest
@@ -100,6 +100,12 @@ final private class LiveFrasersClient[F[_]](
             logger.warn(s"$name-search/error-${r.code.code}: ${error.getMessage}") >>
               F.sleep(5.second) >> getItems(sc)(page)
       }
+
+  extension (cs: SearchCriteria)
+    def formattedCategory: String =
+      cs.category match
+        case Some(c) => s"$categoryFiltersKey^${c.toLowerCase.capitalize}"
+        case None    => "???"
 }
 
 object FrasersClient:
