@@ -11,9 +11,9 @@ object time:
       val localDate = dateString.length match
         case 10 => s"${dateString}T00:00:00Z"
         case 19 => s"${dateString}Z"
-        case _ => dateString
+        case _  => dateString
       Try(Instant.parse(localDate)).toEither
-      
+
   extension (ts: Instant)
     def truncatedToSeconds: Instant = ts.truncatedTo(ChronoUnit.SECONDS)
     def durationBetween(otherTs: Instant): FiniteDuration =
@@ -21,14 +21,14 @@ object time:
 
   extension (fd: FiniteDuration)
     def toReadableString: String =
-      val hours = fd.toHours
+      val hours   = fd.toHours
       val remMins = fd - hours.hours
       val minutes = remMins.toMinutes
       val remSecs = remMins - minutes.minutes
       val seconds = remSecs.toSeconds
-      s"""
+      val result = s"""
          |${if hours > 0 then s"${hours}h" else ""}
          |${if minutes > 0 then s"${minutes}m" else ""}
          |${if seconds > 0 then s"${seconds}s" else ""}
          |""".stripMargin.replaceAll("\n", "")
-    
+      if result == "" then "0s" else result

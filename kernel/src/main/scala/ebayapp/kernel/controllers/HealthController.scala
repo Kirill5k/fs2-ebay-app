@@ -4,8 +4,8 @@ import cats.effect.{Async, Ref, Temporal}
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.apply.*
-import cats.syntax.either.*
 import ebayapp.kernel.controllers.HealthController.{AppStatus, Metadata}
+import ebayapp.kernel.syntax.time.*
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.*
@@ -18,6 +18,7 @@ import sttp.tapir.model.ServerRequest
 
 import java.net.InetAddress
 import java.time.Instant
+import scala.concurrent.duration.*
 
 final private[controllers] class HealthController[F[_]: Async](
     private val startupTime: Instant,
@@ -27,13 +28,18 @@ final private[controllers] class HealthController[F[_]: Async](
 
   private val statusEndpoint: ServerEndpoint[Fs2Streams[F], F] =
     HealthController.statusEndpoint
-      .serverLogicPure { req =>
-        AppStatus(
-          startupTime,
-          appVersion,
-          ipAddress,
-          req.metadata
-        ).asRight
+      .serverLogicSuccess { req =>
+        Async[F]
+          .realTimeInstant
+          .map { now =>
+            AppStatus(
+              startupTime,
+              startupTime.durationBetween(now).toReadableString,
+              appVersion,
+              ipAddress,
+              req.metadata
+            )
+          }
       }
 
   override def routes: HttpRoutes[F] = Http4sServerInterpreter[F]().toRoutes(statusEndpoint)
@@ -59,6 +65,7 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
 
   final case class AppStatus(
       startupTime: Instant,
+      upTime: String,
       appVersion: Option[String],
       serverIpAddress: String,
       requestMetadata: Metadata
