@@ -21,14 +21,17 @@ object time:
 
   extension (fd: FiniteDuration)
     def toReadableString: String =
-      val hours   = fd.toHours
-      val remMins = fd - hours.hours
+      val days = fd.toDays
+      val remHours = fd - days.days
+      val hours   = remHours.toHours
+      val remMins = remHours - hours.hours
       val minutes = remMins.toMinutes
       val remSecs = remMins - minutes.minutes
       val seconds = remSecs.toSeconds
       val result = s"""
-         |${if hours > 0 then s"${hours}h" else ""}
-         |${if minutes > 0 then s"${minutes}m" else ""}
-         |${if seconds > 0 then s"${seconds}s" else ""}
-         |""".stripMargin.replaceAll("\n", "")
+         |${if days > 0 then s"${days}d " else ""}
+         |${if hours > 0 then s"${hours}h " else ""}
+         |${if minutes > 0 then s"${minutes}m " else ""}
+         |${if seconds > 0 then s"${seconds}s " else ""}
+         |""".stripMargin.trim.replaceAll("\n", "")
       if result == "" then "0s" else result
