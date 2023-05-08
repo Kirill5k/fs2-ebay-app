@@ -4,28 +4,24 @@ import './DealsItems.css'
 const DealsItemList = ({items}) => (
     <div style={{maxHeight: 300, overflow: 'auto'}}>
       <List
-          dataSource={items.items}
-          renderItem={(item) => (
+          dataSource={Array.from(items.items.entries())}
+          renderItem={([i, item]) => (
               <Card
                   key={item.url}
-                  size="small"
                   className="deals-item"
                   hoverable
                   onClick={() => window.open(item.url, "_blank")}
               >
-                <Descriptions
-                    size="small"
-                    column={1}
-                >
+                <Descriptions column={1}>
                   <Descriptions.Item label="Name">
-                    {item.name}
+                    <span>{item.name}</span>
+                    <Tag bordered={false}>{i+1}</Tag>
                   </Descriptions.Item>
                   <Descriptions.Item label="Listing Title">
                     {item.title}
                   </Descriptions.Item>
                   <Descriptions.Item label="Price">
-                    £{item.buyPrice} (Buy) {item.exchangePrice
-                      ? `/ £${item.exchangePrice} (Sell)` : ''}
+                    £{item.buyPrice} (Buy) {item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}
                   </Descriptions.Item>
                 </Descriptions>
               </Card>
@@ -37,8 +33,7 @@ const DealsItemList = ({items}) => (
 const DealsItems = ({items}) => (
     <Collapse
         className="test"
-        defaultActiveKey={['1']}
-        size="small"
+        defaultActiveKey="1"
         accordion
         ghost
         style={{width: '660px'}}

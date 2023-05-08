@@ -15,7 +15,8 @@ const Home = ({backgroundColor}) => {
           column
           style={{
             padding: '24px 24px',
-            background: backgroundColor
+            background: backgroundColor,
+            minHeight: '300px'
           }}>
         {dealsStatus === 'succeeded' && (
             <Descriptions title="Deals">

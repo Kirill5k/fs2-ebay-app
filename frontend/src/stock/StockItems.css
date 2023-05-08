@@ -14,10 +14,6 @@
   margin-top: 0;
 }
 
-.stock-item .image {
-  padding: 1px;
-}
-
 .stock-item .ant-card-body {
   padding: 10px;
 }
@@ -33,8 +29,4 @@
 
 .stock-item .ant-descriptions-item {
   padding-bottom: 0 !important;
-}
-
-.stock-item .discount {
-  padding-left: 4px;
 }

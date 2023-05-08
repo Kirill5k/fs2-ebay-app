@@ -30,9 +30,8 @@ const App = () => {
   }, [dealsStatus, dispatch])
 
   return (
-      <Layout>
+      <Layout style={{ minHeight: "100vh" }}>
         <Layout.Header className="header">
-          <div className="logo"/>
           <Menu
               theme="dark"
               mode="horizontal"
@@ -71,7 +70,7 @@ const App = () => {
         <Layout.Footer
             className="footer"
         >
-          eBay app
+          Deals Tracker
         </Layout.Footer>
       </Layout>
   )
