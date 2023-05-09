@@ -10,6 +10,7 @@ import scala.concurrent.duration.FiniteDuration
 trait Clock[F[_]]:
   def now: F[Instant]
   def durationBetweenNowAnd(time: Instant): F[FiniteDuration]
+  def sleep(duration: FiniteDuration): F[Unit]
 
 final private class LiveClock[F[_]](using F: Temporal[F]) extends Clock[F] {
 
@@ -19,6 +20,8 @@ final private class LiveClock[F[_]](using F: Temporal[F]) extends Clock[F] {
   override def durationBetweenNowAnd(time: Instant): F[FiniteDuration] =
     now.map(_.durationBetween(time))
 
+  override def sleep(duration: FiniteDuration): F[Unit] =
+    F.sleep(duration)
 }
 
 object Clock:
