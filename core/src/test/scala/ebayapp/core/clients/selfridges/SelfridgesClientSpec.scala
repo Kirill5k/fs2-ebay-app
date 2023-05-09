@@ -16,7 +16,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
   "A SelfridgesClient" should {
 
     val selfridgesConfig = GenericRetailerConfig("http://selfridges.com", Map("api-key" -> "foo-bar"))
-    val config = MockConfigProvider.make[IO](selfridgesConfig = Some(selfridgesConfig))
+    val config           = MockConfigProvider.make[IO](selfridgesConfig = Some(selfridgesConfig))
 
     val criteria = SearchCriteria("EA7 Armani")
 
@@ -50,7 +50,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
 
       client.flatMap(_.search(criteria).compile.toList).asserting { items =>
         items must have size 16
-        val firstItem = items.head
+        val firstItem  = items.head
         val secondItem = items.drop(6).head
 
         firstItem.itemDetails mustBe Clothing("Brand-badge stretch-jersey hoody", "EA7 Armani", "XL")
@@ -59,7 +59,7 @@ class SelfridgesClientSpec extends SttpClientSpec {
         items.map(_.buyPrice).distinct mustBe List(
           BuyPrice(1, BigDecimal(20.0), Some(86)),
           BuyPrice(1, BigDecimal(10.0), Some(90)),
-          BuyPrice(1, BigDecimal(50.0), Some(60)),
+          BuyPrice(1, BigDecimal(50.0), Some(60))
         )
       }
     }
@@ -92,11 +92,13 @@ class SelfridgesClientSpec extends SttpClientSpec {
   }
 
   def isSearchRequest(req: client3.Request[_, _], params: Map[String, String]): Boolean =
-    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "productview", "byCategory", "byIds"), params)
+    req.isGet &&
+      req.isGoingTo("selfridges.com/api/cms/ecom/v1/GB/en/productview/byCategory/byIds") &&
+      req.hasParams(params)
 
   def isGetStockRequest(req: client3.Request[_, _], id: String): Boolean =
-    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "stock", "byId", id))
+    req.isGet && req.isGoingTo(s"selfridges.com/api/cms/ecom/v1/GB/en/stock/byId/$id")
 
   def isGetPriceRequest(req: client3.Request[_, _], id: String): Boolean =
-    isGoingTo(req, Method.GET, "selfridges.com", List("api", "cms", "ecom", "v1", "GB", "en", "price", "byId", id))
+    req.isGet && req.isGoingTo(s"selfridges.com/api/cms/ecom/v1/GB/en/price/byId/$id")
 }

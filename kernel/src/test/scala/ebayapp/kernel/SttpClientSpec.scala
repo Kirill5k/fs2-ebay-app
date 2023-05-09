@@ -19,18 +19,6 @@ trait SttpClientSpec extends AsyncWordSpec with Matchers {
   def backendStub: SttpBackendStub[IO, Any] =
     HttpClientFs2Backend.stub[IO]
 
-  def isGoingTo(
-      req: client3.Request[_, _],
-      method: Method,
-      host: String,
-      paths: Seq[String] = Nil,
-      params: Map[String, String] = Map.empty
-  ): Boolean =
-    req.uri.host.get == host &&
-      (paths.isEmpty || req.uri.path == paths) &&
-      req.method == method &&
-      req.uri.params.toMap.toSet[(String, String)].subsetOf(params.toSet)
-
   def json(path: String): String = FileReader.fromResources(path)
 
   extension (req: client3.Request[_, _])
