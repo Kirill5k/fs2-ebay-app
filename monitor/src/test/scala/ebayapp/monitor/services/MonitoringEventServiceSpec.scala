@@ -1,6 +1,8 @@
 package ebayapp.monitor.services
 
 import cats.effect.IO
+import ebayapp.kernel.{Clock, MockClock}
+import ebayapp.kernel.syntax.time.*
 import ebayapp.monitor.{IOWordSpec, MockActionDispatcher}
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
 import ebayapp.monitor.clients.HttpClient
@@ -15,6 +17,9 @@ import scala.concurrent.duration.*
 class MonitoringEventServiceSpec extends IOWordSpec {
 
   val downTime = Instant.parse("2011-01-01T00:00:00Z")
+
+  val now         = Instant.parse("2020-01-01T00:00:00Z")
+  given Clock[IO] = MockClock[IO](now)
 
   "A MonitoringEventService" when {
     "schedule" should {
@@ -36,7 +41,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
 
       "dispatch query action if monitor hasn't been queried for longer than period" in {
         val (disp, repo, http) = mocks
-        val event              = MonitoringEvents.up(ts = Instant.now.minusSeconds(Monitors.monitor.interval.toSeconds))
+        val event              = MonitoringEvents.up(ts = now.minus(Monitors.monitor.interval + 10.seconds))
         when(repo.findLatestBy(any[Monitor.Id])).thenReturn(IO.some(event))
 
         val result = for
@@ -53,7 +58,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
 
       "reschedule monitor if it was checked recently" in {
         val (disp, repo, http) = mocks
-        val event              = MonitoringEvents.up(ts = Instant.now.minusSeconds(300))
+        val event              = MonitoringEvents.up(ts = now.minus(300.seconds))
         when(repo.findLatestBy(any[Monitor.Id])).thenReturn(IO.some(event))
 
         val result = for
@@ -63,10 +68,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
 
         result.asserting { res =>
           verify(repo).findLatestBy(Monitors.id)
-          disp.submittedActions must have size 1
-          disp.submittedActions.head mustBe an[Action.Reschedule]
-          disp.submittedActions.head.asInstanceOf[Action.Reschedule].id mustBe Monitors.id
-          disp.submittedActions.head.asInstanceOf[Action.Reschedule].interval must (be > 295.seconds and be <= 300.seconds)
+          disp.submittedActions mustBe List(Action.Reschedule(Monitors.id, 300.seconds))
           res mustBe ()
         }
       }
@@ -185,7 +187,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
       if (notification.isDefined) {
         disp.submittedActions mustBe List(
           Action.Notify(monitor, notification.get),
-          Action.Reschedule(monitor.id, monitor.interval - currentStatusCheck.responseTime),
+          Action.Reschedule(monitor.id, monitor.interval - currentStatusCheck.responseTime)
         )
       } else {
         disp.submittedActions mustBe List(Action.Reschedule(monitor.id, monitor.interval - currentStatusCheck.responseTime))
