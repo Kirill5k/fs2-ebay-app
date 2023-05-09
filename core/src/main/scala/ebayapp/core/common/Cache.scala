@@ -1,13 +1,12 @@
 package ebayapp.core.common
 
 import cats.Monad
-
 import cats.effect.{Ref, Temporal}
 import cats.effect.syntax.spawn.*
-import cats.effect.Clock
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.applicative.*
+import ebayapp.kernel.Clock
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -30,8 +29,8 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
 
   override def put(key: K, value: V): F[Unit] =
     for
-      ts <- Clock[F].realTime
-      _  <- state.update(_ + (key -> (value -> ts.toMillis)))
+      ts <- Clock[F].now
+      _  <- state.update(_ + (key -> (value -> ts.toEpochMilli)))
     yield ()
 
   override def contains(key: K): F[Boolean] =
@@ -55,19 +54,19 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
 }
 
 object Cache:
-  def make[F[_], K, V](
+  def make[F[_]: Temporal, K, V](
       expiresIn: FiniteDuration,
       checkOnEvery: FiniteDuration
-  )(using F: Temporal[F]): F[Cache[F, K, V]] = {
+  )(using C: Clock[F]): F[Cache[F, K, V]] = {
 
     def checkExpirations(state: Ref[F, Map[K, (V, Long)]]): F[Unit] = {
-      val process = F.realTime.flatMap { ts =>
+      val process = C.now.flatMap { ts =>
         state.update(_.filter { case (_, (_, exp)) =>
-          exp + expiresIn.toMillis > ts.toMillis
+          exp + expiresIn.toMillis > ts.toEpochMilli
         })
       }
 
-      F.sleep(checkOnEvery) >> process >> checkExpirations(state)
+      C.sleep(checkOnEvery) >> process >> checkExpirations(state)
     }
 
     Ref
