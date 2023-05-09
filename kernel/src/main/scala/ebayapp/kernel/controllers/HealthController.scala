@@ -4,6 +4,7 @@ import cats.effect.{Async, Ref, Temporal}
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.apply.*
+import ebayapp.kernel.Clock
 import ebayapp.kernel.controllers.HealthController.{AppStatus, Metadata}
 import ebayapp.kernel.syntax.time.*
 import org.http4s.{HttpRoutes, Request}
@@ -23,18 +24,19 @@ import scala.concurrent.duration.*
 final private[controllers] class HealthController[F[_]: Async](
     private val startupTime: Instant,
     private val ipAddress: String,
-    private val appVersion: Option[String]
+    private val appVersion: Option[String],
+    private val clock: Clock[F]
 ) extends Controller[F] {
 
   private val statusEndpoint: ServerEndpoint[Fs2Streams[F], F] =
     HealthController.statusEndpoint
       .serverLogicSuccess { req =>
-        Async[F]
-          .realTimeInstant
-          .map { now =>
+        clock
+          .durationBetweenNowAnd(startupTime)
+          .map { uptime =>
             AppStatus(
               startupTime,
-              startupTime.durationBetween(now).toReadableString,
+              uptime.toReadableString,
               appVersion,
               ipAddress,
               req.metadata
@@ -77,6 +79,9 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
     .out(jsonBody[AppStatus])
 
   def make[F[_]](using F: Async[F]): F[Controller[F]] =
-    (F.realTimeInstant, F.delay(InetAddress.getLocalHost.getHostAddress), F.delay(sys.env.get("VERSION")))
-      .mapN((time, ip, version) => new HealthController[F](time, ip, version))
+    for
+      now     <- F.realTimeInstant
+      ip      <- F.delay(InetAddress.getLocalHost.getHostAddress)
+      version <- F.delay(sys.env.get("VERSION"))
+    yield new HealthController[F](now, ip, version, Clock[F])
 }
