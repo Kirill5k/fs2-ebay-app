@@ -16,6 +16,7 @@ import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.kernel.Clock
 import fs2.Stream
 import sttp.client3.SttpBackend
 
@@ -24,18 +25,17 @@ import java.time.Instant
 final private[ebay] class LiveEbayClient[F[_]](
     private val configProvider: ConfigProvider[F],
     private val authClient: EbayAuthClient[F],
-    private val browseClient: EbayBrowseClient[F]
+    private val browseClient: EbayBrowseClient[F],
+    private val clock: Clock[F]
 )(using
     val F: Temporal[F],
     val logger: Logger[F]
 ) extends SearchClient[F] {
 
-  private def now: F[Instant] = F.realTimeInstant
-
   def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     for
       searchConfig <- Stream.eval(configProvider.ebay.map(_.search))
-      time         <- Stream.eval(now.map(_.minusMillis(searchConfig.maxListingDuration.toMillis)))
+      time         <- Stream.eval(clock.now.map(_.minusMillis(searchConfig.maxListingDuration.toMillis)))
       mapper       <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params       <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       catId = params.categoryId.toString
@@ -87,4 +87,4 @@ object EbayClient:
     (
       EbayAuthClient.make[F](configProvider, backend),
       EbayBrowseClient.make[F](configProvider, backend)
-    ).mapN((a, b) => LiveEbayClient[F](configProvider, a, b))
+    ).mapN((a, b) => LiveEbayClient[F](configProvider, a, b, Clock[F]))
