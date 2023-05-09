@@ -4,8 +4,8 @@ import cats.effect.{Deferred, Ref, Temporal}
 import cats.effect.kernel.Temporal
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
-import cats.syntax.apply.*
 import cats.syntax.flatMap.*
+import ebayapp.kernel.Clock
 import ebayapp.kernel.syntax.time.*
 import ebayapp.proxy.common.config.InterrupterConfig
 import org.typelevel.log4cats.Logger
@@ -17,28 +17,28 @@ trait Interrupter[F[_]]:
   def terminate: F[Unit]
   def awaitSigTerm: F[Either[Throwable, Unit]]
 
-final private class LiveInterrupter[F[_]](
+final private class LiveInterrupter[F[_]: Temporal](
     private val initialDelay: FiniteDuration,
-    private val startupTime: Ref[F, Instant],
+    private val startupTime: Instant,
     private val sigTerm: Deferred[F, Unit]
 )(implicit
-    F: Temporal[F],
+    clock: Clock[F],
     logger: Logger[F]
 ) extends Interrupter[F]:
   def terminate: F[Unit] =
-    (startupTime.get, F.realTimeInstant)
-      .mapN(_ durationBetween _)
+    clock.now
+      .map(_ durationBetween startupTime)
       .flatMap { duration =>
         if (duration < initialDelay) logger.info(s"delaying termination as the app has started ${duration.toMinutes} min ago")
         else logger.info("terminating app") >> sigTerm.complete(()).void
       }
+
   def awaitSigTerm: F[Either[Throwable, Unit]] =
     sigTerm.get.attempt
 
 object Interrupter:
-  def make[F[_]: Logger](config: InterrupterConfig)(implicit F: Temporal[F]): F[Interrupter[F]] =
+  def make[F[_]: Temporal: Logger: Clock](config: InterrupterConfig): F[Interrupter[F]] =
     for
-      ts      <- F.realTimeInstant
+      ts      <- Clock[F].now
       sigTerm <- Deferred[F, Unit]
-      ref     <- Ref.of(ts)
-    yield LiveInterrupter[F](config.initialDelay, ref, sigTerm)
+    yield LiveInterrupter[F](config.initialDelay, ts, sigTerm)
