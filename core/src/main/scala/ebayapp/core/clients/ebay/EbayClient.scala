@@ -22,14 +22,13 @@ import sttp.client3.SttpBackend
 
 import java.time.Instant
 
-final private[ebay] class LiveEbayClient[F[_]](
+final private[ebay] class LiveEbayClient[F[_]: Temporal](
     private val configProvider: ConfigProvider[F],
     private val authClient: EbayAuthClient[F],
-    private val browseClient: EbayBrowseClient[F],
-    private val clock: Clock[F]
+    private val browseClient: EbayBrowseClient[F]
 )(using
-    val F: Temporal[F],
-    val logger: Logger[F]
+    logger: Logger[F],
+    clock: Clock[F]
 ) extends SearchClient[F] {
 
   def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
@@ -80,11 +79,11 @@ final private[ebay] class LiveEbayClient[F[_]](
 }
 
 object EbayClient:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: Temporal: Logger: Clock](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     (
       EbayAuthClient.make[F](configProvider, backend),
       EbayBrowseClient.make[F](configProvider, backend)
-    ).mapN((a, b) => LiveEbayClient[F](configProvider, a, b, Clock[F]))
+    ).mapN((a, b) => LiveEbayClient[F](configProvider, a, b))

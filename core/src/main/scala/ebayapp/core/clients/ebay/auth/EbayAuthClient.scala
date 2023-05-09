@@ -27,10 +27,10 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Temporal](
     private val config: EbayConfig,
     private val token: Ref[F, Option[OAuthToken]],
     private val credentials: Ref[F, List[OAuthCredentials]],
-    private val clock: Clock[F],
     override protected val httpBackend: SttpBackend[F, Any]
 )(using
-    logger: Logger[F]
+    logger: Logger[F],
+    clock: Clock[F]
 ) extends EbayAuthClient[F] with HttpClient[F] {
 
   override protected val name: String                              = "ebay-auth"
@@ -87,7 +87,7 @@ private[ebay] object EbayAuthClient:
     def isValid(now: Instant): Boolean = expiresAt.isAfter(now)
   }
 
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: Temporal: Logger: Clock](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[EbayAuthClient[F]] =
@@ -95,4 +95,4 @@ private[ebay] object EbayAuthClient:
       config <- configProvider.ebay
       token  <- Ref.of[F, Option[OAuthToken]](None)
       creds  <- Ref.of[F, List[OAuthCredentials]](config.credentials)
-    yield LiveEbayAuthClient[F](config, token, creds, Clock[F], backend)
+    yield LiveEbayAuthClient[F](config, token, creds, backend)
