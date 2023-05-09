@@ -1,18 +1,27 @@
 package ebayapp.kernel
 
 import cats.Monad
+import cats.effect.IO
 import ebayapp.kernel.syntax.time.*
 
 import java.time.Instant
 import scala.concurrent.duration.FiniteDuration
 
+final private class MockClock[F[_]: Monad](
+    private var timestamp: Instant
+)(using
+    M: Monad[F]
+) extends Clock[F] {
+  def set(newTimestamp: Instant): Unit = {
+    timestamp = newTimestamp
+    ()
+  }
+
+  override def now: F[Instant]                                         = M.pure(timestamp)
+  override def durationBetweenNowAnd(time: Instant): F[FiniteDuration] = M.pure(time.durationBetween(timestamp))
+  override def sleep(duration: FiniteDuration): F[Unit]                = M.pure(set(timestamp.plusNanos(duration.toNanos)))
+}
+
 object MockClock {
-  def apply[F[_]: Monad](timestamp: Instant): Clock[F] =
-    new Clock[F]:
-      override def now: F[Instant] =
-        Monad[F].pure(timestamp)
-      override def sleep(duration: FiniteDuration): F[Unit] =
-        Monad[F].pure(())
-      override def durationBetweenNowAnd(time: Instant): F[FiniteDuration] =
-        Monad[F].pure(time.durationBetween(timestamp))
+  def apply[F[_]: Monad](timestamp: Instant): Clock[F] = new MockClock[F](timestamp)
 }

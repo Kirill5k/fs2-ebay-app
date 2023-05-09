@@ -7,6 +7,7 @@ import cats.syntax.apply.*
 import ebayapp.kernel.Clock
 import ebayapp.kernel.controllers.HealthController.{AppStatus, Metadata}
 import ebayapp.kernel.syntax.time.*
+import ebayapp.kernel.syntax.time.given
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.*
@@ -24,8 +25,9 @@ import scala.concurrent.duration.*
 final private[controllers] class HealthController[F[_]: Async](
     private val startupTime: Instant,
     private val ipAddress: String,
-    private val appVersion: Option[String],
-    private val clock: Clock[F]
+    private val appVersion: Option[String]
+)(using
+  clock: Clock[F]
 ) extends Controller[F] {
 
   private val statusEndpoint: ServerEndpoint[Fs2Streams[F], F] =
@@ -80,8 +82,8 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
 
   def make[F[_]](using F: Async[F]): F[Controller[F]] =
     for
-      now     <- F.realTimeInstant
+      now     <- Clock[F].now
       ip      <- F.delay(InetAddress.getLocalHost.getHostAddress)
       version <- F.delay(sys.env.get("VERSION"))
-    yield new HealthController[F](now, ip, version, Clock[F])
+    yield new HealthController[F](now, ip, version)
 }

@@ -9,9 +9,7 @@ import scala.concurrent.duration.*
 import scala.util.Try
 
 object time:
-
-  given [F[_]: Temporal]: Clock[F] = Clock[F]
-
+  
   extension (dateString: String)
     def toInstant: Either[Throwable, Instant] =
       val localDate = dateString.length match
@@ -21,19 +19,20 @@ object time:
       Try(Instant.parse(localDate)).toEither
 
   extension (ts: Instant)
-    def truncatedToSeconds: Instant = ts.truncatedTo(ChronoUnit.SECONDS)
+    def plus(duration: FiniteDuration): Instant = ts.plusNanos(duration.toNanos)
+    def truncatedToSeconds: Instant             = ts.truncatedTo(ChronoUnit.SECONDS)
     def durationBetween(otherTs: Instant): FiniteDuration =
       math.abs(ts.toEpochMilli - otherTs.toEpochMilli).millis
 
   extension (fd: FiniteDuration)
     def toReadableString: String =
-      val days = fd.toDays
+      val days     = fd.toDays
       val remHours = fd - days.days
-      val hours = remHours.toHours
-      val remMins = remHours - hours.hours
-      val minutes = remMins.toMinutes
-      val remSecs = remMins - minutes.minutes
-      val seconds = remSecs.toSeconds
+      val hours    = remHours.toHours
+      val remMins  = remHours - hours.hours
+      val minutes  = remMins.toMinutes
+      val remSecs  = remMins - minutes.minutes
+      val seconds  = remSecs.toSeconds
       val result =
         s"""
            |${if days > 0 then s"${days}d" else ""}

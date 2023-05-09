@@ -13,16 +13,13 @@ trait Clock[F[_]]:
   def sleep(duration: FiniteDuration): F[Unit]
 
 final private class LiveClock[F[_]](using F: Temporal[F]) extends Clock[F] {
-
-  override def now: F[Instant] =
-    F.realTimeInstant
-
-  override def durationBetweenNowAnd(time: Instant): F[FiniteDuration] =
-    now.map(_.durationBetween(time))
-
-  override def sleep(duration: FiniteDuration): F[Unit] =
-    F.sleep(duration)
+  override def now: F[Instant]                                         = F.realTimeInstant
+  override def durationBetweenNowAnd(time: Instant): F[FiniteDuration] = now.map(_.durationBetween(time))
+  override def sleep(duration: FiniteDuration): F[Unit]                = F.sleep(duration)
 }
 
 object Clock:
-  def apply[F[_]: Temporal]: Clock[F] = new LiveClock[F]()
+  given [F[_]: Temporal]: Clock[F] = Clock.make[F]
+  
+  def apply[F[_]](using C: Clock[F]): C.type = C
+  def make[F[_]: Temporal]: Clock[F]         = new LiveClock[F]()
