@@ -4,6 +4,7 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
+import ebayapp.kernel.Clock
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
 import ebayapp.monitor.clients.HttpClient
 import ebayapp.monitor.domain.Monitor.Connection
@@ -25,7 +26,8 @@ final private class LiveMonitoringEventService[F[_]](
     private val repository: MonitoringEventRepository[F],
     private val httpClient: HttpClient[F]
 )(using
-    F: Temporal[F]
+    F: Temporal[F],
+    clock: Clock[F]
 ) extends MonitoringEventService[F]:
 
   def find(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]] =
@@ -35,9 +37,10 @@ final private class LiveMonitoringEventService[F[_]](
     repository
       .findLatestBy(monitor.id)
       .flatMap {
-        case None => dispatcher.dispatch(Action.Query(monitor, None))
+        case None => 
+          dispatcher.dispatch(Action.Query(monitor, None))
         case Some(event) =>
-          F.realTimeInstant.flatMap { now =>
+          clock.now.flatMap { now =>
             F.ifTrueOrElse(now.isAfter(event.statusCheck.time.plusSeconds(monitor.interval.toSeconds)))(
               dispatcher.dispatch(Action.Query(monitor, Some(event))),
               dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - event.statusCheck.time.durationBetween(now)))
@@ -59,7 +62,7 @@ final private class LiveMonitoringEventService[F[_]](
       case http: Connection.Http => httpClient.status(http)
 
   private def paused: F[MonitoringEvent.StatusCheck] =
-    F.realTimeInstant.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
+    clock.now.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
 
   private def compareStatus(
       current: MonitoringEvent.StatusCheck,
@@ -81,7 +84,7 @@ final private class LiveMonitoringEventService[F[_]](
         (None, None)
 
 object MonitoringEventService:
-  def make[F[_]: Temporal](
+  def make[F[_]: Temporal: Clock](
       dispatcher: ActionDispatcher[F],
       repository: MonitoringEventRepository[F],
       httpClient: HttpClient[F]
