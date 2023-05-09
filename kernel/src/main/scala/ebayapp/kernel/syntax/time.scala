@@ -1,11 +1,17 @@
 package ebayapp.kernel.syntax
 
+import cats.effect.Temporal
+import ebayapp.kernel.Clock
+
 import java.time.temporal.ChronoUnit
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import scala.concurrent.duration.*
 import scala.util.Try
 
 object time:
+
+  given [F[_]: Temporal]: Clock[F] = Clock[F]
+
   extension (dateString: String)
     def toInstant: Either[Throwable, Instant] =
       val localDate = dateString.length match
