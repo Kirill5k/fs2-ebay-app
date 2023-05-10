@@ -18,12 +18,11 @@ final case class Error(
     time: Instant
 )
 
-trait Logger[F[_]] extends Logger4Cats[F] {
+trait Logger[F[_]] extends Logger4Cats[F]:
   def errors: Stream[F, Error]
   def awaitSigTerm: F[Either[Throwable, Unit]]
   def critical(message: => String): F[Unit]
   def critical(t: Throwable)(message: => String): F[Unit]
-}
 
 final private class LiveLogger[F[_]](
     private val logger: Logger4Cats[F],
@@ -48,23 +47,32 @@ final private class LiveLogger[F[_]](
     Stream.fromQueueUnterminated(loggedErrors)
 
   override def critical(message: => String): F[Unit] =
-    sigTerm.complete(Left(AppError.Critical(message))) >> error(message)
+    sigTerm.complete(Left(AppError.Critical(message))) >> 
+      error(message)
 
   override def critical(t: Throwable)(message: => String): F[Unit] =
-    sigTerm.complete(Left(t)) >> error(t)(message)
+    sigTerm.complete(Left(t)) >> 
+      error(t)(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
     errorsCache.evalIfNew(message) {
-      errorsCache.put(message, ()) >> enqueueError(t, message) >> logger.error(t)(message)
+      errorsCache.put(message, ()) >> 
+        enqueueError(t, message) >> 
+        logger.error(t)(message)
     }
 
   override def error(message: => String): F[Unit] =
     errorsCache.evalIfNew(message) {
-      errorsCache.put(message, ()) >> enqueueError(message) >> logger.error(message)
+      errorsCache.put(message, ()) >> 
+        enqueueError(message) >> 
+        logger.error(message)
     }
 
   override def warn(t: Throwable)(message: => String): F[Unit] =
-    warningsCache.evalIfNew(message)(warningsCache.put(message, ()) >> logger.warn(t)(message))
+    warningsCache.evalIfNew(message) {
+      warningsCache.put(message, ()) >> 
+        logger.warn(t)(message)
+    }
 
   override def info(t: Throwable)(message: => String): F[Unit] =
     logger.info(t)(message)
@@ -76,7 +84,10 @@ final private class LiveLogger[F[_]](
     logger.trace(t)(message)
 
   override def warn(message: => String): F[Unit] =
-    warningsCache.evalIfNew(message)(warningsCache.put(message, ()) >> logger.warn(message))
+    warningsCache.evalIfNew(message) {
+      warningsCache.put(message, ()) >> 
+        logger.warn(message)
+    }
 
   override def info(message: => String): F[Unit] =
     logger.info(message)

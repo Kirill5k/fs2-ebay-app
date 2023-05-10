@@ -1,7 +1,7 @@
 package ebayapp.monitor.clients
 
 import cats.Monad
-import cats.effect.syntax.temporal.genTemporalOps_
+import cats.effect.syntax.temporal.*
 import cats.syntax.applicative.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
@@ -30,7 +30,7 @@ final private class LiveHttpClient[F[_]: Async](
       start <- C.now
       res <- emptyRequest
         .headers(connection.headers.getOrElse(Map.empty))
-        .method(Method(connection.method.toString), uri"${connection.url.toString}")
+        .method(Method(connection.method.toString.toUpperCase), uri"${connection.url.toString}")
         .readTimeout(connection.timeout)
         .send(backend)
         .map(r => (if r.code.isSuccess then Monitor.Status.Up else Monitor.Status.Down) -> s"HTTP ${r.code} ${r.statusText}")
