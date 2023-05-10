@@ -7,7 +7,7 @@ import Stock from './stock'
 import {getStock} from './stock/slice'
 import Deals from './deals'
 import {getTodayDeals} from './deals/slice'
-import './App.css'
+
 
 const App = () => {
   const dispatch = useDispatch()
@@ -30,8 +30,8 @@ const App = () => {
   }, [dealsStatus, dispatch])
 
   return (
-      <Layout style={{ minHeight: "100vh" }}>
-        <Layout.Header className="header">
+      <Layout style={{minHeight: '100vh'}}>
+        <Layout.Header style={{position: 'sticky', top: 0, zIndex: 1, width: '100%'}}>
           <Menu
               theme="dark"
               mode="horizontal"
@@ -48,7 +48,7 @@ const App = () => {
             </Menu.Item>
           </Menu>
         </Layout.Header>
-        <Layout.Content className="content">
+        <Layout.Content style={{padding: '0 50px', margin: '16px 50px'}}>
           <Routes>
             <Route
                 exact
@@ -67,9 +67,7 @@ const App = () => {
             />
           </Routes>
         </Layout.Content>
-        <Layout.Footer
-            className="footer"
-        >
+        <Layout.Footer style={{textAlign: 'center'}}>
           Deals Tracker
         </Layout.Footer>
       </Layout>
