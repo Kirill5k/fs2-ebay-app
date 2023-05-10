@@ -12,9 +12,11 @@ import ebayapp.core.clients.cex.requests.{CexGraphqlSearchRequest, GraphqlSearch
 import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.errors.AppError
+import ebayapp.kernel.syntax.effects.*
 import ebayapp.core.common.{Cache, ConfigProvider, Logger}
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.ResellableItem
+import ebayapp.kernel.Clock
 import fs2.Stream
 import io.circe.syntax.*
 import sttp.client3.circe.*
@@ -34,12 +36,13 @@ final private class CexApiClient[F[_]](
     override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
-    logger: Logger[F]
+    logger: Logger[F],
+    clock: Clock[F]
 ) extends CexClient[F] with HttpClient[F] {
 
   override protected val name: String = "cex"
 
-  private inline def categoriesMap: Map[String, String] = CexClient.categories.map((k, v) => (k, v.mkString("[", ",", "]")))
+  private inline def categoriesMap: Map[String, String] = CexClient.categories.map((k, v) => k -> v.mkString("[", ",", "]"))
 
   override def withUpdatedSellPrice(category: Option[String])(item: ResellableItem): F[ResellableItem] =
     item.itemDetails.fullName match {
@@ -54,8 +57,10 @@ final private class CexApiClient[F[_]](
       dispatchSearchRequest(baseUri => uri"$baseUri/v3/boxes?q=$query&categoryIds=$categories")
         .map(getMinResellPrice)
         .flatMap { rp =>
-          if (rp.isEmpty && categories.isDefined) findSellPrice(query, None)
-          else F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F]
+          F.ifTrueOrElse(rp.isEmpty && categories.isDefined)(
+            findSellPrice(query, None),
+            F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F]
+          )
         }
     }
 
@@ -95,17 +100,17 @@ final private class CexApiClient[F[_]](
             response.pure[F]
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-search/exhausted input") *>
-              F.sleep(1.second) *> dispatchSearchRequest(fullUri)
+              clock.sleep(1.second) *> dispatchSearchRequest(fullUri)
           case Left(DeserializationException(body, error)) =>
             logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
-              F.raiseError(AppError.Json(s"$name-search/json-error: ${error.getMessage}"))
+              AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError
           case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.error(s"$name-search/403-critical") *> F.sleep(5.seconds) *> dispatchSearchRequest(fullUri)
+            logger.error(s"$name-search/403-critical") *> clock.sleep(5.seconds) *> dispatchSearchRequest(fullUri)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"$name-search/429-retry") *> F.sleep(5.seconds) *> dispatchSearchRequest(fullUri)
+            logger.warn(s"$name-search/429-retry") *> clock.sleep(5.seconds) *> dispatchSearchRequest(fullUri)
           case Left(error) =>
             logger.warn(s"$name-search/${r.code}-error\n$error") *>
-              F.sleep(5.second) *> dispatchSearchRequest(fullUri)
+              clock.sleep(5.second) *> dispatchSearchRequest(fullUri)
         }
       }
 }
@@ -117,7 +122,8 @@ final private class CexGraphqlClient[F[_]](
     override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
-    logger: Logger[F]
+    logger: Logger[F],
+    clock: Clock[F]
 ) extends CexClient[F] with HttpClient[F] {
 
   override protected val name: String = "cex-graphql"
@@ -141,7 +147,7 @@ final private class CexGraphqlClient[F[_]](
   private def filterByCategory(category: Option[String])(response: CexGraphqlSearchResponse): List[CexGraphqlItem] = {
     val items = response.results.getOrElse(Nil).flatMap(_.hits)
     val cats  = category.flatMap(c => CexClient.categories.get(c))
-    if (cats.isEmpty) items else items.filter(i => cats.get.contains(i.categoryId))
+    if cats.isEmpty then items else items.filter(i => cats.get.contains(i.categoryId))
   }
 
   private def getMinResellPrice(items: List[CexGraphqlItem]): Option[SellPrice] =
@@ -189,18 +195,18 @@ final private class CexGraphqlClient[F[_]](
             response.pure[F]
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-search/exhausted input") *>
-              F.sleep(1.second) *> dispatchSearchRequest(query)
+              clock.sleep(1.second) *> dispatchSearchRequest(query)
           case Left(DeserializationException(body, error)) =>
             logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
-              F.raiseError(AppError.Json(s"$name-search/json-error: ${error.getMessage}"))
+              AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError
           case Left(HttpError(res, StatusCode.BadRequest)) =>
             logger.error(s"$name-search/400-bad-request: $res") *> CexGraphqlSearchResponse.empty.pure[F]
           case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.error(s"$name-search/403-critical") *> F.sleep(30.seconds) *> dispatchSearchRequest(query)
+            logger.error(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatchSearchRequest(query)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"$name-search/429-retry") *> F.sleep(10.seconds) *> dispatchSearchRequest(query)
+            logger.warn(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatchSearchRequest(query)
           case Left(error) =>
-            logger.warn(s"$name-search/${r.code}-error\n$error") *> F.sleep(5.second) *> dispatchSearchRequest(query)
+            logger.warn(s"$name-search/${r.code}-error\n$error") *> clock.sleep(5.second) *> dispatchSearchRequest(query)
         }
       }
   }
@@ -223,14 +229,14 @@ object CexClient:
       cache       <- Cache.make[F, String, Option[SellPrice]](cacheConfig.expiration, cacheConfig.validationPeriod)
     yield cache
 
-  def standard[F[_]: Temporal: Logger](
+  def standard[F[_]: Temporal: Logger: Clock](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[CexClient[F]] =
     mkCache(configProvider).map(cache => CexApiClient[F](() => configProvider.cex, cache, backend, proxyBackend))
 
-  def graphql[F[_]: Temporal: Logger](
+  def graphql[F[_]: Temporal: Logger: Clock](
       configProvider: ConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

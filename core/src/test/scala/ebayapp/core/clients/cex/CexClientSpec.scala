@@ -8,15 +8,18 @@ import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
-import ebayapp.kernel.SttpClientSpec
+import ebayapp.kernel.{Clock, MockClock, SttpClientSpec}
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
+import java.time.Instant
 import scala.collection.immutable.Map
 import scala.concurrent.duration.*
 
 class CexClientSpec extends SttpClientSpec {
+
+  given Clock[IO] = MockClock(Instant.parse("2020-01-01T00:00:00Z"))
 
   val cexConfig = GenericRetailerConfig(
     "http://cex.com",
