@@ -105,7 +105,7 @@ final private class LiveFrasersClient[F[_]](
     def formattedCategory: String =
       cs.category match
         case Some(c) => s"$categoryFiltersKey^${c.toLowerCase.capitalize}"
-        case None    => "???"
+        case None    => ""
 }
 
 object FrasersClient:
