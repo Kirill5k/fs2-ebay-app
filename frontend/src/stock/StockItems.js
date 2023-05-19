@@ -82,14 +82,17 @@ const StockItems = ({items}) => {
     pageSizeOptions: [25, 50, 100, 250]
   }
   return (
-      <List
-          className="stock-items"
-          grid={grid}
-          pagination={pagination}
-          dataSource={items}
-          renderItem={(item) => <StockItem item={item}/>}
-          locale={{emptyText: 'No Items in Stock'}}
-      />
+      <div>
+        <p style={{float: 'left', margin: '5px 0 0 0'}}>{items.length} items</p>
+        <List
+            className="stock-items"
+            grid={grid}
+            pagination={pagination}
+            dataSource={items}
+            renderItem={(item) => <StockItem item={item}/>}
+            locale={{emptyText: 'No Items in Stock'}}
+        />
+      </div>
   )
 }
 
