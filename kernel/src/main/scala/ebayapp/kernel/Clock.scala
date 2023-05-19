@@ -20,6 +20,6 @@ final private class LiveClock[F[_]](using F: Temporal[F]) extends Clock[F] {
 
 object Clock:
   given [F[_]: Temporal]: Clock[F] = Clock.make[F]
-  
+
   def apply[F[_]](using C: Clock[F]): C.type = C
-  def make[F[_]: Temporal]: Clock[F]         = new LiveClock[F]()
+  def make[F[_]: Temporal]: Clock[F]         = LiveClock[F]()
