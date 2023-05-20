@@ -7,7 +7,6 @@ import {countByProperty} from '../common/functions/collections'
 const Home = ({backgroundColor}) => {
   const stockStatus = useSelector(state => state.stock.status)
   const stockItems = useSelector(state => state.stock.items)
-  const stockRetailers = useSelector(state => state.stock.filters.retailers)
   const dealsStatus = useSelector(state => state.deals.status)
   const dealsItems = useSelector(state => state.deals.todayItems)
 
@@ -37,17 +36,14 @@ const Home = ({backgroundColor}) => {
               <Descriptions.Item label="Total">
                 {stockItems.length}
               </Descriptions.Item>
-              <Descriptions.Item label="Tracked retailers">
-                {stockRetailers.join(', ')}
-              </Descriptions.Item>
-              {{Object
+              {Object
                 .entries(countByProperty(stockItems, i => i.listingDetails.seller))
-                .map([retailer, count] => (
+                .map(([retailer, count]) => (
                   <Descriptions.Item label={retailer}>
                     {count}
                   </Descriptions.Item>
                 ))
-              }}
+              }
             </Descriptions>
         )}
       </Container>
