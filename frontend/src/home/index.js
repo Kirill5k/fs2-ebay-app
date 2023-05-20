@@ -2,6 +2,7 @@ import React from 'react'
 import {useSelector} from 'react-redux'
 import {Descriptions} from 'antd'
 import Container from '../common/components/Container'
+import {countByProperty} from '../common/functions/collections'
 
 const Home = ({backgroundColor}) => {
   const stockStatus = useSelector(state => state.stock.status)
@@ -39,6 +40,14 @@ const Home = ({backgroundColor}) => {
               <Descriptions.Item label="Tracked retailers">
                 {stockRetailers.join(', ')}
               </Descriptions.Item>
+              {{Object
+                .entries(countByProperty(stockItems, i => i.listingDetails.seller))
+                .map([retailer, count] => (
+                  <Descriptions.Item label={retailer}>
+                    {count}
+                  </Descriptions.Item>
+                ))
+              }}
             </Descriptions>
         )}
       </Container>
