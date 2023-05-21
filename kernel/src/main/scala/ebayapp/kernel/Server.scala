@@ -6,14 +6,15 @@ import ebayapp.kernel.config.ServerConfig
 import org.http4s.HttpRoutes
 import org.http4s.ember.server.EmberServerBuilder
 import fs2.Stream
+import fs2.io.net.Network
 
 import scala.concurrent.duration.*
 
 object Server:
-  def serve[F[_]: Async](config: ServerConfig, routes: HttpRoutes[F]): Stream[F, Unit] =
+  def serve[F[_]](config: ServerConfig, routes: HttpRoutes[F])(using F: Async[F]): Stream[F, Unit] = {
     Stream.eval {
       EmberServerBuilder
-        .default[F]
+        .default(F, Network.forAsync[F])
         .withHost(Ipv4Address.fromString(config.host).get)
         .withPort(Port.fromInt(config.port).get)
         .withHttpApp(routes.orNotFound)
@@ -21,3 +22,4 @@ object Server:
         .build
         .use(_ => Async[F].never)
     }.drain
+  }

@@ -6,6 +6,7 @@ import cats.syntax.flatMap.*
 import ebayapp.kernel.config.ClientConfig
 import ebayapp.kernel.errors.AppError
 import ebayapp.proxy.common.config.AppConfig
+import fs2.io.net.Network
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.client.middleware.FollowRedirect
@@ -30,9 +31,9 @@ object Resources:
       }
     }
 
-  private def makeEmberClient[F[_]: Async](config: ClientConfig): Resource[F, Client[F]] =
+  private def makeEmberClient[F[_]](config: ClientConfig)(using F: Async[F]): Resource[F, Client[F]] =
     EmberClientBuilder
-      .default[F]
+      .default[F](F, Network.forAsync[F])
       .withMaxTotal(256 * 10)
       .withTimeout(config.connectTimeout)
       .withIdleConnectionTime(Duration.Inf)
