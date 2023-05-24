@@ -9,6 +9,7 @@ import cats.syntax.applicativeError.*
 import com.mongodb.{DuplicateKeyException, MongoWriteException}
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
+import ebayapp.kernel.syntax.effects.*
 import mongo4cats.bson.Document
 import mongo4cats.circe.given
 import mongo4cats.bson.syntax.*
@@ -68,7 +69,7 @@ final private class ResellableItemMongoRepository[F[_]](
       .filter(params.toFilter)
       .limit(params.limit.getOrElse(Int.MaxValue))
       .all
-      .map(_.map(_.toDomain).toList)
+      .mapList(_.toDomain)
 
   def summaries(params: SearchParams): F[List[ItemSummary]] =
     mongoCollection
@@ -80,7 +81,7 @@ final private class ResellableItemMongoRepository[F[_]](
           .project(videoGameSummaryProjection)
       }
       .all
-      .map(_.toList)
+      .mapList(identity)
 
   private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Filter = {
     val fromFilter = from.map(d => Filter.gte(Field.DatePosted, d))

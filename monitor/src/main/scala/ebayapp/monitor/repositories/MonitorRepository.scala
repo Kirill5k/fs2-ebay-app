@@ -4,6 +4,7 @@ import cats.effect.Async
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
+import ebayapp.kernel.syntax.effects.*
 import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 import mongo4cats.operations.{Filter, Update}
@@ -33,11 +34,14 @@ final private class LiveMonitorRepository[F[_]](
     val entity = MonitorEntity.from(monitor)
     collection.insertOne(entity).as(entity.toDomain)
 
-  def all: F[List[Monitor]]      = collection.find.all.map(_.map(_.toDomain).toList)
+  def all: F[List[Monitor]]      = collection.find.all.mapList(_.toDomain)
   def stream: Stream[F, Monitor] = collection.find.stream.map(_.toDomain)
 
   def find(id: Monitor.Id): F[Option[Monitor]] =
-    collection.find(Filter.idEq(id.toObjectId)).first.map(_.map(_.toDomain))
+    collection
+      .find(Filter.idEq(id.toObjectId))
+      .first
+      .mapOpt(_.toDomain)
 
   def delete(id: Monitor.Id): F[Unit] =
     collection
