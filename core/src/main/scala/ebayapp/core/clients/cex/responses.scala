@@ -11,7 +11,7 @@ private[cex] object responses {
       categoryFriendlyName: String,
       firstPrice: Option[BigDecimal],
       previousPrice: Option[BigDecimal],
-      ecomQuantity: Int,
+      ecomQuantity: Option[Int],
       exchangePerc: BigDecimal,
       priceLastChanged: Option[String],
       sellPrice: BigDecimal,
