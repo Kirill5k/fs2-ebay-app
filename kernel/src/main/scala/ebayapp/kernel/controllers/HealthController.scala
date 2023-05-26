@@ -83,7 +83,7 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
   def make[F[_]](using F: Async[F], C: Clock[F]): F[Controller[F]] =
     for
       now     <- C.now
-      ip      <- F.delay(InetAddress.getLocalHost.getHostAddress)
+      ip      <- F.blocking(InetAddress.getLocalHost.getHostAddress)
       version <- F.delay(sys.env.get("VERSION"))
     yield new HealthController[F](now, ip, version)
 }

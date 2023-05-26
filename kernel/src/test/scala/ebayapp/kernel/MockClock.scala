@@ -18,7 +18,7 @@ final private class MockClock[F[_]: Monad](
   }
 
   override def now: F[Instant]                                         = M.pure(timestamp)
-  override def durationBetweenNowAnd(time: Instant): F[FiniteDuration] = M.pure(time.durationBetween(timestamp))
+  override def durationBetweenNowAnd(otherTs: Instant): F[FiniteDuration] = M.pure(otherTs.durationBetween(timestamp))
   override def sleep(duration: FiniteDuration): F[Unit]                = M.pure(set(timestamp.plusNanos(duration.toNanos)))
 }
 

@@ -11,7 +11,7 @@ import fs2.io.net.Network
 import scala.concurrent.duration.*
 
 object Server:
-  def serve[F[_]](config: ServerConfig, routes: HttpRoutes[F])(using F: Async[F]): Stream[F, Unit] = {
+  def serve[F[_]](config: ServerConfig, routes: HttpRoutes[F])(using F: Async[F]): Stream[F, Unit] =
     Stream.eval {
       EmberServerBuilder
         .default(F, Network.forAsync[F])
@@ -22,4 +22,3 @@ object Server:
         .build
         .use(_ => Async[F].never)
     }.drain
-  }
