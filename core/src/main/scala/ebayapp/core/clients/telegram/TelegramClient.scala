@@ -38,7 +38,7 @@ final private class LiveTelegramClient[F[_]](
     }
 
   extension (c: TelegramConfig)
-    def channelId(n: Notification): String =
+    private def channelId(n: Notification): String =
       n match
         case _: Notification.Alert => c.alertsChannelId
         case _: Notification.Deal  => c.mainChannelId
