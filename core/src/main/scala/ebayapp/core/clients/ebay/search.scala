@@ -89,7 +89,7 @@ private[ebay] object search {
         "arabic", "slovakian", "czech", "\\bNTSC(-J)?\\b", "to be updated", "(ps\\d|xbox( one)?) digital", "Dreamcast", "Handheld System", "PC MAC",
         "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "steel( )?(box|case)", "PC( )?(comp|win|game|CD|DVD)", "\\n digit code", "Commodore 64",
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|SMALLTRIBE|breeding|deadpool|pve|reaper|lvl|Tek)", "Code( )?in( )?(a)?( )?Box",
-        "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder \\d", "character skin", "overwatch\\s+(sony|ps|xbox|legendary|origins|game)",
+        "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder( listing)? \\d", "character skin", "overwatch\\s+(sony|ps|xbox|legendary|origins|game)",
         "(rune|items).*diablo", "diablo.*(rune|items)", "nexigo", "fan cooling", "Eve Valkyrie", "invaders plush", "xbox original", "Original Xbox 1",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "touchpad", "Touch( )?Screen", "Make Your Selection",
         "(villager|bells|money).*animal crossing", "animal crossing(?s).* (\\d+M|item|cafe|park|bell|mil|diy|material|turnip|ticket|recipe|fossil|dino|egg|gold)",
