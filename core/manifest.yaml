@@ -35,7 +35,7 @@ spec:
             name: fs2-app-core-config
       containers:
         - name: "core"
-          image: "kirill1/fs2-app-core:latest"
+          image: "registry.cloud.okteto.net/kirill5k/fs2-app-core:latest"
           imagePullPolicy: Always
           volumeMounts:
             - name: config-volume
