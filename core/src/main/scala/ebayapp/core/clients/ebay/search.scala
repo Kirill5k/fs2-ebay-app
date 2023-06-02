@@ -93,7 +93,7 @@ private[ebay] object search {
         "(rune|items).*diablo", "diablo.*(rune|items)", "nexigo", "fan cooling", "Eve Valkyrie", "invaders plush", "xbox original", "Original Xbox 1",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "touchpad", "Touch( )?Screen", "Make Your Selection",
         "animal crossing", "SCARLET VIOLET",
-        "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mill)",
+        "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mil)",
         "(cod|of duty|mw2|warzone)(?s).*(dmz|jack link|crossbow|code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king", "heatsink", "Destiny\\s+the coll",
         "Temperature Sensor", "RGB LED", "powerstand", "not duped", "amiibo", "DIY material", "Steep X ", "Switch pedal", "Split Pad",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor) Switch", "Switching Sack",
