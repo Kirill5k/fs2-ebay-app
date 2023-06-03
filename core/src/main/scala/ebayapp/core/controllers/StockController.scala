@@ -4,7 +4,6 @@ import cats.Monad
 import cats.effect.Async
 import cats.syntax.flatMap.*
 import cats.syntax.traverse.*
-import cats.syntax.functor.*
 import ebayapp.core.controllers.views.ResellableItemView
 import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem, Retailer}
 import ebayapp.core.services.StockService
