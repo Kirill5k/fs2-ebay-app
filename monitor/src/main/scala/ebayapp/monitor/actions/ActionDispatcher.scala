@@ -1,6 +1,5 @@
 package ebayapp.monitor.actions
 
-import cats.Monad
 import cats.effect.kernel.Concurrent
 import cats.effect.std.Queue
 import cats.syntax.functor.*

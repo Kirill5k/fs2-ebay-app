@@ -4,7 +4,6 @@ import java.time.Instant
 import cats.effect.Async
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
-import cats.syntax.applicative.*
 import cats.syntax.applicativeError.*
 import com.mongodb.{DuplicateKeyException, MongoWriteException}
 import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}

@@ -10,12 +10,9 @@ import cats.effect.Async
 import ebayapp.kernel.Clock
 import ebayapp.kernel.syntax.time.*
 
-import java.time.Instant
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import sttp.client3.*
 import sttp.model.Method
-
-import scala.concurrent.duration.FiniteDuration
 
 trait HttpClient[F[_]]:
   def status(connection: Monitor.Connection.Http): F[MonitoringEvent.StatusCheck]

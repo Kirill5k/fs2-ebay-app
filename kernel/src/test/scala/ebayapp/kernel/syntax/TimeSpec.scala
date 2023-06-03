@@ -4,7 +4,7 @@ import ebayapp.kernel.syntax.time.*
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-import java.time.{Instant, LocalDate}
+import java.time.Instant
 import scala.concurrent.duration.*
 
 class TimeSpec extends AnyWordSpec with Matchers {

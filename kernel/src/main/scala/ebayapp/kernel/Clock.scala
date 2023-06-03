@@ -1,6 +1,6 @@
 package ebayapp.kernel
 
-import cats.effect.{Async, Temporal}
+import cats.effect.Temporal
 import cats.syntax.functor.*
 import ebayapp.kernel.syntax.time.*
 

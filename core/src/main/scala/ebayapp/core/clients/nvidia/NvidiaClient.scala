@@ -3,8 +3,6 @@ package ebayapp.core.clients.nvidia
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
-import cats.syntax.functor.*
-import cats.syntax.functorFilter.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient}

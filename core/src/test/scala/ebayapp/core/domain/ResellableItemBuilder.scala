@@ -1,6 +1,5 @@
 package ebayapp.core.domain
 
-import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.ItemDetails.{Phone, VideoGame}
 import ebayapp.core.domain.search.*
 

@@ -1,6 +1,5 @@
 package ebayapp.core.clients.selfridges
 
-import cats.kernel.Semigroup
 import io.circe.Codec
 
 private[selfridges] object responses {

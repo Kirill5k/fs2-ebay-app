@@ -6,7 +6,6 @@ import ebayapp.kernel.config.MongoConfig
 import ebayapp.monitor.common.config.{AppConfig, EmailConfig}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
-import sttp.client3.SttpBackendOptions.Proxy
 import sttp.client3.httpclient.fs2.HttpClientFs2Backend
 import sttp.client3.{SttpBackend, SttpBackendOptions}
 import courier.{Envelope, Mailer as CourierMailer}

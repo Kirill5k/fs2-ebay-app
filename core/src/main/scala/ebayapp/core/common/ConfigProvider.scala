@@ -8,12 +8,10 @@ import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
 import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
 import ebayapp.kernel.syntax.stream.*
-import ebayapp.kernel.syntax.effects.*
 import ebayapp.core.domain.Retailer
 import fs2.Stream
 
 import java.nio.file.Paths
-import java.time.Instant
 import scala.concurrent.duration.*
 
 trait ConfigProvider[F[_]]:

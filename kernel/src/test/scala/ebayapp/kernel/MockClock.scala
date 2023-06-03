@@ -1,7 +1,6 @@
 package ebayapp.kernel
 
 import cats.Monad
-import cats.effect.IO
 import ebayapp.kernel.syntax.time.*
 
 import java.time.Instant

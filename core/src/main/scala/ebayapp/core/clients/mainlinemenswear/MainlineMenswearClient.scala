@@ -1,9 +1,7 @@
 package ebayapp.core.clients.mainlinemenswear
 
-import cats.Monad
 import cats.effect.{Ref, Temporal}
 import cats.syntax.apply.*
-import cats.syntax.applicative.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
@@ -15,14 +13,12 @@ import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
-import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import sttp.client3.*
 import sttp.client3.circe.asJson
 import sttp.model.headers.CacheDirective
 import sttp.model.{Header, MediaType, StatusCode}
 
-import java.time.Instant
 import scala.concurrent.duration.*
 
 final private class LiveMainlineMenswearClient[F[_]](

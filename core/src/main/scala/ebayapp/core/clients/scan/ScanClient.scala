@@ -3,7 +3,6 @@ package ebayapp.core.clients.scan
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
-import cats.syntax.functor.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper

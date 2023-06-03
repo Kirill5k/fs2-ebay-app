@@ -1,8 +1,7 @@
 package ebayapp.kernel.controllers
 
-import cats.{Monad, MonadThrow}
+import cats.MonadThrow
 import cats.effect.*
-import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.either.*
 import cats.syntax.applicativeError.*
@@ -14,13 +13,10 @@ import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.server.http4s.Http4sServerOptions
-import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.model.ValuedEndpointOutput
-import sttp.tapir.server.interceptor.exception.ExceptionHandler
-import sttp.tapir.{Codec, DecodeResult, ValidationError, oneOf, oneOfDefaultVariant, oneOfVariant}
+import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultVariant, oneOfVariant}
 
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
-import scala.util.Try
+import java.time.Instant
 
 trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
   

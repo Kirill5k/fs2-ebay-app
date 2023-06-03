@@ -5,10 +5,8 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.monitor.actions.ActionDispatcher
 import ebayapp.monitor.clients.Clients
-import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.Repositories
 import org.typelevel.log4cats.Logger
-import fs2.Stream
 
 trait Services[F[_]]:
   def monitor: MonitorService[F]

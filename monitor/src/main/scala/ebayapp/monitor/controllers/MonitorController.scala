@@ -2,13 +2,9 @@ package ebayapp.monitor.controllers
 
 import cats.Monad
 import cats.effect.Async
-import cats.syntax.applicativeError.*
-import cats.syntax.either.*
-import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.controllers.Controller
-import ebayapp.kernel.controllers.views.ErrorResponse
 import ebayapp.monitor.controllers.views.{
   ActivateMonitorRequest,
   CreateMonitorRequest,

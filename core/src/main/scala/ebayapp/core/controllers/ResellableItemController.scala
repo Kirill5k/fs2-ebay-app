@@ -2,11 +2,8 @@ package ebayapp.core.controllers
 
 import cats.Monad
 import cats.effect.Async
-import cats.syntax.applicativeError.*
-import cats.syntax.either.*
 import cats.syntax.functor.*
 import ebayapp.kernel.controllers.Controller
-import ebayapp.kernel.controllers.views.ErrorResponse
 import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.core.repositories.SearchParams

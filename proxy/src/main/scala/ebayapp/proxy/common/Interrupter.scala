@@ -1,6 +1,6 @@
 package ebayapp.proxy.common
 
-import cats.effect.{Deferred, Ref, Temporal}
+import cats.effect.{Deferred, Temporal}
 import cats.effect.kernel.Temporal
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*

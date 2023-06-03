@@ -2,7 +2,7 @@ package ebayapp.kernel.controllers
 
 import ebayapp.kernel.errors.AppError
 import io.circe.Encoder
-import io.circe.{Codec, Encoder}
+import io.circe.Codec
 import io.circe.syntax.*
 
 object views {

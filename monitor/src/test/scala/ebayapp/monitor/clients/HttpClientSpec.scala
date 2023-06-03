@@ -5,12 +5,9 @@ import cats.syntax.option.*
 import ebayapp.kernel.{Clock, MockClock, SttpClientSpec}
 import ebayapp.monitor.domain.{HttpMethod, Monitor, MonitoringEvent, Url}
 import org.scalatest.wordspec.AsyncWordSpec
-import org.scalatest.matchers.must.Matchers
 import sttp.client3.Response
-import sttp.client3.httpclient.fs2.HttpClientFs2Backend
-import sttp.client3.testing.SttpBackendStub
 import sttp.client3.*
-import sttp.model.{Method, StatusCode}
+import sttp.model.StatusCode
 
 import java.time.Instant
 import scala.concurrent.duration.*

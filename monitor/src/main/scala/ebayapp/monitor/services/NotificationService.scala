@@ -10,8 +10,6 @@ import ebayapp.monitor.domain.Monitor.Contact
 import ebayapp.monitor.domain.{Monitor, Notification}
 import org.typelevel.log4cats.Logger
 
-import java.time.Duration
-
 trait NotificationService[F[_]]:
   def notify(monitor: Monitor, notification: Notification): F[Unit]
 

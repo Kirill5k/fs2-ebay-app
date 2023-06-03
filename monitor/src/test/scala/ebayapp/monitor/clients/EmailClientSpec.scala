@@ -4,12 +4,10 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import courier.Mailer as CourierMailer
 import ebayapp.monitor.{IOWordSpec, Mailer}
-import ebayapp.monitor.common.config.EmailConfig
 import org.jvnet.mock_javamail.{Mailbox, MockTransport}
 
 import java.util.Properties
 import javax.mail.{Provider, Session}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class EmailClientSpec extends IOWordSpec {
 

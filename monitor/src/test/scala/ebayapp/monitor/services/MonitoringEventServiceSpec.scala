@@ -4,10 +4,10 @@ import cats.effect.IO
 import ebayapp.kernel.{Clock, MockClock}
 import ebayapp.kernel.syntax.time.*
 import ebayapp.monitor.{IOWordSpec, MockActionDispatcher}
-import ebayapp.monitor.actions.{Action, ActionDispatcher}
+import ebayapp.monitor.actions.Action
 import ebayapp.monitor.clients.HttpClient
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, MonitoringEvents, Monitors, Notification}
-import ebayapp.monitor.repositories.{MonitorRepository, MonitoringEventRepository}
+import ebayapp.monitor.repositories.MonitoringEventRepository
 import org.scalatest.Assertion
 
 import java.time.Instant

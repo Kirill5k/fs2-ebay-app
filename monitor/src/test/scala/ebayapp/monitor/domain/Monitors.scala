@@ -1,6 +1,5 @@
 package ebayapp.monitor.domain
 
-import ebayapp.monitor.domain.Monitors.id
 import mongo4cats.bson.ObjectId
 
 import scala.concurrent.duration.*

@@ -9,7 +9,7 @@ import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import ebayapp.kernel.SttpClientSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
-import sttp.model.{Method, StatusCode}
+import sttp.model.StatusCode
 
 class SelfridgesClientSpec extends SttpClientSpec {
 

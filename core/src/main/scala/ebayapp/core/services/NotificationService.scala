@@ -2,7 +2,6 @@ package ebayapp.core.services
 
 import cats.Monad
 import cats.effect.Temporal
-import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.MessengerClient

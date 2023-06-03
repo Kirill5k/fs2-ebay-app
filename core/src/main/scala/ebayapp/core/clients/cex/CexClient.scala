@@ -18,7 +18,6 @@ import ebayapp.core.domain.search.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.kernel.Clock
 import fs2.Stream
-import io.circe.syntax.*
 import sttp.client3.circe.*
 import sttp.client3.*
 import sttp.model.headers.CacheDirective

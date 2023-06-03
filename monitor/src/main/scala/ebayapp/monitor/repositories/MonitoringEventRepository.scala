@@ -5,7 +5,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import ebayapp.kernel.syntax.effects.*
-import mongo4cats.operations.{Filter, Sort}
+import mongo4cats.operations.Filter
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.MongoDatabase
 import mongo4cats.circe.MongoJsonCodecs

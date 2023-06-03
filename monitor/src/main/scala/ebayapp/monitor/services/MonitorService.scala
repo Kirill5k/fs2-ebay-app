@@ -1,13 +1,11 @@
 package ebayapp.monitor.services
 
 import cats.effect.Concurrent
-import cats.effect.std.Queue
 import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
-import ebayapp.monitor.repositories.{MonitorRepository, MonitoringEventRepository}
-import fs2.Stream
+import ebayapp.monitor.repositories.MonitorRepository
 
 trait MonitorService[F[_]]:
   def rescheduleAll: F[Unit]

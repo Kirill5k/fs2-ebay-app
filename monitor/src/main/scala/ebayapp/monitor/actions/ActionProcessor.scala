@@ -3,7 +3,6 @@ package ebayapp.monitor.actions
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
-import cats.syntax.parallel.*
 import cats.syntax.applicativeError.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.domain.Monitor

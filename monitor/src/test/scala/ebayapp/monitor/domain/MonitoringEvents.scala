@@ -1,8 +1,5 @@
 package ebayapp.monitor.domain
 
-import ebayapp.monitor.domain.MonitoringEvents.ts
-import mongo4cats.bson.ObjectId
-
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import scala.concurrent.duration.*

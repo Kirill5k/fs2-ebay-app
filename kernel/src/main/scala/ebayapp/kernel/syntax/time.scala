@@ -1,10 +1,7 @@
 package ebayapp.kernel.syntax
 
-import cats.effect.Temporal
-import ebayapp.kernel.Clock
-
 import java.time.temporal.ChronoUnit
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
+import java.time.Instant
 import scala.concurrent.duration.*
 import scala.util.Try
 

@@ -15,7 +15,6 @@ import ebayapp.core.clients.scan.ScanClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.common.{ConfigProvider, Logger, Resources}
-import ebayapp.core.common.config.AppConfig
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.Retailer.Flannels
 

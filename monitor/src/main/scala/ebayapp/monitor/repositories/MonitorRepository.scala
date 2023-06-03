@@ -5,7 +5,6 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.syntax.effects.*
-import ebayapp.monitor.common.JsonCodecs
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 import mongo4cats.operations.{Filter, Update}
 import mongo4cats.collection.MongoCollection

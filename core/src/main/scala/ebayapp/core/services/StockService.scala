@@ -14,7 +14,7 @@ import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import fs2.concurrent.SignallingRef
-import fs2.{Pipe, Stream}
+import fs2.Stream
 
 import scala.concurrent.duration.*
 

@@ -7,7 +7,6 @@ import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder as Builder, Retailer}
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
-import fs2.Stream
 import org.mockito.Mockito.atLeast as atLeastTimes
 
 import java.time.Instant

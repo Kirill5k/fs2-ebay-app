@@ -15,7 +15,7 @@ import fs2.Stream
 import sttp.client3.*
 import sttp.client3.circe.asJson
 import sttp.model.headers.CacheDirective
-import sttp.model.{Header, MediaType, StatusCode, Uri}
+import sttp.model.{Header, MediaType, StatusCode}
 
 import scala.concurrent.duration.*
 

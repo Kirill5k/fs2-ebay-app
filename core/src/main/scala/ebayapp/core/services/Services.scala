@@ -5,7 +5,6 @@ import cats.syntax.traverse.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.{ConfigProvider, Logger}
-import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, StockMonitorConfig}
 import ebayapp.core.repositories.Repositories
 import ebayapp.core.domain.Retailer
 

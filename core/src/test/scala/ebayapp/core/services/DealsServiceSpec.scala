@@ -8,7 +8,6 @@ import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
-import fs2.Stream
 import org.mockito.Mockito.times
 
 import scala.concurrent.duration.*

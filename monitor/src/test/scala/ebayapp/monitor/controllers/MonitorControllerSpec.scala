@@ -110,7 +110,6 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
     "PUT /monitors/:id/active" should {
       "activate monitor and return 204" in {
-        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturnUnit
 
@@ -127,7 +126,6 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
       }
 
       "return 404 if monitor does not exist" in {
-        val monitor = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.activate(any[Monitor.Id], any[Boolean])).thenReturn(IO.raiseError(AppError.NotFound("does not exist")))
 

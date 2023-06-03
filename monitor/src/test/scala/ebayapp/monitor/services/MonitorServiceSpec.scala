@@ -3,7 +3,7 @@ package ebayapp.monitor.services
 import cats.effect.IO
 import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.{IOWordSpec, MockActionDispatcher}
-import ebayapp.monitor.actions.{Action, ActionDispatcher}
+import ebayapp.monitor.actions.Action
 import ebayapp.monitor.domain.{CreateMonitor, Monitor, Monitors}
 import ebayapp.monitor.repositories.MonitorRepository
 import fs2.Stream

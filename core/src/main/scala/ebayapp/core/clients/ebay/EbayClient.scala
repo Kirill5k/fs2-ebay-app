@@ -10,7 +10,7 @@ import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses.{EbayItem, EbayItemSummary}
 import ebayapp.core.clients.ebay.mappers.EbayItemMapper
 import ebayapp.core.clients.ebay.search.EbaySearchParams
-import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig}
+import ebayapp.core.common.config.EbaySearchConfig
 import ebayapp.kernel.syntax.predicates.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.ResellableItem
@@ -19,8 +19,6 @@ import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.kernel.Clock
 import fs2.Stream
 import sttp.client3.SttpBackend
-
-import java.time.Instant
 
 final private[ebay] class LiveEbayClient[F[_]: Temporal](
     private val configProvider: ConfigProvider[F],

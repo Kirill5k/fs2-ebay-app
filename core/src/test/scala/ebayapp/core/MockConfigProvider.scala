@@ -1,7 +1,6 @@
 package ebayapp.core
 
 import cats.MonadThrow
-import cats.effect.Sync
 import ebayapp.core.common.ConfigProvider
 import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
 import ebayapp.core.domain.Retailer

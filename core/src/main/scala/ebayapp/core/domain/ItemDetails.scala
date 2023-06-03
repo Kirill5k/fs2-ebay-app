@@ -1,6 +1,5 @@
 package ebayapp.core.domain
 
-import cats.syntax.functor.*
 import cats.syntax.traverse.*
 import cats.syntax.apply.*
 import io.circe.{Codec, Decoder, Encoder, Json}

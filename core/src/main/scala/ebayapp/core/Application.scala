@@ -4,7 +4,6 @@ import cats.effect.{IO, IOApp}
 import ebayapp.kernel.Server
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.{ConfigProvider, Logger, Resources}
-import ebayapp.core.common.config.AppConfig
 import ebayapp.core.controllers.Controllers
 import ebayapp.core.repositories.Repositories
 import ebayapp.core.services.Services

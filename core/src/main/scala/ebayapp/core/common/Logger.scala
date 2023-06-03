@@ -1,6 +1,5 @@
 package ebayapp.core.common
 
-import cats.Monad
 import cats.effect.std.Queue
 import cats.effect.{Async, Deferred, Temporal}
 import cats.syntax.flatMap.*

@@ -6,7 +6,7 @@ import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.{ConfigProvider, Logger}
-import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
+import ebayapp.core.common.config.DealsFinderRequest
 import ebayapp.kernel.syntax.stream.*
 import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository

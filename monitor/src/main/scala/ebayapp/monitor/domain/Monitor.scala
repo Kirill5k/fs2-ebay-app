@@ -4,8 +4,6 @@ import io.circe.{Codec, Decoder, Encoder}
 import mongo4cats.bson.ObjectId
 import ebayapp.monitor.common.json.given
 
-import java.util.UUID
-import java.time.Instant
 import scala.concurrent.duration.FiniteDuration
 
 opaque type Url = java.net.URL

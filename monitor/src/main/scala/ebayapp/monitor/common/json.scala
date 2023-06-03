@@ -1,7 +1,6 @@
 package ebayapp.monitor.common
 
 import cats.syntax.either.*
-import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import io.circe.{Decoder, Encoder}
 

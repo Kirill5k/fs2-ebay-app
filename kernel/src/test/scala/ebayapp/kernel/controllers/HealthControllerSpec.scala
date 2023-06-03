@@ -1,6 +1,6 @@
 package ebayapp.kernel.controllers
 
-import cats.effect.{IO, Ref}
+import cats.effect.IO
 import ebayapp.kernel.{Clock, ControllerSpec, MockClock}
 import org.http4s.Header.Raw
 import org.http4s.implicits.*
@@ -8,7 +8,6 @@ import org.http4s.*
 import org.typelevel.ci.CIString
 
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import scala.concurrent.duration.*
 
 class HealthControllerSpec extends ControllerSpec {

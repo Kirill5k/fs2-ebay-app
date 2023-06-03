@@ -3,7 +3,6 @@ package ebayapp.monitor.repositories
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.traverse.*
-import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.domain.{MonitoringEvents, Monitors}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase

@@ -1,10 +1,6 @@
 package ebayapp.core.common
 
-import cats.effect.Sync
-import cats.syntax.flatMap.*
-import cats.syntax.applicativeError.*
-import cats.syntax.apply.*
-import ebayapp.core.domain.{ItemKind, Retailer}
+import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.kernel.config.{MongoConfig, ServerConfig, ClientConfig}
 import pureconfig.ConfigConvert.catchReadError
@@ -13,7 +9,7 @@ import pureconfig.generic.derivation.default.*
 import pureconfig.configurable.genericMapReader
 
 import java.io.File
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.FiniteDuration
 
 object config {
 

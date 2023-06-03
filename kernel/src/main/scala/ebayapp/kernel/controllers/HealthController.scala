@@ -1,13 +1,11 @@
 package ebayapp.kernel.controllers
 
-import cats.effect.{Async, Ref, Temporal}
+import cats.effect.Async
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
-import cats.syntax.apply.*
 import ebayapp.kernel.Clock
 import ebayapp.kernel.controllers.HealthController.{AppStatus, Metadata}
 import ebayapp.kernel.syntax.time.*
-import ebayapp.kernel.syntax.time.given
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.*
@@ -20,7 +18,6 @@ import sttp.tapir.model.ServerRequest
 
 import java.net.InetAddress
 import java.time.Instant
-import scala.concurrent.duration.*
 
 final private[controllers] class HealthController[F[_]: Async](
     private val startupTime: Instant,
