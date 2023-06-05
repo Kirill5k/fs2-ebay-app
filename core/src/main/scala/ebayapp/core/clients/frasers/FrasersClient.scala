@@ -3,7 +3,6 @@ package ebayapp.core.clients.frasers
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
-import cats.syntax.functor.*
 import ebayapp.core.clients.frasers.mappers.{frasers, FrasersItem}
 import ebayapp.core.clients.frasers.responses.{FlannelsProduct, FlannelsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient}
