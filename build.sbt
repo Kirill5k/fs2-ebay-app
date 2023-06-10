@@ -17,14 +17,14 @@ val noPublish = Seq(
 
 val docker = Seq(
   Universal / javaOptions += "-Djdk.httpclient.allowRestrictedHeaders=cache-control,accept,accept-encoding,accept-language,connection,content-type,content-length,expect,host,referer",
+  dockerEnvVars ++= Map("VERSION" -> version.value),
   packageName        := moduleName.value,
   version            := version.value,
+  maintainer         := "immotional@aol.com",
   dockerUsername     := sys.env.get("DOCKER_USERNAME"),
   dockerRepository   := sys.env.get("DOCKER_REPO_URI"),
-  maintainer         := "immotional@aol.com",
   dockerBaseImage    := "amazoncorretto:20.0.0-alpine",
   dockerUpdateLatest := true,
-  dockerEnvVars ++= Map("VERSION" -> version.value),
   dockerCommands := {
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)
