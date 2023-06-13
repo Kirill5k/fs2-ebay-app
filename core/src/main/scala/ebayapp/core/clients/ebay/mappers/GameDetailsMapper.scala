@@ -93,7 +93,7 @@ private[mappers] object GameDetailsMapper {
     "deleted title", "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "ebays cheapest",
     "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)( )?(X|S)?\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
-    "Stric(t|k)ly limited", "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "(inc)?.{0,10}Lenticular (cover|Sleeve)", 
+    "Stric(t|k)ly limited", "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "(inc|with)? Lenticular (cover|Sleeve)", 
     "plays perfect", "100 trusted seller", "(Backward(s)? )?compatible( with)?", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?",
     "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", 

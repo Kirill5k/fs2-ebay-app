@@ -92,7 +92,7 @@ private[ebay] object search {
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder( listing)? \\d", "character skin", "overwatch\\s+(sony|ps|xbox|legendary|origins|game)",
         "(rune|items|gold).*diablo", "diablo.*(rune|items|gold)", "nexigo", "fan cooling", "Eve Valkyrie", "invaders plush", "xbox original", "Original Xbox 1",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "touchpad", "Touch( )?Screen", "Make Your Selection",
-        "animal crossing", "SCARLET VIOLET", "Patch Cable",
+        "animal crossing", "SCARLET VIOLET", "Patch Cable", "kinect sensor",
         "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mil)",
         "(cod|of duty|mw2|warzone)(?s).*(dmz|jack link|crossbow|code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)", "Destiny 2", "Destiny.*taken king", "heatsink", "Destiny\\s+the coll",
         "Temperature Sensor", "RGB LED", "powerstand", "not duped", "amiibo", "DIY material", "Steep X ", "Switch pedal", "Split Pad",
