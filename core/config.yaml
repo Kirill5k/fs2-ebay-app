@@ -179,16 +179,22 @@ data:
       }
 
       jdsports {
-        delay-between-requests: 45s
+        delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {category: "men", query: "Emporio Armani EA7"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "emporio-armani-ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Boss", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
+    
+          {search-criteria: {category: "women", query: "nike", filters: {"include": ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "women", query: "adidas", filters: {"include": ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "women", query: "emporio-armani-ea7", filters: {"include": ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "women", query: "under-armour", filters: {"include": ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "women", query: "puma", filters: {"include": ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
           exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], 
-          min-discount: 49
+          min-discount: 29
         }
       }
 
