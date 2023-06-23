@@ -348,6 +348,12 @@ class CexClientSpec extends SttpClientSpec {
           "Grand Theft Auto V (2 Disc)",
           "Grand Theft Auto V (5) Collector's Ed."
         )
+        items.map(_.buyPrice) mustBe List(
+          BuyPrice(2425, 15, None),
+          BuyPrice(2045, 4, None),
+          BuyPrice(170, 20, None),
+          BuyPrice(3, 58, None)
+        )
       }
     }
   }

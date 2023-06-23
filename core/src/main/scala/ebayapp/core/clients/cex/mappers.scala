@@ -32,7 +32,7 @@ private[cex] object mappers {
             item.priceLastChanged.map(plc => "priceLastChanged" -> plc)
           ).flatten.toMap
         ),
-        BuyPrice(item.ecomQuantity.getOrElse(0), item.sellPrice),
+        BuyPrice(item.quantityAvailable.getOrElse(0), item.sellPrice),
         Some(SellPrice(item.cashPriceCalculated, item.exchangePriceCalculated)),
         foundWith
       )

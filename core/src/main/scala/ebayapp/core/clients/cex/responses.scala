@@ -1,6 +1,6 @@
 package ebayapp.core.clients.cex
 
-import io.circe.{Codec, JsonObject}
+import io.circe.{Codec, Json, JsonObject}
 
 private[cex] object responses {
 
@@ -11,7 +11,7 @@ private[cex] object responses {
       categoryFriendlyName: String,
       firstPrice: Option[BigDecimal],
       previousPrice: Option[BigDecimal],
-      ecomQuantity: Option[Int],
+      ecomQuantity: Json,
       exchangePerc: BigDecimal,
       priceLastChanged: Option[String],
       sellPrice: BigDecimal,
@@ -21,6 +21,11 @@ private[cex] object responses {
       Grade: Option[List[String]],
       imageUrls: Option[JsonObject]
   ) derives Codec.AsObject {
+    def quantityAvailable: Option[Int] =
+      ecomQuantity match
+        case j if j.isNumber => j.asNumber.flatMap(_.toInt)
+        case j if j.isArray  => j.asArray.flatMap(_.flatMap(_.asNumber).flatMap(_.toInt).maxOption)
+        case _               => None
     def imageUrl: Option[String] =
       imageUrls
         .flatMap(_("medium"))
