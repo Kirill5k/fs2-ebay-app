@@ -26,6 +26,7 @@ private[cex] object mappers {
           Instant.now,
           "CEX",
           List(
+            Some("ecomQuantity" -> item.ecomQuantity.noSpaces),
             Some("exchangePerc" -> item.exchangePerc.toString),
             item.firstPrice.map(fp => "firstPrice" -> fp.toString()),
             item.previousPrice.map(pp => "previousPrice" -> pp.toString()),
