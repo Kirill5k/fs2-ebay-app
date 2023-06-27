@@ -161,6 +161,7 @@ class EbayClientSpec extends IOWordSpec {
         "fallout 4 preorder",
         "COD MW2 GHILLIE Skin 4x Jack Links Codes [COMPLETE SET] + 2 Hours 2XP",
         "fallout 4 disc only",
+        "pokemon scarlet/violet",
         "destiny taken king full game",
         "fallout 76 blah damage blah blah blah",
         "call of duty digital code",
