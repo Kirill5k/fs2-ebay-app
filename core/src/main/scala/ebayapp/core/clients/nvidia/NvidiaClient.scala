@@ -6,7 +6,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.nvidia.mappers.nvidiaGenericItemMapper
+import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -42,7 +42,7 @@ final private class LiveNvidiaClient[F[_]](
           .map(r => NvidiaItem(p.displayName, p.imageURL, p.category, r))
       }
       .flatMap(Stream.emits)
-      .map(nvidiaGenericItemMapper.toDomain(criteria))
+      .map(NvidiaItemMapper.generic.toDomain(criteria))
 
   private def searchProducts(c: SearchCriteria): F[List[Product]] =
     configProvider()

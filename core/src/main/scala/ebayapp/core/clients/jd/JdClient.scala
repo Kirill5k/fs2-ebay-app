@@ -6,7 +6,7 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.jd.mappers.{jdsportsClothingMapper, JdsportsItem}
+import ebayapp.core.clients.jd.mappers.{JdsportsItemMapper, JdsportsItem}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -89,7 +89,7 @@ final private class LiveJdClient[F[_]](
           }
         }
         .flatMap(Stream.emits)
-        .map(jdsportsClothingMapper.toDomain(criteria))
+        .map(JdsportsItemMapper.clothing.toDomain(criteria))
         .handleErrorWith(e => Stream.logError(e)(e.getMessage))
     }
 

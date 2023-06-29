@@ -6,7 +6,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.selfridges.mappers.{selfridgesClothingMapper, SelfridgesItem}
+import ebayapp.core.clients.selfridges.mappers.{SelfridgesItemMapper, SelfridgesItem}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{ConfigProvider, Logger}
@@ -65,7 +65,7 @@ final private class LiveSelfridgesClient[F[_]](
               .metered(config.delayBetweenIndividualRequests.getOrElse(Duration.Zero))
               .map((stock, price) => SelfridgesItem(item, stock, price))
           }
-          .map(selfridgesClothingMapper.toDomain(criteria))
+          .map(SelfridgesItemMapper.clothing.toDomain(criteria))
           .filter(_.buyPrice.quantityAvailable > 0)
       }
 

@@ -8,7 +8,7 @@ import cats.syntax.option.*
 import cats.syntax.apply.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.argos.mappers.argosGenericItemMapper
+import ebayapp.core.clients.argos.mappers.ArgosItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -42,7 +42,7 @@ final private class LiveArgosClient[F[_]](
       .flatMap(Stream.emits)
       .filter(_.attributes.relevancyRank == 1)
       .filter(i => i.attributes.deliverable || i.attributes.reservable)
-      .map(argosGenericItemMapper.toDomain(criteria))
+      .map(ArgosItemMapper.generic.toDomain(criteria))
 
   private def search(query: String, page: Int): F[Option[SearchData]] =
     configProvider()

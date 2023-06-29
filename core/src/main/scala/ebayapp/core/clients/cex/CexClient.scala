@@ -7,7 +7,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.cex.mappers.{cexGenericItemMapper, cexGraphqlGenericItemMapper}
+import ebayapp.core.clients.cex.mappers.{CexGraphqlItemMapper, CexItemMapper}
 import ebayapp.core.clients.cex.requests.{CexGraphqlSearchRequest, GraphqlSearchRequest}
 import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -76,7 +76,7 @@ final private class CexApiClient[F[_]](
       .eval(dispatchSearchRequest(baseUri => uri"$baseUri/v3/boxes?q=${criteria.query}&inStock=1&inStockOnline=1"))
       .map(_.response.data.fold(List.empty[CexItem])(_.boxes))
       .flatMap(Stream.emits)
-      .map(cexGenericItemMapper.toDomain(criteria))
+      .map(CexItemMapper.generic.toDomain(criteria))
 
   private def dispatchSearchRequest(fullUri: String => Uri): F[CexSearchResponse] =
     configProvider()
@@ -162,7 +162,7 @@ final private class CexGraphqlClient[F[_]](
       .flatMap(Stream.emits)
       .map(_.hits)
       .flatMap(Stream.emits)
-      .map(cexGraphqlGenericItemMapper.toDomain(criteria))
+      .map(CexGraphqlItemMapper.generic.toDomain(criteria))
 
   private def dispatchSearchRequest(query: String, inStock: Boolean = true): F[CexGraphqlSearchResponse] = {
     val faceFilters =

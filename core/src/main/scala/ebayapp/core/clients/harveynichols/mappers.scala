@@ -21,34 +21,34 @@ private[harveynichols] object mappers {
   )
 
   type HarveyNicholsItemMapper = ItemMapper[HarveyNicholsItem]
+  object HarveyNicholsItemMapper {
+    val clothing: HarveyNicholsItemMapper = new HarveyNicholsItemMapper {
+      override def toDomain(foundWith: SearchCriteria)(hni: HarveyNicholsItem): ResellableItem =
+        ResellableItem.clothing(
+          Clothing(
+            hni.name.replaceAll("(?i)" + hni.brand, "").trimmed,
+            hni.brand.capitalizeAll,
+            formatSize(hni.size)
+          ),
+          listingDetails(hni),
+          BuyPrice(1, BigDecimal(hni.currentPrice), hni.discount.map(_.toInt)),
+          None,
+          foundWith
+        )
 
-  inline def harveyNicholsClothingMapper: HarveyNicholsItemMapper = new HarveyNicholsItemMapper {
-
-    override def toDomain(foundWith: SearchCriteria)(hni: HarveyNicholsItem): ResellableItem =
-      ResellableItem.clothing(
-        Clothing(
-          hni.name.replaceAll("(?i)" + hni.brand, "").trimmed,
-          hni.brand.capitalizeAll,
-          formatSize(hni.size)
-        ),
-        listingDetails(hni),
-        BuyPrice(1, BigDecimal(hni.currentPrice), hni.discount.map(_.toInt)),
-        None,
-        foundWith
-      )
-
-    private def listingDetails(hni: HarveyNicholsItem): ListingDetails =
-      ListingDetails(
-        s"https://www.harveynichols.com/${hni.itemUrl}",
-        hni.name,
-        None,
-        None,
-        None,
-        Some(hni.imageUrl),
-        s"NEW",
-        Instant.now,
-        "Harvey Nichols",
-        Map.empty
-      )
+      private def listingDetails(hni: HarveyNicholsItem): ListingDetails =
+        ListingDetails(
+          s"https://www.harveynichols.com/${hni.itemUrl}",
+          hni.name,
+          None,
+          None,
+          None,
+          Some(hni.imageUrl),
+          s"NEW",
+          Instant.now,
+          "Harvey Nichols",
+          Map.empty
+        )
+    }
   }
 }

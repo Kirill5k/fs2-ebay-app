@@ -10,46 +10,48 @@ import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria, Sel
 private[cex] object mappers {
 
   type CexGraphqlItemMapper = ItemMapper[CexGraphqlItem]
-
-  val cexGraphqlGenericItemMapper: CexGraphqlItemMapper = new CexGraphqlItemMapper {
-    override def toDomain(foundWith: SearchCriteria)(item: CexGraphqlItem): ResellableItem =
-      ResellableItem.generic(
-        ItemDetails.Generic(item.boxName),
-        ListingDetails(
-          s"https://uk.webuy.com/product-detail/?id=${item.boxId}",
-          item.boxName,
-          Some(item.categoryFriendlyName),
-          None,
-          None,
-          item.imageUrl,
-          s"USED${item.Grade.flatMap(_.headOption).map(g => s" / ${g}").getOrElse("")}",
-          Instant.now,
-          "CEX",
-          List(
-            item.ecomQuantity.map(q => "ecomQuantity" -> q.noSpaces),
-            Some("exchangePerc" -> item.exchangePerc.toString),
-            item.firstPrice.map(fp => "firstPrice" -> fp.toString()),
-            item.previousPrice.map(pp => "previousPrice" -> pp.toString()),
-            item.priceLastChanged.map(plc => "priceLastChanged" -> plc)
-          ).flatten.toMap
-        ),
-        BuyPrice(item.quantityAvailable.getOrElse(0), item.sellPrice),
-        Some(SellPrice(item.cashPriceCalculated, item.exchangePriceCalculated)),
-        foundWith
-      )
+  object CexGraphqlItemMapper {
+    val generic: CexGraphqlItemMapper = new CexGraphqlItemMapper {
+      override def toDomain(foundWith: SearchCriteria)(item: CexGraphqlItem): ResellableItem =
+        ResellableItem.generic(
+          ItemDetails.Generic(item.boxName),
+          ListingDetails(
+            s"https://uk.webuy.com/product-detail/?id=${item.boxId}",
+            item.boxName,
+            Some(item.categoryFriendlyName),
+            None,
+            None,
+            item.imageUrl,
+            s"USED${item.Grade.flatMap(_.headOption).map(g => s" / ${g}").getOrElse("")}",
+            Instant.now,
+            "CEX",
+            List(
+              item.ecomQuantity.map(q => "ecomQuantity" -> q.noSpaces),
+              Some("exchangePerc" -> item.exchangePerc.toString),
+              item.firstPrice.map(fp => "firstPrice" -> fp.toString()),
+              item.previousPrice.map(pp => "previousPrice" -> pp.toString()),
+              item.priceLastChanged.map(plc => "priceLastChanged" -> plc)
+            ).flatten.toMap
+          ),
+          BuyPrice(item.quantityAvailable.getOrElse(0), item.sellPrice),
+          Some(SellPrice(item.cashPriceCalculated, item.exchangePriceCalculated)),
+          foundWith
+        )
+    }
   }
 
   type CexItemMapper = ItemMapper[CexItem]
-
-  val cexGenericItemMapper: CexItemMapper = new CexItemMapper {
-    override def toDomain(foundWith: SearchCriteria)(sr: CexItem): ResellableItem =
-      ResellableItem.generic(
-        ItemDetails.Generic(sr.boxName),
-        listingDetails(sr),
-        price(sr),
-        Some(resellPrice(sr)),
-        foundWith
-      )
+  object CexItemMapper {
+    val generic: CexItemMapper = new CexItemMapper {
+      override def toDomain(foundWith: SearchCriteria)(sr: CexItem): ResellableItem =
+        ResellableItem.generic(
+          ItemDetails.Generic(sr.boxName),
+          listingDetails(sr),
+          price(sr),
+          Some(resellPrice(sr)),
+          foundWith
+        )
+    } 
   }
 
   private def price(sr: CexItem): BuyPrice =

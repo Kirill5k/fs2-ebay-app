@@ -23,37 +23,38 @@ private[mainlinemenswear] object mappers {
   )
 
   type MainlineMenswearItemMapper = ItemMapper[MainlineMenswearItem]
+  object MainlineMenswearItemMapper {
+    val clothing: MainlineMenswearItemMapper = new MainlineMenswearItemMapper {
+      override def toDomain(foundWith: SearchCriteria)(mmi: MainlineMenswearItem): ResellableItem =
+        ResellableItem.clothing(itemDetails(mmi), listingDetails(mmi), buyPrice(mmi), None, foundWith)
 
-  val mainlineMenswearClothingMapper: MainlineMenswearItemMapper = new MainlineMenswearItemMapper {
-    override def toDomain(foundWith: SearchCriteria)(mmi: MainlineMenswearItem): ResellableItem =
-      ResellableItem.clothing(itemDetails(mmi), listingDetails(mmi), buyPrice(mmi), None, foundWith)
+      private def itemDetails(mmi: MainlineMenswearItem): ItemDetails.Clothing =
+        Clothing(
+          mmi.name,
+          mmi.brand.capitalizeAll,
+          formatSize(mmi.size)
+        )
 
-    private def itemDetails(mmi: MainlineMenswearItem): ItemDetails.Clothing =
-      Clothing(
-        mmi.name,
-        mmi.brand.capitalizeAll,
-        formatSize(mmi.size)
-      )
+      private def buyPrice(mmi: MainlineMenswearItem): BuyPrice = {
+        val current = mmi.currentPrice
+        val rrp = mmi.previousPrice
+        val discount = 100 - (current * 100 / rrp).toInt
+        BuyPrice(mmi.onlineStock, current, Some(discount))
+      }
 
-    private def buyPrice(mmi: MainlineMenswearItem): BuyPrice = {
-      val current  = mmi.currentPrice
-      val rrp = mmi.previousPrice
-      val discount = 100 - (current * 100 / rrp).toInt
-      BuyPrice(mmi.onlineStock, current, Some(discount))
-    }
-
-    private def listingDetails(mmi: MainlineMenswearItem): ListingDetails =
-      ListingDetails(
-        s"https://www.mainlinemenswear.co.uk/${mmi.url}",
-        s"${mmi.name} (${mmi.brand} / ${mmi.size})",
-        Some(s"Clothing/${mmi.category}"),
-        None,
-        None,
-        Some(s"https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/${mmi.image}"),
-        "NEW",
-        Instant.now,
-        "Mainline Menswear",
-        Map.empty
-      )
+      private def listingDetails(mmi: MainlineMenswearItem): ListingDetails =
+        ListingDetails(
+          s"https://www.mainlinemenswear.co.uk/${mmi.url}",
+          s"${mmi.name} (${mmi.brand} / ${mmi.size})",
+          Some(s"Clothing/${mmi.category}"),
+          None,
+          None,
+          Some(s"https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/${mmi.image}"),
+          "NEW",
+          Instant.now,
+          "Mainline Menswear",
+          Map.empty
+        )
+    } 
   }
 }

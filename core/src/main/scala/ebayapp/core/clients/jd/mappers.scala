@@ -30,39 +30,40 @@ private[jd] object mappers {
   }
 
   type JdsportsItemMapper = ItemMapper[JdsportsItem]
+  object JdsportsItemMapper {
+    val clothing: JdsportsItemMapper = new JdsportsItemMapper {
+      override def toDomain(foundWith: SearchCriteria)(jdi: JdsportsItem): ResellableItem =
+        ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None, foundWith)
 
-  val jdsportsClothingMapper: JdsportsItemMapper = new JdsportsItemMapper {
-    override def toDomain(foundWith: SearchCriteria)(jdi: JdsportsItem): ResellableItem =
-      ResellableItem.clothing(itemDetails(jdi), listingDetails(jdi), buyPrice(jdi), None, foundWith)
+      private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing = {
+        val id = if (jdi.colour.isBlank) jdi.id else s"${jdi.colour.capitalize}, ${jdi.id}"
+        Clothing(
+          s"${jdi.name.replaceAll("(?i)" + jdi.brand, "").trimmed} ($id)",
+          jdi.brand.capitalizeAll,
+          formatSize(jdi.size)
+        )
+      }
 
-    private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing = {
-      val id = if (jdi.colour.isBlank) jdi.id else s"${jdi.colour.capitalize}, ${jdi.id}"
-      Clothing(
-        s"${jdi.name.replaceAll("(?i)" + jdi.brand, "").trimmed} ($id)",
-        jdi.brand.capitalizeAll,
-        formatSize(jdi.size)
-      )
-    }
+      private def buyPrice(jdi: JdsportsItem): BuyPrice = {
+        val current = jdi.currentPrice
+        val rrp = jdi.previousPrice
+        val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
+        BuyPrice(1, current, discount)
+      }
 
-    private def buyPrice(jdi: JdsportsItem): BuyPrice = {
-      val current  = jdi.currentPrice
-      val rrp = jdi.previousPrice
-      val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
-      BuyPrice(1, current, discount)
-    }
-
-    private def listingDetails(jdi: JdsportsItem): ListingDetails =
-      ListingDetails(
-        s"${jdi.storeUrl}/product/${jdi.fullName}/${jdi.id}/",
-        s"${jdi.name} (${jdi.colour} / ${jdi.size})",
-        Some(jdi.category),
-        None,
-        None,
-        Some(jdi.image),
-        "NEW",
-        Instant.now,
-        jdi.storeName.capitalizeAll,
-        Map.empty
-      )
+      private def listingDetails(jdi: JdsportsItem): ListingDetails =
+        ListingDetails(
+          s"${jdi.storeUrl}/product/${jdi.fullName}/${jdi.id}/",
+          s"${jdi.name} (${jdi.colour} / ${jdi.size})",
+          Some(jdi.category),
+          None,
+          None,
+          Some(jdi.image),
+          "NEW",
+          Instant.now,
+          jdi.storeName.capitalizeAll,
+          Map.empty
+        )
+    } 
   }
 }

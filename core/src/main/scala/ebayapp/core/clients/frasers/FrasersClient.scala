@@ -3,7 +3,7 @@ package ebayapp.core.clients.frasers
 import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
-import ebayapp.core.clients.frasers.mappers.{frasers, FrasersItem}
+import ebayapp.core.clients.frasers.mappers.{FrasersItemMapper, FrasersItem}
 import ebayapp.core.clients.frasers.responses.{FlannelsProduct, FlannelsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -52,7 +52,7 @@ final private class LiveFrasersClient[F[_]](
           .flatMap { product =>
             Stream.emits(product.sizes.split(", ").toList.map(s => FrasersItem(product, s, config.websiteUri, name)))
           }
-          .map(frasers.toDomain(criteria))
+          .map(FrasersItemMapper.clothing.toDomain(criteria))
       }
 
   private def getItems(sc: SearchCriteria)(page: Int = 1): F[(List[FlannelsProduct], Option[Int])] =

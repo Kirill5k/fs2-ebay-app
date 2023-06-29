@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.scan.mappers.scanaGenericItemMapper
+import ebayapp.core.clients.scan.mappers.ScanItemMapper
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -34,7 +34,7 @@ final private class LiveScanClient[F[_]](
       .flatMap { cat =>
         Stream
           .evalSeq(searchByCard(criteria.query, cat))
-          .map(scanaGenericItemMapper.toDomain(criteria))
+          .map(ScanItemMapper.generic.toDomain(criteria))
       }
 
   private def searchByCard(query: String, category: String): F[List[ScanItem]] =

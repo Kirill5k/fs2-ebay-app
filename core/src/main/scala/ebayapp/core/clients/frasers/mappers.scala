@@ -17,31 +17,31 @@ private[frasers] object mappers {
   )
 
   type FrasersItemMapper = ItemMapper[FrasersItem]
-
-  inline def frasers: FrasersItemMapper = new FrasersItemMapper {
-
-    override def toDomain(foundWith: search.SearchCriteria)(item: FrasersItem): ResellableItem =
-      ResellableItem.clothing(
-        ItemDetails.Clothing(
-          s"${item.product.name.cut(item.product.brand)} (${item.product.colour})",
-          item.product.brand.capitalizeAll,
-          formatSize(item.size)
-        ),
-        ListingDetails(
-          s"${item.websiteUri}${item.product.url}",
-          item.product.imageAltText,
+  object FrasersItemMapper {
+    val clothing: FrasersItemMapper = new FrasersItemMapper {
+      override def toDomain(foundWith: search.SearchCriteria)(item: FrasersItem): ResellableItem =
+        ResellableItem.clothing(
+          ItemDetails.Clothing(
+            s"${item.product.name.cut(item.product.brand)} (${item.product.colour})",
+            item.product.brand.capitalizeAll,
+            formatSize(item.size)
+          ),
+          ListingDetails(
+            s"${item.websiteUri}${item.product.url}",
+            item.product.imageAltText,
+            None,
+            None,
+            None,
+            item.product.imageLarge,
+            "NEW",
+            Instant.now,
+            item.retailer.capitalizeAll,
+            Map.empty
+          ),
+          BuyPrice(1, item.product.priceUnFormatted, item.product.discountPercentage.map(_.toInt)),
           None,
-          None,
-          None,
-          item.product.imageLarge,
-          "NEW",
-          Instant.now,
-          item.retailer.capitalizeAll,
-          Map.empty
-        ),
-        BuyPrice(1, item.product.priceUnFormatted, item.product.discountPercentage.map(_.toInt)),
-        None,
-        foundWith
-      )
+          foundWith
+        )
+    }
   }
 }

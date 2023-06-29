@@ -6,7 +6,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
-import ebayapp.core.clients.mainlinemenswear.mappers.{mainlineMenswearClothingMapper, MainlineMenswearItem}
+import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItemMapper, MainlineMenswearItem}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -67,7 +67,7 @@ final private class LiveMainlineMenswearClient[F[_]](
       }
       .flatMap(Stream.emits)
       .filter(_.previousPrice > BigDecimal(0))
-      .map(mainlineMenswearClothingMapper.toDomain(criteria))
+      .map(MainlineMenswearItemMapper.clothing.toDomain(criteria))
       .handleErrorWith(e => Stream.logError(e)(e.getMessage))
 
   private def searchForItems(criteria: SearchCriteria): Stream[F, ProductPreview] =
