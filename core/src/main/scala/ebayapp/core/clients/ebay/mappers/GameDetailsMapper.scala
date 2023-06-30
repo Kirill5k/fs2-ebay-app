@@ -42,7 +42,7 @@ private[mappers] object GameDetailsMapper {
     "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
     "dis(c|k)(s)? (are|is|in)(?s).*$",
     "(in )?((absolutely|near) )?(great|(very )?good|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
-    "(official\\s+)?(\\bUK\\b|\\bEU(R)?\\b|genuine|european|platinum|original|essentials|cartridge)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
+    "(official\\s+)?(\\bUK\\b|\\bEU(R)?\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
     "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
@@ -73,7 +73,7 @@ private[mappers] object GameDetailsMapper {
     // removes the word USED
     "((barely|condition|never|hardly|dlc|only) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
     // removes the word VERSION
-    "(official|20\\d\\d) version",
+    "(official|cartridge|20\\d\\d) version",
     // removes the word "BRAND NEW"
     "(sealed )?brand new( (condition|case|(factory )?sealed|still wrapped))?( in packaging)?( 20\\d\\d)?",
     // removes the word SEALED
