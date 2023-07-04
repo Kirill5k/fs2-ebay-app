@@ -2,7 +2,7 @@ import sbt.*
 
 object Dependencies {
   private object Versions {
-    val mongo4cats      = "0.6.13"
+    val mongo4cats      = "0.6.15"
     val pureConfig      = "0.17.4"
     val circe           = "0.14.5"
     val sttp            = "3.8.15"
@@ -10,7 +10,7 @@ object Dependencies {
     val http4sJdkClient = "0.9.1"
     val logback         = "1.4.8"
     val log4cats        = "2.6.0"
-    val tapir           = "1.5.5"
+    val tapir           = "1.6.0"
     val courier         = "3.2.0"
 
     val scalaTest    = "3.2.15"
