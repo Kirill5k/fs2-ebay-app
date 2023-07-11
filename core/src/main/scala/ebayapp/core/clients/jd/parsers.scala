@@ -82,7 +82,8 @@ private[jd] object parsers {
     }
 
     private def parseAvailableSizes(rawHtml: String): Either[AppError, List[String]] =
-      rawHtml
+      Option(rawHtml)
+        .getOrElse("")
         .split("title=\"Select Size ")
         .toList
         .tail
