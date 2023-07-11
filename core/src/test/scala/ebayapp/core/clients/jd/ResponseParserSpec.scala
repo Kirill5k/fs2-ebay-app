@@ -42,8 +42,14 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
         ).some.asRight
       }
 
-      "should return no size when out of stock" in {
+      "return no size when out of stock" in {
         val result = ResponseParser.parseProductStockResponse(html("jdsports/get-product-stock-oos.html"))
+
+        result mustBe Right(None)
+      }
+
+      "handle nulls" in {
+        val result = ResponseParser.parseProductStockResponse(null)
 
         result mustBe Right(None)
       }
