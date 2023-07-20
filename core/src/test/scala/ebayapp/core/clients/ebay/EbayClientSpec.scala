@@ -37,7 +37,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "return error when invalid category specified" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       val itemsResponse = videoGameSearchClient.search(criteria.copy(category = None))
 
@@ -50,7 +50,7 @@ class EbayClientSpec extends IOWordSpec {
     "search for video games" in {
       val searchParamsCaptor: ArgumentCaptor[Map[String, String]] = ArgumentCaptor.forClass(classOf[Map[String, String]])
       val (authClient, browseClient)                              = mocks
-      val videoGameSearchClient                                   = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient                                   = LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], searchParamsCaptor.capture())).thenReturn(IO.pure(List()))
@@ -74,7 +74,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "switch ebay account on autherror" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(authClient.switchAccount()).thenReturnUnit
@@ -93,7 +93,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "return empty on http error" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], any[Map[String, String]]))
@@ -112,7 +112,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "filter out items with bad feedback" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], any[Map[String, String]]))
@@ -130,7 +130,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "filter out items are part of a group" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], any[Map[String, String]]))
@@ -148,7 +148,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "filter out items with bad names" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       val badItems = List(
         "super mario bros 3ds",
@@ -199,7 +199,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "filter out items that are not buy it now" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], any[Map[String, String]]))
@@ -214,7 +214,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "filter out items with bad description" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       val response = List(
         ebayItemSummary(shortDescription = Some("this is a shared account")),
@@ -233,7 +233,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "get item details for each item id" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       when(authClient.accessToken).thenReturn(IO.pure(accessToken))
       when(browseClient.search(any[String], any[Map[String, String]])).thenReturn(IO.pure(ebayItemSummaries("item-1")))
@@ -253,7 +253,7 @@ class EbayClientSpec extends IOWordSpec {
 
     "return error when there is not item-kind passes" in {
       val (authClient, browseClient) = mocks
-      val videoGameSearchClient      = new LiveEbayClient[IO](config, authClient, browseClient)
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       val itemsResponse = videoGameSearchClient.search(criteria.copy(itemKind = None))
 
