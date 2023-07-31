@@ -38,7 +38,7 @@ private[jd] object mappers {
       private def itemDetails(jdi: JdsportsItem): ItemDetails.Clothing = {
         val id = if (jdi.colour.isBlank) jdi.id else s"${jdi.colour.capitalize}, ${jdi.id}"
         Clothing(
-          s"${jdi.name.replaceAll("(?i)" + jdi.brand, "").trimmed} ($id)",
+          s"${jdi.name.replaceAll("&amp;", "&").replaceAll("(?i)" + jdi.brand, "").trimmed} ($id)",
           jdi.brand.capitalizeAll,
           formatSize(jdi.size)
         )
