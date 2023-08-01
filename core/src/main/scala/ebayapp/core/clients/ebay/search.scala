@@ -82,7 +82,7 @@ private[ebay] object search {
         "horipad", "(mouse|keyboard|cord|power|\\bAC\\b|hdmi)( )?(adapter|level|supply)", "tv tuner", "home circuit", "Origami Sheets",
         "starter (set|pack|bundle|kit)", "figure(s)? bundle", "k eso", "(mini|gift) toy", "pad pro", "cable (adapter|pack)",
         "pre(\\s+)?(order|sale)", "season pass", "(steel|art)( )?book", "(game|mini)( )?figure", "collectable", "collectible", "remote control", "(aux|charg(ing|e)|power|av) cable",
-        "membership", "12 month", "(wallpaper|dynamic|ps\\d) theme", "themes", "account", "achievement pack", "FN ACC", "RDS Industries",
+        "membership", "12 month", "(wallpaper|dynamic|ps\\d) theme", "themes", "account", "achievement pack", "(MODDED|FN) ACC", "RDS Industries",
         "(xp|level|lvl) boost", "gamer score", "trophy service", "platinum trophy", "arcade mini", "boosting levels", "rare promo", "LUGGAGE TAG",
         "samsung", "huawei", "iphone", "\\bipad\\b", "sandisk", "server", "wireless", "Tempered Glass", "Early Access", "beta test",
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
