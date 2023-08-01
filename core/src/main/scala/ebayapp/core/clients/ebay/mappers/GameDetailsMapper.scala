@@ -241,7 +241,6 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(wafare|warefare)", "Warfare")
       .replaceAll("(?i)(as(s)?a(s)?(s)?in)", "Assassin")
       .replaceAll("(?i)(va(l)?(l)?hal(l)?a)", "Valhalla")
-      .replaceAll("(?i)(diablo 3)", "diablo iii")
       .replaceAll("(?i)(World Rally Championship)", "WRC")
       .replaceAll("(?i)(\\bPVZ\\b)", "Plants vs Zombies ")
       .replaceAll("(?i)(\\bnsane\\b)", "N Sane")
