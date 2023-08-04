@@ -217,7 +217,7 @@ data:
           {search-criteria: {query: "stone-island", category: mens}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "off-white", category: mens, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "palm-angels", category: mens, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "kenzo", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "kenzo", category: mens}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
           exclude: ["size (\\dX(S|L)|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants|olive"], 
