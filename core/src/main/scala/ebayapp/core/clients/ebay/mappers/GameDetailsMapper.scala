@@ -10,7 +10,7 @@ private[mappers] object GameDetailsMapper {
     "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
     "\\bPS(-| )?(\\d|one)\\b",
     "(nintendo )?(switch|\\bwii( u)?\\b)",
-    "((m(i)?(c)?(r)?(o)?soft|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d{1,3}|sx)\\b"
+    "((m(i)?(c)?(r)?(o)?soft(s)?|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d{1,3}|sx)\\b"
   ).mkString(
     "((new|(super )?rare|cheapest|excellent|official|select|enhanced|Officially Licensed) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
     "|",
@@ -40,14 +40,14 @@ private[mappers] object GameDetailsMapper {
     "exclusive to(?s).*$", "clean(ed)?( )?(fully )?tested",
     "((\\bC\\b )?\\bW\\b|with| inc(ludes)?|including|contain|((\\d|no) )?bonus|plus).{0,20}(game|insert|guide|dlc|pass|level|content|bonus|pack)(?s).*$",
     "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|art|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
-    "dis(c|k)(s)? (are|is|in)(?s).*$",
+    "(both )?dis(c|k)(s)? (are|is|in)(?s).*$", "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b",
     "(in )?((absolutely|near) )?(great|(very )?good|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU(R)?\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
     "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
     "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b",
-    "Microsoft( 20\\d\\d)?", "sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "xbox()?(original)?",
+    "Microsoft(s)?( 20\\d\\d)?", "(by )?sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "xbox()?(original)?",
     "\\d games in (one|1)",
     "(?<=\\b(W)?(2k)?\\d+)\\s+(20\\d\\d|wrestling|basketball|footbal)(?s).*", "(?<=FIFA( \\d\\d)?) (soccer|football)",
     "(?<=Minecraft) bedrock", "(?<=NBA) basketball", "(?<=WWE) wrestling",
@@ -67,7 +67,7 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
     // removes the word GAME
-    "((new|\\ball\\b) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|(limited|LTD) run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|boxed complete) game(s)?( )?(\\d+|in one)?( new)?",
+    "((new|\\ball\\b) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|(limited|LTD) run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|\\bbase\\b|boxed complete) game(s)?( )?(\\d+|in one)?( new)?",
     "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|puzzle|extreme sport(s)?|soccer|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike|driving) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( )?(for kids|series|film|racing|good|box(ed)?|watch|collection|console|of (year|olympic(s)?|movie))?( 20\\d\\d)?",
     "real driving simulator",
     // removes the word USED
@@ -87,11 +87,10 @@ private[mappers] object GameDetailsMapper {
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer",
     "(Multi|Single)( )?Player", "life simulation", "racing rally",
     "\\bpegi( \\d+)?\\b(?s).*$",
-    "((\\d+|ten)th|(10|20|ten))( year(s)?)? (anniversary|celebration)",
-    "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b", "free gift",
+    "((\\d+|ten)th|(10|20|ten))( year(s)?)? (anniversary|celebration)", "free gift",
     "\\d \\d players", "1 ONE", "(flash|xmas|christmas) sale", "Fun Kids Play( Console)?", "with all extras",
     "deleted title", "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "ebays cheapest",
-    "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)( )?(X|S)?\\b",
+    "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)( )?(X|S)?\\b", "\\bRev\\d+\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Stric(t|k)ly limited", "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "(inc|with)? Lenticular (cover|Sleeve)", 
     "plays perfect", "100 trusted seller", "(Backward(s)? )?compatible( with)?", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?",
