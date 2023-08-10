@@ -79,7 +79,8 @@ const StockItems = ({items}) => {
     position: 'both',
     align: 'center',
     defaultPageSize: 50,
-    pageSizeOptions: [25, 50, 100, 250]
+    pageSizeOptions: [25, 50, 100, 250],
+    onChange: () => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }
   return (
       <div>
