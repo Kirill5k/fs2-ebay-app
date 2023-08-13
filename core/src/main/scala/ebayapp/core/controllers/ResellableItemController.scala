@@ -8,21 +8,26 @@ import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummar
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
+import ebayapp.kernel.controllers.views.ErrorResponse
 import org.http4s.HttpRoutes
 import sttp.tapir.*
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import java.time.Instant
 
-final private[controllers] class ResellableItemController[F[_]: Async](
-    private val basePath: String,
-    private val itemKind: ItemKind,
+final private[controllers] class ResellableItemController[F[_]](
     private val itemService: ResellableItemService[F]
+)(using
+    F: Async[F]
 ) extends Controller[F] {
 
-  given Schema[ItemKind] = Schema.string
+  given Schema[ItemKind]    = Schema.string
   given Schema[ItemDetails] = Schema.string
-  
+
+  private val itemKindMappings = Map(
+    "video-games" -> ItemKind.VideoGame
+  )
+
   private val searchQueryParams =
     query[Option[Int]]("limit")
       .and(query[Option[String]]("query"))
@@ -30,25 +35,33 @@ final private[controllers] class ResellableItemController[F[_]: Async](
       .and(query[Option[Instant]]("to"))
 
   private val getAll = endpoint.get
-    .in(basePath)
+    .in(path[String])
     .in(searchQueryParams)
     .errorOut(Controller.errorResponse)
     .out(jsonBody[List[ResellableItemView]])
-    .serverLogic { (limit, query, from, to) =>
-      itemService
-        .search(SearchParams(itemKind, limit, from, to, query))
-        .mapResponse(_.map(ResellableItemView.from))
+    .serverLogic { (kind, limit, query, from, to) =>
+      itemKindMappings.get(kind) match
+        case Some(itemKind) =>
+          itemService
+            .search(SearchParams(itemKind, limit, from, to, query))
+            .mapResponse(_.map(ResellableItemView.from))
+        case None =>
+          F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
     }
 
   private val getSummaries = endpoint.get
-    .in(basePath / "summary")
+    .in(path[String] / "summary")
     .in(searchQueryParams)
     .errorOut(Controller.errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
-    .serverLogic { (limit, query, from, to) =>
-      itemService
-        .summaries(SearchParams(itemKind, limit, from, to, query))
-        .mapResponse(ResellableItemsSummaryResponse.from)
+    .serverLogic { (kind, limit, query, from, to) =>
+      itemKindMappings.get(kind) match
+        case Some(itemKind) =>
+          itemService
+            .summaries(SearchParams(itemKind, limit, from, to, query))
+            .mapResponse(ResellableItemsSummaryResponse.from)
+        case None =>
+          F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
     }
 
   override def routes: HttpRoutes[F] =
@@ -56,5 +69,5 @@ final private[controllers] class ResellableItemController[F[_]: Async](
 }
 
 object ResellableItemController:
-  def videoGame[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
-    Monad[F].pure(ResellableItemController[F]("video-games", ItemKind.VideoGame, service))
+  def make[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
+    Monad[F].pure(ResellableItemController[F](service))

@@ -29,7 +29,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(List(game1, game2))
 
-      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
+      val controller = new ResellableItemController[IO](service)
 
       val request  = Request[IO](uri = uri"/video-games", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -100,7 +100,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.summaries(any[SearchParams])).thenReturnIO(summaries)
 
-      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
+      val controller = new ResellableItemController[IO](service)
 
       val request  = Request[IO](uri = uri"/video-games/summary", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -120,7 +120,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
-      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
+      val controller = new ResellableItemController[IO](service)
 
       val request  = Request[IO](uri = uri"/video-games?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -139,7 +139,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
-      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
+      val controller = new ResellableItemController[IO](service)
 
       val request  = Request[IO](uri = uri"/video-games?from=2020-01-01&to=2020-01-01T00:00:01", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -154,7 +154,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
-      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
+      val controller = new ResellableItemController[IO](service)
 
       val request  = Request[IO](uri = uri"/video-games?from=foo", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -167,7 +167,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(Nil)
 
-      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
+      val controller = new ResellableItemController[IO](service)
 
       val request  = Request[IO](uri = uri"/video-games?limit=100&query=foo-bar", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
@@ -180,7 +180,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenRaiseError(new RuntimeException("bad request"))
 
-      val controller = new ResellableItemController[IO]("video-games", ItemKind.VideoGame, service)
+      val controller = new ResellableItemController[IO](service)
 
       val request  = Request[IO](uri = uri"/video-games", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)

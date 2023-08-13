@@ -27,7 +27,7 @@ object Controllers {
   def make[F[_]: Async](services: Services[F]): F[Controllers[F]] =
     (
       HomeController.make[F],
-      ResellableItemController.videoGame(services.resellableItem),
+      ResellableItemController.make(services.resellableItem),
       HealthController.make[F],
       StockController.make[F](services.stock)
     ).mapN((ho, vg, he, st) =>
