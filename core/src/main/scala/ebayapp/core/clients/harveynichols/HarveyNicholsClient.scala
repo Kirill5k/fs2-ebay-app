@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.harveynichols.mappers.{HarveyNicholsItemMapper, HarveyNicholsItem}
+import ebayapp.core.clients.harveynichols.mappers.{HarveyNicholsItem, HarveyNicholsItemMapper}
 import ebayapp.core.clients.harveynichols.responses.{HarveyNicholsProduct, HarveyNicholsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.{ConfigProvider, Logger}

@@ -7,7 +7,7 @@ import scala.util.Try
 
 private[scan] object parsers {
 
-  private[scan] final case class ScanItem(
+  final private[scan] case class ScanItem(
       name: String,
       productUrlPath: String,
       imageUrl: String,

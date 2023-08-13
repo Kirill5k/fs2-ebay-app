@@ -2,7 +2,7 @@ package ebayapp.core.services
 
 import cats.Monad
 import ebayapp.core.domain.{ItemSummary, ResellableItem}
-import ebayapp.core.repositories.{SearchParams, ResellableItemRepository}
+import ebayapp.core.repositories.{ResellableItemRepository, SearchParams}
 
 trait ResellableItemService[F[_]]:
   def search(filters: SearchParams): F[List[ResellableItem]]

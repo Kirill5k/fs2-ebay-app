@@ -14,7 +14,9 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
   val videoGameEbayItem = EbayItem(
     "item-1",
     "Call of Duty Modern Warfare xbox one 2019",
-    Some("call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."),
+    Some(
+      "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."
+    ),
     None,
     "Video Games & Consoles|Video Games",
     139973,
@@ -26,7 +28,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
       ItemProperty("Game Name", "Call of Duty: Modern Warfare"),
       ItemProperty("Release Year", "2019"),
       ItemProperty("Platform", "Microsoft Xbox One"),
-      ItemProperty("Genre", "Action"),
+      ItemProperty("Genre", "Action")
     ).some,
     Set("FIXED_PRICE"),
     "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
@@ -34,7 +36,10 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     None,
     None,
     None,
-    List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR")), ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal(2.99), "GBR"))).some,
+    List(
+      ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR")),
+      ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal(2.99), "GBR"))
+    ).some,
     List(ItemAvailabilities(None, Some(5))).some
   )
 
@@ -42,7 +47,9 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "item-2",
     "Samsung Galaxy S10 128gb UNLOCKED Prism Blue",
     Some("Samsung Galaxy S10 Used"),
-    Some("<div><u>Up For Grabs</u></div><div><br></div><div><div><div style=\"color:rgb(0, 0, 0); font-family:Arial; font-size:14px; font-style:normal; font-variant:normal; font-weight:400; letter-spacing:normal; orphans:2; text-align:left; text-decoration:none; text-indent:0px; text-transform:none; white-space:normal; word-spacing:0px;\">Samsung Galaxy S10 128gb UNLOCKED Prism Blue</div></div><br></div><div>Good Condition</div><div>The usual minor wear and Tear as you would expect from a used phone.</div><div>It has been in a case with a screen protector since new however they appears to</div><div>have 1 x Deeper Scratch no more than 1cm long to the top left of the phone which does not affect the use of the phone nor does it show up when the screen is in use and you have got to look for it to see it when the screen is off.</div><div><br></div><div>Comes with Wall Plug and Wire.</div><div><br></div><div>I like the phone but unfortunately I changed from Apple to android and just can't get away with it.</div><div>So I ordered the iPhone 11 last night for delivery today.</div><div><br></div><div>I'm always 100% honest in my descriptions and this is how i've obtained my 100% feedback rating as a seller.</div><div>The stratch isn't really noticable but it's there so I would not sell the phone without advising.</div><div><br></div><div>Pictures to follow.</div><div><br></div><div>Music Magie are currently offering £352 for the phone so please no silly offers.</div><div><br></div><div><u><br></u></div><div><br></div>"),
+    Some(
+      "<div><u>Up For Grabs</u></div><div><br></div><div><div><div style=\"color:rgb(0, 0, 0); font-family:Arial; font-size:14px; font-style:normal; font-variant:normal; font-weight:400; letter-spacing:normal; orphans:2; text-align:left; text-decoration:none; text-indent:0px; text-transform:none; white-space:normal; word-spacing:0px;\">Samsung Galaxy S10 128gb UNLOCKED Prism Blue</div></div><br></div><div>Good Condition</div><div>The usual minor wear and Tear as you would expect from a used phone.</div><div>It has been in a case with a screen protector since new however they appears to</div><div>have 1 x Deeper Scratch no more than 1cm long to the top left of the phone which does not affect the use of the phone nor does it show up when the screen is in use and you have got to look for it to see it when the screen is off.</div><div><br></div><div>Comes with Wall Plug and Wire.</div><div><br></div><div>I like the phone but unfortunately I changed from Apple to android and just can't get away with it.</div><div>So I ordered the iPhone 11 last night for delivery today.</div><div><br></div><div>I'm always 100% honest in my descriptions and this is how i've obtained my 100% feedback rating as a seller.</div><div>The stratch isn't really noticable but it's there so I would not sell the phone without advising.</div><div><br></div><div>Pictures to follow.</div><div><br></div><div>Music Magie are currently offering £352 for the phone so please no silly offers.</div><div><br></div><div><u><br></u></div><div><br></div>"
+    ),
     "Mobile Phones & Communication|Mobile & Smart Phones",
     0,
     ItemPrice(BigDecimal(425.00), "GBP"),
@@ -77,21 +84,23 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
         "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
         "Call of Duty Modern Warfare xbox one 2019",
         Some("Games"),
-        Some("call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."),
+        Some(
+          "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."
+        ),
         None,
         Some("https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg"),
         "NEW",
         game.listingDetails.datePosted,
         "EBAY:168.robinhood",
         Map(
-          "Game Name" -> "Call of Duty: Modern Warfare",
+          "Game Name"    -> "Call of Duty: Modern Warfare",
           "Release Year" -> "2019",
-          "Platform" -> "Microsoft Xbox One",
-          "Genre" -> "Action",
-          "Postage" -> "2.99",
-          "Price" -> "30.0",
-          "Currency" -> "GBP",
-          "CategoryId" -> "139973"
+          "Platform"     -> "Microsoft Xbox One",
+          "Genre"        -> "Action",
+          "Postage"      -> "2.99",
+          "Price"        -> "30.0",
+          "Currency"     -> "GBP",
+          "CategoryId"   -> "139973"
         )
       )
 
@@ -101,27 +110,29 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "transform to GameDetails even if no shipping options" in {
       val game = EbayItemMapper.gameDetailsMapper.toDomain(searchCriteria)(videoGameEbayItem.copy(shippingOptions = None))
 
-      game.itemDetails mustBe(ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
+      game.itemDetails mustBe (ItemDetails.VideoGame(Some("Call of Duty Modern Warfare"), Some("XBOX ONE"), Some("2019"), Some("Action")))
 
       game.listingDetails mustBe ListingDetails(
         "https://www.ebay.co.uk/itm/call-of-duty-modern-warfare-xbox-one-2019-/333474293066",
         "Call of Duty Modern Warfare xbox one 2019",
         Some("Games"),
-        Some("call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."),
+        Some(
+          "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."
+        ),
         None,
         Some("https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg"),
         "NEW",
         game.listingDetails.datePosted,
         "EBAY:168.robinhood",
         Map(
-          "Game Name" -> "Call of Duty: Modern Warfare",
+          "Game Name"    -> "Call of Duty: Modern Warfare",
           "Release Year" -> "2019",
-          "Platform" -> "Microsoft Xbox One",
-          "Genre" -> "Action",
-          "Postage" -> "0",
-          "Price" -> "30.0",
-          "Currency" -> "GBP",
-          "CategoryId" -> "139973",
+          "Platform"     -> "Microsoft Xbox One",
+          "Genre"        -> "Action",
+          "Postage"      -> "0",
+          "Price"        -> "30.0",
+          "Currency"     -> "GBP",
+          "CategoryId"   -> "139973"
         )
       )
 
@@ -145,21 +156,23 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
         "Samsung Galaxy S10 128gb UNLOCKED Prism Blue",
         Some("Mobile Phones & Communication|Mobile & Smart Phones"),
         Some("Samsung Galaxy S10 Used"),
-        Some("Up For GrabsSamsung Galaxy S10 128gb UNLOCKED Prism BlueGood ConditionThe usual minor wear and Tear as you would expect from a used phone.It has been in a case with a screen protector since new however they appears tohave 1 x Deeper Scratch no more than 1cm long to the top left of the phone which does not affect the use of the phone nor does it show up when the screen is in use and you have got to look for it to see it when the screen is off.Comes with Wall Plug and Wire.I like the phone but unf"),
+        Some(
+          "Up For GrabsSamsung Galaxy S10 128gb UNLOCKED Prism BlueGood ConditionThe usual minor wear and Tear as you would expect from a used phone.It has been in a case with a screen protector since new however they appears tohave 1 x Deeper Scratch no more than 1cm long to the top left of the phone which does not affect the use of the phone nor does it show up when the screen is in use and you have got to look for it to see it when the screen is off.Comes with Wall Plug and Wire.I like the phone but unf"
+        ),
         Some("https://i.ebayimg.com/images/g/yOMAAOSw~5ReGEH2/s-l1600.jpg"),
         "USED",
         phone.listingDetails.datePosted,
         "EBAY:jb-liquidation3",
         Map(
-          "Brand" -> "Samsung",
-          "Model" -> "Samsung Galaxy S10",
+          "Brand"            -> "Samsung",
+          "Model"            -> "Samsung Galaxy S10",
           "Storage Capacity" -> "128 GB",
-          "Network" -> "Unlocked",
-          "Colour" -> "Blue",
-          "Postage" -> "4.99",
-          "Price" -> "425.0",
-          "Currency" -> "GBP",
-          "CategoryId" -> "0",
+          "Network"          -> "Unlocked",
+          "Colour"           -> "Blue",
+          "Postage"          -> "4.99",
+          "Price"            -> "425.0",
+          "Currency"         -> "GBP",
+          "CategoryId"       -> "0"
         )
       )
 

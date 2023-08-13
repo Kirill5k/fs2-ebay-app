@@ -51,7 +51,7 @@ private[cex] object mappers {
           Some(resellPrice(sr)),
           foundWith
         )
-    } 
+    }
   }
 
   private def price(sr: CexItem): BuyPrice =

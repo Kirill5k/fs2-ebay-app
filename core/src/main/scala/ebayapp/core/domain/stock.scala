@@ -5,7 +5,7 @@ import ebayapp.core.domain.search.BuyPrice
 object stock {
 
   enum StockUpdate(val header: String, val message: String):
-    case New extends StockUpdate("STOCK/NEW", "New in stock")
+    case New        extends StockUpdate("STOCK/NEW", "New in stock")
     case OutOfStock extends StockUpdate("STOCK/OOS", "Out of stock")
     case PriceDrop(previous: BigDecimal, current: BigDecimal)
         extends StockUpdate("PRICE/DROP", s"Price has reduced from £$previous to £$current")

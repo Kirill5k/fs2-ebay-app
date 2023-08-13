@@ -17,7 +17,7 @@ import scala.concurrent.duration.*
 
 class EbayAuthClientSpec extends SttpClientSpec {
 
-  val now = Instant.parse("2020-01-01T00:00:00Z")
+  val now                = Instant.parse("2020-01-01T00:00:00Z")
   given clock: Clock[IO] = MockClock(now)
 
   val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))

@@ -30,7 +30,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
       "return 422 when id is invalid" in {
         val (monSvc, meSvc) = mocks
-        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+        val controller      = new LiveMonitorController[IO](monSvc, meSvc)
 
         val request  = Request[IO](uri = Uri.fromString(s"/monitors/fooo").value, method = Method.DELETE)
         val response = controller.routes.orNotFound.run(request)
@@ -42,7 +42,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
     "PUT /monitors/:id" should {
       "activate monitor and return 204" in {
-        val monitor = Monitors.monitor
+        val monitor         = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.update(any[Monitor])).thenReturnUnit
 
@@ -78,7 +78,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
       "return 400 when ids do not match" in {
         val (monSvc, meSvc) = mocks
-        val controller = new LiveMonitorController[IO](monSvc, meSvc)
+        val controller      = new LiveMonitorController[IO](monSvc, meSvc)
 
         val requestBody =
           s"""{
@@ -117,7 +117,8 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
         val requestBody = """{"active":true}""".stripMargin
 
-        val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}/active").value, method = Method.PUT).withEntity(requestBody)
+        val request =
+          Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}/active").value, method = Method.PUT).withEntity(requestBody)
         val response = controller.routes.orNotFound.run(request)
 
         verifyJsonResponse(response, Status.NoContent, None)
@@ -133,7 +134,8 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
         val requestBody = """{"active":true}""".stripMargin
 
-        val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}/active").value, method = Method.PUT).withEntity(requestBody)
+        val request =
+          Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}/active").value, method = Method.PUT).withEntity(requestBody)
         val response = controller.routes.orNotFound.run(request)
 
         verifyJsonResponse(response, Status.NotFound, Some("""{"message":"does not exist"}"""))
@@ -144,7 +146,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
 
     "POST /monitors" should {
       "return 400 on malformed request" in {
-        val monitor = Monitors.monitor
+        val monitor         = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.create(any[CreateMonitor])).thenReturn(IO.pure(monitor))
 
@@ -155,13 +157,14 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
         val request  = Request[IO](uri = uri"/monitors", method = Method.POST).withEntity(requestBody)
         val response = controller.routes.orNotFound.run(request)
 
-        val error = "Invalid value for: body (Missing required field at 'name', Missing required field at 'connection', Missing required field at 'interval', Missing required field at 'contact')"
+        val error =
+          "Invalid value for: body (Missing required field at 'name', Missing required field at 'connection', Missing required field at 'interval', Missing required field at 'contact')"
         verifyJsonResponse(response, Status.BadRequest, Some(s"""{"message":"$error"}"""))
         verifyNoInteractions(meSvc, monSvc)
       }
 
       "create new monitor and return 201 on success" in {
-        val monitor = Monitors.monitor
+        val monitor         = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.create(any[CreateMonitor])).thenReturn(IO.pure(monitor))
 
@@ -197,7 +200,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
     "GET /monitors" should {
 
       "return all monitors on success" in {
-        val monitor = Monitors.monitor
+        val monitor         = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.getAll).thenReturn(IO.pure(List(monitor)))
 
@@ -262,7 +265,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
       }
 
       "find monitor by on success" in {
-        val monitor = Monitors.monitor
+        val monitor         = Monitors.monitor
         val (monSvc, meSvc) = mocks
         when(monSvc.find(any[Monitor.Id])).thenReturn(IO.pure(Some(monitor)))
 

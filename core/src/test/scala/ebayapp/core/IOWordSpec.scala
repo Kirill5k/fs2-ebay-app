@@ -23,7 +23,7 @@ trait IOWordSpec extends AsyncWordSpec with Matchers with MockitoSugar with Mock
     val deals: List[DealsService[IO]]             = List(mock[DealsService[IO]])
   }
 
-  extension[A] (io: IO[A])
+  extension [A](io: IO[A])
     def throws(error: Throwable): Future[Assertion] =
       io.attempt.asserting(_ mustBe Left(error))
     def asserting(f: A => Assertion): Future[Assertion] =

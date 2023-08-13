@@ -49,7 +49,7 @@ final private class RefbasedCache[F[_]: Clock: Monad, K, V](
     state.get.map(_.values.map(_._1).toList)
 
   override def size: F[Int] = state.get.map(_.size)
-  
+
   override def clear: F[Unit] = state.set(Map.empty)
 }
 

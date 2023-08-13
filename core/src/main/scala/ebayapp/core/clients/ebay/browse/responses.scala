@@ -11,13 +11,13 @@ private[ebay] object responses {
       name: String,
       value: String
   ) derives Codec.AsObject
-  
+
   final case class ItemSeller(
       username: Option[String],
       feedbackPercentage: Option[Double],
       feedbackScore: Option[Int]
   ) derives Codec.AsObject
-  
+
   final case class ItemImage(imageUrl: String) derives Codec.AsObject
   final case class ItemPrice(value: BigDecimal, currency: String) derives Codec.AsObject
   final case class ItemCategory(categoryId: String) derives Codec.AsObject

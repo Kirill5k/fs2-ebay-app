@@ -16,7 +16,7 @@ final private class MockActionDispatcher[F[_]](
     submittedActions.addOne(action)
     F.unit
   }
-  
+
   override def actions: fs2.Stream[F, Action] =
     Stream.emits(submittedActions)
 

@@ -45,8 +45,8 @@ private[jd] object mappers {
       }
 
       private def buyPrice(jdi: JdsportsItem): BuyPrice = {
-        val current = jdi.currentPrice
-        val rrp = jdi.previousPrice
+        val current  = jdi.currentPrice
+        val rrp      = jdi.previousPrice
         val discount = rrp.map(current * 100 / _).map(100 - _.toInt)
         BuyPrice(1, current, discount)
       }
@@ -64,6 +64,6 @@ private[jd] object mappers {
           jdi.storeName.capitalizeAll,
           Map.empty
         )
-    } 
+    }
   }
 }

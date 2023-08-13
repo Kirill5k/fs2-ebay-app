@@ -122,11 +122,11 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val controller = new ResellableItemController[IO](service)
 
-      val request = Request[IO](uri = uri"/foo/summary", method = Method.GET)
+      val request  = Request[IO](uri = uri"/foo/summary", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
       val expected = """{"message":"Unrecognized item kind foo"}""".stripMargin
-      response mustHaveStatus(Status.NotFound, Some(expected))
+      response mustHaveStatus (Status.NotFound, Some(expected))
       verifyNoInteractions(service)
     }
 

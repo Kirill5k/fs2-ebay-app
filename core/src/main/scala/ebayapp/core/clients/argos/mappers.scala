@@ -32,6 +32,6 @@ private[argos] object mappers {
           None,
           foundWith
         )
-    } 
+    }
   }
 }

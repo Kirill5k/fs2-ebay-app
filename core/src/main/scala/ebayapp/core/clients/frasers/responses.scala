@@ -14,10 +14,10 @@ private[frasers] object responses {
       discountPercentage: Option[BigDecimal],
       sizes: String,
       colourName: String,
-      imageAltText: String,
+      imageAltText: String
   ) derives Codec.AsObject:
     def isOnSale: Boolean = discountPercentage.exists(d => d > 0 && d < 100) && sizes.nonEmpty
-    def colour: String = colourName.replaceFirst(" V[ 0-9]+", "")
+    def colour: String    = colourName.replaceFirst(" V[ 0-9]+", "")
 
   final case class FlannelsSearchResponse(products: List[FlannelsProduct]) derives Codec.AsObject
 }

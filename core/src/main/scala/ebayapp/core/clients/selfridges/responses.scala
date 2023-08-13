@@ -21,7 +21,7 @@ private[selfridges] object responses {
       `Stock Quantity Available to Purchase`: Int,
       key: Option[String]
   ) derives Codec.AsObject
-  
+
   final case class SelfridgesItemStockResponse(
       stocks: Option[List[ItemStock]]
   ) derives Codec.AsObject

@@ -8,7 +8,7 @@ import fs2.Stream
 trait SearchClient[F[_]] {
 
   protected val XRerouteToHeader = "X-Reroute-To"
-  
+
   extension (c: GenericRetailerConfig) protected def websiteUri = c.headers.getOrElse(XRerouteToHeader, c.baseUri)
 
   def search(criteria: SearchCriteria): Stream[F, ResellableItem]

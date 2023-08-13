@@ -6,7 +6,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
-import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItemMapper, MainlineMenswearItem}
+import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, MainlineMenswearItemMapper}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig

@@ -14,7 +14,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
     "parseSearchResponse" should {
 
       "return list of items that are in stock" in {
-        val html = FileReader.fromResources("scan/search-by-card.html")
+        val html   = FileReader.fromResources("scan/search-by-card.html")
         val result = ResponseParser.parseSearchResponse(html)
 
         result.map(_.head) mustBe

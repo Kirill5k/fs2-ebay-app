@@ -16,4 +16,4 @@ object Clients:
       ec <- EmailClient.make[F](resources.mailer)
     yield new Clients[F]:
       def email: EmailClient[F] = ec
-      def http: HttpClient[F] = hc
+      def http: HttpClient[F]   = hc

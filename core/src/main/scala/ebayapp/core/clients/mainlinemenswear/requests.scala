@@ -3,7 +3,7 @@ package ebayapp.core.clients.mainlinemenswear
 private[mainlinemenswear] object requests {
 
   case object ProductRequest:
-    def toJson: String  =
+    def toJson: String =
       s"""
          |{
          |    "data": {
@@ -113,7 +113,7 @@ private[mainlinemenswear] object requests {
          |    "error": {}
          |}
          |""".stripMargin
-  
+
   final case class SearchRequest(page: Int, query: String):
     def toJson: String =
       s"""

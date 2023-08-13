@@ -2,7 +2,7 @@ package ebayapp.core.common
 
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
-import ebayapp.kernel.config.{MongoConfig, ServerConfig, ClientConfig}
+import ebayapp.kernel.config.{ClientConfig, MongoConfig, ServerConfig}
 import pureconfig.ConfigConvert.catchReadError
 import pureconfig.*
 import pureconfig.generic.derivation.default.*

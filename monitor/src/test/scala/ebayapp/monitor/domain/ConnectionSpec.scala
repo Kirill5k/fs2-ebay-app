@@ -28,7 +28,10 @@ class ConnectionSpec extends AnyWordSpec with Matchers {
     }
 
     "convert Connection to json" in {
-      connection.asInstanceOf[Connection].asJson.noSpaces mustBe """{"Http":{"url":"http://foo.bar","method":"GET","timeout":"1 minute","headers":null}}"""
+      connection
+        .asInstanceOf[Connection]
+        .asJson
+        .noSpaces mustBe """{"Http":{"url":"http://foo.bar","method":"GET","timeout":"1 minute","headers":null}}"""
     }
   }
 }

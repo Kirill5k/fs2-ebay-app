@@ -36,8 +36,8 @@ private[mainlinemenswear] object mappers {
         )
 
       private def buyPrice(mmi: MainlineMenswearItem): BuyPrice = {
-        val current = mmi.currentPrice
-        val rrp = mmi.previousPrice
+        val current  = mmi.currentPrice
+        val rrp      = mmi.previousPrice
         val discount = 100 - (current * 100 / rrp).toInt
         BuyPrice(mmi.onlineStock, current, Some(discount))
       }
@@ -55,6 +55,6 @@ private[mainlinemenswear] object mappers {
           "Mainline Menswear",
           Map.empty
         )
-    } 
+    }
   }
 }

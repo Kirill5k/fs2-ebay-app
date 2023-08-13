@@ -17,13 +17,13 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
     Header("Content-Type", "text/html; charset=utf-8"),
     Header("set-cookie", "access_token=foo.bar; Max-Age=2592000; Path=/; HttpOnly; Secure"),
     Header("set-cookie", "access_token_expiry=1644568903; Max-Age=2592000; Path=/; HttpOnly; Secure"),
-    Header("vary", "Accept-Encoding"),
+    Header("vary", "Accept-Encoding")
   )
 
   "A MainlineMenswearClient" should {
 
-    val mainlineMenswearConfig   = GenericRetailerConfig("http://mainline.com", Map("Authorization" -> "Bearer foo-bar"))
-    val config                   = MockConfigProvider.make[IO](mainlineMenswearConfig = Some(mainlineMenswearConfig))
+    val mainlineMenswearConfig = GenericRetailerConfig("http://mainline.com", Map("Authorization" -> "Bearer foo-bar"))
+    val config                 = MockConfigProvider.make[IO](mainlineMenswearConfig = Some(mainlineMenswearConfig))
 
     val criteria = SearchCriteria("emporio armani")
 
@@ -32,9 +32,13 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
         .whenRequestMatchesPartial {
           case r if r.isGet =>
             Response("hello", StatusCode.Ok, "Ok", responseHeaders)
-          case r if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 1""") =>
+          case r
+              if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r
+                .bodyContains(""""page": 1""") =>
             Response.ok(json("mainline-menswear/search-response-1.json"))
-          case r if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r.bodyContains(""""page": 2""") =>
+          case r
+              if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r
+                .bodyContains(""""page": 2""") =>
             Response.ok(json("mainline-menswear/search-response-2.json"))
           case r if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo("mainline.com/app/mmw/m/product/149663") =>
             Response.ok(json("mainline-menswear/product-response-149663.json"))
@@ -49,7 +53,9 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
 
         item.itemDetails mustBe Clothing("Emporio Armani Crew Neck Logo T Shirt Black", "Armani", "M")
         item.listingDetails.url mustBe "https://www.mainlinemenswear.co.uk/product/emporio-armani-crew-neck-logo-t-shirt-black/149663"
-        item.listingDetails.image mustBe Some("https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/shopimages/products/149663/Mainimage.jpg")
+        item.listingDetails.image mustBe Some(
+          "https://cdn.mainlinemenswear.co.uk/f_auto,q_auto/mainlinemenswear/shopimages/products/149663/Mainimage.jpg"
+        )
 
         items.map(_.buyPrice) mustBe List(
           BuyPrice(5, BigDecimal(51.98), Some(51)),

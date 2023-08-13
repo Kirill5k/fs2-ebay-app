@@ -49,8 +49,7 @@ class CexStockServiceSpec extends IOWordSpec {
     "return new in stock update if cache previously had some items" in {
       val client = mock[CexClient[IO]]
 
-      when(client.search(req1.searchCriteria))
-        .thenReturnEmptyStream
+      when(client.search(req1.searchCriteria)).thenReturnEmptyStream
         .thenStream(mb1)
 
       val result = StockService
@@ -102,7 +101,7 @@ class CexStockServiceSpec extends IOWordSpec {
         .thenStream(mb1)
 
       val result = StockService
-        .make[IO](Retailer.Cex, config((req1.copy(monitorStockChange = false))), client)
+        .make[IO](Retailer.Cex, config(req1.copy(monitorStockChange = false)), client)
         .flatMap {
           _.stockUpdates
             .interruptAfter(2.second)

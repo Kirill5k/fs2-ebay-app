@@ -35,13 +35,13 @@ object search {
     def apply(ri: ResellableItem): Boolean = {
       val name = ri.itemDetails.fullName
       name.isDefined &&
-        maxPrice.fold(true)(max => ri.buyPrice.rrp < max) &&
-        minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)) &&
-        excludeRegex.fold(true)(filter => !name.get.matches(filter)) &&
-        includeRegex.fold(true)(filter => name.get.matches(filter))
+      maxPrice.fold(true)(max => ri.buyPrice.rrp < max) &&
+      minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)) &&
+      excludeRegex.fold(true)(filter => !name.get.matches(filter)) &&
+      includeRegex.fold(true)(filter => name.get.matches(filter))
     }
   }
-  
+
   final case class SearchCriteria(
       query: String,
       category: Option[String] = None,

@@ -59,7 +59,7 @@ private[jd] object parsers {
 
     def parseProductStockResponse(rawHtml: String): Either[AppError, Option[JdProduct]] =
       parseAvailableSizes(rawHtml).flatMap {
-        case Nil => None.asRight[AppError]
+        case Nil   => None.asRight[AppError]
         case sizes => parseItemDetails(rawHtml).map(d => Some(JdProduct(d, sizes)))
       }
 

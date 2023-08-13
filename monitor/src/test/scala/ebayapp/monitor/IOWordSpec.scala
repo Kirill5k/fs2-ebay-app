@@ -11,6 +11,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import scala.concurrent.Future
 
 trait IOWordSpec extends AsyncWordSpec with Matchers with MockitoSugar with MockitoMatchers:
-  extension[A] (io: IO[A])
+  extension [A](io: IO[A])
     def asserting(f: A => Assertion): Future[Assertion] =
       io.map(f).unsafeToFuture()(IORuntime.global)

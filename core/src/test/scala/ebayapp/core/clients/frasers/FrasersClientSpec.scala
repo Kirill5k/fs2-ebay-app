@@ -13,14 +13,14 @@ class FrasersClientSpec extends SttpClientSpec {
 
   "FrasersClient for flannels" should {
     val flannelsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
-    val config = MockConfigProvider.make[IO](flannelsConfig = Some(flannelsConfig))
+    val config         = MockConfigProvider.make[IO](flannelsConfig = Some(flannelsConfig))
 
     val sc = SearchCriteria("stone island", Some("Mens"))
 
     "return stream of items based on provided search criteria" in {
       val args = Map(
-        "categoryId" -> "FLAN_TMSTONEISLAND",
-        "sortOption" -> "discountvalue_desc",
+        "categoryId"      -> "FLAN_TMSTONEISLAND",
+        "sortOption"      -> "discountvalue_desc",
         "selectedFilters" -> "AFLOR^Mens"
       )
       val testingBackend: SttpBackend[IO, Any] = backendStub
@@ -48,22 +48,22 @@ class FrasersClientSpec extends SttpClientSpec {
 
   "FrasersClient for tessuti" should {
     val tessutiConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
-    val config = MockConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
+    val config        = MockConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
 
     val sc = SearchCriteria("emporio armani", Some("MENS"))
 
     "return stream of items based on provided search criteria" in {
       val args = Map(
-        "categoryId" -> "TESS_BRAEMPORIOARMANI",
+        "categoryId"      -> "TESS_BRAEMPORIOARMANI",
         "selectedFilters" -> "390_4098650^Mens",
-        "sortOption" -> "discountvalue_desc"
+        "sortOption"      -> "discountvalue_desc"
       )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
           case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
           case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-page3.json"))
-          case r => throw new RuntimeException(r.uri.toString)
+          case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
       FrasersClient
@@ -75,22 +75,22 @@ class FrasersClientSpec extends SttpClientSpec {
 
   "FrasersClient for scotts" should {
     val scottsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
-    val config = MockConfigProvider.make[IO](scottsConfig = Some(scottsConfig))
+    val config       = MockConfigProvider.make[IO](scottsConfig = Some(scottsConfig))
 
     val sc = SearchCriteria("hugo", Some("mens"))
 
     "return stream of items based on provided search criteria" in {
       val args = Map(
-        "categoryId" -> "SCOT_BRAHUGO",
+        "categoryId"      -> "SCOT_BRAHUGO",
         "selectedFilters" -> "390_4098464^Mens",
-        "sortOption" -> "discountvalue_desc"
+        "sortOption"      -> "discountvalue_desc"
       )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
           case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
           case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-page3.json"))
-          case r => throw new RuntimeException(r.uri.toString)
+          case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
       FrasersClient

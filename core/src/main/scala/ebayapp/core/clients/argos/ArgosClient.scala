@@ -23,7 +23,7 @@ import scala.concurrent.duration.*
 final private class LiveArgosClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]],
+    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     logger: Logger[F],
     timer: Temporal[F]
@@ -48,7 +48,8 @@ final private class LiveArgosClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
-          val uri = uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query};searchType=null?returnMeta=true"
+          val uri =
+            uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query};searchType=null?returnMeta=true"
           emptyRequest
             .get(uri)
             .headers(defaultHeaders ++ config.headers)

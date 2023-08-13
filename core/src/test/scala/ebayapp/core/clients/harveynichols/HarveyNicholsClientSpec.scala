@@ -14,17 +14,33 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
 
   "A HarveyNicholsClient" should {
 
-    val harveyNicholsConfig   = GenericRetailerConfig("http://harveynichols.com")
-    val config = MockConfigProvider.make[IO](harveyNicholsConfig = Some(harveyNicholsConfig))
+    val harveyNicholsConfig = GenericRetailerConfig("http://harveynichols.com")
+    val config              = MockConfigProvider.make[IO](harveyNicholsConfig = Some(harveyNicholsConfig))
 
     val criteria = SearchCriteria("kenzo")
 
     "return stream of clothing items that are on sale" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if isSearchRequest(r, Map("context[sort_by]" -> "low_to_high", "query" -> s"//search=${criteria.query}/categories=cp2_cp134/", "context[page_number]" -> "1")) =>
+          case r
+              if isSearchRequest(
+                r,
+                Map(
+                  "context[sort_by]"     -> "low_to_high",
+                  "query"                -> s"//search=${criteria.query}/categories=cp2_cp134/",
+                  "context[page_number]" -> "1"
+                )
+              ) =>
             Response.ok(json("harvey-nichols/search-kenzo-page-1.json"))
-          case r if isSearchRequest(r, Map("context[sort_by]" -> "low_to_high", "query" -> s"//search=${criteria.query}/categories=cp2_cp134/", "context[page_number]" -> "2")) =>
+          case r
+              if isSearchRequest(
+                r,
+                Map(
+                  "context[sort_by]"     -> "low_to_high",
+                  "query"                -> s"//search=${criteria.query}/categories=cp2_cp134/",
+                  "context[page_number]" -> "2"
+                )
+              ) =>
             Response.ok(json("harvey-nichols/search-kenzo-page-2.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }

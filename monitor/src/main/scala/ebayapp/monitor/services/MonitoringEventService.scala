@@ -37,7 +37,7 @@ final private class LiveMonitoringEventService[F[_]](
     repository
       .findLatestBy(monitor.id)
       .flatMap {
-        case None => 
+        case None =>
           dispatcher.dispatch(Action.Query(monitor, None))
         case Some(event) =>
           clock.now.flatMap { now =>

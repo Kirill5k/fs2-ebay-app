@@ -36,7 +36,7 @@ private[repositories] object MonitorEntity:
       monitor.interval,
       monitor.contact
     )
-  
+
   def from(monitor: CreateMonitor): MonitorEntity =
     MonitorEntity(
       ObjectId(),

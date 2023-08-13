@@ -22,7 +22,7 @@ object Application extends IOApp.Simple:
           interrupter        <- Interrupter.make[IO](config.interrupter)
           redirectController <- RedirectController.make[IO](resources, interrupter)
           healthController   <- HealthController.make[IO]
-          routes = (healthController.routes <+> redirectController.routes)
+          routes = healthController.routes <+> redirectController.routes
           _ <- logger.info("starting http server") *> Server
             .serve[IO](config.server, RequestLogger.httpRoutes(true, true)(routes))
             .interruptWhen(interrupter.awaitSigTerm)

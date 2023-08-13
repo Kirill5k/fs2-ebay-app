@@ -20,7 +20,18 @@ object ResellableItemBuilder {
   ): ResellableItem =
     ResellableItem.clothing(
       ItemDetails.Clothing(name, "Foo-bar", "XXL"),
-      ListingDetails(s"http://cex.com/${name.replaceAll(" ", "")}", name, None, None, None, None, "USED", datePosted, retailer.name.toUpperCase, Map.empty),
+      ListingDetails(
+        s"http://cex.com/${name.replaceAll(" ", "")}",
+        name,
+        None,
+        None,
+        None,
+        None,
+        "USED",
+        datePosted,
+        retailer.name.toUpperCase,
+        Map.empty
+      ),
       BuyPrice(quantity, BigDecimal(price), discount),
       None,
       foundWith

@@ -10,7 +10,7 @@ import scala.concurrent.duration.*
 
 class AppConfigSpec extends AsyncWordSpec with Matchers {
 
-  given rt: IORuntime      = IORuntime.global
+  given rt: IORuntime = IORuntime.global
 
   "An AppConfig" should {
     "load from application.conf" in {

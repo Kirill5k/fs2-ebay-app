@@ -6,7 +6,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.clients.selfridges.mappers.{SelfridgesItemMapper, SelfridgesItem}
+import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{ConfigProvider, Logger}
@@ -72,11 +72,11 @@ final private class LiveSelfridgesClient[F[_]](
   private def getItemDetails(item: CatalogItem): F[List[(List[ItemStock], Option[ItemPrice])]] =
     (getItemStock(item.partNumber), getItemPrice(item.partNumber))
       .mapN { (stock, prices) =>
-        val stockBySkuid   = stock.groupBy(_.SKUID).toList
+        val stockBySkuid  = stock.groupBy(_.SKUID).toList
         val pricesBySkuid = prices.groupBy(_.SKUID)
-        
+
         stockBySkuid
-          .map { (skuid, stockItems) => 
+          .map { (skuid, stockItems) =>
             stockItems -> pricesBySkuid.get(skuid).flatMap(_.headOption)
           }
       }

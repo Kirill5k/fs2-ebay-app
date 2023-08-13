@@ -46,30 +46,30 @@ final private class LiveLogger[F[_]](
     Stream.fromQueueUnterminated(loggedErrors)
 
   override def critical(message: => String): F[Unit] =
-    sigTerm.complete(Left(AppError.Critical(message))) >> 
+    sigTerm.complete(Left(AppError.Critical(message))) >>
       error(message)
 
   override def critical(t: Throwable)(message: => String): F[Unit] =
-    sigTerm.complete(Left(t)) >> 
+    sigTerm.complete(Left(t)) >>
       error(t)(message)
 
   override def error(t: Throwable)(message: => String): F[Unit] =
     errorsCache.evalIfNew(message) {
-      errorsCache.put(message, ()) >> 
-        enqueueError(t, message) >> 
+      errorsCache.put(message, ()) >>
+        enqueueError(t, message) >>
         logger.error(t)(message)
     }
 
   override def error(message: => String): F[Unit] =
     errorsCache.evalIfNew(message) {
-      errorsCache.put(message, ()) >> 
-        enqueueError(message) >> 
+      errorsCache.put(message, ()) >>
+        enqueueError(message) >>
         logger.error(message)
     }
 
   override def warn(t: Throwable)(message: => String): F[Unit] =
     warningsCache.evalIfNew(message) {
-      warningsCache.put(message, ()) >> 
+      warningsCache.put(message, ()) >>
         logger.warn(t)(message)
     }
 
@@ -84,7 +84,7 @@ final private class LiveLogger[F[_]](
 
   override def warn(message: => String): F[Unit] =
     warningsCache.evalIfNew(message) {
-      warningsCache.put(message, ()) >> 
+      warningsCache.put(message, ()) >>
         logger.warn(message)
     }
 

@@ -29,8 +29,8 @@ class ItemMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "size"       -> "ONE SIZE",
         "X S"        -> "XS",
         "XXS"        -> "2XS",
-        "XXXXL"        -> "4XL",
-        "30W R"        -> "30R",
+        "XXXXL"      -> "4XL",
+        "30W R"      -> "30R"
       )
 
       forAll(sizeMappings) { (size, exp) =>

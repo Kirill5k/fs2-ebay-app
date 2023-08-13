@@ -13,7 +13,7 @@ final private class LiveActionDispatcher[F[_]: Concurrent](
     private val actionsQueue: Queue[F, Action]
 ) extends ActionDispatcher[F]:
   private[actions] def actions: Stream[F, Action] = Stream.fromQueueUnterminated(actionsQueue)
-  def dispatch(action: Action): F[Unit]              = actionsQueue.offer(action)
+  def dispatch(action: Action): F[Unit]           = actionsQueue.offer(action)
 
 object ActionDispatcher:
   def make[F[_]: Concurrent]: F[ActionDispatcher[F]] =

@@ -37,7 +37,7 @@ final private[controllers] class ResellableItemController[F[_]](
   private def withItemKind[A](kind: String)(fa: ItemKind => F[Either[ErrorResponse, A]]): F[Either[ErrorResponse, A]] =
     itemKindMappings.get(kind) match
       case Some(itemKind) => fa(itemKind)
-      case None => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
+      case None           => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
 
   private val getAll = endpoint.get
     .in(path[String])
