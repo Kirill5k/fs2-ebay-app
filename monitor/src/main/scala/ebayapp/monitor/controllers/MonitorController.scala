@@ -45,7 +45,7 @@ final private class LiveMonitorController[F[_]](
 
   private val getAll = endpoint.get
     .in(basePath)
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(jsonBody[List[MonitorView]])
     .serverLogic { _ =>
       monitorService.getAll.mapResponse(_.map(MonitorView.from))
@@ -53,7 +53,7 @@ final private class LiveMonitorController[F[_]](
 
   private val getById = endpoint.get
     .in(idPath)
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(jsonBody[MonitorView])
     .serverLogic { id =>
       parseId(id)
@@ -65,7 +65,7 @@ final private class LiveMonitorController[F[_]](
   private val update = endpoint.put
     .in(idPath)
     .in(jsonBody[MonitorView])
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.NoContent))
     .serverLogic { (id, mon) =>
       F.raiseWhen(id != mon.id)(AppError.Failed(s"Id in path is different from id in the request body"))
@@ -76,7 +76,7 @@ final private class LiveMonitorController[F[_]](
   private val createNew = endpoint.post
     .in(basePath)
     .in(jsonBody[CreateMonitorRequest])
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.Created).and(jsonBody[CreateMonitorResponse]))
     .serverLogic { create =>
       monitorService
@@ -87,7 +87,7 @@ final private class LiveMonitorController[F[_]](
   private val activate = endpoint.put
     .in(idPath / "active")
     .in(jsonBody[ActivateMonitorRequest])
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.NoContent))
     .serverLogic { (id, request) =>
       parseId(id)
@@ -98,7 +98,7 @@ final private class LiveMonitorController[F[_]](
   private val getEvents = endpoint.get
     .in(eventsPath)
     .in(query[Option[Int]]("limit"))
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(jsonBody[List[MonitoringEventView]])
     .serverLogic { (id, limit) =>
       parseId(id)
@@ -108,7 +108,7 @@ final private class LiveMonitorController[F[_]](
 
   private val delete = endpoint.delete
     .in(idPath)
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.NoContent))
     .serverLogic { id =>
       parseId(id)

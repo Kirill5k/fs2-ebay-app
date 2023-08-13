@@ -34,7 +34,7 @@ final private[controllers] class StockController[F[_]](
   private val getAll = endpoint.get
     .in(basePath)
     .in(searchQueryParams)
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(jsonBody[List[ResellableItemView]])
     .serverLogic { q =>
       stockServices
@@ -45,7 +45,7 @@ final private[controllers] class StockController[F[_]](
   private val getByRetailer = endpoint.get
     .in(byRetailer)
     .in(searchQueryParams)
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(jsonBody[List[ResellableItemView]])
     .serverLogic { (retailer, q) =>
       serviceByRetailer(retailer)
@@ -55,7 +55,7 @@ final private[controllers] class StockController[F[_]](
 
   private val pauseRetailer = endpoint.put
     .in(byRetailer / "pause")
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.NoContent))
     .serverLogic { retailer =>
       serviceByRetailer(retailer)
@@ -65,7 +65,7 @@ final private[controllers] class StockController[F[_]](
 
   private val resumeRetailer = endpoint.put
     .in(byRetailer / "resume")
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.NoContent))
     .serverLogic { retailer =>
       serviceByRetailer(retailer)

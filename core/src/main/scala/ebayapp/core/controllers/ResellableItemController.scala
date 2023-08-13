@@ -32,7 +32,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
   private val getAll = endpoint.get
     .in(basePath)
     .in(searchQueryParams)
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(jsonBody[List[ResellableItemView]])
     .serverLogic { (limit, query, from, to) =>
       itemService
@@ -43,7 +43,7 @@ final private[controllers] class ResellableItemController[F[_]: Async](
   private val getSummaries = endpoint.get
     .in(basePath / "summary")
     .in(searchQueryParams)
-    .errorOut(errorResponse)
+    .errorOut(Controller.errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
     .serverLogic { (limit, query, from, to) =>
       itemService

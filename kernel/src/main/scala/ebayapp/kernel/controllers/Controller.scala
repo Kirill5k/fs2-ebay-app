@@ -28,14 +28,6 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
     Http4sServerOptions.customiseInterceptors.defaultHandlers(exceptionHandler).options
   }
 
-  protected val errorResponse =
-    oneOf[ErrorResponse](
-      oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[ErrorResponse.UnprocessableEntity]),
-      oneOfVariant(StatusCode.NotFound, jsonBody[ErrorResponse.NotFound]),
-      oneOfVariant(StatusCode.InternalServerError, jsonBody[ErrorResponse.InternalError]),
-      oneOfDefaultVariant(jsonBody[ErrorResponse.BadRequest])
-    )
-
   def routes: HttpRoutes[F]
 
   extension[A] (fa: F[A])(using F: MonadThrow[F])
@@ -44,4 +36,15 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
       fa
         .map(fab(_).asRight[ErrorResponse])
         .handleError(e => ErrorResponse.from(e).asLeft[B])
+}
+
+object Controller extends TapirJsonCirce with SchemaDerivation {
+
+  val errorResponse =
+    oneOf[ErrorResponse](
+      oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[ErrorResponse.UnprocessableEntity]),
+      oneOfVariant(StatusCode.NotFound, jsonBody[ErrorResponse.NotFound]),
+      oneOfVariant(StatusCode.InternalServerError, jsonBody[ErrorResponse.InternalError]),
+      oneOfDefaultVariant(jsonBody[ErrorResponse.BadRequest])
+    )
 }
