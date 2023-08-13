@@ -1,1 +1,3 @@
 alias libUpdates = ; dependencyUpdates; reload plugins; dependencyUpdates ; reload return;
+alias fmt = ; scalafmtAll ; scalafmtSbt
+alias fmtcheck = ; scalafmtCheckAll; scalafmtSbtCheck
