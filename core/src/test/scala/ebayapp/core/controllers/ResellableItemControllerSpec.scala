@@ -116,6 +116,20 @@ class ResellableItemControllerSpec extends ControllerSpec {
       verify(service).summaries(searchFilters)
     }
 
+    "return 404 when unrecognized kind provided" in {
+      val service = mock[ResellableItemService[IO]]
+      when(service.summaries(any[SearchParams])).thenReturnIO(summaries)
+
+      val controller = new ResellableItemController[IO](service)
+
+      val request = Request[IO](uri = uri"/foo/summary", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      val expected = """{"message":"Unrecognized item kind foo"}""".stripMargin
+      response mustHaveStatus(Status.NotFound, Some(expected))
+      verifyNoInteractions(service)
+    }
+
     "parse optional query params" in {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(Nil)
