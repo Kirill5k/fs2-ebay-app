@@ -34,19 +34,22 @@ final private[controllers] class ResellableItemController[F[_]](
       .and(query[Option[Instant]]("from"))
       .and(query[Option[Instant]]("to"))
 
+  private def withItemKind[A](kind: String)(fa: ItemKind => F[Either[ErrorResponse, A]]): F[Either[ErrorResponse, A]] =
+    itemKindMappings.get(kind) match
+      case Some(itemKind) => fa(itemKind)
+      case None => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
+
   private val getAll = endpoint.get
     .in(path[String])
     .in(searchQueryParams)
     .errorOut(Controller.errorResponse)
     .out(jsonBody[List[ResellableItemView]])
     .serverLogic { (kind, limit, query, from, to) =>
-      itemKindMappings.get(kind) match
-        case Some(itemKind) =>
-          itemService
-            .search(SearchParams(itemKind, limit, from, to, query))
-            .mapResponse(_.map(ResellableItemView.from))
-        case None =>
-          F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
+      withItemKind(kind) { itemKind =>
+        itemService
+          .search(SearchParams(itemKind, limit, from, to, query))
+          .mapResponse(_.map(ResellableItemView.from))
+      }
     }
 
   private val getSummaries = endpoint.get
@@ -55,13 +58,11 @@ final private[controllers] class ResellableItemController[F[_]](
     .errorOut(Controller.errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
     .serverLogic { (kind, limit, query, from, to) =>
-      itemKindMappings.get(kind) match
-        case Some(itemKind) =>
-          itemService
-            .summaries(SearchParams(itemKind, limit, from, to, query))
-            .mapResponse(ResellableItemsSummaryResponse.from)
-        case None =>
-          F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
+      withItemKind(kind) { itemKind =>
+        itemService
+          .summaries(SearchParams(itemKind, limit, from, to, query))
+          .mapResponse(ResellableItemsSummaryResponse.from)
+      }
     }
 
   override def routes: HttpRoutes[F] =
