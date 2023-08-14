@@ -11,6 +11,8 @@ import ebayapp.core.services.ResellableItemService
 import ebayapp.kernel.controllers.views.ErrorResponse
 import org.http4s.HttpRoutes
 import sttp.tapir.*
+import sttp.tapir.generic.auto.SchemaDerivation
+import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import java.time.Instant
@@ -21,29 +23,16 @@ final private[controllers] class ResellableItemController[F[_]](
     F: Async[F]
 ) extends Controller[F] {
 
-  given Schema[ItemKind]    = Schema.string
-  given Schema[ItemDetails] = Schema.string
-
   private val itemKindMappings = Map(
     "video-games" -> ItemKind.VideoGame
   )
-
-  private val searchQueryParams =
-    query[Option[Int]]("limit")
-      .and(query[Option[String]]("query"))
-      .and(query[Option[Instant]]("from"))
-      .and(query[Option[Instant]]("to"))
 
   private def withItemKind[A](kind: String)(fa: ItemKind => F[Either[ErrorResponse, A]]): F[Either[ErrorResponse, A]] =
     itemKindMappings.get(kind) match
       case Some(itemKind) => fa(itemKind)
       case None           => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
 
-  private val getAll = endpoint.get
-    .in(path[String])
-    .in(searchQueryParams)
-    .errorOut(Controller.errorResponse)
-    .out(jsonBody[List[ResellableItemView]])
+  private val getAll = ResellableItemController.getAll
     .serverLogic { (kind, limit, query, from, to) =>
       withItemKind(kind) { itemKind =>
         itemService
@@ -52,11 +41,7 @@ final private[controllers] class ResellableItemController[F[_]](
       }
     }
 
-  private val getSummaries = endpoint.get
-    .in(path[String] / "summary")
-    .in(searchQueryParams)
-    .errorOut(Controller.errorResponse)
-    .out(jsonBody[ResellableItemsSummaryResponse])
+  private val getSummaries = ResellableItemController.getSummaries
     .serverLogic { (kind, limit, query, from, to) =>
       withItemKind(kind) { itemKind =>
         itemService
@@ -69,6 +54,29 @@ final private[controllers] class ResellableItemController[F[_]](
     Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getSummaries))
 }
 
-object ResellableItemController:
+object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
+  import Controller.given
+  given Schema[ItemKind]    = Schema.string
+  given Schema[ItemDetails] = Schema.string
+
+  private val searchQueryParams =
+    query[Option[Int]]("limit")
+      .and(query[Option[String]]("query"))
+      .and(query[Option[Instant]]("from"))
+      .and(query[Option[Instant]]("to"))
+
+  val getAll = endpoint.get
+    .in(path[String])
+    .in(searchQueryParams)
+    .errorOut(Controller.errorResponse)
+    .out(jsonBody[List[ResellableItemView]])
+
+  val getSummaries = endpoint.get
+    .in(path[String] / "summary")
+    .in(searchQueryParams)
+    .errorOut(Controller.errorResponse)
+    .out(jsonBody[ResellableItemsSummaryResponse])
+
   def make[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
     Monad[F].pure(ResellableItemController[F](service))
+}

@@ -88,7 +88,8 @@ final private[controllers] class StockController[F[_]](
     Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getByRetailer, pauseRetailer, resumeRetailer))
 }
 
-object StockController:
+object StockController {
 
   def make[F[_]: Async](services: List[StockService[F]]): F[Controller[F]] =
     Monad[F].pure(StockController[F](services))
+}

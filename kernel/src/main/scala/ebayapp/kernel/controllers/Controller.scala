@@ -20,9 +20,6 @@ import java.time.Instant
 
 trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
   
-  inline given instantCodec: PlainCodec[Instant] =
-    Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
-
   protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F] = {
     val exceptionHandler = (e: String) => ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e))
     Http4sServerOptions.customiseInterceptors.defaultHandlers(exceptionHandler).options
@@ -40,6 +37,9 @@ trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
 
 object Controller extends TapirJsonCirce with SchemaDerivation {
 
+  inline given instantCodec: PlainCodec[Instant] =
+    Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
+  
   val errorResponse =
     oneOf[ErrorResponse](
       oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[ErrorResponse.UnprocessableEntity]),
