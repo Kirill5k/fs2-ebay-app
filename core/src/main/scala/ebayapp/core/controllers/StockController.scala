@@ -12,6 +12,8 @@ import ebayapp.kernel.errors.AppError
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
 import sttp.tapir.*
+import sttp.tapir.generic.auto.SchemaDerivation
+import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import java.time.Instant
@@ -22,51 +24,28 @@ final private[controllers] class StockController[F[_]](
     F: Async[F]
 ) extends Controller[F] {
 
-  given Schema[ItemKind]    = Schema.string
-  given Schema[ItemDetails] = Schema.string
-
-  private val basePath   = "stock"
-  private val byRetailer = basePath / path[String]
-
-  private val searchQueryParams =
-    query[Option[String]]("query")
-
-  private val getAll = endpoint.get
-    .in(basePath)
-    .in(searchQueryParams)
-    .errorOut(Controller.errorResponse)
-    .out(jsonBody[List[ResellableItemView]])
+  private val getAll = StockController.getAll
     .serverLogic { q =>
       stockServices
         .traverse(_.cachedItems)
         .mapResponse(_.flatten.toView(q))
     }
 
-  private val getByRetailer = endpoint.get
-    .in(byRetailer)
-    .in(searchQueryParams)
-    .errorOut(Controller.errorResponse)
-    .out(jsonBody[List[ResellableItemView]])
+  private val getByRetailer = StockController.getByRetailer
     .serverLogic { (retailer, q) =>
       serviceByRetailer(retailer)
         .flatMap(_.cachedItems)
         .mapResponse(_.toView(q))
     }
 
-  private val pauseRetailer = endpoint.put
-    .in(byRetailer / "pause")
-    .errorOut(Controller.errorResponse)
-    .out(statusCode(StatusCode.NoContent))
+  private val pauseRetailer = StockController.pauseRetailer
     .serverLogic { retailer =>
       serviceByRetailer(retailer)
         .flatMap(_.pause)
         .voidResponse
     }
 
-  private val resumeRetailer = endpoint.put
-    .in(byRetailer / "resume")
-    .errorOut(Controller.errorResponse)
-    .out(statusCode(StatusCode.NoContent))
+  private val resumeRetailer = StockController.resumeRetailer
     .serverLogic { retailer =>
       serviceByRetailer(retailer)
         .flatMap(_.resume)
@@ -88,7 +67,37 @@ final private[controllers] class StockController[F[_]](
     Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getByRetailer, pauseRetailer, resumeRetailer))
 }
 
-object StockController {
+object StockController extends TapirJsonCirce with SchemaDerivation {
+  given Schema[ItemKind]    = Schema.string
+  given Schema[ItemDetails] = Schema.string
+
+  private val basePath   = "stock"
+  private val byRetailer = basePath / path[String]
+
+  private val searchQueryParams =
+    query[Option[String]]("query")
+
+  val getAll = endpoint.get
+    .in(basePath)
+    .in(searchQueryParams)
+    .errorOut(Controller.errorResponse)
+    .out(jsonBody[List[ResellableItemView]])
+
+  val getByRetailer = endpoint.get
+    .in(byRetailer)
+    .in(searchQueryParams)
+    .errorOut(Controller.errorResponse)
+    .out(jsonBody[List[ResellableItemView]])
+
+  val pauseRetailer = endpoint.put
+    .in(byRetailer / "pause")
+    .errorOut(Controller.errorResponse)
+    .out(statusCode(StatusCode.NoContent))
+
+  val resumeRetailer = endpoint.put
+    .in(byRetailer / "resume")
+    .errorOut(Controller.errorResponse)
+    .out(statusCode(StatusCode.NoContent))
 
   def make[F[_]: Async](services: List[StockService[F]]): F[Controller[F]] =
     Monad[F].pure(StockController[F](services))
