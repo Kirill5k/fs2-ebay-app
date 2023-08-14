@@ -4,6 +4,7 @@ import ebayapp.core.domain.ItemDetails.Phone
 import ebayapp.core.domain.search.ListingDetails
 
 private[mappers] object PhoneDetailsMapper {
+  // format: off
   private val TITLE_FAULTY_CONDITION_MATCHER = List(
     "cracked", "fault", "spares", "repair", "smashed", "no touch", "no face", "broken", "not work", "damag",
     "no service", "screenburn", "screen burn", "see description"
@@ -29,6 +30,8 @@ private[mappers] object PhoneDetailsMapper {
     "Jet Black", "Black", "Rose Gold", "Gold", "Silver", "White", "Blue", "Grey", "Red",
     "Purple", "Yellow", "Orange", "Green", "Pink"
   ).mkString("(?i)", "|", "").r
+
+  // format: on
 
   def from(listingDetails: ListingDetails): Phone =
     Phone(

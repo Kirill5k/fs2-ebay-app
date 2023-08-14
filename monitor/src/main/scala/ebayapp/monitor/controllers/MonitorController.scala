@@ -5,7 +5,13 @@ import cats.effect.Async
 import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.kernel.controllers.Controller
-import ebayapp.monitor.controllers.views.{ActivateMonitorRequest, CreateMonitorRequest, CreateMonitorResponse, MonitorView, MonitoringEventView}
+import ebayapp.monitor.controllers.views.{
+  ActivateMonitorRequest,
+  CreateMonitorRequest,
+  CreateMonitorResponse,
+  MonitorView,
+  MonitoringEventView
+}
 import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import org.bson.types.ObjectId
@@ -80,15 +86,15 @@ final private class LiveMonitorController[F[_]](
     Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getById, createNew, getEvents, activate, update, delete))
 
 object MonitorController extends TapirJsonCirce with SchemaDerivation {
-  given Schema[HttpMethod] = Schema.string
-  given Schema[Url] = Schema.string
-  given Schema[FiniteDuration] = Schema.string
-  given Schema[Monitor.Contact] = Schema.string
+  given Schema[HttpMethod]         = Schema.string
+  given Schema[Url]                = Schema.string
+  given Schema[FiniteDuration]     = Schema.string
+  given Schema[Monitor.Contact]    = Schema.string
   given Schema[Monitor.Connection] = Schema.string
-  given Schema[Monitor.Status] = Schema.string
+  given Schema[Monitor.Status]     = Schema.string
 
-  private val basePath = "monitors"
-  private val idPath = basePath / path[String]
+  private val basePath   = "monitors"
+  private val idPath     = basePath / path[String]
   private val eventsPath = idPath / "events"
 
   val getAll = endpoint.get
@@ -129,7 +135,7 @@ object MonitorController extends TapirJsonCirce with SchemaDerivation {
     .in(idPath)
     .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.NoContent))
-  
+
   def make[F[_]: Async](monitors: MonitorService[F], monitoringEvents: MonitoringEventService[F]): F[Controller[F]] =
     Monad[F].pure(LiveMonitorController[F](monitors, monitoringEvents))
 }
