@@ -13,7 +13,6 @@ import org.http4s.HttpRoutes
 import sttp.tapir.*
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
-import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import java.time.Instant
 
@@ -51,7 +50,7 @@ final private[controllers] class ResellableItemController[F[_]](
     }
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getSummaries))
+    serverInterpreter.toRoutes(List(getAll, getSummaries))
 }
 
 object ResellableItemController extends TapirJsonCirce with SchemaDerivation {

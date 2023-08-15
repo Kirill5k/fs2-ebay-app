@@ -20,7 +20,6 @@ import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
-import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -29,7 +28,7 @@ final private class LiveMonitorController[F[_]](
     private val monitoringEventService: MonitoringEventService[F]
 )(using
     F: Async[F]
-) extends Controller[F]:
+) extends Controller[F] {
 
   private def parseId(id: String): F[Monitor.Id] =
     F.fromEither(Either.cond(ObjectId.isValid(id), Monitor.Id(id), AppError.Invalid(s"Monitor id $id is invalid")))
@@ -83,7 +82,8 @@ final private class LiveMonitorController[F[_]](
     }
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getById, createNew, getEvents, activate, update, delete))
+    serverInterpreter.toRoutes(List(getAll, getById, createNew, getEvents, activate, update, delete))
+}
 
 object MonitorController extends TapirJsonCirce with SchemaDerivation {
   given Schema[HttpMethod]         = Schema.string

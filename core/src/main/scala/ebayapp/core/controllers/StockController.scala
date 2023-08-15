@@ -14,7 +14,6 @@ import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
-import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 import java.time.Instant
 
@@ -64,7 +63,7 @@ final private[controllers] class StockController[F[_]](
       .flatMap(r => F.fromOption(stockServices.find(_.retailer == r), AppError.Invalid(s"$r is not being monitored")))
 
   override def routes: HttpRoutes[F] =
-    Http4sServerInterpreter[F](serverOptions).toRoutes(List(getAll, getByRetailer, pauseRetailer, resumeRetailer))
+    serverInterpreter.toRoutes(List(getAll, getByRetailer, pauseRetailer, resumeRetailer))
 }
 
 object StockController extends TapirJsonCirce with SchemaDerivation {

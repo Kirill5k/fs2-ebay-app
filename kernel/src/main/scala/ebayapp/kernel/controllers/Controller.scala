@@ -12,18 +12,19 @@ import sttp.model.StatusCode
 import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.generic.auto.SchemaDerivation
-import sttp.tapir.server.http4s.Http4sServerOptions
+import sttp.tapir.server.http4s.{Http4sServerInterpreter, Http4sServerOptions}
 import sttp.tapir.server.model.ValuedEndpointOutput
 import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultVariant, oneOfVariant}
 
 import java.time.Instant
 
 trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
-  
-  protected def serverOptions(using F: Sync[F]): Http4sServerOptions[F] = {
-    val exceptionHandler = (e: String) => ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e))
-    Http4sServerOptions.customiseInterceptors.defaultHandlers(exceptionHandler).options
-  }
+
+  protected def serverInterpreter(using F: Async[F]): Http4sServerInterpreter[F] =
+    Http4sServerInterpreter[F] {
+      val exceptionHandler = (e: String) => ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e))
+      Http4sServerOptions.customiseInterceptors.defaultHandlers(exceptionHandler).options
+    }
 
   def routes: HttpRoutes[F]
 
@@ -39,7 +40,7 @@ object Controller extends TapirJsonCirce with SchemaDerivation {
 
   inline given instantCodec: PlainCodec[Instant] =
     Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
-  
+
   val errorResponse =
     oneOf[ErrorResponse](
       oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[ErrorResponse.UnprocessableEntity]),
