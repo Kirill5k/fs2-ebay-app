@@ -91,8 +91,8 @@ private[ebay] object search {
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|SMALLTRIBE|breeding|deadpool|pve|reaper|lvl|Tek)", "Code( )?in( )?(a)?( )?Box",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder( listing)? \\d", "character skin", "overwatch\\s+(sony|ps|xbox|legendary|origins|game)",
         "(rune|item|gold|softcore|(nm|nightmare) dungeon|\\bGEM\\b|weapon|\\bPC\\b|\\bXP\\b).*diablo", "diablo.*(rune|item|gold|softcore|(nm|nightmare) dungeon|\\bGEM\\b|weapon|\\bXP\\b|\\bPC\\b)",
-        "nexigo", "fan cooling", "Eve Valkyrie", "invaders plush", "xbox original", "Original Xbox 1", "Accessories Only",
-        "battery lid", "lag switch", "media remote",
+        "nexigo", "fan cooling", "Eve Valkyrie", "invaders plush", "xbox original", "Original Xbox", "Accessories Only",
+        "battery lid", "lag switch", "media remote", "game \\d+ for", "NTSCjp", "ZX SPECTRUM",
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "(touch|split|control)( )?pad", "Touch( )?Screen", "Make Your Selection",
         "animal crossing", "SCARLET.*VIOLET", "Patch Cable", "kinect sensor", "gaming locker", "eso gold", "gaming locker",
         "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mil)",
@@ -111,7 +111,7 @@ private[ebay] object search {
         "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", " DS PEGI", "\\bWII\\b", "Roblox", "\\bVPN\\b", "\\bDVD\\b",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b", "\bSNES\\b", "\\bANDROID\\b",
-        "X(BOX)?( )?360", "(super )?nintendo ((3)?ds|wii)", "\\b(3)?DS\\b ninten(t|d)o", "gamecube", "\\bN64\\b", "\\bDS\\b game",
+        "X(BOX)?(\\s+)?360","(super )?nintendo ((3)?ds|wii)", "\\b(3)?DS\\b ninten(t|d)o", "gamecube", "\\bN64\\b", "\\bDS\\b game",
         "PlayStation 3.?PS3", "PlayStation 2.?PS2", "gameboy"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
