@@ -67,7 +67,7 @@ private[ebay] object search {
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot",
         "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)", "(memory|trading|post|sd)( )?card", "stickers", "digital delivery",
-        "(subscription|gift|ps\\d|steam|network)( |-)?(card|code|key)", "disc \\d missing",
+        "(subscription|gift|ps\\d|steam|network|will send)( |-)?(card|code|key)", "disc \\d missing",
         "(demo|game)( )?(code|disc|key|cart|pass)", "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|\\bUK\\b|no)( )?(redeem )?(\\bDL\\b|avatar|game|code|key)",
         "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo) only",
         "(case|variety|accessor(ies|y)|storage|charge|robot) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "switch.*(alu|unicorn).*\\bcase\\b",
@@ -104,7 +104,7 @@ private[ebay] object search {
         "fifa.*(\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa",
         "borderlands.*(artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "minecraft.*(item)", "No Mans Sky.*(Ship Pack|Interceptor)", "BO3.*(Divinium|Cryptokey)", "\\bto update\\b",
-        "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay",
+        "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "beta access",
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon",
         "dying light.*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
         "\\bTBC\\b", "windows( )?(pc|\\d|xp|vista)", "\\b(2|3)DS\\b", "Master System", "Sega Master System",
