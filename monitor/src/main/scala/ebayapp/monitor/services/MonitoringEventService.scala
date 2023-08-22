@@ -14,7 +14,6 @@ import ebayapp.kernel.syntax.time.*
 import ebayapp.kernel.syntax.effects.*
 
 import java.time.Instant
-import scala.concurrent.duration.*
 
 trait MonitoringEventService[F[_]]:
   def find(monitorId: Monitor.Id, limit: Int): F[List[MonitoringEvent]]
@@ -41,7 +40,7 @@ final private class LiveMonitoringEventService[F[_]](
           dispatcher.dispatch(Action.Query(monitor, None))
         case Some(event) =>
           clock.now.flatMap { now =>
-            F.ifTrueOrElse(now.isAfter(event.statusCheck.time.plusSeconds(monitor.interval.toSeconds)))(
+            F.ifTrueOrElse(now.isAfter(event.statusCheck.time.plus(monitor.interval)))(
               dispatcher.dispatch(Action.Query(monitor, Some(event))),
               dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - event.statusCheck.time.durationBetween(now)))
             )
@@ -62,7 +61,7 @@ final private class LiveMonitoringEventService[F[_]](
       case http: Connection.Http => httpClient.status(http)
 
   private def paused: F[MonitoringEvent.StatusCheck] =
-    clock.now.map(t => MonitoringEvent.StatusCheck(Monitor.Status.Paused, 0.millis, t, "Paused"))
+    clock.now.map(MonitoringEvent.StatusCheck.paused)
 
   private def compareStatus(
       current: MonitoringEvent.StatusCheck,

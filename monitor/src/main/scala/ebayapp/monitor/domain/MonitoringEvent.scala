@@ -1,7 +1,7 @@
 package ebayapp.monitor.domain
 
 import java.time.Instant
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 final case class MonitoringEvent(
     monitorId: Monitor.Id,
@@ -16,4 +16,8 @@ object MonitoringEvent {
       time: Instant,
       reason: String
   )
+  object StatusCheck {
+    def paused(time: Instant): StatusCheck =
+      StatusCheck(Monitor.Status.Paused, Duration.Zero, time, "Paused")
+  }
 }
