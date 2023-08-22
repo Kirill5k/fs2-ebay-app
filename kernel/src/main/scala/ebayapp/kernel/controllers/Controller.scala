@@ -22,8 +22,10 @@ trait Controller[F[_]] {
 
   protected def serverInterpreter(using F: Async[F]): Http4sServerInterpreter[F] =
     Http4sServerInterpreter[F] {
-      val exceptionHandler = (e: String) => ValuedEndpointOutput(Controller.badRequestResponse, ErrorResponse.BadRequest(e))
-      Http4sServerOptions.customiseInterceptors.defaultHandlers(exceptionHandler).options
+      Http4sServerOptions
+        .customiseInterceptors
+        .defaultHandlers((e: String) => ValuedEndpointOutput(Controller.badRequestResponse, ErrorResponse.BadRequest(e)))
+        .options
     }
 
   def routes: HttpRoutes[F]
