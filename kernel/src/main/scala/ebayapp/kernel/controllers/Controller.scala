@@ -18,11 +18,11 @@ import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultVariant, oneOfVariant
 
 import java.time.Instant
 
-trait Controller[F[_]] extends TapirJsonCirce with SchemaDerivation {
+trait Controller[F[_]] {
 
   protected def serverInterpreter(using F: Async[F]): Http4sServerInterpreter[F] =
     Http4sServerInterpreter[F] {
-      val exceptionHandler = (e: String) => ValuedEndpointOutput(jsonBody[ErrorResponse.BadRequest], ErrorResponse.BadRequest(e))
+      val exceptionHandler = (e: String) => ValuedEndpointOutput(Controller.badRequestResponse, ErrorResponse.BadRequest(e))
       Http4sServerOptions.customiseInterceptors.defaultHandlers(exceptionHandler).options
     }
 
@@ -40,6 +40,8 @@ object Controller extends TapirJsonCirce with SchemaDerivation {
 
   inline given instantCodec: PlainCodec[Instant] =
     Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
+
+  val badRequestResponse = jsonBody[ErrorResponse.BadRequest]
 
   val errorResponse =
     oneOf[ErrorResponse](
