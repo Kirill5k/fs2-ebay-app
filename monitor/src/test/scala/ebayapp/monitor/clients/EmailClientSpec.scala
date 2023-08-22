@@ -1,7 +1,6 @@
 package ebayapp.monitor.clients
 
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import courier.Mailer as CourierMailer
 import ebayapp.monitor.{IOWordSpec, Mailer}
 import org.jvnet.mock_javamail.{Mailbox, MockTransport}
@@ -18,7 +17,7 @@ class EmailClientSpec extends IOWordSpec {
   })
   mockedSession.setProvider(MockedSMTPProvider)
 
-  val mailerF = Mailer[IO]("foo@bar.com", CourierMailer(mockedSession), IORuntime.global.compute)
+  val mailerF = Mailer[IO]("foo@bar.com", CourierMailer(mockedSession))
 
   "An EmailClient" should {
     "send email to an external address" in {
