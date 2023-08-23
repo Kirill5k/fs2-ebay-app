@@ -14,28 +14,26 @@ import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.server.http4s.{Http4sServerInterpreter, Http4sServerOptions}
 import sttp.tapir.server.model.ValuedEndpointOutput
-import sttp.tapir.{Codec, DecodeResult, oneOf, oneOfDefaultVariant, oneOfVariant}
+import sttp.tapir.{oneOf, oneOfDefaultVariant, oneOfVariant, Codec, DecodeResult}
 
 import java.time.Instant
 
 trait Controller[F[_]] {
+  def routes: HttpRoutes[F]
 
   protected def serverInterpreter(using F: Async[F]): Http4sServerInterpreter[F] =
     Http4sServerInterpreter[F] {
-      Http4sServerOptions
-        .customiseInterceptors
+      Http4sServerOptions.customiseInterceptors
         .defaultHandlers((e: String) => ValuedEndpointOutput(Controller.badRequestResponse, ErrorResponse.BadRequest(e)))
         .options
     }
 
-  def routes: HttpRoutes[F]
-
-  extension[A] (fa: F[A])(using F: MonadThrow[F])
+  extension [A](fa: F[A])(using F: MonadThrow[F])
     def voidResponse: F[Either[ErrorResponse, Unit]] = mapResponse(_ => ())
     def mapResponse[B](fab: A => B): F[Either[ErrorResponse, B]] =
       fa
         .map(fab(_).asRight[ErrorResponse])
-        .handleError(e => ErrorResponse.from(e).asLeft[B])
+        .handleError(ErrorResponse.from(_).asLeft[B])
 }
 
 object Controller extends TapirJsonCirce with SchemaDerivation {
