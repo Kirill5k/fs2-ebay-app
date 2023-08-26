@@ -31,7 +31,7 @@ final private class LiveFrasersClient[F[_]](
   override protected val name: String = retailer.name
 
   private val groupIdPrefix: String = retailer match
-    case Retailer.Flannels => "FLAN_TM"
+    case Retailer.Flannels => "FLAN_BRA"
     case Retailer.Tessuti  => "TESS_BRA"
     case Retailer.Scotts   => "SCOT_BRA"
 

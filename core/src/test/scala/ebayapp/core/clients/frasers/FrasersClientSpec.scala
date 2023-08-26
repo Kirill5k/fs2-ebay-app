@@ -19,7 +19,7 @@ class FrasersClientSpec extends SttpClientSpec {
 
     "return stream of items based on provided search criteria" in {
       val args = Map(
-        "categoryId"      -> "FLAN_TMSTONEISLAND",
+        "categoryId"      -> "FLAN_BRASTONEISLAND",
         "sortOption"      -> "discountvalue_desc",
         "selectedFilters" -> "AFLOR^Mens"
       )
