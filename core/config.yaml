@@ -199,17 +199,20 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {query: "balenciaga", filters: {min-discount: 28}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "dolce-gabbana", filters: {min-discount: 28}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "moncler"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "balenciaga", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "dolce-gabbana", category: mens}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "stone-island", filters: {min-discount: 29}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "emporio armani", filters: {min-discount: 44}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "moncler", filters: {min-discount: 10}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "hugo", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "diesel", filters: {min-discount: 58, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size (3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)"]}
+        filters: {
+          min-discount: 18
+          exclude: ["size (3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)"]
+        }
       }
     
       flannels {
