@@ -256,7 +256,7 @@ data:
           }
         ]
         filters: {
-          exclude: ["size (\\dX(S|L)|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants|olive"], 
+          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants"], 
         }
       }
     
