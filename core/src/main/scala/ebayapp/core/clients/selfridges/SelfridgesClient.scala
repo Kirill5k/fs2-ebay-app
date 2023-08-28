@@ -83,8 +83,11 @@ final private class LiveSelfridgesClient[F[_]](
 
   private def searchForItems(criteria: SearchCriteria)(page: Int): F[(List[CatalogItem], Option[Int])] =
     sendRequest[SelfridgesSearchResponse](
-      baseUri =>
-        uri"$baseUri/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${criteria.query.replaceAll(" ", "-")}&pageNumber=$page&pageSize=60",
+      { baseUri =>
+        val q = criteria.query.replaceAll(" ", "-")
+        val c = criteria.category.fold("")(c => s"|$c")
+        uri"$baseUri/api/cms/ecom/v1/GB/en/productview/byCategory/byIds?ids=${q + c}&pageNumber=$page&pageSize=60"
+      },
       "products-by-ids",
       SelfridgesSearchResponse(0, None, Nil)
     ).map(res => (res.catalogEntryNavView, res.pageNumber.filter(_ != res.noOfPages).map(_ + 1)))
