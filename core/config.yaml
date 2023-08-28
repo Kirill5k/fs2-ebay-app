@@ -214,17 +214,44 @@ data:
         delay-between-requests: 3m
         monitoring-frequency: 12m
         monitoring-requests: [
-          {search-criteria: {query: "balenciaga", category: mens}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "stone-island", category: mens}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "dolce-and-gabbana", category: mens}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "off-white", category: mens, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "palm-angels", category: mens, filters: {min-discount: 40}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "kenzo", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          {
+            search-criteria: {
+              query: "balenciaga", 
+              category: mens,
+              filters: {
+                "include": ["trainers", "runners", "t(-)?shirt", "slide", "slider", "sneaker", "triple s", "\\bTEE\\b", "bag"], 
+                min-discount: 25, 
+                max-price: 700
+              }
+            }, 
+            monitor-stock-change: false, 
+            monitor-price-change: true
+          }
+          {
+            search-criteria: {
+              query: "stone-island", 
+              category: mens,
+              filters: { max-price: 250, min-discount: 35 }
+            }, 
+            monitor-stock-change: false, 
+            monitor-price-change: true
+          }
+          {
+            search-criteria: {
+              query: "dolce-and-gabbana", 
+              category: mens,
+              filters: {
+                "include": ["trainers", "runners", "belt", "t(-)?shirt", "slide", "slider", "sneaker", "airmaster", "\\bTEE\\b"], 
+                min-discount: 25, 
+                max-price: 700
+              }
+            }, 
+            monitor-stock-change: false, 
+            monitor-price-change: true
+          }
         ]
         filters: {
           exclude: ["size (\\dX(S|L)|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants|olive"], 
-          min-discount: 35, 
-          max-price: 350
         }
       }
     
