@@ -243,7 +243,7 @@ data:
               query: "dolce-and-gabbana", 
               category: mens,
               filters: {
-                "include": ["trainers", "runners", "belt", "t(-)?shirt", "slide", "slider", "sneaker", "airmaster", "\\bTEE\\b"], 
+                "include": ["trainers", "runners", "t(-)?shirt", "slide", "slider", "sneaker", "airmaster", "\\bTEE\\b"], 
                 min-discount: 25, 
                 max-price: 700
               }
