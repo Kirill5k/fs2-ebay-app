@@ -14,6 +14,8 @@ private[clients] trait ItemMapper[I] {
       .replaceFirst("(?i)large", "L")
       .replaceFirst("(?i)(?<=^([X]+|\\dX)) ", "")
       .replaceFirst("(?<=^UK\\d+)( )?\\(.*\\)", "")
+      .replaceFirst("(?<=\\d+) UK MEN", "")
+      .replaceFirst("(?i)EUR \\d+ / ", "")
       .replaceFirst("\\d+ (?=[()SMLX]+)", "")
       .replaceFirst("(?i)^XX(?=(S|L))", "2X")
       .replaceFirst("(?i)^XXX(?=(S|L))", "3X")
