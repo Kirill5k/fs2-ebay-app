@@ -30,7 +30,7 @@ private[clients] trait ItemMapper[I] {
         .split(" |-")
         .map(i => if (i.length > 3) i.toLowerCase.capitalize else i.toUpperCase)
         .mkString(" ")
-        .replaceAll("(?i)\\bAND\\B", "&")
+        .replaceAll("(?i)\\bAND\\b", "&")
 
     def cut(replace: String) =
       s.replaceAll("(?i)" + replace, "").trimmed
