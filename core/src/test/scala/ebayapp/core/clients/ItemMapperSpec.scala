@@ -44,5 +44,11 @@ class ItemMapperSpec extends AnyWordSpec with Matchers with Inspectors {
 
       strings.map(_.capitalizeAll) mustBe List("Harvey Nichols", "Selfridges", "Emporio Armani EA7")
     }
+
+    "replace ampersand" in {
+      val strings = List("Dolce and Gabbana")
+
+      strings.map(_.capitalizeAll) mustBe List("Dolce & Gabbana")
+    }
   }
 }
