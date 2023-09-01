@@ -269,7 +269,7 @@ data:
           //{search-criteria: {category: "mens", query: "Moschino", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "mens", query: "Hugo", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "mens", query: "Boss", filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "mens", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "mens", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
           exclude: ["size (\\d+(l|s)|3[1-9](W|R)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"], 
