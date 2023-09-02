@@ -102,7 +102,7 @@ final private class SimpleStockService[F[_]](
           F.pure(None)
       }
       .unNone
-      .filter(_ => req.disableNotifications.fold(true)(!_))
+      .filter(_ => req.disableNotifications.forall(!_))
       .handleErrorWith { error =>
         Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confFilters, req)
       }
