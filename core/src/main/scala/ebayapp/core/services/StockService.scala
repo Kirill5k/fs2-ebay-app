@@ -67,7 +67,7 @@ final private class SimpleStockService[F[_]](
         }
         .parJoinUnbounded
         .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
-        .onFinalize(cache.clear >> logger.info(s"closing ${retailer.name}-stock-monitor stream"))
+        .onFinalize(cache.clear >> logger.info(s"clearing ${retailer.name}-stock-monitor cache"))
 
   private def preloadCache(confFilters: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
     client
@@ -102,6 +102,7 @@ final private class SimpleStockService[F[_]](
           F.pure(None)
       }
       .unNone
+      .filter(_ => req.notifyOnChange.exists(identity))
       .handleErrorWith { error =>
         Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confFilters, req)
       }

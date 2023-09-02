@@ -197,6 +197,21 @@ class CexStockServiceSpec extends IOWordSpec {
         u.flatMap(_.updates) must have size 4
       }
     }
+
+    "not return anything when notifyOnChange is false" in {
+      val client = mock[CexClient[IO]]
+
+      val req = req1.copy(notifyOnChange = Some(false))
+
+      when(client.search(req.searchCriteria)).thenReturnEmptyStream
+        .thenStream(mb1)
+
+      val result = StockService
+        .make[IO](Retailer.Cex, config(req), client)
+        .flatMap(_.stockUpdates.interruptAfter(2200.millis).compile.toList)
+
+      result.asserting(_ mustBe Nil)
+    }
   }
 
   extension (item: ResellableItem)
