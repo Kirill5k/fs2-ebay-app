@@ -83,7 +83,7 @@ object config {
       searchCriteria: SearchCriteria,
       monitorStockChange: Boolean,
       monitorPriceChange: Boolean,
-      notifyOnChange: Option[Boolean] = Some(true)
+      disableNotifications: Option[Boolean] = None
   ) derives ConfigReader
 
   final case class StockMonitorConfig(

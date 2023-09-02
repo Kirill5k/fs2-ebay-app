@@ -201,7 +201,7 @@ class CexStockServiceSpec extends IOWordSpec {
     "not return anything when notifyOnChange is false" in {
       val client = mock[CexClient[IO]]
 
-      val req = req1.copy(notifyOnChange = Some(false))
+      val req = req1.copy(disableNotifications = Some(true))
 
       when(client.search(req.searchCriteria)).thenReturnEmptyStream
         .thenStream(mb1)
