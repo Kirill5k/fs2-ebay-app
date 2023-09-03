@@ -27,7 +27,7 @@ class FrasersClientSpec extends SttpClientSpec {
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
           case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-page3.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -54,7 +54,7 @@ class FrasersClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/new-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page3.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-no-results.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -83,7 +83,7 @@ class FrasersClientSpec extends SttpClientSpec {
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
           case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-page3.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -110,7 +110,7 @@ class FrasersClientSpec extends SttpClientSpec {
         .whenRequestMatchesPartial {
           case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
           case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-page3.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
