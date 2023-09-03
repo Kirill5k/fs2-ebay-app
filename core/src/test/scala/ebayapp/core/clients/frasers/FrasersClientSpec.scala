@@ -44,6 +44,27 @@ class FrasersClientSpec extends SttpClientSpec {
           item.buyPrice mustBe BuyPrice(1, 899.00, Some(69))
         }
     }
+
+    "parse updated response" in {
+      val args = Map(
+        "categoryId" -> "FLAN_BRASTONEISLAND",
+        "sortOption" -> "discountvalue_desc",
+        "selectedFilters" -> "AFLOR^Mens"
+      )
+      val testingBackend: SttpBackend[IO, Any] = backendStub
+        .whenRequestMatchesPartial {
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/new-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page3.json"))
+          case r => throw new RuntimeException(r.uri.toString)
+        }
+
+      FrasersClient
+        .flannels[IO](config, testingBackend)
+        .flatMap(_.search(sc).compile.toList)
+        .asserting { items =>
+          items must have size 323
+        }
+    }
   }
 
   "FrasersClient for tessuti" should {

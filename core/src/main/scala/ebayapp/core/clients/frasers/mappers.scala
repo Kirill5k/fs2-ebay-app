@@ -38,7 +38,7 @@ private[frasers] object mappers {
             item.retailer.capitalizeAll,
             Map.empty
           ),
-          BuyPrice(1, item.product.priceUnFormatted, item.product.discountPercentage.map(_.toInt)),
+          BuyPrice(1, item.product.priceUnFormatted, item.product.discount),
           None,
           foundWith
         )
