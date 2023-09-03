@@ -67,7 +67,7 @@ final private class SimpleStockService[F[_]](
         }
         .parJoinUnbounded
         .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
-        .onFinalize(cache.clear >> logger.info(s"clearing ${retailer.name}-stock-monitor cache"))
+        .onFinalize(cache.clear >> logger.info(s"closing ${retailer.name}-stock-monitor stream"))
 
   private def preloadCache(confFilters: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
     client
