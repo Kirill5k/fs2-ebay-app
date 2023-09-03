@@ -85,7 +85,8 @@ final private class LiveFrasersClient[F[_]](
       .flatMap { r =>
         r.body match
           case Right(res) =>
-            F.pure(res.products -> Option.when(res.products.nonEmpty)(page + 1))
+            logger.info(s"$name-search/${sc.query}-page-$page returned ${res.products.size} items") >>
+              F.pure(res.products -> Option.when(res.products.nonEmpty)(page + 1))
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-search/exhausted input") >>
               F.sleep(3.second) >> getItems(sc)(page)
