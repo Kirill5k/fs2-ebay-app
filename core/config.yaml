@@ -236,7 +236,7 @@ data:
             search-criteria: {
               query: "stone-island", 
               category: mens,
-              filters: { max-price: 250, min-discount: 35 }
+              filters: { max-price: 250, min-discount: 28 }
             }, 
             monitor-stock-change: false, 
             monitor-price-change: true
@@ -256,7 +256,7 @@ data:
           }
         ]
         filters: {
-          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants"], 
+          //exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants"], 
         }
       }
     
