@@ -90,19 +90,20 @@ final private class SimpleStockService[F[_]](
       .search(req.searchCriteria)
       .filter(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)(_))
       .evalMap(item => cache.get(item.key).map(_ -> item))
-      .evalMap {
+      .evalTap((_, currItem) => cache.put(currItem.key, currItem))
+      .filter(_ => req.disableNotifications.forall(!_))
+      .map {
         case (None, currItem) =>
-          cache.put(currItem.key, currItem).as(Some(ItemStockUpdates(currItem, List(StockUpdate.New))))
+          Some(ItemStockUpdates(currItem, List(StockUpdate.New)))
         case (Some(prevItem), currItem) if currItem.isPostedAfter(prevItem) =>
           val upd1    = Option.flatWhen(req.monitorPriceChange)(StockUpdate.priceChanged(prevItem.buyPrice, currItem.buyPrice)).toList
           val upd2    = Option.flatWhen(req.monitorStockChange)(StockUpdate.quantityChanged(prevItem.buyPrice, currItem.buyPrice)).toList
           val updates = upd1 ++ upd2
-          cache.put(currItem.key, currItem).as(Option.when(updates.nonEmpty)(ItemStockUpdates(currItem, updates)))
+          Option.when(updates.nonEmpty)(ItemStockUpdates(currItem, updates))
         case _ =>
-          F.pure(None)
+          None
       }
       .unNone
-      .filter(_ => req.disableNotifications.forall(!_))
       .handleErrorWith { error =>
         Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confFilters, req)
       }
