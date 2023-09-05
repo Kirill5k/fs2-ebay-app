@@ -36,9 +36,11 @@ final private class SimpleStockService[F[_]](
     logger: Logger[F]
 ) extends StockService[F] {
 
+  private val serviceName = s"${retailer.name}-stock"
+
   override def cachedItems: F[List[ResellableItem]] = cache.values
-  override def pause: F[Unit]                       = isPaused.set(true) >> logger.info(s"""${retailer.name}-stock-monitor-paused""")
-  override def resume: F[Unit]                      = isPaused.set(false) >> logger.info(s"""${retailer.name}-stock-monitor-resumed""")
+  override def pause: F[Unit]                       = isPaused.set(true) >> logger.info(s"""$serviceName-monitor-paused""")
+  override def resume: F[Unit]                      = isPaused.set(false) >> logger.info(s"""$serviceName-monitor-resumed""")
 
   override def stockUpdates: Stream[F, ItemStockUpdates] =
     for
@@ -55,11 +57,12 @@ final private class SimpleStockService[F[_]](
     yield upd
 
   private def itemStockUpdates(config: StockMonitorConfig): Stream[F, ItemStockUpdates] =
-    Stream.logInfo(s"starting ${retailer.name}-stock-monitor stream") ++
+    Stream.logInfo(s"starting $serviceName-monitor stream") ++
       Stream
         .emits(config.monitoringRequests.zipWithIndex)
         .map { (req, index) =>
-          preloadCache(config.filtersOrDefault, req).delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
+          preloadCache(config.filtersOrDefault, req)
+            .delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
             Stream
               .awakeDelay(config.monitoringFrequency)
               .flatMap(_ => getUpdates(config.filtersOrDefault, req))
@@ -67,7 +70,7 @@ final private class SimpleStockService[F[_]](
         }
         .parJoinUnbounded
         .concurrently(Stream.eval(logCacheSize(config.monitoringFrequency)))
-        .onFinalize(cache.clear >> logger.info(s"closing ${retailer.name}-stock-monitor stream"))
+        .onFinalize(cache.clear >> logger.info(s"closing $serviceName-monitor stream"))
 
   private def preloadCache(confFilters: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
     client
@@ -81,8 +84,8 @@ final private class SimpleStockService[F[_]](
       val item = if items.size == 1 then "item" else "items"
       val groups =
         if items.isEmpty then ""
-        else items.map(_.foundWith.query).groupMapReduce(identity)(_ => 1)(_ + _).mkString("(", ", ", ")")
-      logger.info(s"""${retailer.name}-stock-cache: ${items.size} $item $groups""")
+        else items.groupMapReduce(_.foundWith.query)(_ => 1)(_ + _).mkString("(", ", ", ")")
+      logger.info(s"""$serviceName-cache: ${items.size} $item $groups""")
     } >> logCacheSize(frequency)
 
   private def getUpdates(confFilters: Filters, req: StockMonitorRequest): Stream[F, ItemStockUpdates] =
@@ -105,7 +108,7 @@ final private class SimpleStockService[F[_]](
       }
       .unNone
       .handleErrorWith { error =>
-        Stream.logError(error)(s"${retailer.name}-stock/error - ${error.getMessage}") ++ getUpdates(confFilters, req)
+        Stream.logError(error)(s"$serviceName/error - ${error.getMessage}") ++ getUpdates(confFilters, req)
       }
 
   extension (config: StockMonitorConfig)
