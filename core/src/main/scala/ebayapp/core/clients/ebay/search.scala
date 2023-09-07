@@ -113,7 +113,7 @@ private[ebay] object search {
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b", "\bSNES\\b", "\\bANDROID\\b",
         "X(BOX)?(\\s+)?360","(super )?nintendo ((3)?ds|wii|eshop)", "\\b(3)?DS\\b ninten(t|d)o", "gamecube", "\\bN64\\b", "\\bDS\\b game", "nintendo (3)?ds",
-        "\\bPlayStation (2|3)\\b", "gameboy"
+        "PlayStation 3.?PS3", "PlayStation 2.?PS2", "\\bPlayStation (2|3)\\b", "gameboy"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
 
