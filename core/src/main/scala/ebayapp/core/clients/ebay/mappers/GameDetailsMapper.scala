@@ -31,7 +31,7 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL2_TITLE_WORDS_REPLACEMENTS = List(
     CONSOLE_REGEX_PATTERN,
-    "\\d{5,}(\\w+)?", "\\d{3,}\\s+\\d{4,}", "for playstation( )?vr", "((ps( )?)?(vr|move)|kinect|fit|balance board) (needed|required|compatible)",
+    "\\d{5,}(\\w+)?", "\\d{3,}\\s+\\d{4,}", "for playstation( )?vr(2)?", "((ps( )?)?(vr(2)?|move)|kinect|fit|balance board) (needed|required|compatible)",
     "requires kinect( sensor)?", "(dbl|double|dual|triple|twin|expansion|comb|mega).{0,10}(pass|pack|pk)",
     "new in (wrapper|wrapping|cellophane|packaging|box)( still wrapped)?",
     "Now Released(?s).*$", "Release date(?s).*$", "includes( free(?s).*$|.{0,20}pack(?s).*$| \\w+)", "amazon.{0,20}exclusive(?s).*$",
@@ -39,7 +39,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=\\w+ )((all|fully) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$", "clean(ed)?( )?(fully )?tested",
     "((\\bC\\b )?\\bW\\b|with| inc(ludes)?|including|contain|((\\d|no) )?bonus|plus).{0,20}(game|insert|guide|dlc|pass|level|content|bonus|pack)(?s).*$",
-    "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|art|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
+    "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|\\bart\\b|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
     "(both )?dis(c|k)(s)? (are|is|in)(?s).*$", "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b",
     "(in )?((absolutely|near) )?(great|(very )?good|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*{0,9}(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU(R)?\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
@@ -118,7 +118,7 @@ private[mappers] object GameDetailsMapper {
     "\\bWAR L\\d+\\b", "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", 
     "(ultra )?\\b(u)?hd(r)?\\b", "(\\b4k\\b|\\bone x\\b)( enhanced)?", "\\buns\\b", "\\bx360\\b", 
     "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b", 
-    "\\bSE\\b", "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( |\\d)?)?VR\\b( version)?", 
+    "\\bSE\\b", "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( |\\d)?)?VR(2)?\\b( version)?", 
     "\\bDEFY\\b", "\\bArgos\\b", "\\bGD\\b", "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b", 
     "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b", "(?<=\\d)PS\\d", "\bXBOX\b", "\bCASED\b",
     "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "(condition )?NEW(\\s+)?$"
@@ -148,7 +148,7 @@ private[mappers] object GameDetailsMapper {
   private val PLATFORMS_MATCH_REGEX = List(
     "(?<![a-zA-Z])PS( )?[1-5]",
     "PLAY( )?STATION(\\s+)?([1-5](?!\\d+)|one)",
-    "PSVR",
+    "PSVR(2)?",
     "NINTENDO SWITCH",
     "SWITCH",
     "\\bWII( )?U\\b",
