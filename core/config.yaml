@@ -167,7 +167,7 @@ data:
       nvidia {
         monitoring-frequency: 10m
         monitoring-requests: [
-          {search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true}
+          {search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true, disable-notifications: true}
         ]
         filters: {exclude: ["GTX 1650", "GTX 1660"]}
       }
@@ -282,12 +282,12 @@ data:
         delay-between-requests: 1m
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {query: "Emporio Armani", category: mens}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "EA7", category: mens}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "Emporio Armani", category: mens}, monitor-stock-change: false, monitor-price-change: true, disable-notifications: true}
+          {search-criteria: {query: "EA7", category: mens}, monitor-stock-change: false, monitor-price-change: true, disable-notifications: true}
           //{search-criteria: {query: "Kenzo", category: mens}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "Boss", category: mens, filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {query: "Hugo", category: mens, filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "diesel", category: mens, filters: {min-discount: 60, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "diesel", category: mens, filters: {min-discount: 60, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true, disable-notifications: true}
         ]
         filters: {
           exclude: ["size (\\d+(l|s)|3[1-9](R|W)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"], 
