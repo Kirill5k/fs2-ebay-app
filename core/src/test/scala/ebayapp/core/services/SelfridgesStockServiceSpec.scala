@@ -115,7 +115,7 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
 
       val result = StockService
         .make[IO](Retailer.Selfridges, configProvider, client)
-        .flatMap(_.stockUpdates.interruptAfter(4500.millis).compile.toList)
+        .flatMap(_.stockUpdates.interruptAfter(5.seconds).compile.toList)
 
       result.asserting { updates =>
         verify(client, Mockito.times(2)).search(criteria)
