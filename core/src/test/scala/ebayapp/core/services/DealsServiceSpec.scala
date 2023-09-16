@@ -160,12 +160,12 @@ class DealsServiceSpec extends IOWordSpec {
       val result = for
         service <- DealsService.make(
           Retailer.Ebay,
-          config(DealsFinderConfig(2.seconds, List(request1, request2))),
+          config(DealsFinderConfig(1.seconds, List(request1, request2))),
           searchClient,
           cexClient,
           repo
         )
-        items <- service.newDeals.interruptAfter(5.seconds).compile.toList
+        items <- service.newDeals.interruptAfter(3.seconds).compile.toList
       yield items
 
       result.asserting { items =>
