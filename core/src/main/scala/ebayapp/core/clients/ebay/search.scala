@@ -66,7 +66,7 @@ private[ebay] object search {
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot",
-        "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)", "(memory|trading|post|sd|nfc( mini)?( )?card", "stickers", "digital delivery",
+        "(\\d+|rune|perk|skill|(e)?xp(erience)?) (stats|points)", "(memory|trading|post|sd|nfc( mini)?)( )?card", "stickers", "digital delivery",
         "(subscription|gift|ps\\d|steam|network|will send)( |-)?(card|code|key)", "disc \\d missing", "faulty",
         "(demo|game)( )?(code|disc|key|cart|pass)", "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|\\bUK\\b|no)( )?(redeem )?(\\bDL\\b|avatar|game|code|key)",
         "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo) only",
