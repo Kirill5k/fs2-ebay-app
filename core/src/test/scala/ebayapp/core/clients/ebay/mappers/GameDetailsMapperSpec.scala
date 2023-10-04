@@ -251,6 +251,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     "remove noise words from title" in {
       forAll(
         List(
+          "Call of Duty Infinite Warfare PS4 (L:100497)",
           "Call of Duty Infinite Warfare Playstation 3 PS3 Game + Free UK Delivery",
           "Call of Duty Infinite Warfare \\ £54.99",
           "5 PS3 Games Call of Duty Infinite Warfare VR PSVR",

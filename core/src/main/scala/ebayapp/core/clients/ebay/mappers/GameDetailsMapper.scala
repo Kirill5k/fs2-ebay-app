@@ -31,7 +31,7 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL2_TITLE_WORDS_REPLACEMENTS = List(
     CONSOLE_REGEX_PATTERN,
-    "\\d{5,}(\\w+)?", "\\d{3,}\\s+\\d{4,}", "for playstation( )?vr(2)?", "((ps( )?)?(vr(2)?|move)|kinect|fit|balance board) (needed|required|compatible)",
+    "(\\w+)?\\d{5,}(\\w+)?", "\\d{3,}\\s+\\d{4,}", "for playstation( )?vr(2)?", "((ps( )?)?(vr(2)?|move)|kinect|fit|balance board) (needed|required|compatible)",
     "requires kinect( sensor)?", "(dbl|double|dual|triple|twin|expansion|comb|mega).{0,10}(pass|pack|pk)",
     "new in (wrapper|wrapping|cellophane|packaging|box)( still wrapped)?",
     "Now Released(?s).*$", "Release date(?s).*$", "includes( free(?s).*$|.{0,20}pack(?s).*$| \\w+)", "amazon.{0,20}exclusive(?s).*$",
@@ -44,7 +44,7 @@ private[mappers] object GameDetailsMapper {
     "(in )?((absolutely|near) )?(great|(very )?good|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*{0,9}(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU(R)?\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
-    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
+    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|koch media|Activision( (NG|Blizzard))?|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
     "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b",
     "Microsoft(s)?( 20\\d\\d)?", "(by )?sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "xbox()?(original)?",
@@ -112,7 +112,7 @@ private[mappers] object GameDetailsMapper {
     "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included",
     "(still )?in( (plastic|cellophane))? wrap(p)?(ing|er)", "\\brated \\d+\\b", "\\d supplied",
     "((region|europe) )?((R2( )?)?\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?",
-    "\\ben\\b", "\\bcr\\b", "\\bnc\\b", "\\bfr\\b", "\\bes\\b", "\\ban\\b", "\\bLTD\\b", "\\bREF (\\w)?( )?\\d+\\b",
+    "\\ben\\b", "\\bcr\\b", "\\bnc\\b", "\\bfr\\b", "\\bes\\b", "\\ban\\b", "\\bLTD\\b", "\\bREF( )?(\\w)?( )?\\d+\\b",
     "\\b\\w+VG(C)?\\b", "\\bns\\b", "\\b(B)?NW(O)?T\\b", "\\bnsw\\b", "\\bsft\\b", "uac pack",
     "\\bsave s\\b", "\\bdmc\\b", "\\bBNI(B|P)\\b", "\\bNSO\\b", "\\bNM\\b", "\\bLRG(( )?\\d+)?\\b",
     "\\bWAR L\\d+\\b", "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", 
@@ -286,6 +286,7 @@ private[mappers] object GameDetailsMapper {
     def withoutSpecialChars: String =
       str
         .replaceAll("&#\\d+;", "")
+        .replaceAll("#\\d{4,};", "")
         .replaceAll("100%$", "")
         .replaceAll("(?i)(\\bAND\\b| \\bA\\b(?!\\.)|\\bTHE\\b)", "")
         .replaceAll("£\\d+(\\.\\d+)?", "")
