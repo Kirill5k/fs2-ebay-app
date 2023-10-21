@@ -89,6 +89,7 @@ private[ebay] object search {
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (release|cover|pack|box|import|item|disc|vers|copy)",
         "arabic", "slovakian", "czech", "\\bNTSC(-J)?\\b", "to be updated", "(ps\\d|xbox( one)?) digital", "Dreamcast", "Handheld System",
         "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "PC( )?(mac|steam|comp|win|game|CD|DVD)", "\\n digit code", "Commodore 64",
+        "TOPModel", "Sleeping Mask", "Juwel",
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|SMALLTRIBE|breeding|deadpool|pve|reaper|lvl|Tek)", "Code( )?in( )?(a)?( )?Box", "Creativ Company",
         "diablo 3(\\s+(\\w+|\\d+)){6,}", "fortnite", "placeholder( listing)? \\d", "character skin", "overwatch\\s+(sony|ps|xbox|legendary|origins|game)",
         "(rune|item|gold|softcore|(nm|nightmare) dungeon|modded|\\bGEM(s)?\\b|weapon|\\bPC\\b|\\bXP\\b).*diablo", "Trigger Treadz", "Painting on Canvas",
