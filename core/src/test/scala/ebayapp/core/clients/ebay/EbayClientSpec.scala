@@ -155,7 +155,7 @@ class EbayClientSpec extends IOWordSpec {
         "super mario bros 3 xbox / 360",
         "game 5 for PS4",
         "Spider-Man 2 (ps5) - Campaign Completion",
-        "fifa 2009",
+        "Game & Watch: The Legend of Zelda - Brand New and Sealed in box",
         "Max Payne (Xbox Classics)",
         "5 PLAYSTATION 3 GAMES (LOT 3)",
         "super mario bros 3ds",

@@ -215,6 +215,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     "separate words where appropriate" in {
       forAll(
         Map(
+          "back4blood"                                                 -> "back 4 blood",
           "racedriver grid"                                            -> "race driver grid",
           "racedriver: grid"                                           -> "race driver grid",
           "NEW Playerunknowns battlegrounds pal PSVR Ultimate Evil Ed" -> "Player unknowns battlegrounds"
@@ -286,6 +287,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "Call of Duty: Infinite Warfare 20th anniversary FUVG ID7274z",
           "Call of Duty: Infinite Warfare classic edition foo",
           "Call of Duty: Infinite Warfare 2017",
+          "Call of Duty: Infinite Warfare Game & watch",
           "Call of Duty: Infinite Warfare PAL R2",
           "Call of Duty: Infinite Warfare X BOX ONE REF",
           "Call of Duty: Infinite Warfare - factory sealed",

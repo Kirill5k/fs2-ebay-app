@@ -68,7 +68,7 @@ private[mappers] object GameDetailsMapper {
   private val LEVEL3_TITLE_WORDS_REPLACEMENTS = List(
     // removes the word GAME
     "((new|\\ball\\b) )?(fully )?(((very|super) )?rare|strictly limited|exclusive|(limited|LTD) run|(\\d+( )?(x )?)?new|pal|physical|great|boxed|full|two|complete|\\bbase\\b|boxed complete) game(s)?( )?(\\d+|in one)?( new)?",
-    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|puzzle|extreme sport(s)?|soccer|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike|driving) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( )?(for kids|series|film|racing|good|box(ed)?|watch|collection|console|of (year|olympic(s)?|movie))?( 20\\d\\d)?",
+    "(\\b(\\d player|kids( \\w+)?|multiplayer|(active )?dance|puzzle|extreme sport(s)?|soccer|football sport|rally|driving|shooting|fighting|hacker|((car|motorbike|driving) )?racing|Skateboarding|action|hit|official|strategy|console|gold|(base )?main|children)\\b.{0,15})?(video( )?)?game(s)?( )?(for kids|series|film|racing|good|box(ed)?|(&)?watch|collection|console|of (year|olympic(s)?|movie))?( 20\\d\\d)?",
     "real driving simulator",
     // removes the word USED
     "((barely|condition|never|hardly|dlc|only) )?(un)?used( (once|twice))?(( very)? good)?( (game(s)?|condition))?",
@@ -118,7 +118,7 @@ private[mappers] object GameDetailsMapper {
     "\\bWAR L\\d+\\b", "\\bUE\\b", "\\bBN(S)?\\b", "\\bRRP\\b(\\s|\\d)*", "\\bremake\\b( 20\\d\\d)?", 
     "(ultra )?\\b(u)?hd(r)?\\b", "(\\b4k\\b|\\bone x\\b)( enhanced)?", "\\buns\\b", "\\bx360\\b", 
     "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b", 
-    "\\bSE\\b", "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( |\\d)?)?VR(2)?\\b( version)?", 
+    "\\bSE\\b", "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( |\\d)?)?VR(2)?\\b( (version|virtual reality))?", 
     "\\bDEFY\\b", "\\bArgos\\b", "\\bGD\\b", "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b", 
     "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b", "(?<=\\d)PS\\d", "\bXBOX\b", "\bCASED\b",
     "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "(condition )?NEW(\\s+)?$"
@@ -141,6 +141,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=south)(?=park)", "(?<=Super)(?=Heroes)", "(?<=Rock)(?=Band)", "(?<=My)(?=Sims)", "(?<=Nier)(?=Automata)", 
     "(?<=Race)(?=driver grid)", "(?<=(NBA|FIFA))(?=\\d+)", "(?<=BOX)(?=VR)", "(?<=WATCH)(?=DOGS)", 
     "(?<=PES)(?=20\\d\\d)", "(?<=MICRO)(?=MACHINES)", "(?<=PLAYER)(?=UNKNOWN)", "(?<=ARK)(?=PARK)",
+    "(?<=BACK)(?=4BLOOD)", "(?<=BACK( )?4)(?=BLOOD)",
     "(?<=Dragon)(?=Ball)"
   ).mkString("(?i)", "|", "")
   // format: on
