@@ -83,7 +83,7 @@ private[mappers] object GameDetailsMapper {
     "(s|c)ellophane wrapped", "free\\s+upgrade", "(official )?Strategy Combat( guide)?", "upgrade available",
     "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football( soccer)?)",
-    "football soccer( sim(ulator)?)?", "action (stealth|thriller)", "(car|motorcycles|rally) (Driving|Racing)",
+    "football soccer( sim(ulator)?)?", "action (action|survival|stealth|thriller)", "(car|motorcycles|rally) (Driving|Racing)",
     "((family fun|survival) )?Action Adventure( Open World)?", "(adventure )?survival horror", "fighting multiplayer",
     "(Multi|Single)( )?Player", "life simulation", "racing rally",
     "\\bpegi( \\d+)?\\b(?s).*$",
