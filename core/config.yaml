@@ -229,7 +229,7 @@ data:
                 max-price: 700
               }
             }, 
-            monitor-stock-change: false, 
+            monitor-stock-change: false
             monitor-price-change: true
           }
           {
@@ -238,7 +238,7 @@ data:
               category: mens,
               filters: { max-price: 250, min-discount: 28 }
             }, 
-            monitor-stock-change: false, 
+            monitor-stock-change: false 
             monitor-price-change: true
           }
           {
@@ -251,7 +251,7 @@ data:
                 max-price: 700
               }
             }, 
-            monitor-stock-change: false, 
+            monitor-stock-change: false 
             monitor-price-change: true
           }
         ]
