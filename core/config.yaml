@@ -224,7 +224,7 @@ data:
               query: "balenciaga", 
               category: mens,
               filters: {
-                "include": ["hoodie", "sweatshirt", "sweatshirt", "combat", "trousers", "jogger", "trainer", "runner", "t(-)?shirt", "slide", "slider", "sneaker", "triple s", "tee", "bag"],
+                "include": ["triple s", "bag"],
               }
             }, 
             monitor-stock-change: false
@@ -245,7 +245,7 @@ data:
               query: "dolce-and-gabbana", 
               category: mens,
               filters: {
-                "include": ["hoodie", "sweatshirt", "combat", "trousers", "jogger", "trainer", "runner", "t(-)?shirt", "slide", "slider", "sneaker", "airmaster", "tee"],
+                "include": ["slide", "slider", "sneaker", "airmaster"],
               }
             }, 
             monitor-stock-change: false 
@@ -253,8 +253,9 @@ data:
           }
         ]
         filters: {
-          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants"],
-          min-discount: 25,
+          "include": ["combat", "hoodie", "sweatshirt", "trousers", "jogger", "jeans", "t(-)?shirt", "tee", "trainer", "runner", "slide", "sneaker", "shorts"]
+          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants", "GRAFFITI"]
+          min-discount: 25
           max-price: 700
         }
       }
