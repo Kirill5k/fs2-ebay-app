@@ -224,9 +224,7 @@ data:
               query: "balenciaga", 
               category: mens,
               filters: {
-                "include": ["trainers", "runners", "t(-)?shirt", "slide", "slider", "sneaker", "triple s", "\\bTEE\\b", "bag"], 
-                min-discount: 25, 
-                max-price: 700
+                "include": ["hoodie", "sweatshirt", "sweatshirt", "combat", "trousers", "jogger", "trainer", "runner", "t(-)?shirt", "slide", "slider", "sneaker", "triple s", "tee", "bag"],
               }
             }, 
             monitor-stock-change: false
@@ -236,7 +234,8 @@ data:
             search-criteria: {
               query: "stone-island", 
               category: mens,
-              filters: { max-price: 250, min-discount: 28 }
+              filters: { min-discount: 28 }
+              exclude: ["shadow", "knit"]
             }, 
             monitor-stock-change: false 
             monitor-price-change: true
@@ -246,9 +245,7 @@ data:
               query: "dolce-and-gabbana", 
               category: mens,
               filters: {
-                "include": ["trainers", "runners", "t(-)?shirt", "slide", "slider", "sneaker", "airmaster", "\\bTEE\\b"], 
-                min-discount: 25, 
-                max-price: 700
+                "include": ["hoodie", "sweatshirt", "combat", "trousers", "jogger", "trainer", "runner", "t(-)?shirt", "slide", "slider", "sneaker", "airmaster", "tee"],
               }
             }, 
             monitor-stock-change: false 
@@ -256,7 +253,9 @@ data:
           }
         ]
         filters: {
-          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants"], 
+          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants"],
+          min-discount: 25,
+          max-price: 700
         }
       }
     
