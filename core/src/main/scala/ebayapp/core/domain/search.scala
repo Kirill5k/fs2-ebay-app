@@ -26,7 +26,7 @@ object search {
 
     def mergeWith(anotherLimit: Filters): Filters =
       Filters(
-        minDiscount = mergeOptWith(minDiscount, anotherLimit.minDiscount, math.max),
+        minDiscount = mergeOptWith(minDiscount, anotherLimit.minDiscount, _.max(_)),
         exclude = mergeOptWith(exclude, anotherLimit.exclude, _ ::: _),
         include = mergeOptWith(include, anotherLimit.include, _ ::: _),
         maxPrice = mergeOptWith(maxPrice, anotherLimit.maxPrice, _.min(_))

@@ -43,5 +43,26 @@ class FiltersSpec extends AnyWordSpec with Matchers {
 
       Filters(exclude = Some(List("super")), include = Some(List("mario 3"))).apply(game) mustBe false
     }
+
+    "use higher min discount when merging 2 filters together" in {
+      val f1 = Filters(minDiscount = Some(10))
+      val f2 = Filters(minDiscount = Some(15))
+
+      f1.mergeWith(f2).minDiscount mustBe Some(15)
+    }
+
+    "use lower max price when merging 2 filters together" in {
+      val f1 = Filters(maxPrice = Some(100))
+      val f2 = Filters(maxPrice = Some(150))
+
+      f1.mergeWith(f2).maxPrice mustBe Some(100)
+    }
+
+    "merge 2 include filters together" in {
+      val f1 = Filters(include = Some(List("foo")))
+      val f2 = Filters(include = Some(List("bar")))
+
+      f1.mergeWith(f2).include mustBe Some(List("foo", "bar"))
+    }
   }
 }
