@@ -254,7 +254,7 @@ data:
         ]
         filters: {
           "include": ["combat", "hoodie", "sweatshirt", "trousers", "jogger", "jeans", "t(-)?shirt", "tee", "trainer", "runner", "slide", "sneaker", "shorts"]
-          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants", "GRAFFITI"]
+          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants|leopard|GRAFFITI|TAILORED|LUMINARIE|paint"]
           min-discount: 25
           max-price: 700
         }
