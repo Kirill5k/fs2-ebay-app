@@ -10,7 +10,7 @@ object Dependencies {
     val http4sJdkClient = "0.9.1"
     val logback         = "1.4.8"
     val log4cats        = "2.6.0"
-    val tapir           = "1.8.1"
+    val tapir           = "1.8.5"
     val courier         = "3.2.0"
 
     val scalaTest    = "3.2.15"
