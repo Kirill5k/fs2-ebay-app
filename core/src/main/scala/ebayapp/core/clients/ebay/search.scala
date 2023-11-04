@@ -63,6 +63,10 @@ private[ebay] object search {
         "priceCurrency:GBP," +
         "itemLocationCountry:GB,"
 
+      private val LISTING_NAME_TRIGGER_TAGS = List(
+        "\\(DS\\)", "\\(XBOX\\)"
+      ).mkString("^.*?(?i)(", "|", ").*$").r
+      
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "upcoming.{1,5}game",
@@ -141,6 +145,7 @@ private[ebay] object search {
       private val ACCEPTER_BUYING_OPTIONS = Set("FIXED_PRICE", "BEST_OFFER")
 
       override val filter: EbayItemSummary => Boolean = { item =>
+        !LISTING_NAME_TRIGGER_TAGS.matches(item.title) &&
         !LISTING_NAME_TRIGGER_WORDS.matches(item.title.replaceAll("[^a-zA-Z0-9 ]", "")) &&
         !LISTING_DESCRIPTION_TRIGGER_WORDS.matches(item.shortDescription.fold("")(_.replaceAll("[^a-zA-Z0-9 ]", ""))) &&
         item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
