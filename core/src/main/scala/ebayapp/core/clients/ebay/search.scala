@@ -66,7 +66,7 @@ private[ebay] object search {
       private val LISTING_NAME_TRIGGER_TAGS = List(
         "\\(DS\\)", "\\(XBOX\\)"
       ).mkString("^.*?(?i)(", "|", ").*$").r
-      
+
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "upcoming.{1,5}game",
@@ -77,7 +77,7 @@ private[ebay] object search {
         "(subscription|gift|ps\\d|steam|network|will send|insta)( |-)?(card|code|key)", "disc \\d missing", "(instant|digital) delivery", "faulty", "damaged",
         "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|\\bUK\\b|no)( )?(redeem )?(\\bDL\\b|avatar|game|code|key)",
         "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo|Accessories|cloth map) only",
-        "(case|variety|accessor(ies|y)|storage|charge|robot|dice) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass",
+        "(case|variety|accessor(ies|y)|storage|charge|robot|dice) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "keychain",
         "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch|empty)\\s+(sleeve|pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging|power|desk)( )?(dock|station|stand)", "download",
         "official (server|magazin)", "Option File", "offline", "online", "unlock all", "mini dock", "Press Release", "starlink(?s).*pack",
