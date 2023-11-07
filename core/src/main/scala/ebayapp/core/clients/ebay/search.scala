@@ -64,12 +64,15 @@ private[ebay] object search {
         "itemLocationCountry:GB,"
 
       private val LISTING_NAME_TRIGGER_TAGS = List(
-        "\\(DS\\)", "\\(XBOX\\)"
+        "\\(PC\\)",
+        "\\(DS\\)",
+        "\\(XBOX\\)"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
-        "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "upcoming.{1,5}game",
+        "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+",
+        "upcoming.{1,5}game", "various video games", "nintendo switch \\d{1,2}", "\\d x nintendo switch games", "ps games x \\d", "PS4 game \\d+",
         "\\b200[0-9]\\b", "(demo|game)( )?(code|disc|key|cart|pass)",
         "\\bhdmi\\b", "\\bUSB\\b", "\\bhdd\\b",
         "switch.*(alu|unicorn).*\\bcase\\b", "credit(?s).*accoun", "credits", "test (listing|page)",
@@ -77,7 +80,7 @@ private[ebay] object search {
         "(subscription|gift|ps\\d|steam|network|will send|insta)( |-)?(card|code|key)", "disc \\d missing", "(instant|digital) delivery", "faulty", "damaged",
         "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|\\bUK\\b|no)( )?(redeem )?(\\bDL\\b|avatar|game|code|key)",
         "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo|Accessories|cloth map) only",
-        "(case|variety|accessor(ies|y)|storage|charge|robot|dice) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "keychain",
+        "(case|variety|accessor(ies|y)|storage|charge|robot|dice) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "pass set", "keychain",
         "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch|empty)\\s+(sleeve|pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging|power|desk)( )?(dock|station|stand)", "download",
         "official (server|magazin)", "Option File", "offline", "online", "unlock all", "mini dock", "Press Release", "starlink(?s).*pack",
@@ -85,10 +88,10 @@ private[ebay] object search {
         "(no|protective|foreign|case|slip|silicone|phone|style|\\bUS\\b|miss(ing)?) cover(s)?", "promotional game", "starter pack", "Microphone", "KontrolFreek",
         "sniper thumbs", "(game|skin|thumb|Silicone|floating) grip", "thumb( )?(stick|pack)", "(screen|grip|case) (protector|combat|stick)", "(sports|leg) strap", "Cleaning Cloth",
         "dual( )?(sense|shock|charge)", "efigs", "gamepad", "(toy|joy|ring)(\\s+)?con", "controller", "(card|stand|ring) holder", "(Spa|messenger)?( )?Bag", "keyring",
-        "headset", "(nintendo|switch) labo", "(steering|racing|driving|official|nintendo|wii|race) wheel", "wristband",
+        "headset", "(nintendo|switch) labo", "(steering|racing|driving|official|nintendo|wii|race) wheel", "wristband", "lenovo", "smoby", "calling card",
         "horipad", "(mouse|keyboard|cord|power|\\bAC\\b|hdmi)( )?(adapter|level|supply)", "tv tuner", "home circuit", "Origami Sheets", "\\bPlaygro\\b",
         "(starter|craft|diy) (set|pack|bundle|kit)", "figure(s)? bundle", "k eso", "(mini|plush|gift|grip(s)?) (set|toy)", "pad pro", "cable (guy|adapter|pack)", "Philips",
-        "pre(\\s+)?(order|sale)", "season pass", "(steel|art)( )?book", "(game|vinyl|mini)( )?figure", "collectable", "collectible", "remote control", "(patch|aux|charg(ing|e)|power|av|adapter) cable",
+        "pre(\\s+)?(order|sale)", "(steel|art)( )?book", "(game|vinyl|mini)( )?figure", "collectable", "collectible", "remote control", "(patch|aux|charg(ing|e)|power|av|adapter) cable",
         "membership", "12 month", "(wallpaper|dynamic|ps\\d) theme", "themes", "account", "achievement pack", "(MODDED|FN) ACC", "RDS Industries",
         "(xp|level|lvl) boost", "gamer score", "trophy service", "platinum trophy", "arcade mini", "boosting levels", "rare promo", "LUGGAGE TAG",
         "samsung", "huawei", "iphone", "\\bipad\\b", "sandisk", "server", "wireless", "Tempered Glass", "(early|beta) (test|access)", "closed",
@@ -114,7 +117,7 @@ private[ebay] object search {
         "(ammo|damage|weapon|tesla|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
         "fallout(?s).* (ammo|damage|tesla|weapon|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",
         "fifa.*(\\d+k|team|money|milli|gener|player|gold|point)", "(\\d+k|team|money|milli|gener|player|gold|point).*fifa",
-        "\\bFC\\b.*(points|qualifiction)", "Lords of the Fallen.*(Weapons|MAX|LEVEL)",
+        "\\bFC\\b.*(bot|trading|points|qualifiction)", "Lords of the Fallen.*(Weapons|MAX|LEVEL)",
         "borderlands.*(artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "starfield.*(credit|max pow)", "spiderman.*(trophy|campaign|service)",
         "minecraft.*(item)", "No Mans Sky.*(element|Ship Pack|Interceptor)", "BO3.*(Divinium|Cryptokey)", "\\bto update\\b",
