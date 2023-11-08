@@ -13,6 +13,6 @@ export const reject = async res => {
     const e = JSON.parse(text)
     return Promise.reject({ message: e.message, status: res.status })
   } catch(err) {
-    return Promise.reject({ message: 'Internal server error', status: res.status })
+    return Promise.reject({ message: 'Server not available', status: res.status })
   }
 }
