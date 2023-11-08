@@ -1,6 +1,6 @@
 import {Layout, Spin, Alert} from 'antd'
 import {useSelector, useDispatch} from 'react-redux'
-import {filter} from './slice'
+import {filter, setCurrentPage} from './slice'
 import StockItems from './StockItems'
 import StockFilters from "./StockFilters"
 import Container from '../common/components/Container'
@@ -8,6 +8,7 @@ import Container from '../common/components/Container'
 const Stock = ({backgroundColor}) => {
   const dispatch = useDispatch()
   const stockStatus = useSelector(state => state.stock.status)
+  const currentPage = useSelector(state => state.stock.currentPage)
   const selectedItems = useSelector(state => state.stock.selectedItems)
   const filters = useSelector(state => state.stock.filters)
   const selectedFilters = useSelector(state => state.stock.selectedFilters)
@@ -34,6 +35,8 @@ const Stock = ({backgroundColor}) => {
           {stockStatus === 'succeeded' &&
               <StockItems
                   items={selectedItems}
+                  currentPage={currentPage}
+                  onPageChange={p => dispatch(setCurrentPage(p))}
               />
           }
           {stockStatus === 'failed' &&

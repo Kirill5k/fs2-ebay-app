@@ -64,7 +64,7 @@ const StockItem = ({item}) => {
   )
 }
 
-const StockItems = ({items}) => {
+const StockItems = ({items, currentPage, onPageChange}) => {
   const grid = {
     gutter: 0,
     xs: 1,
@@ -76,11 +76,15 @@ const StockItems = ({items}) => {
   }
 
   const pagination = {
+    current: currentPage,
     position: 'both',
     align: 'center',
     defaultPageSize: 50,
     pageSizeOptions: [25, 50, 100, 250],
-    onChange: () => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+    onChange: (p) => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+      onPageChange(p)
+    }
   }
   return (
       <div>

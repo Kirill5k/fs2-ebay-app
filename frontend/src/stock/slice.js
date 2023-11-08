@@ -41,6 +41,7 @@ const initialFilters = {
 }
 
 const initialState = {
+  currentPage: 1,
   status: 'idle',
   error: null,
   items: [],
@@ -69,6 +70,10 @@ const stockSlice = createSlice({
 
         return byRetailer && byBrand && bySize && byDiscount && byPrice && byKind
       })
+      state.currentPage = 1
+    },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload
     }
   },
   extraReducers: builder => {
@@ -93,6 +98,6 @@ const stockSlice = createSlice({
   }
 })
 
-export const { filter } = stockSlice.actions
+export const { filter, setCurrentPage } = stockSlice.actions
 export default stockSlice.reducer
 
