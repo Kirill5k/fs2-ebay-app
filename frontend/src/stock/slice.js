@@ -93,7 +93,11 @@ const stockSlice = createSlice({
         })
         .addCase(getStock.rejected, (state, action) => {
           state.status = 'failed'
-          state.error = action.error.message
+          if (action?.error?.message) {
+            state.error = action.error.message
+          } else {
+            state.error = 'Failed to obtain current stock. Try again later'
+          }
         })
   }
 })
