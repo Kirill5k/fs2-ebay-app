@@ -7,7 +7,12 @@ export const defaultRequestParams = {
   credentials: 'include'
 }
 
-export const reject = (res) => res.json().then(e => {
-  // eslint-disable-next-line
-  return Promise.reject({ message: e.message, status: res.status })
-})
+export const reject = async res => {
+  const text = await res.text()
+  try {
+    const e = JSON.parse(text)
+    return Promise.reject({ message: e.message, status: res.status })
+  } catch(err) {
+    return Promise.reject({ message: 'Internal server error', status: res.status })
+  }
+}

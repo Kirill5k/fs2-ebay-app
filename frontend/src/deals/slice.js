@@ -64,11 +64,7 @@ const dealsSlice = createSlice({
         })
         .addCase(getDeals.rejected, (state, action) => {
           state.status = 'failed'
-          if (action?.error?.message) {
-            state.error = action.error.message
-          } else {
-            state.error = 'Failed to obtain current deals. Try again later'
-          }
+          state.error = action.error.message
         })
   }
 })
