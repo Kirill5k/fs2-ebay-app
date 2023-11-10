@@ -104,7 +104,7 @@ private[mappers] object GameDetailsMapper {
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
     "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids", 
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated", 
-    "essentials", "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?",
+    "essentials", "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?", "huge saving(s)?",
     "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very|mega) rare", "award winning",
     "Instruction(s)? Book", "works (great|perfectly( fine)?)", "Unwanted Gift", "limited (release|quantity)",
     "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console", 
