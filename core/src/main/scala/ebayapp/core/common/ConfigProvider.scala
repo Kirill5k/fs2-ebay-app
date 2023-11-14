@@ -80,7 +80,7 @@ object ConfigProvider:
   private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
     F.blocking(Paths.get(AppConfig.mountedConfigPath).toFile.lastModified())
 
-  def make[F[_]](checkEvery: FiniteDuration)(using F: Async[F], logger: Logger[F]): F[ConfigProvider[F]] = {
+  def make[F[_]](checkEvery: FiniteDuration = 2.minutes)(using F: Async[F], logger: Logger[F]): F[ConfigProvider[F]] = {
     def reloadConfigWhenUpdated(state: Ref[F, AppConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
       val process = for
         modifiedTs <- mountedConfigModifiedTs

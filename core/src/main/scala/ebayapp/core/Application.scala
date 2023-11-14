@@ -9,14 +9,12 @@ import ebayapp.core.repositories.Repositories
 import ebayapp.core.services.Services
 import ebayapp.core.tasks.Tasks
 
-import scala.concurrent.duration.*
-
 object Application extends IOApp.Simple:
   override val run: IO[Unit] =
     Logger.make[IO].flatMap { implicit logger =>
       for
         _              <- logger.info(s"starting ebay-app-core ${sys.env.getOrElse("VERSION", "")}")
-        configProvider <- logger.info("initialising config") *> ConfigProvider.make[IO](2.minutes)
+        configProvider <- logger.info("initialising config") *> ConfigProvider.make[IO]()
         config         <- configProvider.config
         _ <- Resources.make[IO](config).use { resources =>
           for
