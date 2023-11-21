@@ -71,7 +71,7 @@ private[ebay] object search {
 
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
-        "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+",
+        "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game \\d+",
         "upcoming.{1,5}game", "various video games", "nintendo switch \\d{1,2}", "\\d x nintendo switch games", "ps games x \\d", "PS4 game \\d+",
         "\\b200[0-9]\\b", "(demo|game|global)( )?(code|disc|key|cart|pass)",
         "\\bhdmi\\b", "\\bUSB\\b", "\\bhdd\\b",

@@ -36,7 +36,7 @@ private[mappers] object GameDetailsMapper {
     "new in (wrapper|wrapping|cellophane|packaging|box)( still wrapped)?",
     "Now Released(?s).*$", "Release date(?s).*$", "includes( free(?s).*$|.{0,20}pack(?s).*$| \\w+)", "amazon.{0,20}exclusive(?s).*$",
     "(royal mail )?(1st|2nd|first) class.*$",
-    "(?<=\\w+ )((all|fully) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
+    "(?<=\\w+ )((all|fully|this game is) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$", "clean(ed)?( )?(fully )?tested",
     "((\\bC\\b )?\\bW\\b|with| inc(ludes)?|including|contain|((\\d|no) )?bonus|plus).{0,20}(game|insert|guide|dlc|pass|level|content|bonus|pack)(?s).*$",
     "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|\\bart\\b|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
