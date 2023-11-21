@@ -235,7 +235,7 @@ data:
               query: "stone-island", 
               category: mens,
               filters: { min-discount: 28 }
-              exclude: ["shadow", "knit"]
+              exclude: ["shadow", "knit", "marina"]
             }, 
             monitor-stock-change: false 
             monitor-price-change: true
