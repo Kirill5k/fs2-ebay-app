@@ -13,11 +13,9 @@ const Home = ({backgroundColor}) => {
   return (
       <Container
           column
-          style={{
-            padding: '24px 24px',
-            background: backgroundColor,
-            minHeight: '300px'
-          }}>
+          padded
+          backgroundColor={backgroundColor}
+          style={{minHeight: '300px'}}>
         {dealsStatus === 'succeeded' && (
             <Descriptions title="Deals">
               <Descriptions.Item label="Total for today">

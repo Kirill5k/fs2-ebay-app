@@ -1,10 +1,12 @@
-import {Space} from "antd";
-import React from "react";
+import {Space} from "antd"
+import React from "react"
+import './Container.css'
 
-const Container = ({children, style, column, className}) => (
+const Container = ({children, style, column, padded, backgroundColor}) => (
     <Space
-        className={className}
+        className={padded ? 'padded' : ''}
         style={{
+          backgroundColor: backgroundColor,
           height: '100%',
           display: 'flex',
           justifyContent: 'center',

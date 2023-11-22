@@ -1,9 +1,0 @@
-.deals-container {
-  padding: 0;
-}
-
-@media (min-width: 680px) {
-  .deals-container {
-    padding: 24px 24px;
-  }
-}

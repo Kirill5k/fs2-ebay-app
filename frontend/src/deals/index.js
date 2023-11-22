@@ -5,7 +5,6 @@ import dayjs from 'dayjs'
 import {getDeals} from './slice'
 import Container from '../common/components/Container'
 import DealsItems from './DealsItems'
-import './index.css'
 
 const Deals = ({backgroundColor}) => {
   const dispatch = useDispatch()
@@ -16,9 +15,9 @@ const Deals = ({backgroundColor}) => {
 
   return (
       <Container
+          padded
           column
-          className="deals-container"
-          style={{background: backgroundColor}}
+          backgroundColor={backgroundColor}
       >
         <DatePicker.RangePicker
             value={[dayjs(dateRange.from), dayjs(dateRange.to)]}
