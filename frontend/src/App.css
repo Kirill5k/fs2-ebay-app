@@ -10,10 +10,17 @@
 }
 
 .app-content {
-  padding: 0 50px;
-  margin: 16px 50px;
+  padding: 0 0;
+  margin: 16px;
 }
 
 .app-footer {
   text-align: center;
+}
+
+@media (min-width: 680px) {
+  .app-content {
+    padding: 0 50px;
+    margin: 16px 50px;
+  }
 }
