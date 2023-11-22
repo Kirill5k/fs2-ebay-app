@@ -1,0 +1,19 @@
+.app {
+  min-height: 100vh;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+}
+
+.app-content {
+  padding: 0 50px;
+  margin: 16px 50px;
+}
+
+.app-footer {
+  text-align: center;
+}
