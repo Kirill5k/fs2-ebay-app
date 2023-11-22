@@ -1,5 +1,10 @@
 .deals-items {
-  max-width: 660px;
+  width: 100%;
+}
+
+.deals-item-list {
+  max-height: 500px;
+  overflow: auto;
 }
 
 .deals-item {
@@ -12,4 +17,10 @@
 
 .deals-item .ant-descriptions-item-content {
   justify-content: space-between;
+}
+
+@media (min-width: 680px) {
+  .deals-items {
+    max-width: 660px;
+  }
 }

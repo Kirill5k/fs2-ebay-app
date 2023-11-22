@@ -2,7 +2,7 @@ import {Card, Collapse, Descriptions, List, Tag} from 'antd'
 import './DealsItems.css'
 
 const DealsItemList = ({items}) => (
-    <div style={{maxHeight: 300, overflow: 'auto'}}>
+    <div className="deals-item-list">
       <List
           dataSource={Array.from(items.items.entries())}
           renderItem={([i, item]) => (
