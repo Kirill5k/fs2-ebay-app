@@ -1,3 +1,7 @@
+.deals-items {
+  max-width: 660px;
+}
+
 .deals-item {
   margin: 2px 2px 10px;
 }

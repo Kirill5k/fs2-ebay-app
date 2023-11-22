@@ -32,11 +32,10 @@ const DealsItemList = ({items}) => (
 
 const DealsItems = ({items}) => (
     <Collapse
-        className="test"
+        className="deals-items"
         defaultActiveKey="1"
         accordion
         ghost
-        style={{width: '660px'}}
     >
       <Collapse.Panel
           header="Without sell price"
