@@ -24,3 +24,9 @@
     padding: 0 15%;
   }
 }
+
+@media (min-width: 1280px) {
+  .deals-items {
+    padding: 0 25%;
+  }
+}
