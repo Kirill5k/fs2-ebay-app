@@ -10,6 +10,15 @@ const Home = ({backgroundColor}) => {
   const dealsStatus = useSelector(state => state.deals.status)
   const dealsItems = useSelector(state => state.deals.todayItems)
 
+  const column = {
+    xs: 2,
+    sm: 2,
+    md: 3,
+    lg: 3,
+    xl: 4,
+    xxl: 5,
+  }
+
   return (
       <Container
           column
@@ -17,7 +26,7 @@ const Home = ({backgroundColor}) => {
           backgroundColor={backgroundColor}
           style={{minHeight: '300px'}}>
         {dealsStatus === 'succeeded' && (
-            <Descriptions title="Deals">
+            <Descriptions title="Deals" column={column}>
               <Descriptions.Item label="Total for today">
                 {dealsItems.total}
               </Descriptions.Item>
@@ -30,7 +39,7 @@ const Home = ({backgroundColor}) => {
             </Descriptions>
         )}
         {stockStatus === 'succeeded' && (
-            <Descriptions title="Stock">
+            <Descriptions title="Stock" column={column}>
               <Descriptions.Item label="Total">
                 {stockItems.length}
               </Descriptions.Item>
