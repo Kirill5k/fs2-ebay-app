@@ -2,7 +2,14 @@ import {Space} from "antd"
 import React from "react"
 import './Container.css'
 
-const Container = ({children, style, column, padded, backgroundColor}) => (
+const Container = ({
+  children,
+  style,
+  column,
+  padded,
+  stretchItems,
+  backgroundColor
+}) => (
     <Space
         className={padded ? 'padded' : ''}
         style={{
@@ -10,7 +17,7 @@ const Container = ({children, style, column, padded, backgroundColor}) => (
           height: '100%',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: stretchItems ? 'stretch' : 'center',
           textTransform: 'capitalize',
           flexDirection: column ? 'column' : 'row',
           ...style
