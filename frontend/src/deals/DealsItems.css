@@ -21,6 +21,6 @@
 
 @media (min-width: 680px) {
   .deals-items {
-    max-width: 660px;
+    padding: 0 15%;
   }
 }

@@ -18,18 +18,21 @@ const Deals = ({backgroundColor}) => {
           padded
           column
           backgroundColor={backgroundColor}
+          stretchItems
       >
-        <DatePicker.RangePicker
-            value={[dayjs(dateRange.from), dayjs(dateRange.to)]}
-            onChange={([dateFrom, dateTo]) => {
-              const from = dateFrom.toDate().toISOString();
-              const to = dateTo.toDate().toISOString()
-              if (dateRange.from !== from || dateRange.to !== to) {
-                dispatch(getDeals({from, to}))
-              }
-            }}
-            showTime
-        />
+        <Container>
+          <DatePicker.RangePicker
+              value={[dayjs(dateRange.from), dayjs(dateRange.to)]}
+              onChange={([dateFrom, dateTo]) => {
+                const from = dateFrom.toDate().toISOString();
+                const to = dateTo.toDate().toISOString()
+                if (dateRange.from !== from || dateRange.to !== to) {
+                  dispatch(getDeals({from, to}))
+                }
+              }}
+              showTime
+          />
+        </Container>
         {dealsStatus === 'loading' &&
             <Container>
               <Spin size="large" tip="Loading" style={{padding: '40px'}}/>
