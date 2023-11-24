@@ -82,22 +82,19 @@ const StockItems = ({items, currentPage, onPageChange}) => {
     defaultPageSize: 50,
     pageSizeOptions: [25, 50, 100, 250],
     onChange: (p) => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+      window.scrollTo({top: 0, left: 0, behavior: 'smooth'})
       onPageChange(p)
     }
   }
   return (
-      <div>
-        <p style={{float: 'left', margin: '5px 0 0 0'}}>{items.length} items</p>
-        <List
-            className="stock-items"
-            grid={grid}
-            pagination={pagination}
-            dataSource={items}
-            renderItem={(item) => <StockItem item={item}/>}
-            locale={{emptyText: 'No Items in Stock'}}
-        />
-      </div>
+      <List
+          className="stock-items"
+          grid={grid}
+          pagination={pagination}
+          dataSource={items}
+          renderItem={(item) => <StockItem item={item}/>}
+          locale={{emptyText: 'No Items in Stock'}}
+      />
   )
 }
 

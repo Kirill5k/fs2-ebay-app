@@ -20,6 +20,7 @@ const Stock = ({backgroundColor}) => {
             style={{background: backgroundColor, paddingLeft: '24px'}}
             width={200}
         >
+          <p style={{textAlign: 'center', margin: '5px 0'}}>{selectedItems.length} items</p>
           <StockFilters
               options={filters}
               selections={selectedFilters}
