@@ -1,4 +1,5 @@
 import {Select, Space, Slider} from 'antd'
+import './StockFilters.css'
 
 const StockSelectFilter = ({items, value, placeHolder, onChange}) => {
   return (
@@ -6,20 +7,14 @@ const StockSelectFilter = ({items, value, placeHolder, onChange}) => {
           size="small"
           mode="multiple"
           allowClear
-          style={{width: '100%'}}
           placeholder={placeHolder}
           value={value}
           onChange={onChange}
+          className="stock-filter-select"
       >
         {items.map(i => (
             <Select.Option key={i} value={i} label={i}>
-              <Space style={{
-                fontSize: '10px',
-                verticalAlign: 'text-top',
-                textTransform: 'capitalize'
-              }}>
-                {i}
-              </Space>
+              <Space className="stock-filter-select-option">{i}</Space>
             </Select.Option>
         ))}
       </Select>
@@ -28,7 +23,7 @@ const StockSelectFilter = ({items, value, placeHolder, onChange}) => {
 
 const StockFilters = ({options, selections, onChange}) => {
   return (
-      <Space style={{width: '100%'}} direction="vertical">
+      <Space className="stock-filters" direction="vertical">
         <StockSelectFilter
             items={options.kinds}
             value={selections.kinds}
