@@ -35,7 +35,7 @@ const Deals = ({backgroundColor}) => {
         </Container>
         {dealsStatus === 'loading' &&
             <Container>
-              <Spin size="large" tip="Loading" style={{padding: '40px'}}/>
+              <Spin size="large" style={{padding: '40px'}}/>
             </Container>
         }
         {dealsStatus === 'succeeded' &&
