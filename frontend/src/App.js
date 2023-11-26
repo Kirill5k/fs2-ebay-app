@@ -30,6 +30,12 @@ const App = () => {
     }
   }, [dealsStatus, dispatch])
 
+  const menuItems = [
+    { key: '/', label: <Link to="/">Home</Link> },
+    { key: '/stock', label: <Link to="/stock">Stock</Link> },
+    { key: '/deals', label: <Link to="/deals">Deals</Link> }
+  ]
+
   return (
       <Layout className="app">
         <Layout.Header className="app-header">
@@ -37,17 +43,8 @@ const App = () => {
               theme="dark"
               mode="horizontal"
               selectedKeys={[location.pathname]}
-          >
-            <Menu.Item key="/" title="Home">
-              <Link to="/">Home</Link>
-            </Menu.Item>
-            <Menu.Item key="/stock" title="Stock">
-              <Link to="/stock">Stock</Link>
-            </Menu.Item>
-            <Menu.Item key="/deals" title="Deals">
-              <Link to="/deals">Deals</Link>
-            </Menu.Item>
-          </Menu>
+              items={menuItems}
+          />
         </Layout.Header>
         <Layout.Content className="app-content">
           <Routes>
