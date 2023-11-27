@@ -19,19 +19,6 @@ const Home = ({backgroundColor}) => {
     xxl: 5,
   }
 
-  const dealsDescriptions = [
-    { key: '0', label: 'Total for today', children: dealsItems.total },
-    { key: '1', label: 'Without exchange price', children: dealsItems.unrecognized.total },
-    { key: '2', label: 'With buy price smaller than exchange', children: dealsItems.profitable.total }
-  ]
-
-  const stockDescriptions = [
-    { key: '0', label: 'Total', children: stockItems.length },
-      ...Object
-          .entries(countByProperty(stockItems, i => i.listingDetails.seller))
-          .map(([retailer, count]) => ({ key: retailer, label: retailer, children: count }))
-  ]
-
   return (
       <Container
           column
@@ -39,10 +26,19 @@ const Home = ({backgroundColor}) => {
           backgroundColor={backgroundColor}
           style={{minHeight: '300px'}}>
         {dealsStatus === 'succeeded' && (
-            <Descriptions title="Deals" column={column} items={dealsDescriptions}/>
+            <Descriptions title="Deals" column={column} items={[
+              { key: '0', label: 'Total for today', children: dealsItems.total },
+              { key: '1', label: 'Without exchange price', children: dealsItems.unrecognized.total },
+              { key: '2', label: 'With buy price smaller than exchange', children: dealsItems.profitable.total }
+            ]}/>
         )}
         {stockStatus === 'succeeded' && (
-            <Descriptions title="Stock" column={column} items={stockDescriptions}/>
+            <Descriptions title="Stock" column={column} items={[
+              { key: '0', label: 'Total', children: stockItems.length },
+              ...Object
+                  .entries(countByProperty(stockItems, i => i.listingDetails.seller))
+                  .map(([retailer, count]) => ({ key: retailer, label: retailer, children: count }))
+            ]}/>
         )}
       </Container>
   )

@@ -9,13 +9,6 @@ const ItemName = ({index, name}) => (
 )
 
 const DealsItemList = ({items}) => {
-
-  const itemDescription = (i, item) => [
-    { key: `name-${i}`, label: 'Name', children: <ItemName name={item.name} index={i}/> },
-    { key: `listing-title-${i}`, label: 'Listing Title', children: item.title },
-    { key: `price-${i}`, label: 'Price', children: `£${item.buyPrice} (Buy) ${item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}` },
-  ]
-
   return (
       <div className="deals-item-list">
         <List
@@ -27,7 +20,11 @@ const DealsItemList = ({items}) => {
                     hoverable
                     onClick={() => window.open(item.url, "_blank")}
                 >
-                  <Descriptions column={1} items={itemDescription(i, item)}/>
+                  <Descriptions column={1} items={[
+                    { key: `name-${i}`, label: 'Name', children: <ItemName name={item.name} index={i}/> },
+                    { key: `listing-title-${i}`, label: 'Listing Title', children: item.title },
+                    { key: `price-${i}`, label: 'Price', children: `£${item.buyPrice} (Buy) ${item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}` },
+                  ]}/>
                 </Card>
             )}
         />
