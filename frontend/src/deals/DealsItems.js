@@ -33,35 +33,32 @@ const DealsItemList = ({items}) => {
 }
 
 const DealsItems = ({items}) => {
-
-  const panels = [
-    {
-      key: '1',
-      label: 'Without sell price',
-      extra: <Tag>{items.unrecognized.total}</Tag>,
-      children: <DealsItemList items={items.unrecognized}/>
-    },
-    {
-      key: '2',
-      label: 'Profitable to resell',
-      extra: <Tag>{items.profitable.total}</Tag>,
-      children: <DealsItemList items={items.profitable}/>
-    },
-    {
-      key: '3',
-      label: 'Remaining',
-      extra: <Tag>{items.rest.total}</Tag>,
-      children: <DealsItemList items={items.rest}/>
-    }
-  ]
-
   return (
       <Collapse
           className="deals-items"
           defaultActiveKey="1"
           accordion
           ghost
-          items={panels}
+          items={[
+            {
+              key: '1',
+              label: 'Without sell price',
+              extra: <Tag>{items.unrecognized.total}</Tag>,
+              children: <DealsItemList items={items.unrecognized}/>
+            },
+            {
+              key: '2',
+              label: 'Profitable to resell',
+              extra: <Tag>{items.profitable.total}</Tag>,
+              children: <DealsItemList items={items.profitable}/>
+            },
+            {
+              key: '3',
+              label: 'Remaining',
+              extra: <Tag>{items.rest.total}</Tag>,
+              children: <DealsItemList items={items.rest}/>
+            }
+          ]}
       />
   )
 }
