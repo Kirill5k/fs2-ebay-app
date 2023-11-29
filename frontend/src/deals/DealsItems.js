@@ -21,9 +21,9 @@ const DealsItemList = ({items}) => {
                     onClick={() => window.open(item.url, "_blank")}
                 >
                   <Descriptions column={1} items={[
-                    { key: `name-${i}`, label: 'Name', children: <ItemName name={item.name} index={i}/> },
-                    { key: `listing-title-${i}`, label: 'Listing Title', children: item.title },
-                    { key: `price-${i}`, label: 'Price', children: `£${item.buyPrice} (Buy) ${item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}` },
+                    { key: `n-${i}`, label: 'Name', children: <ItemName name={item.name} index={i+1}/> },
+                    { key: `lt-${i}`, label: 'Listing Title', children: item.title },
+                    { key: `p-${i}`, label: 'Price', children: `£${item.buyPrice} (Buy) ${item.exchangePrice ? `/ £${item.exchangePrice} (Sell)` : ''}` },
                   ]}/>
                 </Card>
             )}
