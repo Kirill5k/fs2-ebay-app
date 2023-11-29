@@ -255,6 +255,8 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(nitro( )?fuelled)", "Nitro Fueled")
       .replaceAll("(?i)(\\bGW\\b)", "Garden Warfare ")
       .replaceAll("(?i)(\\bGW2\\b)", "Garden Warfare 2")
+      .replaceAll("(?i)(\\bMWIII\\b)", "MW3")
+      .replaceAll("(?i)(\\bMWII\\b)", "MW2")
       .replaceAll("(?i)(Telltale(\\s+series)?(\\s+season)?)", "Telltale")
       .replaceAll(" +", " ")
       .replaceAll("[^\\d\\w]$", "")
