@@ -122,7 +122,7 @@ private[ebay] object search {
         "Destiny 2", "Destiny.*taken king", "Destiny\\s+the coll",
         "borderlands.*(artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "starfield.*(credit|max pow)", "Elder Scrolls.*(tamriel|morrowind)",
-        "spiderman.*(trophy|campaign|service)", "10k.*save( the)? world",
+        "spiderman.*(trophy|campaign|service)", "(10k|traps).*save( the)? world",
         "minecraft.*(item)", "No Mans Sky.*(element|Ship Pack|Interceptor)", "BO3.*(Divinium|Cryptokey)", "\\bto update\\b",
         "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "[A-Z]\\d{4,6}(A|Z)",
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon",
