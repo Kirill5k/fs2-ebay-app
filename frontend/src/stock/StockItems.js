@@ -9,7 +9,8 @@ const StockItemBase = ({item, children}) => (
           hoverable
           cover={
             <img
-                style={{padding: '1px'}}
+                height="180"
+                style={{padding: '1px', objectFit: 'cover'}}
                 alt={item.listingDetails.title}
                 src={item.listingDetails.image}
             />
