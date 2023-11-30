@@ -29,10 +29,7 @@ const StockItemBase = ({item, children}) => (
           {children}
           <Descriptions.Item label="Price">
             £{item.price.buy}
-            {item.price.discount
-                ? <span style={{paddingLeft: '4px'}}>{`(-${item.price.discount}%)`}</span>
-                : ''
-            }
+            {item.price.discount && <span style={{paddingLeft: '4px'}}>{`(-${item.price.discount}%)`}</span>}
           </Descriptions.Item>
           <Descriptions.Item label="Quantity">
             {item.price.quantityAvailable}
@@ -66,32 +63,29 @@ const StockItem = ({item}) => {
 }
 
 const StockItems = ({items, currentPage, onPageChange}) => {
-  const grid = {
-    gutter: 0,
-    xs: 1,
-    sm: 1,
-    md: 2,
-    lg: 3,
-    xl: 4,
-    xxl: 5,
-  }
-
-  const pagination = {
-    current: currentPage,
-    position: 'both',
-    align: 'center',
-    defaultPageSize: 50,
-    pageSizeOptions: [25, 50, 100, 250],
-    onChange: (p) => {
-      window.scrollTo({top: 0, left: 0, behavior: 'smooth'})
-      onPageChange(p)
-    }
-  }
   return (
       <List
           className="stock-items"
-          grid={grid}
-          pagination={pagination}
+          grid={{
+            gutter: 0,
+            xs: 1,
+            sm: 1,
+            md: 2,
+            lg: 3,
+            xl: 4,
+            xxl: 5,
+          }}
+          pagination={{
+            current: currentPage,
+            position: 'both',
+            align: 'center',
+            defaultPageSize: 50,
+            pageSizeOptions: [25, 50, 100, 250],
+            onChange: (p) => {
+              window.scrollTo({top: 0, left: 0, behavior: 'smooth'})
+              onPageChange(p)
+            }
+          }}
           dataSource={items}
           renderItem={(item) => <StockItem item={item}/>}
           locale={{emptyText: 'No Items in Stock'}}
