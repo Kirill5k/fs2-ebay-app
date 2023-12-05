@@ -4,6 +4,7 @@ import {filter, setCurrentPage} from './slice'
 import StockItems from './StockItems'
 import StockFilters from "./StockFilters"
 import Container from '../common/components/Container'
+import './index.css'
 
 const Stock = ({backgroundColor}) => {
   const dispatch = useDispatch()
@@ -15,19 +16,21 @@ const Stock = ({backgroundColor}) => {
   const errorMessage = useSelector(state => state.stock.error)
 
   return (
-      <Layout style={{padding: '24px 0', background: backgroundColor}}>
+      <Layout className="stock-layout" style={{background: backgroundColor}}>
         <Layout.Sider
-            style={{background: backgroundColor, paddingLeft: '24px'}}
+            className="stock-layout-slider"
+            style={{background: backgroundColor}}
             width={200}
+            breakpoint="md"
         >
-          <p style={{textAlign: 'center', margin: '5px 0'}}>{selectedItems.length} items</p>
+          <p className="stock-count">{selectedItems.length} items</p>
           <StockFilters
               options={filters}
               selections={selectedFilters}
               onChange={f => dispatch(filter(f))}
           />
         </Layout.Sider>
-        <Layout.Content style={{paddingLeft: '24px', minHeight: 280}}>
+        <Layout.Content className="stock-layout-content">
           {stockStatus === 'loading' &&
               <Container>
                 <Spin size="large" />

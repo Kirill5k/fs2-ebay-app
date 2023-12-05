@@ -1,0 +1,27 @@
+.stock-layout {
+  padding: 24px 0;
+}
+
+.stock-layout-slider {
+  padding-left: 12px;
+}
+
+.stock-count {
+  text-align: center;
+  margin: 5px 0;
+}
+
+.stock-layout-content {
+  padding-left: 48px;
+}
+
+@media (min-width: 768px) {
+  .stock-layout-slider {
+    padding-left: 24px;
+  }
+
+  .stock-layout-content {
+    padding-left: 24px;
+    min-height: 280px;
+  }
+}

@@ -19,7 +19,7 @@
   justify-content: space-between;
 }
 
-@media (min-width: 680px) {
+@media (min-width: 768px) {
   .deals-items {
     padding: 0 15%;
   }

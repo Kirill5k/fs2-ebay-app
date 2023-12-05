@@ -18,7 +18,7 @@
   text-align: center;
 }
 
-@media (min-width: 680px) {
+@media (min-width: 768px) {
   .app-content {
     padding: 0 50px;
     margin: 16px 50px;
