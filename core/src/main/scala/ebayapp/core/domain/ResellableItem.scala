@@ -13,8 +13,15 @@ enum ItemKind derives EnumConfigReader:
   case Clothing
 
 object ItemKind:
-  inline given Decoder[ItemKind] = Decoder[String].emapTry(s => Try(ItemKind.valueOf(s.split("-").map(_.capitalize).mkString)))
-  inline given Encoder[ItemKind] = Encoder[String].contramap(_.toString.replaceAll("(?<=[a-z])(?=[A-Z])", "-").toLowerCase)
+  
+  def fromStringRepr(stringRepr: String): Either[Throwable, ItemKind] =
+    Try(ItemKind.valueOf(stringRepr.split("-").map(_.capitalize).mkString)).toEither
+  
+  extension (ik: ItemKind)
+    def stringRepr: String = ik.toString.replaceAll("(?<=[a-z])(?=[A-Z])", "-").toLowerCase
+  
+  inline given Decoder[ItemKind] = Decoder[String].emap(ItemKind.fromStringRepr(_).left.map(_.getMessage))
+  inline given Encoder[ItemKind] = Encoder[String].contramap(_.stringRepr)
 
 final case class ItemSummary(
     name: Option[String],

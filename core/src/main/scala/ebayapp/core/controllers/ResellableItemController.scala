@@ -11,6 +11,7 @@ import ebayapp.core.services.ResellableItemService
 import ebayapp.kernel.controllers.views.ErrorResponse
 import org.http4s.HttpRoutes
 import sttp.tapir.*
+import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 
@@ -32,7 +33,7 @@ final private[controllers] class ResellableItemController[F[_]](
       case None           => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
 
   private val getAll = ResellableItemController.getAll
-    .serverLogic { (kind, limit, query, from, to) =>
+    .serverLogic { (kind, limit, query, from, to, _) =>
       withItemKind(kind) { itemKind =>
         itemService
           .search(SearchParams(itemKind, limit, from, to, query))
@@ -41,7 +42,7 @@ final private[controllers] class ResellableItemController[F[_]](
     }
 
   private val getSummaries = ResellableItemController.getSummaries
-    .serverLogic { (kind, limit, query, from, to) =>
+    .serverLogic { (kind, limit, query, from, to, _) =>
       withItemKind(kind) { itemKind =>
         itemService
           .summaries(SearchParams(itemKind, limit, from, to, query))
@@ -58,11 +59,14 @@ object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
   given Schema[ItemKind]    = Schema.string
   given Schema[ItemDetails] = Schema.string
 
+  given PlainCodec[ItemKind] = Codec.string.mapDecode(s => ItemKind.fromStringRepr(s).fold(DecodeResult.Error(s, _), DecodeResult.Value(_)))(_.stringRepr)
+
   private val searchQueryParams =
     query[Option[Int]]("limit")
       .and(query[Option[String]]("query"))
       .and(query[Option[Instant]]("from"))
       .and(query[Option[Instant]]("to"))
+      .and(query[Option[ItemKind]]("kind"))
 
   val getAll = endpoint.get
     .in(path[String])

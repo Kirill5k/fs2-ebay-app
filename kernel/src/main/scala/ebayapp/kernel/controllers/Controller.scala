@@ -38,9 +38,9 @@ trait Controller[F[_]] {
 
 object Controller extends TapirJsonCirce with SchemaDerivation {
 
-  inline given instantCodec: PlainCodec[Instant] =
+  inline given PlainCodec[Instant] =
     Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
-
+  
   val badRequestResponse = jsonBody[ErrorResponse.BadRequest]
 
   val errorResponse =
