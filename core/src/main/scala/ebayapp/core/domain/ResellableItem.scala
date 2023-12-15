@@ -1,10 +1,9 @@
 package ebayapp.core.domain
 
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria, SellPrice}
+import ebayapp.kernel.types.EnumType
 import io.circe.{Codec, Decoder, Encoder}
 import pureconfig.generic.derivation.EnumConfigReader
-
-import scala.util.Try
 
 enum ItemKind derives EnumConfigReader:
   case Generic
@@ -12,16 +11,7 @@ enum ItemKind derives EnumConfigReader:
   case MobilePhone
   case Clothing
 
-object ItemKind:
-  
-  def fromStringRepr(stringRepr: String): Either[Throwable, ItemKind] =
-    Try(ItemKind.valueOf(stringRepr.split("-").map(_.capitalize).mkString)).toEither
-  
-  extension (ik: ItemKind)
-    def stringRepr: String = ik.toString.replaceAll("(?<=[a-z])(?=[A-Z])", "-").toLowerCase
-  
-  inline given Decoder[ItemKind] = Decoder[String].emap(ItemKind.fromStringRepr(_).left.map(_.getMessage))
-  inline given Encoder[ItemKind] = Encoder[String].contramap(_.stringRepr)
+object ItemKind extends EnumType[ItemKind](() => ItemKind.values)
 
 final case class ItemSummary(
     name: Option[String],

@@ -56,10 +56,8 @@ final private[controllers] class ResellableItemController[F[_]](
 
 object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
   import Controller.given
-  given Schema[ItemKind]    = Schema.string
+  
   given Schema[ItemDetails] = Schema.string
-
-  given PlainCodec[ItemKind] = Codec.string.mapDecode(s => ItemKind.fromStringRepr(s).fold(DecodeResult.Error(s, _), DecodeResult.Value(_)))(_.stringRepr)
 
   private val searchQueryParams =
     query[Option[Int]]("limit")
