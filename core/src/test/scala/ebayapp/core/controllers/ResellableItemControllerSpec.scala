@@ -136,7 +136,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val controller = new ResellableItemController[IO](service)
 
-      val request  = Request[IO](uri = uri"/video-games?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z", method = Method.GET)
+      val request  = Request[IO](uri = uri"/video-games?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z&kind=video-game", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
       response mustHaveStatus (Status.Ok, Some("""[]"""))
@@ -174,6 +174,19 @@ class ResellableItemControllerSpec extends ControllerSpec {
       val response = controller.routes.orNotFound.run(request)
 
       response mustHaveStatus (Status.BadRequest, Some("""{"message":"Invalid value for: query parameter from"}"""))
+      verifyNoInteractions(service)
+    }
+
+    "return error when invalid kind passed" in {
+      val service = mock[ResellableItemService[IO]]
+      when(service.search(any[SearchParams])).thenReturnIO(Nil)
+
+      val controller = new ResellableItemController[IO](service)
+
+      val request = Request[IO](uri = uri"/video-games?kind=foo", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      response mustHaveStatus(Status.BadRequest, Some("""{"message":"Invalid value for: query parameter kind"}"""))
       verifyNoInteractions(service)
     }
 
