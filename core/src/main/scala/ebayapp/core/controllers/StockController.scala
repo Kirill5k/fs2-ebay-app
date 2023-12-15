@@ -5,7 +5,7 @@ import cats.effect.Async
 import cats.syntax.flatMap.*
 import cats.syntax.traverse.*
 import ebayapp.core.controllers.views.ResellableItemView
-import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem, Retailer}
+import ebayapp.core.domain.{ItemDetails, ResellableItem, Retailer}
 import ebayapp.core.services.StockService
 import ebayapp.kernel.controllers.Controller
 import ebayapp.kernel.errors.AppError
@@ -67,7 +67,6 @@ final private[controllers] class StockController[F[_]](
 }
 
 object StockController extends TapirJsonCirce with SchemaDerivation {
-  given Schema[ItemKind]    = Schema.string
   given Schema[ItemDetails] = Schema.string
 
   private val basePath   = "stock"

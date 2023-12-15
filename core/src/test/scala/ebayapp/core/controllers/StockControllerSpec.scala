@@ -142,7 +142,7 @@ class StockControllerSpec extends ControllerSpec {
         val request  = Request[IO](uri = uri"/stock/foo", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
-        response mustHaveStatus (Status.UnprocessableEntity, Some("""{"message":"unrecognized retailer foo"}"""))
+        response mustHaveStatus (Status.UnprocessableEntity, Some("""{"message":"Invalid value foo for enum Retailer, Accepted values: cex,ebay,selfridges,argos,scotts,jdsports,tessuti,nvidia,scan,harvey-nichols,mainline-menswear,flannels"}"""))
       }
 
       "return error when retailer is not monitored" in {
