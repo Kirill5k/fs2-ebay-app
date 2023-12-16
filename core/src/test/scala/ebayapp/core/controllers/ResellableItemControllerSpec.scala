@@ -23,7 +23,93 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
   val searchFilters = SearchParams(ItemKind.VideoGame, None, None, None)
 
-  "A VideoGameController" should {
+  "A ResellableItemController" should {
+
+    "return list of resellable items" in {
+      val service = mock[ResellableItemService[IO]]
+      when(service.search(any[SearchParams])).thenReturnIO(List(game1, game2))
+
+      val controller = new ResellableItemController[IO](service)
+
+      val request = Request[IO](uri = uri"/resellable-items?kind=video-game", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      val expected =
+        """[{
+          |"itemDetails":{
+          |"kind": "video-game",
+          |"name":"super mario 3",
+          |"platform":"XBOX ONE",
+          |"releaseYear":"2019",
+          |"genre":"Action"
+          |},
+          |"listingDetails":{
+          |"url":"https://www.ebay.co.uk/itm/super-mario-3",
+          |"title":"super mario 3",
+          |"category":"Games",
+          |"shortDescription":"super mario 3 xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.",
+          |"description":null,
+          |"image":"https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg",
+          |"condition":"NEW",
+          |"datePosted":"2020-01-01T00:00:00Z",
+          |"seller":"EBAY:168.robinhood",
+          |"properties":{"Game Name":"super mario 3","Release Year":"2019","Platform":"Microsoft Xbox One","Genre":"Action"}
+          |},
+          |"price":{
+          |"buy":32.99,
+          |"discount":null,
+          |"quantityAvailable":1,
+          |"sell":100,
+          |"credit":80
+          |},
+          |"foundWith" : "item"
+          |},{
+          |"itemDetails":{
+          |"kind": "video-game",
+          |"name":"Battlefield 1",
+          |"platform":"XBOX ONE",
+          |"releaseYear":"2019",
+          |"genre":"Action"
+          |},
+          |"listingDetails":{
+          |"url":"https://www.ebay.co.uk/itm/battlefield-1",
+          |"title":"Battlefield 1",
+          |"category":"Games",
+          |"shortDescription":"Battlefield 1 xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.",
+          |"description":null,
+          |"image":"https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg",
+          |"condition":"NEW",
+          |"datePosted":"2020-01-01T00:00:00Z",
+          |"seller":"EBAY:168.robinhood",
+          |"properties":{"Game Name":"Battlefield 1","Release Year":"2019","Platform":"Microsoft Xbox One","Genre":"Action"}
+          |},
+          |"price":{
+          |"buy":32.99,
+          |"discount":null,
+          |"quantityAvailable":1,
+          |"sell":null,
+          |"credit":null
+          |},
+          |"foundWith" : "item"
+          |}]""".stripMargin
+      response mustHaveStatus(Status.Ok, Some(expected))
+      verify(service).search(searchFilters)
+    }
+
+    "return error when kind is not provided" in {
+      val service = mock[ResellableItemService[IO]]
+      when(service.search(any[SearchParams])).thenReturnIO(List(game1, game2))
+
+      val controller = new ResellableItemController[IO](service)
+
+      val request = Request[IO](uri = uri"/resellable-items", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      val expected = """{"message":"missing 'kind' request parameter"}""".stripMargin
+
+      response mustHaveStatus(Status.BadRequest, Some(expected))
+      verifyNoInteractions(service)
+    }
 
     "return list of video games" in {
       val service = mock[ResellableItemService[IO]]

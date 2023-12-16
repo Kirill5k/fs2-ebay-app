@@ -2,7 +2,7 @@ package ebayapp.core.controllers
 
 import cats.Monad
 import cats.effect.Async
-import cats.syntax.functor.*
+import cats.syntax.flatMap.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.{ItemDetails, ItemKind}
@@ -32,12 +32,25 @@ final private[controllers] class ResellableItemController[F[_]](
       case Some(itemKind) => fa(itemKind)
       case None           => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
 
+  private def withItemKind[A](kind: Option[ItemKind])(fa: ItemKind => F[Either[ErrorResponse, A]]): F[Either[ErrorResponse, A]] =
+    kind match
+      case Some(value) => fa(value)
+      case None => F.pure(Left(ErrorResponse.BadRequest("missing 'kind' request parameter")))
+
   private val getAll = ResellableItemController.getAll
-    .serverLogic { (kind, limit, query, from, to, _) =>
-      withItemKind(kind) { itemKind =>
-        itemService
-          .search(SearchParams(itemKind, limit, from, to, query))
-          .mapResponse(_.map(ResellableItemView.from))
+    .serverLogic { (path, limit, query, from, to, kind) =>
+      if (path == "resellable-items") {
+        withItemKind(kind) { itemKind =>
+          itemService
+            .search(SearchParams(itemKind, limit, from, to, query))
+            .mapResponse(_.map(ResellableItemView.from))
+        }
+      } else {
+        withItemKind(path) { itemKind =>
+          itemService
+            .search(SearchParams(itemKind, limit, from, to, query))
+            .mapResponse(_.map(ResellableItemView.from))
+        }
       }
     }
 
@@ -56,7 +69,7 @@ final private[controllers] class ResellableItemController[F[_]](
 
 object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
   import Controller.given
-  
+
   given Schema[ItemDetails] = Schema.string
 
   private val searchQueryParams =
