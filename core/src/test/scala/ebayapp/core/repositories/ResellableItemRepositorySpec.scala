@@ -27,7 +27,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
     ResellableItemBuilder.videoGame("Super Mario 3", timestamp.plusSeconds(1000), platform = None)
   )
 
-  val searchFilters = SearchParams(ItemKind.VideoGame, Some(100), None, None)
+  val searchFilters = SearchParams(Some(ItemKind.VideoGame), Some(100), None, None)
 
   "A ResellableItemRepository" when {
 
@@ -70,7 +70,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
         val result = for
           repo <- ResellableItemRepository.mongo[IO](db)
           _    <- repo.saveAll(videoGames)
-          all  <- repo.search(searchFilters.copy(kind = ItemKind.Generic))
+          all  <- repo.search(searchFilters.copy(kind = Some(ItemKind.Generic)))
         yield all
 
         result.map(_ mustBe Nil)

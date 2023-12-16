@@ -18,7 +18,7 @@ import mongo4cats.database.MongoDatabase
 import mongo4cats.models.database.CreateCollectionOptions
 
 final case class SearchParams(
-    kind: ItemKind,
+    kind: Option[ItemKind] = None,
     limit: Option[Int] = None,
     from: Option[Instant] = None,
     to: Option[Instant] = None,
@@ -91,7 +91,7 @@ final private class ResellableItemMongoRepository[F[_]](
   extension (sp: SearchParams)
     def toFilter: Filter =
       postedDateRangeSelector(sp.from, sp.to) &&
-        Filter.eq(Field.ItemKind, sp.kind) &&
+        sp.kind.fold(Filter.empty)(k => Filter.eq(Field.ItemKind, k)) &&
         sp.query.fold(Filter.empty)(Filter.text)
 }
 

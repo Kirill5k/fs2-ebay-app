@@ -32,23 +32,16 @@ final private[controllers] class ResellableItemController[F[_]](
       case Some(itemKind) => fa(itemKind)
       case None           => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
 
-  private def withItemKind[A](kind: Option[ItemKind])(fa: ItemKind => F[Either[ErrorResponse, A]]): F[Either[ErrorResponse, A]] =
-    kind match
-      case Some(value) => fa(value)
-      case None => F.pure(Left(ErrorResponse.BadRequest("missing 'kind' request parameter")))
-
   private val getAll = ResellableItemController.getAll
     .serverLogic { (path, limit, query, from, to, kind) =>
       if (path == "resellable-items") {
-        withItemKind(kind) { itemKind =>
-          itemService
-            .search(SearchParams(itemKind, limit, from, to, query))
-            .mapResponse(_.map(ResellableItemView.from))
-        }
+        itemService
+          .search(SearchParams(kind, limit, from, to, query))
+          .mapResponse(_.map(ResellableItemView.from))
       } else {
         withItemKind(path) { itemKind =>
           itemService
-            .search(SearchParams(itemKind, limit, from, to, query))
+            .search(SearchParams(Some(itemKind), limit, from, to, query))
             .mapResponse(_.map(ResellableItemView.from))
         }
       }
@@ -57,15 +50,13 @@ final private[controllers] class ResellableItemController[F[_]](
   private val getSummaries = ResellableItemController.getSummaries
     .serverLogic { (path, limit, query, from, to, kind) =>
       if (path == "resellable-items") {
-        withItemKind(kind) { itemKind =>
-          itemService
-            .summaries(SearchParams(itemKind, limit, from, to, query))
-            .mapResponse(ResellableItemsSummaryResponse.from)
-        }
+        itemService
+          .summaries(SearchParams(kind, limit, from, to, query))
+          .mapResponse(ResellableItemsSummaryResponse.from)
       } else {
         withItemKind(path) { itemKind =>
           itemService
-            .summaries(SearchParams(itemKind, limit, from, to, query))
+            .summaries(SearchParams(Some(itemKind), limit, from, to, query))
             .mapResponse(ResellableItemsSummaryResponse.from)
         }
       }

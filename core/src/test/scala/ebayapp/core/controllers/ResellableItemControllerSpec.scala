@@ -21,7 +21,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
   val summaries = List(game1, game2, game3).map(_.summary)
 
-  val searchFilters = SearchParams(ItemKind.VideoGame, None, None, None)
+  val searchFilters = SearchParams(Some(ItemKind.VideoGame), None, None, None)
 
   "A ResellableItemController" should {
 
@@ -94,21 +94,6 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |}]""".stripMargin
       response mustHaveStatus(Status.Ok, Some(expected))
       verify(service).search(searchFilters)
-    }
-
-    "return error when kind is not provided" in {
-      val service = mock[ResellableItemService[IO]]
-      when(service.search(any[SearchParams])).thenReturnIO(List(game1, game2))
-
-      val controller = new ResellableItemController[IO](service)
-
-      val request = Request[IO](uri = uri"/resellable-items", method = Method.GET)
-      val response = controller.routes.orNotFound.run(request)
-
-      val expected = """{"message":"missing 'kind' request parameter"}""".stripMargin
-
-      response mustHaveStatus(Status.BadRequest, Some(expected))
-      verifyNoInteractions(service)
     }
 
     "return list of video games" in {

@@ -15,7 +15,7 @@ class ResellableItemServiceSpec extends IOWordSpec {
     videoGame.buyPrice.rrp,
     videoGame.sellPrice.map(_.credit)
   )
-  val searchFilters = SearchParams(ItemKind.VideoGame, Some(100), None, None)
+  val searchFilters = SearchParams(Some(ItemKind.VideoGame), Some(100), None, None)
 
   "A VideoGameService" should {
 
