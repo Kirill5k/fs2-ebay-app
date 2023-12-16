@@ -27,6 +27,19 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
     "return list of resellable items" in {
       val service = mock[ResellableItemService[IO]]
+      when(service.search(any[SearchParams])).thenReturnIO(Nil)
+
+      val controller = new ResellableItemController[IO](service)
+
+      val request = Request[IO](uri = uri"/resellable-items", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      response mustHaveStatus(Status.Ok, Some("""[]"""))
+      verify(service).search(SearchParams())
+    }
+
+    "return list of resellable items filtered by kind" in {
+      val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(List(game1, game2))
 
       val controller = new ResellableItemController[IO](service)
