@@ -182,6 +182,26 @@ class ResellableItemControllerSpec extends ControllerSpec {
       verify(service).search(searchFilters)
     }
 
+    "return summary of resellable items" in {
+      val service = mock[ResellableItemService[IO]]
+      when(service.summaries(any[SearchParams])).thenReturnIO(summaries)
+
+      val controller = new ResellableItemController[IO](service)
+
+      val request = Request[IO](uri = uri"/resellable-items/summary?kind=video-game", method = Method.GET)
+      val response = controller.routes.orNotFound.run(request)
+
+      val expected =
+        """{
+          |"total":3,
+          |"unrecognized":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":null}]},
+          |"profitable":{"total":1,"items":[{"name":"super mario 3 XBOX ONE","title":"super mario 3","url":"https://www.ebay.co.uk/itm/super-mario-3","buyPrice":32.99,"exchangePrice":80}]},
+          |"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":5}]}
+          |}""".stripMargin
+      response mustHaveStatus(Status.Ok, Some(expected))
+      verify(service).summaries(searchFilters)
+    }
+
     "return summary of video games" in {
       val service = mock[ResellableItemService[IO]]
       when(service.summaries(any[SearchParams])).thenReturnIO(summaries)

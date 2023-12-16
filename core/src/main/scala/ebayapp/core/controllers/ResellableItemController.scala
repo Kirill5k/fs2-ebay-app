@@ -55,11 +55,19 @@ final private[controllers] class ResellableItemController[F[_]](
     }
 
   private val getSummaries = ResellableItemController.getSummaries
-    .serverLogic { (kind, limit, query, from, to, _) =>
-      withItemKind(kind) { itemKind =>
-        itemService
-          .summaries(SearchParams(itemKind, limit, from, to, query))
-          .mapResponse(ResellableItemsSummaryResponse.from)
+    .serverLogic { (path, limit, query, from, to, kind) =>
+      if (path == "resellable-items") {
+        withItemKind(kind) { itemKind =>
+          itemService
+            .summaries(SearchParams(itemKind, limit, from, to, query))
+            .mapResponse(ResellableItemsSummaryResponse.from)
+        }
+      } else {
+        withItemKind(path) { itemKind =>
+          itemService
+            .summaries(SearchParams(itemKind, limit, from, to, query))
+            .mapResponse(ResellableItemsSummaryResponse.from)
+        }
       }
     }
 
