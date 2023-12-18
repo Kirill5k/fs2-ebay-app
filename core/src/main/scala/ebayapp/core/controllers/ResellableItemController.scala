@@ -8,7 +8,6 @@ import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummar
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
-import ebayapp.kernel.controllers.views.ErrorResponse
 import org.http4s.HttpRoutes
 import sttp.tapir.*
 import sttp.tapir.Codec.PlainCodec
@@ -23,43 +22,18 @@ final private[controllers] class ResellableItemController[F[_]](
     F: Async[F]
 ) extends Controller[F] {
 
-  private val itemKindMappings = Map(
-    "video-games" -> ItemKind.VideoGame
-  )
-
-  private def withItemKind[A](kind: String)(fa: ItemKind => F[Either[ErrorResponse, A]]): F[Either[ErrorResponse, A]] =
-    itemKindMappings.get(kind) match
-      case Some(itemKind) => fa(itemKind)
-      case None           => F.pure(Left(ErrorResponse.NotFound(s"Unrecognized item kind $kind")))
-
   private val getAll = ResellableItemController.getAll
-    .serverLogic { (path, limit, query, from, to, kind) =>
-      if (path == "resellable-items") {
-        itemService
-          .search(SearchParams(kind, limit, from, to, query))
-          .mapResponse(_.map(ResellableItemView.from))
-      } else {
-        withItemKind(path) { itemKind =>
-          itemService
-            .search(SearchParams(Some(itemKind), limit, from, to, query))
-            .mapResponse(_.map(ResellableItemView.from))
-        }
-      }
+    .serverLogic { (limit, query, from, to, kind) =>
+      itemService
+        .search(SearchParams(kind, limit, from, to, query))
+        .mapResponse(_.map(ResellableItemView.from))
     }
 
   private val getSummaries = ResellableItemController.getSummaries
-    .serverLogic { (path, limit, query, from, to, kind) =>
-      if (path == "resellable-items") {
-        itemService
-          .summaries(SearchParams(kind, limit, from, to, query))
-          .mapResponse(ResellableItemsSummaryResponse.from)
-      } else {
-        withItemKind(path) { itemKind =>
-          itemService
-            .summaries(SearchParams(Some(itemKind), limit, from, to, query))
-            .mapResponse(ResellableItemsSummaryResponse.from)
-        }
-      }
+    .serverLogic { (limit, query, from, to, kind) =>
+      itemService
+        .summaries(SearchParams(kind, limit, from, to, query))
+        .mapResponse(ResellableItemsSummaryResponse.from)
     }
 
   override def routes: HttpRoutes[F] =
@@ -71,6 +45,8 @@ object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
 
   given Schema[ItemDetails] = Schema.string
 
+  private val basePath = "resellable-items"
+
   private val searchQueryParams =
     query[Option[Int]]("limit")
       .and(query[Option[String]]("query"))
@@ -79,13 +55,13 @@ object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
       .and(query[Option[ItemKind]]("kind"))
 
   val getAll = endpoint.get
-    .in(path[String])
+    .in(basePath)
     .in(searchQueryParams)
     .errorOut(Controller.errorResponse)
     .out(jsonBody[List[ResellableItemView]])
 
   val getSummaries = endpoint.get
-    .in(path[String] / "summary")
+    .in(basePath / "summary")
     .in(searchQueryParams)
     .errorOut(Controller.errorResponse)
     .out(jsonBody[ResellableItemsSummaryResponse])
