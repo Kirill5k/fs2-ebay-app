@@ -23,16 +23,16 @@ final private[controllers] class ResellableItemController[F[_]](
 ) extends Controller[F] {
 
   private val getAll = ResellableItemController.getAll
-    .serverLogic { (limit, query, from, to, kind) =>
+    .serverLogic { sp =>
       itemService
-        .search(SearchParams(kind, limit, from, to, query))
+        .search(sp)
         .mapResponse(_.map(ResellableItemView.from))
     }
 
   private val getSummaries = ResellableItemController.getSummaries
-    .serverLogic { (limit, query, from, to, kind) =>
+    .serverLogic { sp =>
       itemService
-        .summaries(SearchParams(kind, limit, from, to, query))
+        .summaries(sp)
         .mapResponse(ResellableItemsSummaryResponse.from)
     }
 
@@ -47,12 +47,13 @@ object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
 
   private val basePath = "resellable-items"
 
-  private val searchQueryParams =
-    query[Option[Int]]("limit")
-      .and(query[Option[String]]("query"))
+  private val searchQueryParams: EndpointInput[SearchParams] =
+    query[Option[ItemKind]]("kind")
+      .and(query[Option[Int]]("limit"))
       .and(query[Option[Instant]]("from"))
       .and(query[Option[Instant]]("to"))
-      .and(query[Option[ItemKind]]("kind"))
+      .and(query[Option[String]]("query"))
+      .mapTo[SearchParams]
 
   val getAll = endpoint.get
     .in(basePath)
