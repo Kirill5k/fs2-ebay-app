@@ -4,8 +4,9 @@ import {Routes, Route, Link, useLocation} from 'react-router-dom'
 import {Layout, Menu, theme} from 'antd'
 import Home from './home'
 import Stock from './stock'
-import {getStock} from './stock/slice'
+import Items from './items'
 import Deals from './deals'
+import {getStock} from './stock/slice'
 import {getTodayDeals} from './deals/slice'
 import './App.css'
 
@@ -40,7 +41,8 @@ const App = () => {
               items={[
                 { key: '/', label: <Link to="/">Home</Link> },
                 { key: '/stock', label: <Link to="/stock">Stock</Link> },
-                { key: '/deals', label: <Link to="/deals">Deals</Link> }
+                { key: '/deals', label: <Link to="/deals">Deals</Link> },
+                { key: '/items', label: <Link to="/items">Items</Link> }
               ]}
           />
         </Layout.Header>
@@ -60,6 +62,11 @@ const App = () => {
                 exact
                 path="/deals"
                 element={<Deals backgroundColor={colorBgContainer}/>}
+            />
+            <Route
+                exact
+                path="/items"
+                element={<Items backgroundColor={colorBgContainer}/>}
             />
           </Routes>
         </Layout.Content>
