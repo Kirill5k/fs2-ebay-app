@@ -35,7 +35,7 @@ val docker = Seq(
 )
 
 val kernel = project
-  .in(file("kernel"))
+  .in(file("modules/kernel"))
   .settings(
     name       := "fs2-ebay-app-kernel",
     moduleName := "fs2-ebay-app-kernel",
@@ -43,7 +43,7 @@ val kernel = project
   )
 
 val core = project
-  .in(file("core"))
+  .in(file("modules/core"))
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
@@ -54,7 +54,7 @@ val core = project
   )
 
 val proxy = project
-  .in(file("proxy"))
+  .in(file("modules/proxy"))
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
@@ -66,7 +66,7 @@ val proxy = project
   )
 
 val monitor = project
-  .in(file("monitor"))
+  .in(file("modules/monitor"))
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
