@@ -31,10 +31,10 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val controller = new ResellableItemController[IO](service)
 
-      val request = Request[IO](uri = uri"/resellable-items", method = Method.GET)
+      val request  = Request[IO](uri = uri"/resellable-items", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      response mustHaveStatus(Status.Ok, Some("""[]"""))
+      response mustHaveStatus (Status.Ok, Some("""[]"""))
       verify(service).search(SearchParams())
     }
 
@@ -44,7 +44,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val controller = new ResellableItemController[IO](service)
 
-      val request = Request[IO](uri = uri"/resellable-items?kind=video-game", method = Method.GET)
+      val request  = Request[IO](uri = uri"/resellable-items?kind=video-game", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
       val expected =
@@ -105,7 +105,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |},
           |"foundWith" : "item"
           |}]""".stripMargin
-      response mustHaveStatus(Status.Ok, Some(expected))
+      response mustHaveStatus (Status.Ok, Some(expected))
       verify(service).search(searchFilters)
     }
 
@@ -115,7 +115,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val controller = new ResellableItemController[IO](service)
 
-      val request = Request[IO](uri = uri"/resellable-items/summary?kind=video-game", method = Method.GET)
+      val request  = Request[IO](uri = uri"/resellable-items/summary?kind=video-game", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
       val expected =
@@ -125,7 +125,7 @@ class ResellableItemControllerSpec extends ControllerSpec {
           |"profitable":{"total":1,"items":[{"name":"super mario 3 XBOX ONE","title":"super mario 3","url":"https://www.ebay.co.uk/itm/super-mario-3","buyPrice":32.99,"exchangePrice":80}]},
           |"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":5}]}
           |}""".stripMargin
-      response mustHaveStatus(Status.Ok, Some(expected))
+      response mustHaveStatus (Status.Ok, Some(expected))
       verify(service).summaries(searchFilters)
     }
 
@@ -155,7 +155,8 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val controller = new ResellableItemController[IO](service)
 
-      val request  = Request[IO](uri = uri"/resellable-items?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z&kind=video-game", method = Method.GET)
+      val request =
+        Request[IO](uri = uri"/resellable-items?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z&kind=video-game", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
       response mustHaveStatus (Status.Ok, Some("""[]"""))
@@ -205,10 +206,10 @@ class ResellableItemControllerSpec extends ControllerSpec {
 
       val controller = new ResellableItemController[IO](service)
 
-      val request = Request[IO](uri = uri"/resellable-items?kind=foo", method = Method.GET)
+      val request  = Request[IO](uri = uri"/resellable-items?kind=foo", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
-      response mustHaveStatus(Status.BadRequest, Some("""{"message":"Invalid value for: query parameter kind"}"""))
+      response mustHaveStatus (Status.BadRequest, Some("""{"message":"Invalid value for: query parameter kind"}"""))
       verifyNoInteractions(service)
     }
 
