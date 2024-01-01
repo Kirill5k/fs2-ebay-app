@@ -269,9 +269,9 @@ private[mappers] object GameDetailsMapper {
   private def mapPlatform(listingDetails: ListingDetails): Option[String] =
     PLATFORMS_MATCH_REGEX
       .findFirstIn(listingDetails.title.withoutSpecialChars)
-      .orElse(listingDetails.properties.get("Platform").map(_.split(",|/")(0)))
+      .orElse(listingDetails.properties.get("Platform").map(_.split("[,/]")(0)))
       .map(_.toUpperCase.trim)
-      .map(_.replaceAll(" |-", ""))
+      .map(_.replaceAll("[ \\-]", ""))
       .map(platform => PLATFORM_MAPPINGS.getOrElse(platform, platform))
       .map(_.trim)
       .filterNot(_.equalsIgnoreCase("SEEDESCRIPTIONFORDETAILS"))
