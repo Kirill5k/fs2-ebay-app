@@ -152,7 +152,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
         yield all
 
         result.map { res =>
-          res mustBe videoGames.map(_.summary)
+          res mustBe videoGames.sortBy(_.listingDetails.datePosted)(Ordering[Instant].reverse).map(_.summary)
         }
       }
     }
