@@ -6,7 +6,7 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import com.mongodb.{DuplicateKeyException, MongoWriteException}
-import ebayapp.core.domain.{ItemKind, ResellableItemSummary, ResellableItem}
+import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import ebayapp.kernel.syntax.effects.*
 import mongo4cats.circe.given
@@ -36,16 +36,21 @@ final private class ResellableItemMongoRepository[F[_]](
 ) extends ResellableItemRepository[F] {
 
   private object Field:
-    val ItemKind   = "itemDetails.kind"
-    val DatePosted = "listingDetails.datePosted"
-    val Url        = "listingDetails.url"
+    val ItemDetails    = "itemDetails"
+    val ListingDetails = "listingDetails"
+    val ItemKind       = s"${ItemDetails}.kind"
+    val DatePosted     = s"${ListingDetails}.datePosted"
+    val Url            = s"${ListingDetails}.url"
+    val Title          = s"${ListingDetails}.title"
+    val BuyPrice       = "price.buy"
+    val ExchangePrice  = "price.credit"
 
   private val itemSummaryProjection = Projection
-    .include("itemDetails")
-    .computed("listingUrl", "$listingDetails.url")
-    .computed("listingTitle", "$listingDetails.title")
-    .computed("buyPrice", "$price.buy")
-    .computed("exchangePrice", "$price.credit")
+    .include(Field.ItemDetails)
+    .computed("listingUrl", "$" + Field.Url)
+    .computed("listingTitle", "$" + Field.Title)
+    .computed("buyPrice", "$" + Field.BuyPrice)
+    .computed("exchangePrice", "$" + Field.ExchangePrice)
 
   def existsByUrl(listingUrl: String): F[Boolean] =
     mongoCollection.count(Filter.eq(Field.Url, listingUrl)).map(_ > 0)
