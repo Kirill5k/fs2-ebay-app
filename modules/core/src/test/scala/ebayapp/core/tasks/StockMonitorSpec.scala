@@ -12,7 +12,7 @@ class StockMonitorSpec extends IOWordSpec {
 
   "A StockMonitor" should {
 
-    val updateClothing = ItemStockUpdates(ResellableItemBuilder.clothing("Clothing 2"), List(StockUpdate.New))
+    val updateClothing = ItemStockUpdates(ResellableItemBuilder.makeClothing("Clothing 2"), List(StockUpdate.New))
 
     "get stock updates from various outlets" in {
       val services = servicesMock

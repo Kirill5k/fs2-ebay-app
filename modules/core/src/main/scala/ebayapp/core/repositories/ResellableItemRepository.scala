@@ -6,12 +6,10 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import com.mongodb.{DuplicateKeyException, MongoWriteException}
-import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem}
+import ebayapp.core.domain.{ItemKind, ResellableItemSummary, ResellableItem}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import ebayapp.kernel.syntax.effects.*
-import mongo4cats.bson.Document
 import mongo4cats.circe.given
-import mongo4cats.bson.syntax.*
 import mongo4cats.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.MongoDatabase
@@ -29,7 +27,7 @@ trait ResellableItemRepository[F[_]]:
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: ResellableItem): F[Unit]
   def search(params: SearchParams): F[List[ResellableItem]]
-  def summaries(params: SearchParams): F[List[ItemSummary]]
+  def summaries(params: SearchParams): F[List[ResellableItemSummary]]
 
 final private class ResellableItemMongoRepository[F[_]](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
@@ -42,10 +40,10 @@ final private class ResellableItemMongoRepository[F[_]](
     val DatePosted = "listingDetails.datePosted"
     val Url        = "listingDetails.url"
 
-  private val videoGameSummaryProjection = Projection
-    .computed("url", "$listingDetails.url")
-    .computed("title", "$listingDetails.title")
-    .computed("name", Document("$concat" := List("$itemDetails.name", " ", "$itemDetails.platform")))
+  private val itemSummaryProjection = Projection
+    .include("itemDetails")
+    .computed("listingUrl", "$listingDetails.url")
+    .computed("listingTitle", "$listingDetails.title")
     .computed("buyPrice", "$price.buy")
     .computed("exchangePrice", "$price.credit")
 
@@ -70,14 +68,14 @@ final private class ResellableItemMongoRepository[F[_]](
       .all
       .mapList(_.toDomain)
 
-  def summaries(params: SearchParams): F[List[ItemSummary]] =
+  def summaries(params: SearchParams): F[List[ResellableItemSummary]] =
     mongoCollection
-      .aggregateWithCodec[ItemSummary] {
+      .aggregateWithCodec[ResellableItemSummary] {
         Aggregate
           .matchBy(params.toFilter)
           .sort(Sort.desc(Field.DatePosted))
           .limit(params.limit.getOrElse(Int.MaxValue))
-          .project(videoGameSummaryProjection)
+          .project(itemSummaryProjection)
       }
       .all
       .mapList(identity)

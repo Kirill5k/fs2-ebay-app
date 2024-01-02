@@ -2,19 +2,14 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.IOWordSpec
-import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItemBuilder}
+import ebayapp.core.domain.ItemKind
+import ebayapp.core.domain.ResellableItemBuilder.*
 import ebayapp.core.repositories.{ResellableItemRepository, SearchParams}
 
 class ResellableItemServiceSpec extends IOWordSpec {
 
-  val videoGame = ResellableItemBuilder.videoGame("super mario 3")
-  val summary = ItemSummary(
-    videoGame.itemDetails.fullName,
-    videoGame.listingDetails.title,
-    videoGame.listingDetails.url,
-    videoGame.buyPrice.rrp,
-    videoGame.sellPrice.map(_.credit)
-  )
+  val videoGame     = makeVideoGame("super mario 3")
+  val summary       = videoGame.summary
   val searchFilters = SearchParams(Some(ItemKind.VideoGame), Some(100), None, None)
 
   "A VideoGameService" should {

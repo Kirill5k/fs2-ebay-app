@@ -3,7 +3,8 @@ package ebayapp.core.repositories
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.traverse.*
-import ebayapp.core.domain.{ItemKind, ItemSummary, ResellableItem, ResellableItemBuilder}
+import ebayapp.core.domain.{ItemKind, ResellableItem}
+import ebayapp.core.domain.ResellableItemBuilder.*
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import mongo4cats.embedded.EmbeddedMongo
@@ -22,9 +23,9 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
   val timestamp = Instant.now.truncatedTo(ChronoUnit.SECONDS)
 
   val videoGames = List(
-    ResellableItemBuilder.videoGame("GTA 5", timestamp.minusSeconds(1000)),
-    ResellableItemBuilder.videoGame("Call of Duty WW2", timestamp, sellPrice = None),
-    ResellableItemBuilder.videoGame("Super Mario 3", timestamp.plusSeconds(1000), platform = None)
+    makeVideoGame("GTA 5", timestamp.minusSeconds(1000)),
+    makeVideoGame("Call of Duty WW2", timestamp, sellPrice = None),
+    makeVideoGame("Super Mario 3", timestamp.plusSeconds(1000), platform = None)
   )
 
   val searchFilters = SearchParams(Some(ItemKind.VideoGame), Some(100), None, None)
@@ -133,7 +134,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
       "save video game in db" in withEmbeddedMongoClient { db =>
         val result = for
           repo <- ResellableItemRepository.mongo[IO](db)
-          res  <- repo.save(ResellableItemBuilder.videoGame("Witcher 3"))
+          res  <- repo.save(makeVideoGame("Witcher 3"))
         yield res
 
         result.map(_ mustBe (()))
@@ -151,11 +152,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
         yield all
 
         result.map { res =>
-          res mustBe List(
-            ItemSummary(None, "Super Mario 3", videoGames.last.listingDetails.url, BigDecimal(32.99), Some(BigDecimal(80))),
-            ItemSummary(Some("Call of Duty WW2 XBOX ONE"), "Call of Duty WW2", videoGames(1).listingDetails.url, BigDecimal(32.99), None),
-            ItemSummary(Some("GTA 5 XBOX ONE"), "GTA 5", videoGames.head.listingDetails.url, BigDecimal(32.99), Some(BigDecimal(80)))
-          )
+          res mustBe videoGames.map(_.summary)
         }
       }
     }

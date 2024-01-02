@@ -5,7 +5,7 @@ import ebayapp.core.{IOWordSpec, MockConfigProvider}
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.ConfigProvider
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.ResellableItemBuilder.clothing
+import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import fs2.Stream
@@ -28,9 +28,9 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
 
     "return items with discount greater than min" in {
       val items = List(
-        clothing("T-shirt rrp", discount = None),
-        clothing("T-shirt expensive", discount = Some(10)),
-        clothing("T-shirt cheap", discount = Some(96))
+        makeClothing("T-shirt rrp", discount = None),
+        makeClothing("T-shirt expensive", discount = Some(10)),
+        makeClothing("T-shirt cheap", discount = Some(96))
       )
 
       val client = mock[SearchClient[IO]]
@@ -49,9 +49,9 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
 
     "ignore items that are excluded with filter from SearchCriteria" in {
       val items = List(
-        clothing("T-shirt Sc-Ignore", discount = Some(80)),
-        clothing("T-shirt Sc-Skip", discount = Some(80)),
-        clothing("T-shirt", discount = Some(80))
+        makeClothing("T-shirt Sc-Ignore", discount = Some(80)),
+        makeClothing("T-shirt Sc-Skip", discount = Some(80)),
+        makeClothing("T-shirt", discount = Some(80))
       )
 
       val client = mock[SearchClient[IO]]
@@ -70,10 +70,10 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
 
     "ignore items that are excluded with filter from StockMonitorConfig" in {
       val items = List(
-        clothing("T-shirt conf-skip", discount = Some(80)),
-        clothing("T-shirt size 7", discount = Some(80)),
-        clothing("T-shirt size 12Y", discount = Some(80)),
-        clothing("T-shirt", discount = Some(80))
+        makeClothing("T-shirt conf-skip", discount = Some(80)),
+        makeClothing("T-shirt size 7", discount = Some(80)),
+        makeClothing("T-shirt size 12Y", discount = Some(80)),
+        makeClothing("T-shirt", discount = Some(80))
       )
 
       val client = mock[SearchClient[IO]]
@@ -93,9 +93,9 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
 
     "reload stream when config changes" in {
       val items = List(
-        clothing("T-shirt sc-ignore", discount = Some(80)),
-        clothing("T-shirt sc-skip", discount = Some(80)),
-        clothing("T-shirt", discount = Some(80))
+        makeClothing("T-shirt sc-ignore", discount = Some(80)),
+        makeClothing("T-shirt sc-skip", discount = Some(80)),
+        makeClothing("T-shirt", discount = Some(80))
       )
 
       val configProvider = mock[ConfigProvider[IO]]

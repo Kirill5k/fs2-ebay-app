@@ -13,10 +13,10 @@ enum ItemKind derives EnumConfigReader:
 
 object ItemKind extends EnumType[ItemKind](() => ItemKind.values)
 
-final case class ItemSummary(
-    name: Option[String],
-    title: String,
-    url: String,
+final case class ResellableItemSummary(
+    itemDetails: ItemDetails,
+    listingTitle: String,
+    listingUrl: String,
     buyPrice: BigDecimal,
     exchangePrice: Option[BigDecimal]
 ) derives Codec.AsObject
@@ -27,16 +27,7 @@ final case class ResellableItem(
     buyPrice: BuyPrice,
     sellPrice: Option[SellPrice],
     foundWith: SearchCriteria
-) {
-  def summary: ItemSummary =
-    ItemSummary(
-      itemDetails.fullName,
-      listingDetails.title,
-      listingDetails.url,
-      buyPrice.rrp,
-      sellPrice.map(_.credit)
-    )
-}
+)
 
 object ResellableItem {
   def generic(

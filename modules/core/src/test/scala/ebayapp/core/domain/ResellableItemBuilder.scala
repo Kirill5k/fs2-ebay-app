@@ -7,9 +7,19 @@ import java.time.Instant
 
 object ResellableItemBuilder {
 
+  extension (ri: ResellableItem)
+    def summary: ResellableItemSummary =
+      ResellableItemSummary(
+        itemDetails = ri.itemDetails,
+        listingTitle = ri.listingDetails.title,
+        listingUrl = ri.listingDetails.url,
+        buyPrice = ri.buyPrice.rrp,
+        exchangePrice = ri.sellPrice.map(_.credit)
+      )
+  
   val searchCriteria = SearchCriteria("item")
 
-  def clothing(
+  def makeClothing(
       name: String,
       quantity: Int = 1,
       price: Double = 100.0,
@@ -37,7 +47,7 @@ object ResellableItemBuilder {
       foundWith
     )
 
-  def generic(
+  def makeGeneric(
       name: String,
       quantity: Int = 1,
       price: Double = 1800.0,
@@ -53,7 +63,7 @@ object ResellableItemBuilder {
       foundWith
     )
 
-  def videoGame(
+  def makeVideoGame(
       name: String,
       datePosted: Instant = Instant.now(),
       platform: Option[String] = Some("XBOX ONE"),
@@ -87,7 +97,7 @@ object ResellableItemBuilder {
       foundWith
     )
 
-  def mobilePhone(
+  def makeMobilePhone(
       make: String,
       model: String,
       colour: String,

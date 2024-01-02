@@ -21,8 +21,8 @@ class CexStockServiceSpec extends IOWordSpec {
     MockConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Cex -> StockMonitorConfig(1.seconds, req.toList)))
 
   val ts  = Instant.now()
-  val mb1 = Builder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0, datePosted = ts)
-  val mb2 = Builder.generic("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B", datePosted = ts)
+  val mb1 = Builder.makeGeneric("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0, datePosted = ts)
+  val mb2 = Builder.makeGeneric("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/B", datePosted = ts)
 
   "A GenericStatefulCexStockService" should {
 

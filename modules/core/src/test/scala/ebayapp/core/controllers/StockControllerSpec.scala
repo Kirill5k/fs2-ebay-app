@@ -241,7 +241,7 @@ class StockControllerSpec extends ControllerSpec {
   def mocks(retailers: Retailer*): Map[Retailer, StockService[IO]] =
     retailers.map { r =>
       val svc  = mock[StockService[IO]]
-      val item = ResellableItemBuilder.clothing(s"${r.name} item", retailer = r, datePosted = ts)
+      val item = ResellableItemBuilder.makeClothing(s"${r.name} item", retailer = r, datePosted = ts)
       when(svc.retailer).thenReturn(r)
       when(svc.pause).thenReturnUnit
       when(svc.resume).thenReturnUnit

@@ -14,8 +14,8 @@ import scala.concurrent.duration.*
 
 class DealsServiceSpec extends IOWordSpec {
 
-  val game1 = ResellableItemBuilder.videoGame("super mario 3", sellPrice = None)
-  val game2 = ResellableItemBuilder.videoGame("Battlefield 1", sellPrice = None)
+  val game1 = ResellableItemBuilder.makeVideoGame("super mario 3", sellPrice = None)
+  val game2 = ResellableItemBuilder.makeVideoGame("Battlefield 1", sellPrice = None)
 
   val request1 = DealsFinderRequest(SearchCriteria("q1", Some("cat1")), 34, Some(10))
   val request2 = DealsFinderRequest(SearchCriteria("q2", Some("cat2")), 100, Some(10))
