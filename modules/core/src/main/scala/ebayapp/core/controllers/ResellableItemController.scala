@@ -5,8 +5,7 @@ import cats.effect.Async
 import cats.syntax.flatMap.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
-import ebayapp.core.domain.{ItemDetails, ItemKind}
-import ebayapp.core.repositories.SearchParams
+import ebayapp.core.domain.{ItemDetails, ItemKind, SearchParams}
 import ebayapp.core.services.ResellableItemService
 import org.http4s.HttpRoutes
 import sttp.tapir.*

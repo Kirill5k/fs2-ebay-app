@@ -2,9 +2,8 @@ package ebayapp.core.controllers
 
 import cats.effect.IO
 import ebayapp.core.domain.search.SellPrice
-import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary}
+import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary, SearchParams}
 import ebayapp.core.domain.ResellableItemBuilder.*
-import ebayapp.core.repositories.SearchParams
 import ebayapp.core.services.ResellableItemService
 import ebayapp.kernel.ControllerSpec
 import org.http4s.implicits.*
@@ -13,7 +12,7 @@ import org.http4s.*
 import java.time.Instant
 
 class ResellableItemControllerSpec extends ControllerSpec {
-  
+
   val postedTs = Instant.ofEpochMilli(1577836800000L)
 
   val game1 = makeVideoGame("super mario 3", postedTs)

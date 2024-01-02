@@ -6,7 +6,7 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import com.mongodb.{DuplicateKeyException, MongoWriteException}
-import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary}
+import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary, SearchParams}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import ebayapp.kernel.syntax.effects.*
 import mongo4cats.circe.given
@@ -14,14 +14,6 @@ import mongo4cats.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.MongoDatabase
 import mongo4cats.models.database.CreateCollectionOptions
-
-final case class SearchParams(
-    kind: Option[ItemKind] = None,
-    limit: Option[Int] = None,
-    from: Option[Instant] = None,
-    to: Option[Instant] = None,
-    query: Option[String] = None
-)
 
 trait ResellableItemRepository[F[_]]:
   def existsByUrl(listingUrl: String): F[Boolean]

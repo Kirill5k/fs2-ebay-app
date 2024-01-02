@@ -5,6 +5,16 @@ import ebayapp.kernel.types.EnumType
 import io.circe.{Codec, Decoder, Encoder}
 import pureconfig.generic.derivation.EnumConfigReader
 
+import java.time.Instant
+
+final case class SearchParams(
+    kind: Option[ItemKind] = None,
+    limit: Option[Int] = None,
+    from: Option[Instant] = None,
+    to: Option[Instant] = None,
+    query: Option[String] = None
+)
+
 enum ItemKind derives EnumConfigReader:
   case Generic
   case VideoGame

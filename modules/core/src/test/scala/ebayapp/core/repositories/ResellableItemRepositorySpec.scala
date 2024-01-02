@@ -3,7 +3,7 @@ package ebayapp.core.repositories
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.traverse.*
-import ebayapp.core.domain.{ItemKind, ResellableItem}
+import ebayapp.core.domain.{ItemKind, ResellableItem, SearchParams}
 import ebayapp.core.domain.ResellableItemBuilder.*
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
