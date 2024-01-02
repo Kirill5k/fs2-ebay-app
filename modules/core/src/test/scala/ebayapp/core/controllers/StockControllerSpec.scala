@@ -2,6 +2,7 @@ package ebayapp.core.controllers
 
 import cats.effect.IO
 import ebayapp.core.domain.ResellableItemBuilder
+import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.Retailer
 import ebayapp.core.services.StockService
 import ebayapp.kernel.ControllerSpec
@@ -241,7 +242,7 @@ class StockControllerSpec extends ControllerSpec {
   def mocks(retailers: Retailer*): Map[Retailer, StockService[IO]] =
     retailers.map { r =>
       val svc  = mock[StockService[IO]]
-      val item = ResellableItemBuilder.makeClothing(s"${r.name} item", retailer = r, datePosted = ts)
+      val item = makeClothing(s"${r.name} item", retailer = r, datePosted = ts)
       when(svc.retailer).thenReturn(r)
       when(svc.pause).thenReturnUnit
       when(svc.resume).thenReturnUnit

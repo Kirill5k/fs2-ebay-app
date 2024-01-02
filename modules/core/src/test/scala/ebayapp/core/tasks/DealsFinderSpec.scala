@@ -2,6 +2,7 @@ package ebayapp.core.tasks
 
 import cats.effect.IO
 import ebayapp.core.IOWordSpec
+import ebayapp.core.domain.ResellableItemBuilder.makeVideoGame
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
 
@@ -10,7 +11,7 @@ class DealsFinderSpec extends IOWordSpec {
   "A DealsFinder" should {
 
     "send notification on deals" in {
-      val game     = ResellableItemBuilder.makeVideoGame("Super Mario 3", buyPrice = BuyPrice(1, BigDecimal(5)))
+      val game     = makeVideoGame("Super Mario 3", buyPrice = BuyPrice(1, BigDecimal(5)))
       val services = servicesMock
 
       when(services.deals.head.newDeals).thenStream(game)

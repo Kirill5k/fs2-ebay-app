@@ -1,5 +1,6 @@
 package ebayapp.core.domain
 
+import ebayapp.core.domain.ResellableItemBuilder.{makeMobilePhone, makeVideoGame}
 import io.circe.syntax.*
 import io.circe.parser.*
 import org.scalatest.matchers.must.Matchers
@@ -8,7 +9,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class ItemDetailsSpec extends AnyWordSpec with Matchers {
 
   "A VideoGame" should {
-    val game = ResellableItemBuilder.makeVideoGame("super mario 3", platform = Some("SWITCH"))
+    val game = makeVideoGame("super mario 3", platform = Some("SWITCH"))
 
     "return search query string" in {
       val query = game.itemDetails.fullName
@@ -31,13 +32,13 @@ class ItemDetailsSpec extends AnyWordSpec with Matchers {
 
   "A MobilePhone" should {
     "return search query string" in {
-      val phone = ResellableItemBuilder.makeMobilePhone("apple", "iphone 6", "Space Grey")
+      val phone = makeMobilePhone("apple", "iphone 6", "Space Grey")
       val query = phone.itemDetails.fullName
       query mustBe Some("apple iphone 6 16GB Space Grey Unlocked")
     }
 
     "return none is some of the parameters are missing" in {
-      val phone = ResellableItemBuilder.makeMobilePhone("apple", "iphone 6", "Space Grey")
+      val phone = makeMobilePhone("apple", "iphone 6", "Space Grey")
       val query = phone.itemDetails.asInstanceOf[ItemDetails.Phone].copy(model = None).fullName
       query mustBe None
     }

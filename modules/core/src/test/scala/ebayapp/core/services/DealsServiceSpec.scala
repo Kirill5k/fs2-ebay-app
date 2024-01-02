@@ -5,6 +5,7 @@ import ebayapp.core.{IOWordSpec, MockConfigProvider}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
+import ebayapp.core.domain.ResellableItemBuilder.makeVideoGame
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
@@ -14,8 +15,8 @@ import scala.concurrent.duration.*
 
 class DealsServiceSpec extends IOWordSpec {
 
-  val game1 = ResellableItemBuilder.makeVideoGame("super mario 3", sellPrice = None)
-  val game2 = ResellableItemBuilder.makeVideoGame("Battlefield 1", sellPrice = None)
+  val game1 = makeVideoGame("super mario 3", sellPrice = None)
+  val game2 = makeVideoGame("Battlefield 1", sellPrice = None)
 
   val request1 = DealsFinderRequest(SearchCriteria("q1", Some("cat1")), 34, Some(10))
   val request2 = DealsFinderRequest(SearchCriteria("q2", Some("cat2")), 100, Some(10))

@@ -6,6 +6,7 @@ import ebayapp.core.clients.MessengerClient
 import ebayapp.core.common.Error
 import ebayapp.core.domain.Notification
 import ebayapp.core.domain.ResellableItemBuilder
+import ebayapp.core.domain.ResellableItemBuilder.{makeGeneric, makeVideoGame}
 import ebayapp.core.domain.stock.StockUpdate
 import org.mockito.Mockito.times
 
@@ -35,7 +36,7 @@ class NotificationServiceSpec extends IOWordSpec {
       "send cheap item notification message" in {
         val client = mock[MessengerClient[IO]]
         when(client.send(any[Notification])).thenReturnUnit
-        val videoGame = ResellableItemBuilder.makeVideoGame("super mario 3", platform = Some("SWITCH"))
+        val videoGame = makeVideoGame("super mario 3", platform = Some("SWITCH"))
 
         val result = NotificationService.make(client).flatMap(_.cheapItem(videoGame))
 
@@ -52,7 +53,7 @@ class NotificationServiceSpec extends IOWordSpec {
         val client = mock[MessengerClient[IO]]
         when(client.send(any[Notification])).thenReturnUnit
 
-        val item   = ResellableItemBuilder.makeGeneric("macbook pro", price = 50.0, discount = Some(25))
+        val item   = makeGeneric("macbook pro", price = 50.0, discount = Some(25))
         val update = StockUpdate.PriceDrop(BigDecimal(100.0), BigDecimal(50.0))
         val result = NotificationService.make(client).flatMap(_.stockUpdate(item, update))
 
@@ -67,7 +68,7 @@ class NotificationServiceSpec extends IOWordSpec {
         val client = mock[MessengerClient[IO]]
         when(client.send(any[Notification])).thenReturnUnit
 
-        val item = ResellableItemBuilder.makeGeneric("macbook pro")
+        val item = makeGeneric("macbook pro")
         val result = NotificationService
           .make(client)
           .flatTap(_.stockUpdate(item, StockUpdate.New))
