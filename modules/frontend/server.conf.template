@@ -1,0 +1,18 @@
+server {
+  listen       80;
+  server_name  localhost;
+  location / {
+    root   /app;
+    index  index.html;
+    try_files $uri $uri/ /index.html;
+  }
+  location /api/ {
+    proxy_pass ${FS2_EBAY_APP_CORE_URL};
+      proxy_http_version 1.1;
+    proxy_ssl_server_name on;
+  }
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {
+    root   /usr/share/nginx/html;
+  }
+}
