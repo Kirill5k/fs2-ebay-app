@@ -18,8 +18,8 @@ class AppConfigSpec extends IOWordSpec {
       conf.retailer.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
       conf.retailer.selfridges.headers mustBe Map(
         "X-Reroute-To"    -> "https://www.selfridges.com",
-        "api-key"         -> "key",
-        "Accept-Encoding" -> "*/*"
+        "X-Reload-On-403" -> "true",
+        "api-key" -> "key"
       )
       conf.retailer.argos.proxied mustBe Some(true)
       conf.retailer.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
