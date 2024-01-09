@@ -38,7 +38,7 @@ spec:
     spec:
       containers:
         - name: "core"
-          image: "registry.cloud.okteto.net/kirill5k/fs2-app-proxy:latest"
+          image: "kirill1/fs2-app-proxy:latest"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

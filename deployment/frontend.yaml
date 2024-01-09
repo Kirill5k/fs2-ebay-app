@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: "frontend"
-          image: "registry.cloud.okteto.net/kirill5k/fs2-ebay-app-frontend:latest"
+          image: "kirill1/fs2-ebay-app-frontend:latest"
           env:
             - name: FS2_EBAY_APP_CORE_URL
               value: "http://fs2-app-core:8080"
