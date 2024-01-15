@@ -57,10 +57,10 @@ spec:
                 name: "fs2-app-secret"
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "0.05"
+              memory: "192Mi"
+              cpu: "0.1"
             limits:
-              memory: "512Mi"
+              memory: "320Mi"
               cpu: "0.3"
           readinessProbe:
             httpGet:
