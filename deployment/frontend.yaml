@@ -1,7 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "web"
+  name: "fs2-ebay-app-frontend-extlb"
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: "fs2-ebay-app-frontend"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "fs2-ebay-app-frontend"
 spec:
   ports:
     - targetPort: 80
