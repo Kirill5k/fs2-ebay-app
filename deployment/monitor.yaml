@@ -58,10 +58,10 @@ spec:
           resources:
             requests:
               memory: "192Mi"
-              cpu: "0.1"
+              cpu: "0.05"
             limits:
               memory: "320Mi"
-              cpu: "0.3"
+              cpu: "0.1"
           readinessProbe:
             httpGet:
               path: /health/status
