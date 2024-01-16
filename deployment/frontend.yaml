@@ -48,11 +48,11 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "0.2"
+              memory: "64Mi"
+              cpu: "0.025"
             limits:
-              memory: "512Mi"
-              cpu: "0.5"
+              memory: "128Mi"
+              cpu: "0.05"
           readinessProbe:
             httpGet:
               scheme: HTTP
