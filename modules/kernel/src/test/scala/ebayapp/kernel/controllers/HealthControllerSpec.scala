@@ -19,7 +19,7 @@ class HealthControllerSpec extends ControllerSpec {
 
   "A HealthController" should {
 
-    "return status on the app" in {
+    "return status of the app" in {
       val controller = HealthController[IO]("test-service", timestamp, ipAddress, Some("v0.0.1"))
 
       val response = for
