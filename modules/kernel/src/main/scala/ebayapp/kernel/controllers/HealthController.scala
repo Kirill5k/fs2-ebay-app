@@ -20,6 +20,7 @@ import java.net.InetAddress
 import java.time.Instant
 
 final private[controllers] class HealthController[F[_]: Async](
+    private val service: String,
     private val startupTime: Instant,
     private val ipAddress: String,
     private val appVersion: Option[String]
@@ -34,6 +35,7 @@ final private[controllers] class HealthController[F[_]: Async](
           .durationBetweenNowAnd(startupTime)
           .map { uptime =>
             AppStatus(
+              service,
               startupTime,
               uptime.toReadableString,
               appVersion,
@@ -65,6 +67,7 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
   ) derives Codec.AsObject
 
   final case class AppStatus(
+      service: String,
       startupTime: Instant,
       upTime: String,
       appVersion: Option[String],
@@ -77,10 +80,10 @@ object HealthController extends TapirJsonCirce with SchemaDerivation {
     .in(extractFromRequest(identity))
     .out(jsonBody[AppStatus])
 
-  def make[F[_]](using F: Async[F], C: Clock[F]): F[Controller[F]] =
+  def make[F[_]](service: String)(using F: Async[F], C: Clock[F]): F[Controller[F]] =
     for
       now     <- C.now
       ip      <- F.blocking(InetAddress.getLocalHost.getHostAddress)
       version <- F.delay(sys.env.get("VERSION"))
-    yield new HealthController[F](now, ip, version)
+    yield HealthController[F](service, now, ip, version)
 }

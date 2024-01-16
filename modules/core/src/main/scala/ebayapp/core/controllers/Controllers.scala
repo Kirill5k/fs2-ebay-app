@@ -28,7 +28,7 @@ object Controllers {
     (
       HomeController.make[F],
       ResellableItemController.make(services.resellableItem),
-      HealthController.make[F],
+      HealthController.make[F]("fs2-app-core"),
       StockController.make[F](services.stock)
     ).mapN((ho, it, he, st) =>
       new Controllers[F] {

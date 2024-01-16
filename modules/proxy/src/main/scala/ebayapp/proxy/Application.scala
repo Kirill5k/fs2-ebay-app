@@ -21,7 +21,7 @@ object Application extends IOApp.Simple:
         for
           interrupter        <- Interrupter.make[IO](config.interrupter)
           redirectController <- RedirectController.make[IO](resources, interrupter)
-          healthController   <- HealthController.make[IO]
+          healthController   <- HealthController.make[IO]("fs2-app-proxy")
           routes = healthController.routes <+> redirectController.routes
           _ <- logger.info("starting http server") *> Server
             .serve[IO](config.server, RequestLogger.httpRoutes(true, true)(routes))

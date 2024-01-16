@@ -20,7 +20,7 @@ class HealthControllerSpec extends ControllerSpec {
   "A HealthController" should {
 
     "return status on the app" in {
-      val controller = new HealthController[IO](timestamp, ipAddress, Some("v0.0.1"))
+      val controller = HealthController[IO]("test-service", timestamp, ipAddress, Some("v0.0.1"))
 
       val response = for
         _ <- clock.sleep(1.day + 2.hours + 30.minutes + 10.seconds)
@@ -30,6 +30,7 @@ class HealthControllerSpec extends ControllerSpec {
 
       val responseBody =
         s"""{
+           |"service": "test-service",
            |"startupTime": "$timestamp",
            |"appVersion": "v0.0.1",
            |"upTime": "1d2h30m10s",

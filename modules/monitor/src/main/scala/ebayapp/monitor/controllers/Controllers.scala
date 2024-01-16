@@ -19,7 +19,7 @@ trait Controllers[F[_]]:
 object Controllers:
   def make[F[_]: Async: Logger](services: Services[F]): F[Controllers[F]] =
     (
-      HealthController.make[F],
+      HealthController.make[F]("fs2-app-monitor"),
       MonitorController.make[F](services.monitor, services.monitoringEvent)
     ).mapN { (hc, mc) =>
       new Controllers[F]:
