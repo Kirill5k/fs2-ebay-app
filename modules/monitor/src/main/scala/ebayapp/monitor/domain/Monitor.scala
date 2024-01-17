@@ -1,5 +1,6 @@
 package ebayapp.monitor.domain
 
+import ebayapp.kernel.types.EnumType
 import io.circe.{Codec, Decoder, Encoder}
 import mongo4cats.bson.ObjectId
 import ebayapp.monitor.common.json.given
@@ -7,9 +8,14 @@ import ebayapp.monitor.common.json.given
 import scala.concurrent.duration.FiniteDuration
 
 opaque type Url = java.net.URL
-object Url:
+object Url {
   def apply(host: String): Url = java.net.URI.create(host).toURL
 
+  given Decoder[Url] = Decoder.decodeString.map(Url.apply)
+  given Encoder[Url] = Encoder.encodeString.contramap(_.toString)
+}
+
+object HttpMethod extends EnumType[HttpMethod](() => HttpMethod.values, EnumType.printUpperCase(_))
 enum HttpMethod:
   case GET, POST, PUT, DELETE, PATCH, HEAD
 
@@ -36,6 +42,7 @@ object Monitor {
     def apply(name: String): Name            = name
     extension (name: Name) def value: String = name
 
+  object Status extends EnumType[Status](() => Status.values, _.toString)
   enum Status:
     case Up, Down, Paused
 

@@ -11,6 +11,7 @@ object types {
   object EnumType:
     def printKebabCase[E](e: E): String = e.toString.replaceAll("(?<=[a-z])(?=[A-Z])", "-").toLowerCase
     def printLowerCase[E](e: E): String = e.toString.toLowerCase
+    def printUpperCase[E](e: E): String = e.toString.toUpperCase
 
   transparent trait EnumType[E: ClassTag](private val enums: () => Array[E], private val unwrap: E => String = EnumType.printKebabCase(_)):
     given Encoder[E]    = Encoder[String].contramap(unwrap(_))
