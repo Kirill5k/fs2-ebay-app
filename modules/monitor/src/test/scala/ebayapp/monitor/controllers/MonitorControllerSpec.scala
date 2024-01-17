@@ -60,11 +60,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |  "timeout": "1 minute",
              |  "kind": "http"
              |},
-             |"contact": {
-             |  "Email": {
-             |    "email": "foo@bar.com"
-             |  }
-             |}
+             |"contact": {"email": "foo@bar.com", "kind": "email"}
              |}""".stripMargin
 
         val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}").value, method = Method.PUT).withEntity(requestBody)
@@ -91,11 +87,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |  "timeout": "1 minute",
              |  "kind": "http"
              |},
-             |"contact": {
-             |  "Email": {
-             |    "email": "foo@bar.com"
-             |  }
-             |}
+             |"contact": {"email": "foo@bar.com", "kind": "email"}
              |}""".stripMargin
 
         val request  = Request[IO](uri = Uri.fromString(s"/monitors/${Monitors.id}").value, method = Method.PUT).withEntity(requestBody)
@@ -178,11 +170,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |  "timeout": "1 minute",
              |  "kind": "http"
              |},
-             |"contact": {
-             |  "Email": {
-             |    "email": "foo@bar.com"
-             |  }
-             |}
+             |"contact": {"email": "foo@bar.com", "kind": "email"}
              |}""".stripMargin
 
         val request  = Request[IO](uri = uri"/monitors", method = Method.POST).withEntity(requestBody)
@@ -219,11 +207,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
             |  "kind": "http",
             |  "headers": null
             |},
-            |"contact": {
-            |  "Email": {
-            |    "email": "foo@bar.com"
-            |  }
-            |}
+            |"contact": {"email": "foo@bar.com", "kind": "email"}
             |}]""".stripMargin
 
         verifyJsonResponse(response, Status.Ok, Some(expected))
@@ -283,11 +267,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |  "kind": "http",
              |  "headers": null
              |},
-             |"contact": {
-             |  "Email": {
-             |    "email": "foo@bar.com"
-             |  }
-             |}
+             |"contact": {"email": "foo@bar.com", "kind": "email"}
              |}""".stripMargin
 
         verifyJsonResponse(response, Status.Ok, Some(expected))

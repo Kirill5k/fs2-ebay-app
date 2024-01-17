@@ -4,7 +4,6 @@ import cats.Monad
 import cats.effect.Concurrent
 import cats.syntax.applicativeError.*
 import ebayapp.kernel.syntax.time.*
-import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.clients.{EmailClient, EmailMessage}
 import ebayapp.monitor.domain.Monitor.Contact
 import ebayapp.monitor.domain.{Monitor, Notification}
@@ -23,7 +22,6 @@ final private class LiveNotificationService[F[_]](
     (mon.contact match
       case Contact.Logging   => logger.info(not.messageFor(mon))
       case Contact.Email(to) => emailClient.send(EmailMessage(to, s"Monitor is ${not.statusString}: ${mon.name}", not.messageFor(mon)))
-      case contact           => F.raiseError(AppError.Invalid(s"Contact $contact is not yet supported"))
     ).handleErrorWith(e => logger.error(e)(s"error sending notification for monitor id=${mon.id} status change"))
 
   extension (notification: Notification)

@@ -48,11 +48,6 @@ object Monitor {
   enum Status:
     case Up, Down, Paused
 
-  enum Contact:
-    case Logging
-    case Email(email: String)
-    case Telegram(channelId: String)
-
   sealed trait Connection
   object Connection {
     final case class Http(
@@ -81,6 +76,29 @@ object Monitor {
 
     inline given Encoder[Connection] = Encoder.instance { case http: Http =>
       http.asJsonObject.add("kind", Json.fromString("http")).asJson
+    }
+  }
+
+  sealed trait Contact
+  object Contact {
+    case object Logging                   extends Contact
+    final case class Email(email: String) extends Contact derives Codec.AsObject
+
+    inline given Decoder[Contact] = Decoder.instance { c =>
+      c.downField("kind") match
+        case k: HCursor =>
+          k.as[String].flatMap {
+            case "logging" => Right(Logging)
+            case "email"   => c.as[Email]
+            case kind      => Left(DecodingFailure(s"Unexpected contact kind $kind", List(CursorOp.Field("kind"))))
+          }
+        case _ =>
+          deriveDecoder[Contact].tryDecode(c)
+    }
+
+    inline given Encoder[Contact] = Encoder.instance {
+      case email: Email => Json.obj("kind" := "email", "email" := email.email)
+      case Logging      => Json.obj("kind" := "logging")
     }
   }
 }
