@@ -54,7 +54,7 @@ object Monitor {
     case Telegram(channelId: String)
 
   sealed trait Connection
-  object Connection:
+  object Connection {
     final case class Http(
         url: Url,
         method: HttpMethod,
@@ -68,7 +68,7 @@ object Monitor {
         conn match
           case Connection.Http(url, method, _, _) => s"$method $url"
 
-    given Decoder[Connection] = Decoder.instance { c =>
+    inline given Decoder[Connection] = Decoder.instance { c =>
       c.downField("kind") match
         case k: HCursor =>
           k.as[String].flatMap {
@@ -79,9 +79,10 @@ object Monitor {
           deriveDecoder[Connection].tryDecode(c)
     }
 
-    given Encoder[Connection] = Encoder.instance { case http: Http =>
+    inline given Encoder[Connection] = Encoder.instance { case http: Http =>
       http.asJsonObject.add("kind", Json.fromString("http")).asJson
     }
+  }
 }
 
 final case class CreateMonitor(

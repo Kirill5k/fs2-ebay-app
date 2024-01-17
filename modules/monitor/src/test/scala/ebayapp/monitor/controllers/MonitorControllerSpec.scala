@@ -55,11 +55,10 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"active": true,
              |"interval": "10 minutes",
              |"connection": {
-             |  "Http": {
-             |    "url": "http://foo.bar",
-             |    "method": "GET",
-             |    "timeout": "1 minute"
-             |  }
+             |  "url": "http://foo.bar",
+             |  "method": "GET",
+             |  "timeout": "1 minute",
+             |  "kind": "http"
              |},
              |"contact": {
              |  "Email": {
@@ -87,11 +86,10 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"active": true,
              |"interval": "10 minutes",
              |"connection": {
-             |  "Http": {
-             |    "url": "http://foo.bar",
-             |    "method": "GET",
-             |    "timeout": "1 minute"
-             |  }
+             |  "url": "http://foo.bar",
+             |  "method": "GET",
+             |  "timeout": "1 minute",
+             |  "kind": "http"
              |},
              |"contact": {
              |  "Email": {
@@ -175,11 +173,10 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"name": "test",
              |"interval": "10 minutes",
              |"connection": {
-             |  "Http": {
-             |    "url": "http://foo.bar",
-             |    "method": "GET",
-             |    "timeout": "1 minute"
-             |  }
+             |  "url": "http://foo.bar",
+             |  "method": "GET",
+             |  "timeout": "1 minute",
+             |  "kind": "http"
              |},
              |"contact": {
              |  "Email": {
@@ -216,12 +213,11 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
             |"active": true,
             |"interval": "10 minutes",
             |"connection": {
-            |  "Http": {
-            |    "url": "http://foo.bar",
-            |    "method": "GET",
-            |    "timeout": "1 minute",
-            |    "headers": null
-            |  }
+            |  "url": "http://foo.bar",
+            |  "method": "GET",
+            |  "timeout": "1 minute",
+            |  "kind": "http",
+            |  "headers": null
             |},
             |"contact": {
             |  "Email": {
@@ -281,12 +277,11 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"active": true,
              |"interval": "10 minutes",
              |"connection": {
-             |  "Http": {
-             |    "url": "http://foo.bar",
-             |    "method": "GET",
-             |    "timeout": "1 minute",
-             |    "headers": null
-             |  }
+             |  "url": "http://foo.bar",
+             |  "method": "GET",
+             |  "timeout": "1 minute",
+             |  "kind": "http",
+             |  "headers": null
              |},
              |"contact": {
              |  "Email": {
