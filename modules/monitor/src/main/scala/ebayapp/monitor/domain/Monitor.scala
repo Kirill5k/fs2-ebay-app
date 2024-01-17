@@ -1,9 +1,11 @@
 package ebayapp.monitor.domain
 
 import ebayapp.kernel.types.EnumType
-import io.circe.{Codec, Decoder, Encoder}
-import mongo4cats.bson.ObjectId
 import ebayapp.monitor.common.json.given
+import io.circe.generic.semiauto.deriveDecoder
+import io.circe.syntax.*
+import io.circe.*
+import mongo4cats.bson.ObjectId
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -65,6 +67,21 @@ object Monitor {
       def asString: String =
         conn match
           case Connection.Http(url, method, _, _) => s"$method $url"
+
+    given Decoder[Connection] = Decoder.instance { c =>
+      c.downField("kind") match
+        case k: HCursor =>
+          k.as[String].flatMap {
+            case "http" => c.as[Http]
+            case kind   => Left(DecodingFailure(s"Unexpected connection kind $kind", List(CursorOp.Field("kind"))))
+          }
+        case _ =>
+          deriveDecoder[Connection].tryDecode(c)
+    }
+
+    given Encoder[Connection] = Encoder.instance { case http: Http =>
+      http.asJsonObject.add("kind", Json.fromString("http")).asJson
+    }
 }
 
 final case class CreateMonitor(
