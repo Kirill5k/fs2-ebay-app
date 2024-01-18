@@ -19,6 +19,7 @@ class ScheduleSpec extends AnyWordSpec with Matchers with EitherValues {
         val cron = Schedule.Periodic(5.hours)
 
         cron.nextExecutionTime(ts) mustBe Instant.parse("2022-01-01T05:00:00Z")
+        cron.durationUntilNextExecutionTime(ts) mustBe 5.hours
       }
 
       "encode and decode into json" in {

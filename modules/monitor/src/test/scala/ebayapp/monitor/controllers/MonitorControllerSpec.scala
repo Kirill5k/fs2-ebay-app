@@ -53,7 +53,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"id": "${monitor.id}",
              |"name": "${monitor.name}",
              |"active": true,
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "interval": "10 minutes",
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",
@@ -80,7 +80,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"id": "foo",
              |"name": "bar",
              |"active": true,
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "interval": "10 minutes",
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",
@@ -163,7 +163,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
         val requestBody =
           s"""{
              |"name": "test",
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "interval": "10 minutes",
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",
@@ -199,7 +199,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
             |"id": "${monitor.id}",
             |"name": "${monitor.name}",
             |"active": true,
-            |"interval": "10 minutes",
+            |"schedule": {"kind": "periodic", "interval": "10 minutes",
             |"connection": {
             |  "url": "http://foo.bar",
             |  "method": "GET",
@@ -259,7 +259,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"id": "${monitor.id}",
              |"name": "${monitor.name}",
              |"active": true,
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "period": "10 minutes"},
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",

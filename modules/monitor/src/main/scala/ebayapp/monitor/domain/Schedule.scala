@@ -6,6 +6,7 @@ import com.cronutils.model.definition.CronDefinitionBuilder
 import com.cronutils.model.time.ExecutionTime
 import com.cronutils.parser.CronParser
 import ebayapp.monitor.common.json.given
+import ebayapp.kernel.syntax.time.*
 import io.circe.{CursorOp, Decoder, DecodingFailure, Encoder, Json}
 import io.circe.syntax.*
 
@@ -15,6 +16,8 @@ import scala.util.Try
 
 sealed trait Schedule(val kind: String):
   def nextExecutionTime(lastExecutionTime: Instant): Instant
+  def durationUntilNextExecutionTime(lastExecutionTime: Instant): FiniteDuration =
+    lastExecutionTime.durationBetween(nextExecutionTime(lastExecutionTime))
 
 object Schedule {
   final case class Periodic(period: FiniteDuration) extends Schedule("periodic"):
@@ -51,8 +54,7 @@ object Schedule {
   }
 
   inline given Encoder[Schedule] = Encoder.instance {
-    case cron: Cron         => Json.obj(discriminatorField -> Json.fromString(cron.kind), "cron" -> Json.fromString(cron.cron.asString()))
-    case periodic: Periodic => Json.obj(discriminatorField -> Json.fromString(periodic.kind), "period" -> periodic.period.asJson)
+    case cron: Cron         => Json.obj(discriminatorField := cron.kind, "cron" := cron.cron.asString())
+    case periodic: Periodic => Json.obj(discriminatorField := periodic.kind, "period" -> periodic.period.asJson)
   }
 }
-

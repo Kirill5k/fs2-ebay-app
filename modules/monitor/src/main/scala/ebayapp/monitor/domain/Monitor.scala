@@ -25,7 +25,7 @@ final case class Monitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
     active: Boolean,
-    interval: FiniteDuration,
+    schedule: Schedule,
     contact: Monitor.Contact
 )
 
@@ -100,6 +100,6 @@ object Monitor {
 final case class CreateMonitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
-    interval: FiniteDuration,
+    schedule: Schedule,
     contact: Monitor.Contact
 )

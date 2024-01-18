@@ -12,7 +12,7 @@ import ebayapp.monitor.controllers.views.{
   MonitorView,
   MonitoringEventView
 }
-import ebayapp.monitor.domain.{HttpMethod, Monitor, Url}
+import ebayapp.monitor.domain.{HttpMethod, Monitor, Schedule, Url}
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import org.bson.types.ObjectId
 import org.http4s.HttpRoutes
@@ -92,6 +92,7 @@ object MonitorController extends TapirJsonCirce with SchemaDerivation {
   given Schema[Monitor.Contact]    = Schema.string
   given Schema[Monitor.Connection] = Schema.string
   given Schema[Monitor.Status]     = Schema.string
+  given Schema[Schedule]           = Schema.string
 
   private val basePath   = "monitors"
   private val idPath     = basePath / path[String]
