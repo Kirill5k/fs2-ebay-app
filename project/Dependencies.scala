@@ -12,6 +12,7 @@ object Dependencies {
     val log4cats        = "2.6.0"
     val tapir           = "1.9.0"
     val courier         = "3.2.0"
+    val cronUtils       = "9.2.1"
 
     val scalaTest    = "3.2.15"
     val mockito      = "3.2.15.0"
@@ -21,6 +22,7 @@ object Dependencies {
   private object Libraries {
     val courier      = "com.github.daddykotex"  %% "courier"       % Versions.courier
     val mockJavaMail = "org.jvnet.mock-javamail" % "mock-javamail" % Versions.mockJavaMail
+    val cronUtils    = "com.cronutils"           % "cron-utils"    % Versions.cronUtils
 
     object mongo4cats {
       val core     = "io.github.kirill5k" %% "mongo4cats-core"     % Versions.mongo4cats
@@ -95,6 +97,7 @@ object Dependencies {
   )
 
   val monitor = Seq(
+    Libraries.cronUtils,
     Libraries.courier,
     Libraries.mockJavaMail % Test
   )
