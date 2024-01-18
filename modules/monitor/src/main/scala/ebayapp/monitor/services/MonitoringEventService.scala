@@ -52,7 +52,7 @@ final private class LiveMonitoringEventService[F[_]](
       status <- F.ifTrueOrElse(monitor.active)(checkStatus(monitor), paused)
       (downTime, notification) = compareStatus(status, previousEvent.map(_.statusCheck), previousEvent.flatMap(_.downTime))
       _ <- repository.save(MonitoringEvent(monitor.id, status, downTime))
-      _ <- F.whenA(notification.nonEmpty)(dispatcher.dispatch(Action.Notify(monitor, notification.get)))
+      _ <- notification.fold(F.unit)(n => dispatcher.dispatch(Action.Notify(monitor, n)))
       _ <- dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - status.responseTime))
     yield ()
 
