@@ -2,12 +2,22 @@ package ebayapp.kernel
 
 import ebayapp.kernel.errors.AppError
 import io.circe.{Decoder, Encoder, KeyDecoder, KeyEncoder}
+import mongo4cats.bson.ObjectId
 import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.{Codec, DecodeResult, Schema}
 
 import scala.reflect.ClassTag
 
 object types {
+  transparent trait IdType[Id]:
+    def apply(id: String): Id   = id.asInstanceOf[Id]
+    def apply(id: ObjectId): Id = apply(id.toHexString)
+    given Encoder[Id]           = Encoder[String].contramap(_.value)
+    given Decoder[Id]           = Decoder[String].map(apply)
+    extension (id: Id)
+      def value: String        = id.asInstanceOf[String]
+      def toObjectId: ObjectId = ObjectId(value)
+
   object EnumType:
     def printKebabCase[E](e: E): String = e.toString.replaceAll("(?<=[a-z])(?=[A-Z])", "-").toLowerCase
     def printLowerCase[E](e: E): String = e.toString.toLowerCase

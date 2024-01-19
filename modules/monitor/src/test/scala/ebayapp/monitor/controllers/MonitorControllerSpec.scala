@@ -53,7 +53,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"id": "${monitor.id}",
              |"name": "${monitor.name}",
              |"active": true,
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "period": "10 minutes"},
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",
@@ -80,7 +80,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"id": "foo",
              |"name": "bar",
              |"active": true,
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "period": "10 minutes"},
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",
@@ -148,7 +148,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
         val response = controller.routes.orNotFound.run(request)
 
         val error =
-          "Invalid value for: body (Missing required field at 'name', Missing required field at 'connection', Missing required field at 'interval', Missing required field at 'contact')"
+          "Invalid value for: body (Missing required field at 'name', Missing required field at 'connection', Missing required field at 'schedule', Missing required field at 'contact')"
         verifyJsonResponse(response, Status.BadRequest, Some(s"""{"message":"$error"}"""))
         verifyNoInteractions(meSvc, monSvc)
       }
@@ -163,7 +163,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
         val requestBody =
           s"""{
              |"name": "test",
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "period": "10 minutes"},
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",
@@ -199,7 +199,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
             |"id": "${monitor.id}",
             |"name": "${monitor.name}",
             |"active": true,
-            |"interval": "10 minutes",
+            |"schedule": {"kind": "periodic", "period": "10 minutes"},
             |"connection": {
             |  "url": "http://foo.bar",
             |  "method": "GET",
@@ -259,7 +259,7 @@ class MonitorControllerSpec extends ControllerSpec with EitherValues {
              |"id": "${monitor.id}",
              |"name": "${monitor.name}",
              |"active": true,
-             |"interval": "10 minutes",
+             |"schedule": {"kind": "periodic", "period": "10 minutes"},
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",

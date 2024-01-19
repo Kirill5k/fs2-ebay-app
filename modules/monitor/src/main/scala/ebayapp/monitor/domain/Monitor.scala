@@ -1,11 +1,10 @@
 package ebayapp.monitor.domain
 
-import ebayapp.kernel.types.EnumType
+import ebayapp.kernel.types.{EnumType, IdType}
 import ebayapp.monitor.common.json.given
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax.*
 import io.circe.*
-import mongo4cats.bson.ObjectId
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -26,18 +25,13 @@ final case class Monitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
     active: Boolean,
-    interval: FiniteDuration,
+    schedule: Schedule,
     contact: Monitor.Contact
 )
 
 object Monitor {
   opaque type Id = String
-  object Id:
-    def apply(id: String): Id   = id
-    def apply(id: ObjectId): Id = id.toHexString
-    extension (id: Id)
-      def toObjectId: ObjectId = ObjectId(id)
-      def value: String        = id
+  object Id extends IdType[Id]
 
   opaque type Name <: String = String
   object Name:
@@ -106,6 +100,6 @@ object Monitor {
 final case class CreateMonitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
-    interval: FiniteDuration,
+    schedule: Schedule,
     contact: Monitor.Contact
 )

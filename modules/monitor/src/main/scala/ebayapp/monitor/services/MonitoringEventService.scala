@@ -40,9 +40,10 @@ final private class LiveMonitoringEventService[F[_]](
           dispatcher.dispatch(Action.Query(monitor, None))
         case Some(event) =>
           clock.now.flatMap { now =>
-            F.ifTrueOrElse(now.isAfter(event.statusCheck.time.plus(monitor.interval)))(
+            val nextExecTime = monitor.schedule.nextExecutionTime(event.statusCheck.time)
+            F.ifTrueOrElse(now.isAfter(nextExecTime))(
               dispatcher.dispatch(Action.Query(monitor, Some(event))),
-              dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - event.statusCheck.time.durationBetween(now)))
+              dispatcher.dispatch(Action.Reschedule(monitor.id, now.durationBetween(nextExecTime)))
             )
           }
       }
@@ -52,8 +53,8 @@ final private class LiveMonitoringEventService[F[_]](
       status <- F.ifTrueOrElse(monitor.active)(checkStatus(monitor), paused)
       (downTime, notification) = compareStatus(status, previousEvent.map(_.statusCheck), previousEvent.flatMap(_.downTime))
       _ <- repository.save(MonitoringEvent(monitor.id, status, downTime))
-      _ <- F.whenA(notification.nonEmpty)(dispatcher.dispatch(Action.Notify(monitor, notification.get)))
-      _ <- dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.interval - status.responseTime))
+      _ <- F.whenNonEmpty(notification)(n => dispatcher.dispatch(Action.Notify(monitor, n)))
+      _ <- dispatcher.dispatch(Action.Reschedule(monitor.id, monitor.schedule.durationUntilNextExecutionTime(status.time)))
     yield ()
 
   private def checkStatus(monitor: Monitor): F[MonitoringEvent.StatusCheck] =

@@ -39,36 +39,39 @@ class MonitoringEventServiceSpec extends IOWordSpec {
         }
       }
 
-      "dispatch query action if monitor hasn't been queried for longer than period" in {
+      "dispatch query action if monitor with periodic schedule hasn't been queried for longer than its period" in {
         val (disp, repo, http) = mocks
-        val event              = MonitoringEvents.up(ts = now.minus(Monitors.monitor.interval + 10.seconds))
+        val monitor            = Monitors.gen()
+        val event              = MonitoringEvents.up(ts = now.minus(monitor.schedule.durationUntilNextExecutionTime(now) + 10.seconds))
         when(repo.findLatestBy(any[Monitor.Id])).thenReturn(IO.some(event))
 
         val result = for
           svc <- MonitoringEventService.make(disp, repo, http)
-          _   <- svc.schedule(Monitors.monitor)
+          _   <- svc.schedule(monitor)
         yield ()
 
         result.asserting { res =>
-          verify(repo).findLatestBy(Monitors.id)
-          disp.submittedActions mustBe List(Action.Query(Monitors.monitor, Some(event)))
+          verify(repo).findLatestBy(monitor.id)
+          disp.submittedActions mustBe List(Action.Query(monitor, Some(event)))
           res mustBe ()
         }
       }
 
       "reschedule monitor if it was checked recently" in {
-        val (disp, repo, http) = mocks
-        val event              = MonitoringEvents.up(ts = now.minus(300.seconds))
+        val (disp, repo, http)    = mocks
+        val monitor               = Monitors.gen()
+        val event                 = MonitoringEvents.up(ts = now.minusSeconds(30))
+        val durationUntilNextExec = monitor.schedule.durationUntilNextExecutionTime(event.statusCheck.time)
         when(repo.findLatestBy(any[Monitor.Id])).thenReturn(IO.some(event))
 
         val result = for
           svc <- MonitoringEventService.make(disp, repo, http)
-          _   <- svc.schedule(Monitors.monitor)
+          _   <- svc.schedule(monitor)
         yield ()
 
         result.asserting { res =>
-          verify(repo).findLatestBy(Monitors.id)
-          disp.submittedActions mustBe List(Action.Reschedule(Monitors.id, 300.seconds))
+          verify(repo).findLatestBy(monitor.id)
+          disp.submittedActions mustBe List(Action.Reschedule(monitor.id, durationUntilNextExec - 30.seconds))
           res mustBe ()
         }
       }
@@ -187,10 +190,12 @@ class MonitoringEventServiceSpec extends IOWordSpec {
       if (notification.isDefined) {
         disp.submittedActions mustBe List(
           Action.Notify(monitor, notification.get),
-          Action.Reschedule(monitor.id, monitor.interval - currentStatusCheck.responseTime)
+          Action.Reschedule(monitor.id, monitor.schedule.durationUntilNextExecutionTime(currentStatusCheck.time))
         )
       } else {
-        disp.submittedActions mustBe List(Action.Reschedule(monitor.id, monitor.interval - currentStatusCheck.responseTime))
+        disp.submittedActions mustBe List(
+          Action.Reschedule(monitor.id, monitor.schedule.durationUntilNextExecutionTime(currentStatusCheck.time))
+        )
       }
       verify(http).status(Monitors.httpConnection)
       verify(repo).save(expectedEvent)
