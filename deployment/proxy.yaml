@@ -50,18 +50,20 @@ spec:
                 name: "fs2-app-proxy-config"
           resources:
             requests:
-              memory: "256Mi"
+              memory: "196Mi"
               cpu: "0.05"
             limits:
-              memory: "512Mi"
-              cpu: "0.3"
+              memory: "256Mi"
+              cpu: "0.1"
           readinessProbe:
             httpGet:
               path: /health/status
               port: 8080
-            periodSeconds: 30
+            periodSeconds: 15
+            initialDelaySeconds: 20
           livenessProbe:
             httpGet:
               path: /health/status
               port: 8080
-            periodSeconds: 30
+            periodSeconds: 60
+            initialDelaySeconds: 20

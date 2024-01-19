@@ -66,9 +66,11 @@ spec:
             httpGet:
               path: /health/status
               port: 8080
-            periodSeconds: 60
+            periodSeconds: 15
+            initialDelaySeconds: 20
           livenessProbe:
             httpGet:
               path: /health/status
               port: 8080
             periodSeconds: 60
+            initialDelaySeconds: 20
