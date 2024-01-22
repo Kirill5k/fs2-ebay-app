@@ -39,7 +39,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
         }
       }
 
-      "dispatch query action if monitor with periodic schedule hasn't been queried for longer than its period" in {
+      "dispatch query action if monitor hasn't been queried for longer than duration until next execution" in {
         val (disp, repo, http) = mocks
         val monitor            = Monitors.gen()
         val event              = MonitoringEvents.up(ts = now.minus(monitor.schedule.durationUntilNextExecutionTime(now) + 10.seconds))
