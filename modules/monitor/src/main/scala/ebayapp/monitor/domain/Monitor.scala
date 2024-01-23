@@ -1,12 +1,20 @@
 package ebayapp.monitor.domain
 
+import cats.syntax.either.*
+import com.cronutils.model.{Cron as JCron, CronType}
+import com.cronutils.model.definition.CronDefinitionBuilder
+import com.cronutils.model.time.ExecutionTime
+import com.cronutils.parser.CronParser
 import ebayapp.kernel.types.{EnumType, IdType}
 import ebayapp.monitor.common.json.given
+import ebayapp.kernel.syntax.time.*
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax.*
 import io.circe.*
 
 import scala.concurrent.duration.FiniteDuration
+import java.time.{Instant, ZoneOffset}
+import scala.util.Try
 
 opaque type Url = java.net.URL
 object Url {
@@ -25,11 +33,13 @@ final case class Monitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
     active: Boolean,
-    schedule: Schedule,
+    schedule: Monitor.Schedule,
     contact: Monitor.Contact
 )
 
 object Monitor {
+  private val discriminatorField = "kind"
+
   opaque type Id = String
   object Id extends IdType[Id]
 
@@ -58,18 +68,18 @@ object Monitor {
           case Connection.Http(url, method, _, _) => s"$method $url"
 
     inline given Decoder[Connection] = Decoder.instance { c =>
-      c.downField("kind") match
+      c.downField(discriminatorField) match
         case k: HCursor =>
           k.as[String].flatMap {
             case "http" => c.as[Http]
-            case kind   => Left(DecodingFailure(s"Unexpected connection kind $kind", List(CursorOp.Field("kind"))))
+            case kind   => Left(DecodingFailure(s"Unexpected connection kind $kind", List(CursorOp.Field(discriminatorField))))
           }
         case _ =>
           deriveDecoder[Connection].tryDecode(c)
     }
 
     inline given Encoder[Connection] = Encoder.instance { case http: Http =>
-      http.asJsonObject.add("kind", Json.fromString("http")).asJson
+      http.asJsonObject.add(discriminatorField, Json.fromString("http")).asJson
     }
   }
 
@@ -79,20 +89,64 @@ object Monitor {
     final case class Email(email: String) extends Contact derives Codec.AsObject
 
     inline given Decoder[Contact] = Decoder.instance { c =>
-      c.downField("kind") match
+      c.downField(discriminatorField) match
         case k: HCursor =>
           k.as[String].flatMap {
             case "logging" => Right(Logging)
             case "email"   => c.as[Email]
-            case kind      => Left(DecodingFailure(s"Unexpected contact kind $kind", List(CursorOp.Field("kind"))))
+            case kind      => Left(DecodingFailure(s"Unexpected contact kind $kind", List(CursorOp.Field(discriminatorField))))
           }
         case _ =>
           deriveDecoder[Contact].tryDecode(c)
     }
 
     inline given Encoder[Contact] = Encoder.instance {
-      case email: Email => Json.obj("kind" := "email", "email" := email.email)
-      case Logging      => Json.obj("kind" := "logging")
+      case email: Email => Json.obj(discriminatorField := "email", "email" := email.email)
+      case Logging      => Json.obj(discriminatorField := "logging")
+    }
+  }
+
+  sealed trait Schedule(val kind: String):
+    def nextExecutionTime(lastExecutionTime: Instant): Instant
+
+    def durationUntilNextExecutionTime(lastExecutionTime: Instant): FiniteDuration =
+      lastExecutionTime.durationBetween(nextExecutionTime(lastExecutionTime))
+
+  object Schedule {
+    final case class Periodic(period: FiniteDuration) extends Schedule("periodic"):
+      override def nextExecutionTime(lastExecutionTime: Instant): Instant =
+        lastExecutionTime.plusSeconds(period.toSeconds)
+
+    final case class Cron(cron: JCron) extends Schedule("cron"):
+      override def nextExecutionTime(lastExecutionTime: Instant): Instant =
+        ExecutionTime.forCron(cron).nextExecution(lastExecutionTime.atZone(ZoneOffset.UTC)).orElseThrow().toInstant
+
+    object Cron {
+      private val definition = CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)
+      private val parser = new CronParser(definition)
+
+      def apply(expression: String): Either[Throwable, Cron] =
+        Try(parser.parse(expression)).map(Cron.apply).toEither
+
+      def unsafe(expression: String): Cron =
+        Cron(parser.parse(expression))
+    }
+
+    inline given Decoder[Schedule] = Decoder.instance { c =>
+      c.downField(discriminatorField).as[String].flatMap {
+        case "cron" =>
+          c.downField("cron")
+            .as[String]
+            .flatMap(Cron.apply)
+            .leftMap(e => DecodingFailure(e.getMessage, List(CursorOp.Field("cron"))))
+        case "periodic" => c.downField("period").as[FiniteDuration].map(Periodic.apply)
+        case kind => Left(DecodingFailure(s"Unexpected schedule kind $kind", List(CursorOp.Field(discriminatorField))))
+      }
+    }
+
+    inline given Encoder[Schedule] = Encoder.instance {
+      case cron: Cron => Json.obj(discriminatorField := cron.kind, "cron" := cron.cron.asString())
+      case periodic: Periodic => Json.obj(discriminatorField := periodic.kind, "period" -> periodic.period.asJson)
     }
   }
 }
@@ -100,6 +154,6 @@ object Monitor {
 final case class CreateMonitor(
     name: Monitor.Name,
     connection: Monitor.Connection,
-    schedule: Schedule,
+    schedule: Monitor.Schedule,
     contact: Monitor.Contact
 )

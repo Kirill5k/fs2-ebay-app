@@ -2,7 +2,7 @@ package ebayapp.monitor.controllers
 
 import ebayapp.monitor.common.JsonCodecs
 import io.circe.Codec
-import ebayapp.monitor.domain.{CreateMonitor, Monitor, MonitoringEvent, Schedule}
+import ebayapp.monitor.domain.{CreateMonitor, Monitor, MonitoringEvent}
 
 import java.time.Instant
 import scala.concurrent.duration.FiniteDuration
@@ -13,7 +13,7 @@ private[controllers] object views extends JsonCodecs {
       id: String,
       name: String,
       active: Boolean,
-      schedule: Schedule,
+      schedule: Monitor.Schedule,
       connection: Monitor.Connection,
       contact: Monitor.Contact
   ) derives Codec.AsObject:
@@ -53,7 +53,7 @@ private[controllers] object views extends JsonCodecs {
   final case class CreateMonitorRequest(
       name: String,
       connection: Monitor.Connection,
-      schedule: Schedule,
+      schedule: Monitor.Schedule,
       contact: Monitor.Contact
   ) derives Codec.AsObject:
     def toDomain: CreateMonitor = CreateMonitor(Monitor.Name(name), connection, schedule, contact)

@@ -16,36 +16,35 @@ class ScheduleSpec extends AnyWordSpec with Matchers with EitherValues {
   "A Schedule" when {
     "Periodic" should {
       "return next execution time based on period" in {
-        val cron = Schedule.Periodic(5.hours)
+        val cron = Monitor.Schedule.Periodic(5.hours)
 
         cron.nextExecutionTime(ts) mustBe Instant.parse("2022-01-01T05:00:00Z")
         cron.durationUntilNextExecutionTime(ts) mustBe 5.hours
       }
 
       "encode and decode into json" in {
-        val schedule: Schedule = Schedule.Periodic(5.hours)
-        val json               = schedule.asJson.noSpaces
+        val schedule: Monitor.Schedule = Monitor.Schedule.Periodic(5.hours)
+        val json                       = schedule.asJson.noSpaces
 
-        decode[Schedule](json) mustBe Right(schedule)
+        decode[Monitor.Schedule](json) mustBe Right(schedule)
         json mustBe """{"kind":"periodic","period":"5 hours"}"""
       }
     }
 
     "Cron" should {
       "return next execution time based on cron schedule" in {
-        val cron = Schedule.Cron("0 7,20 * * 1-5").value // every monday-friday at 7:00 and 20:00 UTC
+        val cron = Monitor.Schedule.Cron("0 7,20 * * 1-5").value // every monday-friday at 7:00 and 20:00 UTC
 
         cron.nextExecutionTime(ts) mustBe Instant.parse("2022-01-03T07:00:00Z")
       }
 
       "encode and decode into json" in {
-        val schedule: Schedule = Schedule.Cron("0 7,20 * * 1-5").value
-        val json               = schedule.asJson.noSpaces
+        val schedule: Monitor.Schedule = Monitor.Schedule.Cron("0 7,20 * * 1-5").value
+        val json     = schedule.asJson.noSpaces
 
-        decode[Schedule](json) mustBe a[Right[_, _]]
+        decode[Monitor.Schedule](json) mustBe a[Right[_, _]]
         json mustBe """{"kind":"cron","cron":"0 7,20 * * 1-5"}"""
       }
     }
   }
 }
-

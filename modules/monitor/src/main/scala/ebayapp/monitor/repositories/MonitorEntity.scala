@@ -4,7 +4,7 @@ import io.circe.Codec
 import mongo4cats.bson.ObjectId
 import mongo4cats.circe.given
 import ebayapp.monitor.common.json.given
-import ebayapp.monitor.domain.{CreateMonitor, Monitor, Schedule}
+import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -14,7 +14,7 @@ final private[repositories] case class MonitorEntity(
     connection: Monitor.Connection,
     active: Boolean,
     interval: Option[FiniteDuration],
-    schedule: Option[Schedule],
+    schedule: Option[Monitor.Schedule],
     contact: Monitor.Contact
 ) derives Codec.AsObject:
   def toDomain: Monitor =
@@ -23,7 +23,7 @@ final private[repositories] case class MonitorEntity(
       Monitor.Name(name),
       connection,
       active,
-      schedule.getOrElse(Schedule.Periodic(interval.get)),
+      schedule.getOrElse(Monitor.Schedule.Periodic(interval.get)),
       contact
     )
 
