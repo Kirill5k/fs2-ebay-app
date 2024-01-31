@@ -27,41 +27,45 @@ final private class LiveMonitorRepository[F[_]](
     private val collection: MongoCollection[F, MonitorEntity]
 )(using
     F: Async[F]
-) extends MonitorRepository[F]:
+) extends MonitorRepository[F] {
 
   def save(monitor: CreateMonitor): F[Monitor] =
     val entity = MonitorEntity.from(monitor)
     collection.insertOne(entity).as(entity.toDomain)
 
-  def all: F[List[Monitor]]      = collection.find.all.mapList(_.toDomain)
+  def all: F[List[Monitor]] = collection.find.all.mapList(_.toDomain)
+
   def stream: Stream[F, Monitor] = collection.find.stream.map(_.toDomain)
 
   def find(id: Monitor.Id): F[Option[Monitor]] =
     collection
-      .find(Filter.idEq(id.toObjectId))
+      .find(id.eqFilter)
       .first
       .mapOpt(_.toDomain)
 
   def delete(id: Monitor.Id): F[Unit] =
     collection
-      .deleteOne(Filter.idEq(id.toObjectId))
+      .deleteOne(id.eqFilter)
       .map(_.getDeletedCount)
       .flatMap(notFoundErrorIfNoMatches(id))
 
   def activate(id: Monitor.Id, active: Boolean): F[Unit] =
     collection
-      .updateOne(Filter.idEq(id.toObjectId), Update.set("active", active))
+      .updateOne(id.eqFilter, Update.set("active", active))
       .map(_.getMatchedCount)
       .flatMap(notFoundErrorIfNoMatches(id))
 
   def update(monitor: Monitor): F[Unit] =
     collection
-      .replaceOne(Filter.idEq(monitor.id.toObjectId), MonitorEntity.from(monitor))
+      .replaceOne(monitor.id.eqFilter, MonitorEntity.from(monitor))
       .map(_.getMatchedCount)
       .flatMap(notFoundErrorIfNoMatches(monitor.id))
 
   private def notFoundErrorIfNoMatches(id: Monitor.Id)(matchCount: Long): F[Unit] =
     F.raiseWhen(matchCount == 0)(AppError.NotFound(s"Monitor with id $id does not exist"))
+
+  extension (id: Monitor.Id) private def eqFilter: Filter = Filter.idEq(id.toObjectId)
+}
 
 object MonitorRepository extends MongoJsonCodecs:
   private val collectionName = "monitors"

@@ -20,14 +20,14 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
     private val collection: MongoCollection[F, MonitoringEventEntity]
 ) extends MonitoringEventRepository[F]:
 
-  private val monitorIdFilter = (id: Monitor.Id) => Filter.eq("monitorId", id.toObjectId)
+  extension (id: Monitor.Id) private def eqFilter: Filter = Filter.eq("monitorId", id.toObjectId)
 
   def save(event: MonitoringEvent): F[Unit] =
     collection.insertOne(MonitoringEventEntity.from(event)).void
 
   def findAllBy(mid: Monitor.Id, limit: Int): F[List[MonitoringEvent]] =
     collection
-      .find(monitorIdFilter(mid))
+      .find(mid.eqFilter)
       .sortByDesc("statusCheck.time")
       .limit(limit)
       .all
@@ -35,7 +35,7 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
 
   def findLatestBy(mid: Monitor.Id): F[Option[MonitoringEvent]] =
     collection
-      .find(monitorIdFilter(mid))
+      .find(mid.eqFilter)
       .sortByDesc("statusCheck.time")
       .first
       .mapOpt(_.toDomain)
