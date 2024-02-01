@@ -1,7 +1,7 @@
 package ebayapp.kernel.syntax
 
 import java.time.temporal.ChronoUnit
-import java.time.Instant
+import java.time.{Instant, ZoneOffset, ZonedDateTime}
 import scala.concurrent.duration.*
 import scala.util.Try
 
@@ -16,6 +16,7 @@ object time:
       Try(Instant.parse(localDate)).toEither
 
   extension (ts: Instant)
+    def utc: ZonedDateTime                                = ts.atZone(ZoneOffset.UTC)
     def minus(duration: FiniteDuration): Instant          = ts.minusNanos(duration.toNanos)
     def plus(duration: FiniteDuration): Instant           = ts.plusNanos(duration.toNanos)
     def truncatedToSeconds: Instant                       = ts.truncatedTo(ChronoUnit.SECONDS)

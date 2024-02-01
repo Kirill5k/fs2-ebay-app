@@ -1,19 +1,19 @@
 package ebayapp.monitor.domain
 
 import cats.syntax.either.*
-import com.cronutils.model.{Cron as JCron, CronType}
 import com.cronutils.model.definition.CronDefinitionBuilder
 import com.cronutils.model.time.ExecutionTime
+import com.cronutils.model.{CronType, Cron as JCron}
 import com.cronutils.parser.CronParser
+import ebayapp.kernel.syntax.time.*
 import ebayapp.kernel.types.{EnumType, IdType}
 import ebayapp.monitor.common.json.given
-import ebayapp.kernel.syntax.time.*
+import io.circe.*
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax.*
-import io.circe.*
 
+import java.time.Instant
 import scala.concurrent.duration.FiniteDuration
-import java.time.{Instant, ZoneOffset}
 import scala.util.Try
 
 opaque type Url = java.net.URL
@@ -119,11 +119,10 @@ object Monitor {
 
     final case class Cron(cron: JCron) extends Schedule("cron"):
       override def nextExecutionTime(lastExecutionTime: Instant): Instant =
-        ExecutionTime.forCron(cron).nextExecution(lastExecutionTime.atZone(ZoneOffset.UTC)).orElseThrow().toInstant
+        ExecutionTime.forCron(cron).nextExecution(lastExecutionTime.utc).orElseThrow().toInstant
 
     object Cron {
-      private val definition = CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)
-      private val parser = new CronParser(definition)
+      private val parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX))
 
       def apply(expression: String): Either[Throwable, Cron] =
         Try(parser.parse(expression)).map(Cron.apply).toEither
