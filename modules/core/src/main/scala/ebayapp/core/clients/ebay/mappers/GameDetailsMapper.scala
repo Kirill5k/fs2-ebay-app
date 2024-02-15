@@ -289,6 +289,7 @@ private[mappers] object GameDetailsMapper {
   extension (str: String)
     def withoutSpecialChars: String =
       str
+        .replaceAll("ß", "b")
         .replaceAll("&#\\d+;", "")
         .replaceAll("#\\d{4,};", "")
         .replaceAll("100%$", "")
