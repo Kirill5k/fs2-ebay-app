@@ -109,7 +109,7 @@ private[mappers] object GameDetailsMapper {
     "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very|mega) rare", "award winning",
     "Instruction(s)? Book", "works (great|perfectly( fine)?)", "Unwanted Gift", "limited (release|quantity)",
     "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console",
-    "\\brated \\d+\\b",  "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b", "must see",
+    "\\brated \\d+\\b",  "\\b(Rated )?(For )?age(s)?( )?\\d+(\\s+over)?\\b", "must see", "3 for 2",
     "shrink( )?wrapped", "\\bcert( )?\\d+\\b", "no dlc(s)?( included)?", "dlc( not)? included",
     "(still )?in( (plastic|cellophane))? wrap(p)?(ing|er)", "\\d supplied", "see (pictures|photos|pics)", "Refurbished",
     "((region|europe) )?((R2( )?)?\\bPAL\\b|\\bNTSC\\b)( (\\d+|r2))?( (region|format|version))?",
