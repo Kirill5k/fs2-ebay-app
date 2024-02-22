@@ -1,19 +1,23 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{IOWordSpec, MockConfigProvider}
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.SearchClient
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{DealsFinderConfig, DealsFinderRequest}
 import ebayapp.core.domain.ResellableItemBuilder.makeVideoGame
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
+import ebayapp.kernel.IOWordSpec
 import org.mockito.Mockito.times
 
 import scala.concurrent.duration.*
 
 class DealsServiceSpec extends IOWordSpec {
+
+  given Logger[IO] = MockLogger.make[IO]
 
   val game1 = makeVideoGame("super mario 3", sellPrice = None)
   val game2 = makeVideoGame("Battlefield 1", sellPrice = None)

@@ -1,7 +1,7 @@
 package ebayapp.core.common
 
 import cats.effect.IO
-import ebayapp.core.IOWordSpec
+import ebayapp.kernel.IOWordSpec
 
 import scala.concurrent.duration.*
 

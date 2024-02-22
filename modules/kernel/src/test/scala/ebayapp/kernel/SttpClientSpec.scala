@@ -1,9 +1,6 @@
 package ebayapp.kernel
 
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
-import org.scalatest.Assertion
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import sttp.client3
 import sttp.client3.*
@@ -11,9 +8,7 @@ import sttp.client3.httpclient.fs2.HttpClientFs2Backend
 import sttp.client3.testing.SttpBackendStub
 import sttp.model.{Header, HeaderNames, MediaType, Method}
 
-import scala.concurrent.Future
-
-trait SttpClientSpec extends AsyncWordSpec with Matchers {
+trait SttpClientSpec extends IOWordSpec {
 
   def backendStub: SttpBackendStub[IO, Any] =
     HttpClientFs2Backend.stub[IO]
@@ -37,8 +32,4 @@ trait SttpClientSpec extends AsyncWordSpec with Matchers {
     }
     def hasContentType(contentType: MediaType): Boolean =
       hasHeader(HeaderNames.ContentType, contentType.toString())
-
-  extension[A] (io: IO[A])
-    def asserting(f: A => Assertion): Future[Assertion] =
-      io.map(f).unsafeToFuture()(IORuntime.global)
 }

@@ -3,15 +3,17 @@ package ebayapp.core.clients.ebay
 import cats.effect.IO
 import cats.syntax.applicative.*
 import cats.syntax.option.*
-import ebayapp.core.{IOWordSpec, MockConfigProvider}
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
 import ebayapp.core.clients.ebay.browse.responses.*
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.kernel.{Clock, MockClock}
+import ebayapp.kernel.IOWordSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.{never, times}
@@ -22,6 +24,8 @@ import scala.jdk.CollectionConverters.*
 import java.time.Instant
 
 class EbayClientSpec extends IOWordSpec {
+
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   val now         = Instant.parse("2020-01-01T00:00:00Z")
   given Clock[IO] = MockClock[IO](now)

@@ -1,18 +1,22 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{IOWordSpec, MockConfigProvider}
+import ebayapp.core.{MockConfigProvider, MockLogger}
 import ebayapp.core.clients.cex.CexClient
+import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
-import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder as Builder, Retailer}
+import ebayapp.core.domain.{ResellableItem, Retailer, ResellableItemBuilder as Builder}
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
+import ebayapp.kernel.IOWordSpec
 import org.mockito.Mockito.atLeast as atLeastTimes
 
 import java.time.Instant
 import scala.concurrent.duration.*
 
 class CexStockServiceSpec extends IOWordSpec {
+
+  given logger: Logger[IO] = MockLogger.make[IO]
 
   val req1 = StockMonitorRequest(SearchCriteria("macbook"), true, true)
   val req2 = StockMonitorRequest(SearchCriteria("iphone"), true, true)

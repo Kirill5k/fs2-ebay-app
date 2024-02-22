@@ -3,7 +3,8 @@ package ebayapp.monitor.services
 import cats.effect.IO
 import ebayapp.kernel.{Clock, MockClock}
 import ebayapp.kernel.syntax.time.*
-import ebayapp.monitor.{IOWordSpec, MockActionDispatcher}
+import ebayapp.kernel.IOWordSpec
+import ebayapp.monitor.MockActionDispatcher
 import ebayapp.monitor.actions.Action
 import ebayapp.monitor.clients.HttpClient
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, MonitoringEvents, Monitors, Notification}

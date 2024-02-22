@@ -1,9 +1,10 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.IOWordSpec
+import ebayapp.core.MockLogger
+import ebayapp.kernel.IOWordSpec
 import ebayapp.core.clients.MessengerClient
-import ebayapp.core.common.Error
+import ebayapp.core.common.{Error, Logger}
 import ebayapp.core.domain.Notification
 import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.ResellableItemBuilder.{makeGeneric, makeVideoGame}
@@ -14,6 +15,8 @@ import java.time.Instant
 import scala.concurrent.duration.*
 
 class NotificationServiceSpec extends IOWordSpec {
+
+  given Logger[IO] = MockLogger.make[IO]
 
   "A TelegramNotificationService" when {
 

@@ -2,7 +2,8 @@ package ebayapp.core.tasks
 
 import cats.effect.kernel.Outcome.Errored
 import cats.effect.IO
-import ebayapp.core.IOWordSpec
+import ebayapp.core.MockServices
+import ebayapp.kernel.IOWordSpec
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Error, Logger}
 
@@ -13,7 +14,7 @@ class ErrorsNotifierSpec extends IOWordSpec {
   "An ErrorsNotifier" should {
 
     "send alerts on critical errors" in {
-      val services = servicesMock
+      val services = MockServices.make
       when(services.notification.alert(any[Error])).thenReturnUnit
 
       val res = Logger.make[IO].flatMap { implicit logger =>
@@ -33,7 +34,7 @@ class ErrorsNotifierSpec extends IOWordSpec {
     }
 
     "send termination signal on critical errors" in {
-      val services = servicesMock
+      val services = MockServices.make
       val res = Logger.make[IO].flatMap { implicit logger =>
         for
           logger          <- Logger.make[IO]

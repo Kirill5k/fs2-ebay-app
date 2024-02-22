@@ -1,7 +1,7 @@
 package ebayapp.monitor.services
 
 import cats.effect.IO
-import ebayapp.monitor.IOWordSpec
+import ebayapp.kernel.IOWordSpec
 import ebayapp.monitor.clients.{EmailClient, EmailMessage}
 import ebayapp.monitor.domain.{Monitor, Monitors, Notification}
 import org.typelevel.log4cats.Logger

@@ -1,7 +1,8 @@
 package ebayapp.core.tasks
 
 import cats.effect.IO
-import ebayapp.core.IOWordSpec
+import ebayapp.kernel.IOWordSpec
+import ebayapp.core.MockServices
 import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
@@ -16,7 +17,7 @@ class StockMonitorSpec extends IOWordSpec {
     val updateClothing = ItemStockUpdates(makeClothing("Clothing 2"), List(StockUpdate.New))
 
     "get stock updates from various outlets" in {
-      val services = servicesMock
+      val services = MockServices.make
 
       when(services.stock.head.stockUpdates).thenReturnEmptyStream
       when(services.stock.drop(1).head.stockUpdates).thenReturn(Stream.sleep[IO](2.hours).drain)

@@ -1,6 +1,6 @@
 package ebayapp.core.common
 
-import ebayapp.core.IOWordSpec
+import ebayapp.kernel.IOWordSpec
 import ebayapp.core.common.config.{AppConfig, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.core.domain.Retailer

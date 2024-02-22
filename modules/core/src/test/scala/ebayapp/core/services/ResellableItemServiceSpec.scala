@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.IOWordSpec
+import ebayapp.kernel.IOWordSpec
 import ebayapp.core.domain.{ItemKind, SearchParams}
 import ebayapp.core.domain.ResellableItemBuilder.*
 import ebayapp.core.repositories.ResellableItemRepository
