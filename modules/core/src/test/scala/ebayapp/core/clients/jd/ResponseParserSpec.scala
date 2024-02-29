@@ -3,7 +3,7 @@ package ebayapp.core.clients.jd
 import cats.syntax.either.*
 import cats.syntax.option.*
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, JdProductDetails, ResponseParser}
-import ebayapp.kernel.FileReader
+import kirill5k.common.test.FileReader
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

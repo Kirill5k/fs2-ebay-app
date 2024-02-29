@@ -5,7 +5,7 @@ import ebayapp.core.MockServices
 import ebayapp.core.domain.ResellableItemBuilder.makeVideoGame
 import ebayapp.core.domain.search.BuyPrice
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder}
-import ebayapp.kernel.IOWordSpec
+import kirill5k.common.test.cats.IOWordSpec
 
 class DealsFinderSpec extends IOWordSpec {
 

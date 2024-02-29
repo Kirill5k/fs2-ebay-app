@@ -8,7 +8,7 @@ import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
-import ebayapp.kernel.IOWordSpec
+import kirill5k.common.test.cats.IOWordSpec
 import fs2.Stream
 import org.mockito.Mockito
 

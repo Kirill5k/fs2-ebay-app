@@ -1,7 +1,7 @@
 package ebayapp.proxy.common
 
 import cats.effect.IO
-import ebayapp.kernel.IOWordSpec
+import kirill5k.common.test.cats.IOWordSpec
 import ebayapp.proxy.common.config.AppConfig
 
 import scala.concurrent.duration.*

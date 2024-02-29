@@ -3,7 +3,7 @@ package ebayapp.core.tasks
 import cats.effect.kernel.Outcome.Errored
 import cats.effect.IO
 import ebayapp.core.MockServices
-import ebayapp.kernel.IOWordSpec
+import kirill5k.common.test.cats.IOWordSpec
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.common.{Error, Logger}
 

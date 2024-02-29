@@ -3,6 +3,7 @@ import sbt.*
 object Dependencies {
   private object Versions {
     val mongo4cats      = "0.7.2"
+    val commonScala     = "0.1.5"
     val pureConfig      = "0.17.5"
     val circe           = "0.14.5"
     val sttp            = "3.9.3"
@@ -14,8 +15,6 @@ object Dependencies {
     val courier         = "3.2.0"
     val cronUtils       = "9.2.1"
 
-    val scalaTest    = "3.2.15"
-    val mockito      = "3.2.15.0"
     val mockJavaMail = "1.9"
   }
 
@@ -23,6 +22,11 @@ object Dependencies {
     val courier      = "com.github.daddykotex"  %% "courier"       % Versions.courier
     val mockJavaMail = "org.jvnet.mock-javamail" % "mock-javamail" % Versions.mockJavaMail
     val cronUtils    = "com.cronutils"           % "cron-utils"    % Versions.cronUtils
+
+    object commonScala {
+      val syntax   = "io.github.kirill5k" %% "common-syntax"    % Versions.commonScala
+      val testCats = "io.github.kirill5k" %% "common-test-cats" % Versions.commonScala
+    }
 
     object mongo4cats {
       val core     = "io.github.kirill5k" %% "mongo4cats-core"     % Versions.mongo4cats
@@ -75,12 +79,10 @@ object Dependencies {
 
       val all = Seq(core, circe, http4s)
     }
-
-    val scalaTest = "org.scalatest"     %% "scalatest"   % Versions.scalaTest
-    val mockito   = "org.scalatestplus" %% "mockito-4-6" % Versions.mockito
   }
 
   val kernel = Seq(
+    Libraries.commonScala.syntax,
     Libraries.mongo4cats.core,
     Libraries.mongo4cats.circe,
     Libraries.pureconfig.core
@@ -103,8 +105,7 @@ object Dependencies {
   )
 
   val test = Seq(
-    Libraries.scalaTest           % Test,
-    Libraries.mockito             % Test,
-    Libraries.mongo4cats.embedded % Test
+    Libraries.commonScala.testCats % Test,
+    Libraries.mongo4cats.embedded  % Test
   )
 }

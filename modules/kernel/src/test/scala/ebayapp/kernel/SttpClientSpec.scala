@@ -1,6 +1,8 @@
 package ebayapp.kernel
 
 import cats.effect.IO
+import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.test.FileReader
 import org.scalatest.wordspec.AsyncWordSpec
 import sttp.client3
 import sttp.client3.*

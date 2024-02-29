@@ -3,7 +3,7 @@ package ebayapp.core.clients.scan
 import cats.syntax.either.*
 import ebayapp.core.clients.scan.parsers.{ResponseParser, ScanItem}
 import ebayapp.kernel.errors.AppError
-import ebayapp.kernel.FileReader
+import kirill5k.common.test.FileReader
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
