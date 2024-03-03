@@ -3,7 +3,7 @@ package ebayapp.monitor.services
 import cats.Monad
 import cats.effect.Concurrent
 import cats.syntax.applicativeError.*
-import ebayapp.kernel.syntax.time.*
+import kirill5k.common.syntax.time.*
 import ebayapp.monitor.clients.{EmailClient, EmailMessage}
 import ebayapp.monitor.domain.Monitor.Contact
 import ebayapp.monitor.domain.{Monitor, Notification}

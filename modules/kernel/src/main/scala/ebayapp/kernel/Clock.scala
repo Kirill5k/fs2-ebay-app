@@ -2,7 +2,7 @@ package ebayapp.kernel
 
 import cats.effect.Temporal
 import cats.syntax.functor.*
-import ebayapp.kernel.syntax.time.*
+import kirill5k.common.syntax.time.*
 
 import java.time.Instant
 import scala.concurrent.duration.FiniteDuration

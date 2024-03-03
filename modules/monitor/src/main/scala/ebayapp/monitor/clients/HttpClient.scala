@@ -8,7 +8,7 @@ import cats.syntax.functor.*
 import cats.syntax.applicativeError.*
 import cats.effect.Async
 import ebayapp.kernel.Clock
-import ebayapp.kernel.syntax.time.*
+import kirill5k.common.syntax.time.*
 
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import sttp.client3.*

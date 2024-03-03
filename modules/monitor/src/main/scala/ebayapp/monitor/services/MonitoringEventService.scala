@@ -10,8 +10,8 @@ import ebayapp.monitor.clients.HttpClient
 import ebayapp.monitor.domain.Monitor.Connection
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.MonitoringEventRepository
-import ebayapp.kernel.syntax.time.*
-import ebayapp.kernel.syntax.effects.*
+import kirill5k.common.syntax.time.*
+import kirill5k.common.syntax.cats.applicative.*
 
 import java.time.Instant
 

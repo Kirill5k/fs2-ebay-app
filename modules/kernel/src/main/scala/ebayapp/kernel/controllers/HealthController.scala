@@ -5,7 +5,7 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import ebayapp.kernel.Clock
 import ebayapp.kernel.controllers.HealthController.{AppStatus, Metadata}
-import ebayapp.kernel.syntax.time.*
+import kirill5k.common.syntax.time.*
 import org.http4s.{HttpRoutes, Request}
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.*

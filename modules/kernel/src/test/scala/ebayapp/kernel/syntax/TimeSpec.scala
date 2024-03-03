@@ -1,6 +1,6 @@
 package ebayapp.kernel.syntax
 
-import ebayapp.kernel.syntax.time.*
+import kirill5k.common.syntax.time.*
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

@@ -5,7 +5,7 @@ import cats.effect.*
 import cats.syntax.functor.*
 import cats.syntax.either.*
 import cats.syntax.applicativeError.*
-import ebayapp.kernel.syntax.time.*
+import kirill5k.common.syntax.time.*
 import ebayapp.kernel.controllers.views.*
 import org.http4s.HttpRoutes
 import sttp.model.StatusCode
