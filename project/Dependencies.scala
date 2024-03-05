@@ -3,7 +3,7 @@ import sbt.*
 object Dependencies {
   private object Versions {
     val mongo4cats      = "0.7.2"
-    val commonScala     = "0.1.6"
+    val commonScala     = "0.1.7"
     val pureConfig      = "0.17.5"
     val circe           = "0.14.5"
     val sttp            = "3.9.3"
@@ -24,6 +24,7 @@ object Dependencies {
     val cronUtils    = "com.cronutils"           % "cron-utils"    % Versions.cronUtils
 
     object commonScala {
+      val cats       = "io.github.kirill5k" %% "common-cats"        % Versions.commonScala
       val syntax     = "io.github.kirill5k" %% "common-syntax"      % Versions.commonScala
       val syntaxCats = "io.github.kirill5k" %% "common-syntax-cats" % Versions.commonScala
       val testCats   = "io.github.kirill5k" %% "common-test-cats"   % Versions.commonScala
@@ -83,6 +84,7 @@ object Dependencies {
   }
 
   val kernel = Seq(
+    Libraries.commonScala.cats,
     Libraries.commonScala.syntaxCats,
     Libraries.commonScala.syntax,
     Libraries.mongo4cats.core,
