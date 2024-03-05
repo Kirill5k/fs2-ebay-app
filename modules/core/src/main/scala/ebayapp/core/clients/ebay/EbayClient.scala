@@ -16,7 +16,7 @@ import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.{ConfigProvider, Logger}
-import ebayapp.kernel.Clock
+import kirill5k.common.cats.Clock
 import fs2.Stream
 import sttp.client3.SttpBackend
 

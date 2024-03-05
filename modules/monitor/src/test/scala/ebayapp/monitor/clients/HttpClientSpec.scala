@@ -2,9 +2,10 @@ package ebayapp.monitor.clients
 
 import cats.effect.IO
 import cats.syntax.option.*
-import ebayapp.kernel.{Clock, MockClock, SttpClientSpec}
+import ebayapp.kernel.{MockClock, SttpClientSpec}
 import ebayapp.monitor.domain.{HttpMethod, Monitor, MonitoringEvent, Url}
 import org.scalatest.wordspec.AsyncWordSpec
+import kirill5k.common.cats.Clock
 import sttp.client3.Response
 import sttp.client3.*
 import sttp.model.StatusCode

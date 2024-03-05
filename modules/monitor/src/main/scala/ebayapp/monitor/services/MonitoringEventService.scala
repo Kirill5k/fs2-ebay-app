@@ -4,7 +4,7 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.kernel.Clock
+import kirill5k.common.cats.Clock
 import ebayapp.monitor.actions.{Action, ActionDispatcher}
 import ebayapp.monitor.clients.HttpClient
 import ebayapp.monitor.domain.Monitor.Connection

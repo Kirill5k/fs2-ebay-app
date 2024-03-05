@@ -7,7 +7,7 @@ import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.applicativeError.*
 import cats.effect.Async
-import ebayapp.kernel.Clock
+import kirill5k.common.cats.Clock
 import kirill5k.common.syntax.time.*
 
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}

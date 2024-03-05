@@ -5,10 +5,11 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.HttpClient
-import ebayapp.core.common.{Cache, ConfigProvider, Logger}
+import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.EbayConfig
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
 import ebayapp.kernel.errors.AppError
+import kirill5k.common.cats.Cache
 import sttp.client3.*
 import sttp.client3.circe.*
 import sttp.model.{HeaderNames, MediaType, StatusCode}

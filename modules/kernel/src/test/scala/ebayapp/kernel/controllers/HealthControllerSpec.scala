@@ -1,11 +1,12 @@
 package ebayapp.kernel.controllers
 
 import cats.effect.IO
-import ebayapp.kernel.{Clock, ControllerSpec, MockClock}
+import ebayapp.kernel.{ControllerSpec, MockClock}
 import org.http4s.Header.Raw
 import org.http4s.implicits.*
 import org.http4s.*
 import org.typelevel.ci.CIString
+import kirill5k.common.cats.Clock
 
 import java.time.Instant
 import scala.concurrent.duration.*

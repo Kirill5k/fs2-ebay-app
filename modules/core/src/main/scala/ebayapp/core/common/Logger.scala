@@ -8,6 +8,7 @@ import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.Logger as Logger4Cats
+import kirill5k.common.cats.Cache
 
 import java.time.Instant
 import scala.concurrent.duration.*

@@ -1,9 +1,10 @@
 package ebayapp.monitor.services
 
 import cats.effect.IO
-import ebayapp.kernel.{Clock, MockClock}
+import ebayapp.kernel.{MockClock}
 import kirill5k.common.syntax.time.*
 import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.cats.Clock
 import ebayapp.monitor.MockActionDispatcher
 import ebayapp.monitor.actions.Action
 import ebayapp.monitor.clients.HttpClient

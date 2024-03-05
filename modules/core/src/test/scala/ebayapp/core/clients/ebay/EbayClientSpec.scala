@@ -12,7 +12,8 @@ import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
-import ebayapp.kernel.{Clock, MockClock}
+import ebayapp.kernel.{MockClock}
+import kirill5k.common.cats.Clock
 import kirill5k.common.test.cats.IOWordSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.anyString

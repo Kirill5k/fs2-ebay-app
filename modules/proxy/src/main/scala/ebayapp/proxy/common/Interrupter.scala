@@ -5,7 +5,7 @@ import cats.effect.kernel.Temporal
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
-import ebayapp.kernel.Clock
+import kirill5k.common.cats.Clock
 import kirill5k.common.syntax.time.*
 import ebayapp.proxy.common.config.InterrupterConfig
 import org.typelevel.log4cats.Logger

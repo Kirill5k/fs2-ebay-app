@@ -4,10 +4,11 @@ import cats.Monad
 import cats.effect.Temporal
 import cats.syntax.functor.*
 import cats.syntax.apply.*
+import kirill5k.common.cats.Cache
 import ebayapp.core.clients.MessengerClient
 import ebayapp.core.domain.stock.StockUpdate
 import ebayapp.core.domain.{Notification, ResellableItem}
-import ebayapp.core.common.{Cache, Error, Logger}
+import ebayapp.core.common.{Error, Logger}
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64

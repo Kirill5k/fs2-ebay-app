@@ -3,7 +3,7 @@ package ebayapp.kernel.controllers
 import cats.effect.Async
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
-import ebayapp.kernel.Clock
+import kirill5k.common.cats.Clock
 import ebayapp.kernel.controllers.HealthController.{AppStatus, Metadata}
 import kirill5k.common.syntax.time.*
 import org.http4s.{HttpRoutes, Request}

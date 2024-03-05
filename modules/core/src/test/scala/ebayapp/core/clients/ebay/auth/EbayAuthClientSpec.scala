@@ -7,7 +7,8 @@ import ebayapp.core.MockConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.OAuthToken
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
-import ebayapp.kernel.{Clock, MockClock, SttpClientSpec}
+import ebayapp.kernel.{MockClock, SttpClientSpec}
+import kirill5k.common.cats.Clock
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.*

@@ -2,6 +2,7 @@ package ebayapp.kernel
 
 import cats.Monad
 import kirill5k.common.syntax.time.*
+import kirill5k.common.cats.Clock
 
 import java.time.Instant
 import scala.concurrent.duration.FiniteDuration

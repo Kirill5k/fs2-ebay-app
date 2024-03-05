@@ -11,7 +11,7 @@ import EbayAuthClient.OAuthToken
 import ebayapp.core.clients.HttpClient
 import responses.{EbayAuthErrorResponse, EbayAuthSuccessResponse}
 import ebayapp.core.common.config.{EbayConfig, OAuthCredentials}
-import ebayapp.kernel.Clock
+import kirill5k.common.cats.Clock
 import sttp.client3.*
 import sttp.client3.circe.*
 import sttp.model.{HeaderNames, MediaType, StatusCode}
