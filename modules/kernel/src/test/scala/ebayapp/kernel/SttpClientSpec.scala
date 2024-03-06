@@ -17,7 +17,7 @@ trait SttpClientSpec extends IOWordSpec {
 
   def json(path: String): String = FileReader.fromResources(path)
 
-  extension (req: client3.Request[_, _])
+  extension (req: client3.Request[?, ?])
     def isPost: Boolean                                 = req.method == Method.POST
     def isGet: Boolean                                  = req.method == Method.GET
     def isPut: Boolean                                  = req.method == Method.PUT

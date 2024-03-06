@@ -35,6 +35,6 @@ trait ControllerSpec extends AnyWordSpec with MockitoSugar with Matchers with IO
       .unsafeRunSync()(IORuntime.global)
 
   extension (res: IO[Response[IO]])
-    def mustHaveStatus(expectedStatus: Status, expectedBody: Option[String] = None): Assertion =
+    infix def mustHaveStatus(expectedStatus: Status, expectedBody: Option[String] = None): Assertion =
       verifyJsonResponse(res, expectedStatus, expectedBody)
 }

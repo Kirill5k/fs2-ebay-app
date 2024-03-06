@@ -59,6 +59,6 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
     }
   }
 
-  def isSearchRequest(req: client3.Request[_, _], params: Map[String, String]): Boolean =
+  def isSearchRequest(req: client3.Request[?, ?], params: Map[String, String]): Boolean =
     req.isGet && req.hasHost("harveynichols.com") && req.hasPath("data/lister") && req.hasParams(params)
 }

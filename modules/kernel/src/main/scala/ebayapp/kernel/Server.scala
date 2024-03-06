@@ -14,7 +14,7 @@ object Server:
   def serve[F[_]](config: ServerConfig, routes: HttpRoutes[F])(using F: Async[F]): Stream[F, Unit] =
     Stream.eval {
       EmberServerBuilder
-        .default(F, Network.forAsync[F])
+        .default(using F, Network.forAsync[F])
         .withHost(Ipv4Address.fromString(config.host).get)
         .withPort(Port.fromInt(config.port).get)
         .withHttpApp(routes.orNotFound)

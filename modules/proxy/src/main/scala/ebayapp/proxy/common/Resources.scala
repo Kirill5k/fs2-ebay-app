@@ -33,7 +33,7 @@ object Resources:
 
   private def makeEmberClient[F[_]](config: ClientConfig)(using F: Async[F]): Resource[F, Client[F]] =
     EmberClientBuilder
-      .default[F](F, Network.forAsync[F])
+      .default[F](using F, Network.forAsync[F])
       .withMaxTotal(256 * 10)
       .withTimeout(config.connectTimeout)
       .withIdleConnectionTime(Duration.Inf)

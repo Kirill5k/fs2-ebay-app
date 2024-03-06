@@ -91,14 +91,14 @@ class SelfridgesClientSpec extends SttpClientSpec {
     }
   }
 
-  def isSearchRequest(req: client3.Request[_, _], params: Map[String, String]): Boolean =
+  def isSearchRequest(req: client3.Request[?, ?], params: Map[String, String]): Boolean =
     req.isGet &&
       req.isGoingTo("selfridges.com/api/cms/ecom/v1/GB/en/productview/byCategory/byIds") &&
       req.hasParams(params)
 
-  def isGetStockRequest(req: client3.Request[_, _], id: String): Boolean =
+  def isGetStockRequest(req: client3.Request[?, ?], id: String): Boolean =
     req.isGet && req.isGoingTo(s"selfridges.com/api/cms/ecom/v1/GB/en/stock/byId/$id")
 
-  def isGetPriceRequest(req: client3.Request[_, _], id: String): Boolean =
+  def isGetPriceRequest(req: client3.Request[?, ?], id: String): Boolean =
     req.isGet && req.isGoingTo(s"selfridges.com/api/cms/ecom/v1/GB/en/price/byId/$id")
 }

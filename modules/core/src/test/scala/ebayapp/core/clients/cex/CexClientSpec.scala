@@ -316,7 +316,7 @@ class CexClientSpec extends SttpClientSpec {
       }
     }
 
-    def isQueryRequest(req: client3.Request[_, _], params: Map[String, String]): Boolean =
+    def isQueryRequest(req: client3.Request[?, ?], params: Map[String, String]): Boolean =
       req.isGet && req.isGoingTo("cex.com/v3/boxes") && req.hasParams(params)
   }
 

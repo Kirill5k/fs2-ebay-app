@@ -130,7 +130,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       }
     }
 
-    def isAuthRequest(req: client3.Request[_, _]): Boolean =
+    def isAuthRequest(req: client3.Request[?, ?]): Boolean =
       req.isPost &&
         req.hasContentType(MediaType.ApplicationXWwwFormUrlencoded) &&
         req.isGoingTo("ebay.com/identity/v1/oauth2/token")
