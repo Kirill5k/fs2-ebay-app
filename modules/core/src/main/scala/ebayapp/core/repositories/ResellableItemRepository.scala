@@ -8,7 +8,7 @@ import cats.syntax.applicativeError.*
 import com.mongodb.{DuplicateKeyException, MongoWriteException}
 import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary, SearchParams}
 import ebayapp.core.repositories.entities.ResellableItemEntity
-import kirill5k.common.syntax.cats.applicative.*
+import kirill5k.common.cats.syntax.applicative.*
 import mongo4cats.circe.given
 import mongo4cats.operations.{Aggregate, Filter, Projection, Sort}
 import mongo4cats.collection.MongoCollection

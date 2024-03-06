@@ -4,7 +4,7 @@ import cats.effect.Temporal
 import cats.syntax.functor.*
 import cats.syntax.traverse.*
 import ebayapp.core.common.Logger
-import kirill5k.common.syntax.cats.stream.*
+import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.services.Services
 import fs2.Stream
 

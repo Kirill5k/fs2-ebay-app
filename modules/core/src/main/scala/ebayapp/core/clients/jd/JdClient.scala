@@ -11,7 +11,7 @@ import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.Retailer
-import kirill5k.common.syntax.cats.stream.*
+import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream

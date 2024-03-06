@@ -10,7 +10,7 @@ import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, Main
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
-import kirill5k.common.syntax.cats.stream.*
+import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream

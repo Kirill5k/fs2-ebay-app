@@ -12,7 +12,7 @@ import ebayapp.core.clients.cex.requests.{CexGraphqlSearchRequest, GraphqlSearch
 import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.errors.AppError
-import kirill5k.common.syntax.cats.applicative.*
+import kirill5k.common.cats.syntax.applicative.*
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.ResellableItem

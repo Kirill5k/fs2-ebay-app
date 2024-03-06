@@ -6,7 +6,7 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
-import kirill5k.common.syntax.cats.stream.*
+import kirill5k.common.cats.syntax.stream.*
 import kirill5k.common.syntax.option.*
 import kirill5k.common.cats.Cache
 import ebayapp.core.common.{ConfigProvider, Logger}

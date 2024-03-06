@@ -7,7 +7,7 @@ import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.{ConfigProvider, Logger}
 import ebayapp.core.common.config.DealsFinderRequest
-import kirill5k.common.syntax.cats.stream.*
+import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
 import fs2.*

@@ -11,7 +11,7 @@ import ebayapp.monitor.domain.Monitor.Connection
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent, Notification}
 import ebayapp.monitor.repositories.MonitoringEventRepository
 import kirill5k.common.syntax.time.*
-import kirill5k.common.syntax.cats.applicative.*
+import kirill5k.common.cats.syntax.applicative.*
 
 import java.time.Instant
 

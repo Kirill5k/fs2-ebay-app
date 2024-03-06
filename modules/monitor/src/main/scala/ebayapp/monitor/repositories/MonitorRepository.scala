@@ -4,7 +4,7 @@ import cats.effect.Async
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import ebayapp.kernel.errors.AppError
-import kirill5k.common.syntax.cats.applicative.*
+import kirill5k.common.cats.syntax.applicative.*
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 import mongo4cats.operations.{Filter, Update}
 import mongo4cats.collection.MongoCollection
