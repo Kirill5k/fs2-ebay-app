@@ -3,7 +3,7 @@ package ebayapp.kernel
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import io.circe.parser.parse
-import kirill5k.common.test.cats.IOMockitoMatchers
+import kirill5k.common.cats.test.IOMockitoMatchers
 import org.http4s.{Response, Status}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers

@@ -2,7 +2,7 @@ package ebayapp.core.services
 
 import cats.effect.IO
 import ebayapp.core.MockLogger
-import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.cats.test.IOWordSpec
 import ebayapp.core.clients.MessengerClient
 import ebayapp.core.common.{Error, Logger}
 import ebayapp.core.domain.Notification

@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.cats.test.IOWordSpec
 import ebayapp.core.domain.{ItemKind, SearchParams}
 import ebayapp.core.domain.ResellableItemBuilder.*
 import ebayapp.core.repositories.ResellableItemRepository

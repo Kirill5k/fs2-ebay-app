@@ -14,7 +14,7 @@ import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
 import ebayapp.kernel.{MockClock}
 import kirill5k.common.cats.Clock
-import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.cats.test.IOWordSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.{never, times}

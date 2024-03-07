@@ -1,6 +1,6 @@
 package ebayapp.core.common
 
-import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.cats.test.IOWordSpec
 import ebayapp.core.common.config.{AppConfig, StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.core.domain.Retailer

@@ -2,7 +2,7 @@ package ebayapp.monitor.clients
 
 import cats.effect.IO
 import courier.Mailer as CourierMailer
-import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.cats.test.IOWordSpec
 import ebayapp.monitor.Mailer
 import org.jvnet.mock_javamail.{Mailbox, MockTransport}
 

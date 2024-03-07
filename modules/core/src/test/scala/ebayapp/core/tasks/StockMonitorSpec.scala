@@ -1,7 +1,7 @@
 package ebayapp.core.tasks
 
 import cats.effect.IO
-import kirill5k.common.test.cats.IOWordSpec
+import kirill5k.common.cats.test.IOWordSpec
 import ebayapp.core.MockServices
 import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.stock.{ItemStockUpdates, StockUpdate}
