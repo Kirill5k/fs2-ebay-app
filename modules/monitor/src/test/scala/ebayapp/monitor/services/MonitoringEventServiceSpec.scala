@@ -1,7 +1,6 @@
 package ebayapp.monitor.services
 
 import cats.effect.IO
-import ebayapp.kernel.{MockClock}
 import kirill5k.common.syntax.time.*
 import kirill5k.common.cats.test.IOWordSpec
 import kirill5k.common.cats.Clock
@@ -21,7 +20,7 @@ class MonitoringEventServiceSpec extends IOWordSpec {
   val downTime = Instant.parse("2011-01-01T00:00:00Z")
 
   val now         = Instant.parse("2020-01-01T00:00:00Z")
-  given Clock[IO] = MockClock[IO](now)
+  given Clock[IO] = Clock.mock[IO](now)
 
   "A MonitoringEventService" when {
     "schedule" should {

@@ -7,7 +7,7 @@ import ebayapp.core.MockConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.OAuthToken
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
-import ebayapp.kernel.{MockClock, SttpClientSpec}
+import ebayapp.kernel.SttpClientSpec
 import kirill5k.common.cats.Clock
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
@@ -19,7 +19,7 @@ import scala.concurrent.duration.*
 class EbayAuthClientSpec extends SttpClientSpec {
 
   val now                = Instant.parse("2020-01-01T00:00:00Z")
-  given clock: Clock[IO] = MockClock(now)
+  given clock: Clock[IO] = Clock.mock(now)
 
   val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))
   val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))

@@ -12,7 +12,6 @@ import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.{ItemDetails, ItemKind}
-import ebayapp.kernel.{MockClock}
 import kirill5k.common.cats.Clock
 import kirill5k.common.cats.test.IOWordSpec
 import org.mockito.ArgumentCaptor
@@ -29,7 +28,7 @@ class EbayClientSpec extends IOWordSpec {
   given logger: Logger[IO] = MockLogger.make[IO]
 
   val now         = Instant.parse("2020-01-01T00:00:00Z")
-  given Clock[IO] = MockClock[IO](now)
+  given Clock[IO] = Clock.mock[IO](now)
 
   val accessToken = "access-token"
   val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame), category = Some("games-xbox"))

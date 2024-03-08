@@ -2,7 +2,7 @@ package ebayapp.monitor.clients
 
 import cats.effect.IO
 import cats.syntax.option.*
-import ebayapp.kernel.{MockClock, SttpClientSpec}
+import ebayapp.kernel.SttpClientSpec
 import ebayapp.monitor.domain.{HttpMethod, Monitor, MonitoringEvent, Url}
 import org.scalatest.wordspec.AsyncWordSpec
 import kirill5k.common.cats.Clock
@@ -18,7 +18,7 @@ class HttpClientSpec extends SttpClientSpec {
   val url = Url("http://foo.bar/health")
 
   val ts          = Instant.parse("2020-01-01T00:00:00Z")
-  given Clock[IO] = MockClock[IO](ts)
+  given Clock[IO] = Clock.mock[IO](ts)
 
   "A HttpClient" should {
     "return status Up on success" in {

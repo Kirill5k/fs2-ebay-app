@@ -1,7 +1,7 @@
 package ebayapp.kernel.controllers
 
 import cats.effect.IO
-import ebayapp.kernel.{ControllerSpec, MockClock}
+import ebayapp.kernel.ControllerSpec
 import org.http4s.Header.Raw
 import org.http4s.implicits.*
 import org.http4s.*
@@ -16,7 +16,7 @@ class HealthControllerSpec extends ControllerSpec {
   val ipAddress = "127.0.0.1"
   val timestamp = Instant.parse("2020-01-01T00:00:00Z")
 
-  given clock: Clock[IO] = MockClock[IO](timestamp)
+  given clock: Clock[IO] = Clock.mock[IO](timestamp)
 
   "A HealthController" should {
 
