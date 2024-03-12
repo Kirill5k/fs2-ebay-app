@@ -1,7 +1,7 @@
 package ebayapp.core
 
 import cats.effect.{IO, IOApp}
-import ebayapp.kernel.Server
+import kirill5k.common.http4s.Server
 import ebayapp.core.clients.Clients
 import ebayapp.core.common.{ConfigProvider, Logger, Resources}
 import ebayapp.core.controllers.Controllers
@@ -25,7 +25,7 @@ object Application extends IOApp.Simple:
             tasks        <- Tasks.make(services) <* logger.info("created tasks")
             controllers  <- Controllers.make(services) <* logger.info("created controllers")
             _ <- logger.info("starting http server") *> Server
-              .serve[IO](config.server, controllers.routes)
+              .serveEmber[IO](config.server, controllers.routes)
               .concurrently(tasks.runAll)
               .interruptWhen(logger.awaitSigTerm)
               .compile

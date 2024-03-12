@@ -2,7 +2,7 @@ package ebayapp.proxy
 
 import cats.effect.{IO, IOApp}
 import cats.syntax.semigroupk.*
-import ebayapp.kernel.Server
+import kirill5k.common.http4s.Server
 import ebayapp.kernel.controllers.HealthController
 import ebayapp.proxy.common.{Interrupter, Resources}
 import ebayapp.proxy.common.config.AppConfig
@@ -24,7 +24,7 @@ object Application extends IOApp.Simple:
           healthController   <- HealthController.make[IO]("fs2-app-proxy")
           routes = healthController.routes <+> redirectController.routes
           _ <- logger.info("starting http server") *> Server
-            .serve[IO](config.server, RequestLogger.httpRoutes(true, true)(routes))
+            .serveEmber[IO](config.server, RequestLogger.httpRoutes(true, true)(routes))
             .interruptWhen(interrupter.awaitSigTerm)
             .compile
             .drain

@@ -2,6 +2,7 @@ package ebayapp.kernel
 
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
+import kirill5k.common.http4s.Server
 
 import scala.concurrent.duration.*
 
@@ -17,6 +18,10 @@ object config:
       host: String,
       port: Int
   ) derives ConfigReader
+
+  object ServerConfig:
+    given Conversion[ServerConfig, Server.Config] =
+      (sc: ServerConfig) => Server.Config(sc.host, sc.port)
 
   final case class MongoConfig(
       connectionUri: String,

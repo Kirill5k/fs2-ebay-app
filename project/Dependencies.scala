@@ -3,7 +3,7 @@ import sbt.*
 object Dependencies {
   private object Versions {
     val mongo4cats      = "0.7.2"
-    val commonScala     = "0.1.10"
+    val commonScala     = "0.1.12"
     val pureConfig      = "0.17.5"
     val circe           = "0.14.5"
     val sttp            = "3.9.3"
@@ -24,9 +24,10 @@ object Dependencies {
     val cronUtils    = "com.cronutils"           % "cron-utils"    % Versions.cronUtils
 
     object commonScala {
-      val cats       = "io.github.kirill5k" %% "common-cats"        % Versions.commonScala
-      val syntax     = "io.github.kirill5k" %% "common-syntax"      % Versions.commonScala
-      val testCats   = "io.github.kirill5k" %% "common-cats-test"   % Versions.commonScala
+      val cats     = "io.github.kirill5k" %% "common-cats"      % Versions.commonScala
+      val http4s   = "io.github.kirill5k" %% "common-http4s"    % Versions.commonScala
+      val syntax   = "io.github.kirill5k" %% "common-syntax"    % Versions.commonScala
+      val testCats = "io.github.kirill5k" %% "common-cats-test" % Versions.commonScala
     }
 
     object mongo4cats {
@@ -63,14 +64,9 @@ object Dependencies {
     }
 
     object http4s {
-      val core          = "org.http4s" %% "http4s-core"            % Versions.http4s
       val dsl           = "org.http4s" %% "http4s-dsl"             % Versions.http4s
-      val server        = "org.http4s" %% "http4s-server"          % Versions.http4s
-      val emberServer   = "org.http4s" %% "http4s-ember-server"    % Versions.http4s
       val emberClient   = "org.http4s" %% "http4s-ember-client"    % Versions.http4s
       val jdkHttpClient = "org.http4s" %% "http4s-jdk-http-client" % Versions.http4sJdkClient
-
-      val all = Seq(core, dsl, server, emberServer)
     }
 
     object tapir {
@@ -85,12 +81,13 @@ object Dependencies {
   val kernel = Seq(
     Libraries.commonScala.cats,
     Libraries.commonScala.syntax,
+    Libraries.commonScala.http4s,
     Libraries.mongo4cats.core,
     Libraries.mongo4cats.circe,
-    Libraries.pureconfig.core
+    Libraries.pureconfig.core,
+    Libraries.http4s.dsl
   ) ++
     Libraries.circe.all ++
-    Libraries.http4s.all ++
     Libraries.logging.all ++
     Libraries.sttp.all ++
     Libraries.tapir.all

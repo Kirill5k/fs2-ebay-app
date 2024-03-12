@@ -1,7 +1,7 @@
 package ebayapp.monitor
 
 import cats.effect.{IO, IOApp}
-import ebayapp.kernel.Server
+import kirill5k.common.http4s.Server
 import ebayapp.monitor.actions.{Action, ActionDispatcher, ActionProcessor}
 import ebayapp.monitor.common.config.AppConfig
 import ebayapp.monitor.clients.Clients
@@ -30,7 +30,7 @@ object Application extends IOApp.Simple:
           _               <- logger.info("starting http server and processors")
           _ <- Stream(
             Stream.eval(dispatcher.dispatch(Action.RescheduleAll)),
-            Server.serve[IO](config.server, controllers.routes),
+            Server.serveEmber[IO](config.server, controllers.routes),
             actionProcessor.process
           ).parJoinUnbounded.compile.drain
         yield ()
