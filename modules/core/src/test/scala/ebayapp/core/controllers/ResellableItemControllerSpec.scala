@@ -5,13 +5,13 @@ import ebayapp.core.domain.search.SellPrice
 import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary, SearchParams}
 import ebayapp.core.domain.ResellableItemBuilder.*
 import ebayapp.core.services.ResellableItemService
-import ebayapp.kernel.ControllerSpec
+import kirill5k.common.http4s.test.HttpRoutesWordSpec
 import org.http4s.implicits.*
 import org.http4s.*
 
 import java.time.Instant
 
-class ResellableItemControllerSpec extends ControllerSpec {
+class ResellableItemControllerSpec extends HttpRoutesWordSpec {
 
   val postedTs = Instant.ofEpochMilli(1577836800000L)
 

@@ -1,7 +1,7 @@
 package ebayapp.monitor.controllers
 
 import cats.effect.IO
-import ebayapp.kernel.ControllerSpec
+import kirill5k.common.http4s.test.HttpRoutesWordSpec
 import ebayapp.kernel.errors.AppError
 import ebayapp.monitor.services.{MonitorService, MonitoringEventService}
 import ebayapp.monitor.domain.{CreateMonitor, Monitor, Monitors}
@@ -9,7 +9,7 @@ import org.http4s.implicits.*
 import org.http4s.*
 import org.scalatest.EitherValues
 
-class MonitorControllerSpec extends ControllerSpec with EitherValues {
+class MonitorControllerSpec extends HttpRoutesWordSpec with EitherValues {
 
   "A MonitorController" when {
 

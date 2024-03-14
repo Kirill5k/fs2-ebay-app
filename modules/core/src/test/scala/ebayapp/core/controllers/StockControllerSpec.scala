@@ -5,14 +5,14 @@ import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.Retailer
 import ebayapp.core.services.StockService
-import ebayapp.kernel.ControllerSpec
+import kirill5k.common.http4s.test.HttpRoutesWordSpec
 import org.http4s.implicits.*
 import org.http4s.*
 import org.mockito.Mockito
 
 import java.time.Instant
 
-class StockControllerSpec extends ControllerSpec {
+class StockControllerSpec extends HttpRoutesWordSpec {
 
   val ts = Instant.now
 
