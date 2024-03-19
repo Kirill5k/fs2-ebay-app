@@ -2,7 +2,7 @@ package ebayapp.monitor.clients
 
 import cats.effect.IO
 import cats.syntax.option.*
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import ebayapp.monitor.domain.{HttpMethod, Monitor, MonitoringEvent, Url}
 import org.scalatest.wordspec.AsyncWordSpec
 import kirill5k.common.cats.Clock
@@ -13,7 +13,7 @@ import sttp.model.StatusCode
 import java.time.Instant
 import scala.concurrent.duration.*
 
-class HttpClientSpec extends SttpClientSpec {
+class HttpClientSpec extends SttpWordSpec {
 
   val url = Url("http://foo.bar/health")
 

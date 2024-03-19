@@ -7,7 +7,7 @@ import ebayapp.core.MockConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.OAuthToken
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import kirill5k.common.cats.Clock
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
@@ -16,7 +16,7 @@ import sttp.model.*
 import java.time.Instant
 import scala.concurrent.duration.*
 
-class EbayAuthClientSpec extends SttpClientSpec {
+class EbayAuthClientSpec extends SttpWordSpec {
 
   val now                = Instant.parse("2020-01-01T00:00:00Z")
   given clock: Clock[IO] = Clock.mock(now)
@@ -31,7 +31,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) =>
-            Response.ok(json("ebay/auth-success-response.json"))
+            Response.ok(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -63,7 +63,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMTpzZWNyZXQtMQ==")) =>
             throw new RuntimeException()
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMjpzZWNyZXQtMg==")) =>
-            Response.ok(json("ebay/auth-success-response.json"))
+            Response.ok(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -82,7 +82,7 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) =>
-            Response.ok(json("ebay/auth-success-response.json"))
+            Response.ok(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -99,9 +99,9 @@ class EbayAuthClientSpec extends SttpClientSpec {
     "retry on errors from ebay" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
-          Response(json("ebay/auth-error-response.json"), StatusCode.BadRequest),
-          Response(json("ebay/auth-error-response.json"), StatusCode.BadRequest),
-          Response.ok(json("ebay/auth-success-response.json"))
+          Response(readJson("ebay/auth-error-response.json"), StatusCode.BadRequest),
+          Response(readJson("ebay/auth-error-response.json"), StatusCode.BadRequest),
+          Response.ok(readJson("ebay/auth-success-response.json"))
         )
 
       val ebayAuthClient = EbayAuthClient.make[IO](config, testingBackend)
@@ -116,9 +116,9 @@ class EbayAuthClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMTpzZWNyZXQtMQ==")) =>
-            Response(json("ebay/auth-error-response.json"), StatusCode.TooManyRequests)
+            Response(readJson("ebay/auth-error-response.json"), StatusCode.TooManyRequests)
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMjpzZWNyZXQtMg==")) =>
-            Response.ok(json("ebay/auth-success-response.json"))
+            Response.ok(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 

@@ -6,12 +6,12 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.{Header, StatusCode}
 
-class MainlineMenswearClientSpec extends SttpClientSpec {
+class MainlineMenswearClientSpec extends SttpWordSpec {
 
   val responseHeaders = List(
     Header("Content-Type", "text/html; charset=utf-8"),
@@ -35,13 +35,13 @@ class MainlineMenswearClientSpec extends SttpClientSpec {
           case r
               if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r
                 .bodyContains(""""page": 1""") =>
-            Response.ok(json("mainline-menswear/search-response-1.json"))
+            Response.ok(readJson("mainline-menswear/search-response-1.json"))
           case r
               if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r
                 .bodyContains(""""page": 2""") =>
-            Response.ok(json("mainline-menswear/search-response-2.json"))
+            Response.ok(readJson("mainline-menswear/search-response-2.json"))
           case r if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo("mainline.com/app/mmw/m/product/149663") =>
-            Response.ok(json("mainline-menswear/product-response-149663.json"))
+            Response.ok(readJson("mainline-menswear/product-response-149663.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 

@@ -6,9 +6,9 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.search.SearchCriteria
 import sttp.client3.{Response, SttpBackend}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 
-class ScanClientSpec extends SttpClientSpec {
+class ScanClientSpec extends SttpWordSpec {
 
   "A ScanClient" should {
 
@@ -21,7 +21,7 @@ class ScanClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("scan.co.uk/shop/gaming/gpu-nvidia-gaming/all") =>
-            Response.ok(json("scan/search-by-card.html"))
+            Response.ok(readJson("scan/search-by-card.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 

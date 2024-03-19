@@ -6,11 +6,11 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
-class JdClientSpec extends SttpClientSpec {
+class JdClientSpec extends SttpWordSpec {
 
   "A JdsportsClient" should {
     val jdsportsConfig = GenericRetailerConfig("http://jdsports.com/proxy")
@@ -22,13 +22,13 @@ class JdClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") && r.hasParams(Map("from" -> "0")) =>
-            Response.ok(json("jdsports/search-by-brand.html"))
+            Response.ok(readJson("jdsports/search-by-brand.html"))
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") =>
             Response("n/a", StatusCode.NotFound)
           case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock/") =>
-            Response.ok(json("jdsports/get-product-stock.html"))
+            Response.ok(readJson("jdsports/get-product-stock.html"))
           case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock/") =>
-            Response.ok(json("jdsports/get-product-stock-oos.html"))
+            Response.ok(readJson("jdsports/get-product-stock-oos.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 

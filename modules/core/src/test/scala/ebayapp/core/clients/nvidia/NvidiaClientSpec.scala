@@ -6,9 +6,9 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.config.GenericRetailerConfig
 import sttp.client3.*
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 
-class NvidiaClientSpec extends SttpClientSpec {
+class NvidiaClientSpec extends SttpWordSpec {
 
   "A NvidiaClient" should {
 
@@ -23,7 +23,7 @@ class NvidiaClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
-            Response.ok(json("nvidia/search-success-response.json"))
+            Response.ok(readJson("nvidia/search-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
@@ -40,7 +40,7 @@ class NvidiaClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
-            Response.ok(json("nvidia/search-with-retailers-response.json"))
+            Response.ok(readJson("nvidia/search-with-retailers-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
@@ -73,7 +73,7 @@ class NvidiaClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
-            Response.ok(json("nvidia/search-with-invalid-json-response.json"))
+            Response.ok(readJson("nvidia/search-with-invalid-json-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 

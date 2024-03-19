@@ -8,9 +8,9 @@ import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 
-class TelegramClientSpec extends SttpClientSpec {
+class TelegramClientSpec extends SttpWordSpec {
 
   val message        = "lorem ipsum dolor sit amet"
   val telegramConfig = TelegramConfig("http://telegram.com", "BOT-KEY", "m1", "m2", "alerts")

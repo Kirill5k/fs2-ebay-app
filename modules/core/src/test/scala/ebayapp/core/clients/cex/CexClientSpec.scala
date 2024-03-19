@@ -9,7 +9,7 @@ import ebayapp.core.domain.ResellableItemBuilder.{makeMobilePhone, makeVideoGame
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.{ItemDetails, ResellableItem, ResellableItemBuilder}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import kirill5k.common.cats.Clock
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
@@ -19,7 +19,7 @@ import java.time.Instant
 import scala.collection.immutable.Map
 import scala.concurrent.duration.*
 
-class CexClientSpec extends SttpClientSpec {
+class CexClientSpec extends SttpWordSpec {
 
   given Clock[IO] = Clock.mock(Instant.parse("2020-01-01T00:00:00Z"))
 
@@ -42,7 +42,7 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "macbook pro 16,1", "inStock" -> "1", "inStockOnline" -> "1")) =>
-            Response.ok(json("cex/search-macbook-success-response.json"))
+            Response.ok(readJson("cex/search-macbook-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -116,7 +116,7 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "Apple iPhone 6S 16GB Grey Unlocked")) =>
-            Response.ok(json("cex/search-iphone-success-response.json"))
+            Response.ok(readJson("cex/search-iphone-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -134,7 +134,7 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "UFC 3 2020 PLAYSTATION4", "categoryIds" -> "[1003,1141]")) =>
-            Response.ok(json("cex/search-game-success-response.json"))
+            Response.ok(readJson("cex/search-game-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -152,7 +152,7 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "Need for speed PLAYSTATION4", "categoryIds" -> "[782]")) =>
-            Response.ok(json("cex/search-game-cannotbuy-success-response.json"))
+            Response.ok(readJson("cex/search-game-cannotbuy-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -169,8 +169,8 @@ class CexClientSpec extends SttpClientSpec {
       val item = makeVideoGame("super mario3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
-          Response.ok(json("cex/search-iphone-success-response.json")),
-          Response(json("cex/search-error-response.json"), StatusCode.InternalServerError)
+          Response.ok(readJson("cex/search-iphone-success-response.json")),
+          Response(readJson("cex/search-error-response.json"), StatusCode.InternalServerError)
         )
 
       val result = for
@@ -204,8 +204,8 @@ class CexClientSpec extends SttpClientSpec {
       val item = makeVideoGame("super mario 3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
-          Response.ok(json("cex/search-iphone-success-response.json")),
-          Response.ok(json("cex/search-noresults-response.json"))
+          Response.ok(readJson("cex/search-iphone-success-response.json")),
+          Response.ok(readJson("cex/search-noresults-response.json"))
         )
 
       val result = for
@@ -225,9 +225,9 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH", "categoryIds" -> "[1064]")) =>
-            Response.ok(json("cex/search-noresults-response.json"))
+            Response.ok(readJson("cex/search-noresults-response.json"))
           case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH")) =>
-            Response.ok(json("cex/search-game-success-response.json"))
+            Response.ok(readJson("cex/search-game-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -245,7 +245,7 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH")) =>
-            Response.ok(json("cex/search-noresults-response.json"))
+            Response.ok(readJson("cex/search-noresults-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -263,7 +263,7 @@ class CexClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isQueryRequest(r, Map("q" -> "super mario 3 SWITCH", "categoryIds" -> "[1000,1146,1147]")) =>
-            Response.ok(json("cex/search-unexpected-response.json"))
+            Response.ok(readJson("cex/search-unexpected-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
@@ -284,9 +284,9 @@ class CexClientSpec extends SttpClientSpec {
       val item = makeVideoGame("super mario 3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
-          Response(json("cex/search-error-response.json"), StatusCode.TooManyRequests),
-          Response(json("cex/search-error-response.json"), StatusCode.TooManyRequests),
-          Response.ok(json("cex/search-iphone-success-response.json"))
+          Response(readJson("cex/search-error-response.json"), StatusCode.TooManyRequests),
+          Response(readJson("cex/search-error-response.json"), StatusCode.TooManyRequests),
+          Response.ok(readJson("cex/search-iphone-success-response.json"))
         )
 
       val cexClient = CexClient.standard[IO](config, testingBackend)
@@ -302,9 +302,9 @@ class CexClientSpec extends SttpClientSpec {
       val item = makeVideoGame("super mario 3", sellPrice = None)
       val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
-          Response(json("cex/search-error-response.json"), StatusCode.BadRequest),
-          Response(json("cex/search-error-response.json"), StatusCode.BadRequest),
-          Response.ok(json("cex/search-iphone-success-response.json"))
+          Response(readJson("cex/search-error-response.json"), StatusCode.BadRequest),
+          Response(readJson("cex/search-error-response.json"), StatusCode.BadRequest),
+          Response.ok(readJson("cex/search-iphone-success-response.json"))
         )
 
       val cexClient = CexClient.standard[IO](config, testingBackend)
@@ -337,7 +337,7 @@ class CexClientSpec extends SttpClientSpec {
           case r
               if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r
                 .hasBody(reqBody) && r.hasParams(cexConfig.queryParameters.get) =>
-            Response.ok(json("cex/search-graphql-success-response.json"))
+            Response.ok(readJson("cex/search-graphql-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 

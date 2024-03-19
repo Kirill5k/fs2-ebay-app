@@ -6,11 +6,11 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 
-class HarveyNicholsClientSpec extends SttpClientSpec {
+class HarveyNicholsClientSpec extends SttpWordSpec {
 
   "A HarveyNicholsClient" should {
 
@@ -31,7 +31,7 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
                   "context[page_number]" -> "1"
                 )
               ) =>
-            Response.ok(json("harvey-nichols/search-kenzo-page-1.json"))
+            Response.ok(readJson("harvey-nichols/search-kenzo-page-1.json"))
           case r
               if isSearchRequest(
                 r,
@@ -41,7 +41,7 @@ class HarveyNicholsClientSpec extends SttpClientSpec {
                   "context[page_number]" -> "2"
                 )
               ) =>
-            Response.ok(json("harvey-nichols/search-kenzo-page-2.json"))
+            Response.ok(readJson("harvey-nichols/search-kenzo-page-2.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 

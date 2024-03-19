@@ -6,10 +6,10 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import sttp.client3.{Response, SttpBackend}
 
-class FrasersClientSpec extends SttpClientSpec {
+class FrasersClientSpec extends SttpWordSpec {
 
   "FrasersClient for flannels" should {
     val flannelsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
@@ -25,9 +25,9 @@ class FrasersClientSpec extends SttpClientSpec {
       )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -53,8 +53,8 @@ class FrasersClientSpec extends SttpClientSpec {
       )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/new-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/new-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -81,9 +81,9 @@ class FrasersClientSpec extends SttpClientSpec {
       )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -108,9 +108,9 @@ class FrasersClientSpec extends SttpClientSpec {
       )
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(json("flannels/search-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(json("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(json("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 

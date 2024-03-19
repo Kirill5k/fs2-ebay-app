@@ -5,13 +5,13 @@ import ebayapp.core.MockConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
 import scala.concurrent.duration.*
 
-class EbayBrowseClientSpec extends SttpClientSpec {
+class EbayBrowseClientSpec extends SttpWordSpec {
 
   val accessToken       = "access-token"
   val itemId            = "item-id-1"
@@ -27,7 +27,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
-            Response.ok(json("ebay/search-success-response.json"))
+            Response.ok(readJson("ebay/search-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -45,7 +45,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
-            Response.ok(json("ebay/search-empty-response.json"))
+            Response.ok(readJson("ebay/search-empty-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -61,7 +61,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
-            Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
+            Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
           case _ => throw new RuntimeException()
         }
 
@@ -77,7 +77,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response.ok(json("ebay/get-item-1-success-response.json"))
+            Response.ok(readJson("ebay/get-item-1-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -93,7 +93,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response.ok(json("ebay/get-item-3-no-aspects-success-response.json"))
+            Response.ok(readJson("ebay/get-item-3-no-aspects-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -109,7 +109,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
+            Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
           case _ => throw new RuntimeException()
         }
 
@@ -125,7 +125,7 @@ class EbayBrowseClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response(json("ebay/get-item-notfound-error-response.json"), StatusCode.NotFound)
+            Response(readJson("ebay/get-item-notfound-error-response.json"), StatusCode.NotFound)
           case _ => throw new RuntimeException()
         }
 
@@ -140,9 +140,9 @@ class EbayBrowseClientSpec extends SttpClientSpec {
     "return item from cache when itemid is the same" in {
       val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
-          Response.ok(json("ebay/get-item-1-success-response.json")),
-          Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden),
-          Response(json("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
+          Response.ok(readJson("ebay/get-item-1-success-response.json")),
+          Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden),
+          Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
         )
 
       val result = for

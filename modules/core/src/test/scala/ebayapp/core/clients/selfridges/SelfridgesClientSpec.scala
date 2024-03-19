@@ -6,12 +6,12 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
-class SelfridgesClientSpec extends SttpClientSpec {
+class SelfridgesClientSpec extends SttpWordSpec {
 
   "A SelfridgesClient" should {
 
@@ -24,25 +24,25 @@ class SelfridgesClientSpec extends SttpClientSpec {
       val testingBackend: SttpBackend[IO, Any] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
-            Response.ok(json("selfridges/search-page-1.json"))
+            Response.ok(readJson("selfridges/search-page-1.json"))
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "2", "ids" -> "EA7-Armani")) =>
-            Response.ok(json("selfridges/search-page-2.json"))
+            Response.ok(readJson("selfridges/search-page-2.json"))
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "3", "ids" -> "EA7-Armani")) =>
-            Response.ok(json("selfridges/search-page-3.json"))
+            Response.ok(readJson("selfridges/search-page-3.json"))
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "4", "ids" -> "EA7-Armani")) =>
-            Response.ok(json("selfridges/search-page-4.json"))
+            Response.ok(readJson("selfridges/search-page-4.json"))
           case r if isGetStockRequest(r, "R03631644") =>
-            Response.ok(json("selfridges/stock-R03631644.json"))
+            Response.ok(readJson("selfridges/stock-R03631644.json"))
           case r if isGetStockRequest(r, "R03631641") =>
-            Response.ok(json("selfridges/stock-R03631641.json"))
+            Response.ok(readJson("selfridges/stock-R03631641.json"))
           case r if isGetStockRequest(r, "R03631642") =>
-            Response.ok(json("selfridges/stock-R03631642.json"))
+            Response.ok(readJson("selfridges/stock-R03631642.json"))
           case r if isGetPriceRequest(r, "R03631644") =>
-            Response.ok(json("selfridges/price-R03631644.json"))
+            Response.ok(readJson("selfridges/price-R03631644.json"))
           case r if isGetPriceRequest(r, "R03631641") =>
-            Response.ok(json("selfridges/price-R03631641.json"))
+            Response.ok(readJson("selfridges/price-R03631641.json"))
           case r if isGetPriceRequest(r, "R03631642") =>
-            Response.ok(json("selfridges/price-R03631642.json"))
+            Response.ok(readJson("selfridges/price-R03631642.json"))
           case _ => throw new RuntimeException()
         }
 

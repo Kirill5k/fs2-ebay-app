@@ -5,10 +5,10 @@ import ebayapp.core.MockConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.config.GenericRetailerConfig
-import ebayapp.kernel.SttpClientSpec
+import kirill5k.common.sttp.test.SttpWordSpec
 import sttp.client3.{Response, SttpBackend}
 
-class ArgosClientSpec extends SttpClientSpec {
+class ArgosClientSpec extends SttpWordSpec {
 
   "An ArgosClient" should {
 
@@ -23,12 +23,12 @@ class ArgosClientSpec extends SttpClientSpec {
               if r.isGet && r.hasHost("argos.com") && r.hasPath(
                 """finder-api/product;isSearch=true;queryParams={"page":"1","templateType":null};searchTerm=PlayStation 5 Console;searchType=null"""
               ) =>
-            Response.ok(json("argos/search-success-page-1-response.json"))
+            Response.ok(readJson("argos/search-success-page-1-response.json"))
           case r
               if r.isGet && r.hasHost("argos.com") && r.hasPath(
                 """finder-api/product;isSearch=true;queryParams={"page":"2","templateType":null};searchTerm=PlayStation 5 Console;searchType=null"""
               ) =>
-            Response.ok(json("argos/search-success-page-2-response.json"))
+            Response.ok(readJson("argos/search-success-page-2-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
