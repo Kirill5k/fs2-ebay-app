@@ -9,7 +9,6 @@ import ebayapp.core.domain.Notification
 import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.ResellableItemBuilder.{makeGeneric, makeVideoGame}
 import ebayapp.core.domain.stock.StockUpdate
-import org.mockito.Mockito.times
 
 import java.time.Instant
 import scala.concurrent.duration.*

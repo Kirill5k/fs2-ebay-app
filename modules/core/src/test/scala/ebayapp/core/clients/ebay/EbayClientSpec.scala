@@ -15,8 +15,6 @@ import ebayapp.core.domain.{ItemDetails, ItemKind}
 import kirill5k.common.cats.Clock
 import kirill5k.common.cats.test.IOWordSpec
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.{never, times}
 
 import java.util.UUID
 import scala.concurrent.duration.*
@@ -207,7 +205,7 @@ class EbayClientSpec extends IOWordSpec {
       val itemsResponse = videoGameSearchClient.search(criteria)
 
       itemsResponse.compile.toList.asserting { res =>
-        verify(browseClient, never()).getItem(anyString(), anyString())
+        verify(browseClient, never).getItem(anyString, anyString)
         res mustBe Nil
       }
     }

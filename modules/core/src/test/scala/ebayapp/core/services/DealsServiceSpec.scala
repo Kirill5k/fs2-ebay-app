@@ -11,7 +11,6 @@ import ebayapp.core.domain.search.{BuyPrice, SearchCriteria, SellPrice}
 import ebayapp.core.domain.{ResellableItem, ResellableItemBuilder, Retailer}
 import ebayapp.core.repositories.ResellableItemRepository
 import kirill5k.common.cats.test.IOWordSpec
-import org.mockito.Mockito.times
 
 import scala.concurrent.duration.*
 
