@@ -4,14 +4,14 @@ object Dependencies {
   private object Versions {
     val mongo4cats      = "0.7.2"
     val commonScala     = "0.1.17"
-    val pureConfig      = "0.17.5"
+    val pureConfig      = "0.17.6"
     val circe           = "0.14.5"
-    val sttp            = "3.9.3"
+    val sttp            = "3.9.5"
     val http4s          = "0.23.24"
     val http4sJdkClient = "0.9.1"
-    val logback         = "1.4.8"
+    val logback         = "1.5.3"
     val log4cats        = "2.6.0"
-    val tapir           = "1.9.9"
+    val tapir           = "1.10.0"
     val courier         = "3.2.0"
     val cronUtils       = "9.2.1"
 
