@@ -31,12 +31,14 @@ class FiltersSpec extends AnyWordSpec with Matchers {
       val game = makeVideoGame("super mario 3")
 
       Filters(exclude = Some(List("mario 3"))).apply(game) mustBe false
+      Filters(deny = Some(List("mario 3"))).apply(game) mustBe false
     }
 
     "return false when item doesn't match include filter" in {
       val game = makeVideoGame("super mario 3")
 
       Filters(include = Some(List("mario 2"))).apply(game) mustBe false
+      Filters(allow = Some(List("mario 2"))).apply(game) mustBe false
     }
 
     "return false when item has excluded name and include filter is present" in {
@@ -61,9 +63,12 @@ class FiltersSpec extends AnyWordSpec with Matchers {
 
     "merge 2 include filters together" in {
       val f1 = Filters(include = Some(List("foo")))
-      val f2 = Filters(include = Some(List("bar")))
+      val f2 = Filters(include = Some(List("bar")), deny = Some(List("baz")))
 
-      f1.mergeWith(f2).include mustBe Some(List("foo", "bar"))
+      val res = f1.mergeWith(f2)
+
+      res.allow mustBe Some(List("foo", "bar"))
+      res.deny mustBe Some(List("baz"))
     }
   }
 }
