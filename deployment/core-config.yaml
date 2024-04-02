@@ -81,9 +81,9 @@ data:
       jdsports {
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         //base-uri: "https://request-follower.fly.dev"
-        //base-uri: "https://reqfol.fly.dev"
+        base-uri: "https://reqfol.fly.dev"
         //base-uri: "https://request-follower.onrender.com"
-        base-uri: "https://www.jdsports.co.uk"
+        //base-uri: "https://www.jdsports.co.uk"
         headers {
           "X-Reroute-To": "https://www.jdsports.co.uk"
           "X-Reload-On-403": "true"
@@ -118,7 +118,7 @@ data:
       }
   
       mainline-menswear {
-        //base-uri: "https://request-follower.fly.dev"
+        //base-uri: "https://reqfol.fly.dev"
         base-uri: "http://mdrhnkozaf.eu08.qoddiapp.com"
         headers {
           "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
