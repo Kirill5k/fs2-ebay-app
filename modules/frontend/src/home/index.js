@@ -2,6 +2,7 @@ import React from 'react'
 import {useSelector} from 'react-redux'
 import {Descriptions} from 'antd'
 import Container from '../common/components/Container'
+import Status from '../common/status'
 import {countByProperty} from '../common/functions/collections'
 
 const Home = ({backgroundColor}) => {
@@ -25,14 +26,14 @@ const Home = ({backgroundColor}) => {
           padded
           backgroundColor={backgroundColor}
           style={{minHeight: '300px'}}>
-        {dealsStatus === 'succeeded' && (
+        {dealsStatus === Status.SUCCEEDED && (
             <Descriptions title="Deals" column={column} items={[
               { key: '0', label: 'Total for today', children: dealsItems.total },
               { key: '1', label: 'Without exchange price', children: dealsItems.unrecognized.total },
               { key: '2', label: 'With buy price smaller than exchange', children: dealsItems.profitable.total }
             ]}/>
         )}
-        {stockStatus === 'succeeded' && (
+        {stockStatus === Status.SUCCEEDED && (
             <Descriptions title="Stock" column={column} items={[
               { key: '0', label: 'Total', children: stockItems.length },
               ...Object

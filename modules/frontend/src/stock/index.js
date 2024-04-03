@@ -4,6 +4,7 @@ import {filter, setCurrentPage} from './slice'
 import StockItems from './StockItems'
 import StockFilters from "./StockFilters"
 import Container from '../common/components/Container'
+import Status from '../common/status'
 import './index.css'
 
 const Stock = ({backgroundColor}) => {
@@ -31,19 +32,19 @@ const Stock = ({backgroundColor}) => {
           />
         </Layout.Sider>
         <Layout.Content className="stock-layout-content">
-          {stockStatus === 'loading' &&
+          {stockStatus === Status.LOADING &&
               <Container>
                 <Spin size="large" />
               </Container>
           }
-          {stockStatus === 'succeeded' &&
+          {stockStatus === Status.SUCCEEDED &&
               <StockItems
                   items={selectedItems}
                   currentPage={currentPage}
                   onPageChange={p => dispatch(setCurrentPage(p))}
               />
           }
-          {stockStatus === 'failed' &&
+          {stockStatus === Status.FAILED &&
               <Container>
                 <Alert
                     message="Failed to Fetch Current Stock"
