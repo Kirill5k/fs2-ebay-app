@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import DealsClient from './client'
 import {endOfToday, startOfToday} from '../common/functions/dates'
+import Status from '../common/status'
 
 export const getTodayDeals =
     createAsyncThunk('deals/today', DealsClient.getSummariesForToday)
@@ -13,7 +14,7 @@ const initialState = {
     from: startOfToday(),
     to: endOfToday()
   },
-  status: 'idle',
+  status: Status.IDLE,
   error: null,
   todayItems: {
     unrecognized: {total: 0, items: []},
@@ -39,31 +40,31 @@ const dealsSlice = createSlice({
     builder
         .addCase(getTodayDeals.pending, (state) => {
           state.error = null
-          state.status = 'loading'
+          state.status = Status.LOADING
         })
         .addCase(getTodayDeals.fulfilled, (state, action) => {
-          state.status = 'succeeded'
+          state.status = Status.SUCCEEDED
           state.items = action.payload
           state.todayItems = action.payload
         })
         .addCase(getTodayDeals.rejected, (state, action) => {
-          state.status = 'failed'
+          state.status = Status.FAILED
           state.error = action.error.message
         })
         .addCase(getDeals.pending, (state) => {
           state.error = null
-          state.status = 'loading'
+          state.status = Status.LOADING
         })
         .addCase(getDeals.fulfilled, (state, action) => {
           state.dateRange = {
             from: action.meta.arg.from,
             to: action.meta.arg.to
           }
-          state.status = 'succeeded'
+          state.status = Status.SUCCEEDED
           state.items = action.payload
         })
         .addCase(getDeals.rejected, (state, action) => {
-          state.status = 'failed'
+          state.status = Status.FAILED
           state.error = action.error.message
         })
   }

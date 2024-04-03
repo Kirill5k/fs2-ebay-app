@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import {distinct} from '../common/functions/collections'
 import StockClient from './client'
+import Status from '../common/status'
 
 export const getStock = createAsyncThunk('stock/get', StockClient.getAll)
 
@@ -42,7 +43,7 @@ const initialFilters = {
 
 const initialState = {
   currentPage: 1,
-  status: 'idle',
+  status: Status.IDLE,
   error: null,
   items: [],
   selectedItems: [],
@@ -80,10 +81,10 @@ const stockSlice = createSlice({
     builder
         .addCase(getStock.pending, (state, action) => {
           state.error = null
-          state.status = 'loading'
+          state.status = Status.LOADING
         })
         .addCase(getStock.fulfilled, (state, action) => {
-          state.status = 'succeeded'
+          state.status = Status.SUCCEEDED
           state.items = action.payload
           state.selectedItems = action.payload
           state.filters.kinds = distinct(action.payload.map(i => i.itemDetails.kind))
@@ -92,7 +93,7 @@ const stockSlice = createSlice({
           state.filters.retailers = distinct(action.payload.map(i => i.listingDetails.seller)).sort()
         })
         .addCase(getStock.rejected, (state, action) => {
-          state.status = 'failed'
+          state.status = Status.FAILED
           state.error = action.error.message
         })
   }
