@@ -159,8 +159,8 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 10m
         monitoring-requests: [
-          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {"include": ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
-          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {exclude: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {allow: ["WiFi A"]}}, monitor-stock-change: true, monitor-price-change: true}
+          //{search-criteria: {query: "Apple iPad Pro 11 3rd Gen (A2377) 128GB", filters: {deny: ["WiFi A"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
       }
 
@@ -169,7 +169,7 @@ data:
         monitoring-requests: [
           //{search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true, disable-notifications: true}
         ]
-        filters: {exclude: ["GTX 1650", "GTX 1660"]}
+        filters: {deny: ["GTX 1650", "GTX 1660"]}
       }
 
       argos {
@@ -183,15 +183,14 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {category: "men", query: "emporio-armani-ea7", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Boss", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {category: "men", query: "Hugo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
-    
-          //{search-criteria: {category: "women", query: "nike", filters: {"include": ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "emporio-armani-ea7"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
+          //{search-criteria: {category: "women", query: "nike", filters: {allow: ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
-          exclude: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], 
-          min-discount: 29
+          deny: ["size (\\d+(l|s)|3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "\\bcap\\b"], 
+          min-discount: 49
         }
       }
 
@@ -207,11 +206,11 @@ data:
           {search-criteria: {query: "kenzo", filters: {min-discount: 49}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "hugo", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {query: "boss", filters: {min-discount: 48}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "diesel", filters: {min-discount: 58, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "diesel", filters: {min-discount: 58, allow: ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
           min-discount: 18
-          exclude: ["size (3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)"]
+          deny: ["size (3[1-9]R|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)"]
         }
       }
     
@@ -223,9 +222,7 @@ data:
             search-criteria: {
               query: "balenciaga", 
               category: mens,
-              filters: {
-                "include": ["triple s", "bag"]
-              }
+              filters: { allow: ["triple s", "bag"] }
             }, 
             monitor-stock-change: false
             monitor-price-change: true
@@ -235,8 +232,7 @@ data:
             search-criteria: {
               query: "stone-island", 
               category: mens,
-              filters: { min-discount: 28 }
-              exclude: ["shadow", "knit", "marina"]
+              filters: { min-discount: 28, deny: ["shadow", "knit", "marina"] }
             }, 
             monitor-stock-change: false 
             monitor-price-change: true
@@ -245,9 +241,7 @@ data:
             search-criteria: {
               query: "dolce-and-gabbana", 
               category: mens,
-              filters: {
-                "include": ["slide", "slider", "sneaker", "airmaster"]
-              }
+              filters: { allow: ["slide", "slider", "sneaker", "airmaster"] }
             }, 
             monitor-stock-change: false 
             monitor-price-change: true
@@ -255,8 +249,8 @@ data:
           }
         ]
         filters: {
-          "include": ["combat", "hoodie", "sweatshirt", "trousers", "jogger", "jeans", "t(-)?shirt", "tee", "trainer", "runner", "slide", "sneaker", "shorts"]
-          exclude: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants|leopard|GRAFFITI|TAILORED|LUMINARIE|paint"]
+          allow: ["combat", "hoodie", "sweatshirt", "trousers", "jogger", "jeans", "t(-)?shirt", "tee", "trainer", "runner", "slide", "sneaker", "shorts"]
+          deny: ["size (\\dX(S|L)|(X)?L|\\b[1-8]\\b|\\b1\\d\\b|3[2-9]R)", "\\bmask\\b", "socks|formal pants|leopard|GRAFFITI|TAILORED|LUMINARIE|paint"]
           min-discount: 25
           max-price: 700
         }
@@ -274,7 +268,7 @@ data:
           //{search-criteria: {category: "mens", query: "Moncler"}, monitor-stock-change: false, monitor-price-change: true}
         ]
         filters: {
-          exclude: ["size (\\d+(l|s)|3[1-9](W|R)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"], 
+          deny: ["size (\\d+(l|s)|3[1-9](W|R)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"], 
           min-discount: 29,
           max-price: 80
         }
@@ -286,13 +280,11 @@ data:
         monitoring-requests: [
           {search-criteria: {query: "Emporio Armani", category: mens}, monitor-stock-change: false, monitor-price-change: true, disable-notifications: true}
           {search-criteria: {query: "EA7", category: mens}, monitor-stock-change: false, monitor-price-change: true, disable-notifications: true}
-          //{search-criteria: {query: "Kenzo", category: mens}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "Boss", category: mens, filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          //{search-criteria: {query: "Hugo", category: mens, filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
-          {search-criteria: {query: "diesel", category: mens, filters: {min-discount: 60, "include": ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true, disable-notifications: true}
+          {search-criteria: {query: "Boss", category: mens, filters: {min-discount: 53}}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {query: "diesel", category: mens, filters: {min-discount: 60, allow: ["jeans"]}}, monitor-stock-change: false, monitor-price-change: true, disable-notifications: true}
         ]
         filters: {
-          exclude: ["size (\\d+(l|s)|3[1-9](R|W)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"]
+          deny: ["size (\\d+(l|s)|3[1-9](R|W)|(\\d)?xl|xxl|xxxl|l|\\b[1-8]\\b|1\\d|\\d+Y)", "mini crossbody", "shoulder bag", "\\bcap\\b"]
           min-discount: 49,
           max-price: 250
         }
@@ -317,7 +309,7 @@ data:
         monitoring-requests: [
           //{search-criteria: {query: "moschino"}, monitor-stock-change: false, monitor-price-change: true}
         ]
-        filters: {exclude: ["size xxl", "size xl", "size l"], min-discount: 58}
+        filters: {deny: ["size xxl", "size xl", "size l"], min-discount: 58}
       }
 
       scan {
