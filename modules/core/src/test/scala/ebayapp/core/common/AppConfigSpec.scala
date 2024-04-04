@@ -24,7 +24,7 @@ class AppConfigSpec extends IOWordSpec {
       conf.retailer.argos.proxied mustBe Some(true)
       conf.retailer.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
 
-      val geforceFilters = Some(Filters(None, Some(List("GTX 1650", "GTX 1660")), None))
+      val geforceFilters = Some(Filters(deny = Some(List("GTX 1650", "GTX 1660"))))
       val geforceMonReq  = StockMonitorRequest(SearchCriteria("geforce", Some("GPU")), true, true)
       conf.stockMonitor must contain(Retailer.Nvidia -> StockMonitorConfig(10.minutes, List(geforceMonReq), filters = geforceFilters))
 
