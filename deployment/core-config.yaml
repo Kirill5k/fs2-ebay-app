@@ -31,7 +31,8 @@ data:
     retailer {
       cex {
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        base-uri: "https://reqfol.fly.dev"
+        //base-uri: "https://reqfol.fly.dev"
+        base-uri: "https://request-follower.fly.dev"
         cache {
           expiration: 24h
           validation-period: 1h
@@ -63,7 +64,8 @@ data:
       }
   
       selfridges {
-        base-uri: "https://reqfol.fly.dev"
+        //base-uri: "https://reqfol.fly.dev"
+        base-uri: "https://request-follower.fly.dev"
         delay-between-individual-requests: 2s
         headers: {
           "api-key": ${?SELFRIDGES_API_KEY}
@@ -80,8 +82,8 @@ data:
   
       jdsports {
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        //base-uri: "https://request-follower.fly.dev"
-        base-uri: "https://reqfol.fly.dev"
+        base-uri: "https://request-follower.fly.dev"
+        //base-uri: "https://reqfol.fly.dev"
         //base-uri: "https://request-follower.onrender.com"
         //base-uri: "https://www.jdsports.co.uk"
         headers {
@@ -127,7 +129,8 @@ data:
     
       flannels {
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        base-uri: "https://reqfol.fly.dev"
+        //base-uri: "https://reqfol.fly.dev"
+        base-uri: "https://request-follower.fly.dev"
         headers: {
           "X-Reroute-To": "https://www.flannels.com"
         }
@@ -135,7 +138,8 @@ data:
     
       tessuti {
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        base-uri: "https://reqfol.fly.dev"
+        //base-uri: "https://reqfol.fly.dev"
+        base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.tessuti.co.uk"
           "X-Reload-On-403": "true"
@@ -145,7 +149,8 @@ data:
     
       scotts {
         //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        base-uri: "https://reqfol.fly.dev"
+        //base-uri: "https://reqfol.fly.dev"
+        base-uri: "https://request-follower.fly.dev"
         headers {
           "X-Reroute-To": "https://www.scottsmenswear.com"
           "X-Reload-On-403": "true"
