@@ -2,6 +2,7 @@ import {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {Routes, Route, Link, useLocation} from 'react-router-dom'
 import {Layout, Menu, theme} from 'antd'
+import Status from './common/status'
 import Home from './home'
 import Stock from './stock'
 import Items from './items'
@@ -20,13 +21,13 @@ const App = () => {
   const dealsStatus = useSelector(state => state.deals.status)
 
   useEffect(() => {
-    if (stockStatus === 'idle') {
+    if (stockStatus === Status.IDLE) {
       dispatch(getStock())
     }
   }, [stockStatus, dispatch])
 
   useEffect(() => {
-    if (dealsStatus === 'idle') {
+    if (dealsStatus === Status.IDLE) {
       dispatch(getTodayDeals())
     }
   }, [dealsStatus, dispatch])

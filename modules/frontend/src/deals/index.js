@@ -4,6 +4,7 @@ import {DatePicker, Spin} from 'antd'
 import dayjs from 'dayjs'
 import {getDeals} from './slice'
 import Container from '../common/components/Container'
+import Status from '../common/status'
 import DealsItems from './DealsItems'
 
 const Deals = ({backgroundColor}) => {
@@ -33,12 +34,12 @@ const Deals = ({backgroundColor}) => {
               showTime
           />
         </Container>
-        {dealsStatus === 'loading' &&
+        {dealsStatus === Status.LOADING &&
             <Container>
               <Spin size="large" style={{padding: '40px'}}/>
             </Container>
         }
-        {dealsStatus === 'succeeded' &&
+        {dealsStatus === Status.SUCCEEDED &&
             <DealsItems items={items}/>
         }
       </Container>
