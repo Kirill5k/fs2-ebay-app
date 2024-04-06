@@ -10,14 +10,12 @@ object search {
 
   final case class Filters(
       minDiscount: Option[Int] = None,
-      exclude: Option[List[String]] = None,
-      include: Option[List[String]] = None,
       maxPrice: Option[BigDecimal] = None,
       allow: Option[List[String]] = None,
       deny: Option[List[String]] = None
   ) derives ConfigReader, Codec.AsObject {
-    private val denyRegex: Option[String]  = deny.orElse(exclude).map(_.mkString("(?i).*(", "|", ").*"))
-    private val allowRegex: Option[String] = allow.orElse(include).map(_.mkString("(?i).*(", "|", ").*"))
+    private val denyRegex: Option[String]  = deny.map(_.mkString("(?i).*(", "|", ").*"))
+    private val allowRegex: Option[String] = allow.map(_.mkString("(?i).*(", "|", ").*"))
 
     private def mergeOptWith[A](op1: Option[A], op2: Option[A], f: (A, A) => A): Option[A] =
       (op1, op2) match
@@ -29,8 +27,8 @@ object search {
     def mergeWith(anotherLimit: Filters): Filters =
       Filters(
         minDiscount = mergeOptWith(minDiscount, anotherLimit.minDiscount, _.max(_)),
-        deny = mergeOptWith(deny.orElse(exclude), anotherLimit.deny.orElse(anotherLimit.exclude), _ ::: _),
-        allow = mergeOptWith(allow.orElse(include), anotherLimit.allow.orElse(anotherLimit.include), _ ::: _),
+        deny = mergeOptWith(deny, anotherLimit.deny, _ ::: _),
+        allow = mergeOptWith(allow, anotherLimit.allow, _ ::: _),
         maxPrice = mergeOptWith(maxPrice, anotherLimit.maxPrice, _.min(_))
       )
 

@@ -10,7 +10,6 @@ import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import kirill5k.common.cats.test.IOWordSpec
 import fs2.Stream
-import org.mockito.Mockito
 
 import scala.concurrent.duration.*
 
@@ -18,7 +17,7 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
 
   given Logger[IO] = MockLogger.make[IO]
 
-  val scLimits           = Filters(Some(50), Some(List("SC-IGNORE", "SC-SKIP")), None)
+  val scLimits           = Filters(minDiscount = Some(50), deny = Some(List("SC-IGNORE", "SC-SKIP")))
   val criteria           = SearchCriteria("foo", filters = Some(scLimits))
   val anotherCriteria    = SearchCriteria("bar", filters = Some(scLimits))
   val yetAnotherCriteria = SearchCriteria("baz", filters = Some(scLimits))
@@ -83,7 +82,7 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
       when(client.search(any[SearchCriteria]))
         .thenReturn(Stream.empty, Stream.emits(items))
 
-      val limits = Filters(None, Some(List("conf-skip", "size \\d+Y", "size [1-7]")), None)
+      val limits = Filters(deny = Some(List("conf-skip", "size \\d+Y", "size [1-7]")))
       val result = StockService
         .make[IO](Retailer.Selfridges, config(stockMonitorConfig.copy(filters = Some(limits))), client)
         .flatMap(_.stockUpdates.interruptAfter(2.seconds).compile.toList)
@@ -121,9 +120,9 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
         .flatMap(_.stockUpdates.interruptAfter(5.seconds).compile.toList)
 
       result.asserting { updates =>
-        verify(client, Mockito.times(2)).search(criteria)
-        verify(client, Mockito.times(2)).search(anotherCriteria)
-        verify(client, Mockito.times(2)).search(yetAnotherCriteria)
+        verify(client, times(2)).search(criteria)
+        verify(client, times(2)).search(anotherCriteria)
+        verify(client, times(2)).search(yetAnotherCriteria)
         updates must have size 1
         updates.head.item.itemDetails.fullName mustBe Some("Foo-bar - T-shirt, size XXL")
       }

@@ -30,21 +30,19 @@ class FiltersSpec extends AnyWordSpec with Matchers {
     "return false when item has excluded name" in {
       val game = makeVideoGame("super mario 3")
 
-      Filters(exclude = Some(List("mario 3"))).apply(game) mustBe false
       Filters(deny = Some(List("mario 3"))).apply(game) mustBe false
     }
 
     "return false when item doesn't match include filter" in {
       val game = makeVideoGame("super mario 3")
 
-      Filters(include = Some(List("mario 2"))).apply(game) mustBe false
       Filters(allow = Some(List("mario 2"))).apply(game) mustBe false
     }
 
     "return false when item has excluded name and include filter is present" in {
       val game = makeVideoGame("super mario 3")
 
-      Filters(exclude = Some(List("super")), include = Some(List("mario 3"))).apply(game) mustBe false
+      Filters(deny = Some(List("super")), allow = Some(List("mario 3"))).apply(game) mustBe false
     }
 
     "use higher min discount when merging 2 filters together" in {
@@ -62,8 +60,8 @@ class FiltersSpec extends AnyWordSpec with Matchers {
     }
 
     "merge 2 include filters together" in {
-      val f1 = Filters(include = Some(List("foo")))
-      val f2 = Filters(include = Some(List("bar")), deny = Some(List("baz")))
+      val f1 = Filters(allow = Some(List("foo")))
+      val f2 = Filters(allow = Some(List("bar")), deny = Some(List("baz")))
 
       val res = f1.mergeWith(f2)
 
