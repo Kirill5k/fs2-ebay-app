@@ -30,7 +30,6 @@ data:
     
     retailer {
       cex {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         //base-uri: "https://reqfol.fly.dev"
         base-uri: "https://request-follower.fly.dev"
         cache {
@@ -81,10 +80,8 @@ data:
       }
   
       jdsports {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         base-uri: "https://request-follower.fly.dev"
         //base-uri: "https://reqfol.fly.dev"
-        //base-uri: "https://request-follower.onrender.com"
         //base-uri: "https://www.jdsports.co.uk"
         headers {
           "X-Reroute-To": "https://www.jdsports.co.uk"
@@ -94,7 +91,6 @@ data:
       }
   
       nvidia {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         base-uri: "https://reqfol.fly.dev"
         headers: {
           "X-Reroute-To": "https://api.nvidia.partners"
@@ -120,16 +116,13 @@ data:
       }
   
       mainline-menswear {
-        //base-uri: "https://reqfol.fly.dev"
-        base-uri: "http://mdrhnkozaf.eu08.qoddiapp.com"
+        base-uri: "https://reqfol.fly.dev"
         headers {
           "X-Reroute-To": "https://livewebapi.mainlinemenswear.co.uk"
         }
       }
     
       flannels {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
-        //base-uri: "https://reqfol.fly.dev"
         base-uri: "https://request-follower.fly.dev"
         headers: {
           "X-Reroute-To": "https://www.flannels.com"
@@ -137,7 +130,6 @@ data:
       }
     
       tessuti {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         //base-uri: "https://reqfol.fly.dev"
         base-uri: "https://request-follower.fly.dev"
         headers {
@@ -148,7 +140,6 @@ data:
       }
     
       scotts {
-        //base-uri: "https://p01--api--smb9w7tyzdrk.code.run"
         //base-uri: "https://reqfol.fly.dev"
         base-uri: "https://request-follower.fly.dev"
         headers {
@@ -174,7 +165,7 @@ data:
         monitoring-requests: [
           //{search-criteria: {query: "geforce", category: "GPU"}, monitor-stock-change: true, monitor-price-change: true, disable-notifications: true}
         ]
-        filters: {deny: ["GTX 1650", "GTX 1660"]}
+        filters: { deny: ["GTX 1650", "GTX 1660"] }
       }
 
       argos {
