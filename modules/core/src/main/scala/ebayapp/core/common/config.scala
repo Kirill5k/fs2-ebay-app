@@ -1,5 +1,6 @@
 package ebayapp.core.common
 
+import cats.effect.Async
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.kernel.config.{ClientConfig, MongoConfig, ServerConfig}
@@ -97,13 +98,21 @@ object config {
       server: ServerConfig,
       client: ClientConfig,
       mongo: MongoConfig,
-      telegram: TelegramConfig,
+      telegram: TelegramConfig
+  ) derives ConfigReader
+
+  object AppConfig {
+    def loadDefault[F[_]](using F: Async[F]): F[AppConfig] =
+      F.blocking(ConfigSource.default.loadOrThrow[AppConfig])
+  }
+
+  final case class RetailConfig(
       retailer: RetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]
   ) derives ConfigReader
 
-  object AppConfig {
+  object RetailConfig {
     val mountedConfigPath = "/opt/app/application.conf"
 
     given stockMonitorMapReader: ConfigReader[Map[Retailer, StockMonitorConfig]] =
@@ -111,8 +120,10 @@ object config {
     given dealsFinderMapReader: ConfigReader[Map[Retailer, DealsFinderConfig]] =
       genericMapReader[Retailer, DealsFinderConfig](catchReadError(Retailer.fromUnsafe))
 
-    def loadDefault: AppConfig   = ConfigSource.default.loadOrThrow[AppConfig]
-    def loadFromMount: AppConfig = ConfigSource.file(new File(mountedConfigPath)).loadOrThrow[AppConfig]
+    def loadDefault[F[_]](using F: Async[F]): F[RetailConfig] =
+      F.blocking(ConfigSource.default.loadOrThrow[RetailConfig])
+    def loadFromMount[F[_]](using F: Async[F]): F[RetailConfig] =
+      F.blocking(ConfigSource.file(new File(mountedConfigPath)).loadOrThrow[RetailConfig])
   }
 
 }

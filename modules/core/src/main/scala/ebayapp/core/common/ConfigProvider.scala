@@ -6,7 +6,15 @@ import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
-import ebayapp.core.common.config.{AppConfig, DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
+import ebayapp.core.common.config.{
+  AppConfig,
+  DealsFinderConfig,
+  EbayConfig,
+  GenericRetailerConfig,
+  RetailConfig,
+  StockMonitorConfig,
+  TelegramConfig
+}
 import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.Retailer
 import fs2.Stream
@@ -32,28 +40,29 @@ trait ConfigProvider[F[_]]:
   def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig]
   def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]
 
-final private class LiveConfigProvider[F[_]](
-    private val state: Ref[F, AppConfig],
+final private class FileConfigProvider[F[_]](
+    private val appConfig: AppConfig,
+    private val state: Ref[F, RetailConfig],
     private val updatePeriod: FiniteDuration
 )(using
     F: Temporal[F]
 ) extends ConfigProvider[F] {
-  override def config: F[AppConfig]                                            = state.get
-  override def telegram: F[TelegramConfig]                                     = config.map(_.telegram)
-  override def cex: F[GenericRetailerConfig]                                   = config.map(_.retailer.cex)
-  override def ebay: F[EbayConfig]                                             = config.map(_.retailer.ebay)
-  override def selfridges: F[GenericRetailerConfig]                            = config.map(_.retailer.selfridges)
-  override def argos: F[GenericRetailerConfig]                                 = config.map(_.retailer.argos)
-  override def jdsports: F[GenericRetailerConfig]                              = config.map(_.retailer.jdsports)
-  override def scotts: F[GenericRetailerConfig]                                = config.map(_.retailer.scotts)
-  override def tessuti: F[GenericRetailerConfig]                               = config.map(_.retailer.tessuti)
-  override def nvidia: F[GenericRetailerConfig]                                = config.map(_.retailer.nvidia)
-  override def scan: F[GenericRetailerConfig]                                  = config.map(_.retailer.scan)
-  override def harveyNichols: F[GenericRetailerConfig]                         = config.map(_.retailer.harveyNichols)
-  override def mainlineMenswear: F[GenericRetailerConfig]                      = config.map(_.retailer.mainlineMenswear)
-  override def flannels: F[GenericRetailerConfig]                              = config.map(_.retailer.flannels)
-  override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = streamUpdates(config.map(_.stockMonitor.get(retailer)))
-  override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = streamUpdates(config.map(_.dealsFinder.get(retailer)))
+  override def config: F[AppConfig]                                            = F.pure(appConfig)
+  override def telegram: F[TelegramConfig]                                     = F.pure(appConfig.telegram)
+  override def cex: F[GenericRetailerConfig]                                   = state.get.map(_.retailer.cex)
+  override def ebay: F[EbayConfig]                                             = state.get.map(_.retailer.ebay)
+  override def selfridges: F[GenericRetailerConfig]                            = state.get.map(_.retailer.selfridges)
+  override def argos: F[GenericRetailerConfig]                                 = state.get.map(_.retailer.argos)
+  override def jdsports: F[GenericRetailerConfig]                              = state.get.map(_.retailer.jdsports)
+  override def scotts: F[GenericRetailerConfig]                                = state.get.map(_.retailer.scotts)
+  override def tessuti: F[GenericRetailerConfig]                               = state.get.map(_.retailer.tessuti)
+  override def nvidia: F[GenericRetailerConfig]                                = state.get.map(_.retailer.nvidia)
+  override def scan: F[GenericRetailerConfig]                                  = state.get.map(_.retailer.scan)
+  override def harveyNichols: F[GenericRetailerConfig]                         = state.get.map(_.retailer.harveyNichols)
+  override def mainlineMenswear: F[GenericRetailerConfig]                      = state.get.map(_.retailer.mainlineMenswear)
+  override def flannels: F[GenericRetailerConfig]                              = state.get.map(_.retailer.flannels)
+  override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = streamUpdates(state.get.map(_.stockMonitor.get(retailer)))
+  override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = streamUpdates(state.get.map(_.dealsFinder.get(retailer)))
 
   private def streamUpdates[C](getConfig: => F[Option[C]]): Stream[F, C] = for
     configs       <- Stream.eval(Queue.unbounded[F, C])
@@ -73,33 +82,35 @@ final private class LiveConfigProvider[F[_]](
 }
 
 object ConfigProvider:
-  private def loadConfigFromMount[F[_]](using F: Async[F], logger: Logger[F]): F[AppConfig] =
-    logger.info("loading config from volume mount") >> F.blocking(AppConfig.loadFromMount)
-  private def loadDefaultConfig[F[_]](using F: Async[F], logger: Logger[F]): F[AppConfig] =
-    logger.info("loading default config") >> F.blocking(AppConfig.loadDefault)
+  private def loadRetailConfigFromMount[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
+    logger.info("loading config from volume mount") >> RetailConfig.loadFromMount
+  private def loadDefaultRetailConfig[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
+    logger.info("loading default config") >> RetailConfig.loadDefault
   private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
-    F.blocking(Paths.get(AppConfig.mountedConfigPath).toFile.lastModified())
+    F.blocking(Paths.get(RetailConfig.mountedConfigPath).toFile.lastModified())
 
   def make[F[_]](checkEvery: FiniteDuration = 2.minutes)(using F: Async[F], logger: Logger[F]): F[ConfigProvider[F]] = {
-    def reloadConfigWhenUpdated(state: Ref[F, AppConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
+    def reloadRetailConfigWhenUpdated(state: Ref[F, RetailConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
       val process = for
         modifiedTs <- mountedConfigModifiedTs
         isUpdated = previousLastModifiedTs.nonEmpty && previousLastModifiedTs.exists(_ != modifiedTs)
         _ <- F
-          .whenA(isUpdated)(logger.info("config from volume mount has been updated") >> loadConfigFromMount.flatMap(state.set))
+          .whenA(isUpdated)(logger.info("config from volume mount has been updated") >> loadRetailConfigFromMount.flatMap(state.set))
           .handleErrorWith(e => logger.error(e)("error reloading updated config"))
       yield modifiedTs
 
-      F.sleep(checkEvery) >> process.flatMap(ts => reloadConfigWhenUpdated(state, Some(ts)))
+      F.sleep(checkEvery) >> process.flatMap(ts => reloadRetailConfigWhenUpdated(state, Some(ts)))
     }
 
-    loadConfigFromMount
-      .flatTap(_ => logger.info("loaded config from a configmap volume mount"))
-      .flatMap(Ref.of)
-      .flatTap(s => reloadConfigWhenUpdated(s, None).start.void)
-      .handleErrorWith { e =>
-        logger.warn(s"error loading config from a configmap volume mount: ${e.getMessage}") >>
-          loadDefaultConfig.flatMap(Ref.of)
-      }
-      .map(LiveConfigProvider(_, checkEvery))
+    for {
+      appConfig <- AppConfig.loadDefault[F]
+      retailConfig <- loadRetailConfigFromMount[F]
+        .flatMap(Ref.of)
+        .flatTap(_ => logger.info("loaded config from a configmap volume mount"))
+        .flatTap(s => reloadRetailConfigWhenUpdated(s, None).start.void)
+        .handleErrorWith { e =>
+          logger.warn(s"error loading config from a configmap volume mount: ${e.getMessage}") >>
+            loadDefaultRetailConfig.flatMap(Ref.of)
+        }
+    } yield FileConfigProvider(appConfig, retailConfig, checkEvery)
   }
