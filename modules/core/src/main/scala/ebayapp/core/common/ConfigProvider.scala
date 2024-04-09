@@ -48,7 +48,7 @@ final private class FileConfigProvider[F[_]](
     F: Temporal[F]
 ) extends ConfigProvider[F] {
   override def config: F[AppConfig]                                            = F.pure(appConfig)
-  override def telegram: F[TelegramConfig]                                     = F.pure(appConfig.telegram)
+  override def telegram: F[TelegramConfig]                                     = state.get.map(_.telegram)
   override def cex: F[GenericRetailerConfig]                                   = state.get.map(_.retailer.cex)
   override def ebay: F[EbayConfig]                                             = state.get.map(_.retailer.ebay)
   override def selfridges: F[GenericRetailerConfig]                            = state.get.map(_.retailer.selfridges)

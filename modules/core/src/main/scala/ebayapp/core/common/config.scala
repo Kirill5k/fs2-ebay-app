@@ -97,8 +97,7 @@ object config {
   final case class AppConfig(
       server: ServerConfig,
       client: ClientConfig,
-      mongo: MongoConfig,
-      telegram: TelegramConfig
+      mongo: MongoConfig
   ) derives ConfigReader
 
   object AppConfig {
@@ -107,6 +106,7 @@ object config {
   }
 
   final case class RetailConfig(
+      telegram: TelegramConfig,
       retailer: RetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]
