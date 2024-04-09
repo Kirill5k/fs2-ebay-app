@@ -2,7 +2,7 @@ package ebayapp.core.clients.cex
 
 import cats.effect.IO
 import cats.syntax.option.*
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
 import ebayapp.core.domain.ResellableItemBuilder.{makeMobilePhone, makeVideoGame}
@@ -33,7 +33,7 @@ class CexClientSpec extends SttpWordSpec {
     ).some
   )
 
-  val config = MockConfigProvider.make[IO](cexConfig = Some(cexConfig))
+  val config = MockRetailConfigProvider.make[IO](cexConfig = Some(cexConfig))
 
   "CexClient" should {
 

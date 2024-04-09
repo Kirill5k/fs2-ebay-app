@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{MockConfigProvider, MockLogger}
+import ebayapp.core.{MockRetailConfigProvider, MockLogger}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.common.Logger
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
@@ -22,7 +22,7 @@ class CexStockServiceSpec extends IOWordSpec {
   val req2 = StockMonitorRequest(SearchCriteria("iphone"), true, true)
 
   def config(req: StockMonitorRequest*) =
-    MockConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Cex -> StockMonitorConfig(1.seconds, req.toList)))
+    MockRetailConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Cex -> StockMonitorConfig(1.seconds, req.toList)))
 
   val ts  = Instant.now()
   val mb1 = Builder.makeGeneric("Apple MacBook Pro 16,1/i7-9750H/16GB/512GB SSD/5300M 4GB/16\"/Silver/A", 2, 1950.0, datePosted = ts)

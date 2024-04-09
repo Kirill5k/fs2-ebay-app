@@ -1,7 +1,7 @@
 package ebayapp.core.clients.argos
 
 import cats.effect.IO
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -13,7 +13,7 @@ class ArgosClientSpec extends SttpWordSpec {
   "An ArgosClient" should {
 
     val argosConfig = GenericRetailerConfig("http://argos.com")
-    val config      = MockConfigProvider.make[IO](argosConfig = Some(argosConfig))
+    val config      = MockRetailConfigProvider.make[IO](argosConfig = Some(argosConfig))
     val criteria    = SearchCriteria("PlayStation 5 Console")
 
     "return relevant deliverable or reservable items" in {

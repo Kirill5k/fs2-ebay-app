@@ -1,7 +1,7 @@
 package ebayapp.core.clients.ebay.browse
 
 import cats.effect.IO
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
@@ -19,7 +19,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
 
   val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))
   val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
-  val config      = MockConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
+  val config      = MockRetailConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
 
   "EbaySearchClient" should {
 

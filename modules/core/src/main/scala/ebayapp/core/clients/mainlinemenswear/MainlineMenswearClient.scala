@@ -8,7 +8,7 @@ import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPrev
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
 import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, MainlineMenswearItemMapper}
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
 import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
@@ -161,9 +161,9 @@ final private class LiveMainlineMenswearClient[F[_]](
 
 object MainlineMenswearClient:
   def make[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
+                                    configProvider: RetailConfigProvider[F],
+                                    backend: SttpBackend[F, Any],
+                                    proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Ref
       .of(Option.empty[String])

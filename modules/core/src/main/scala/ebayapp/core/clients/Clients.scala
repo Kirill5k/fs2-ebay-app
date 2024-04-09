@@ -14,7 +14,7 @@ import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.scan.ScanClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.telegram.TelegramClient
-import ebayapp.core.common.{ConfigProvider, Logger, Resources}
+import ebayapp.core.common.{RetailConfigProvider, Logger, Resources}
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.Retailer.Flannels
 
@@ -25,8 +25,8 @@ trait Clients[F[_]]:
 
 object Clients:
   def make[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      resources: Resources[F]
+                                    configProvider: RetailConfigProvider[F],
+                                    resources: Resources[F]
   ): F[Clients[F]] =
     for
       cexClient              <- CexClient.graphql[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)

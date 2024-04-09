@@ -1,9 +1,9 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{MockConfigProvider, MockLogger}
+import ebayapp.core.{MockRetailConfigProvider, MockLogger}
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.Retailer
@@ -24,7 +24,7 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
   val stockMonitorConfig = StockMonitorConfig(1.second, List(StockMonitorRequest(criteria, true, true)))
 
   def config(config: StockMonitorConfig = stockMonitorConfig) =
-    MockConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Selfridges -> config))
+    MockRetailConfigProvider.make[IO](stockMonitorConfigs = Map(Retailer.Selfridges -> config))
 
   "A SelfridgesStockService" should {
 
@@ -100,7 +100,7 @@ class SelfridgesStockServiceSpec extends IOWordSpec {
         makeClothing("T-shirt", discount = Some(80))
       )
 
-      val configProvider = mock[ConfigProvider[IO]]
+      val configProvider = mock[RetailConfigProvider[IO]]
       when(configProvider.stockMonitor(any[Retailer]))
         .thenReturn(
           Stream(stockMonitorConfig) ++

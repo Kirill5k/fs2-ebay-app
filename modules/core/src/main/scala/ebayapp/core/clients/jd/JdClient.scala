@@ -8,7 +8,7 @@ import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.Retailer
 import kirill5k.common.cats.syntax.stream.*
@@ -160,8 +160,8 @@ final private class LiveJdClient[F[_]](
 
 object JdClient:
   def jdsports[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
+                                        configProvider: RetailConfigProvider[F],
+                                        backend: SttpBackend[F, Any],
+                                        proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend, proxyBackend))

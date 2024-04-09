@@ -3,7 +3,7 @@ package ebayapp.core.clients.ebay
 import cats.effect.IO
 import cats.syntax.applicative.*
 import cats.syntax.option.*
-import ebayapp.core.{MockConfigProvider, MockLogger}
+import ebayapp.core.{MockRetailConfigProvider, MockLogger}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
@@ -33,7 +33,7 @@ class EbayClientSpec extends IOWordSpec {
 
   val credentials = List(OAuthCredentials("id-1", "secret-1"), OAuthCredentials("id-2", "secret-2"))
   val ebayConfig  = EbayConfig("http://ebay.com", credentials, EbaySearchConfig(5, 92, 20.minutes))
-  val config      = MockConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
+  val config      = MockRetailConfigProvider.make[IO](ebayConfig = Some(ebayConfig))
 
   "An EbayClient" should {
 

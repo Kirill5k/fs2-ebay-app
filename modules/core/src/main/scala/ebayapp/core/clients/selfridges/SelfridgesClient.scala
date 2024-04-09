@@ -9,7 +9,7 @@ import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
@@ -147,8 +147,8 @@ final private class LiveSelfridgesClient[F[_]](
 
 object SelfridgesClient:
   def make[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
+                                    configProvider: RetailConfigProvider[F],
+                                    backend: SttpBackend[F, Any],
+                                    proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveSelfridgesClient[F](() => configProvider.selfridges, backend, proxyBackend))

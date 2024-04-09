@@ -9,7 +9,7 @@ import ebayapp.core.clients.SearchClient
 import kirill5k.common.cats.syntax.stream.*
 import kirill5k.common.syntax.option.*
 import kirill5k.common.cats.Cache
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
@@ -27,11 +27,11 @@ trait StockService[F[_]]:
   def resume: F[Unit]
 
 final private class SimpleStockService[F[_]](
-    val retailer: Retailer,
-    private val configProvider: ConfigProvider[F],
-    private val client: SearchClient[F],
-    private val cache: Cache[F, String, ResellableItem],
-    private val isPaused: SignallingRef[F, Boolean]
+                                              val retailer: Retailer,
+                                              private val configProvider: RetailConfigProvider[F],
+                                              private val client: SearchClient[F],
+                                              private val cache: Cache[F, String, ResellableItem],
+                                              private val isPaused: SignallingRef[F, Boolean]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -126,9 +126,9 @@ final private class SimpleStockService[F[_]](
 
 object StockService:
   def make[F[_]: Temporal: Logger](
-      retailer: Retailer,
-      configProvider: ConfigProvider[F],
-      client: SearchClient[F]
+                                    retailer: Retailer,
+                                    configProvider: RetailConfigProvider[F],
+                                    client: SearchClient[F]
   ): F[StockService[F]] =
     (
       Cache.make[F, String, ResellableItem](6.hours, 1.minute),

@@ -1,7 +1,7 @@
 package ebayapp.core.clients.nvidia
 
 import cats.effect.IO
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -13,7 +13,7 @@ class NvidiaClientSpec extends SttpWordSpec {
   "A NvidiaClient" should {
 
     val nvidiaConfig = GenericRetailerConfig("http://nvidia.com")
-    val config       = MockConfigProvider.make[IO](nvidiaConfig = Some(nvidiaConfig))
+    val config       = MockRetailConfigProvider.make[IO](nvidiaConfig = Some(nvidiaConfig))
 
     val criteria = SearchCriteria("geforce", Some("GPU"))
 

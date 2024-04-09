@@ -13,7 +13,7 @@ import ebayapp.core.clients.cex.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.kernel.errors.AppError
 import kirill5k.common.cats.syntax.applicative.*
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.domain.search.*
 import ebayapp.core.domain.ResellableItem
 import kirill5k.common.cats.{Clock, Cache}
@@ -221,7 +221,7 @@ object CexClient:
     "games-switch"            -> Set(1064)
   )
 
-  private def mkCache[F[_]: Temporal](configProvider: ConfigProvider[F]): F[Cache[F, String, Option[SellPrice]]] =
+  private def mkCache[F[_]: Temporal](configProvider: RetailConfigProvider[F]): F[Cache[F, String, Option[SellPrice]]] =
     for
       config      <- configProvider.cex
       cacheConfig <- Temporal[F].fromOption(config.cache, AppError.Critical("missing cache settings for cex client"))
@@ -229,15 +229,15 @@ object CexClient:
     yield cache
 
   def standard[F[_]: Temporal: Logger: Clock](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
+                                               configProvider: RetailConfigProvider[F],
+                                               backend: SttpBackend[F, Any],
+                                               proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[CexClient[F]] =
     mkCache(configProvider).map(cache => CexApiClient[F](() => configProvider.cex, cache, backend, proxyBackend))
 
   def graphql[F[_]: Temporal: Logger: Clock](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
+                                              configProvider: RetailConfigProvider[F],
+                                              backend: SttpBackend[F, Any],
+                                              proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[CexClient[F]] =
     mkCache(configProvider).map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend, proxyBackend))

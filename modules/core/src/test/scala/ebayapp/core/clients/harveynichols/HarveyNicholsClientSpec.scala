@@ -1,7 +1,7 @@
 package ebayapp.core.clients.harveynichols
 
 import cats.effect.IO
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
@@ -15,7 +15,7 @@ class HarveyNicholsClientSpec extends SttpWordSpec {
   "A HarveyNicholsClient" should {
 
     val harveyNicholsConfig = GenericRetailerConfig("http://harveynichols.com")
-    val config              = MockConfigProvider.make[IO](harveyNicholsConfig = Some(harveyNicholsConfig))
+    val config              = MockRetailConfigProvider.make[IO](harveyNicholsConfig = Some(harveyNicholsConfig))
 
     val criteria = SearchCriteria("kenzo")
 

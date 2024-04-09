@@ -1,7 +1,7 @@
 package ebayapp.core.clients.telegram
 
 import cats.effect.IO
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
@@ -14,7 +14,7 @@ class TelegramClientSpec extends SttpWordSpec {
 
   val message        = "lorem ipsum dolor sit amet"
   val telegramConfig = TelegramConfig("http://telegram.com", "BOT-KEY", "m1", "m2", "alerts")
-  val config         = MockConfigProvider.make[IO](telegramConfig = Some(telegramConfig))
+  val config         = MockRetailConfigProvider.make[IO](telegramConfig = Some(telegramConfig))
 
   "TelegramClient" should {
 

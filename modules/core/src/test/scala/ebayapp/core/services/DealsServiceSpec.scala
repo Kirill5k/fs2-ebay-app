@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{MockConfigProvider, MockLogger}
+import ebayapp.core.{MockRetailConfigProvider, MockLogger}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.Logger
@@ -24,7 +24,7 @@ class DealsServiceSpec extends IOWordSpec {
   val request1 = DealsFinderRequest(SearchCriteria("q1", Some("cat1")), 34, Some(10))
   val request2 = DealsFinderRequest(SearchCriteria("q2", Some("cat2")), 100, Some(10))
 
-  def config(c: DealsFinderConfig) = MockConfigProvider.make[IO](dealsFinderConfigs = Map(Retailer.Ebay -> c))
+  def config(c: DealsFinderConfig) = MockRetailConfigProvider.make[IO](dealsFinderConfigs = Map(Retailer.Ebay -> c))
 
   "An DealsSearchService" should {
 

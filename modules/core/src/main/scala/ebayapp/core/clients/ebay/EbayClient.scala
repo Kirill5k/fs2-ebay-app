@@ -15,15 +15,15 @@ import kirill5k.common.syntax.predicate.*
 import ebayapp.kernel.errors.AppError
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import kirill5k.common.cats.Clock
 import fs2.Stream
 import sttp.client3.SttpBackend
 
 final private[ebay] class LiveEbayClient[F[_]: Temporal](
-    private val configProvider: ConfigProvider[F],
-    private val authClient: EbayAuthClient[F],
-    private val browseClient: EbayBrowseClient[F]
+                                                          private val configProvider: RetailConfigProvider[F],
+                                                          private val authClient: EbayAuthClient[F],
+                                                          private val browseClient: EbayBrowseClient[F]
 )(using
     logger: Logger[F],
     clock: Clock[F]
@@ -78,8 +78,8 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
 
 object EbayClient:
   def make[F[_]: Temporal: Logger: Clock](
-      configProvider: ConfigProvider[F],
-      backend: SttpBackend[F, Any]
+                                           configProvider: RetailConfigProvider[F],
+                                           backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     (
       EbayAuthClient.make[F](configProvider, backend),

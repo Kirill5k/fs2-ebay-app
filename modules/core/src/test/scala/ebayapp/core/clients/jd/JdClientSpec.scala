@@ -1,7 +1,7 @@
 package ebayapp.core.clients.jd
 
 import cats.effect.IO
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
@@ -14,7 +14,7 @@ class JdClientSpec extends SttpWordSpec {
 
   "A JdsportsClient" should {
     val jdsportsConfig = GenericRetailerConfig("http://jdsports.com/proxy")
-    val config         = MockConfigProvider.make[IO](jdsportsConfig = Some(jdsportsConfig))
+    val config         = MockRetailConfigProvider.make[IO](jdsportsConfig = Some(jdsportsConfig))
 
     "return items on sale" in {
       val criteria = SearchCriteria("Emporio Armani EA7", category = Some("men"))

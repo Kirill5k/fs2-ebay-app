@@ -1,7 +1,7 @@
 package ebayapp.core.clients.frasers
 
 import cats.effect.IO
-import ebayapp.core.MockConfigProvider
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
@@ -13,7 +13,7 @@ class FrasersClientSpec extends SttpWordSpec {
 
   "FrasersClient for flannels" should {
     val flannelsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
-    val config         = MockConfigProvider.make[IO](flannelsConfig = Some(flannelsConfig))
+    val config         = MockRetailConfigProvider.make[IO](flannelsConfig = Some(flannelsConfig))
 
     val sc = SearchCriteria("stone island", Some("Mens"))
 
@@ -69,7 +69,7 @@ class FrasersClientSpec extends SttpWordSpec {
 
   "FrasersClient for tessuti" should {
     val tessutiConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
-    val config        = MockConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
+    val config        = MockRetailConfigProvider.make[IO](tessutiConfig = Some(tessutiConfig))
 
     val sc = SearchCriteria("emporio armani", Some("MENS"))
 
@@ -96,7 +96,7 @@ class FrasersClientSpec extends SttpWordSpec {
 
   "FrasersClient for scotts" should {
     val scottsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
-    val config       = MockConfigProvider.make[IO](scottsConfig = Some(scottsConfig))
+    val config       = MockRetailConfigProvider.make[IO](scottsConfig = Some(scottsConfig))
 
     val sc = SearchCriteria("hugo", Some("mens"))
 

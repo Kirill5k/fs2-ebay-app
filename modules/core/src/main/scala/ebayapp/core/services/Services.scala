@@ -4,7 +4,7 @@ import cats.effect.Temporal
 import cats.syntax.traverse.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.Clients
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.repositories.Repositories
 import ebayapp.core.domain.Retailer
 
@@ -17,9 +17,9 @@ trait Services[F[_]]:
 object Services {
 
   def make[F[_]: Temporal: Logger](
-      configProvider: ConfigProvider[F],
-      clients: Clients[F],
-      repo: Repositories[F]
+                                    configProvider: RetailConfigProvider[F],
+                                    clients: Clients[F],
+                                    repo: Repositories[F]
   ): F[Services[F]] =
     (
       NotificationService.make[F](clients.messenger),

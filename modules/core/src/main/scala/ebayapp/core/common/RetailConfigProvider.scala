@@ -6,15 +6,7 @@ import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
-import ebayapp.core.common.config.{
-  AppConfig,
-  DealsFinderConfig,
-  EbayConfig,
-  GenericRetailerConfig,
-  RetailConfig,
-  StockMonitorConfig,
-  TelegramConfig
-}
+import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, GenericRetailerConfig, RetailConfig, StockMonitorConfig, TelegramConfig}
 import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.Retailer
 import fs2.Stream
@@ -22,8 +14,7 @@ import fs2.Stream
 import java.nio.file.Paths
 import scala.concurrent.duration.*
 
-trait ConfigProvider[F[_]]:
-  def config: F[AppConfig]
+trait RetailConfigProvider[F[_]]:
   def cex: F[GenericRetailerConfig]
   def selfridges: F[GenericRetailerConfig]
   def telegram: F[TelegramConfig]
@@ -40,14 +31,12 @@ trait ConfigProvider[F[_]]:
   def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig]
   def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]
 
-final private class FileConfigProvider[F[_]](
-    private val appConfig: AppConfig,
+final private class FileRetailConfigProvider[F[_]](
     private val state: Ref[F, RetailConfig],
     private val updatePeriod: FiniteDuration
 )(using
     F: Temporal[F]
-) extends ConfigProvider[F] {
-  override def config: F[AppConfig]                                            = F.pure(appConfig)
+) extends RetailConfigProvider[F] {
   override def telegram: F[TelegramConfig]                                     = state.get.map(_.telegram)
   override def cex: F[GenericRetailerConfig]                                   = state.get.map(_.retailer.cex)
   override def ebay: F[EbayConfig]                                             = state.get.map(_.retailer.ebay)
@@ -81,7 +70,7 @@ final private class FileConfigProvider[F[_]](
   yield c
 }
 
-object ConfigProvider:
+object RetailConfigProvider:
   private def loadRetailConfigFromMount[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
     logger.info("loading config from volume mount") >> RetailConfig.loadFromMount
   private def loadDefaultRetailConfig[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
@@ -89,7 +78,7 @@ object ConfigProvider:
   private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
     F.blocking(Paths.get(RetailConfig.mountedConfigPath).toFile.lastModified())
 
-  def make[F[_]](checkEvery: FiniteDuration = 2.minutes)(using F: Async[F], logger: Logger[F]): F[ConfigProvider[F]] = {
+  def make[F[_]](checkEvery: FiniteDuration = 2.minutes)(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
     def reloadRetailConfigWhenUpdated(state: Ref[F, RetailConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
       val process = for
         modifiedTs <- mountedConfigModifiedTs
@@ -102,15 +91,13 @@ object ConfigProvider:
       F.sleep(checkEvery) >> process.flatMap(ts => reloadRetailConfigWhenUpdated(state, Some(ts)))
     }
 
-    for {
-      appConfig <- AppConfig.loadDefault[F]
-      retailConfig <- loadRetailConfigFromMount[F]
-        .flatMap(Ref.of)
-        .flatTap(_ => logger.info("loaded config from a configmap volume mount"))
-        .flatTap(s => reloadRetailConfigWhenUpdated(s, None).start.void)
-        .handleErrorWith { e =>
-          logger.warn(s"error loading config from a configmap volume mount: ${e.getMessage}") >>
-            loadDefaultRetailConfig.flatMap(Ref.of)
-        }
-    } yield FileConfigProvider(appConfig, retailConfig, checkEvery)
+    loadRetailConfigFromMount[F]
+      .flatMap(Ref.of)
+      .flatTap(_ => logger.info("loaded config from a configmap volume mount"))
+      .flatTap(s => reloadRetailConfigWhenUpdated(s, None).start.void)
+      .handleErrorWith { e =>
+        logger.warn(s"error loading config from a configmap volume mount: ${e.getMessage}") >>
+          loadDefaultRetailConfig.flatMap(Ref.of)
+      }
+      .map(rc => FileRetailConfigProvider(rc, checkEvery))
   }

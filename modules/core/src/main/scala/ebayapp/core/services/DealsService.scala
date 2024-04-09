@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.functor.*
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.clients.cex.CexClient
-import ebayapp.core.common.{ConfigProvider, Logger}
+import ebayapp.core.common.{RetailConfigProvider, Logger}
 import ebayapp.core.common.config.DealsFinderRequest
 import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.{ResellableItem, Retailer}
@@ -18,11 +18,11 @@ trait DealsService[F[_]]:
   def newDeals: Stream[F, ResellableItem]
 
 final private class LiveDealsService[F[_]: Logger: Temporal](
-    private val retailer: Retailer,
-    private val configProvider: ConfigProvider[F],
-    private val searchClient: SearchClient[F],
-    private val cexClient: CexClient[F],
-    private val repository: ResellableItemRepository[F]
+                                                              private val retailer: Retailer,
+                                                              private val configProvider: RetailConfigProvider[F],
+                                                              private val searchClient: SearchClient[F],
+                                                              private val cexClient: CexClient[F],
+                                                              private val repository: ResellableItemRepository[F]
 ) extends DealsService[F] {
 
   private def isNew(item: ResellableItem): F[Boolean] =
@@ -59,10 +59,10 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
 
 object DealsService:
   def make[F[_]: Temporal: Logger](
-      retailer: Retailer,
-      configProvider: ConfigProvider[F],
-      searchClient: SearchClient[F],
-      cexClient: CexClient[F],
-      repository: ResellableItemRepository[F]
+                                    retailer: Retailer,
+                                    configProvider: RetailConfigProvider[F],
+                                    searchClient: SearchClient[F],
+                                    cexClient: CexClient[F],
+                                    repository: ResellableItemRepository[F]
   ): F[DealsService[F]] =
     Monad[F].pure(LiveDealsService[F](retailer, configProvider, searchClient, cexClient, repository))
