@@ -1,6 +1,6 @@
 package ebayapp.monitor.controllers
 
-import ebayapp.monitor.common.JsonCodecs
+import ebayapp.kernel.JsonCodecs
 import io.circe.Codec
 import ebayapp.monitor.domain.{CreateMonitor, Monitor, MonitoringEvent}
 

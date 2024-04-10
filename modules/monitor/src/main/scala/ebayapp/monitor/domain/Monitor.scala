@@ -7,7 +7,7 @@ import com.cronutils.model.{CronType, Cron as JCron}
 import com.cronutils.parser.CronParser
 import kirill5k.common.syntax.time.*
 import ebayapp.kernel.types.{EnumType, IdType}
-import ebayapp.monitor.common.json.given
+import ebayapp.kernel.json.given
 import io.circe.*
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.syntax.*

@@ -5,7 +5,9 @@ import io.circe.{Encoder, Decoder}
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
 
-object json {
+object json extends JsonCodecs
+
+trait JsonCodecs {
   inline given Encoder[FiniteDuration] = Encoder.encodeString.contramap { fd =>
     fd.toString().replace(" ", "")
   }

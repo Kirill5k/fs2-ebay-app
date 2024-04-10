@@ -3,7 +3,7 @@ package ebayapp.monitor.repositories
 import io.circe.Codec
 import mongo4cats.bson.ObjectId
 import mongo4cats.circe.given
-import ebayapp.monitor.common.json.given
+import ebayapp.kernel.json.given
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 
 import scala.concurrent.duration.FiniteDuration

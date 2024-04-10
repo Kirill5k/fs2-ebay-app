@@ -1,6 +1,6 @@
 package ebayapp.monitor.repositories
 
-import ebayapp.monitor.common.json.given
+import ebayapp.kernel.json.given
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
 import io.circe.Codec
 import mongo4cats.bson.ObjectId
