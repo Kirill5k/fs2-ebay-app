@@ -9,7 +9,7 @@ object json extends JsonCodecs
 
 trait JsonCodecs {
   inline given Encoder[FiniteDuration] = Encoder.encodeString.contramap { fd =>
-    fd.toString().replace(" ", "")
+    fd.toString()
   }
   inline given Decoder[FiniteDuration] = Decoder.decodeString.emap { fdStr =>
     Either.cond[String, String](
