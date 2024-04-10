@@ -27,7 +27,7 @@ final private class LiveRetailConfigRepository[F[_]](
 
 object RetailConfigRepository {
   private val collectionName = "retail-config"
-  private val collectionOptions = CreateCollectionOptions(capped = true, maxDocuments = 1)
+  private val collectionOptions = CreateCollectionOptions(capped = true, maxDocuments = 1, sizeInBytes = 268435456L)
 
   def mongo[F[_]](database: MongoDatabase[F])(using F: Async[F]): F[RetailConfigRepository[F]] =
     for
