@@ -2,7 +2,7 @@ package ebayapp.core.common
 
 import cats.effect.Async
 import io.circe.Codec
-import ebayapp.core.common.json.given
+import ebayapp.kernel.json.given
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.kernel.config.{ClientConfig, MongoConfig, ServerConfig}
