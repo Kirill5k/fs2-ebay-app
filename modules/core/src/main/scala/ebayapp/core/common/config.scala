@@ -1,6 +1,8 @@
 package ebayapp.core.common
 
 import cats.effect.Async
+import io.circe.Codec
+import ebayapp.core.common.json.given
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.kernel.config.{ClientConfig, MongoConfig, ServerConfig}
@@ -17,24 +19,24 @@ object config {
   final case class OAuthCredentials(
       clientId: String,
       clientSecret: String
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class EbaySearchConfig(
       minFeedbackScore: Int,
       minFeedbackPercentage: Int,
       maxListingDuration: FiniteDuration
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class EbayConfig(
       baseUri: String,
       credentials: List[OAuthCredentials],
       search: EbaySearchConfig
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class CacheConfig(
       expiration: FiniteDuration,
       validationPeriod: FiniteDuration
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class GenericRetailerConfig(
       baseUri: String,
@@ -43,7 +45,7 @@ object config {
       cache: Option[CacheConfig] = None,
       delayBetweenIndividualRequests: Option[FiniteDuration] = None,
       queryParameters: Option[Map[String, String]] = None
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class TelegramConfig(
       baseUri: String,
@@ -51,7 +53,7 @@ object config {
       mainChannelId: String,
       secondaryChannelId: String,
       alertsChannelId: String
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class RetailerConfig(
       ebay: EbayConfig,
@@ -66,33 +68,33 @@ object config {
       scan: GenericRetailerConfig,
       cex: GenericRetailerConfig,
       flannels: GenericRetailerConfig
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class DealsFinderConfig(
       searchFrequency: FiniteDuration,
       searchRequests: List[DealsFinderRequest],
       delayBetweenRequests: Option[FiniteDuration] = None
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class DealsFinderRequest(
       searchCriteria: SearchCriteria,
       minMargin: Int,
       maxQuantity: Option[Int] = None
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class StockMonitorRequest(
       searchCriteria: SearchCriteria,
       monitorStockChange: Boolean,
       monitorPriceChange: Boolean,
       disableNotifications: Option[Boolean] = None
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class StockMonitorConfig(
       monitoringFrequency: FiniteDuration,
       monitoringRequests: List[StockMonitorRequest],
       delayBetweenRequests: Option[FiniteDuration] = None,
       filters: Option[Filters] = None
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   final case class AppConfig(
       server: ServerConfig,
@@ -110,7 +112,7 @@ object config {
       retailer: RetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]
-  ) derives ConfigReader
+  ) derives ConfigReader, Codec.AsObject
 
   object RetailConfig {
     val mountedConfigPath = "/opt/app/application.conf"
