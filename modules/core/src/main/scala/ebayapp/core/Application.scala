@@ -19,9 +19,9 @@ object Application extends IOApp.Simple:
         _ <- Resources.make[IO](appConfig).use { resources =>
           for
             _              <- logger.info("created resources")
+            repositories   <- Repositories.make(resources.database) <* logger.info("created repositories")
             configProvider <- logger.info("initialising config provider") *> RetailConfigProvider.make[IO]()
             clients        <- Clients.make(configProvider, resources) <* logger.info("created clients")
-            repositories   <- Repositories.make(resources.database) <* logger.info("created repositories")
             services       <- Services.make(configProvider, clients, repositories) <* logger.info("created services")
             tasks          <- Tasks.make(services) <* logger.info("created tasks")
             controllers    <- Controllers.make(services) <* logger.info("created controllers")
