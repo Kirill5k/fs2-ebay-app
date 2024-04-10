@@ -203,7 +203,7 @@ class MonitorControllerSpec extends HttpRoutesWordSpec with EitherValues {
             |"connection": {
             |  "url": "http://foo.bar",
             |  "method": "GET",
-            |  "timeout": "1 minute",
+            |  "timeout": "60 seconds",
             |  "kind": "http",
             |  "headers": null
             |},
@@ -263,7 +263,7 @@ class MonitorControllerSpec extends HttpRoutesWordSpec with EitherValues {
              |"connection": {
              |  "url": "http://foo.bar",
              |  "method": "GET",
-             |  "timeout": "1 minute",
+             |  "timeout": "60 seconds",
              |  "kind": "http",
              |  "headers": null
              |},
