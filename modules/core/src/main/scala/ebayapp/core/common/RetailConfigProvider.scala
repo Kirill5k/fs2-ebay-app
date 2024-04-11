@@ -70,11 +70,13 @@ final private class LiveRetailConfigProvider[F[_]](
   yield c
 }
 
-object RetailConfigProvider:
+object RetailConfigProvider {
   private def loadRetailConfigFromMount[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
     logger.info("loading config from volume mount") >> RetailConfig.loadFromMount
+
   private def loadDefaultRetailConfig[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
     logger.info("loading default config") >> RetailConfig.loadDefault
+
   private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
     F.blocking(Paths.get(RetailConfig.mountedConfigPath).toFile.lastModified())
 
@@ -101,3 +103,31 @@ object RetailConfigProvider:
       }
       .map(rc => LiveRetailConfigProvider(rc))
   }
+
+  def mongo[F[_]](repo: RetailConfigRepository[F])(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
+    val initialConfig = repo.get.flatMap {
+      case Some(rc) =>
+        logger.info("loaded retail config from the database") >> Ref.of(rc)
+      case None =>
+        for
+          _     <- logger.info("could not find retail config in database. loading from file")
+          rc    <- RetailConfig.loadDefault[F]
+          _     <- repo.save(rc)
+          state <- Ref.of(rc)
+        yield state
+    }
+    
+    initialConfig
+      .flatTap { rc =>
+        repo
+          .updates
+          .evalTap(_ => logger.info("received retail config update from database"))
+          .evalMap(rc.set)
+          .compile
+          .drain
+          .start
+          .void
+      }
+      .map(rc => LiveRetailConfigProvider(rc))
+  }
+}
