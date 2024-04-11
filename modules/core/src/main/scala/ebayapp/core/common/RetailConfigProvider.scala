@@ -9,6 +9,7 @@ import cats.syntax.functor.*
 import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, GenericRetailerConfig, RetailConfig, StockMonitorConfig, TelegramConfig}
 import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.Retailer
+import ebayapp.core.repositories.RetailConfigRepository
 import fs2.Stream
 
 import java.nio.file.Paths
@@ -31,9 +32,8 @@ trait RetailConfigProvider[F[_]]:
   def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig]
   def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]
 
-final private class FileRetailConfigProvider[F[_]](
-    private val state: Ref[F, RetailConfig],
-    private val updatePeriod: FiniteDuration
+final private class LiveRetailConfigProvider[F[_]](
+    private val state: Ref[F, RetailConfig]
 )(using
     F: Temporal[F]
 ) extends RetailConfigProvider[F] {
@@ -65,7 +65,7 @@ final private class FileRetailConfigProvider[F[_]](
         case (Some(latest), Some(current)) if current != latest => currentConfig.set(Some(latest)) >> configs.offer(latest)
         case _                                                  => F.unit
       }
-      .repeatEvery(updatePeriod)
+      .repeatEvery(30.seconds)
     c <- Stream.fromQueueUnterminated(configs).concurrently(configUpdate)
   yield c
 }
@@ -99,5 +99,5 @@ object RetailConfigProvider:
         logger.warn(s"error loading config from a configmap volume mount: ${e.getMessage}") >>
           loadDefaultRetailConfig.flatMap(Ref.of)
       }
-      .map(rc => FileRetailConfigProvider(rc, checkEvery))
+      .map(rc => LiveRetailConfigProvider(rc))
   }
