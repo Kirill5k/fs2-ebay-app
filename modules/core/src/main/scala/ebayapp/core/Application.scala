@@ -20,7 +20,7 @@ object Application extends IOApp.Simple:
           for
             _              <- logger.info("created resources")
             repositories   <- Repositories.make(resources.database) <* logger.info("created repositories")
-            configProvider <- logger.info("initialising config provider") *> RetailConfigProvider.make[IO]()
+            configProvider <- logger.info("initialising config provider") *> RetailConfigProvider.file[IO]()
             clients        <- Clients.make(configProvider, resources) <* logger.info("created clients")
             services       <- Services.make(configProvider, clients, repositories) <* logger.info("created services")
             tasks          <- Tasks.make(services) <* logger.info("created tasks")

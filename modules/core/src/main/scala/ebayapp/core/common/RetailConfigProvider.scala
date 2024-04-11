@@ -78,7 +78,7 @@ object RetailConfigProvider:
   private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
     F.blocking(Paths.get(RetailConfig.mountedConfigPath).toFile.lastModified())
 
-  def make[F[_]](checkEvery: FiniteDuration = 2.minutes)(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
+  def file[F[_]](checkEvery: FiniteDuration = 2.minutes)(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
     def reloadRetailConfigWhenUpdated(state: Ref[F, RetailConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
       val process = for
         modifiedTs <- mountedConfigModifiedTs
