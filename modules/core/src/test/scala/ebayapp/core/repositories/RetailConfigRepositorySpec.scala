@@ -8,10 +8,14 @@ import mongo4cats.database.MongoDatabase
 import mongo4cats.embedded.EmbeddedMongo
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.Future
 
 class RetailConfigRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMongo {
+
+  given Logger[IO] = Slf4jLogger.getLogger[IO]
 
   override val mongoPort: Int = 12347
 

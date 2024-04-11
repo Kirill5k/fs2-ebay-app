@@ -31,6 +31,7 @@ final private class LiveRetailConfigRepository[F[_]](
 
   override def updates: Stream[F, RetailConfig] =
     collection.watch.stream
+      .evalTap(cs => logger.info(s"received update. cs: ${cs}"))
       .evalTap(cs => logger.info(s"received update. original doc: ${cs.getFullDocumentBeforeChange}"))
       .evalTap(cs => logger.info(s"received update. new doc: ${cs.getFullDocument}"))
       .evalMap { cs =>
