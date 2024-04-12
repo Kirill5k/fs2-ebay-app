@@ -3,6 +3,7 @@ package ebayapp.core.repositories
 import cats.effect.kernel.Async
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
+import com.mongodb.client.model.changestream.OperationType
 import ebayapp.core.common.config.RetailConfig
 import io.circe.syntax.*
 import mongo4cats.circe.given
@@ -20,8 +21,7 @@ trait RetailConfigRepository[F[_]]:
 final private class LiveRetailConfigRepository[F[_]](
     private val collection: MongoCollection[F, RetailConfig]
 )(using
-    F: Async[F],
-    logger: Logger[F]
+    F: Async[F]
 ) extends RetailConfigRepository[F] {
   override def get: F[Option[RetailConfig]] =
     collection.find.first
@@ -31,9 +31,7 @@ final private class LiveRetailConfigRepository[F[_]](
 
   override def updates: Stream[F, RetailConfig] =
     collection.watch.stream
-      .evalTap(cs => logger.info(s"received update. cs: ${cs}"))
-      .evalTap(cs => logger.info(s"received update. original doc: ${cs.getFullDocumentBeforeChange}"))
-      .evalTap(cs => logger.info(s"received update. new doc: ${cs.getFullDocument}"))
+      .filter(cs => cs.getOperationType == OperationType.INSERT)
       .evalMap { cs =>
         F.fromEither(cs.getFullDocument.asJson.as[RetailConfig])
       }
