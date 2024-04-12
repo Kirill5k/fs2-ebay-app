@@ -8,7 +8,6 @@ import ebayapp.core.services.StockService
 import kirill5k.common.http4s.test.HttpRoutesWordSpec
 import org.http4s.implicits.*
 import org.http4s.*
-import org.mockito.Mockito
 
 import java.time.Instant
 
@@ -200,7 +199,7 @@ class StockControllerSpec extends HttpRoutesWordSpec {
         response mustHaveStatus (Status.Ok, Some(expectedResponse))
         verify(services(Retailer.Scotts)).retailer
         verify(services(Retailer.Scotts)).cachedItems
-        verify(services(Retailer.Selfridges), Mockito.never()).cachedItems
+        verify(services(Retailer.Selfridges), never).cachedItems
       }
     }
 
