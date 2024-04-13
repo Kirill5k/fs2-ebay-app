@@ -44,20 +44,14 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |        "X-Reload-On-403" : "true",
       |        "api-key" : "key"
       |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : "2 seconds",
-      |      "queryParameters" : null
+      |      "delayBetweenIndividualRequests" : "2 seconds"
       |    },
       |    "argos" : {
       |      "baseUri" : "https://www.argos.co.uk",
       |      "headers" : {
       |
       |      },
-      |      "proxied" : true,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : null,
-      |      "queryParameters" : null
+      |      "proxied" : true
       |    },
       |    "jdsports" : {
       |      "baseUri" : "https://fs2-proxy.herokuapp.com",
@@ -65,10 +59,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |        "X-Reload-On-403" : "true",
       |        "X-Reroute-To" : "https://www.jdsports.co.uk"
       |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : "2 seconds",
-      |      "queryParameters" : null
+      |      "delayBetweenIndividualRequests" : "2 seconds"
       |    },
       |    "tessuti" : {
       |      "baseUri" : "https://fs2-proxy.herokuapp.com",
@@ -76,10 +67,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |        "X-Reload-On-403" : "true",
       |        "X-Reroute-To" : "https://www.tessuti.co.uk"
       |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : "2 seconds",
-      |      "queryParameters" : null
+      |      "delayBetweenIndividualRequests" : "2 seconds"
       |    },
       |    "scotts" : {
       |      "baseUri" : "https://fs2-proxy.herokuapp.com",
@@ -87,10 +75,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |        "X-Reload-On-403" : "true",
       |        "X-Reroute-To" : "https://www.scottsmenswear.com"
       |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : "2 seconds",
-      |      "queryParameters" : null
+      |      "delayBetweenIndividualRequests" : "2 seconds"
       |    },
       |    "harveyNichols" : {
       |      "baseUri" : "https://proxy-kirill5k.cloud.okteto.net",
@@ -105,53 +90,37 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |        "Accept-Encoding" : "gzip, deflate, br",
       |        "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36 OPR/82.0.4227.33"
       |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : "15 seconds",
-      |      "queryParameters" : null
+      |      "delayBetweenIndividualRequests" : "15 seconds"
       |    },
       |    "mainlineMenswear" : {
       |      "baseUri" : "https://fs2-proxy.herokuapp.com",
       |      "headers" : {
       |        "X-Reroute-To" : "https://livewebapi.mainlinemenswear.co.uk"
-      |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : null,
-      |      "queryParameters" : null
+      |      }
       |    },
       |    "nvidia" : {
       |      "baseUri" : "https://proxy-kirill5k.cloud.okteto.net",
       |      "headers" : {
       |        "User-Agent" : "PostmanRuntime/7.29.2",
       |        "X-Reroute-To" : "https://api.nvidia.partners"
-      |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : null,
-      |      "queryParameters" : null
+      |      }
       |    },
       |    "scan" : {
       |      "baseUri" : "https://www.scan.co.uk",
       |      "headers" : {
       |        "X-Forwarded-For" : "92.7.76.29"
       |      },
-      |      "proxied" : true,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : null,
-      |      "queryParameters" : null
+      |      "proxied" : true
       |    },
       |    "cex" : {
       |      "baseUri" : "https://wss2.cex.uk.webuy.io",
       |      "headers" : {
       |        "X-Reroute-To" : "https://lnnfeewzva-dsn.algolia.net"
       |      },
-      |      "proxied" : null,
       |      "cache" : {
       |        "expiration" : "24 hours",
       |        "validationPeriod" : "1 hour"
       |      },
-      |      "delayBetweenIndividualRequests" : null,
       |      "queryParameters" : {
       |        "x-algolia-agent" : "Algolia for JavaScript (4.13.1); Browser (lite); instantsearch.js (4.41.1); Vue (2.6.14); Vue InstantSearch (4.3.3); JS Helper (3.8.2)"
       |      }
@@ -160,11 +129,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |      "baseUri" : "https://reqfol.fly.dev",
       |      "headers" : {
       |        "X-Reroute-To" : "https://www.flannels.com"
-      |      },
-      |      "proxied" : null,
-      |      "cache" : null,
-      |      "delayBetweenIndividualRequests" : null,
-      |      "queryParameters" : null
+      |      }
       |    }
       |  },
       |  "stockMonitor" : {
@@ -173,46 +138,70 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |      "monitoringRequests" : [
       |        {
       |          "searchCriteria" : {
-      |            "query" : "iphone 14 pro max unlocked",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "query" : "iphone 14 pro max unlocked"
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        }
       |      ],
-      |      "delayBetweenRequests" : "30 seconds",
-      |      "filters" : null
+      |      "delayBetweenRequests" : "30 seconds"
       |    },
-      |    "nvidia" : {
-      |      "monitoringFrequency" : "10 minutes",
+      |    "scotts" : {
+      |      "monitoringFrequency" : "6 minutes",
       |      "monitoringRequests" : [
       |        {
       |          "searchCriteria" : {
-      |            "query" : "geforce",
-      |            "category" : "GPU",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "query" : "Emporio Armani EA7"
       |          },
-      |          "monitorStockChange" : true,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "Boss",
+      |            "filters" : {
+      |              "minDiscount" : 53
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "Hugo",
+      |            "filters" : {
+      |              "minDiscount" : 53
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "emporio-armani-loungewear",
+      |            "filters" : {
+      |              "minDiscount" : 53
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
       |        }
       |      ],
-      |      "delayBetweenRequests" : null,
+      |      "delayBetweenRequests" : "30 seconds",
       |      "filters" : {
-      |        "minDiscount" : null,
-      |        "maxPrice" : null,
-      |        "allow" : null,
+      |        "minDiscount" : 49,
+      |        "maxPrice" : 250,
       |        "deny" : [
-      |          "GTX 1650",
-      |          "GTX 1660"
+      |          "size xxl",
+      |          "size xl",
+      |          "size l"
       |        ]
       |      }
+      |    },
+      |    "ebay" : {
+      |      "monitoringFrequency" : "10 minutes",
+      |      "monitoringRequests" : [
+      |      ]
       |    },
       |    "jdsports" : {
       |      "monitoringFrequency" : "6 minutes",
@@ -220,91 +209,235 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |        {
       |          "searchCriteria" : {
       |            "query" : "Emporio Armani EA7",
-      |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "category" : "men"
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Calvin Klein",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 59,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 59
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Boss",
-      |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "category" : "men"
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "boss-loungewear",
-      |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "category" : "men"
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Hugo",
-      |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "category" : "men"
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "tommy-hilfiger",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 59,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 59
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        }
       |      ],
       |      "delayBetweenRequests" : "30 seconds",
       |      "filters" : {
       |        "minDiscount" : 49,
-      |        "maxPrice" : null,
-      |        "allow" : null,
+      |        "deny" : [
+      |          "size xxl",
+      |          "size xl",
+      |          "size l"
+      |        ]
+      |      }
+      |    },
+      |    "nvidia" : {
+      |      "monitoringFrequency" : "10 minutes",
+      |      "monitoringRequests" : [
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "geforce",
+      |            "category" : "GPU"
+      |          },
+      |          "monitorStockChange" : true,
+      |          "monitorPriceChange" : true
+      |        }
+      |      ],
+      |      "filters" : {
+      |        "deny" : [
+      |          "GTX 1650",
+      |          "GTX 1660"
+      |        ]
+      |      }
+      |    },
+      |    "mainline-menswear" : {
+      |      "monitoringFrequency" : "12 minutes",
+      |      "monitoringRequests" : [
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "moschino"
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "ea7 emporio armani"
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "boss bodywear"
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "boss athleisure"
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "boss casual"
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "emporio armani"
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        }
+      |      ],
+      |      "delayBetweenRequests" : "30 seconds",
+      |      "filters" : {
+      |        "minDiscount" : 54,
+      |        "deny" : [
+      |          "size xxl",
+      |          "size xl",
+      |          "size l"
+      |        ]
+      |      }
+      |    },
+      |    "argos" : {
+      |      "monitoringFrequency" : "10 minutes",
+      |      "monitoringRequests" : [
+      |      ]
+      |    },
+      |    "selfridges" : {
+      |      "monitoringFrequency" : "6 minutes",
+      |      "monitoringRequests" : [
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "stone-island",
+      |            "filters" : {
+      |              "minDiscount" : 39
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "emporio armani",
+      |            "filters" : {
+      |              "minDiscount" : 44
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "kenzo",
+      |            "filters" : {
+      |              "minDiscount" : 49
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "moncler",
+      |            "filters" : {
+      |              "minDiscount" : 10
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "tommy hilfiger",
+      |            "filters" : {
+      |              "minDiscount" : 59
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "polo ralph lauren",
+      |            "filters" : {
+      |              "minDiscount" : 59
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "hugo",
+      |            "filters" : {
+      |              "minDiscount" : 48
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        },
+      |        {
+      |          "searchCriteria" : {
+      |            "query" : "boss",
+      |            "filters" : {
+      |              "minDiscount" : 48
+      |            }
+      |          },
+      |          "monitorStockChange" : false,
+      |          "monitorPriceChange" : true
+      |        }
+      |      ],
+      |      "delayBetweenRequests" : "30 seconds",
+      |      "filters" : {
+      |        "minDiscount" : 18,
       |        "deny" : [
       |          "size xxl",
       |          "size xl",
@@ -319,349 +452,106 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "Emporio Armani",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 49,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 49
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Hugo",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 53,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 53
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Boss",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 53,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 53
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "calvin-klein-jeans",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 53,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 53
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Tommy Hilfiger",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 53,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 53
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Moschino",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 49,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 49
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Stone Island",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 39,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 39
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Kenzo",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 49,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 49
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "Moncler",
       |            "category" : "men",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : 29,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
+      |              "minDiscount" : 29
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        }
       |      ],
       |      "delayBetweenRequests" : "30 seconds",
       |      "filters" : {
       |        "minDiscount" : 29,
       |        "maxPrice" : 80,
-      |        "allow" : null,
-      |        "deny" : [
-      |          "size xxl",
-      |          "size xl",
-      |          "size l"
-      |        ]
-      |      }
-      |    },
-      |    "mainline-menswear" : {
-      |      "monitoringFrequency" : "12 minutes",
-      |      "monitoringRequests" : [
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "moschino",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "ea7 emporio armani",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "boss bodywear",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "boss athleisure",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "boss casual",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "emporio armani",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        }
-      |      ],
-      |      "delayBetweenRequests" : "30 seconds",
-      |      "filters" : {
-      |        "minDiscount" : 54,
-      |        "maxPrice" : null,
-      |        "allow" : null,
-      |        "deny" : [
-      |          "size xxl",
-      |          "size xl",
-      |          "size l"
-      |        ]
-      |      }
-      |    },
-      |    "scan" : {
-      |      "monitoringFrequency" : "15 minutes",
-      |      "monitoringRequests" : [
-      |      ],
-      |      "delayBetweenRequests" : null,
-      |      "filters" : null
-      |    },
-      |    "argos" : {
-      |      "monitoringFrequency" : "10 minutes",
-      |      "monitoringRequests" : [
-      |      ],
-      |      "delayBetweenRequests" : null,
-      |      "filters" : null
-      |    },
-      |    "ebay" : {
-      |      "monitoringFrequency" : "10 minutes",
-      |      "monitoringRequests" : [
-      |      ],
-      |      "delayBetweenRequests" : null,
-      |      "filters" : null
-      |    },
-      |    "scotts" : {
-      |      "monitoringFrequency" : "6 minutes",
-      |      "monitoringRequests" : [
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Emporio Armani EA7",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : null
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Boss",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 53,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Hugo",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 53,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "emporio-armani-loungewear",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 53,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        }
-      |      ],
-      |      "delayBetweenRequests" : "30 seconds",
-      |      "filters" : {
-      |        "minDiscount" : 49,
-      |        "maxPrice" : 250,
-      |        "allow" : null,
       |        "deny" : [
       |          "size xxl",
       |          "size xl",
@@ -673,8 +563,12 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |      "monitoringFrequency" : "12 minutes",
       |      "monitoringRequests" : [
       |      ],
-      |      "delayBetweenRequests" : "2 minutes",
-      |      "filters" : null
+      |      "delayBetweenRequests" : "2 minutes"
+      |    },
+      |    "scan" : {
+      |      "monitoringFrequency" : "15 minutes",
+      |      "monitoringRequests" : [
+      |      ]
       |    },
       |    "flannels" : {
       |      "monitoringFrequency" : "12 minutes",
@@ -683,16 +577,11 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "balenciaga",
       |            "category" : "mens",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : null,
-      |              "maxPrice" : null,
       |              "allow" : [
       |                "triple s",
       |                "bag"
-      |              ],
-      |              "deny" : null
+      |              ]
       |            }
       |          },
       |          "monitorStockChange" : false,
@@ -703,12 +592,8 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "stone-island",
       |            "category" : "mens",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
       |              "minDiscount" : 28,
-      |              "maxPrice" : null,
-      |              "allow" : null,
       |              "deny" : [
       |                "shadow",
       |                "knit",
@@ -717,25 +602,19 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |            }
       |          },
       |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
+      |          "monitorPriceChange" : true
       |        },
       |        {
       |          "searchCriteria" : {
       |            "query" : "dolce-and-gabbana",
       |            "category" : "mens",
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
       |            "filters" : {
-      |              "minDiscount" : null,
-      |              "maxPrice" : null,
       |              "allow" : [
       |                "slide",
       |                "slider",
       |                "sneaker",
       |                "airmaster"
-      |              ],
-      |              "deny" : null
+      |              ]
       |            }
       |          },
       |          "monitorStockChange" : false,
@@ -768,158 +647,6 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "socks|formal pants|leopard|GRAFFITI|TAILORED|LUMINARIE|paint"
       |        ]
       |      }
-      |    },
-      |    "selfridges" : {
-      |      "monitoringFrequency" : "6 minutes",
-      |      "monitoringRequests" : [
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "stone-island",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 39,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "emporio armani",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 44,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "kenzo",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 49,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "moncler",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 10,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "tommy hilfiger",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 59,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "polo ralph lauren",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 59,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "hugo",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 48,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "boss",
-      |            "category" : null,
-      |            "itemKind" : null,
-      |            "minDiscount" : null,
-      |            "filters" : {
-      |              "minDiscount" : 48,
-      |              "maxPrice" : null,
-      |              "allow" : null,
-      |              "deny" : null
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true,
-      |          "disableNotifications" : null
-      |        }
-      |      ],
-      |      "delayBetweenRequests" : "30 seconds",
-      |      "filters" : {
-      |        "minDiscount" : 18,
-      |        "maxPrice" : null,
-      |        "allow" : null,
-      |        "deny" : [
-      |          "size xxl",
-      |          "size xl",
-      |          "size l"
-      |        ]
-      |      }
       |    }
       |  },
       |  "dealsFinder" : {
@@ -930,9 +657,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "PS4",
       |            "category" : "games-ps4-ps5",
-      |            "itemKind" : "video-game",
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "itemKind" : "video-game"
       |          },
       |          "minMargin" : 45,
       |          "maxQuantity" : 10
@@ -941,9 +666,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "XBOX ONE",
       |            "category" : "games-xbox-one-series-x",
-      |            "itemKind" : "video-game",
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "itemKind" : "video-game"
       |          },
       |          "minMargin" : 45,
       |          "maxQuantity" : 10
@@ -952,9 +675,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "PS5",
       |            "category" : "games-ps4-ps5",
-      |            "itemKind" : "video-game",
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "itemKind" : "video-game"
       |          },
       |          "minMargin" : 45,
       |          "maxQuantity" : 10
@@ -963,9 +684,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "XBOX SERIES",
       |            "category" : "games-xbox-one-series-x",
-      |            "itemKind" : "video-game",
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "itemKind" : "video-game"
       |          },
       |          "minMargin" : 45,
       |          "maxQuantity" : 10
@@ -974,9 +693,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |          "searchCriteria" : {
       |            "query" : "SWITCH",
       |            "category" : "games-switch",
-      |            "itemKind" : "video-game",
-      |            "minDiscount" : null,
-      |            "filters" : null
+      |            "itemKind" : "video-game"
       |          },
       |          "minMargin" : 45,
       |          "maxQuantity" : 10
