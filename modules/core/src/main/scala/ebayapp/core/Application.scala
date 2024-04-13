@@ -20,12 +20,11 @@ object Application extends IOApp.Simple:
           for
             _              <- logger.info("created resources")
             repositories   <- Repositories.make(resources.database) <* logger.info("created repositories")
-            configProvider <- logger.info("initialising file retail config provider") *> RetailConfigProvider.file[IO]()
-            _           <- logger.info("initialising mongo retail config provider") *> RetailConfigProvider.mongo(repositories.retailConfig)
-            clients     <- Clients.make(configProvider, resources) <* logger.info("created clients")
-            services    <- Services.make(configProvider, clients, repositories) <* logger.info("created services")
-            tasks       <- Tasks.make(services) <* logger.info("created tasks")
-            controllers <- Controllers.make(services) <* logger.info("created controllers")
+            configProvider <- RetailConfigProvider.mongo(repositories.retailConfig)
+            clients        <- Clients.make(configProvider, resources) <* logger.info("created clients")
+            services       <- Services.make(configProvider, clients, repositories) <* logger.info("created services")
+            tasks          <- Tasks.make(services) <* logger.info("created tasks")
+            controllers    <- Controllers.make(services) <* logger.info("created controllers")
             _ <- logger.info("starting http server") *> Server
               .serveEmber[IO](appConfig.server, controllers.routes)
               .concurrently(tasks.runAll)
