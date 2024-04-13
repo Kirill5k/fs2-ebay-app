@@ -65,7 +65,7 @@ final private class LiveRetailConfigProvider[F[_]](
         case (Some(latest), Some(current)) if current != latest => currentConfig.set(Some(latest)) >> configs.offer(latest)
         case _                                                  => F.unit
       }
-      .repeatEvery(30.seconds)
+      .repeatEvery(15.seconds)
     c <- Stream.fromQueueUnterminated(configs).concurrently(configUpdate)
   yield c
 }
