@@ -53,8 +53,6 @@ final private class LiveJdClient[F[_]](
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
-    HeaderNames.ContentType    -> "application/json",
-    HeaderNames.XRequestedWith -> "XMLHttpRequest",
     HeaderNames.UserAgent      -> operaUserAgent,
     "sec-ch-ua"                -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
     "sec-ch-ua-mobile"         -> "?0",
