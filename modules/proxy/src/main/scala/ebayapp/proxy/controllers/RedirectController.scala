@@ -10,13 +10,15 @@ import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
 import org.http4s.*
 import org.typelevel.ci.CIString
+import org.typelevel.log4cats.Logger
 
 final private class RedirectController[F[_]](
     private val standardClient: Client[F],
     private val proxiedClient: Client[F],
     private val interrupter: Interrupter[F]
 )(using
-    F: Concurrent[F]
+    F: Concurrent[F],
+    logger: Logger[F]
 ) extends Controller[F] with Http4sDsl[F] {
 
   private val XRerouteToHeader      = CIString("X-Reroute-To")
@@ -38,7 +40,18 @@ final private class RedirectController[F[_]](
     CIString("X-Forwarded-Scheme"),
     CIString("X-Forwarded-Host"),
     CIString("X-Forwarded-Proto"),
-    CIString("X-Scheme")
+    CIString("x-forwarded-ssl"),
+    CIString("X-Scheme"),
+    CIString("x-request-start"),
+    CIString("fly-client-ip"),
+    CIString("fly-forwarded-proto"),
+    CIString("fly-forwarded-ssl"),
+    CIString("fly-forwarded-port"),
+    CIString("fly-region"),
+    CIString("fly-request-id"),
+    CIString("fly-tracestate"),
+    CIString("fly-traceparent"),
+    CIString("via"),
   )
 
   override def routes: HttpRoutes[F] =
@@ -51,8 +64,12 @@ final private class RedirectController[F[_]](
   private def redirect(req: Request[F]): F[Response[F]] =
     req.redirectUri match
       case Right(url) =>
+        val updReq = req.withUri(url).removeHeaders(headersToRemove).cleanAcceptEncodingHeader
         req.redirectClient
-          .toHttpApp(req.withUri(url).removeHeaders(headersToRemove).cleanAcceptEncodingHeader)
+          .toHttpApp(updReq)
+          .flatTap { res =>
+            logger.info(s"Request: ${updReq.method} ${updReq.uri} ${updReq.headers} Response: ${res.status}")
+          }
           .flatTap(res => terminateIfTrue(res.status == Status.Forbidden && req.reloadOn403))
       case Left(errorMessage) =>
         BadRequest(errorMessage)
@@ -75,5 +92,5 @@ final private class RedirectController[F[_]](
 }
 
 object RedirectController:
-  def make[F[_]: Concurrent](resources: Resources[F], interrupter: Interrupter[F]): F[Controller[F]] =
+  def make[F[_]: Concurrent: Logger](resources: Resources[F], interrupter: Interrupter[F]): F[Controller[F]] =
     Monad[F].pure(RedirectController[F](resources.emberClient, resources.jdkHttpClient, interrupter))
