@@ -17,6 +17,10 @@ processes = []
   internal_port = 8080
   processes = ["app"]
   protocol = "tcp"
+  auto_start_machines = false
+  auto_stop_machines = true
+  min_machines_running = 1
+
   script_checks = []
   [services.concurrency]
     hard_limit = 25
