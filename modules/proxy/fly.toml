@@ -1,5 +1,5 @@
 # fly.toml file generated for request-follower on 2022-11-19T09:27:18Z
-# fly deploy -i kirill1/fs2-app-proxy:latest --strategy immediate
+# fly deploy -i kirill1/fs2-app-proxy:latest --strategy immediate --no-cache
 
 app = "request-follower"
 kill_signal = "SIGINT"
