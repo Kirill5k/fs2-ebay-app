@@ -5,7 +5,6 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import com.mongodb.client.model.changestream.OperationType
 import ebayapp.core.common.config.RetailConfig
-import io.circe.syntax.*
 import mongo4cats.circe.given
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.MongoDatabase
@@ -31,10 +30,9 @@ final private class LiveRetailConfigRepository[F[_]](
 
   override def updates: Stream[F, RetailConfig] =
     collection.watch.stream
-      .filter(cs => cs.getOperationType == OperationType.INSERT)
-      .evalMap { cs =>
-        F.fromEither(cs.getFullDocument.asJson.as[RetailConfig])
-      }
+      .filter(_.operationType == OperationType.INSERT)
+      .map(_.fullDocument)
+      .unNone
 }
 
 object RetailConfigRepository {
