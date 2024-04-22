@@ -4,6 +4,8 @@ import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 
 private[clients] trait ItemMapper[I] {
+  def discount(currentPrice: BigDecimal, rrp: Option[BigDecimal]): Option[Int] =
+    rrp.map(currentPrice * 100 / _).map(100 - _.toInt)
 
   def formatSize(size: String): String =
     size
