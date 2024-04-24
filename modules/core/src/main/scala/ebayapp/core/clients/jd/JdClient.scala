@@ -8,7 +8,7 @@ import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.Retailer
 import kirill5k.common.cats.syntax.stream.*
@@ -39,27 +39,14 @@ final private class LiveJdClient[F[_]](
     HeaderNames.AcceptLanguage  -> "en-GB,en;q=0.9",
     HeaderNames.UserAgent       -> operaUserAgent,
     HeaderNames.ContentType     -> "application/json",
-    "upgrade-insecure-requests" -> "1",
-    "sec-ch-ua"                 -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
-    "sec-ch-ua-mobile"          -> "?0",
-    "sec-ch-ua-platform"        -> "macOS",
-    "sec-fetch-dest"            -> "document",
-    "sec-fetch-mode"            -> "navigate",
-    "sec-fetch-site"            -> "same-origin",
-    "sec-fetch-user"            -> "?1"
+    "upgrade-insecure-requests" -> "1"
   )
 
   private val getStockHeaders = Map(
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
-    HeaderNames.UserAgent      -> operaUserAgent,
-    "sec-ch-ua"                -> """"Opera";v="89", "Chromium";v="103", "_Not:A-Brand";v="24"""",
-    "sec-ch-ua-mobile"         -> "?0",
-    "sec-ch-ua-platform"       -> "macOS",
-    "sec-fetch-dest"           -> "empty",
-    "sec-fetch-mode"           -> "cors",
-    "sec-fetch-site"           -> "same-origin"
+    HeaderNames.UserAgent      -> operaUserAgent
   )
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
@@ -158,8 +145,8 @@ final private class LiveJdClient[F[_]](
 
 object JdClient:
   def jdsports[F[_]: Temporal: Logger](
-                                        configProvider: RetailConfigProvider[F],
-                                        backend: SttpBackend[F, Any],
-                                        proxyBackend: Option[SttpBackend[F, Any]] = None
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend, proxyBackend))
