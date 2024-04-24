@@ -28,31 +28,7 @@ final private class RedirectController[F[_]](
 
   private val AcceptEncodingHeader = CIString("accept-encoding")
 
-  private val headersToRemove = List(
-    XAcceptEncodingHeader,
-    XReloadOn403Header,
-    XRerouteToHeader,
-    XProxiedHeader,
-    CIString("host"),
-    CIString("X-Real-IP"),
-    CIString("X-Forwarded-For"),
-    CIString("X-Forwarded-Port"),
-    CIString("X-Forwarded-Scheme"),
-    CIString("X-Forwarded-Host"),
-    CIString("X-Forwarded-Proto"),
-    CIString("x-forwarded-ssl"),
-    CIString("X-Scheme"),
-    CIString("x-request-start"),
-    CIString("fly-client-ip"),
-    CIString("fly-forwarded-proto"),
-    CIString("fly-forwarded-ssl"),
-    CIString("fly-forwarded-port"),
-    CIString("fly-region"),
-    CIString("fly-request-id"),
-    CIString("fly-tracestate"),
-    CIString("fly-traceparent"),
-    CIString("via"),
-  )
+  private val invalidHeaderRegex = "^((x|cf|fly|sec)-.*|host|via)$"
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
@@ -64,7 +40,7 @@ final private class RedirectController[F[_]](
   private def redirect(req: Request[F]): F[Response[F]] =
     req.redirectUri match
       case Right(url) =>
-        val updReq = req.withUri(url).removeHeaders(headersToRemove).cleanAcceptEncodingHeader
+        val updReq = req.withUri(url).withSanitisedHeaders
         req.redirectClient
           .toHttpApp(updReq)
           .flatTap { res =>
@@ -77,9 +53,21 @@ final private class RedirectController[F[_]](
   private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
 
   extension (req: Request[F])
-    def cleanAcceptEncodingHeader: Request[F] =
-      req.headers.get(XAcceptEncodingHeader).fold(req)(hs => req.putHeaders(Header.Raw(AcceptEncodingHeader, hs.head.value)))
-    def removeHeaders(keys: List[CIString]): Request[F] = keys.foldLeft(req)(_.removeHeader(_))
+    def withSanitisedHeaders: Request[F] = {
+      var newHeaders = Headers.empty
+      req.headers.foreach { header =>
+        if (!header.name.toString.toLowerCase.matches(invalidHeaderRegex)) {
+          newHeaders = newHeaders.put(header)
+        }
+      }
+      newHeaders = req.headers
+        .get(XAcceptEncodingHeader)
+        .map(hs => newHeaders.put(Header.Raw(AcceptEncodingHeader, hs.head.value)))
+        .getOrElse(newHeaders)
+
+      req.withHeaders(newHeaders)
+    }
+
     def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
     def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
     def redirectUri: Either[String, Uri] =

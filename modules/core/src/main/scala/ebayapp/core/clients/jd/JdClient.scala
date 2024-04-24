@@ -51,7 +51,7 @@ final private class LiveJdClient[F[_]](
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
-      brands(criteria)
+      brandItems(criteria)
         .filter(_.sale)
         .metered(config.delayBetweenIndividualRequests.getOrElse(0.second))
         .evalMap(getProductStock)
@@ -78,7 +78,7 @@ final private class LiveJdClient[F[_]](
         .handleErrorWith(e => Stream.logError(e)(e.getMessage))
     }
 
-  private def brands(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
+  private def brandItems(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
     Stream
       .unfoldLoopEval(0) { step =>
         searchByBrand(criteria, step).map(items => (items, Option.when(items.nonEmpty)(step + 1)))
