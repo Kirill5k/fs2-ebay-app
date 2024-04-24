@@ -53,7 +53,7 @@ final private class RedirectController[F[_]](
   private def terminateIfTrue(cond: Boolean): F[Unit] = F.whenA(cond)(interrupter.terminate)
 
   extension (req: Request[F])
-    def withSanitisedHeaders: Request[F] = {
+    private def withSanitisedHeaders: Request[F] = {
       var newHeaders = Headers.empty
       req.headers.foreach { header =>
         if (!header.name.toString.toLowerCase.matches(invalidHeaderRegex)) {
@@ -68,9 +68,9 @@ final private class RedirectController[F[_]](
       req.withHeaders(newHeaders)
     }
 
-    def reloadOn403: Boolean                            = req.headers.get(XReloadOn403Header).isDefined
-    def redirectClient: Client[F]                       = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
-    def redirectUri: Either[String, Uri] =
+    private def reloadOn403: Boolean      = req.headers.get(XReloadOn403Header).isDefined
+    private def redirectClient: Client[F] = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
+    private def redirectUri: Either[String, Uri] =
       req.headers
         .get(XRerouteToHeader)
         .toRight(s"Missing $XRerouteToHeader header")
