@@ -3,7 +3,7 @@ package ebayapp.core.clients.ebay
 import cats.effect.IO
 import cats.syntax.applicative.*
 import cats.syntax.option.*
-import ebayapp.core.{MockRetailConfigProvider, MockLogger}
+import ebayapp.core.{MockLogger, MockRetailConfigProvider}
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.clients.ebay.auth.EbayAuthClient
 import ebayapp.core.clients.ebay.browse.EbayBrowseClient
@@ -23,10 +23,8 @@ import java.time.Instant
 
 class EbayClientSpec extends IOWordSpec {
 
-  given logger: Logger[IO] = MockLogger.make[IO]
-
-  val now         = Instant.parse("2020-01-01T00:00:00Z")
-  given Clock[IO] = Clock.mock[IO](now)
+  given Clock[IO]  = Clock.mock[IO](Instant.parse("2020-01-01T00:00:00Z"))
+  given Logger[IO] = MockLogger.make[IO]
 
   val accessToken = "access-token"
   val criteria    = SearchCriteria("xbox", itemKind = Some(ItemKind.VideoGame), category = Some("games-xbox"))
