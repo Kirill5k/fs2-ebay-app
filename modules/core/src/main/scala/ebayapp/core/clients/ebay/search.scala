@@ -71,11 +71,11 @@ private[ebay] object search {
 
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
-        "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game \\d+", "\\d x games",
+        "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d", "\\d x games",
         "upcoming.{1,5}game", "various video games", "\\d x nintendo switch games", "ps games x \\d", "PS4 game \\d+",
         "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games", "\\d( x)? playstation( \\d)? games",
         "\\b200[0-9]\\b", "(demo|game|global|premium)( )?(code|disc|key|cart|pass)",
-        "\\bhdmi\\b", "\\bUSB\\b", "\\bhdd\\b",
+        "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b",
         "(m|b)illion (pure)? cash", "\\d+M (cash|money)", "\\d+ mill",
         "switch.*(alu|unicorn).*\\bcase\\b", "credit(?s).*accoun", "credits", "test (listing|page)", "In Game Item",
         "(starter|craft|diy|achievement|icon|BADGE PIN) (set|pack|bundle|kit)", "starlink(?s).*pack",
@@ -114,7 +114,7 @@ private[ebay] object search {
         "skylander", "lego dimension", "disney infinity", "ring fit", "guitar hero", "million bell", "(touch|split|control)( )?pad", "Touch( )?Screen", "Make Your Selection",
         "animal crossing", "SCARLET.*VIOLET", "kinect sensor", "gaming locker", "eso gold", "gaming locker", "WOW Generation", "Track Connector",
         "Temperature Sensor", "RGB LED", "not duped", "amiibo", "DIY material", "Steep X ", "(Switch|lag) pedal", "game not included", "car charger",
-        "LED Light Box", "check description", "loot run", "bluetooth", "(personalised|gift) mug",
+        "LED Light Box", "check description", "loot run", "bluetooth", "(personalised|gift) mug", "Expansion Pack",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor|lag) Switch", "Switching Sack",
         "(ammo|damage|weapon|tesla|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
         "fallout(?s).* (ammo|damage|tesla|weapon|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",
@@ -122,7 +122,7 @@ private[ebay] object search {
         "\\bFC\\b.*(coins|bot|trading|points|qualifiction)", "Lords of the Fallen.*(Weapons|MAX|LEVEL)",
         "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|car|mxd|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mil)",
         "(cod|of duty|mw\\d|warzone)(?s).*(plan|tool|skill|bot|rank|zombi|legendary|tools|monster|energy|blueprint|schematic|burger|dmz|jack link|service|crossbow|code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)",
-        "modern warfare.*(camo)", "YuGiOh.*(Gems)", "pubg.*(troll|duracell)",
+        "modern warfare.*(camo)", "YuGiOh.*(Gems)", "pubg.*(troll|duracell)", "Numberplate", "bottle opener",
         "Destiny 2", "Destiny.*taken king", "Destiny\\s+the coll", "team( )?group",
         "borderlands.*(artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "starfield.*(credit|max pow)", "Elder Scrolls.*(tamriel|morrowind|Summerset)",
@@ -130,14 +130,14 @@ private[ebay] object search {
         "minecraft.*(item)", "No Mans Sky.*(element|Ship|Interceptor)", "BO3.*(Divinium|Cryptokey)", "\\bto update\\b",
         "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "[A-Z]\\d{4,6}(A|Z)",
         "(rune|million|level)(?s).*elden ring", "elden ring(?s).*(rune|million|level)", "Pok(e|é)?mon",
-        "dragon(s)? dogma(?s).*(item|upgraded|gold|stone|pack|weapon|ring|each|corset)",
+        "dragon(s)? dogma(?s).*(item|upgraded|gold|stone|pack|weapon|ring|each|corset)", "\\bCD32\\b",
         "dying light.*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
-        "\\bTBC\\b", "windows( )?(pc|\\d|xp|vista)", "\\b(2|3)DS\\b", "Master System", "Sega Master System", "sega game gear",
+        "\\bTBC\\b", "windows( )?(pc|\\d|xp|vista)", "\\b(2|3)DS\\b", "Master System", "sega (game gear|saturn)",
         "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", " DS PEGI", "\\bWII\\b", "Roblox", "\\bVPN\\b", "\\bDVD\\b", "\\bNDS\\b", "\\bOLED\\b",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b", "\bSNES\\b", "\\bANDROID\\b", "\\bvbucks\\b",
         "X(BOX)?(\\s+)?360","(super )?nintendo ((3)?ds|wii|nes|eshop)", "\\b(3)?DS\\b ninten(t|d)o", "gamecube", "\\bN64\\b", "\\bDS\\b game", "nintendo (3)?ds",
-        "PlayStation 3.?PS3", "PlayStation 2.?PS2", "\\bPlayStation (2|3)\\b", "gameboy", "switch.*Accessories"
+        "PlayStation (2|3)", "gameboy", "switch.*Accessories"
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
 
