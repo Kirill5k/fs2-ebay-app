@@ -77,28 +77,27 @@ final private class ReactiveRetailConfigProvider[F[_]](
 )(using
     F: Temporal[F]
 ) extends RetailConfigProvider[F] {
-  override def telegram: F[TelegramConfig] = state.get.map(_.telegram)
-  override def cex: F[GenericRetailerConfig] = state.get.map(_.retailer.cex)
-  override def ebay: F[EbayConfig] = state.get.map(_.retailer.ebay)
-  override def selfridges: F[GenericRetailerConfig] = state.get.map(_.retailer.selfridges)
-  override def argos: F[GenericRetailerConfig] = state.get.map(_.retailer.argos)
-  override def jdsports: F[GenericRetailerConfig] = state.get.map(_.retailer.jdsports)
-  override def scotts: F[GenericRetailerConfig] = state.get.map(_.retailer.scotts)
-  override def tessuti: F[GenericRetailerConfig] = state.get.map(_.retailer.tessuti)
-  override def nvidia: F[GenericRetailerConfig] = state.get.map(_.retailer.nvidia)
-  override def scan: F[GenericRetailerConfig] = state.get.map(_.retailer.scan)
-  override def harveyNichols: F[GenericRetailerConfig] = state.get.map(_.retailer.harveyNichols)
-  override def mainlineMenswear: F[GenericRetailerConfig] = state.get.map(_.retailer.mainlineMenswear)
-  override def flannels: F[GenericRetailerConfig] = state.get.map(_.retailer.flannels)
+  override def telegram: F[TelegramConfig]                                     = state.get.map(_.telegram)
+  override def cex: F[GenericRetailerConfig]                                   = state.get.map(_.retailer.cex)
+  override def ebay: F[EbayConfig]                                             = state.get.map(_.retailer.ebay)
+  override def selfridges: F[GenericRetailerConfig]                            = state.get.map(_.retailer.selfridges)
+  override def argos: F[GenericRetailerConfig]                                 = state.get.map(_.retailer.argos)
+  override def jdsports: F[GenericRetailerConfig]                              = state.get.map(_.retailer.jdsports)
+  override def scotts: F[GenericRetailerConfig]                                = state.get.map(_.retailer.scotts)
+  override def tessuti: F[GenericRetailerConfig]                               = state.get.map(_.retailer.tessuti)
+  override def nvidia: F[GenericRetailerConfig]                                = state.get.map(_.retailer.nvidia)
+  override def scan: F[GenericRetailerConfig]                                  = state.get.map(_.retailer.scan)
+  override def harveyNichols: F[GenericRetailerConfig]                         = state.get.map(_.retailer.harveyNichols)
+  override def mainlineMenswear: F[GenericRetailerConfig]                      = state.get.map(_.retailer.mainlineMenswear)
+  override def flannels: F[GenericRetailerConfig]                              = state.get.map(_.retailer.flannels)
   override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = streamUpdates(_.stockMonitor.get(retailer))
-  override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig] = streamUpdates(_.dealsFinder.get(retailer))
+  override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = streamUpdates(_.dealsFinder.get(retailer))
 
   private def streamUpdates[C](getConfig: RetailConfig => Option[C]): Stream[F, C] =
     for
       initialConfig <- Stream.eval(state.get.map(getConfig))
       currentConfig <- Stream.eval(Ref.of[F, Option[C]](initialConfig))
-      c <- updates
-        .subscribeUnbounded
+      c <- updates.subscribeUnbounded
         .map(getConfig)
         .zip(Stream.eval(currentConfig.get).repeat)
         .map {
@@ -170,5 +169,30 @@ object RetailConfigProvider {
           .void
       }
       .map(rc => LiveRetailConfigProvider(rc))
+  }
+
+  def mongoV2[F[_]](repo: RetailConfigRepository[F])(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
+    val initialConfig = repo.get.flatMap {
+      case Some(rc) =>
+        logger.info("loaded retail config from the database") >> Ref.of(rc)
+      case None =>
+        for
+          _     <- logger.info("could not find retail config in database. loading from file")
+          rc    <- RetailConfig.loadDefault[F]
+          _     <- repo.save(rc)
+          state <- Ref.of(rc)
+        yield state
+    }
+
+    for
+      rc  <- initialConfig
+      upd <- Topic[F, RetailConfig]
+      _ <- repo.updates
+        .evalTap(c => logger.info("received retail config update from database") >> rc.set(c))
+        .through(upd.publish)
+        .compile
+        .drain
+        .start
+    yield ReactiveRetailConfigProvider(rc, upd)
   }
 }
