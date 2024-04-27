@@ -76,17 +76,17 @@ class RetailConfigProviderSpec extends IOWordSpec {
             monitoringFrequency = 1.minute
           )
 
+        val updatedRetailConfig = retailConfig.withStockMonitorConfig(Retailer.Cex, updatedCexStockMonitor)
+
         val repo = mock[RetailConfigRepository[IO]]
         when(repo.get).thenReturnIO(Some(retailConfig))
-        when(repo.updates).thenReturn(
-          Stream[IO, RetailConfig](retailConfig.withStockMonitorConfig(Retailer.Cex, updatedCexStockMonitor)).delayBy(500.millis)
-        )
+        when(repo.updates).thenReturn(Stream[IO, RetailConfig](updatedRetailConfig).delayBy(500.millis))
 
         val result = for
-          rcp      <- RetailConfigProvider.mongoV2[IO](repo)
-          _        <- IO.sleep(1.second)
-          cexSM    <- rcp.stockMonitor(Retailer.Cex).take(2).compile.toList
-          nvidiaSM <- rcp.stockMonitor(Retailer.Nvidia).take(2).compile.toList
+          rcp           <- RetailConfigProvider.mongoV2[IO](repo)
+          nvidiaSMFiber <- rcp.stockMonitor(Retailer.Nvidia).interruptAfter(1.seconds).compile.toList.start
+          cexSM         <- rcp.stockMonitor(Retailer.Cex).interruptAfter(1.seconds).compile.toList
+          nvidiaSM      <- nvidiaSMFiber.join.flatMap(_.embed(IO.pure(Nil)))
         yield (cexSM.lastOption, nvidiaSM.lastOption)
 
         result.asserting { res =>
