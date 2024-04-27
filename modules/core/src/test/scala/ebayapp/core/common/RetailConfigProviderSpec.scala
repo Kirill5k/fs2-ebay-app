@@ -2,7 +2,7 @@ package ebayapp.core.common
 
 import cats.effect.IO
 import ebayapp.core.MockLogger
-import ebayapp.core.common.config.{GenericRetailerConfig, RetailConfig}
+import ebayapp.core.common.config.{GenericRetailerConfig, RetailConfig, StockMonitorConfig}
 import ebayapp.core.domain.Retailer
 import ebayapp.core.repositories.RetailConfigRepository
 import kirill5k.common.cats.test.IOWordSpec
@@ -67,10 +67,38 @@ class RetailConfigProviderSpec extends IOWordSpec {
           res mustBe (retailConfig.stockMonitor.get(Retailer.Cex), retailConfig.stockMonitor.get(Retailer.Nvidia))
         }
       }
+
+      "stream stock monitor config updates for a retailer" in {
+        val updatedCexStockMonitor = retailConfig
+          .stockMonitor(Retailer.Cex)
+          .copy(
+            monitoringRequests = Nil,
+            monitoringFrequency = 1.minute
+          )
+
+        val repo = mock[RetailConfigRepository[IO]]
+        when(repo.get).thenReturnIO(Some(retailConfig))
+        when(repo.updates).thenReturn(
+          Stream[IO, RetailConfig](retailConfig.withStockMonitorConfig(Retailer.Cex, updatedCexStockMonitor)).delayBy(500.millis)
+        )
+
+        val result = for
+          rcp      <- RetailConfigProvider.mongoV2[IO](repo)
+          _        <- IO.sleep(1.second)
+          cexSM    <- rcp.stockMonitor(Retailer.Cex).take(2).compile.toList
+          nvidiaSM <- rcp.stockMonitor(Retailer.Nvidia).take(2).compile.toList
+        yield (cexSM.lastOption, nvidiaSM.lastOption)
+
+        result.asserting { res =>
+          res mustBe (Some(updatedCexStockMonitor), retailConfig.stockMonitor.get(Retailer.Nvidia))
+        }
+      }
     }
   }
 
   extension (rc: RetailConfig)
     def withCexConfig(cex: GenericRetailerConfig): RetailConfig =
       rc.copy(retailer = rc.retailer.copy(cex = cex))
+    def withStockMonitorConfig(retailer: Retailer, config: StockMonitorConfig): RetailConfig =
+      rc.copy(stockMonitor = rc.stockMonitor + (retailer -> config))
 }
