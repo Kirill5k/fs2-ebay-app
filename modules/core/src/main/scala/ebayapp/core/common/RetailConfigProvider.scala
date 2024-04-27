@@ -11,6 +11,7 @@ import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.Retailer
 import ebayapp.core.repositories.RetailConfigRepository
 import fs2.Stream
+import fs2.concurrent.Topic
 
 import java.nio.file.Paths
 import scala.concurrent.duration.*
@@ -70,6 +71,47 @@ final private class LiveRetailConfigProvider[F[_]](
   yield c
 }
 
+final private class ReactiveRetailConfigProvider[F[_]](
+    private val state: Ref[F, RetailConfig],
+    private val updates: Topic[F, RetailConfig]
+)(using
+    F: Temporal[F]
+) extends RetailConfigProvider[F] {
+  override def telegram: F[TelegramConfig] = state.get.map(_.telegram)
+  override def cex: F[GenericRetailerConfig] = state.get.map(_.retailer.cex)
+  override def ebay: F[EbayConfig] = state.get.map(_.retailer.ebay)
+  override def selfridges: F[GenericRetailerConfig] = state.get.map(_.retailer.selfridges)
+  override def argos: F[GenericRetailerConfig] = state.get.map(_.retailer.argos)
+  override def jdsports: F[GenericRetailerConfig] = state.get.map(_.retailer.jdsports)
+  override def scotts: F[GenericRetailerConfig] = state.get.map(_.retailer.scotts)
+  override def tessuti: F[GenericRetailerConfig] = state.get.map(_.retailer.tessuti)
+  override def nvidia: F[GenericRetailerConfig] = state.get.map(_.retailer.nvidia)
+  override def scan: F[GenericRetailerConfig] = state.get.map(_.retailer.scan)
+  override def harveyNichols: F[GenericRetailerConfig] = state.get.map(_.retailer.harveyNichols)
+  override def mainlineMenswear: F[GenericRetailerConfig] = state.get.map(_.retailer.mainlineMenswear)
+  override def flannels: F[GenericRetailerConfig] = state.get.map(_.retailer.flannels)
+  override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = streamUpdates(_.stockMonitor.get(retailer))
+  override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig] = streamUpdates(_.dealsFinder.get(retailer))
+
+  private def streamUpdates[C](getConfig: RetailConfig => Option[C]): Stream[F, C] =
+    for
+      initialConfig <- Stream.eval(state.get.map(getConfig))
+      currentConfig <- Stream.eval(Ref.of[F, Option[C]](initialConfig))
+      c <- updates
+        .subscribe(1)
+        .map(getConfig)
+        .zip(Stream.eval(currentConfig.get).repeat)
+        .map {
+          case (None, None)                                       => None
+          case (Some(latest), None)                               => Some(latest)
+          case (Some(latest), Some(current)) if current != latest => Some(latest)
+          case _                                                  => None
+        }
+        .unNone
+        .evalTap(c => currentConfig.set(Some(c)))
+    yield c
+}
+
 object RetailConfigProvider {
   private def loadRetailConfigFromMount[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
     logger.info("loading config from volume mount") >> RetailConfig.loadFromMount
@@ -116,11 +158,10 @@ object RetailConfigProvider {
           state <- Ref.of(rc)
         yield state
     }
-    
+
     initialConfig
       .flatTap { rc =>
-        repo
-          .updates
+        repo.updates
           .evalTap(_ => logger.info("received retail config update from database"))
           .evalMap(rc.set)
           .compile
