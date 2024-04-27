@@ -95,15 +95,13 @@ final private class ReactiveRetailConfigProvider[F[_]](
 
   private def streamUpdates[C](getConfig: RetailConfig => Option[C]): Stream[F, C] =
     for
-      initialConfig <- Stream.eval(state.get.map(getConfig))
-      currentConfig <- Stream.eval(Ref.of[F, Option[C]](initialConfig))
-      c <- updates.subscribeUnbounded
+      currentConfig <- Stream.eval(Ref.of[F, Option[C]](None))
+      c <- (Stream.eval(state.get) ++ updates.subscribeUnbounded)
         .map(getConfig)
         .zip(Stream.eval(currentConfig.get).repeat)
         .map {
-          case (None, None)                                       => None
-          case (Some(latest), None)                               => Some(latest)
           case (Some(latest), Some(current)) if current != latest => Some(latest)
+          case (Some(latest), None)                               => Some(latest)
           case _                                                  => None
         }
         .unNone
