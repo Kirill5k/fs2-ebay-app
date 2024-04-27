@@ -98,7 +98,7 @@ final private class ReactiveRetailConfigProvider[F[_]](
       initialConfig <- Stream.eval(state.get.map(getConfig))
       currentConfig <- Stream.eval(Ref.of[F, Option[C]](initialConfig))
       c <- updates
-        .subscribe(1)
+        .subscribeUnbounded
         .map(getConfig)
         .zip(Stream.eval(currentConfig.get).repeat)
         .map {
