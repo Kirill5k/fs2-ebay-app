@@ -156,32 +156,6 @@ object RetailConfigProvider {
         yield state
     }
 
-    initialConfig
-      .flatTap { rc =>
-        repo.updates
-          .evalTap(_ => logger.info("received retail config update from database"))
-          .evalMap(rc.set)
-          .compile
-          .drain
-          .start
-          .void
-      }
-      .map(rc => LiveRetailConfigProvider(rc))
-  }
-
-  def mongoV2[F[_]](repo: RetailConfigRepository[F])(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
-    val initialConfig = repo.get.flatMap {
-      case Some(rc) =>
-        logger.info("loaded retail config from the database") >> Ref.of(rc)
-      case None =>
-        for
-          _     <- logger.info("could not find retail config in database. loading from file")
-          rc    <- RetailConfig.loadDefault[F]
-          _     <- repo.save(rc)
-          state <- Ref.of(rc)
-        yield state
-    }
-
     for
       rc  <- initialConfig
       upd <- Topic[F, RetailConfig]

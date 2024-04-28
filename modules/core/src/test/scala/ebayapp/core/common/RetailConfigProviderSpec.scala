@@ -24,7 +24,7 @@ class RetailConfigProviderSpec extends IOWordSpec {
         when(repo.updates).thenReturn(Stream.empty)
 
         val result = for
-          rcp    <- RetailConfigProvider.mongoV2[IO](repo)
+          rcp    <- RetailConfigProvider.mongo[IO](repo)
           config <- rcp.cex
         yield config
 
@@ -42,7 +42,7 @@ class RetailConfigProviderSpec extends IOWordSpec {
         when(repo.updates).thenReturn(Stream[IO, RetailConfig](retailConfig.withCexConfig(updatedCexConfig)).delayBy(500.millis))
 
         val result = for
-          rcp    <- RetailConfigProvider.mongoV2[IO](repo)
+          rcp    <- RetailConfigProvider.mongo[IO](repo)
           _      <- IO.sleep(1.second)
           config <- rcp.cex
         yield config
@@ -58,7 +58,7 @@ class RetailConfigProviderSpec extends IOWordSpec {
         when(repo.updates).thenReturn(Stream.empty)
 
         val result = for
-          rcp      <- RetailConfigProvider.mongoV2[IO](repo)
+          rcp      <- RetailConfigProvider.mongo[IO](repo)
           cexSM    <- rcp.stockMonitor(Retailer.Cex).take(1).compile.toList
           nvidiaSM <- rcp.stockMonitor(Retailer.Nvidia).take(1).compile.toList
         yield (cexSM.headOption, nvidiaSM.headOption)
@@ -83,7 +83,7 @@ class RetailConfigProviderSpec extends IOWordSpec {
         when(repo.updates).thenReturn(Stream[IO, RetailConfig](updatedRetailConfig).delayBy(500.millis))
 
         val result = for
-          rcp           <- RetailConfigProvider.mongoV2[IO](repo)
+          rcp           <- RetailConfigProvider.mongo[IO](repo)
           nvidiaSMFiber <- rcp.stockMonitor(Retailer.Nvidia).interruptAfter(1.seconds).compile.toList.start
           cexSM         <- rcp.stockMonitor(Retailer.Cex).interruptAfter(1.seconds).compile.toList
           nvidiaSM      <- nvidiaSMFiber.join.flatMap(_.embed(IO.pure(Nil)))
