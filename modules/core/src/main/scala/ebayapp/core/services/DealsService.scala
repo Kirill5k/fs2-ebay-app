@@ -48,7 +48,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
               .evalTap(repository.save)
               .filter(hasRequiredStock(req))
               .filter(isProfitableToResell(req))
-              .metered(250.millis)
+              .metered(config.delayBetweenRequests.getOrElse(250.millis))
               .handleErrorWith(e => Stream.logError(e)(s"${retailer.name}-deals/error - ${e.getMessage}"))
               .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
           }
