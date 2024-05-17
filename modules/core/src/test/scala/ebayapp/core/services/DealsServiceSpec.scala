@@ -34,9 +34,9 @@ class DealsServiceSpec extends IOWordSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturnUnit
 
-      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](0).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
-        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
+        .withUpdatedSellPrice(any[ResellableItem])
 
       val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
@@ -45,8 +45,8 @@ class DealsServiceSpec extends IOWordSpec {
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
-        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
-        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
+        verify(cexClient).withUpdatedSellPrice(game1)
+        verify(cexClient).withUpdatedSellPrice(game2)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
         verify(repo, times(2)).save(any[ResellableItem])
@@ -82,9 +82,9 @@ class DealsServiceSpec extends IOWordSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturnUnit
 
-      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](0).copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
         .when(cexClient)
-        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
+        .withUpdatedSellPrice(any[ResellableItem])
 
       val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
@@ -95,7 +95,7 @@ class DealsServiceSpec extends IOWordSpec {
         verify(searchClient).search(request1.searchCriteria)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
-        verify(cexClient, times(2)).withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
+        verify(cexClient, times(2)).withUpdatedSellPrice(any[ResellableItem])
         verify(repo, times(2)).save(any[ResellableItem])
         items.map(_.itemDetails) mustBe Nil
       }
@@ -108,9 +108,9 @@ class DealsServiceSpec extends IOWordSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturnUnit
 
-      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1)))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](0)))
         .when(cexClient)
-        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
+        .withUpdatedSellPrice(any[ResellableItem])
 
       val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
@@ -119,8 +119,8 @@ class DealsServiceSpec extends IOWordSpec {
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
-        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
-        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
+        verify(cexClient).withUpdatedSellPrice(game1)
+        verify(cexClient).withUpdatedSellPrice(game2)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
         verify(repo).save(game1)
@@ -136,9 +136,9 @@ class DealsServiceSpec extends IOWordSpec {
       when(repo.existsByUrl(any[String])).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturnUnit
 
-      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](1).copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
+      doAnswer(inv => IO.pure(inv.getArgument[ResellableItem](0).copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
         .when(cexClient)
-        .withUpdatedSellPrice(any[Option[String]])(any[ResellableItem])
+        .withUpdatedSellPrice(any[ResellableItem])
 
       val result = for
         service <- DealsService.make(Retailer.Ebay, config(DealsFinderConfig(2.seconds, List(request1))), searchClient, cexClient, repo)
@@ -147,8 +147,8 @@ class DealsServiceSpec extends IOWordSpec {
 
       result.asserting { items =>
         verify(searchClient).search(request1.searchCriteria)
-        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game1)
-        verify(cexClient).withUpdatedSellPrice(Some("cat1"))(game2)
+        verify(cexClient).withUpdatedSellPrice(game1)
+        verify(cexClient).withUpdatedSellPrice(game2)
         verify(repo).existsByUrl(game1.listingDetails.url)
         verify(repo).existsByUrl(game2.listingDetails.url)
         verify(repo, times(2)).save(any[ResellableItem])
