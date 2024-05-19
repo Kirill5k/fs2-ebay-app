@@ -26,6 +26,7 @@ import scala.concurrent.duration.*
 
 trait CexClient[F[_]] extends SearchClient[F]:
   def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem]
+  def withUpdatedSellPrices(items: List[ResellableItem]): F[List[ResellableItem]]
 
 final private class CexGraphqlClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
@@ -39,6 +40,15 @@ final private class CexGraphqlClient[F[_]](
 ) extends CexClient[F] with HttpClient[F] {
 
   override protected val name: String = "cex-graphql"
+
+  /*
+  TODO:
+  - check cache entry for each item
+  - create single compound request which includes all remaining items
+  - process response by mapping price for each item
+  - update cache
+   */
+  override def withUpdatedSellPrices(items: List[ResellableItem]): F[List[ResellableItem]] = F.pure(Nil)
 
   override def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem] =
     item.itemDetails.fullName match {
