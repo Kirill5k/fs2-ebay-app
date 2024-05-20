@@ -34,7 +34,10 @@ private[cex] object responses {
         .orElse(imageUrls.flatMap(_("small")).flatMap(_.asString))
   }
 
-  final case class GraphqlSearchResult(hits: List[CexGraphqlItem]) derives Codec.AsObject
+  final case class GraphqlSearchResult(
+      hits: List[CexGraphqlItem],
+      query: String
+  ) derives Codec.AsObject
 
   final case class CexGraphqlSearchResponse(results: Option[List[GraphqlSearchResult]]) derives Codec.AsObject
 

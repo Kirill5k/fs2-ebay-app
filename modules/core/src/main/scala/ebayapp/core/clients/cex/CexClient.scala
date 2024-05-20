@@ -6,6 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
+import cats.syntax.traverse.*
 import ebayapp.core.clients.cex.mappers.CexGraphqlItemMapper
 import ebayapp.core.clients.cex.requests.{CexGraphqlSearchRequest, GraphqlSearchRequest}
 import ebayapp.core.clients.cex.responses.*
@@ -41,34 +42,64 @@ final private class CexGraphqlClient[F[_]](
 
   override protected val name: String = "cex-graphql"
 
-  /*
-  TODO:
-  - check cache entry for each item
-  - create single compound request which includes all remaining items
-  - process response by mapping price for each item
-  - update cache
-   */
-  override def withUpdatedSellPrices(items: List[ResellableItem]): F[List[ResellableItem]] = F.pure(Nil)
+  private def reportItemWithoutName(item: ResellableItem): F[ResellableItem] =
+    logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""").as(item)
+
+  private def obtainPriceFromCache(item: ResellableItem): F[ResellableItem] =
+    item.itemDetails.fullName match
+      case Some(fullName) => resellPriceCache.get(fullName).map(sp => item.copy(sellPrice = sp.flatten))
+      case None           => item.pure[F]
+
+  private def obtainPricesFromCex(items: List[ResellableItem]): F[List[ResellableItem]] = {
+    val searchRequests = items.flatMap(_.itemDetails.fullName).distinct.map(searchRequest(_, false))
+    if (searchRequests.isEmpty) F.pure(items)
+    else {
+      dispatch(searchRequests*)
+        .flatMap { res =>
+          val resByQuery = res.results.getOrElse(Nil).map(sr => sr.query -> sr.hits).toMap
+          items.traverse { item =>
+            val query          = item.itemDetails.fullName.get
+            val prices         = resByQuery.getOrElse(item.itemDetails.fullName.get, Nil)
+            val filteredPrices = filterByCategory(item.foundWith.category)(prices)
+            val rp             = getMinResellPrice(filteredPrices)
+            F.ifM(F.pure(rp.isEmpty))(
+              logger.warn(s"""cex-price-match "$query" returned 0 results""").as(item),
+              resellPriceCache.put(query, rp).as(item.copy(sellPrice = rp))
+            )
+          }
+        }
+    }
+  }
+
+  override def withUpdatedSellPrices(items: List[ResellableItem]): F[List[ResellableItem]] = {
+    val (withName, withoutName) = items.partition(_.itemDetails.fullName.isDefined)
+    for
+      withoutName <- withoutName.traverse(reportItemWithoutName)
+      withName    <- withName.traverse(obtainPriceFromCache)
+      (withPriceFromCache, withoutPrice) = withName.partition(_.sellPrice.isDefined)
+      withPriceFromCex <- obtainPricesFromCex(withoutPrice)
+    yield withoutName ++ withPriceFromCache ++ withPriceFromCex
+  }
 
   override def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem] =
     item.itemDetails.fullName match {
       case None =>
-        logger.warn(s"""not enough details to query for resell price: "${item.listingDetails.title}"""") *> item.pure[F]
+        reportItemWithoutName(item)
       case Some(name) =>
         findSellPrice(name, item.foundWith.category).map(sp => item.copy(sellPrice = sp))
     }
 
   private def findSellPrice(query: String, category: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
-      dispatchSearchRequest(query, false)
+      dispatch(searchRequest(query, false))
+        .map(_.results.getOrElse(Nil).flatMap(_.hits))
         .map(filterByCategory(category))
         .map(getMinResellPrice)
         .flatMap(rp => F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F])
     }
 
-  private def filterByCategory(category: Option[String])(response: CexGraphqlSearchResponse): List[CexGraphqlItem] = {
-    val items = response.results.getOrElse(Nil).flatMap(_.hits)
-    val cats  = category.flatMap(c => CexClient.categories.get(c))
+  private def filterByCategory(category: Option[String])(items: List[CexGraphqlItem]): List[CexGraphqlItem] = {
+    val cats = category.flatMap(c => CexClient.categories.get(c))
     if cats.isEmpty then items else items.filter(i => cats.get.contains(i.categoryId))
   }
 
@@ -80,17 +111,21 @@ final private class CexGraphqlClient[F[_]](
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
-      .eval(dispatchSearchRequest(criteria.query))
+      .eval(dispatch(searchRequest(criteria.query)))
       .map(_.results.getOrElse(List.empty))
       .flatMap(Stream.emits)
       .map(_.hits)
       .flatMap(Stream.emits)
       .map(CexGraphqlItemMapper.generic.toDomain(criteria))
 
-  private def dispatchSearchRequest(query: String, inStock: Boolean = true): F[CexGraphqlSearchResponse] = {
+  private def searchRequest(query: String, inStock: Boolean = true): GraphqlSearchRequest = {
     val faceFilters =
       if (inStock) "&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
       else ""
+    GraphqlSearchRequest("prod_cex_uk", s"query=${query}&userToken=ecf31216f1ec463fac30a91a1f0a0dc3$faceFilters")
+  }
+
+  private def dispatch(request: GraphqlSearchRequest*): F[CexGraphqlSearchResponse] =
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
@@ -103,9 +138,7 @@ final private class CexGraphqlClient[F[_]](
             .header("Accept", "application/json")
             .post(uri"${config.baseUri}/1/indexes/*/queries?${config.queryParameters.getOrElse(Map.empty)}")
             .body(
-              CexGraphqlSearchRequest(
-                List(GraphqlSearchRequest("prod_cex_uk", s"query=${query}&userToken=ecf31216f1ec463fac30a91a1f0a0dc3$faceFilters"))
-              )
+              CexGraphqlSearchRequest(request.toList)
             )
             .headers(config.headers)
             .response(asJson[CexGraphqlSearchResponse])
@@ -117,21 +150,20 @@ final private class CexGraphqlClient[F[_]](
             response.pure[F]
           case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-search/exhausted input") *>
-              clock.sleep(1.second) *> dispatchSearchRequest(query)
+              clock.sleep(1.second) *> dispatch(request*)
           case Left(DeserializationException(body, error)) =>
             logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
               AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError
           case Left(HttpError(res, StatusCode.BadRequest)) =>
             logger.error(s"$name-search/400-bad-request: $res") *> CexGraphqlSearchResponse.empty.pure[F]
           case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.error(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatchSearchRequest(query)
+            logger.error(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatch(request*)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatchSearchRequest(query)
+            logger.warn(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatch(request*)
           case Left(error) =>
-            logger.warn(s"$name-search/${r.code}-error\n$error") *> clock.sleep(5.second) *> dispatchSearchRequest(query)
+            logger.warn(s"$name-search/${r.code}-error\n$error") *> clock.sleep(5.second) *> dispatch(request*)
         }
       }
-  }
 }
 
 object CexClient:
