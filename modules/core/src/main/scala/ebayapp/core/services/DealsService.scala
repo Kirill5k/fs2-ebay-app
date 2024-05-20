@@ -41,6 +41,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
       .flatMap { config =>
         Stream
           .emits(config.searchRequests.zipWithIndex)
+          .repeatEvery(config.searchFrequency)
           .map { (req, i) =>
             searchClient
               .search(req.searchCriteria)
@@ -54,12 +55,10 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
               .evalTap(repository.save)
               .filter(hasRequiredStock(req))
               .filter(isProfitableToResell(req))
-              .metered(100.millis)
               .handleErrorWith(e => Stream.logError(e)(s"${retailer.name}-deals/error - ${e.getMessage}"))
               .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
           }
           .parJoinUnbounded
-          .repeatEvery(config.searchFrequency)
       }
 }
 
@@ -70,6 +69,6 @@ object DealsService:
       searchClient: SearchClient[F],
       cexClient: CexClient[F],
       repository: ResellableItemRepository[F],
-      windowSize: Int = 20
+      windowSize: Int = 100
   ): F[DealsService[F]] =
     Monad[F].pure(LiveDealsService[F](retailer, configProvider, searchClient, cexClient, repository, windowSize))
