@@ -77,7 +77,7 @@ final private class CexGraphqlClient[F[_]](
       withoutName <- withoutName.traverse(reportItemWithoutName)
       withName    <- withName.traverse(obtainPriceFromCache)
       (withPriceFromCache, withoutPrice) = withName.partition(_.sellPrice.isDefined)
-      _ <- logger.info(s"sending request to get prices for ${withoutPrice.size} items. ${withoutName.size} don't have name; ${withPriceFromCache.size} prices were obtained from cache")
+      _ <- logger.info(s"getting prices for ${withoutPrice.size} items; ${withoutName.size} don't have name; ${withPriceFromCache.size} prices were obtained from cache")
       withPriceFromCex <- obtainPricesFromCex(withoutPrice)
     yield withoutName ++ withPriceFromCache ++ withPriceFromCex
   }
