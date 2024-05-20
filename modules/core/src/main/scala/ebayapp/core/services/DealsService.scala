@@ -22,7 +22,8 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
     private val configProvider: RetailConfigProvider[F],
     private val searchClient: SearchClient[F],
     private val cexClient: CexClient[F],
-    private val repository: ResellableItemRepository[F]
+    private val repository: ResellableItemRepository[F],
+    private val windowSize: Int
 ) extends DealsService[F] {
 
   private def isNew(item: ResellableItem): F[Boolean] =
@@ -44,11 +45,16 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
             searchClient
               .search(req.searchCriteria)
               .evalFilter(isNew)
-              .evalMap(cexClient.withUpdatedSellPrice)
+              .groupWithin(windowSize, 2.seconds)
+              .flatMap { chunk =>
+                Stream
+                  .eval(cexClient.withUpdatedSellPrices(chunk.toList))
+                  .flatMap(Stream.emits)
+              }
               .evalTap(repository.save)
               .filter(hasRequiredStock(req))
               .filter(isProfitableToResell(req))
-              .metered(config.delayBetweenRequests.getOrElse(250.millis))
+              .metered(100.millis)
               .handleErrorWith(e => Stream.logError(e)(s"${retailer.name}-deals/error - ${e.getMessage}"))
               .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
           }
@@ -63,6 +69,7 @@ object DealsService:
       configProvider: RetailConfigProvider[F],
       searchClient: SearchClient[F],
       cexClient: CexClient[F],
-      repository: ResellableItemRepository[F]
+      repository: ResellableItemRepository[F],
+      windowSize: Int = 20
   ): F[DealsService[F]] =
-    Monad[F].pure(LiveDealsService[F](retailer, configProvider, searchClient, cexClient, repository))
+    Monad[F].pure(LiveDealsService[F](retailer, configProvider, searchClient, cexClient, repository, windowSize))
