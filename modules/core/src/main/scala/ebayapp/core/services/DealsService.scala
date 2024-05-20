@@ -46,21 +46,19 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
             searchClient
               .search(req.searchCriteria)
               .evalFilter(isNew)
-              .groupWithin(windowSize, 30.seconds)
+              .groupWithin(windowSize, 20.seconds)
               .flatMap { chunk =>
                 Stream
                   .eval(cexClient.withUpdatedSellPrices(chunk.toList))
                   .flatMap(Stream.emits)
               }
-              .map(item => req -> item)
+              .evalTap(repository.save)
+              .filter(hasRequiredStock(req))
+              .filter(isProfitableToResell(req))
               .handleErrorWith(e => Stream.logError(e)(s"${retailer.name}-deals/error - ${e.getMessage}"))
               .delayBy(config.delayBetweenRequests.getOrElse(Duration.Zero) * i.toLong)
           }
           .parJoinUnbounded
-          .evalTap((_, item) => repository.save(item))
-          .filter((req, item) => hasRequiredStock(req)(item))
-          .filter((req, item) => isProfitableToResell(req)(item))
-          .map(_._2)
       }
 }
 
