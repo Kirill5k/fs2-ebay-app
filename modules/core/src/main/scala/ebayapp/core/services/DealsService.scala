@@ -46,7 +46,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
             searchClient
               .search(req.searchCriteria)
               .evalFilter(isNew)
-              .groupWithin(windowSize, 2.seconds)
+              .groupWithin(windowSize, 5.seconds)
               .flatMap { chunk =>
                 Stream
                   .eval(cexClient.withUpdatedSellPrices(chunk.toList))
