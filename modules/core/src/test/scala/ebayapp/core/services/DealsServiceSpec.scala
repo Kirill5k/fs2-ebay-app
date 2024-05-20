@@ -166,7 +166,7 @@ class DealsServiceSpec extends IOWordSpec {
           cexClient,
           repo
         )
-        items <- service.newDeals.interruptAfter(3400.millis).compile.toList
+        items <- service.newDeals.interruptAfter(3200.millis).compile.toList
       yield items
 
       result.asserting { items =>
