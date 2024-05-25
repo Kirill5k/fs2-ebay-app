@@ -158,7 +158,7 @@ final private class CexGraphqlClient[F[_]](
           case Left(HttpError(res, StatusCode.BadRequest)) =>
             logger.error(s"$name-search/400-bad-request: $res") *> CexGraphqlSearchResponse.empty.pure[F]
           case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.error(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatch(request*)
+            logger.critical(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatch(request*)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
             logger.error(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatch(request*)
           case Left(error) =>
