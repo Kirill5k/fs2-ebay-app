@@ -160,7 +160,7 @@ final private class CexGraphqlClient[F[_]](
           case Left(HttpError(_, StatusCode.Forbidden)) =>
             logger.error(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatch(request*)
           case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.warn(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatch(request*)
+            logger.error(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatch(request*)
           case Left(error) =>
             logger.warn(s"$name-search/${r.code}-error\n$error") *> clock.sleep(5.second) *> dispatch(request*)
         }
