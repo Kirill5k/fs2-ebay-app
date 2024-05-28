@@ -49,7 +49,6 @@ object search {
       query: String,
       category: Option[String] = None,
       itemKind: Option[ItemKind] = None,
-      minDiscount: Option[Int] = None,
       filters: Option[Filters] = None
   ) derives ConfigReader, Codec.AsObject
 
