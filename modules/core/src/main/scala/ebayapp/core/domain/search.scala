@@ -10,6 +10,7 @@ object search {
 
   final case class Filters(
       minDiscount: Option[Int] = None,
+      maxDiscount: Option[Int] = None,
       maxPrice: Option[BigDecimal] = None,
       allow: Option[List[String]] = None,
       deny: Option[List[String]] = None
@@ -27,6 +28,7 @@ object search {
     def mergeWith(anotherLimit: Filters): Filters =
       Filters(
         minDiscount = mergeOptWith(minDiscount, anotherLimit.minDiscount, _.max(_)),
+        maxDiscount = mergeOptWith(maxDiscount, anotherLimit.maxDiscount, _.min(_)),
         deny = mergeOptWith(deny, anotherLimit.deny, _ ::: _),
         allow = mergeOptWith(allow, anotherLimit.allow, _ ::: _),
         maxPrice = mergeOptWith(maxPrice, anotherLimit.maxPrice, _.min(_))
@@ -37,6 +39,7 @@ object search {
       name.isDefined &&
       maxPrice.fold(true)(max => ri.buyPrice.rrp < max) &&
       minDiscount.fold(true)(min => ri.buyPrice.discount.exists(_ >= min)) &&
+      maxDiscount.fold(true)(max => ri.buyPrice.discount.exists(_ < max)) &&
       denyRegex.fold(true)(filter => !name.get.matches(filter)) &&
       allowRegex.fold(true)(filter => name.get.matches(filter))
     }

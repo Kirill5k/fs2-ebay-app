@@ -27,6 +27,12 @@ class FiltersSpec extends AnyWordSpec with Matchers {
       Filters(minDiscount = Some(50)).apply(game) mustBe false
     }
 
+    "return false when max discount is above limit" in {
+      val game = makeVideoGame("super mario 3", buyPrice = BuyPrice(1, BigDecimal(10), Some(90)))
+
+      Filters(maxDiscount = Some(50)).apply(game) mustBe false
+    }
+
     "return false when item has excluded name" in {
       val game = makeVideoGame("super mario 3")
 
