@@ -72,7 +72,8 @@ private[ebay] object search {
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d", "\\d x games",
-        "upcoming.{1,5}game", "various video games", "\\d x nintendo switch games", "ps games x \\d", "PS4 game(s)?( X)? \\d+", "\\d+( )?x ps4( video)? games",
+        "upcoming.{1,5}game", "various video games", "\\d x nintendo switch games", "ps games x \\d", "PS4 game(s)?( X)? \\d+",
+        "\\d+( )?x( various)? ps4( video)? games",
         "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games", "\\d( x)? playstation( \\d)? games",
         "\\b200[0-9]\\b", "(demo|game|global|premium)( )?(code|disc|key|cart|pass)",
         "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b",
@@ -116,7 +117,7 @@ private[ebay] object search {
         "animal crossing", "SCARLET.*VIOLET", "kinect sensor", "gaming locker", "eso gold", "gaming locker", "WOW Generation", "Track Connector",
         "Temperature Sensor", "RGB LED", "not duped", "amiibo", "DIY material", "Steep X ", "(Switch|lag) pedal", "game not included", "car charger",
         "LED Light", "check description", "loot run", "bluetooth", "(personalised|gift) mug", "Expansion Pack", "portable stand",
-        "Strikepack Horizon",
+        "Strikepack Horizon", "twitch",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor|lag) Switch", "Switching Sack",
         "(treasure|rare|apparel|ammo|damage|weapon|tesla|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
         "fallout(?s).* (treasure|rare|apparel|ammo|damage|tesla|weapon|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",
