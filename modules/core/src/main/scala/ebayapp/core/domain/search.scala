@@ -74,5 +74,5 @@ object search {
       datePosted: Instant,
       seller: String,
       properties: Map[String, String]
-  )
+  ) derives Codec.AsObject
 }

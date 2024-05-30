@@ -4,7 +4,6 @@ import cats.syntax.apply.*
 import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria, SellPrice}
 import io.circe.Codec
-import mongo4cats.circe.given
 
 private[repositories] object entities {
 
