@@ -4,6 +4,8 @@ import cats.syntax.apply.*
 import ebayapp.core.domain.{ItemDetails, ItemKind, ResellableItem}
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria, SellPrice}
 import io.circe.Codec
+import io.circe.generic.semiauto.deriveCodec
+import mongo4cats.circe.given
 
 private[repositories] object entities {
 
@@ -31,6 +33,7 @@ private[repositories] object entities {
       )
 
   object ResellableItemEntity:
+    given Codec[ListingDetails] = deriveCodec[ListingDetails]
     def from(item: ResellableItem): ResellableItemEntity =
       ResellableItemEntity(
         item.itemDetails.fullName,
