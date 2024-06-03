@@ -132,6 +132,7 @@ private[ebay] object search {
         "starfield.*(credit|max pow)", "Elder Scrolls.*(tamriel|morrowind|Summerset)",
         "spiderman.*(trophy|campaign|service)", "(10k|traps).*save( the)? world",
         "Genshin Impact",
+        "red dead.*(gold)",
         "minecraft.*(item)", "No Mans Sky.*(element|Ship|Interceptor)", "BO3.*(Divinium|Cryptokey)", "\\bto update\\b",
         "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "[A-Z]\\d{4,6}(A|Z)",
         "(rune|million|level|crafting|material)(?s).*elden ring", "elden ring(?s).*(rune|million|level|crafting|material)", "Pok(e|é)?mon",
