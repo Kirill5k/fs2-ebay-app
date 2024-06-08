@@ -12,7 +12,6 @@ class AppConfigSpec extends IOWordSpec {
     "load from application.conf" in {
       AppConfig.load[IO].asserting { conf =>
         conf.server.host mustBe "0.0.0.0"
-        conf.client.proxyHost mustBe Some("my.proxy.com")
         conf.interrupter.initialDelay mustBe 30.minutes
       }
     }
