@@ -8,7 +8,6 @@ object Dependencies {
     val circe           = "0.14.7"
     val sttp            = "3.9.7"
     val http4s          = "0.23.27"
-    val http4sJdkClient = "0.9.1"
     val logback         = "1.5.6"
     val log4cats        = "2.6.0"
     val tapir           = "1.10.8"
@@ -67,7 +66,6 @@ object Dependencies {
     object http4s {
       val dsl           = "org.http4s" %% "http4s-dsl"             % Versions.http4s
       val emberClient   = "org.http4s" %% "http4s-ember-client"    % Versions.http4s
-      val jdkHttpClient = "org.http4s" %% "http4s-jdk-http-client" % Versions.http4sJdkClient
     }
 
     object tapir {
@@ -94,8 +92,7 @@ object Dependencies {
     Libraries.tapir.all
 
   val proxy = Seq(
-    Libraries.http4s.emberClient,
-    Libraries.http4s.jdkHttpClient
+    Libraries.http4s.emberClient
   )
 
   val monitor = Seq(

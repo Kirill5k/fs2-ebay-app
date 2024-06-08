@@ -3,7 +3,6 @@ package ebayapp.proxy.controllers
 import cats.Monad
 import cats.effect.Concurrent
 import cats.syntax.flatMap.*
-import cats.syntax.functor.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.proxy.common.{Interrupter, Resources}
 import org.http4s.client.Client
@@ -14,7 +13,6 @@ import org.typelevel.log4cats.Logger
 
 final private class RedirectController[F[_]](
     private val standardClient: Client[F],
-    private val proxiedClient: Client[F],
     private val interrupter: Interrupter[F]
 )(using
     F: Concurrent[F],
@@ -23,7 +21,6 @@ final private class RedirectController[F[_]](
 
   private val XRerouteToHeader      = CIString("X-Reroute-To")
   private val XReloadOn403Header    = CIString("X-Reload-On-403")
-  private val XProxiedHeader        = CIString("X-Proxied")
   private val XAcceptEncodingHeader = CIString("X-Accept-Encoding")
 
   private val AcceptEncodingHeader = CIString("accept-encoding")
@@ -41,7 +38,7 @@ final private class RedirectController[F[_]](
     req.redirectUri match
       case Right(url) =>
         val updReq = req.withUri(url).withSanitisedHeaders
-        req.redirectClient
+        standardClient
           .toHttpApp(updReq)
           .flatTap { res =>
             logger.info(s"Request: ${updReq.method} ${updReq.uri} ${updReq.headers} Response: ${res.status}")
@@ -69,7 +66,6 @@ final private class RedirectController[F[_]](
     }
 
     private def reloadOn403: Boolean      = req.headers.get(XReloadOn403Header).isDefined
-    private def redirectClient: Client[F] = req.headers.get(XProxiedHeader).as(proxiedClient).getOrElse(standardClient)
     private def redirectUri: Either[String, Uri] =
       req.headers
         .get(XRerouteToHeader)
@@ -81,4 +77,4 @@ final private class RedirectController[F[_]](
 
 object RedirectController:
   def make[F[_]: Concurrent: Logger](resources: Resources[F], interrupter: Interrupter[F]): F[Controller[F]] =
-    Monad[F].pure(RedirectController[F](resources.emberClient, resources.jdkHttpClient, interrupter))
+    Monad[F].pure(RedirectController[F](resources.emberClient, interrupter))
