@@ -1,8 +1,5 @@
 package ebayapp.monitor.domain
 
-import io.circe.Codec
-import ebayapp.kernel.json.given
-
 import java.time.Instant
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
@@ -18,7 +15,7 @@ object MonitoringEvent {
       responseTime: FiniteDuration,
       time: Instant,
       reason: String
-  ) derives Codec.AsObject
+  )
 
   object StatusCheck {
     def paused(time: Instant): StatusCheck =
