@@ -1,7 +1,9 @@
 package ebayapp.monitor.repositories
 
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
+import ebayapp.kernel.json.given
 import io.circe.Codec
+import io.circe.generic.semiauto.deriveCodec
 import mongo4cats.bson.ObjectId
 import mongo4cats.circe.given
 
@@ -15,6 +17,7 @@ final private[repositories] case class MonitoringEventEntity(
   def toDomain: MonitoringEvent = MonitoringEvent(Monitor.Id(monitorId), statusCheck, downTime)
 
 private[repositories] object MonitoringEventEntity:
+  given Codec[MonitoringEvent.StatusCheck] = deriveCodec[MonitoringEvent.StatusCheck]
   def from(me: MonitoringEvent): MonitoringEventEntity =
     MonitoringEventEntity(
       me.monitorId.toObjectId,
