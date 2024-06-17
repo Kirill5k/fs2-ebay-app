@@ -151,8 +151,6 @@ class EbayClientSpec extends IOWordSpec {
       val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
 
       val badItems = List(
-        "MAXO 100W USB-C CHARGER WHT (Sony Playstation 5)",
-        "Super Marios Bros (DS)",
         "PS5 games x 3",
         "PS5 games 3",
         "5x PS5 games",
@@ -160,6 +158,8 @@ class EbayClientSpec extends IOWordSpec {
         "5 x PS5 games",
         "5 x PS4 video games",
         "5 x various PS4 video games",
+        "MAXO 100W USB-C CHARGER WHT (Sony Playstation 5)",
+        "Super Marios Bros (DS)",
         "Fallout 3 (XBOX)",
         "Fallout 3 PC CD",
         "video game #5",

@@ -64,19 +64,20 @@ private[ebay] object search {
         "itemLocationCountry:GB,"
 
       private val LISTING_NAME_TRIGGER_TAGS = List(
-        "\\(PC\\)",
         "\\(DS\\)",
         "\\(XBOX\\)"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
+        "\\bPC\\b",
+        "^(PS4|xbox|switch) games$",
         "\\d+( )?(x)?( various)?( (XBOX( ONE)?|PS4|PS5|playstation|nintendo switch))?( video)? games",
         "(PS(4|5)?|XBOX) game(s)?( X)? \\d+",
         "(various video|nintendo switch) games","(various video|nintendo switch) games",
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d",
         "upcoming.{1,5}game",
-        "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games",
+        "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games", "buy any \\d for",
         "\\b200[0-9]\\b", "(demo|game|global|premium)( )?(code|disc|key|cart|pass)",
         "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b",
         "(m|b)illion (pure)? cash", "\\d+M (cash|money)", "\\d+ mill",
@@ -86,7 +87,7 @@ private[ebay] object search {
         "(\\d+|rune|perk|microsoft|skill|(e)?xp(erience)?)\\s+(stats|points)", "(memory|trading|post|sd|nfc( mini)?)( )?card", "stickers",
         "(subscription|gift|ps\\d|steam|network|digital|will send|insta(nt)?|digital)( |-)?(card|code|key)", "disc \\d missing", "(instant|digital) delivery", "faulty", "damaged",
         "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|\\bUK\\b|no)( )?(redeem )?(\\bDL\\b|avatar|game|code|key)",
-        "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo|Accessories|cloth map|disc one|disc two) only",
+        "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card|promo|Accessories|cloth map|disc (one|two|\\d)) only",
         "(case|variety|accessor(ies|y)|storage|charge|robot|dice|charging|streaming) (system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "pass set", "keychain",
         "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch|empty|cargo)\\s+(sleeve|pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging|power|desk)( )?(dock|station|stand)", "download",
@@ -105,7 +106,7 @@ private[ebay] object search {
         "samsung", "huawei", "nokia", "iphone", "\\bipad\\b", "sandisk", "server", "wireless", "Tempered Glass", "(early|beta) (test|access)", "closed", "Funko Pop",
         "(usa|hungarian|scandinavian|asian|korea(n)?|polish|asia(n)?|german|promo(tional)?|starter|demo|french|jap(an)?(ese)?|cz|dutch|italian|spanish|us(a)?|digital|nordic|\\bau\\b|multi(-)?language) (issue|release|cover|pack|box|import|item|disc|vers|copy)",
         "arabic", "slovakian", "czech", "\\bNTSC(-J)?\\b", "to be updated", "(ps\\d|xbox( one)?) digital", "Dreamcast", "Handheld System", "hard drive",
-        "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "PC( )?(xbox|mac|steam|comp|win|game|CD|DVD)", "\\n digit code", "Commodore 64", "leap tv", "smart band",
+        "\\bhori\\b", "\\bDE\\b", "ID\\d+z", "\\bemail\\b", "\\n digit code", "Commodore 64", "leap tv", "smart band",
         "TOPModel", "Sleeping Mask", "Juwel", "game( +)?watch", "Wonder Pin", "Trigger Treadz", "Painting on Canvas", "Life is Strange Before the Storm",
         "(pvp|pve|reaper|lvl)(?s).*ark", "ark(?s).*(pvp|SMALLTRIBE|breeding|deadpool|pve|reaper|lvl|Tek)", "Code( )?in( )?(a)?( )?Box", "Creativ Company",
         "fortnite", "overwatch\\s+(sony|ps|xbox|legendary|origins|game)", "earphone", "Crossbody", "DRESSING GOWN", "drinks cooler", "hair dryer",
@@ -135,14 +136,15 @@ private[ebay] object search {
         "spiderman.*(trophy|campaign|service)", "(10k|traps).*save( the)? world",
         "Genshin Impact",
         "red dead.*(gold)",
-        "BO3.*(Divinium|Cryptokey|level|anime|camo)",
+        "ea fc.*(rank|wins)",
+        "BO3.*(Divinium|Cryptokey|level|anime|camo|modded|classes|perks)",
         "minecraft.*(item)", "(No Mans Sky|\\bNMS\\b).*(companion|element|Ship|Interceptor)", "\\bto update\\b",
         "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "[A-Z]\\d{4,6}(A|Z)",
         "(rune|million|level|crafting|material)(?s).*elden ring", "elden ring(?s).*(rune|million|level|crafting|material)", "Pok(e|é)?mon",
         "dragon(s)? dogma(?s).*(item|upgraded|gold|stone|pack|weapon|ring|each|corset)", "\\bCD32\\b",
         "dying light.*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
         "\\bTBC\\b", "windows( )?(pc|\\d|xp|vista)", "\\b(2|3)DS\\b", "Master System", "sega (game gear|saturn)",
-        "forza.*Wheelspin", "demon soul.*level", "\\bBDSP\\b", " DS PEGI", "\\bWII\\b", "Roblox", "\\bVPN\\b", "\\bDVD\\b", "\\bNDS\\b", "\\bOLED\\b",
+        "forza.*(cars|Wheelspin)", "demon soul.*level", "\\bBDSP\\b", " DS PEGI", "\\bWII\\b", "Roblox", "\\bVPN\\b", "\\bDVD\\b", "\\bNDS\\b", "\\bOLED\\b",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b", "\bSNES\\b", "\\bANDROID\\b", "\\bvbucks\\b",
         "X(BOX)?(\\s+)?360","(super )?nintendo ((3)?ds|wii|nes|eshop)", "\\b(3)?DS\\b ninten(t|d)o", "gamecube", "\\bN64\\b", "\\bDS\\b game", "nintendo (3)?ds",
