@@ -129,7 +129,7 @@ private[mappers] object GameDetailsMapper {
     "Playstation( \\d)?\\s+(?=PS)", "^genuine ", "^bnwt ", "^(brand|condition) new ", "^Pristine",
     "^\\w+ condition ", "^(((brand )?NEW|BNIB|Factory) )?(UN)?SEALED( in Packaging)?( )?", 
     s"^(\\d+ )?$CONSOLE_REGEX_PATTERN", "Standart$", "^SALE", "((condition|brand) )?new$", 
-    "^(UN)?BOXED", "^NEW", "^best", "^software", "^un( )?opened", "un( )?opened$", 
+    "^(UN)?BOXED", "^NEW", "^best", "^read", "^software", "^un( )?opened", "un( )?opened$",
     "((super|very) )?rare$", "^((super|very) )?rare", "official$", "^bargain", "bargain$", 
     "(near )?mint$", "\\bfor\\b$", "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$", 
     "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheap(est)?( on ebay)?", 
