@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.Monad
-import ebayapp.core.domain.{ResellableItemSummary, ResellableItem, SearchParams}
+import ebayapp.core.domain.{ResellableItem, ResellableItemSummary, SearchParams}
 import ebayapp.core.repositories.ResellableItemRepository
 
 trait ResellableItemService[F[_]]:

@@ -1,9 +1,9 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{MockRetailConfigProvider, MockLogger}
+import ebayapp.core.{MockLogger, MockRetailConfigProvider}
 import ebayapp.core.clients.SearchClient
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.{StockMonitorConfig, StockMonitorRequest}
 import ebayapp.core.domain.ResellableItemBuilder.makeClothing
 import ebayapp.core.domain.Retailer

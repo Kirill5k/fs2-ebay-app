@@ -10,7 +10,7 @@ import cats.syntax.functor.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.argos.mappers.ArgosItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
@@ -74,9 +74,9 @@ final private class LiveArgosClient[F[_]](
 
 object ArgosClient {
   def make[F[_]: Temporal: Logger](
-                                    configProvider: RetailConfigProvider[F],
-                                    backend: SttpBackend[F, Any],
-                                    proxyBackend: Option[SttpBackend[F, Any]] = None
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveArgosClient[F](() => configProvider.argos, backend, proxyBackend))
 }

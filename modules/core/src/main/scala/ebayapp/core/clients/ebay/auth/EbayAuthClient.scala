@@ -6,7 +6,7 @@ import cats.syntax.functor.*
 import cats.syntax.option.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import EbayAuthClient.OAuthToken
 import ebayapp.core.clients.HttpClient
 import responses.{EbayAuthErrorResponse, EbayAuthSuccessResponse}
@@ -88,8 +88,8 @@ private[ebay] object EbayAuthClient:
   }
 
   def make[F[_]: Temporal: Logger: Clock](
-                                           configProvider: RetailConfigProvider[F],
-                                           backend: SttpBackend[F, Any]
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any]
   ): F[EbayAuthClient[F]] =
     for
       config <- configProvider.ebay

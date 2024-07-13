@@ -22,10 +22,9 @@ final private class LiveHttpClient[F[_]: Async](
 )(using
     C: Clock[F]
 ) extends HttpClient[F] {
-  
-  extension [T](res: Response[T])
-    private def reason: String = s"HTTP ${res.code} ${res.statusText}".trim
-  
+
+  extension [T](res: Response[T]) private def reason: String = s"HTTP ${res.code} ${res.statusText}".trim
+
   def status(connection: Monitor.Connection.Http): F[MonitoringEvent.StatusCheck] =
     for
       start <- C.now

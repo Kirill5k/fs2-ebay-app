@@ -92,7 +92,7 @@ object MonitorController extends TapirJsonCirce with SchemaDerivation {
   given Schema[Monitor.Contact]    = Schema.string
   given Schema[Monitor.Connection] = Schema.string
   given Schema[Monitor.Status]     = Schema.string
-  given Schema[Monitor.Schedule]           = Schema.string
+  given Schema[Monitor.Schedule]   = Schema.string
 
   private val basePath   = "monitors"
   private val idPath     = basePath / path[String]

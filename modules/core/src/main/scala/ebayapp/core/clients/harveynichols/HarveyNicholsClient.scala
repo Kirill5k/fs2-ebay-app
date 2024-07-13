@@ -8,7 +8,7 @@ import cats.syntax.apply.*
 import ebayapp.core.clients.harveynichols.mappers.{HarveyNicholsItem, HarveyNicholsItemMapper}
 import ebayapp.core.clients.harveynichols.responses.{HarveyNicholsProduct, HarveyNicholsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient}
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
@@ -116,8 +116,8 @@ final private class LiveHarveyNicholsClient[F[_]](
 
 object HarveyNicholsClient:
   def make[F[_]: Temporal: Logger](
-                                    configProvider: RetailConfigProvider[F],
-                                    backend: SttpBackend[F, Any],
-                                    proxyBackend: Option[SttpBackend[F, Any]] = None
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveHarveyNicholsClient[F](() => configProvider.harveyNichols, backend, proxyBackend))

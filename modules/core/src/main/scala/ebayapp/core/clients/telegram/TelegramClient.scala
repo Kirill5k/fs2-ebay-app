@@ -7,7 +7,7 @@ import ebayapp.core.clients.{HttpClient, MessengerClient}
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import sttp.client3.*
 import sttp.model.StatusCode
 
@@ -47,7 +47,7 @@ final private class LiveTelegramClient[F[_]](
 
 object TelegramClient:
   def make[F[_]: Logger](
-                          configProvider: RetailConfigProvider[F],
-                          backend: SttpBackend[F, Any]
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any]
   )(using F: Temporal[F]): F[MessengerClient[F]] =
     F.pure(LiveTelegramClient[F](() => configProvider.telegram, backend))

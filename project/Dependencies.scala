@@ -2,17 +2,17 @@ import sbt.*
 
 object Dependencies {
   private object Versions {
-    val mongo4cats      = "0.7.8"
-    val commonScala     = "0.1.17"
-    val pureConfig      = "0.17.6"
-    val circe           = "0.14.7"
-    val sttp            = "3.9.7"
-    val http4s          = "0.23.27"
-    val logback         = "1.5.6"
-    val log4cats        = "2.6.0"
-    val tapir           = "1.10.9"
-    val courier         = "3.2.0"
-    val cronUtils       = "9.2.1"
+    val mongo4cats  = "0.7.8"
+    val commonScala = "0.1.17"
+    val pureConfig  = "0.17.6"
+    val circe       = "0.14.7"
+    val sttp        = "3.9.7"
+    val http4s      = "0.23.27"
+    val logback     = "1.5.6"
+    val log4cats    = "2.6.0"
+    val tapir       = "1.10.9"
+    val courier     = "3.2.0"
+    val cronUtils   = "9.2.1"
 
     val mockJavaMail = "1.9"
   }
@@ -64,8 +64,8 @@ object Dependencies {
     }
 
     object http4s {
-      val dsl           = "org.http4s" %% "http4s-dsl"             % Versions.http4s
-      val emberClient   = "org.http4s" %% "http4s-ember-client"    % Versions.http4s
+      val dsl         = "org.http4s" %% "http4s-dsl"          % Versions.http4s
+      val emberClient = "org.http4s" %% "http4s-ember-client" % Versions.http4s
     }
 
     object tapir {

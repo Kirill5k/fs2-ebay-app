@@ -16,9 +16,9 @@ trait Resources[F[_]]:
 object Resources:
 
   def make[F[_]: Async](config: AppConfig): Resource[F, Resources[F]] =
-    makeEmberClient[F](config.client)map { ember =>
+    makeEmberClient[F](config.client) map { ember =>
       new Resources[F] {
-        def emberClient: Client[F]   = FollowRedirect(10)(ember)
+        def emberClient: Client[F] = FollowRedirect(10)(ember)
       }
     }
 

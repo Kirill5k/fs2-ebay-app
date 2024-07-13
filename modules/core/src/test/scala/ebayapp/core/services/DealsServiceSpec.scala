@@ -1,7 +1,7 @@
 package ebayapp.core.services
 
 import cats.effect.IO
-import ebayapp.core.{MockRetailConfigProvider, MockLogger}
+import ebayapp.core.{MockLogger, MockRetailConfigProvider}
 import ebayapp.core.clients.cex.CexClient
 import ebayapp.core.clients.SearchClient
 import ebayapp.core.common.Logger
@@ -34,7 +34,9 @@ class DealsServiceSpec extends IOWordSpec {
       when(repo.existsByUrl(anyString)).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturnUnit
 
-      doAnswer(inv => IO.pure(inv.getArgument[List[ResellableItem]](0).map(_.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50)))))))
+      doAnswer(inv =>
+        IO.pure(inv.getArgument[List[ResellableItem]](0).map(_.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      )
         .when(cexClient)
         .withUpdatedSellPrices(anyList[ResellableItem])
 
@@ -75,13 +77,15 @@ class DealsServiceSpec extends IOWordSpec {
 
     "ignore items that have too much quantity" in {
       val (searchClient, cexClient, repo) = mockDependecies
-      val games = List(game1, game2).map(_.copy(buyPrice = BuyPrice(100, BigDecimal(10))))
+      val games                           = List(game1, game2).map(_.copy(buyPrice = BuyPrice(100, BigDecimal(10))))
 
       when(searchClient.search(any[SearchCriteria])).thenStream(games)
       when(repo.existsByUrl(anyString)).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturnUnit
 
-      doAnswer(inv => IO.pure(inv.getArgument[List[ResellableItem]](0).map(_.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50)))))))
+      doAnswer(inv =>
+        IO.pure(inv.getArgument[List[ResellableItem]](0).map(_.copy(sellPrice = Some(SellPrice(BigDecimal(50), BigDecimal(50))))))
+      )
         .when(cexClient)
         .withUpdatedSellPrices(anyList[ResellableItem])
 
@@ -134,7 +138,9 @@ class DealsServiceSpec extends IOWordSpec {
       when(repo.existsByUrl(anyString)).thenReturn(IO.pure(false))
       when(repo.save(any[ResellableItem])).thenReturnUnit
 
-      doAnswer(inv => IO.pure(inv.getArgument[List[ResellableItem]](0).map(_.copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40)))))))
+      doAnswer(inv =>
+        IO.pure(inv.getArgument[List[ResellableItem]](0).map(_.copy(sellPrice = Some(SellPrice(BigDecimal(40), BigDecimal(40))))))
+      )
         .when(cexClient)
         .withUpdatedSellPrices(anyList[ResellableItem])
 

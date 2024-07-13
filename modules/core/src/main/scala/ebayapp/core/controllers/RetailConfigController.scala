@@ -33,7 +33,7 @@ final private[controllers] class RetailConfigController[F[_]](
 
 object RetailConfigController extends TapirJsonCirce with SchemaDerivation {
   override def jsonPrinter: Printer = Printer.spaces2.copy(dropNullValues = true)
-  
+
   given Schema[RetailConfig] = Schema.string
 
   private val basePath = "retail-config"
@@ -48,7 +48,7 @@ object RetailConfigController extends TapirJsonCirce with SchemaDerivation {
     .in(jsonBody[RetailConfig])
     .errorOut(Controller.errorResponse)
     .out(statusCode(StatusCode.NoContent))
-  
+
   def make[F[_]](service: RetailConfigService[F])(using F: Async[F]): F[Controller[F]] =
     F.pure(RetailConfigController(service))
 }

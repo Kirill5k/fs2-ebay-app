@@ -104,7 +104,7 @@ class CexClientSpec extends SttpWordSpec {
           }
 
         val result = for
-          client <- CexClient.graphql[IO](config, testingBackend)
+          client       <- CexClient.graphql[IO](config, testingBackend)
           updatedItems <- client.withUpdatedSellPrices(List(game1, game2, game3))
         yield updatedItems
 

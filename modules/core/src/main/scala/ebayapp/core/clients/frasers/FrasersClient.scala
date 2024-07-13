@@ -7,7 +7,7 @@ import ebayapp.core.clients.frasers.mappers.{FrasersItem, FrasersItemMapper}
 import ebayapp.core.clients.frasers.responses.{FlannelsProduct, FlannelsSearchResponse}
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.common.config.GenericRetailerConfig
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
@@ -109,22 +109,22 @@ final private class LiveFrasersClient[F[_]](
 
 object FrasersClient:
   def flannels[F[_]: Temporal: Logger](
-                                        configProvider: RetailConfigProvider[F],
-                                        backend: SttpBackend[F, Any],
-                                        proxyBackend: Option[SttpBackend[F, Any]] = None
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Flannels))
 
   def tessuti[F[_]: Temporal: Logger](
-                                       configProvider: RetailConfigProvider[F],
-                                       backend: SttpBackend[F, Any],
-                                       proxyBackend: Option[SttpBackend[F, Any]] = None
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.tessuti, backend, proxyBackend, Retailer.Tessuti))
 
   def scotts[F[_]: Temporal: Logger](
-                                      configProvider: RetailConfigProvider[F],
-                                      backend: SttpBackend[F, Any],
-                                      proxyBackend: Option[SttpBackend[F, Any]] = None
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.scotts, backend, proxyBackend, Retailer.Scotts))

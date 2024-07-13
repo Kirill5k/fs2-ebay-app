@@ -8,7 +8,7 @@ import cats.syntax.applicative.*
 import ebayapp.core.clients.{HttpClient, SearchClient}
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
-import ebayapp.core.common.{RetailConfigProvider, Logger}
+import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
@@ -80,8 +80,8 @@ final private class LiveNvidiaClient[F[_]](
 
 object NvidiaClient:
   def make[F[_]: Temporal: Logger](
-                                    configProvider: RetailConfigProvider[F],
-                                    backend: SttpBackend[F, Any],
-                                    proxyBackend: Option[SttpBackend[F, Any]] = None
+      configProvider: RetailConfigProvider[F],
+      backend: SttpBackend[F, Any],
+      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend, proxyBackend))

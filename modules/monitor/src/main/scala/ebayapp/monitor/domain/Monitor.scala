@@ -3,7 +3,7 @@ package ebayapp.monitor.domain
 import cats.syntax.either.*
 import com.cronutils.model.definition.CronDefinitionBuilder
 import com.cronutils.model.time.ExecutionTime
-import com.cronutils.model.{CronType, Cron as JCron}
+import com.cronutils.model.{Cron as JCron, CronType}
 import com.cronutils.parser.CronParser
 import kirill5k.common.syntax.time.*
 import ebayapp.kernel.types.{EnumType, IdType}
@@ -139,12 +139,12 @@ object Monitor {
             .flatMap(Cron.apply)
             .leftMap(e => DecodingFailure(e.getMessage, List(CursorOp.Field("cron"))))
         case "periodic" => c.downField("period").as[FiniteDuration].map(Periodic.apply)
-        case kind => Left(DecodingFailure(s"Unexpected schedule kind $kind", List(CursorOp.Field(discriminatorField))))
+        case kind       => Left(DecodingFailure(s"Unexpected schedule kind $kind", List(CursorOp.Field(discriminatorField))))
       }
     }
 
     inline given Encoder[Schedule] = Encoder.instance {
-      case cron: Cron => Json.obj(discriminatorField := cron.kind, "cron" := cron.cron.asString())
+      case cron: Cron         => Json.obj(discriminatorField := cron.kind, "cron" := cron.cron.asString())
       case periodic: Periodic => Json.obj(discriminatorField := periodic.kind, "period" -> periodic.period.asJson)
     }
   }

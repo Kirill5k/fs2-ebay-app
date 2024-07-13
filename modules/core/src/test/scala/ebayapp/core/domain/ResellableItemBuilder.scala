@@ -16,7 +16,7 @@ object ResellableItemBuilder {
         buyPrice = ri.buyPrice.rrp,
         exchangePrice = ri.sellPrice.map(_.credit)
       )
-  
+
   val searchCriteria = SearchCriteria("item")
 
   def makeClothing(
