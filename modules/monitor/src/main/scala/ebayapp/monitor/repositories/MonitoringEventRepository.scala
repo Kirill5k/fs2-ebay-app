@@ -8,7 +8,6 @@ import kirill5k.common.cats.syntax.applicative.*
 import mongo4cats.operations.Filter
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.MongoDatabase
-import mongo4cats.circe.MongoJsonCodecs
 import mongo4cats.models.database.CreateCollectionOptions
 
 trait MonitoringEventRepository[F[_]]:
@@ -40,7 +39,7 @@ final private class LiveMonitoringEventRepository[F[_]: Async](
       .first
       .mapOpt(_.toDomain)
 
-object MonitoringEventRepository extends MongoJsonCodecs:
+object MonitoringEventRepository:
   private val collectionName    = "monitoring-events"
   private val collectionOptions = CreateCollectionOptions(capped = true, sizeInBytes = 134217728L)
 

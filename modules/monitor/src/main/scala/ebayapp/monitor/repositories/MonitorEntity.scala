@@ -2,9 +2,10 @@ package ebayapp.monitor.repositories
 
 import io.circe.Codec
 import mongo4cats.bson.ObjectId
-import mongo4cats.circe.given
+import mongo4cats.circe.*
 import ebayapp.kernel.json.given
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
+import mongo4cats.codecs.MongoCodecProvider
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -27,7 +28,8 @@ final private[repositories] case class MonitorEntity(
       contact
     )
 
-private[repositories] object MonitorEntity:
+private[repositories] object MonitorEntity {
+  given MongoCodecProvider[MonitorEntity] = deriveCirceCodecProvider[MonitorEntity]
   def from(monitor: Monitor): MonitorEntity =
     MonitorEntity(
       monitor.id.toObjectId,
@@ -49,3 +51,4 @@ private[repositories] object MonitorEntity:
       Some(monitor.schedule),
       monitor.contact
     )
+}
