@@ -14,7 +14,7 @@ import sttp.tapir.json.circe.TapirJsonCirce
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.server.http4s.{Http4sServerInterpreter, Http4sServerOptions}
 import sttp.tapir.server.model.ValuedEndpointOutput
-import sttp.tapir.{oneOf, oneOfDefaultVariant, oneOfVariant, Codec, DecodeResult}
+import sttp.tapir.{Codec, DecodeResult, EndpointIO, EndpointOutput, oneOf, oneOfDefaultVariant, oneOfVariant}
 
 import java.time.Instant
 
@@ -41,9 +41,9 @@ object Controller extends TapirJsonCirce with SchemaDerivation {
   inline given PlainCodec[Instant] =
     Codec.string.mapDecode(d => d.toInstant.fold(DecodeResult.Error(d, _), DecodeResult.Value(_)))(_.toString)
   
-  val badRequestResponse = jsonBody[ErrorResponse.BadRequest]
+  val badRequestResponse: EndpointIO.Body[String, ErrorResponse.BadRequest] = jsonBody[ErrorResponse.BadRequest]
 
-  val errorResponse =
+  val errorResponse: EndpointOutput.OneOf[ErrorResponse, ErrorResponse] =
     oneOf[ErrorResponse](
       oneOfVariant(StatusCode.UnprocessableEntity, jsonBody[ErrorResponse.UnprocessableEntity]),
       oneOfVariant(StatusCode.NotFound, jsonBody[ErrorResponse.NotFound]),
