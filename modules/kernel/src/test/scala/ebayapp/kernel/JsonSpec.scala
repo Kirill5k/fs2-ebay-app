@@ -41,9 +41,9 @@ class JsonSpec extends AnyWordSpec with Matchers with Inspectors {
     "convert finite duration to json" in {
       forAll(
         Map(
-          1.minute   -> "1minute",
-          2.minute   -> "2minutes",
-          500.millis -> "500milliseconds"
+          1.minute   -> "1 minute",
+          2.minute   -> "2 minutes",
+          500.millis -> "500 milliseconds"
         )
       ) { (fd, str) =>
         fd.asJson mustBe Json.fromString(str)
