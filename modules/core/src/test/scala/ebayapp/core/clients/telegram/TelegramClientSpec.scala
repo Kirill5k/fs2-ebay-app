@@ -6,6 +6,8 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 import kirill5k.common.sttp.test.SttpWordSpec
@@ -21,7 +23,7 @@ class TelegramClientSpec extends SttpWordSpec {
     val sendMessageUrl = "telegram.com/botBOT-KEY/sendMessage"
 
     "send message to the main channel" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> message)) =>
             Response.ok("success")
@@ -36,7 +38,7 @@ class TelegramClientSpec extends SttpWordSpec {
     }
 
     "send message to the secondary channel" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m2", "text" -> message)) =>
             Response.ok("success")
@@ -51,7 +53,7 @@ class TelegramClientSpec extends SttpWordSpec {
     }
 
     "send message to the alerts channel" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "alerts", "text" -> message)) =>
             Response.ok("success")
@@ -66,7 +68,7 @@ class TelegramClientSpec extends SttpWordSpec {
     }
 
     "retry on 429" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
           Response("too-many-requests", StatusCode.TooManyRequests),
           Response.ok("ok")
@@ -80,7 +82,7 @@ class TelegramClientSpec extends SttpWordSpec {
     }
 
     "return error when not success" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> message)) =>
             Response("fail", StatusCode.BadRequest)

@@ -9,6 +9,8 @@ import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.search.*
 import kirill5k.common.cats.Clock
 import kirill5k.common.sttp.test.SttpWordSpec
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 
@@ -45,7 +47,7 @@ class CexClientSpec extends SttpWordSpec {
 
         val criteria = SearchCriteria("gta 5 xbox")
 
-        val testingBackend: SttpBackend[IO, Any] = backendStub
+        val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
           .whenRequestMatchesPartial {
             case r
                 if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r
@@ -96,7 +98,7 @@ class CexClientSpec extends SttpWordSpec {
       )
 
       "find resell prices" in {
-        val testingBackend: SttpBackend[IO, Any] = backendStub
+        val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
           .whenRequestMatchesPartial {
             case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasParams(cexConfig.queryParameters.get) =>
               Response.ok(readJson("cex/search-graphql-compound-success-response.json"))

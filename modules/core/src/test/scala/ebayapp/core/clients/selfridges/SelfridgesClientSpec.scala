@@ -7,6 +7,8 @@ import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import kirill5k.common.sttp.test.SttpWordSpec
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
@@ -21,7 +23,7 @@ class SelfridgesClientSpec extends SttpWordSpec {
     val criteria = SearchCriteria("EA7 Armani")
 
     "return stream of clothing items that are on sale" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok(readJson("selfridges/search-page-1.json"))
@@ -65,7 +67,7 @@ class SelfridgesClientSpec extends SttpWordSpec {
     }
 
     "return empty stream in case of errors" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response("foo-bar", StatusCode.BadRequest)
@@ -78,7 +80,7 @@ class SelfridgesClientSpec extends SttpWordSpec {
     }
 
     "return empty stream when failed to deserialize response" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if isSearchRequest(r, Map("pageSize" -> "60", "pageNumber" -> "1", "ids" -> "EA7-Armani")) =>
             Response.ok("""{"foo":"bar"}""")

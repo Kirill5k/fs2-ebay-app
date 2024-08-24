@@ -6,6 +6,8 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.config.GenericRetailerConfig
 import kirill5k.common.sttp.test.SttpWordSpec
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3.{Response, SttpBackend}
 
 class ArgosClientSpec extends SttpWordSpec {
@@ -17,7 +19,7 @@ class ArgosClientSpec extends SttpWordSpec {
     val criteria    = SearchCriteria("PlayStation 5 Console")
 
     "return relevant deliverable or reservable items" in {
-      val backend: SttpBackend[IO, Any] = backendStub
+      val backend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r
               if r.isGet && r.hasHost("argos.com") && r.hasPath(

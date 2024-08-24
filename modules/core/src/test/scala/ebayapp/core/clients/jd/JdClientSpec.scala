@@ -7,6 +7,8 @@ import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import kirill5k.common.sttp.test.SttpWordSpec
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
@@ -19,7 +21,7 @@ class JdClientSpec extends SttpWordSpec {
     "return items on sale" in {
       val criteria = SearchCriteria("Emporio Armani EA7", category = Some("men"))
 
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") && r.hasParams(Map("from" -> "0")) =>
             Response.ok(readJson("jdsports/search-by-brand.html"))

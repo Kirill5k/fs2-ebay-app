@@ -5,6 +5,8 @@ import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.config.GenericRetailerConfig
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3.*
 import kirill5k.common.sttp.test.SttpWordSpec
 
@@ -20,7 +22,7 @@ class NvidiaClientSpec extends SttpWordSpec {
     val requestParams = Map("page" -> "1", "limit" -> "512", "locale" -> "en-gb", "search" -> "geforce", "category" -> "GPU")
 
     "return items that are in stock" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
             Response.ok(readJson("nvidia/search-success-response.json"))
@@ -37,7 +39,7 @@ class NvidiaClientSpec extends SttpWordSpec {
     }
 
     "return items from featured as well" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
             Response.ok(readJson("nvidia/search-with-retailers-response.json"))
@@ -70,7 +72,7 @@ class NvidiaClientSpec extends SttpWordSpec {
     }
 
     "handle json serialization errors" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
             Response.ok(readJson("nvidia/search-with-invalid-json-response.json"))

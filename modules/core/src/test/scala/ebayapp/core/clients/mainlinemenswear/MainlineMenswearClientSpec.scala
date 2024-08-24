@@ -7,6 +7,8 @@ import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
 import kirill5k.common.sttp.test.SttpWordSpec
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.{Header, StatusCode}
@@ -28,7 +30,7 @@ class MainlineMenswearClientSpec extends SttpWordSpec {
     val criteria = SearchCriteria("emporio armani")
 
     "return items that are on sale" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet =>
             Response("hello", StatusCode.Ok, "Ok", responseHeaders)

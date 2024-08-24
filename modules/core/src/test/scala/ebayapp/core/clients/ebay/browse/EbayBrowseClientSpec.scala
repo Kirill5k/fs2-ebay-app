@@ -6,6 +6,8 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
 import kirill5k.common.sttp.test.SttpWordSpec
+import sttp.capabilities.WebSockets
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
 
@@ -24,7 +26,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
   "EbaySearchClient" should {
 
     "make get request to search api" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
             Response.ok(readJson("ebay/search-success-response.json"))
@@ -42,7 +44,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "return empty seq when nothing found" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
             Response.ok(readJson("ebay/search-empty-response.json"))
@@ -58,7 +60,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "return autherror when token expired during search" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
             Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
@@ -74,7 +76,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "make get request to obtain item details" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
             Response.ok(readJson("ebay/get-item-1-success-response.json"))
@@ -90,7 +92,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "make get request to obtain item details without aspects" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
             Response.ok(readJson("ebay/get-item-3-no-aspects-success-response.json"))
@@ -106,7 +108,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "return autherror when token expired" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
             Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
@@ -122,7 +124,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "return None when 404" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
             Response(readJson("ebay/get-item-notfound-error-response.json"), StatusCode.NotFound)
@@ -138,7 +140,7 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "return item from cache when itemid is the same" in {
-      val testingBackend: SttpBackend[IO, Any] = backendStub.whenAnyRequest
+      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub.whenAnyRequest
         .thenRespondCyclicResponses(
           Response.ok(readJson("ebay/get-item-1-success-response.json")),
           Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden),
