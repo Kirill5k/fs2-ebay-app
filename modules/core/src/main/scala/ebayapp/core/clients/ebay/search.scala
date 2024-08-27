@@ -70,9 +70,9 @@ private[ebay] object search {
 
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
-        "\\bPC\\b",
+        "\\bPC(CD)?\\b",
         "^(PS4|xbox|switch) games$", "^\\d+( )?game$",
-        "\\d+( )?(x)?( various)?( (XBOX( ONE)?|PS4|PS5|playstation|nintendo switch))?( video)? games",
+        "\\d+( )?(x)?( (various|used))?( (XBOX( ONE)?|PS4|PS5|playstation|nintendo switch))?( video)? games",
         "(PS(4|5)?|XBOX) game(s)?( X)? \\d+",
         "(various video|nintendo switch) games","(various video|nintendo switch) games", "set of \\d",
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d",
@@ -97,7 +97,7 @@ private[ebay] object search {
         "sniper thumbs", "(game|skin|thumb|Silicone|floating) +grip", "(screen|grip|case|fighting) (protector|combat|stick)", "(sports|leg) strap", "Cleaning Cloth",
         "dual( )?(sense|shock|charge)", "efigs", "gamepad", "(toy|joy|ring)(\\s+)?con", "wired control", "controller", "(card|stand|ring) holder", "(Spa|messenger)?( )?Bag", "keyring",
         "headset", "(nintendo|switch) labo", "(steering|racing|driving|official|nintendo|wii|race) wheel", "wristband", "lenovo", "smoby", "calling card",
-        "Nendoroid", "orb full set", "LC.{0,1}Power", "Wired Rockcandy", "guitar hero",
+        "Nendoroid", "orb full set", "LC.{0,1}Power", "Wired Rockcandy", "guitar hero", "message for details",
         "Gigaset COMFORT", "Curtain(s)? for Patio", "\\d+( )?mAh", "official license", "Levitating Globe", "plus.*subscription", "lucidsound", "dog shoe",
         "horipad", "(camera|mouse|keyboard|cord|power|\\bAC\\b|hdmi|cockpit|plug +play)( )?(adapt(e|o)r|level|supply)", "tv tuner", "home circuit", "Origami Sheets", "\\bPlaygro\\b",
         "figure(s)? bundle", "k eso", "(Person(n)?alisation|mini|plush|gift|grip(s)?( n play)?) (kit|set|toy)", "pad pro", "thumb( )?(tread|stick|pack)", "cable (guy|adapter|pack)", "Philips",
@@ -129,7 +129,7 @@ private[ebay] object search {
         "fifa.*(\\d+k|team|money|milli|gener|player|gold|point|coins)", "(\\d+k|team|money|milli|gener|player|gold|point|coins).*fifa",
         "\\bFC\\b.*(coins|bot|trading|points|qualifiction)", "Lords of the Fallen.*(Weapons|MAX|LEVEL)",
         "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|car|mxd|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mil)",
-        "(cod|of duty|mw\\d|warzone)(?s).*(big red one|plan|tool|skill|bot|rank|zombi|legendary|tools|monster|energy|blueprint|schematic|burger|dmz|jack link|service|crossbow|code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)",
+        "(cod|of duty|mw(\\d|z)|warzone)(?s).*(big red one|plan|tool|skill|bot|rank|zombi|legendary|tools|season|monster|energy|blueprint|schematic|burger|dmz|jack link|service|crossbow|code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\bXP\\b)",
         "modern warfare.*(camo)", "YuGiOh.*(Gems)", "pubg.*(pack|troll|duracell)", "Numberplate", "bottle opener",
         "Destiny 2", "Destiny.*taken king", "Destiny\\s+the coll", "team( )?group",
         "borderlands.*(artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
@@ -138,6 +138,7 @@ private[ebay] object search {
         "Genshin Impact", "red dead.*(gold)", "ea fc.*(\\b\\d+K\\b|rank|wins)",
         "BO3.*(Divinium|Cryptokey|level|anime|camo|modded|classes|perks)",
         "minecraft.*(item)", "(No Mans Sky|\\bNMS\\b).*(companion|element|Ship|Interceptor)", "\\bto update\\b",
+        "shadow rpg.*(skin)", "F76.*(mod|plan)",
         "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "[A-Z]\\d{4,6}(A|Z)",
         "(rune|million|level|crafting|material)(?s).*elden ring", "elden ring(?s).*(rune|million|level|crafting|material)", "Pok(e|é)?mon",
         "dragon(s)? dogma(?s).*(item|upgraded|gold|stone|pack|weapon|ring|each|corset)", "\\bCD32\\b",
@@ -146,8 +147,8 @@ private[ebay] object search {
         "forza.*(cars|Wheelspin)", "demon soul.*level", "\\bBDSP\\b", " DS PEGI", "\\bWII\\b", "Roblox", "\\bVPN\\b", "\\bDVD\\b", "\\bNDS\\b", "\\bOLED\\b",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
         "\\bPS( )?(vita|one|P|1|2|3)\\b", "\\bPlay( )?station( )?(one|vita|psp|1|2|3)\\b", "\bSNES\\b", "\\bANDROID\\b", "\\bvbucks\\b",
-        "X(BOX)?(\\s+)?360","(super )?nintendo ((3)?ds|wii|nes|eshop)", "\\b(3)?DS\\b ninten(t|d)o", "gamecube", "\\bN64\\b", "\\bDS\\b game", "nintendo (3)?ds",
-        "PlayStation (2|3)", "gameboy", "switch.*Accessories"
+        "X(BOX)?(\\s+)?360","(super )?nintendo ((3)?ds|Entertainment System|wii|nes|eshop)", "\\b(3)?DS\\b ninten(t|d)o", "gamecube", "\\bN64\\b", "\\bDS\\b game", "nintendo (3)?ds",
+        "PlayStation (2|3)", "gameboy", "switch.*Accessories",
       ).mkString("^.*?(?i)(", "|", ").*$").r
       // format: on
 

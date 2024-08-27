@@ -39,12 +39,12 @@ private[mappers] object GameDetailsMapper {
     "(?<=\\w+ )((all|fully|this game is) )?((un)?boxed|complete) (\\bin\\b|with|case)(?s).*$",
     "exclusive to(?s).*$", "clean(ed)?( )?(fully )?tested",
     "((\\bC\\b )?\\bW\\b|with| inc(ludes)?|including|contain|((\\d|no) )?bonus|plus).{0,20}(game|insert|guide|dlc|pass|level|content|bonus|pack)(?s).*$",
-    "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|\\bart\\b|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|(slip )?case|manual)(?s).*$",
+    "(supplied|comes)?( )?(with(out)?|\\bW( )?(O)?\\b|in original|\\bno\\b|missing|\\bart\\b|official|plus|has|inc(l)?(udes|uding)?).{0,15}(strategy guide|book|original|instruction|card(s)?|box|map|slipcover|(slip )?case|manual)(?s).*$",
     "(both )?dis(c|k)(s)? (are|is|in)(?s).*$", "\\b(\\d|both)?( )?(dis(c|k)(s)?|cd(s)?)( (version|set|mint))?\\b",
     "(in )?((absolutely|near) )?(great|(very )?good|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*{0,9}(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|perfectly|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU(R)?\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
-    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|koch media|Activision( (NG|Blizzard))?|TOPLITZ PRODUCTIONS|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
+    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|Pix N Love|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|koch media|Activision( (NG|Blizzard))?|TOPLITZ PRODUCTIONS|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
     "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b",
     "Microsoft(s)?( 20\\d\\d)?", "(by )?sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "xbox()?(original)?",
@@ -94,7 +94,7 @@ private[mappers] object GameDetailsMapper {
     "Formula One World Championship", "\\bNo Figure(s)?\\b",
     "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Stric(t|k)ly limited", "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "(inc|with)? Lenticular (cover|Sleeve)", 
-    "plays perfect", "100 trusted seller", "(Backward(s)? )?compatible( with)?", "(bundle|physical) copy", "nuevo", "(big|steel)( )?box( version)?",
+    "plays perfect", "100 trusted seller", "(Backward(s)? )?compatible( with)?", "(bundle|physical|1st|2nd) copy", "nuevo", "(big|steel)( )?box( version)?",
     "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
     "100 ebayer", "(condition )?very good", "reorderable", "(posted|sent|dispatch).{0,10}day( all orders placed)?( by \\d pm)?", 
     "(last one )?in stock( now)?", "never( been)? (opened|played)", "(only )?played (once|twice)",  "Re Mastered", "Re elected",
@@ -228,6 +228,8 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(\\bww2|ww11\\b)", "wwii")
       .replaceAll("(?i)(\\bcod\\b)", "Call of Duty ")
       .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (2|II)(?s).*", "WWII")
+      .replaceAll("(?i)(\\bSF( )?6\\b)", "Street Fighter 7")
+      .replaceAll("(?i)(\\bGT( )?7\\b)", "Gran Turismo 7")
       .replaceAll("(?i)(resident evil \\bVII\\b)", "Resident Evil 7")
       .replaceAll("(?i)(resident evil (8|\\bVIII\\b))", "Resident Evil Village")
       .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
