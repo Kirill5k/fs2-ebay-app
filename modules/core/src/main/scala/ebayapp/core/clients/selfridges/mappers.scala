@@ -25,7 +25,7 @@ private[selfridges] object mappers {
 
   type SelfridgesItemMapper = ItemMapper[SelfridgesItem]
   object SelfridgesItemMapper {
-    inline def clothing: SelfridgesItemMapper = new SelfridgesItemMapper {
+    def clothing: SelfridgesItemMapper = new SelfridgesItemMapper {
 
       override def toDomain(foundWith: SearchCriteria)(si: SelfridgesItem): ResellableItem =
         ResellableItem.clothing(

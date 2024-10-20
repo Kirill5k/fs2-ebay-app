@@ -6,7 +6,6 @@ import kirill5k.common.sttp.test.SttpWordSpec
 import ebayapp.monitor.domain.{HttpMethod, Monitor, MonitoringEvent, Url}
 import org.scalatest.wordspec.AsyncWordSpec
 import kirill5k.common.cats.Clock
-import sttp.client3.Response
 import sttp.client3.*
 import sttp.model.StatusCode
 

@@ -16,7 +16,6 @@ import ebayapp.core.clients.selfridges.SelfridgesClient
 import ebayapp.core.clients.telegram.TelegramClient
 import ebayapp.core.common.{Logger, Resources, RetailConfigProvider}
 import ebayapp.core.domain.Retailer
-import ebayapp.core.domain.Retailer.Flannels
 
 trait Clients[F[_]]:
   def cex: CexClient[F]

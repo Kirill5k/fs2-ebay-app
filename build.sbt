@@ -1,11 +1,11 @@
 import com.typesafe.sbt.packager.docker.*
 import sbtghactions.JavaSpec
 
-ThisBuild / scalaVersion                        := "3.4.1"
+ThisBuild / scalaVersion                        := "3.5.1"
 ThisBuild / version                             := scala.sys.process.Process("git rev-parse HEAD").!!.trim.slice(0, 7)
 ThisBuild / organization                        := "io.github.kirill5k"
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
-ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.temurin("22"))
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.temurin("23"))
 ThisBuild / scalacOptions ++= Seq("-Wunused:all")
 
 val noPublish = Seq(
@@ -23,7 +23,7 @@ val docker = Seq(
   maintainer         := "immotional@aol.com",
   dockerUsername     := sys.env.get("DOCKER_USERNAME"),
   dockerRepository   := sys.env.get("DOCKER_REPO_URI"),
-  dockerBaseImage    := "amazoncorretto:22.0.0-alpine",
+  dockerBaseImage    := "amazoncorretto:23-alpine",
   dockerUpdateLatest := true,
   dockerCommands := {
     val commands         = dockerCommands.value
@@ -40,10 +40,7 @@ val kernel = project
     name       := "fs2-ebay-app-kernel",
     moduleName := "fs2-ebay-app-kernel",
     libraryDependencies ++= Dependencies.kernel ++ Dependencies.test,
-    Test / scalacOptions ++= Seq(
-      // Allow using -Wnonunit-statement to find bugs in tests without exploding from scalatest assertions
-      "-Wconf:msg=unused value of type:s"
-    )
+    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val core = project
@@ -55,10 +52,7 @@ val core = project
     name                 := "fs2-ebay-app-core",
     moduleName           := "fs2-ebay-app-core",
     Docker / packageName := "fs2-app-core", // fs2-app/core
-    Test / scalacOptions ++= Seq(
-      // Allow using -Wnonunit-statement to find bugs in tests without exploding from scalatest assertions
-      "-Wconf:msg=unused value of type:s"
-    )
+    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val proxy = project
@@ -71,10 +65,7 @@ val proxy = project
     moduleName           := "fs2-ebay-app-proxy",
     Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
     libraryDependencies ++= Dependencies.proxy,
-    Test / scalacOptions ++= Seq(
-      // Allow using -Wnonunit-statement to find bugs in tests without exploding from scalatest assertions
-      "-Wconf:msg=unused value of type:s"
-    )
+    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val monitor = project
@@ -87,10 +78,7 @@ val monitor = project
     moduleName           := "fs2-ebay-app-monitor",
     Docker / packageName := "fs2-app-monitor", // fs2-app/monitor
     libraryDependencies ++= Dependencies.monitor,
-    Test / scalacOptions ++= Seq(
-      // Allow using -Wnonunit-statement to find bugs in tests without exploding from scalatest assertions
-      "-Wconf:msg=unused value of type:s"
-    )
+    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val root = project
