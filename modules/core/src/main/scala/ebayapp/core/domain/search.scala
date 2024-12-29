@@ -1,7 +1,6 @@
 package ebayapp.core.domain
 
 import pureconfig.*
-import pureconfig.generic.derivation.default.*
 import io.circe.Codec
 
 import java.time.Instant

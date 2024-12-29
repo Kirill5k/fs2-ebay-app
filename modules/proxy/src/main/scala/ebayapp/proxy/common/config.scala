@@ -3,7 +3,6 @@ package ebayapp.proxy.common
 import cats.effect.Sync
 import ebayapp.kernel.config.{ClientConfig, ServerConfig}
 import pureconfig.*
-import pureconfig.generic.derivation.default.*
 
 import scala.concurrent.duration.FiniteDuration
 

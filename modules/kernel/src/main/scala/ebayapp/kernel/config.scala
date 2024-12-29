@@ -1,7 +1,6 @@
 package ebayapp.kernel
 
 import pureconfig.*
-import pureconfig.generic.derivation.default.*
 import kirill5k.common.http4s.Server
 
 import scala.concurrent.duration.*
