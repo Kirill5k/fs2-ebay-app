@@ -132,7 +132,7 @@ private[ebay] object search {
         "(gta|grand theft)(?s).*(acc|lvl|modded|trading|rank|car|mxd|fast run|bogdan|glitch|heist|billion|(full|max) stat|trillion|character|cars|boost|cash|money|online|mil)",
         "(bo\\d|black ops|cod|of duty|mw(\\d|z)|warzone)(?s).*(unlock|instant|experience|dual weap|walls|Hella Chill|big red one|plan|tool|skill|bot|rank|zombi|legendary|tools|season|monster|energy|blueprint|schematic|burger|dmz|jack link|service|crossbow|code|items|camo|points|boost|hyper|unlock|mountain dew|warzone|skin|level|card|\\b(\\d)?XP\\b)",
         "modern warfare.*(camo)", "YuGiOh.*(Gems)", "pubg.*(pack|troll|duracell)", "Numberplate", "bottle opener",
-        "Destiny 2", "Destiny.*taken king", "Destiny\\s+the coll", "team( )?group",
+        "Destiny 2", "Destiny.*taken king", "Destiny\\s+the coll", "team( )?group", "via ebay message",
         "borderlands.*(artifact|crit|recoil|level|lvl|takedown|damage|Teething|dmg|mayhem|lvl|cash|x50|legendary|money|mod)",
         "starfield.*(credit|max pow)", "Elder Scrolls.*(tamriel|morrowind|Summerset)",
         "spiderman.*(trophy|campaign|service)", "(10k|traps).*save( the)? world",
