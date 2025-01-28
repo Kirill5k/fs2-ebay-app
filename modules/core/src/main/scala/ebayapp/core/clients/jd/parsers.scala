@@ -34,6 +34,18 @@ private[jd] object parsers {
 
   object ResponseParser {
 
+    def parseBrandAjaxResponse(rawHtml: String): Either[AppError, List[JdCatalogItem]] = {
+      val rawItems = rawHtml
+        .split("window.dataObject.items.push\\(")
+        .drop(1)
+        .map(rawItem => rawItem.replaceAll("\\);|category: categoryName,|categoryId: categoryId,|}</script>", ""))
+        .map(rawItem => rawItem.replaceAll("""(\w+)\s*:""" , "\"$1\": ")  )
+        .mkString("[", ",", "]")
+
+      decode[List[JdCatalogItem]](rawItems)
+        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawItems"))
+    }
+
     def parseSearchResponse(rawHtml: String): Either[AppError, List[JdCatalogItem]] = {
       val rawDataObject = rawHtml
         .split("var dataObject = ")
