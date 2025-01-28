@@ -24,12 +24,12 @@ class JdClientSpec extends SttpWordSpec {
       val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") && r.hasParams(Map("from" -> "0")) =>
-            Response.ok(readJson("jdsports/search-by-brand.html"))
+            Response.ok(readJson("jdsports/search-by-brand-ajax.html"))
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") =>
             Response("n/a", StatusCode.NotFound)
-          case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-tape-2-t-shirt/16022719/stock/") =>
+          case r if r.isGoingTo("jdsports.com/proxy/product/white-ea7-emporio-armani-carbon-block-logo-t-shirt/19670520/stock/") =>
             Response.ok(readJson("jdsports/get-product-stock.html"))
-          case r if r.isGoingTo("jdsports.com/proxy/product/black-emporio-armani-ea7-padded-zip-bubble-jacket/16026576/stock/") =>
+          case r if r.isGoingTo("jdsports.com/proxy/product/brown-ea7-emporio-armani-logo-joggers/19581391/stock/") =>
             Response.ok(readJson("jdsports/get-product-stock-oos.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }

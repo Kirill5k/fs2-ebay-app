@@ -92,14 +92,14 @@ final private class LiveJdClient[F[_]](
           val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
           val brand = criteria.query.toLowerCase.replace(" ", "-")
           emptyRequest
-            .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high")
+            .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
             .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + "/")))
         }
       }
       .flatMap { r =>
         r.body match {
           case Right(html) =>
-            F.fromEither(ResponseParser.parseSearchResponse(html))
+            F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
             logger.error(s"$name-search/403") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
           case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
