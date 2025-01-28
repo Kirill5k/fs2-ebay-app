@@ -36,10 +36,13 @@ private[jd] object parsers {
 
     def parseBrandAjaxResponse(rawHtml: String): Either[AppError, List[JdCatalogItem]] = {
       val rawItems = rawHtml
+        .split("\n")
+        .dropRight(3)
+        .mkString("\n")
         .split("window.dataObject.items.push\\(")
         .drop(1)
         .map(rawItem => rawItem.replaceAll("}\\);.*", "}"))
-        .map(rawItem => rawItem.replaceAll("category: categoryName,|categoryId: categoryId,", ""))
+        .map(rawItem => rawItem.replaceAll("category: categoryName,|categoryId: categoryId,|</script>", ""))
         .map(rawItem => rawItem.replaceAll("""(\w+)\s*:""" , "\"$1\": ")  )
         .mkString("[", ",", "]")
 
