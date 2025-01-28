@@ -14,14 +14,20 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
     "parseBrandAjaxResponse" should {
       "parse raw html search response into list of objects" in {
         val result = ResponseParser.parseBrandAjaxResponse(html("jdsports/search-by-brand-ajax.html"))
-        
+
         result mustBe List(
           JdCatalogItem("19670520", "white", "EA7 Emporio Armani Carbon Block Logo T-Shirt", true),
           JdCatalogItem("19581391", "brown", "EA7 Emporio Armani Logo Joggers", true),
         ).asRight
       }
+
+      "parse raw empty html search response" in {
+        val result = ResponseParser.parseBrandAjaxResponse(html("jdsports/search-by-brand-ajax-empty.html"))
+
+        result mustBe Nil.asRight
+      }
     }
-    
+
     "parseSearchResponse" should {
       "parse raw html search response into list of objects" in {
         val result = ResponseParser.parseSearchResponse(html("jdsports/search-by-brand.html"))
