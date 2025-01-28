@@ -33,11 +33,12 @@ final private class LiveJdClient[F[_]](
   override protected val name: String = retailer.name
 
   private val getBrandHeaders = Map(
-    HeaderNames.Accept -> "*/*",
-    HeaderNames.AcceptEncoding  -> "*/*",
-    HeaderNames.AcceptLanguage  -> "en-GB,en-US;q=0.9,en;q=0.8",
-    HeaderNames.UserAgent       -> operaUserAgent,
-    HeaderNames.ContentType     -> "application/json"
+    HeaderNames.Accept         -> "*/*",
+    HeaderNames.AcceptEncoding -> "*/*",
+    HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
+    HeaderNames.UserAgent      -> operaUserAgent,
+    HeaderNames.ContentType    -> "application/json",
+    "priority"                 -> "u=1, i"
   )
 
   private val getStockHeaders = Map(
@@ -91,7 +92,9 @@ final private class LiveJdClient[F[_]](
           val brand = criteria.query.toLowerCase.replace(" ", "-")
           emptyRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
-            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + s"/brand/$brand?from=${step * stepSize}")))
+            .headers(
+              getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + s"/brand/$brand?from=${step * stepSize}"))
+            )
         }
       }
       .flatMap { r =>
