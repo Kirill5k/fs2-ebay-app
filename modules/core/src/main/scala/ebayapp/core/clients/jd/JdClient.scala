@@ -37,9 +37,7 @@ final private class LiveJdClient[F[_]](
     HeaderNames.AcceptEncoding  -> "*/*",
     HeaderNames.AcceptLanguage  -> "en-GB,en-US;q=0.9,en;q=0.8",
     HeaderNames.UserAgent       -> operaUserAgent,
-    HeaderNames.ContentType     -> "application/json",
-    "application/jsonpriority" -> "u=1, i",
-    "upgrade-insecure-requests" -> "1"
+    HeaderNames.ContentType     -> "application/json"
   )
 
   private val getStockHeaders = Map(
