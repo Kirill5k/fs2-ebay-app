@@ -33,19 +33,19 @@ final private class LiveJdClient[F[_]](
   override protected val name: String = retailer.name
 
   private val getBrandHeaders = Map(
-    HeaderNames.Cookie -> "language=en; AKA_A2=A; 49746=; gdprsettings2={\"functional\":false,\"performance\":false,\"targeting\":false}; gdprsettings3={\"functional\":false,\"performance\":false,\"targeting\":false};",
-    HeaderNames.Accept -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    HeaderNames.Accept -> "*/*",
     HeaderNames.AcceptEncoding  -> "*/*",
-    HeaderNames.AcceptLanguage  -> "en-GB,en;q=0.9",
+    HeaderNames.AcceptLanguage  -> "en-GB,en-US;q=0.9,en;q=0.8",
     HeaderNames.UserAgent       -> operaUserAgent,
     HeaderNames.ContentType     -> "application/json",
+    "application/jsonpriority" -> "u=1, i",
     "upgrade-insecure-requests" -> "1"
   )
 
   private val getStockHeaders = Map(
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
-    HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
+    HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
     HeaderNames.UserAgent      -> operaUserAgent
   )
 
@@ -93,7 +93,7 @@ final private class LiveJdClient[F[_]](
           val brand = criteria.query.toLowerCase.replace(" ", "-")
           emptyRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
-            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + "/")))
+            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + s"/brand/$brand?from=${step * stepSize}")))
         }
       }
       .flatMap { r =>
