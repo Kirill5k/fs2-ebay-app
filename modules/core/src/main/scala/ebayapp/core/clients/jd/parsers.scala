@@ -38,7 +38,8 @@ private[jd] object parsers {
       val rawItems = rawHtml
         .split("window.dataObject.items.push\\(")
         .drop(1)
-        .map(rawItem => rawItem.replaceAll("\\);|category: categoryName,|categoryId: categoryId,|}</script>", ""))
+        .map(rawItem => rawItem.replaceAll("\\);|category: categoryName,|categoryId: categoryId,", ""))
+        .map(rawItem => rawItem.replaceAll("}\\);.*", "}"))
         .map(rawItem => rawItem.replaceAll("""(\w+)\s*:""" , "\"$1\": ")  )
         .mkString("[", ",", "]")
 
