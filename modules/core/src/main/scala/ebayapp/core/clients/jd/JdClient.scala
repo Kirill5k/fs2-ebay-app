@@ -32,6 +32,8 @@ final private class LiveJdClient[F[_]](
 
   override protected val name: String = retailer.name
 
+  private val stepSize = 200
+
   private val getBrandHeaders = Map(
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
@@ -80,11 +82,13 @@ final private class LiveJdClient[F[_]](
   private def brandItems(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
     Stream
       .unfoldLoopEval(0) { step =>
-        searchByBrand(criteria, step).map(items => (items, Option.when(items.nonEmpty)(step + 1)))
+        searchByBrand(criteria, step).map { items =>
+          (items, Option.when(items.size == stepSize)(step + 1))
+        }
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(criteria: SearchCriteria, step: Int, stepSize: Int = 120): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
