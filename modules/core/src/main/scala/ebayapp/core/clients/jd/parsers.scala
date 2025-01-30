@@ -49,24 +49,13 @@ private[jd] object parsers {
 
     def parseSearchResponse(rawHtml: String): Either[AppError, List[JdCatalogItem]] = {
       val rawDataObject = rawHtml
-        .split("var dataObject = ")
-        .last
-        .split("</script>")
-        .head
-        .split("items: ")
-        .last
-        .replaceAll("\t|\n|\\s{2,10}", "")
-        .replaceAll(",(?=])", "")
-        .replaceAll("(?<=\\[\\]),(?=})", "")
-        .replaceAll("\\{", "\\{\"")
-        .replaceAll("(?<!\\}),(?!\")", ",\"")
-        .replaceAll(":", "\":")
-        .replaceAll(": ", ":")
-        .replaceAll("},\\{", "},\n\\{")
-        .replaceAll("\\[\\{", "\\[\n\\{")
-        .replaceAll("}]", "}\n]")
+        .replaceFirst(".*items:", "")
+        .replaceFirst("};.*", "")
+        .replaceAll("\n", "")
+        .replaceAll("""(\w+)\s*:""" , "\"$1\": ") // wrap json object key in quotes
+        .replaceAll("""(?<=\w"),(?=\s*\])""", "") // remove trailing comma in arrays
 
-      decode[List[JdCatalogItem]](rawDataObject.slice(0, rawDataObject.length - 2))
+      decode[List[JdCatalogItem]](rawDataObject)
         .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawDataObject"))
     }
 
