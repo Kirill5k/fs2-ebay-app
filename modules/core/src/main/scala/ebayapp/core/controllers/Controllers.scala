@@ -9,19 +9,17 @@ import ebayapp.core.services.Services
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 
-trait Controllers[F[_]] {
+trait Controllers[F[_]]:
   def home: Controller[F]
   def items: Controller[F]
   def health: Controller[F]
   def stock: Controller[F]
   def retailConfig: Controller[F]
-
   def routes(using M: Monad[F]): HttpRoutes[F] =
     Router(
       "api" -> (stock.routes <+> items.routes <+> retailConfig.routes),
       ""    -> (home.routes <+> health.routes)
     )
-}
 
 object Controllers {
 

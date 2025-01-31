@@ -15,7 +15,6 @@ object Repositories:
     for
       items <- ResellableItemRepository.mongo(database)
       rc    <- RetailConfigRepository.mongo(database)
-    yield new Repositories[F] {
+    yield new Repositories[F]:
       override def resellableItems: ResellableItemRepository[F] = items
       override def retailConfig: RetailConfigRepository[F]      = rc
-    }

@@ -17,8 +17,6 @@ final class ErrorsNotifier[F[_]: Logger: Temporal](
       .throttle(30.seconds)
       .evalMap(notificationService.alert)
 
-object ErrorsNotifier {
-
+object ErrorsNotifier:
   def make[F[_]: Temporal: Logger](services: Services[F]): F[Task[F]] =
     Monad[F].pure(ErrorsNotifier[F](services.notification))
-}

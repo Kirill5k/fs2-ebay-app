@@ -27,12 +27,10 @@ final class Tasks[F[_]: Temporal: Logger](
       }
 }
 
-object Tasks {
-
+object Tasks:
   def make[F[_]: Temporal: Logger](services: Services[F]): F[Tasks[F]] =
     List(
       ErrorsNotifier.make[F](services),
       DealsFinder.make[F](services),
       StockMonitor.make[F](services)
     ).sequence.map(tasks => Tasks[F](tasks))
-}

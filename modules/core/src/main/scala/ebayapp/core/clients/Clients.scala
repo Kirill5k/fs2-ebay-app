@@ -41,7 +41,7 @@ object Clients:
       harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
       mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
       flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-    yield new Clients[F] {
+    yield new Clients[F]:
       def cex: CexClient[F]             = cexClient
       def messenger: MessengerClient[F] = telegramClient
       def get(retailer: Retailer): SearchClient[F] =
@@ -58,4 +58,3 @@ object Clients:
           case Retailer.HarveyNichols    => harveyNicholsClient
           case Retailer.MainlineMenswear => mainlineMenswearClient
           case Retailer.Flannels         => flannelsClient
-    }

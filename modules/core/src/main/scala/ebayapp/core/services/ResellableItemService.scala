@@ -19,8 +19,6 @@ final class LiveResellableItemService[F[_]](
     repository.summaries(filters)
 }
 
-object ResellableItemService {
-
+object ResellableItemService:
   def make[F[_]: Monad](repository: ResellableItemRepository[F]): F[ResellableItemService[F]] =
     Monad[F].pure(LiveResellableItemService[F](repository))
-}

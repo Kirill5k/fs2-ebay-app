@@ -16,7 +16,6 @@ final class StockMonitor[F[_]: Concurrent](
       .parJoinUnbounded
       .evalMap(upd => upd.updates.traverse_(u => notificationService.stockUpdate(upd.item, u)))
 
-object StockMonitor {
+object StockMonitor:
   def make[F[_]: Concurrent](services: Services[F]): F[Task[F]] =
     Monad[F].pure(StockMonitor[F](services.notification, services.stock))
-}

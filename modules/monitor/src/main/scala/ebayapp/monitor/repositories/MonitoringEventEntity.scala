@@ -18,7 +18,7 @@ final private[repositories] case class MonitoringEventEntity(
   def toDomain: MonitoringEvent = MonitoringEvent(Monitor.Id(monitorId), statusCheck, downTime)
 
 private[repositories] object MonitoringEventEntity {
-  given Codec[MonitoringEvent.StatusCheck] = deriveCodec[MonitoringEvent.StatusCheck]
+  given Codec[MonitoringEvent.StatusCheck]        = deriveCodec[MonitoringEvent.StatusCheck]
   given MongoCodecProvider[MonitoringEventEntity] = deriveCirceCodecProvider[MonitoringEventEntity]
 
   def from(me: MonitoringEvent): MonitoringEventEntity =

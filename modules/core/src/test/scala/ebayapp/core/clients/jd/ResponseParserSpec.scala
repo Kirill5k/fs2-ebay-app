@@ -17,7 +17,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
 
         result mustBe List(
           JdCatalogItem("19670520", "white", "EA7 Emporio Armani Carbon Block Logo T-Shirt", true),
-          JdCatalogItem("19581391", "brown", "EA7 Emporio Armani Logo Joggers", true),
+          JdCatalogItem("19581391", "brown", "EA7 Emporio Armani Logo Joggers", true)
         ).asRight
       }
 

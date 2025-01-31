@@ -54,7 +54,7 @@ final private class LiveNotificationService[F[_]: Monad](
     Base64.getEncoder.encodeToString(message.getBytes(StandardCharsets.UTF_8))
 }
 
-object NotificationService {
+object NotificationService:
   extension (item: ResellableItem)
     def cheapItemNotification: Option[Notification] =
       for
@@ -83,4 +83,3 @@ object NotificationService {
     Cache
       .make[F, String, Unit](1.hour, 5.minutes)
       .map(cache => LiveNotificationService[F](client, cache))
-}

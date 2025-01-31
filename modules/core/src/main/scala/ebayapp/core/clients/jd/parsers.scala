@@ -40,7 +40,7 @@ private[jd] object parsers {
         .drop(1)
         .map(rawItem => rawItem.replaceAll("category: categoryName,|categoryId: categoryId,|}\n|</script>", ""))
         .map(rawItem => rawItem.replaceAll("\\);.*", ""))
-        .map(rawItem => rawItem.replaceAll("""(\w+)\s*:""" , "\"$1\": ")  )
+        .map(rawItem => rawItem.replaceAll("""(\w+)\s*:""", "\"$1\": "))
         .mkString("[", ",", "]")
 
       decode[List[JdCatalogItem]](rawItems)
@@ -52,7 +52,7 @@ private[jd] object parsers {
         .replaceFirst(".*items:", "")
         .replaceFirst("};.*", "")
         .replaceAll("\n", "")
-        .replaceAll("""(\w+)\s*:""" , "\"$1\": ") // wrap json object key in quotes
+        .replaceAll("""(\w+)\s*:""", "\"$1\": ")  // wrap json object key in quotes
         .replaceAll("""(?<=\w"),(?=\s*\])""", "") // remove trailing comma in arrays
 
       decode[List[JdCatalogItem]](rawDataObject)

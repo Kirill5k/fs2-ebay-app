@@ -35,7 +35,7 @@ final private class LiveRetailConfigRepository[F[_]](
       .unNone
 }
 
-object RetailConfigRepository {
+object RetailConfigRepository:
   private val collectionName    = "retail-config"
   private val collectionOptions = CreateCollectionOptions(capped = true, maxDocuments = 1, sizeInBytes = 268435456L)
 
@@ -45,4 +45,3 @@ object RetailConfigRepository {
       _         <- F.unlessA(collNames.toSet.contains(collectionName))(database.createCollection(collectionName, collectionOptions))
       coll      <- database.getCollectionWithCodec[RetailConfig](collectionName)
     yield LiveRetailConfigRepository[F](coll)
-}

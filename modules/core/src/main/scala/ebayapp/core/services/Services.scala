@@ -16,8 +16,7 @@ trait Services[F[_]]:
   def stock: List[StockService[F]]
   def deals: List[DealsService[F]]
 
-object Services {
-
+object Services:
   def make[F[_]: Temporal: Logger](
       configProvider: RetailConfigProvider[F],
       clients: Clients[F],
@@ -29,11 +28,9 @@ object Services {
       rc  <- RetailConfigService.make[F](repo.retailConfig)
       ss  <- Retailer.values.toList.traverse(r => StockService.make(r, configProvider, clients.get(r)))
       ds  <- Retailer.values.toList.traverse(r => DealsService.make(r, configProvider, clients.get(r), clients.cex, repo.resellableItems))
-    yield new Services[F] {
+    yield new Services[F]:
       def notification: NotificationService[F]     = ns
       def resellableItem: ResellableItemService[F] = ris
       def retailConfig: RetailConfigService[F]     = rc
       def stock: List[StockService[F]]             = ss
       def deals: List[DealsService[F]]             = ds
-    }
-}
