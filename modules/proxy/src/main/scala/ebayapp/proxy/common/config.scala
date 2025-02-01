@@ -7,7 +7,6 @@ import pureconfig.*
 import scala.concurrent.duration.FiniteDuration
 
 object config:
-
   final case class InterrupterConfig(
       initialDelay: FiniteDuration
   ) derives ConfigReader

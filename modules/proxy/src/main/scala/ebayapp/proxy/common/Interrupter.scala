@@ -24,7 +24,7 @@ final private class LiveInterrupter[F[_]: Temporal](
 )(implicit
     clock: Clock[F],
     logger: Logger[F]
-) extends Interrupter[F]:
+) extends Interrupter[F] {
   def terminate: F[Unit] =
     clock.now
       .map(_ durationBetween startupTime)
@@ -35,6 +35,7 @@ final private class LiveInterrupter[F[_]: Temporal](
 
   def awaitSigTerm: F[Either[Throwable, Unit]] =
     sigTerm.get.attempt
+}
 
 object Interrupter:
   def make[F[_]: Temporal: Logger: Clock](config: InterrupterConfig): F[Interrupter[F]] =
