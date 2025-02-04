@@ -12,6 +12,7 @@ import pureconfig.configurable.genericMapReader
 
 import java.io.File
 import scala.concurrent.duration.FiniteDuration
+import scala.util.Random
 
 object config {
 
@@ -44,8 +45,13 @@ object config {
       cache: Option[CacheConfig] = None,
       delayBetweenIndividualRequests: Option[FiniteDuration] = None,
       queryParameters: Option[Map[String, String]] = None,
-      baseUris: Option[List[String]] = None,
-  ) derives ConfigReader, Codec.AsObject
+      baseUris: Option[Vector[String]] = None
+  ) derives ConfigReader, Codec.AsObject {
+    def uri: String =
+      baseUris.filter(_.nonEmpty) match
+        case None       => baseUri
+        case Some(uris) => uris(Random.nextInt(uris.length))
+  }
 
   final case class TelegramConfig(
       baseUri: String,
