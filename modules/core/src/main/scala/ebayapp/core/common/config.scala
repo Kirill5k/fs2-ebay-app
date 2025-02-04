@@ -39,12 +39,12 @@ object config {
 
   final case class GenericRetailerConfig(
       baseUri: String,
-      baseUris: Option[List[String]] = None,
       headers: Map[String, String] = Map.empty,
       proxied: Option[Boolean] = None,
       cache: Option[CacheConfig] = None,
       delayBetweenIndividualRequests: Option[FiniteDuration] = None,
-      queryParameters: Option[Map[String, String]] = None
+      queryParameters: Option[Map[String, String]] = None,
+      baseUris: Option[List[String]] = None,
   ) derives ConfigReader, Codec.AsObject
 
   final case class TelegramConfig(
