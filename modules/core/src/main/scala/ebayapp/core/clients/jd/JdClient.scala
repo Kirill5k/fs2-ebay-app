@@ -92,7 +92,7 @@ final private class LiveJdClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatchWithProxy(config.proxied) {
-          val base  = config.baseUri + criteria.category.fold("")(c => s"/$c")
+          val base  = config.uri + criteria.category.fold("")(c => s"/$c")
           val brand = criteria.query.toLowerCase.replace(" ", "-")
           emptyRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
@@ -126,7 +126,7 @@ final private class LiveJdClient[F[_]](
         dispatchWithProxy(config.proxied) {
           val referrer = config.websiteUri + s"/product/${ci.fullName}/${ci.plu}/"
           emptyRequest
-            .get(uri"${config.baseUri}/product/${ci.fullName}/${ci.plu}/stock/")
+            .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
             .headers(getStockHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
         }
       }
