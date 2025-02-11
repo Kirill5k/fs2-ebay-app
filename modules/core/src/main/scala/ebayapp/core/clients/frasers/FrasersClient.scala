@@ -78,7 +78,7 @@ final private class LiveFrasersClient[F[_]](
             .header("accept-language", "en-GB,en-US")
             .header("referer", config.websiteUri)
             .headers(config.headers)
-            .get(uri"${config.baseUri}/api/productlist/v1/getforcategory?${args}")
+            .get(uri"${config.uri}/api/productlist/v1/getforcategory?${args}")
             .response(asJson[FlannelsSearchResponse])
         }
       }

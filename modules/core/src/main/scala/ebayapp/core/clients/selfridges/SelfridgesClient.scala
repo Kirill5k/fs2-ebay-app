@@ -115,7 +115,7 @@ final private class LiveSelfridgesClient[F[_]](
             .acceptEncoding(acceptAnything)
             .header(Header.userAgent(postmanUserAgent))
             .header(Header.cacheControl(CacheDirective.NoCache))
-            .get(fullUri(config.baseUri))
+            .get(fullUri(config.uri))
             .headers(config.headers)
             .response(asJson[A])
         }
