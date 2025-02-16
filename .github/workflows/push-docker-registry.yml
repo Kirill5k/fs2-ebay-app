@@ -21,7 +21,7 @@ jobs:
           registry: "registry.hub.docker.com"
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_API_KEY }}
-      - name: Setup Java (temurin@21)
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
