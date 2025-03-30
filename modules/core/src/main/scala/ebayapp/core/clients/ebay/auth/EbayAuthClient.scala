@@ -87,7 +87,7 @@ private[ebay] object EbayAuthClient:
     def isValid(now: Instant): Boolean = expiresAt.isAfter(now)
   }
 
-  def make[F[_]: Temporal: Logger: Clock](
+  def make[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[EbayAuthClient[F]] =

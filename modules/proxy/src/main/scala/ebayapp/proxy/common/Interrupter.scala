@@ -38,7 +38,7 @@ final private class LiveInterrupter[F[_]: Temporal](
 }
 
 object Interrupter:
-  def make[F[_]: Temporal: Logger: Clock](config: InterrupterConfig): F[Interrupter[F]] =
+  def make[F[_]: {Temporal, Logger, Clock}](config: InterrupterConfig): F[Interrupter[F]] =
     for
       ts      <- Clock[F].now
       sigTerm <- Deferred[F, Unit]

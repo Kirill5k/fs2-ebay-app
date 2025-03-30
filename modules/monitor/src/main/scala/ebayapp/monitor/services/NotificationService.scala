@@ -35,5 +35,5 @@ final private class LiveNotificationService[F[_]](
 }
 
 object NotificationService:
-  def make[F[_]: Logger: Concurrent](emailClient: EmailClient[F]): F[NotificationService[F]] =
+  def make[F[_]: {Logger, Concurrent}](emailClient: EmailClient[F]): F[NotificationService[F]] =
     Monad[F].pure(LiveNotificationService[F](emailClient))

@@ -84,7 +84,7 @@ final private class LiveMonitoringEventService[F[_]](
         (None, None)
 
 object MonitoringEventService:
-  def make[F[_]: Temporal: Clock](
+  def make[F[_]: {Temporal, Clock}](
       dispatcher: ActionDispatcher[F],
       repository: MonitoringEventRepository[F],
       httpClient: HttpClient[F]

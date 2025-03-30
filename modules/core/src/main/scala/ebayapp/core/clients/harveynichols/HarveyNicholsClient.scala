@@ -115,7 +115,7 @@ final private class LiveHarveyNicholsClient[F[_]](
 }
 
 object HarveyNicholsClient:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

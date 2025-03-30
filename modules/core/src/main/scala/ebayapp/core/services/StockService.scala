@@ -125,7 +125,7 @@ final private class SimpleStockService[F[_]](
 }
 
 object StockService:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       retailer: Retailer,
       configProvider: RetailConfigProvider[F],
       client: SearchClient[F]

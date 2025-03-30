@@ -14,7 +14,7 @@ trait Services[F[_]]:
   def notification: NotificationService[F]
 
 object Services:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       dispatcher: ActionDispatcher[F],
       clients: Clients[F],
       repositories: Repositories[F]

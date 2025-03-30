@@ -9,7 +9,7 @@ import fs2.Stream
 
 import scala.concurrent.duration.*
 
-final class ErrorsNotifier[F[_]: Logger: Temporal](
+final class ErrorsNotifier[F[_]: {Temporal, Logger}](
     private val notificationService: NotificationService[F]
 ) extends Task[F]:
   def run: Stream[F, Unit] =
@@ -18,5 +18,5 @@ final class ErrorsNotifier[F[_]: Logger: Temporal](
       .evalMap(notificationService.alert)
 
 object ErrorsNotifier:
-  def make[F[_]: Temporal: Logger](services: Services[F]): F[Task[F]] =
+  def make[F[_]: {Temporal, Logger}](services: Services[F]): F[Task[F]] =
     Monad[F].pure(ErrorsNotifier[F](services.notification))

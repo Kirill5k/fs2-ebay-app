@@ -17,7 +17,7 @@ import scala.concurrent.duration.*
 trait DealsService[F[_]]:
   def newDeals: Stream[F, ResellableItem]
 
-final private class LiveDealsService[F[_]: Logger: Temporal](
+final private class LiveDealsService[F[_]: {Temporal, Logger}](
     private val retailer: Retailer,
     private val configProvider: RetailConfigProvider[F],
     private val searchClient: SearchClient[F],
@@ -63,7 +63,7 @@ final private class LiveDealsService[F[_]: Logger: Temporal](
 }
 
 object DealsService:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       retailer: Retailer,
       configProvider: RetailConfigProvider[F],
       searchClient: SearchClient[F],

@@ -186,7 +186,7 @@ object CexClient:
       cache       <- Cache.make[F, String, Option[SellPrice]](cacheConfig.expiration, cacheConfig.validationPeriod)
     yield cache
 
-  def graphql[F[_]: Temporal: Logger: Clock](
+  def graphql[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

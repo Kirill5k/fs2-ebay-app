@@ -23,7 +23,7 @@ trait Clients[F[_]]:
   def get(retailer: Retailer): SearchClient[F]
 
 object Clients:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       resources: Resources[F]
   ): F[Clients[F]] =

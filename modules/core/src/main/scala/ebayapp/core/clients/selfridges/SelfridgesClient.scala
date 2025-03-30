@@ -146,7 +146,7 @@ final private class LiveSelfridgesClient[F[_]](
 }
 
 object SelfridgesClient:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

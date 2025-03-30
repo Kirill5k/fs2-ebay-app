@@ -17,7 +17,7 @@ trait Services[F[_]]:
   def deals: List[DealsService[F]]
 
 object Services:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       clients: Clients[F],
       repo: Repositories[F]

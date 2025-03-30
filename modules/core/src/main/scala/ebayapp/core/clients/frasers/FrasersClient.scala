@@ -108,21 +108,21 @@ final private class LiveFrasersClient[F[_]](
 }
 
 object FrasersClient:
-  def flannels[F[_]: Temporal: Logger](
+  def flannels[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Flannels))
 
-  def tessuti[F[_]: Temporal: Logger](
+  def tessuti[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.tessuti, backend, proxyBackend, Retailer.Tessuti))
 
-  def scotts[F[_]: Temporal: Logger](
+  def scotts[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

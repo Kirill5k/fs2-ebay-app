@@ -48,5 +48,5 @@ final private class LiveActionProcessor[F[_]](
     }
 
 object ActionProcessor:
-  def make[F[_]: Temporal: Logger](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
+  def make[F[_]: {Temporal, Logger}](dispatcher: ActionDispatcher[F], services: Services[F]): F[ActionProcessor[F]] =
     Monad[F].pure(LiveActionProcessor(dispatcher, services))

@@ -79,7 +79,7 @@ final private class LiveNvidiaClient[F[_]](
 }
 
 object NvidiaClient:
-  def make[F[_]: Temporal: Logger](
+  def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

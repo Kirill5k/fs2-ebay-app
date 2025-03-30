@@ -76,5 +76,5 @@ final private class RedirectController[F[_]](
 }
 
 object RedirectController:
-  def make[F[_]: Concurrent: Logger](resources: Resources[F], interrupter: Interrupter[F]): F[Controller[F]] =
+  def make[F[_]: {Concurrent, Logger}](resources: Resources[F], interrupter: Interrupter[F]): F[Controller[F]] =
     Monad[F].pure(RedirectController[F](resources.emberClient, interrupter))

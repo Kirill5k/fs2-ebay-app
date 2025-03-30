@@ -96,7 +96,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 }
 
 private[ebay] object EbayBrowseClient:
-  def make[F[_]: Logger: Temporal](
+  def make[F[_]: {Logger, Temporal}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[EbayBrowseClient[F]] =

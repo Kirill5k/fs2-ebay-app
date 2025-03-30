@@ -10,7 +10,7 @@ import fs2.Stream
 
 import scala.concurrent.duration.*
 
-final class Tasks[F[_]: Temporal: Logger](
+final class Tasks[F[_]: {Temporal, Logger}](
     private val tasks: List[Task[F]]
 ) {
   def runAll: Stream[F, Unit] =
@@ -28,7 +28,7 @@ final class Tasks[F[_]: Temporal: Logger](
 }
 
 object Tasks:
-  def make[F[_]: Temporal: Logger](services: Services[F]): F[Tasks[F]] =
+  def make[F[_]: {Temporal, Logger}](services: Services[F]): F[Tasks[F]] =
     List(
       ErrorsNotifier.make[F](services),
       DealsFinder.make[F](services),

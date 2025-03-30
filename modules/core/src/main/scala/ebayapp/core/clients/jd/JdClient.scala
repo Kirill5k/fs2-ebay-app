@@ -149,7 +149,7 @@ final private class LiveJdClient[F[_]](
 }
 
 object JdClient:
-  def jdsports[F[_]: Temporal: Logger](
+  def jdsports[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
       proxyBackend: Option[SttpBackend[F, Any]] = None

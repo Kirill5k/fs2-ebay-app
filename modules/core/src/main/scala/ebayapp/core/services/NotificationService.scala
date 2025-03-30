@@ -79,7 +79,7 @@ object NotificationService:
         Notification.Stock(msg)
       }
 
-  def make[F[_]: Temporal: Logger](client: MessengerClient[F]): F[NotificationService[F]] =
+  def make[F[_]: {Temporal, Logger}](client: MessengerClient[F]): F[NotificationService[F]] =
     Cache
       .make[F, String, Unit](1.hour, 5.minutes)
       .map(cache => LiveNotificationService[F](client, cache))

@@ -77,7 +77,7 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
 }
 
 object EbayClient:
-  def make[F[_]: Temporal: Logger: Clock](
+  def make[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
