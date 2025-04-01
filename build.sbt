@@ -16,6 +16,7 @@ val noPublish = Seq(
 )
 
 val docker = Seq(
+  Compile / run / fork := true,
   Universal / javaOptions += "-Djdk.httpclient.allowRestrictedHeaders=cache-control,accept,accept-encoding,accept-language,connection,content-type,content-length,expect,host,referer",
   dockerEnvVars ++= Map("VERSION" -> version.value),
   packageName        := moduleName.value,
