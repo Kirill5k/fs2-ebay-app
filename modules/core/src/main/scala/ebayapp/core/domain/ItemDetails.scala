@@ -11,16 +11,14 @@ sealed trait ItemDetails(val kind: ItemKind):
 object ItemDetails {
   final case class Generic(
       name: String
-  ) extends ItemDetails(ItemKind.Generic)
-      derives Codec.AsObject:
+  ) extends ItemDetails(ItemKind.Generic) derives Codec.AsObject:
     val fullName: Option[String] = Some(name)
 
   final case class Clothing(
       name: String,
       brand: String,
       size: String
-  ) extends ItemDetails(ItemKind.Clothing)
-      derives Codec.AsObject:
+  ) extends ItemDetails(ItemKind.Clothing) derives Codec.AsObject:
     val fullName: Option[String] = Some(s"$brand - $name, size ${size.capitalize}")
 
   final case class Phone(
@@ -30,8 +28,7 @@ object ItemDetails {
       storageCapacity: Option[String],
       network: Option[String],
       condition: Option[String]
-  ) extends ItemDetails(ItemKind.MobilePhone)
-      derives Codec.AsObject:
+  ) extends ItemDetails(ItemKind.MobilePhone) derives Codec.AsObject:
     val fullName: Option[String] =
       List(make, model, storageCapacity, colour, network).sequence.map(_.mkString(" "))
 
@@ -40,8 +37,7 @@ object ItemDetails {
       platform: Option[String],
       releaseYear: Option[String],
       genre: Option[String]
-  ) extends ItemDetails(ItemKind.VideoGame)
-      derives Codec.AsObject:
+  ) extends ItemDetails(ItemKind.VideoGame) derives Codec.AsObject:
     val fullName: Option[String] = (name, platform).mapN((n, p) => s"$n $p")
 
   inline given Encoder[ItemDetails] = Encoder.instance {

@@ -161,7 +161,7 @@ final private class LiveMainlineMenswearClient[F[_]](
 object MainlineMenswearClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any],
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Ref
       .of(Option.empty[String])

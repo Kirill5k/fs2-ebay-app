@@ -23,7 +23,7 @@ import scala.concurrent.duration.*
 
 final private class LiveNvidiaClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val httpBackend: SttpBackend[F, Any],
+    override val httpBackend: SttpBackend[F, Any]
 )(using
     logger: Logger[F],
     F: Temporal[F]
@@ -80,6 +80,6 @@ final private class LiveNvidiaClient[F[_]](
 object NvidiaClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any],
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend))

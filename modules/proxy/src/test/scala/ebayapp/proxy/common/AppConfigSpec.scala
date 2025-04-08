@@ -9,11 +9,10 @@ import scala.concurrent.duration.*
 class AppConfigSpec extends IOWordSpec {
 
   "An AppConfig" should {
-    "load from application.conf" in {
+    "load from application.conf" in
       AppConfig.load[IO].asserting { conf =>
         conf.server.host mustBe "0.0.0.0"
         conf.interrupter.initialDelay mustBe 30.minutes
       }
-    }
   }
 }

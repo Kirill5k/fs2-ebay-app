@@ -29,8 +29,8 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
     logger: Logger[F]
 ) extends EbayBrowseClient[F] with HttpClient[F] {
 
-  override protected val name: String                              = "ebay-browse"
-  override protected val delayBetweenFailures: FiniteDuration      = 1.second
+  override protected val name: String                         = "ebay-browse"
+  override protected val delayBetweenFailures: FiniteDuration = 1.second
 
   private val expiredStatuses = Set(StatusCode.TooManyRequests, StatusCode.Forbidden, StatusCode.Unauthorized)
 

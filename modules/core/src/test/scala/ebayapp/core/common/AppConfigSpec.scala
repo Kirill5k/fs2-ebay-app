@@ -11,16 +11,15 @@ import scala.concurrent.duration.*
 
 class AppConfigSpec extends IOWordSpec {
   "AppConfig" should {
-    "load itself from application.conf file" in {
+    "load itself from application.conf file" in
       AppConfig.loadDefault[IO].asserting { conf =>
         conf.mongo.dbName mustBe "ebay-app"
         conf.server.host mustBe "0.0.0.0"
       }
-    }
   }
 
   "RetailConfig" should {
-    "load itself from application.conf file" in {
+    "load itself from application.conf file" in
       RetailConfig.loadDefault[IO].asserting { conf =>
         conf.retailer.cex.baseUri mustBe "https://wss2.cex.uk.webuy.io"
         conf.retailer.selfridges.headers mustBe Map(
@@ -37,6 +36,5 @@ class AppConfigSpec extends IOWordSpec {
         conf.stockMonitor must contain key Retailer.HarveyNichols
         conf.dealsFinder must contain key Retailer.Ebay
       }
-    }
   }
 }

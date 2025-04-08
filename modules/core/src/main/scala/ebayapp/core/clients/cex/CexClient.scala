@@ -187,6 +187,6 @@ object CexClient:
 
   def graphql[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any],
+      backend: SttpBackend[F, Any]
   ): F[CexClient[F]] =
     mkCache(configProvider).map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend))

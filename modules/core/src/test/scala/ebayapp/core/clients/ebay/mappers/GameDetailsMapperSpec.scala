@@ -40,7 +40,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.genre mustBe Some("Action")
     }
 
-    "map uncommon platform spellings" in {
+    "map uncommon platform spellings" in
       forAll(
         Map(
           "PS-4"                      -> "PS4",
@@ -73,7 +73,6 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         details.name mustBe Some("Call of Duty Infinite Warfare")
         details.platform mustBe Some(act)
       }
-    }
 
     "map platform from title even if it exists in properties" in {
       val listingDetails = testListing.copy(properties = testListing.properties + ("Platform" -> "Xbox 360"))
@@ -119,7 +118,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.name mustBe Some("Gran Turismo")
     }
 
-    "remove GT from gran turismo title or similar" in {
+    "remove GT from gran turismo title or similar" in
       forAll(
         Map(
           "GTS Gran Turismo Sport"      -> "Gran Turismo Sport",
@@ -133,7 +132,6 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         val gameDetails    = GameDetailsMapper.from(listingDetails)
         gameDetails.name mustBe Some(expected)
       }
-    }
 
     "leave new in the middle of title" in {
       val listingDetails = testListing.copy(title = "pal Wolfenstein: The NEW Colosus", properties = Map.empty)
@@ -178,7 +176,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       gameDetails.name mustBe Some("MINECRAFT")
     }
 
-    "map gta and rdr to full title" in {
+    "map gta and rdr to full title" in
       forAll(
         Map(
           "gta5"                      -> "Grand Theft Auto 5",
@@ -193,9 +191,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         val gameDetails    = GameDetailsMapper.from(listingDetails)
         gameDetails.name mustBe Some(expected)
       }
-    }
 
-    "remove year after number" in {
+    "remove year after number" in
       forAll(
         Map(
           "FIFA 19 2019"                          -> "FIFA 19",
@@ -210,9 +207,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         val gameDetails    = GameDetailsMapper.from(listingDetails)
         gameDetails.name mustBe Some(expected)
       }
-    }
 
-    "separate words where appropriate" in {
+    "separate words where appropriate" in
       forAll(
         Map(
           "back4blood"                                                 -> "back 4 blood",
@@ -225,7 +221,6 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         val gameDetails    = GameDetailsMapper.from(listingDetails)
         gameDetails.name mustBe Some(expected)
       }
-    }
 
     "remove wrestling after 2k17 title" in {
       val listingDetails = testListing.copy(title = "WWE 2k19 Wrestling")
@@ -362,7 +357,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
       }
     }
 
-    "do special replacements" in {
+    "do special replacements" in
       forAll(
         Map(
           "FIFA 18 (XBOX ONE, SERIES X|S) VERY GOOD CONDITION" -> "FIFA 18",
@@ -387,9 +382,8 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map.empty))
         details.name mustBe Some(expected)
       }
-    }
 
-    "remove roman numbers followed by digit or vice versa" in {
+    "remove roman numbers followed by digit or vice versa" in
       forAll(
         Map(
           "Call of Duty Black Ops iii 3" -> "Call of Duty Black Ops iii",
@@ -402,7 +396,6 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         val details = GameDetailsMapper.from(testListing.copy(title = title, properties = Map.empty))
         details.name mustBe Some(expected)
       }
-    }
 
     "correctly parse PS platform" in {
       val listingDetails = testListing.copy(title = "Call Of Duty Black Ops 3 (PS4)")

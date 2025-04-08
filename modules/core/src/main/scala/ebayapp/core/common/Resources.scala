@@ -8,21 +8,27 @@ import ebayapp.core.common.config.AppConfig
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import mongo4cats.models.client.{ConnectionString, MongoClientSettings}
-import sttp.client3.SttpBackendOptions.Proxy
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3.{SttpBackend, SttpBackendOptions}
 import sttp.client3.httpclient.fs2.HttpClientFs2Backend
+import sttp.client4.{BackendOptions, WebSocketStreamBackend}
+import sttp.client4.httpclient.fs2.HttpClientFs2Backend as Fs2Backend
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
 trait Resources[F[_]]:
   def httpClientBackend: SttpBackend[F, Any]
+  def httpBackend: WebSocketStreamBackend[F, Fs2Streams[F]]
   def database: MongoDatabase[F]
 
 object Resources {
 
-  private def mkHttpClientBackend[F[_]: Async](timeout: FiniteDuration, proxy: Option[Proxy]): Resource[F, SttpBackend[F, Any]] =
-    HttpClientFs2Backend.resource[F](SttpBackendOptions(connectionTimeout = timeout, proxy = proxy))
+  private def mkHttpBackend[F[_]: Async](timeout: FiniteDuration): Resource[F, WebSocketStreamBackend[F, Fs2Streams[F]]] =
+    Fs2Backend.resource[F](options = BackendOptions(timeout, None))
+
+  private def mkHttpClientBackend[F[_]: Async](timeout: FiniteDuration): Resource[F, SttpBackend[F, Any]] =
+    HttpClientFs2Backend.resource[F](SttpBackendOptions(connectionTimeout = timeout, proxy = None))
 
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
     val settings = MongoClientSettings
@@ -40,11 +46,13 @@ object Resources {
   def make[F[_]](config: AppConfig)(using F: Async[F]): Resource[F, Resources[F]] =
     Resource.eval(F.delay(System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection,content-length,expect,host,referer"))) >>
       (
-        mkHttpClientBackend[F](config.client.connectTimeout, None),
+        mkHttpClientBackend[F](config.client.connectTimeout),
+        mkHttpBackend[F](config.client.connectTimeout),
         mkMongoDatabase[F](config.mongo)
-      ).mapN { (http, mongo) =>
+      ).mapN { (sttp3Backend, sttp4Backend, mongo) =>
         new Resources[F]:
-          def httpClientBackend: SttpBackend[F, Any]          = http
-          def database: MongoDatabase[F]                      = mongo
+          def httpClientBackend: SttpBackend[F, Any]                = sttp3Backend
+          def httpBackend: WebSocketStreamBackend[F, Fs2Streams[F]] = sttp4Backend
+          def database: MongoDatabase[F]                            = mongo
       }
 }

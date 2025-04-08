@@ -23,7 +23,7 @@ import scala.concurrent.duration.*
 final private class LiveJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val retailer: Retailer.Jdsports.type,
-    override val httpBackend: SttpBackend[F, Any],
+    override val httpBackend: SttpBackend[F, Any]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -150,6 +150,6 @@ final private class LiveJdClient[F[_]](
 object JdClient:
   def jdsports[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any],
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend))

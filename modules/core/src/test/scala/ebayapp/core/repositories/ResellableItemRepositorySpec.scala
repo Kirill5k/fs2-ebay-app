@@ -143,7 +143,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
   }
 
   "summaries" should {
-    "return summaries of stored items" in {
+    "return summaries of stored items" in
       withEmbeddedMongoClient { db =>
         val result = for
           repo <- ResellableItemRepository.mongo[IO](db)
@@ -155,7 +155,6 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
           res mustBe videoGames.sortBy(_.listingDetails.datePosted)(Ordering[Instant].reverse).map(_.summary)
         }
       }
-    }
   }
 
   extension (repo: ResellableItemRepository[IO])

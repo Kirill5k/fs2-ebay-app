@@ -23,7 +23,7 @@ import scala.concurrent.duration.*
 
 final private class LiveSelfridgesClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val httpBackend: SttpBackend[F, Any],
+    override val httpBackend: SttpBackend[F, Any]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -147,6 +147,6 @@ final private class LiveSelfridgesClient[F[_]](
 object SelfridgesClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any],
+      backend: SttpBackend[F, Any]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveSelfridgesClient[F](() => configProvider.selfridges, backend))
