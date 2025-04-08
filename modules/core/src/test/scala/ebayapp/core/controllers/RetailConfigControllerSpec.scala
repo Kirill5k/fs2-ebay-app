@@ -48,10 +48,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |    },
       |    "argos" : {
       |      "baseUri" : "https://www.argos.co.uk",
-      |      "headers" : {
-      |
-      |      },
-      |      "proxied" : true
+      |      "headers" : {}
       |    },
       |    "jdsports" : {
       |      "baseUri" : "https://fs2-proxy.herokuapp.com",
@@ -109,8 +106,7 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |      "baseUri" : "https://www.scan.co.uk",
       |      "headers" : {
       |        "X-Forwarded-For" : "92.7.76.29"
-      |      },
-      |      "proxied" : true
+      |      }
       |    },
       |    "cex" : {
       |      "baseUri" : "https://wss2.cex.uk.webuy.io",
