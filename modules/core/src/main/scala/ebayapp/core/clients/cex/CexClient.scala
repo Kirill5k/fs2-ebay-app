@@ -50,7 +50,7 @@ final private class CexGraphqlClient[F[_]](
       case None           => item.pure[F]
 
   private def obtainPricesFromCex(items: List[ResellableItem]): F[List[ResellableItem]] = {
-    val searchRequests = items.flatMap(_.itemDetails.fullName).distinct.map(searchRequest(_, false))
+    val searchRequests = items.flatMap(_.itemDetails.fullName).distinct.map(GraphqlSearchRequest(_, false))
     if (searchRequests.isEmpty) F.pure(items)
     else {
       dispatch(searchRequests*)
@@ -77,7 +77,9 @@ final private class CexGraphqlClient[F[_]](
       withName    <- withName.traverse(obtainPriceFromCache)
       (withPriceFromCache, withoutPrice) = withName.partition(_.sellPrice.isDefined)
       _ <- logger.info(
-        s"getting prices from CEX for ${withoutPrice.size} items; ${withoutName.size} items don't have name; ${withPriceFromCache.size} prices were obtained from cache"
+        s"getting prices from CEX for ${withoutPrice.size} items; " +
+          s"${withoutName.size} items don't have name; " +
+          s"${withPriceFromCache.size} prices were obtained from cache"
       )
       withPriceFromCex <- obtainPricesFromCex(withoutPrice)
     yield withoutName ++ withPriceFromCache ++ withPriceFromCex
@@ -93,7 +95,7 @@ final private class CexGraphqlClient[F[_]](
 
   private def findSellPrice(query: String, category: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
-      dispatch(searchRequest(query, false))
+      dispatch(GraphqlSearchRequest(query, false))
         .map(_.results.getOrElse(Nil).flatMap(_.hits))
         .map(filterByCategory(category))
         .map(getMinResellPrice)
@@ -113,19 +115,12 @@ final private class CexGraphqlClient[F[_]](
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
-      .eval(dispatch(searchRequest(criteria.query)))
+      .eval(dispatch(GraphqlSearchRequest(criteria.query)))
       .map(_.results.getOrElse(List.empty))
       .flatMap(Stream.emits)
       .map(_.hits)
       .flatMap(Stream.emits)
       .map(CexGraphqlItemMapper.generic.toDomain(criteria))
-
-  private def searchRequest(query: String, inStock: Boolean = true): GraphqlSearchRequest = {
-    val faceFilters =
-      if (inStock) "&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
-      else ""
-    GraphqlSearchRequest("prod_cex_uk", s"query=${query}&userToken=ecf31216f1ec463fac30a91a1f0a0dc3$faceFilters")
-  }
 
   private def dispatch(request: GraphqlSearchRequest*): F[CexGraphqlSearchResponse] =
     configProvider()
@@ -139,9 +134,7 @@ final private class CexGraphqlClient[F[_]](
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
             .header("Accept", "application/json")
             .post(uri"${config.uri}/1/indexes/*/queries?${config.queryParameters.getOrElse(Map.empty)}")
-            .body(
-              CexGraphqlSearchRequest(request.toList)
-            )
+            .body(CexGraphqlSearchRequest(request.toList))
             .headers(config.headers)
             .response(asJson[CexGraphqlSearchResponse])
         }
