@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -14,8 +14,9 @@ import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.domain.ResellableItem
 import fs2.Stream
 import io.circe.Decoder
-import sttp.client3.*
-import sttp.client3.circe.asJson
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.*
+import sttp.client4.circe.asJson
 import sttp.model.headers.CacheDirective
 import sttp.model.{Header, MediaType, StatusCode, Uri}
 
@@ -23,11 +24,11 @@ import scala.concurrent.duration.*
 
 final private class LiveSelfridgesClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val httpBackend: SttpBackend[F, Any]
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String = "selfridges"
 
@@ -109,13 +110,13 @@ final private class LiveSelfridgesClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatch {
-          emptyRequest
+          basicRequest
             .contentType(MediaType.ApplicationJson)
             .acceptEncoding(acceptAnything)
             .header(Header.userAgent(postmanUserAgent))
             .header(Header.cacheControl(CacheDirective.NoCache))
-            .get(fullUri(config.uri))
             .headers(config.headers)
+            .get(fullUri(config.uri))
             .response(asJson[A])
         }
       }
@@ -123,20 +124,20 @@ final private class LiveSelfridgesClient[F[_]](
         r.body match
           case Right(res) =>
             F.pure(res)
-          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+          case Left(ResponseException.DeserializationException(_, error, _)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-$endpoint/exhausted input") *>
               F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-          case Left(DeserializationException(_, error)) =>
+          case Left(ResponseException.DeserializationException(_, error, _)) =>
             logger.error(s"$name-$endpoint response parsing error: ${error.getMessage}") *>
               F.pure(defaultResponse)
-          case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
+          case Left(ResponseException.UnexpectedStatusCode(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
             logger.error(s"$name-$endpoint/$s-critical") *>
               F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-          case Left(HttpError(_, status)) if status.isClientError =>
-            logger.error(s"$name-$endpoint/$status-error") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, metadata)) if metadata.code.isClientError =>
+            logger.error(s"$name-$endpoint/${metadata.code}-error") *>
               F.pure(defaultResponse)
-          case Left(HttpError(_, status)) if status.isServerError =>
-            logger.warn(s"$name-$endpoint/$status-repeatable") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, metadata)) if metadata.code.isServerError =>
+            logger.warn(s"$name-$endpoint/${metadata.code}-repeatable") *>
               F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
           case Left(error) =>
             logger.error(s"$name-$endpoint/error: ${error.getMessage}") *>
@@ -147,6 +148,6 @@ final private class LiveSelfridgesClient[F[_]](
 object SelfridgesClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveSelfridgesClient[F](() => configProvider.selfridges, backend))
