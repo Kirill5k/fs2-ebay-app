@@ -6,10 +6,11 @@ object Dependencies {
     val commonScala = "0.1.24"
     val pureConfig  = "0.17.8"
     val circe       = "0.14.12"
+    val sttp4       = "4.0.0"
     val sttp        = "3.10.3"
     val http4s      = "0.23.30"
     val logback     = "1.5.18"
-    val log4cats    = "2.6.0"
+    val log4cats    = "2.7.0"
     val tapir       = "1.11.20"
     val courier     = "3.2.0"
     val cronUtils   = "9.2.1"
@@ -63,6 +64,14 @@ object Dependencies {
       val all = Seq(core, circe, catsBackend)
     }
 
+    object sttp4 {
+      val core        = "com.softwaremill.sttp.client4" %% "core"  % Versions.sttp4
+      val circe       = "com.softwaremill.sttp.client4" %% "circe" % Versions.sttp4
+      val catsBackend = "com.softwaremill.sttp.client4" %% "fs2"   % Versions.sttp4
+
+      val all = Seq(core, circe, catsBackend)
+    }
+
     object http4s {
       val dsl         = "org.http4s" %% "http4s-dsl"          % Versions.http4s
       val emberClient = "org.http4s" %% "http4s-ember-client" % Versions.http4s
@@ -89,6 +98,7 @@ object Dependencies {
     Libraries.circe.all ++
     Libraries.logging.all ++
     Libraries.sttp.all ++
+    Libraries.sttp4.all ++
     Libraries.tapir.all
 
   val proxy = Seq(
