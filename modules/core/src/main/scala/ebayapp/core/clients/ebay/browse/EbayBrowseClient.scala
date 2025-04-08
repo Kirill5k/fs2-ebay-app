@@ -30,7 +30,6 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 ) extends EbayBrowseClient[F] with HttpClient[F] {
 
   override protected val name: String                              = "ebay-browse"
-  override protected val proxyBackend: Option[SttpBackend[F, Any]] = None
   override protected val delayBetweenFailures: FiniteDuration      = 1.second
 
   private val expiredStatuses = Set(StatusCode.TooManyRequests, StatusCode.Forbidden, StatusCode.Unauthorized)

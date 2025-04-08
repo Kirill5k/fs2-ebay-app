@@ -28,19 +28,19 @@ object Clients:
       resources: Resources[F]
   ): F[Clients[F]] =
     for
-      cexClient              <- CexClient.graphql[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
+      cexClient              <- CexClient.graphql[F](configProvider, resources.httpClientBackend)
       telegramClient         <- TelegramClient.make[F](configProvider, resources.httpClientBackend)
       ebayClient             <- EbayClient.make[F](configProvider, resources.httpClientBackend)
-      selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      argosClient            <- ArgosClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      jdClient               <- JdClient.jdsports[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      scottsClient           <- FrasersClient.scotts[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      scanClient             <- ScanClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
-      flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.httpClientBackend, resources.proxyClientBackend)
+      selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.httpClientBackend)
+      argosClient            <- ArgosClient.make[F](configProvider, resources.httpClientBackend)
+      jdClient               <- JdClient.jdsports[F](configProvider, resources.httpClientBackend)
+      scottsClient           <- FrasersClient.scotts[F](configProvider, resources.httpClientBackend)
+      tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.httpClientBackend)
+      nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.httpClientBackend)
+      scanClient             <- ScanClient.make[F](configProvider, resources.httpClientBackend)
+      harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend)
+      mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend)
+      flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.httpClientBackend)
     yield new Clients[F]:
       def cex: CexClient[F]             = cexClient
       def messenger: MessengerClient[F] = telegramClient

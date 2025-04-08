@@ -3,9 +3,7 @@ package ebayapp.core.clients
 import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.applicativeError.*
-import cats.syntax.flatMap.*
 import ebayapp.core.common.Logger
-import ebayapp.kernel.errors.AppError
 import kirill5k.common.cats.syntax.applicative.*
 import sttp.client3.{Request, Response, SttpBackend}
 import sttp.model.HeaderNames
@@ -15,7 +13,6 @@ import scala.concurrent.duration.*
 trait HttpClient[F[_]] {
   protected val name: String
   protected val httpBackend: SttpBackend[F, Any]
-  protected val proxyBackend: Option[SttpBackend[F, Any]]
 
   protected val delayBetweenFailures: FiniteDuration = 10.seconds
 
@@ -35,18 +32,6 @@ trait HttpClient[F[_]] {
     HeaderNames.Connection     -> "keep-alive",
     HeaderNames.UserAgent      -> operaUserAgent
   )
-
-  protected def dispatchWithProxy[T](
-      useProxy: Option[Boolean]
-  )(
-      request: Request[T, Any]
-  )(using
-      F: Temporal[F],
-      logger: Logger[F]
-  ): F[Response[T]] =
-    useProxy match
-      case Some(true) => F.fromOption(proxyBackend, AppError.Critical("proxy is not setup")).flatMap(dispatchWithRetry(_, request))
-      case _          => dispatchWithRetry(httpBackend, request)
 
   protected def dispatch[T](request: Request[T, Any])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
     dispatchWithRetry(httpBackend, request)

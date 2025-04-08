@@ -24,7 +24,6 @@ import scala.concurrent.duration.*
 final private class LiveNvidiaClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     logger: Logger[F],
     F: Temporal[F]
@@ -47,7 +46,7 @@ final private class LiveNvidiaClient[F[_]](
   private def searchProducts(c: SearchCriteria): F[List[Product]] =
     configProvider()
       .flatMap { config =>
-        dispatchWithProxy(config.proxied) {
+        dispatch {
           emptyRequest
             .acceptEncoding(acceptAnything)
             .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
@@ -82,6 +81,5 @@ object NvidiaClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend, proxyBackend))
+    Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend))

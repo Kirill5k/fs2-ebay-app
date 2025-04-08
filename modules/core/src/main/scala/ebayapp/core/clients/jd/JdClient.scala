@@ -24,7 +24,6 @@ final private class LiveJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val retailer: Retailer.Jdsports.type,
     override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -91,7 +90,7 @@ final private class LiveJdClient[F[_]](
   private def searchByBrand(criteria: SearchCriteria, step: Int): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
-        dispatchWithProxy(config.proxied) {
+        dispatch {
           val base  = config.uri + criteria.category.fold("")(c => s"/$c")
           val brand = criteria.query.toLowerCase.replace(" ", "-")
           emptyRequest
@@ -123,7 +122,7 @@ final private class LiveJdClient[F[_]](
   private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     configProvider()
       .flatMap { config =>
-        dispatchWithProxy(config.proxied) {
+        dispatch {
           val referrer = config.websiteUri + s"/product/${ci.fullName}/${ci.plu}/"
           emptyRequest
             .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
@@ -152,6 +151,5 @@ object JdClient:
   def jdsports[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend, proxyBackend))
+    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend))

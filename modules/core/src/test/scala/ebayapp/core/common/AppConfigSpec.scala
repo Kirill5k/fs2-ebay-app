@@ -28,7 +28,6 @@ class AppConfigSpec extends IOWordSpec {
           "X-Reload-On-403" -> "true",
           "api-key"         -> "key"
         )
-        conf.retailer.argos.proxied mustBe Some(true)
         conf.retailer.jdsports.delayBetweenIndividualRequests mustBe Some(2.seconds)
 
         val geforceFilters = Some(Filters(deny = Some(List("GTX 1650", "GTX 1660"))))

@@ -23,7 +23,6 @@ import scala.concurrent.duration.*
 final private class LiveHarveyNicholsClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -81,7 +80,7 @@ final private class LiveHarveyNicholsClient[F[_]](
   private def sendRequest[A: Decoder](fullUri: String => Uri, endpoint: String, defaultResponse: A): F[A] =
     configProvider()
       .flatMap { config =>
-        dispatchWithProxy(config.proxied) {
+        dispatch {
           emptyRequest
             .get(fullUri(config.uri))
             .headers(defaultHeaders ++ config.headers)
@@ -118,6 +117,5 @@ object HarveyNicholsClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveHarveyNicholsClient[F](() => configProvider.harveyNichols, backend, proxyBackend))
+    Monad[F].pure(LiveHarveyNicholsClient[F](() => configProvider.harveyNichols, backend))

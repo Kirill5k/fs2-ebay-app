@@ -1,10 +1,9 @@
 package ebayapp.core.common
 
 import cats.effect.{Async, Resource}
-import cats.syntax.option.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
-import ebayapp.kernel.config.{ClientConfig, MongoConfig}
+import ebayapp.kernel.config.MongoConfig
 import ebayapp.core.common.config.AppConfig
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
@@ -18,22 +17,12 @@ import scala.concurrent.duration.FiniteDuration
 
 trait Resources[F[_]]:
   def httpClientBackend: SttpBackend[F, Any]
-  def proxyClientBackend: Option[SttpBackend[F, Any]]
   def database: MongoDatabase[F]
 
 object Resources {
 
   private def mkHttpClientBackend[F[_]: Async](timeout: FiniteDuration, proxy: Option[Proxy]): Resource[F, SttpBackend[F, Any]] =
     HttpClientFs2Backend.resource[F](SttpBackendOptions(connectionTimeout = timeout, proxy = proxy))
-
-  private def mkProxyClientBackend[F[_]: Async](config: ClientConfig): Resource[F, Option[SttpBackend[F, Any]]] = {
-    val proxy: Option[Proxy] = (config.proxyHost, config.proxyPort)
-      .mapN((h, p) => SttpBackendOptions.Proxy(h, p, SttpBackendOptions.ProxyType.Http))
-
-    proxy
-      .map(p => mkHttpClientBackend(config.connectTimeout, p.some).map(_.some))
-      .getOrElse(Resource.pure(None))
-  }
 
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
     val settings = MongoClientSettings
@@ -52,12 +41,10 @@ object Resources {
     Resource.eval(F.delay(System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection,content-length,expect,host,referer"))) >>
       (
         mkHttpClientBackend[F](config.client.connectTimeout, None),
-        mkProxyClientBackend[F](config.client),
         mkMongoDatabase[F](config.mongo)
-      ).mapN { (http, proxy, mongo) =>
+      ).mapN { (http, mongo) =>
         new Resources[F]:
           def httpClientBackend: SttpBackend[F, Any]          = http
-          def proxyClientBackend: Option[SttpBackend[F, Any]] = proxy
           def database: MongoDatabase[F]                      = mongo
       }
 }

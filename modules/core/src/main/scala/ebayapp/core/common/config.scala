@@ -41,7 +41,6 @@ object config {
   final case class GenericRetailerConfig(
       baseUri: String,
       headers: Map[String, String] = Map.empty,
-      proxied: Option[Boolean] = None,
       cache: Option[CacheConfig] = None,
       delayBetweenIndividualRequests: Option[FiniteDuration] = None,
       queryParameters: Option[Map[String, String]] = None,

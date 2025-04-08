@@ -25,7 +25,6 @@ final private class LiveMainlineMenswearClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val name: String,
     override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]],
     private val token: Ref[F, Option[String]]
 )(using
     F: Temporal[F],
@@ -80,7 +79,7 @@ final private class LiveMainlineMenswearClient[F[_]](
   private def sendSearchQuery(criteria: SearchCriteria, page: Int): F[List[ProductPreview]] =
     configProvider()
       .flatMap { config =>
-        dispatchReqWithAuth(config.proxied) {
+        dispatchReqWithAuth {
           baseRequest
             .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
             .body(SearchRequest(page, criteria.query).toJson)
@@ -113,7 +112,7 @@ final private class LiveMainlineMenswearClient[F[_]](
   private def getCompleteProduct(pp: ProductPreview): F[Option[ProductData]] =
     configProvider()
       .flatMap { config =>
-        dispatchReqWithAuth(config.proxied) {
+        dispatchReqWithAuth {
           baseRequest
             .post(uri"${config.baseUri}/app/mmw/m/product/${pp.productID}")
             .body(ProductRequest.toJson)
@@ -142,10 +141,10 @@ final private class LiveMainlineMenswearClient[F[_]](
               F.sleep(5.second) *> getCompleteProduct(pp)
       }
 
-  private def dispatchReqWithAuth[T](useProxy: Option[Boolean])(request: Request[T, Any]): F[Response[T]] =
+  private def dispatchReqWithAuth[T](request: Request[T, Any]): F[Response[T]] =
     token.get.flatMap {
-      case Some(t) => dispatchWithProxy(useProxy)(request.auth.bearer(t))
-      case None    => refreshAccessToken *> dispatchReqWithAuth(useProxy)(request)
+      case Some(t) => dispatch(request.auth.bearer(t))
+      case None    => refreshAccessToken *> dispatchReqWithAuth(request)
     }
 
   private def refreshAccessToken: F[Unit] =
@@ -163,8 +162,7 @@ object MainlineMenswearClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
     Ref
       .of(Option.empty[String])
-      .map(t => LiveMainlineMenswearClient[F](() => configProvider.mainlineMenswear, "mainline-menswear", backend, proxyBackend, t))
+      .map(t => LiveMainlineMenswearClient[F](() => configProvider.mainlineMenswear, "mainline-menswear", backend, t))

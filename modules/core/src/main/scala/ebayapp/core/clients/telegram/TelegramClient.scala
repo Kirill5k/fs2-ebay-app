@@ -21,8 +21,7 @@ final private class LiveTelegramClient[F[_]](
     logger: Logger[F]
 ) extends MessengerClient[F] with HttpClient[F] {
 
-  override protected val name: String                              = "telegram"
-  override protected val proxyBackend: Option[SttpBackend[F, Any]] = None
+  override protected val name: String = "telegram"
 
   def send(n: Notification): F[Unit] =
     configProvider().flatMap { config =>

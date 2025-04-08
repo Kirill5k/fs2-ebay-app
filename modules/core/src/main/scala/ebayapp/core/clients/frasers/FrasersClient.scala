@@ -21,7 +21,6 @@ import scala.concurrent.duration.*
 final private class LiveFrasersClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]],
     private val retailer: Retailer.Flannels.type | Retailer.Tessuti.type | Retailer.Scotts.type
 )(using
     F: Temporal[F],
@@ -68,7 +67,7 @@ final private class LiveFrasersClient[F[_]](
           "selectedCurrency" -> "GBP",
           "selectedFilters"  -> sc.formattedCategory
         )
-        dispatchWithProxy(config.proxied) {
+        dispatch {
           emptyRequest
             .maxRedirects(0)
             .acceptEncoding(acceptAnything)
@@ -111,20 +110,17 @@ object FrasersClient:
   def flannels[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, proxyBackend, Retailer.Flannels))
+    Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, backend, Retailer.Flannels))
 
   def tessuti[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveFrasersClient[F](() => configProvider.tessuti, backend, proxyBackend, Retailer.Tessuti))
+    Monad[F].pure(LiveFrasersClient[F](() => configProvider.tessuti, backend, Retailer.Tessuti))
 
   def scotts[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveFrasersClient[F](() => configProvider.scotts, backend, proxyBackend, Retailer.Scotts))
+    Monad[F].pure(LiveFrasersClient[F](() => configProvider.scotts, backend, Retailer.Scotts))

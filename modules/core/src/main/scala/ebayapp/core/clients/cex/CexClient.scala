@@ -32,8 +32,7 @@ trait CexClient[F[_]] extends SearchClient[F]:
 final private class CexGraphqlClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
-    override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]]
+    override val httpBackend: SttpBackend[F, Any]
 )(using
     F: Temporal[F],
     logger: Logger[F],
@@ -131,7 +130,7 @@ final private class CexGraphqlClient[F[_]](
   private def dispatch(request: GraphqlSearchRequest*): F[CexGraphqlSearchResponse] =
     configProvider()
       .flatMap { config =>
-        dispatchWithProxy(config.proxied) {
+        dispatch {
           emptyRequest
             .contentType(MediaType.ApplicationJson)
             .acceptEncoding(acceptAnything)
@@ -189,6 +188,5 @@ object CexClient:
   def graphql[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[CexClient[F]] =
-    mkCache(configProvider).map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend, proxyBackend))
+    mkCache(configProvider).map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend))

@@ -34,7 +34,6 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Temporal](
 ) extends EbayAuthClient[F] with HttpClient[F] {
 
   override protected val name: String                              = "ebay-auth"
-  override protected val proxyBackend: Option[SttpBackend[F, Any]] = None
   override protected val delayBetweenFailures: FiniteDuration      = 1.second
 
   def accessToken: F[String] =

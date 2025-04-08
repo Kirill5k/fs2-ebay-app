@@ -20,7 +20,6 @@ import scala.concurrent.duration.*
 final private class LiveScanClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val httpBackend: SttpBackend[F, Any],
-    override val proxyBackend: Option[SttpBackend[F, Any]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
@@ -40,7 +39,7 @@ final private class LiveScanClient[F[_]](
   private def searchByCard(query: String, category: String): F[List[ScanItem]] =
     configProvider()
       .flatMap { config =>
-        dispatchWithProxy(config.proxied) {
+        dispatch {
           val cat  = category.toLowerCase.replaceAll(" ", "-")
           val card = query.toLowerCase.replaceAll(" ", "-")
           emptyRequest
@@ -71,6 +70,5 @@ object ScanClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: SttpBackend[F, Any],
-      proxyBackend: Option[SttpBackend[F, Any]] = None
   ): F[SearchClient[F]] =
-    Monad[F].pure(LiveScanClient[F](() => configProvider.scan, backend, proxyBackend))
+    Monad[F].pure(LiveScanClient[F](() => configProvider.scan, backend))
