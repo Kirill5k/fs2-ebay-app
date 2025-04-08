@@ -19,12 +19,12 @@ import scala.concurrent.duration.FiniteDuration
 
 trait Resources[F[_]]:
   def httpClientBackend: SttpBackend[F, Any]
-  def httpBackend: WebSocketStreamBackend[F, Fs2Streams[F]]
+  def fs2Backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   def database: MongoDatabase[F]
 
 object Resources {
 
-  private def mkHttpBackend[F[_]: Async](timeout: FiniteDuration): Resource[F, WebSocketStreamBackend[F, Fs2Streams[F]]] =
+  private def mkFs2Backend[F[_]: Async](timeout: FiniteDuration): Resource[F, WebSocketStreamBackend[F, Fs2Streams[F]]] =
     Fs2Backend.resource[F](options = BackendOptions(timeout, None))
 
   private def mkHttpClientBackend[F[_]: Async](timeout: FiniteDuration): Resource[F, SttpBackend[F, Any]] =
@@ -47,12 +47,12 @@ object Resources {
     Resource.eval(F.delay(System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection,content-length,expect,host,referer"))) >>
       (
         mkHttpClientBackend[F](config.client.connectTimeout),
-        mkHttpBackend[F](config.client.connectTimeout),
+        mkFs2Backend[F](config.client.connectTimeout),
         mkMongoDatabase[F](config.mongo)
       ).mapN { (sttp3Backend, sttp4Backend, mongo) =>
         new Resources[F]:
-          def httpClientBackend: SttpBackend[F, Any]                = sttp3Backend
-          def httpBackend: WebSocketStreamBackend[F, Fs2Streams[F]] = sttp4Backend
-          def database: MongoDatabase[F]                            = mongo
+          def httpClientBackend: SttpBackend[F, Any]               = sttp3Backend
+          def fs2Backend: WebSocketStreamBackend[F, Fs2Streams[F]] = sttp4Backend
+          def database: MongoDatabase[F]                           = mongo
       }
 }

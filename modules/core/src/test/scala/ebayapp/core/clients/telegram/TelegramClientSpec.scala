@@ -6,13 +6,11 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.{Response, SttpBackend}
 import sttp.model.StatusCode
-import kirill5k.common.sttp.test.SttpWordSpec
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 
-class TelegramClientSpec extends SttpWordSpec {
+class TelegramClientSpec extends Sttp4WordSpec {
 
   val message        = "lorem ipsum dolor sit amet"
   val telegramConfig = TelegramConfig("http://telegram.com", "BOT-KEY", "m1", "m2", "alerts")
@@ -23,77 +21,82 @@ class TelegramClientSpec extends SttpWordSpec {
     val sendMessageUrl = "telegram.com/botBOT-KEY/sendMessage"
 
     "send message to the main channel" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> message)) =>
-            Response.ok("success")
+            ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
 
-      val telegramClient = TelegramClient.make(config, testingBackend)
+      val result = for
+        client <- TelegramClient.make(config, testingBackend)
+        res    <- client.send(Notification.Deal(message))
+      yield res
 
-      val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
-
-      result.asserting(_ mustBe ())
+      result.assertVoid
     }
 
     "send message to the secondary channel" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m2", "text" -> message)) =>
-            Response.ok("success")
+            ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
 
-      val telegramClient = TelegramClient.make(config, testingBackend)
+      val result = for
+        client <- TelegramClient.make(config, testingBackend)
+        res    <- client.send(Notification.Stock(message))
+      yield res
 
-      val result = telegramClient.flatMap(_.send(Notification.Stock(message)))
-
-      result.asserting(_ mustBe ())
+      result.assertVoid
     }
 
     "send message to the alerts channel" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "alerts", "text" -> message)) =>
-            Response.ok("success")
+            ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
 
-      val telegramClient = TelegramClient.make(config, testingBackend)
+      val result = for
+        client <- TelegramClient.make(config, testingBackend)
+        res    <- client.send(Notification.Alert(message))
+      yield res
 
-      val result = telegramClient.flatMap(_.send(Notification.Alert(message)))
-
-      result.asserting(_ mustBe ())
+      result.assertVoid
     }
 
     "retry on 429" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub.whenAnyRequest
-        .thenRespondCyclicResponses(
-          Response("too-many-requests", StatusCode.TooManyRequests),
-          Response.ok("ok")
+      val testingBackend = fs2BackendStub.whenAnyRequest
+        .thenRespondCyclic(
+          ResponseStub.adjust("too-many-requests", StatusCode.TooManyRequests),
+          ResponseStub.adjust("ok")
         )
 
-      val telegramClient = TelegramClient.make(config, testingBackend)
+      val result = for
+        client <- TelegramClient.make(config, testingBackend)
+        res    <- client.send(Notification.Deal(message))
+      yield res
 
-      val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
-
-      result.asserting(_ mustBe ())
+      result.assertVoid
     }
 
     "return error when not success" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> message)) =>
-            Response("fail", StatusCode.BadRequest)
+            ResponseStub.adjust("fail", StatusCode.BadRequest)
           case _ => throw new RuntimeException()
         }
 
-      val telegramClient = TelegramClient.make(config, testingBackend)
+      val result = for
+        client <- TelegramClient.make(config, testingBackend)
+        res    <- client.send(Notification.Deal(message))
+      yield res
 
-      val result = telegramClient.flatMap(_.send(Notification.Deal(message)))
-
-      result.attempt.asserting(_ mustBe (Left(AppError.Http(400, "error sending message to telegram channel m1: 400"))))
+      result.assertThrows(AppError.Http(400, "error sending message to telegram channel m1: 400"))
     }
   }
 }

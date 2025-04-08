@@ -29,7 +29,7 @@ object Clients:
   ): F[Clients[F]] =
     for
       cexClient              <- CexClient.graphql[F](configProvider, resources.httpClientBackend)
-      telegramClient         <- TelegramClient.make[F](configProvider, resources.httpClientBackend)
+      telegramClient         <- TelegramClient.make[F](configProvider, resources.fs2Backend)
       ebayClient             <- EbayClient.make[F](configProvider, resources.httpClientBackend)
       selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.httpClientBackend)
       argosClient            <- ArgosClient.make[F](configProvider, resources.httpClientBackend)

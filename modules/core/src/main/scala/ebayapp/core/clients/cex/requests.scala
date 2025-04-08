@@ -16,7 +16,7 @@ private[cex] object requests {
         else ""
       GraphqlSearchRequest("prod_cex_uk", s"query=${query}&userToken=ecf31216f1ec463fac30a91a1f0a0dc3$faceFilters")
     }
-  
+
   final case class CexGraphqlSearchRequest(
       requests: List[GraphqlSearchRequest]
   ) derives Codec.AsObject
