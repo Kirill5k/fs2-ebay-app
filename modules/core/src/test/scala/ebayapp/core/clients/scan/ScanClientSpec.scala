@@ -5,12 +5,10 @@ import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.search.SearchCriteria
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.{Response, SttpBackend}
-import kirill5k.common.sttp.test.SttpWordSpec
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 
-class ScanClientSpec extends SttpWordSpec {
+class ScanClientSpec extends Sttp4WordSpec {
 
   "A ScanClient" should {
 
@@ -20,16 +18,19 @@ class ScanClientSpec extends SttpWordSpec {
     val criteria = SearchCriteria("all", Some("gpu-nvidia-gaming"))
 
     "return available graphic cards" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("scan.co.uk/shop/gaming/gpu-nvidia-gaming/all") =>
-            Response.ok(readJson("scan/search-by-card.html"))
+            ResponseStub.adjust(readJson("scan/search-by-card.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
-      val client = ScanClient.make[IO](config, testingBackend)
+      val result = for
+        client <- ScanClient.make[IO](config, testingBackend)
+        res    <- client.search(criteria).compile.toList
+      yield res
 
-      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
+      result.asserting { items =>
         items must have size 12
       }
     }
