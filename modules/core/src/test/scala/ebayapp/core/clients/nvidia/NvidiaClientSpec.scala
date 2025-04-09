@@ -5,12 +5,10 @@ import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.config.GenericRetailerConfig
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.*
-import kirill5k.common.sttp.test.SttpWordSpec
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 
-class NvidiaClientSpec extends SttpWordSpec {
+class NvidiaClientSpec extends Sttp4WordSpec {
 
   "A NvidiaClient" should {
 
@@ -22,16 +20,17 @@ class NvidiaClientSpec extends SttpWordSpec {
     val requestParams = Map("page" -> "1", "limit" -> "512", "locale" -> "en-gb", "search" -> "geforce", "category" -> "GPU")
 
     "return items that are in stock" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
-            Response.ok(readJson("nvidia/search-success-response.json"))
+            ResponseStub.adjust(readJson("nvidia/search-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
-      val client = NvidiaClient.make[IO](config, testingBackend)
-
-      val result = client.flatMap(_.search(criteria).compile.toList)
+      val result = for
+        client <- NvidiaClient.make[IO](config, testingBackend)
+        res    <- client.search(criteria).compile.toList
+      yield res
 
       result.asserting { res =>
         res must have size 103
@@ -39,16 +38,17 @@ class NvidiaClientSpec extends SttpWordSpec {
     }
 
     "return items from featured as well" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
-            Response.ok(readJson("nvidia/search-with-retailers-response.json"))
+            ResponseStub.adjust(readJson("nvidia/search-with-retailers-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
-      val client = NvidiaClient.make[IO](config, testingBackend)
-
-      val result = client.flatMap(_.search(criteria).compile.toList)
+      val result = for
+        client <- NvidiaClient.make[IO](config, testingBackend)
+        res    <- client.search(criteria).compile.toList
+      yield res
 
       result.asserting { res =>
         res.flatMap(_.itemDetails.fullName) mustBe List(
@@ -72,16 +72,17 @@ class NvidiaClientSpec extends SttpWordSpec {
     }
 
     "handle json serialization errors" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("nvidia.com/edge/product/search") && r.hasParams(requestParams) =>
-            Response.ok(readJson("nvidia/search-with-invalid-json-response.json"))
+            ResponseStub.adjust(readJson("nvidia/search-with-invalid-json-response.json"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
-      val client = NvidiaClient.make[IO](config, testingBackend)
-
-      val result = client.flatMap(_.search(criteria).compile.toList)
+      val result = for
+        client <- NvidiaClient.make[IO](config, testingBackend)
+        res    <- client.search(criteria).compile.toList
+      yield res
 
       result.asserting { res =>
         res must have size 0

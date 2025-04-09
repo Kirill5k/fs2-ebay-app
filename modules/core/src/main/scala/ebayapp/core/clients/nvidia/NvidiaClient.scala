@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
-import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
@@ -14,8 +14,9 @@ import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import io.circe.DecodingFailure
-import sttp.client3.circe.asJson
-import sttp.client3.*
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.circe.asJson
+import sttp.client4.*
 import sttp.model.{Header, MediaType}
 import sttp.model.headers.CacheDirective
 
@@ -23,11 +24,11 @@ import scala.concurrent.duration.*
 
 final private class LiveNvidiaClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val httpBackend: SttpBackend[F, Any]
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     logger: Logger[F],
     F: Temporal[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String                         = "nvidia"
   override protected val delayBetweenFailures: FiniteDuration = 2.seconds
@@ -47,7 +48,7 @@ final private class LiveNvidiaClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatch {
-          emptyRequest
+          basicRequest
             .acceptEncoding(acceptAnything)
             .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
@@ -64,12 +65,12 @@ final private class LiveNvidiaClient[F[_]](
         r.body match
           case Right(response) =>
             F.pure(response.searchedProducts.featuredProduct.toList ::: response.searchedProducts.productDetails)
-          case Left(DeserializationException(body, error)) =>
+          case Left(ResponseException.DeserializationException(body, error, _)) =>
             val circeError = error.asInstanceOf[DecodingFailure]
             logger.error(s"$name-search/parsing-error: ${circeError.getMessage} (${circeError.pathToRootString})\n$body") *>
               List.empty[Product].pure[F]
-          case Left(HttpError(body, status)) if status.isClientError || status.isServerError =>
-            logger.warn(s"$name-search/$status-error, \n$body") *>
+          case Left(ResponseException.UnexpectedStatusCode(body, metadata)) if metadata.code.isClientError || metadata.code.isServerError =>
+            logger.warn(s"$name-search/${metadata.code}-error, \n$body") *>
               F.sleep(10.seconds) *> searchProducts(c)
           case Left(error) =>
             logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
@@ -80,6 +81,6 @@ final private class LiveNvidiaClient[F[_]](
 object NvidiaClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveNvidiaClient[F](() => configProvider.nvidia, backend))

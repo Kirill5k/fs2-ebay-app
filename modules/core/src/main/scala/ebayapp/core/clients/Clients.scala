@@ -36,7 +36,7 @@ object Clients:
       jdClient               <- JdClient.jdsports[F](configProvider, resources.httpClientBackend)
       scottsClient           <- FrasersClient.scotts[F](configProvider, resources.httpClientBackend)
       tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.httpClientBackend)
-      nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.httpClientBackend)
+      nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)
       scanClient             <- ScanClient.make[F](configProvider, resources.fs2Backend)
       harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend)
       mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend)
