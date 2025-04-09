@@ -10,7 +10,7 @@ import cats.syntax.traverse.*
 import ebayapp.core.clients.cex.mappers.CexGraphqlItemMapper
 import ebayapp.core.clients.cex.requests.{CexGraphqlSearchRequest, GraphqlSearchRequest}
 import ebayapp.core.clients.cex.responses.*
-import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.ResellableItem
@@ -18,8 +18,9 @@ import ebayapp.core.domain.search.*
 import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import kirill5k.common.cats.{Cache, Clock}
-import sttp.client3.*
-import sttp.client3.circe.*
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.circe.asJson
+import sttp.client4.*
 import sttp.model.headers.CacheDirective
 import sttp.model.{Header, MediaType, StatusCode}
 
@@ -32,12 +33,12 @@ trait CexClient[F[_]] extends SearchClient[F]:
 final private class CexGraphqlClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val resellPriceCache: Cache[F, String, Option[SellPrice]],
-    override val httpBackend: SttpBackend[F, Any]
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     F: Temporal[F],
     logger: Logger[F],
     clock: Clock[F]
-) extends CexClient[F] with HttpClient[F] {
+) extends CexClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String = "cex-graphql"
 
@@ -53,7 +54,7 @@ final private class CexGraphqlClient[F[_]](
     val searchRequests = items.flatMap(_.itemDetails.fullName).distinct.map(GraphqlSearchRequest(_, false))
     if (searchRequests.isEmpty) F.pure(items)
     else {
-      dispatch(searchRequests*)
+      dispatchSearchRequest(searchRequests*)
         .flatMap { res =>
           val resByQuery = res.results.getOrElse(Nil).map(sr => sr.query -> sr.hits).toMap
           items.traverse { item =>
@@ -95,7 +96,7 @@ final private class CexGraphqlClient[F[_]](
 
   private def findSellPrice(query: String, category: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
-      dispatch(GraphqlSearchRequest(query, false))
+      dispatchSearchRequest(GraphqlSearchRequest(query, false))
         .map(_.results.getOrElse(Nil).flatMap(_.hits))
         .map(filterByCategory(category))
         .map(getMinResellPrice)
@@ -115,27 +116,27 @@ final private class CexGraphqlClient[F[_]](
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
-      .eval(dispatch(GraphqlSearchRequest(criteria.query)))
+      .eval(dispatchSearchRequest(GraphqlSearchRequest(criteria.query)))
       .map(_.results.getOrElse(List.empty))
       .flatMap(Stream.emits)
       .map(_.hits)
       .flatMap(Stream.emits)
       .map(CexGraphqlItemMapper.generic.toDomain(criteria))
 
-  private def dispatch(request: GraphqlSearchRequest*): F[CexGraphqlSearchResponse] =
+  private def dispatchSearchRequest(request: GraphqlSearchRequest*): F[CexGraphqlSearchResponse] =
     configProvider()
       .flatMap { config =>
         dispatch {
-          emptyRequest
+          basicRequest
             .contentType(MediaType.ApplicationJson)
             .acceptEncoding(acceptAnything)
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
             .header("Referrer", "https://uk.webuy.com/")
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
             .header("Accept", "application/json")
-            .post(uri"${config.uri}/1/indexes/*/queries?${config.queryParameters.getOrElse(Map.empty)}")
-            .body(CexGraphqlSearchRequest(request.toList))
             .headers(config.headers)
+            .post(uri"${config.uri}/1/indexes/*/queries?${config.queryParameters.getOrElse(Map.empty)}")
+            .body(asJson(CexGraphqlSearchRequest(request.toList)))
             .response(asJson[CexGraphqlSearchResponse])
         }
       }
@@ -143,20 +144,20 @@ final private class CexGraphqlClient[F[_]](
         r.body match {
           case Right(response) =>
             response.pure[F]
-          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+          case Left(ResponseException.DeserializationException(_, error, _)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-search/exhausted input") *>
-              clock.sleep(1.second) *> dispatch(request*)
-          case Left(DeserializationException(body, error)) =>
+              clock.sleep(1.second) *> dispatchSearchRequest(request*)
+          case Left(ResponseException.DeserializationException(body, error, _)) =>
             logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
               AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError
-          case Left(HttpError(res, StatusCode.BadRequest)) =>
+          case Left(ResponseException.UnexpectedStatusCode(res, meta)) if meta.code == StatusCode.BadRequest =>
             logger.error(s"$name-search/400-bad-request: $res") *> CexGraphqlSearchResponse.empty.pure[F]
-          case Left(HttpError(_, StatusCode.Forbidden)) =>
-            logger.critical(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatch(request*)
-          case Left(HttpError(_, StatusCode.TooManyRequests)) =>
-            logger.error(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatch(request*)
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code == StatusCode.Forbidden =>
+            logger.critical(s"$name-search/403-critical") *> clock.sleep(30.seconds) *> dispatchSearchRequest(request*)
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code == StatusCode.TooManyRequests =>
+            logger.error(s"$name-search/429-retry") *> clock.sleep(10.seconds) *> dispatchSearchRequest(request*)
           case Left(error) =>
-            logger.warn(s"$name-search/${r.code}-error\n$error") *> clock.sleep(5.second) *> dispatch(request*)
+            logger.warn(s"$name-search/${r.code}-error\n$error") *> clock.sleep(5.second) *> dispatchSearchRequest(request*)
         }
       }
 }
@@ -180,6 +181,6 @@ object CexClient:
 
   def graphql[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[CexClient[F]] =
     mkCache(configProvider).map(cache => CexGraphqlClient[F](() => configProvider.cex, cache, backend))

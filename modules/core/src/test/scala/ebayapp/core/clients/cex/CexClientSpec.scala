@@ -8,17 +8,13 @@ import ebayapp.core.common.config.{CacheConfig, GenericRetailerConfig}
 import ebayapp.core.domain.ResellableItemBuilder
 import ebayapp.core.domain.search.*
 import kirill5k.common.cats.Clock
-import kirill5k.common.sttp.test.SttpWordSpec
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3
-import sttp.client3.{Response, SttpBackend}
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 
 import java.time.Instant
-import scala.collection.immutable.Map
 import scala.concurrent.duration.*
 
-class CexClientSpec extends SttpWordSpec {
+class CexClientSpec extends Sttp4WordSpec {
 
   given Clock[IO] = Clock.mock(Instant.parse("2020-01-01T00:00:00Z"))
 
@@ -47,18 +43,17 @@ class CexClientSpec extends SttpWordSpec {
 
         val criteria = SearchCriteria("gta 5 xbox")
 
-        val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+        val testingBackend = fs2BackendStub
           .whenRequestMatchesPartial {
-            case r
-                if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r
-                  .hasBody(reqBody) && r.hasParams(cexConfig.queryParameters.get) =>
-              Response.ok(readJson("cex/search-graphql-success-response.json"))
+            case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasBody(reqBody) && r.hasParams(cexConfig.queryParameters.get) =>
+              ResponseStub.adjust(readJson("cex/search-graphql-success-response.json"))
             case r => throw new RuntimeException(r.uri.toString)
           }
 
-        val cexClient = CexClient.graphql[IO](config, testingBackend)
-
-        val result = cexClient.flatMap(_.search(criteria).compile.toList)
+        val result = for
+          client <- CexClient.graphql[IO](config, testingBackend)
+          res    <- client.search(criteria).compile.toList
+        yield res
 
         result.asserting { items =>
           items.flatMap(_.itemDetails.fullName) mustBe List(
@@ -98,10 +93,10 @@ class CexClientSpec extends SttpWordSpec {
       )
 
       "find resell prices" in {
-        val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+        val testingBackend = fs2BackendStub
           .whenRequestMatchesPartial {
             case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasParams(cexConfig.queryParameters.get) =>
-              Response.ok(readJson("cex/search-graphql-compound-success-response.json"))
+              ResponseStub.adjust(readJson("cex/search-graphql-compound-success-response.json"))
             case r => throw new RuntimeException(r.uri.toString)
           }
 
