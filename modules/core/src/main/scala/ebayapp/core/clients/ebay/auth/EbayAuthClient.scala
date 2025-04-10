@@ -8,12 +8,13 @@ import cats.syntax.apply.*
 import cats.syntax.applicative.*
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import EbayAuthClient.OAuthToken
-import ebayapp.core.clients.HttpClient
+import ebayapp.core.clients.Fs2HttpClient
 import responses.{EbayAuthErrorResponse, EbayAuthSuccessResponse}
 import ebayapp.core.common.config.{EbayConfig, OAuthCredentials}
 import kirill5k.common.cats.Clock
-import sttp.client3.*
-import sttp.client3.circe.*
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.*
+import sttp.client4.circe.*
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import java.time.Instant
@@ -27,11 +28,11 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Temporal](
     private val config: EbayConfig,
     private val token: Ref[F, Option[OAuthToken]],
     private val credentials: Ref[F, List[OAuthCredentials]],
-    override protected val httpBackend: SttpBackend[F, Any]
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     logger: Logger[F],
     clock: Clock[F]
-) extends EbayAuthClient[F] with HttpClient[F] {
+) extends EbayAuthClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String                         = "ebay-auth"
   override protected val delayBetweenFailures: FiniteDuration = 1.second
@@ -52,7 +53,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Temporal](
   private def authenticate: F[OAuthToken] =
     credentials.get.map(_.head).flatMap { creds =>
       dispatch {
-        emptyRequest
+        basicRequest
           .header(HeaderNames.Accept, MediaType.ApplicationJson.toString())
           .contentType(MediaType.ApplicationXWwwFormUrlencoded)
           .auth
@@ -64,14 +65,14 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Temporal](
         r.body match
           case Right(EbayAuthSuccessResponse(token, expiresIn, _)) =>
             clock.now.map(now => OAuthToken(token, now.plusSeconds(expiresIn - 30)))
-          case Left(HttpError(_, StatusCode.TooManyRequests)) =>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code == StatusCode.TooManyRequests =>
             logger.warn(s"reached api calls limit (cid - ${creds.clientId})") >>
               switchAccount() >> authenticate
-          case Left(HttpError(error, StatusCode.Unauthorized)) =>
+          case Left(ResponseException.UnexpectedStatusCode(error, meta)) if meta.code == StatusCode.Unauthorized =>
             logger.warn(s"unauthorized: ${error.error_description} (cid - ${creds.clientId})") >>
               switchAccount() >> authenticate
-          case Left(HttpError(error, status)) =>
-            logger.error(s"http error authenticating with ebay ${status.code}: ${error.error_description} (cid - ${creds.clientId})") >>
+          case Left(ResponseException.UnexpectedStatusCode(error, meta)) =>
+            logger.error(s"http error authenticating with ebay ${meta.code}: ${error.error_description} (cid - ${creds.clientId})") >>
               clock.sleep(1.second) >> authenticate
           case Left(error) =>
             logger.error(s"unexpected error authenticating with ebay: ${error.getMessage}") >>
@@ -88,7 +89,7 @@ private[ebay] object EbayAuthClient:
 
   def make[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[EbayAuthClient[F]] =
     for
       config <- configProvider.ebay

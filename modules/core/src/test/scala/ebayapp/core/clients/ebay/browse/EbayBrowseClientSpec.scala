@@ -1,19 +1,17 @@
 package ebayapp.core.clients.ebay.browse
 
 import cats.effect.IO
-import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
+import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
 import ebayapp.kernel.errors.AppError
-import kirill5k.common.sttp.test.SttpWordSpec
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.{Response, SttpBackend}
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 import sttp.model.StatusCode
 
 import scala.concurrent.duration.*
 
-class EbayBrowseClientSpec extends SttpWordSpec {
+class EbayBrowseClientSpec extends Sttp4WordSpec {
 
   val accessToken       = "access-token"
   val itemId            = "item-id-1"
@@ -26,10 +24,10 @@ class EbayBrowseClientSpec extends SttpWordSpec {
   "EbaySearchClient" should {
 
     "make get request to search api" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
-            Response.ok(readJson("ebay/search-success-response.json"))
+            ResponseStub.adjust(readJson("ebay/search-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
@@ -44,107 +42,115 @@ class EbayBrowseClientSpec extends SttpWordSpec {
     }
 
     "return empty seq when nothing found" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
-            Response.ok(readJson("ebay/search-empty-response.json"))
+            ResponseStub.adjust(readJson("ebay/search-empty-response.json"))
           case _ => throw new RuntimeException()
         }
 
-      val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
-      val foundItems       = ebaySearchClient.flatMap(_.search(accessToken, searchQueryParams))
+      val result = for
+        client <- EbayBrowseClient.make[IO](config, testingBackend)
+        res    <- client.search(accessToken, searchQueryParams)
+      yield res
 
-      foundItems.asserting { items =>
+      result.asserting { items =>
         items mustBe Nil
       }
     }
 
     "return autherror when token expired during search" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("ebay.com/buy/browse/v1/item_summary/search") && r.hasParams(searchQueryParams) =>
-            Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
+            ResponseStub.adjust(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
           case _ => throw new RuntimeException()
         }
 
-      val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
-      val result           = ebaySearchClient.flatMap(_.search(accessToken, searchQueryParams))
+      val result = for
+        client <- EbayBrowseClient.make[IO](config, testingBackend)
+        res    <- client.search(accessToken, searchQueryParams)
+      yield res
 
-      result.attempt.asserting { error =>
-        error mustBe (Left(AppError.Auth("ebay account has expired: 403")))
-      }
+      result.assertThrows(AppError.Auth("ebay account has expired: 403"))
     }
 
     "make get request to obtain item details" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response.ok(readJson("ebay/get-item-1-success-response.json"))
+            ResponseStub.adjust(readJson("ebay/get-item-1-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
-      val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
-      val itemResult       = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
+      val result = for
+        client <- EbayBrowseClient.make[IO](config, testingBackend)
+        res    <- client.getItem(accessToken, itemId)
+      yield res
 
-      itemResult.asserting { item =>
+      result.asserting { item =>
         item.map(_.itemId) mustBe (Some("v1|114059888671|0"))
       }
     }
 
     "make get request to obtain item details without aspects" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response.ok(readJson("ebay/get-item-3-no-aspects-success-response.json"))
+            ResponseStub.adjust(readJson("ebay/get-item-3-no-aspects-success-response.json"))
           case _ => throw new RuntimeException()
         }
 
-      val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
-      val itemResult       = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
+      val result = for
+        client <- EbayBrowseClient.make[IO](config, testingBackend)
+        res    <- client.getItem(accessToken, itemId)
+      yield res
 
-      itemResult.asserting { item =>
+      result.asserting { item =>
         item.map(_.localizedAspects) mustBe (Some(None))
       }
     }
 
     "return autherror when token expired" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
+            ResponseStub.adjust(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
           case _ => throw new RuntimeException()
         }
 
-      val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
-      val result           = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
+      val result = for
+        client <- EbayBrowseClient.make[IO](config, testingBackend)
+        res    <- client.getItem(accessToken, itemId)
+      yield res
 
-      result.attempt.asserting { error =>
-        error mustBe (Left(AppError.Auth("ebay account has expired: 403")))
-      }
+      result.assertThrows(AppError.Auth("ebay account has expired: 403"))
     }
 
     "return None when 404" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo(s"ebay.com/buy/browse/v1/item/$itemId") =>
-            Response(readJson("ebay/get-item-notfound-error-response.json"), StatusCode.NotFound)
+            ResponseStub.adjust(readJson("ebay/get-item-notfound-error-response.json"), StatusCode.NotFound)
           case _ => throw new RuntimeException()
         }
 
-      val ebaySearchClient = EbayBrowseClient.make[IO](config, testingBackend)
-      val itemResult       = ebaySearchClient.flatMap(_.getItem(accessToken, itemId))
+      val result = for
+        client <- EbayBrowseClient.make[IO](config, testingBackend)
+        res    <- client.getItem(accessToken, itemId)
+      yield res
 
-      itemResult.asserting { items =>
+      result.asserting { items =>
         items mustBe None
       }
     }
 
     "return item from cache when itemid is the same" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub.whenAnyRequest
-        .thenRespondCyclicResponses(
-          Response.ok(readJson("ebay/get-item-1-success-response.json")),
-          Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden),
-          Response(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
+      val testingBackend = fs2BackendStub.whenAnyRequest
+        .thenRespondCyclic(
+          ResponseStub.adjust(readJson("ebay/get-item-1-success-response.json")),
+          ResponseStub.adjust(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden),
+          ResponseStub.adjust(readJson("ebay/get-item-unauthorized-error-response.json"), StatusCode.Forbidden)
         )
 
       val result = for

@@ -18,7 +18,8 @@ import ebayapp.core.domain.search.SearchCriteria
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import kirill5k.common.cats.Clock
 import fs2.Stream
-import sttp.client3.SttpBackend
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.WebSocketStreamBackend
 
 final private[ebay] class LiveEbayClient[F[_]: Temporal](
     private val configProvider: RetailConfigProvider[F],
@@ -79,7 +80,7 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
 object EbayClient:
   def make[F[_]: {Temporal, Logger, Clock}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[SearchClient[F]] =
     (
       EbayAuthClient.make[F](configProvider, backend),

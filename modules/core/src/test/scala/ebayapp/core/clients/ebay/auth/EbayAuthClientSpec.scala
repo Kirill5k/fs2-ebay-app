@@ -7,18 +7,16 @@ import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
 import ebayapp.core.clients.ebay.auth.EbayAuthClient.OAuthToken
 import ebayapp.core.common.config.{EbayConfig, EbaySearchConfig, OAuthCredentials}
-import kirill5k.common.sttp.test.SttpWordSpec
+import kirill5k.common.sttp.test.Sttp4WordSpec
 import kirill5k.common.cats.Clock
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3
-import sttp.client3.{Response, SttpBackend}
+import sttp.client4.GenericRequest
 import sttp.model.*
+import sttp.client4.testing.ResponseStub
 
 import java.time.Instant
 import scala.concurrent.duration.*
 
-class EbayAuthClientSpec extends SttpWordSpec {
+class EbayAuthClientSpec extends Sttp4WordSpec {
 
   val now                = Instant.parse("2020-01-01T00:00:00Z")
   given clock: Clock[IO] = Clock.mock(now)
@@ -30,10 +28,10 @@ class EbayAuthClientSpec extends SttpWordSpec {
   "EbayAuthClient" should {
 
     "make post request to obtain auth token" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) =>
-            Response.ok(readJson("ebay/auth-success-response.json"))
+            ResponseStub.adjust(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -46,7 +44,7 @@ class EbayAuthClientSpec extends SttpWordSpec {
     }
 
     "return existing token if it is valid" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial { case r => throw new RuntimeException(r.uri.toString) }
 
       val ebayAuthClient = (
@@ -60,12 +58,12 @@ class EbayAuthClientSpec extends SttpWordSpec {
     }
 
     "authenticate with different account when switched" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMTpzZWNyZXQtMQ==")) =>
             throw new RuntimeException()
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMjpzZWNyZXQtMg==")) =>
-            Response.ok(readJson("ebay/auth-success-response.json"))
+            ResponseStub.adjust(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -81,10 +79,10 @@ class EbayAuthClientSpec extends SttpWordSpec {
     }
 
     "make another request when original token has expired" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) =>
-            Response.ok(readJson("ebay/auth-success-response.json"))
+            ResponseStub.adjust(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -99,11 +97,11 @@ class EbayAuthClientSpec extends SttpWordSpec {
     }
 
     "retry on errors from ebay" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub.whenAnyRequest
-        .thenRespondCyclicResponses(
-          Response(readJson("ebay/auth-error-response.json"), StatusCode.BadRequest),
-          Response(readJson("ebay/auth-error-response.json"), StatusCode.BadRequest),
-          Response.ok(readJson("ebay/auth-success-response.json"))
+      val testingBackend = fs2BackendStub.whenAnyRequest
+        .thenRespondCyclic(
+          ResponseStub.adjust(readJson("ebay/auth-error-response.json"), StatusCode.BadRequest),
+          ResponseStub.adjust(readJson("ebay/auth-error-response.json"), StatusCode.BadRequest),
+          ResponseStub.adjust(readJson("ebay/auth-success-response.json"))
         )
 
       val ebayAuthClient = EbayAuthClient.make[IO](config, testingBackend)
@@ -115,12 +113,12 @@ class EbayAuthClientSpec extends SttpWordSpec {
     }
 
     "switch account when 429 received" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMTpzZWNyZXQtMQ==")) =>
-            Response(readJson("ebay/auth-error-response.json"), StatusCode.TooManyRequests)
+            ResponseStub.adjust(readJson("ebay/auth-error-response.json"), StatusCode.TooManyRequests)
           case r if isAuthRequest(r) && r.headers.contains(Header(HeaderNames.Authorization, "Basic aWQtMjpzZWNyZXQtMg==")) =>
-            Response.ok(readJson("ebay/auth-success-response.json"))
+            ResponseStub.adjust(readJson("ebay/auth-success-response.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -132,7 +130,7 @@ class EbayAuthClientSpec extends SttpWordSpec {
       }
     }
 
-    def isAuthRequest(req: client3.Request[?, ?]): Boolean =
+    def isAuthRequest(req: GenericRequest[?, ?]): Boolean =
       req.isPost &&
         req.hasContentType(MediaType.ApplicationXWwwFormUrlencoded) &&
         req.isGoingTo("ebay.com/identity/v1/oauth2/token")

@@ -4,14 +4,15 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.HttpClient
+import ebayapp.core.clients.Fs2HttpClient
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.EbayConfig
 import responses.{EbayBrowseResult, EbayItem, EbayItemSummary}
 import ebayapp.kernel.errors.AppError
 import kirill5k.common.cats.Cache
-import sttp.client3.*
-import sttp.client3.circe.*
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.circe.*
+import sttp.client4.*
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 
 import scala.concurrent.duration.*
@@ -22,12 +23,12 @@ private[ebay] trait EbayBrowseClient[F[_]]:
 
 final private[ebay] class LiveEbayBrowseClient[F[_]](
     private val config: EbayConfig,
-    override protected val httpBackend: SttpBackend[F, Any],
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]],
     private val itemsCache: Cache[F, String, EbayItem]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends EbayBrowseClient[F] with HttpClient[F] {
+) extends EbayBrowseClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String                         = "ebay-browse"
   override protected val delayBetweenFailures: FiniteDuration = 1.second
@@ -42,7 +43,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 
   def search(accessToken: String, queryParams: Map[String, String]): F[List[EbayItemSummary]] =
     dispatch {
-      emptyRequest
+      basicRequest
         .headers(headers)
         .auth
         .bearer(accessToken)
@@ -52,10 +53,10 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
       r.body match {
         case Right(value) =>
           F.pure(value.itemSummaries.getOrElse(Nil))
-        case Left(DeserializationException(body, error)) =>
+        case Left(ResponseException.DeserializationException(body, error, _)) =>
           logger.error(s"ebay-browse-search/parsing-error: ${error.getMessage}, \n$body") *>
             F.pure(Nil)
-        case Left(HttpError(_, status)) if expiredStatuses.contains(status) =>
+        case Left(ResponseException.UnexpectedStatusCode(_, meta)) if expiredStatuses.contains(meta.code) =>
           F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
         case Left(error) =>
           logger.error(s"ebay-browse-search/${r.code.code}: ${error.getMessage}\n$error") *>
@@ -71,7 +72,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 
   private def findItem(accessToken: String, itemId: String): F[Option[EbayItem]] =
     dispatch {
-      emptyRequest
+      basicRequest
         .headers(headers)
         .auth
         .bearer(accessToken)
@@ -81,12 +82,12 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
       r.body match
         case Right(item) =>
           itemsCache.put(itemId, item).as(Some(item))
-        case Left(DeserializationException(body, error)) =>
+        case Left(ResponseException.DeserializationException(body, error, _)) =>
           logger.error(s"ebay-browse-get-item/parsing-error: ${error.getMessage}, \n$body") *>
             F.pure(None)
-        case Left(HttpError(_, StatusCode.NotFound)) =>
+        case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code == StatusCode.NotFound =>
           F.pure(None)
-        case Left(HttpError(_, status)) if expiredStatuses.contains(status) =>
+        case Left(ResponseException.UnexpectedStatusCode(_, meta)) if expiredStatuses.contains(meta.code) =>
           F.raiseError(AppError.Auth(s"ebay account has expired: ${r.code}"))
         case Left(error) =>
           logger.error(s"ebay-browse-get-item/${r.code.code}: ${error.getMessage}\n$error") *>
@@ -97,7 +98,7 @@ final private[ebay] class LiveEbayBrowseClient[F[_]](
 private[ebay] object EbayBrowseClient:
   def make[F[_]: {Logger, Temporal}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[EbayBrowseClient[F]] =
     (
       configProvider.ebay,
