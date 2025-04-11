@@ -32,7 +32,7 @@ object Clients:
       telegramClient         <- TelegramClient.make[F](configProvider, resources.fs2Backend)
       ebayClient             <- EbayClient.make[F](configProvider, resources.fs2Backend)
       selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
-      argosClient            <- ArgosClient.make[F](configProvider, resources.httpClientBackend)
+      argosClient            <- ArgosClient.make[F](configProvider, resources.fs2Backend)
       jdClient               <- JdClient.jdsports[F](configProvider, resources.httpClientBackend)
       scottsClient           <- FrasersClient.scotts[F](configProvider, resources.httpClientBackend)
       tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.httpClientBackend)
