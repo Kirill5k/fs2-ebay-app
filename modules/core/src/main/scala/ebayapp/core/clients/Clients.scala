@@ -33,14 +33,14 @@ object Clients:
       ebayClient             <- EbayClient.make[F](configProvider, resources.fs2Backend)
       selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
       argosClient            <- ArgosClient.make[F](configProvider, resources.fs2Backend)
-      jdClient               <- JdClient.jdsports[F](configProvider, resources.httpClientBackend)
-      scottsClient           <- FrasersClient.scotts[F](configProvider, resources.httpClientBackend)
-      tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.httpClientBackend)
+      jdClient               <- JdClient.jdsports[F](configProvider, resources.fs2Backend)
+      scottsClient           <- FrasersClient.scotts[F](configProvider, resources.fs2Backend)
+      tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.fs2Backend)
       nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)
       scanClient             <- ScanClient.make[F](configProvider, resources.fs2Backend)
       harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.httpClientBackend)
       mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend)
-      flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.httpClientBackend)
+      flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.fs2Backend)
     yield new Clients[F]:
       def cex: CexClient[F]             = cexClient
       def messenger: MessengerClient[F] = telegramClient

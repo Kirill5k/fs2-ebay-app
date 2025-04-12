@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
@@ -15,7 +15,8 @@ import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
-import sttp.client3.*
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.*
 import sttp.model.{HeaderNames, StatusCode}
 
 import scala.concurrent.duration.*
@@ -23,11 +24,11 @@ import scala.concurrent.duration.*
 final private class LiveJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val retailer: Retailer.Jdsports.type,
-    override val httpBackend: SttpBackend[F, Any]
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String = retailer.name
 
@@ -93,7 +94,7 @@ final private class LiveJdClient[F[_]](
         dispatch {
           val base  = config.uri + criteria.category.fold("")(c => s"/$c")
           val brand = criteria.query.toLowerCase.replace(" ", "-")
-          emptyRequest
+          basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
             .headers(
               getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + s"/brand/$brand?from=${step * stepSize}"))
@@ -124,7 +125,7 @@ final private class LiveJdClient[F[_]](
       .flatMap { config =>
         dispatch {
           val referrer = config.websiteUri + s"/product/${ci.fullName}/${ci.plu}/"
-          emptyRequest
+          basicRequest
             .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
             .headers(getStockHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
         }
@@ -150,6 +151,6 @@ final private class LiveJdClient[F[_]](
 object JdClient:
   def jdsports[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend))

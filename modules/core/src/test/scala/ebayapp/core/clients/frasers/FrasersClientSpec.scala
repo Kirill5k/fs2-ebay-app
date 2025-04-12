@@ -6,12 +6,10 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import kirill5k.common.sttp.test.SttpWordSpec
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.{Response, SttpBackend}
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 
-class FrasersClientSpec extends SttpWordSpec {
+class FrasersClientSpec extends Sttp4WordSpec {
 
   "FrasersClient for flannels" should {
     val flannelsConfig = GenericRetailerConfig("http://frasers.com", Map.empty)
@@ -25,11 +23,11 @@ class FrasersClientSpec extends SttpWordSpec {
         "sortOption"      -> "discountvalue_desc",
         "selectedFilters" -> "AFLOR^Mens"
       )
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/search-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(readJson("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => ResponseStub.adjust(readJson("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => ResponseStub.adjust(readJson("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => ResponseStub.adjust(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -53,10 +51,10 @@ class FrasersClientSpec extends SttpWordSpec {
         "sortOption"      -> "discountvalue_desc",
         "selectedFilters" -> "AFLOR^Mens"
       )
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/new-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => ResponseStub.adjust(readJson("flannels/new-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => ResponseStub.adjust(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -81,11 +79,11 @@ class FrasersClientSpec extends SttpWordSpec {
         "selectedFilters" -> "390_4098650^Mens",
         "sortOption"      -> "discountvalue_desc"
       )
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/search-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(readJson("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => ResponseStub.adjust(readJson("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => ResponseStub.adjust(readJson("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => ResponseStub.adjust(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 
@@ -108,11 +106,11 @@ class FrasersClientSpec extends SttpWordSpec {
         "selectedFilters" -> "390_4098464^Mens",
         "sortOption"      -> "discountvalue_desc"
       )
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => Response.ok(readJson("flannels/search-page1.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => Response.ok(readJson("flannels/search-page2.json"))
-          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => Response.ok(readJson("flannels/search-no-results.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "1")) => ResponseStub.adjust(readJson("flannels/search-page1.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "2")) => ResponseStub.adjust(readJson("flannels/search-page2.json"))
+          case r if r.isGet && r.hasParams(args + ("page" -> "3")) => ResponseStub.adjust(readJson("flannels/search-no-results.json"))
           case r                                                   => throw new RuntimeException(r.uri.toString)
         }
 

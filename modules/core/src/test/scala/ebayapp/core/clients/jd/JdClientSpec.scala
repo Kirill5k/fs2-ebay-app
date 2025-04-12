@@ -6,13 +6,11 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import kirill5k.common.sttp.test.SttpWordSpec
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.{Response, SttpBackend}
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 import sttp.model.StatusCode
 
-class JdClientSpec extends SttpWordSpec {
+class JdClientSpec extends Sttp4WordSpec {
 
   "A JdsportsClient" should {
     val jdsportsConfig = GenericRetailerConfig("http://jdsports.com/proxy")
@@ -21,16 +19,16 @@ class JdClientSpec extends SttpWordSpec {
     "return items on sale" in {
       val criteria = SearchCriteria("Emporio Armani EA7", category = Some("men"))
 
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") && r.hasParams(Map("from" -> "0")) =>
-            Response.ok(readJson("jdsports/search-by-brand-ajax.html"))
+            ResponseStub.adjust(readJson("jdsports/search-by-brand-ajax.html"))
           case r if r.isGoingTo("jdsports.com/proxy/men/brand/emporio-armani-ea7") =>
-            Response("n/a", StatusCode.NotFound)
+            ResponseStub.adjust("n/a", StatusCode.NotFound)
           case r if r.isGoingTo("jdsports.com/proxy/product/white-ea7-emporio-armani-carbon-block-logo-t-shirt/19670520/stock/") =>
-            Response.ok(readJson("jdsports/get-product-stock.html"))
+            ResponseStub.adjust(readJson("jdsports/get-product-stock.html"))
           case r if r.isGoingTo("jdsports.com/proxy/product/brown-ea7-emporio-armani-logo-joggers/19581391/stock/") =>
-            Response.ok(readJson("jdsports/get-product-stock-oos.html"))
+            ResponseStub.adjust(readJson("jdsports/get-product-stock-oos.html"))
           case r => throw new RuntimeException(r.uri.toString())
         }
 
