@@ -6,13 +6,11 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import kirill5k.common.sttp.test.SttpWordSpec
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3
-import sttp.client3.{Response, SttpBackend}
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.GenericRequest
+import sttp.client4.testing.ResponseStub
 
-class HarveyNicholsClientSpec extends SttpWordSpec {
+class HarveyNicholsClientSpec extends Sttp4WordSpec {
 
   "A HarveyNicholsClient" should {
 
@@ -22,7 +20,7 @@ class HarveyNicholsClientSpec extends SttpWordSpec {
     val criteria = SearchCriteria("kenzo")
 
     "return stream of clothing items that are on sale" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r
               if isSearchRequest(
@@ -33,7 +31,7 @@ class HarveyNicholsClientSpec extends SttpWordSpec {
                   "context[page_number]" -> "1"
                 )
               ) =>
-            Response.ok(readJson("harvey-nichols/search-kenzo-page-1.json"))
+            ResponseStub.adjust(readJson("harvey-nichols/search-kenzo-page-1.json"))
           case r
               if isSearchRequest(
                 r,
@@ -43,7 +41,7 @@ class HarveyNicholsClientSpec extends SttpWordSpec {
                   "context[page_number]" -> "2"
                 )
               ) =>
-            Response.ok(readJson("harvey-nichols/search-kenzo-page-2.json"))
+            ResponseStub.adjust(readJson("harvey-nichols/search-kenzo-page-2.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
@@ -61,6 +59,6 @@ class HarveyNicholsClientSpec extends SttpWordSpec {
     }
   }
 
-  def isSearchRequest(req: client3.Request[?, ?], params: Map[String, String]): Boolean =
+  def isSearchRequest(req: GenericRequest[?, ?], params: Map[String, String]): Boolean =
     req.isGet && req.hasHost("harveynichols.com") && req.hasPath("data/lister") && req.hasParams(params)
 }

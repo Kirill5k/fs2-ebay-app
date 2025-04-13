@@ -7,26 +7,27 @@ import cats.syntax.functor.*
 import cats.syntax.apply.*
 import ebayapp.core.clients.harveynichols.mappers.{HarveyNicholsItem, HarveyNicholsItemMapper}
 import ebayapp.core.clients.harveynichols.responses.{HarveyNicholsProduct, HarveyNicholsSearchResponse}
-import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import io.circe.Decoder
-import sttp.client3.*
-import sttp.client3.circe.asJson
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.*
+import sttp.client4.circe.asJson
 import sttp.model.{StatusCode, Uri}
 
 import scala.concurrent.duration.*
 
 final private class LiveHarveyNicholsClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    override val httpBackend: SttpBackend[F, Any]
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String = "harvey-nichols"
 
@@ -81,7 +82,7 @@ final private class LiveHarveyNicholsClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatch {
-          emptyRequest
+          basicRequest
             .get(fullUri(config.uri))
             .headers(defaultHeaders ++ config.headers)
             .response(asJson[A])
@@ -91,20 +92,20 @@ final private class LiveHarveyNicholsClient[F[_]](
         r.body match {
           case Right(res) =>
             F.pure(res)
-          case Left(DeserializationException(_, error)) if error.getMessage.contains("exhausted input") =>
+          case Left(ResponseException.DeserializationException(_, error, _)) if error.getMessage.contains("exhausted input") =>
             logger.warn(s"$name-$endpoint/exhausted input") *>
               F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-          case Left(DeserializationException(json, error)) =>
+          case Left(ResponseException.DeserializationException(json, error, _)) =>
             logger.error(s"$name-$endpoint/json-parsing-error: ${error.getMessage}\n$json") *>
               F.pure(defaultResponse)
-          case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
+          case Left(ResponseException.UnexpectedStatusCode(_, s)) if s == StatusCode.Forbidden || s == StatusCode.TooManyRequests =>
             logger.error(s"$name-$endpoint/$s-critical") *>
               F.sleep(3.second) *> sendRequest(fullUri, endpoint, defaultResponse)
-          case Left(HttpError(_, status)) if status.isClientError =>
-            logger.error(s"$name-$endpoint/$status-error") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code.isClientError =>
+            logger.error(s"$name-$endpoint/${meta.code}-error") *>
               F.pure(defaultResponse)
-          case Left(HttpError(_, status)) if status.isServerError =>
-            logger.warn(s"$name-$endpoint/$status-repeatable") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code.isServerError =>
+            logger.warn(s"$name-$endpoint/${meta.code}-repeatable") *>
               F.sleep(5.second) *> sendRequest(fullUri, endpoint, defaultResponse)
           case Left(error) =>
             logger.error(s"$name-$endpoint/error: ${error.getMessage}") *>
@@ -116,6 +117,6 @@ final private class LiveHarveyNicholsClient[F[_]](
 object HarveyNicholsClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveHarveyNicholsClient[F](() => configProvider.harveyNichols, backend))
