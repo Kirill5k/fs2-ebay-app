@@ -45,7 +45,9 @@ class CexClientSpec extends Sttp4WordSpec {
 
         val testingBackend = fs2BackendStub
           .whenRequestMatchesPartial {
-            case r if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r.hasBody(reqBody) && r.hasParams(cexConfig.queryParameters.get) =>
+            case r
+                if r.isPost && r.isGoingTo("cex.com/1/indexes/*/queries") && r
+                  .hasBody(reqBody) && r.hasParams(cexConfig.queryParameters.get) =>
               ResponseStub.adjust(readJson("cex/search-graphql-success-response.json"))
             case r => throw new RuntimeException(r.uri.toString)
           }

@@ -39,7 +39,7 @@ object Clients:
       nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)
       scanClient             <- ScanClient.make[F](configProvider, resources.fs2Backend)
       harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.fs2Backend)
-      mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.httpClientBackend)
+      mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.fs2Backend)
       flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.fs2Backend)
     yield new Clients[F]:
       def cex: CexClient[F]             = cexClient

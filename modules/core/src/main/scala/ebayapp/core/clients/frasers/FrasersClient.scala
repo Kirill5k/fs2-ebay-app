@@ -92,7 +92,8 @@ final private class LiveFrasersClient[F[_]](
           case Left(ResponseException.DeserializationException(body, error, _)) =>
             logger.error(s"$name-search response parsing error: ${error.getMessage}\n$body") >>
               F.pure(Nil -> None)
-          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code == StatusCode.Forbidden || meta.code == StatusCode.TooManyRequests =>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta))
+              if meta.code == StatusCode.Forbidden || meta.code == StatusCode.TooManyRequests =>
             logger.error(s"$name-search/${meta.code}-critical") >>
               F.sleep(10.second) >> getItems(sc)(page)
           case Left(error) =>

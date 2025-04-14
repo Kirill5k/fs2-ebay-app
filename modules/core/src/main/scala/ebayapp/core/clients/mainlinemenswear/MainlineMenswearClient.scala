@@ -7,15 +7,16 @@ import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
 import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, MainlineMenswearItemMapper}
-import ebayapp.core.clients.{HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.GenericRetailerConfig
 import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
-import sttp.client3.*
-import sttp.client3.circe.asJson
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.*
+import sttp.client4.circe.asJson
 import sttp.model.headers.CacheDirective
 import sttp.model.{Header, MediaType, StatusCode}
 
@@ -24,15 +25,15 @@ import scala.concurrent.duration.*
 final private class LiveMainlineMenswearClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     override val name: String,
-    override val httpBackend: SttpBackend[F, Any],
+    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]],
     private val token: Ref[F, Option[String]]
 )(using
     F: Temporal[F],
     logger: Logger[F]
-) extends SearchClient[F] with HttpClient[F] {
+) extends SearchClient[F] with Fs2HttpClient[F] {
 
   private val mainPageUrl = "https://www.mainlinemenswear.co.uk"
-  private val baseRequest = emptyRequest
+  private val baseRequest = basicRequest
     .acceptEncoding(acceptAnything)
     .contentType(MediaType.ApplicationJson)
     .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
@@ -91,17 +92,17 @@ final private class LiveMainlineMenswearClient[F[_]](
         r.body match {
           case Right(res) =>
             F.pure(res.data.products)
-          case Left(DeserializationException(_, error)) =>
+          case Left(ResponseException.DeserializationException(_, error, _)) =>
             logger.error(s"$name-search/json-error: ${error.getMessage}") *>
               F.pure(Nil)
-          case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.Unauthorized =>
-            logger.warn(s"$name-search/$s-critical") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, m)) if m.code == StatusCode.Forbidden || m.code == StatusCode.Unauthorized =>
+            logger.warn(s"$name-search/${m.code}-critical") *>
               F.sleep(3.second) *> refreshAccessToken *> sendSearchQuery(criteria, page)
-          case Left(HttpError(_, status)) if status.isClientError =>
-            logger.error(s"$name-search/$status-error") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code.isClientError =>
+            logger.error(s"$name-search/${meta.code}-error") *>
               F.pure(Nil)
-          case Left(HttpError(_, status)) if status.isServerError =>
-            logger.warn(s"$name-search/$status-repeatable") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code.isServerError =>
+            logger.warn(s"$name-search/${meta.code}-repeatable") *>
               F.sleep(5.second) *> sendSearchQuery(criteria, page)
           case Left(error) =>
             logger.error(s"$name-search/error: ${error.getMessage}") *>
@@ -124,24 +125,24 @@ final private class LiveMainlineMenswearClient[F[_]](
         r.body match
           case Right(res) =>
             F.pure(Some(res.data))
-          case Left(DeserializationException(_, error)) =>
+          case Left(ResponseException.DeserializationException(_, error, _)) =>
             logger.error(s"$name-product/json-error: ${error.getMessage}") *>
               F.pure(None)
-          case Left(HttpError(_, s)) if s == StatusCode.Forbidden || s == StatusCode.Unauthorized =>
-            logger.warn(s"$name-product/$s-critical") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, m)) if m.code == StatusCode.Forbidden || m.code == StatusCode.Unauthorized =>
+            logger.warn(s"$name-product/${m.code}-critical") *>
               F.sleep(3.second) *> refreshAccessToken *> getCompleteProduct(pp)
-          case Left(HttpError(_, status)) if status.isClientError =>
-            logger.error(s"$name-product/$status-error") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code.isClientError =>
+            logger.error(s"$name-product/${meta.code}-error") *>
               F.pure(None)
-          case Left(HttpError(_, status)) if status.isServerError =>
-            logger.warn(s"$name-product/$status-repeatable") *>
+          case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code.isServerError =>
+            logger.warn(s"$name-product/${meta.code}-repeatable") *>
               F.sleep(5.second) *> getCompleteProduct(pp)
           case Left(error) =>
             logger.error(s"$name-product/error: ${error.getMessage}") *>
               F.sleep(5.second) *> getCompleteProduct(pp)
       }
 
-  private def dispatchReqWithAuth[T](request: Request[T, Any]): F[Response[T]] =
+  private def dispatchReqWithAuth[T](request: Request[T]): F[Response[T]] =
     token.get.flatMap {
       case Some(t) => dispatch(request.auth.bearer(t))
       case None    => refreshAccessToken *> dispatchReqWithAuth(request)
@@ -161,7 +162,7 @@ final private class LiveMainlineMenswearClient[F[_]](
 object MainlineMenswearClient:
   def make[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: SttpBackend[F, Any]
+      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[SearchClient[F]] =
     Ref
       .of(Option.empty[String])

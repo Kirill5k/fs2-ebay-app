@@ -6,14 +6,11 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
-import kirill5k.common.sttp.test.SttpWordSpec
-import sttp.capabilities.WebSockets
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3
-import sttp.client3.{Response, SttpBackend}
+import kirill5k.common.sttp.test.Sttp4WordSpec
+import sttp.client4.testing.ResponseStub
 import sttp.model.{Header, StatusCode}
 
-class MainlineMenswearClientSpec extends SttpWordSpec {
+class MainlineMenswearClientSpec extends Sttp4WordSpec {
 
   val responseHeaders = List(
     Header("Content-Type", "text/html; charset=utf-8"),
@@ -30,26 +27,29 @@ class MainlineMenswearClientSpec extends SttpWordSpec {
     val criteria = SearchCriteria("emporio armani")
 
     "return items that are on sale" in {
-      val testingBackend: SttpBackend[IO, Fs2Streams[IO] & WebSockets] = backendStub
+      val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet =>
-            Response("hello", StatusCode.Ok, "Ok", responseHeaders)
+            ResponseStub.adjust("hello", StatusCode.Ok, responseHeaders)
           case r
               if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r
                 .bodyContains(""""page": 1""") =>
-            Response.ok(readJson("mainline-menswear/search-response-1.json"))
+            ResponseStub.adjust(readJson("mainline-menswear/search-response-1.json"))
           case r
               if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo(s"mainline.com/app/mmw/m/search/${criteria.query}") && r
                 .bodyContains(""""page": 2""") =>
-            Response.ok(readJson("mainline-menswear/search-response-2.json"))
+            ResponseStub.adjust(readJson("mainline-menswear/search-response-2.json"))
           case r if r.hasBearerToken("foo.bar") && r.isPost && r.isGoingTo("mainline.com/app/mmw/m/product/149663") =>
-            Response.ok(readJson("mainline-menswear/product-response-149663.json"))
+            ResponseStub.adjust(readJson("mainline-menswear/product-response-149663.json"))
           case r => throw new RuntimeException(r.uri.toString)
         }
 
-      val client = MainlineMenswearClient.make[IO](config, testingBackend)
+      val result = for
+        client <- MainlineMenswearClient.make[IO](config, testingBackend)
+        res    <- client.search(criteria).compile.toList
+      yield res
 
-      client.flatMap(_.search(criteria).compile.toList).asserting { items =>
+      result.asserting { items =>
         items must have size 4
         val item = items.head
 

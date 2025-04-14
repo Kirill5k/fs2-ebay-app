@@ -8,7 +8,6 @@ import ebayapp.core.common.config.GenericRetailerConfig
 import kirill5k.common.sttp.test.Sttp4WordSpec
 import sttp.client4.testing.ResponseStub
 
-
 class ArgosClientSpec extends Sttp4WordSpec {
 
   "An ArgosClient" should {

@@ -77,7 +77,7 @@ class SelfridgesClientSpec extends Sttp4WordSpec {
 
       val res = for
         client <- SelfridgesClient.make[IO](config, testingBackend)
-        items <- client.search(criteria).compile.toList
+        items  <- client.search(criteria).compile.toList
       yield items
 
       res.asserting(_ mustBe Nil)
@@ -93,7 +93,7 @@ class SelfridgesClientSpec extends Sttp4WordSpec {
 
       val res = for
         client <- SelfridgesClient.make[IO](config, testingBackend)
-        items <- client.search(criteria).compile.toList
+        items  <- client.search(criteria).compile.toList
       yield items
 
       res.asserting(_ mustBe Nil)
