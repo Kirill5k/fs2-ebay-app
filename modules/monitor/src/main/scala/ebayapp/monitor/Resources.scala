@@ -7,8 +7,11 @@ import ebayapp.kernel.config.MongoConfig
 import ebayapp.monitor.common.config.{AppConfig, EmailConfig}
 import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
+import sttp.capabilities.fs2.Fs2Streams
 import sttp.client3.httpclient.fs2.HttpClientFs2Backend
 import sttp.client3.{SttpBackend, SttpBackendOptions}
+import sttp.client4.{BackendOptions, WebSocketStreamBackend}
+import sttp.client4.httpclient.fs2.HttpClientFs2Backend as Fs2Backend
 import courier.{Envelope, Mailer as CourierMailer}
 
 import scala.concurrent.duration.*
@@ -25,10 +28,14 @@ final class Mailer[F[_]](
 
 trait Resources[F[_]]:
   def clientBackend: SttpBackend[F, Any]
+  def fs2Backed: WebSocketStreamBackend[F, Fs2Streams[F]]
   def database: MongoDatabase[F]
   def mailer: Mailer[F]
 
 object Resources:
+  private def mkFs2Backend[F[_]: Async]: Resource[F, WebSocketStreamBackend[F, Fs2Streams[F]]] =
+    Fs2Backend.resource[F](options = BackendOptions(3.minutes, None))
+
   private def mkMailer[F[_]: Async](config: EmailConfig): Resource[F, Mailer[F]] =
     val mailer = CourierMailer(config.smtpHost, config.smtpPort).auth(true).as(config.username, config.password).startTls(true)()
     Resource.pure(Mailer[F](config.username, mailer))
@@ -42,11 +49,13 @@ object Resources:
   def make[F[_]: Async](config: AppConfig): Resource[F, Resources[F]] =
     (
       mkHttpClientBackend[F],
+      mkFs2Backend[F],
       mkMongoDatabase[F](config.mongo),
       mkMailer(config.email)
-    ).mapN { (http, mongo, mail) =>
+    ).mapN { (httpSttp3, fs2Sttp4, mongo, mail) =>
       new Resources[F]:
-        def clientBackend: SttpBackend[F, Any] = http
-        def database: MongoDatabase[F]         = mongo
-        def mailer: Mailer[F]                  = mail
+        def clientBackend: SttpBackend[F, Any]                  = httpSttp3
+        def fs2Backed: WebSocketStreamBackend[F, Fs2Streams[F]] = fs2Sttp4
+        def database: MongoDatabase[F]                          = mongo
+        def mailer: Mailer[F]                                   = mail
     }

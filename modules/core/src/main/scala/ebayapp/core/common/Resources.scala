@@ -9,8 +9,6 @@ import mongo4cats.client.MongoClient
 import mongo4cats.database.MongoDatabase
 import mongo4cats.models.client.{ConnectionString, MongoClientSettings}
 import sttp.capabilities.fs2.Fs2Streams
-import sttp.client3.{SttpBackend, SttpBackendOptions}
-import sttp.client3.httpclient.fs2.HttpClientFs2Backend
 import sttp.client4.{BackendOptions, WebSocketStreamBackend}
 import sttp.client4.httpclient.fs2.HttpClientFs2Backend as Fs2Backend
 
@@ -18,7 +16,6 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
 trait Resources[F[_]]:
-  def httpClientBackend: SttpBackend[F, Any]
   def fs2Backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   def database: MongoDatabase[F]
 
@@ -26,10 +23,7 @@ object Resources {
 
   private def mkFs2Backend[F[_]: Async](timeout: FiniteDuration): Resource[F, WebSocketStreamBackend[F, Fs2Streams[F]]] =
     Fs2Backend.resource[F](options = BackendOptions(timeout, None))
-
-  private def mkHttpClientBackend[F[_]: Async](timeout: FiniteDuration): Resource[F, SttpBackend[F, Any]] =
-    HttpClientFs2Backend.resource[F](SttpBackendOptions(connectionTimeout = timeout, proxy = None))
-
+  
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
     val settings = MongoClientSettings
       .builder()
@@ -46,13 +40,11 @@ object Resources {
   def make[F[_]](config: AppConfig)(using F: Async[F]): Resource[F, Resources[F]] =
     Resource.eval(F.delay(System.setProperty("jdk.httpclient.allowRestrictedHeaders", "connection,content-length,expect,host,referer"))) >>
       (
-        mkHttpClientBackend[F](config.client.connectTimeout),
         mkFs2Backend[F](config.client.connectTimeout),
         mkMongoDatabase[F](config.mongo)
-      ).mapN { (sttp3Backend, sttp4Backend, mongo) =>
+      ).mapN { (backend, mongo) =>
         new Resources[F]:
-          def httpClientBackend: SttpBackend[F, Any]               = sttp3Backend
-          def fs2Backend: WebSocketStreamBackend[F, Fs2Streams[F]] = sttp4Backend
+          def fs2Backend: WebSocketStreamBackend[F, Fs2Streams[F]] = backend
           def database: MongoDatabase[F]                           = mongo
       }
 }
