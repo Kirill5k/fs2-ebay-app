@@ -56,14 +56,6 @@ object Dependencies {
       val all = Seq(core, generic, parser)
     }
 
-    object sttp {
-      val core        = "com.softwaremill.sttp.client3" %% "core"  % Versions.sttp
-      val circe       = "com.softwaremill.sttp.client3" %% "circe" % Versions.sttp
-      val catsBackend = "com.softwaremill.sttp.client3" %% "fs2"   % Versions.sttp
-
-      val all = Seq(core, circe, catsBackend)
-    }
-
     object sttp4 {
       val core        = "com.softwaremill.sttp.client4" %% "core"  % Versions.sttp4
       val circe       = "com.softwaremill.sttp.client4" %% "circe" % Versions.sttp4
@@ -97,7 +89,6 @@ object Dependencies {
   ) ++
     Libraries.circe.all ++
     Libraries.logging.all ++
-    Libraries.sttp.all ++
     Libraries.sttp4.all ++
     Libraries.tapir.all
 
