@@ -2,17 +2,18 @@ package ebayapp.monitor.clients
 
 import cats.effect.IO
 import cats.syntax.option.*
-import kirill5k.common.sttp.test.SttpWordSpec
+import kirill5k.common.sttp.test.Sttp4WordSpec
 import ebayapp.monitor.domain.{HttpMethod, Monitor, MonitoringEvent, Url}
 import org.scalatest.wordspec.AsyncWordSpec
 import kirill5k.common.cats.Clock
-import sttp.client3.*
+import sttp.client4.*
+import sttp.client4.testing.ResponseStub
 import sttp.model.StatusCode
 
 import java.time.Instant
 import scala.concurrent.duration.*
 
-class HttpClientSpec extends SttpWordSpec {
+class HttpClientSpec extends Sttp4WordSpec {
 
   val url = Url("http://foo.bar/health")
 
@@ -21,10 +22,10 @@ class HttpClientSpec extends SttpWordSpec {
 
   "A HttpClient" should {
     "return status Up on success" in {
-      val backend = backendStub
+      val backend = fs2BackendStub
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("foo.bar/health") && r.hasHeader("foo", "bar") =>
-            Response.ok("success")
+            ResponseStub.adjust("success")
           case r =>
             throw new RuntimeException()
         }
@@ -38,9 +39,9 @@ class HttpClientSpec extends SttpWordSpec {
     }
 
     "return status Down in failure" in {
-      val backend = backendStub
+      val backend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isPost && r.uri == uri"${url.toString}" => Response("error", StatusCode.BadRequest)
+          case r if r.isPost && r.uri == uri"${url.toString}" => ResponseStub.adjust("error", StatusCode.BadRequest)
           case _                                              => throw new RuntimeException()
         }
 
@@ -53,7 +54,7 @@ class HttpClientSpec extends SttpWordSpec {
     }
 
     "return status Down in error" in {
-      val backend = backendStub.whenAnyRequest
+      val backend = fs2BackendStub.whenAnyRequest
         .thenRespondF(IO.raiseError(new RuntimeException("Internal server error")))
 
       val result = for
@@ -65,8 +66,8 @@ class HttpClientSpec extends SttpWordSpec {
     }
 
     "return status Down in timeout" in {
-      val backend = backendStub.whenAnyRequest
-        .thenRespondF(IO.sleep(5.seconds) >> IO.pure(Response.ok("success")))
+      val backend = fs2BackendStub.whenAnyRequest
+        .thenRespondF(IO.sleep(5.seconds) >> IO.pure(ResponseStub.adjust("success")))
 
       val result = for
         client <- HttpClient.make[IO](backend)

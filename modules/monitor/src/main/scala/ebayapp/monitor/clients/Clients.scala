@@ -12,7 +12,7 @@ trait Clients[F[_]]:
 object Clients:
   def make[F[_]: Async](resources: Resources[F]): F[Clients[F]] =
     for
-      hc <- HttpClient.make[F](resources.clientBackend)
+      hc <- HttpClient.make[F](resources.fs2Backed)
       ec <- EmailClient.make[F](resources.mailer)
     yield new Clients[F]:
       def email: EmailClient[F] = ec

@@ -9,16 +9,16 @@ import cats.syntax.applicativeError.*
 import cats.effect.Async
 import kirill5k.common.cats.Clock
 import kirill5k.common.syntax.time.*
-
 import ebayapp.monitor.domain.{Monitor, MonitoringEvent}
-import sttp.client3.*
+import sttp.capabilities.fs2.Fs2Streams
+import sttp.client4.*
 import sttp.model.Method
 
 trait HttpClient[F[_]]:
   def status(connection: Monitor.Connection.Http): F[MonitoringEvent.StatusCheck]
 
 final private class LiveHttpClient[F[_]: Async](
-    private val backend: SttpBackend[F, Any]
+    private val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     C: Clock[F]
 ) extends HttpClient[F] {
@@ -28,7 +28,7 @@ final private class LiveHttpClient[F[_]: Async](
   def status(connection: Monitor.Connection.Http): F[MonitoringEvent.StatusCheck] =
     for
       start <- C.now
-      res <- emptyRequest
+      res <- basicRequest
         .headers(connection.headers.getOrElse(Map.empty))
         .method(Method(connection.method.toString.toUpperCase), uri"${connection.url.toString}")
         .readTimeout(connection.timeout)
@@ -40,5 +40,5 @@ final private class LiveHttpClient[F[_]: Async](
     yield MonitoringEvent.StatusCheck(res._1, end.durationBetween(start), start, res._2)
 }
 object HttpClient:
-  def make[F[_]: Async: Clock](backend: SttpBackend[F, Any]): F[HttpClient[F]] =
+  def make[F[_]: Async: Clock](backend: WebSocketStreamBackend[F, Fs2Streams[F]]): F[HttpClient[F]] =
     Monad[F].pure(LiveHttpClient[F](backend))
