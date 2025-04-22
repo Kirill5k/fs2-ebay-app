@@ -56,4 +56,6 @@ object UserAgentGenerator {
   private val all = tvs ++ desktop
 
   def random: String = all(Random.nextInt(all.size))
+  
+  val postman: String = "PostmanRuntime/7.43.3"
 }
