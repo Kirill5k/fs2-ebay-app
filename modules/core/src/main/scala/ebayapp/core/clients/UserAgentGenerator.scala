@@ -3,11 +3,11 @@ package ebayapp.core.clients
 import scala.util.Random
 
 object UserAgentGenerator {
-  private val bots: Vector[String] = Vector(
-    // Bots (Googlebot, Bingbot)
-    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
-    "Mozilla/5.0 (compatible; Bingbot/2.0; +http://www.bing.com/bingbot.htm)",
-  )
+//  private val bots: Vector[String] = Vector(
+//    // Bots (Googlebot, Bingbot)
+//    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+//    "Mozilla/5.0 (compatible; Bingbot/2.0; +http://www.bing.com/bingbot.htm)",
+//  )
 
   private val tvs: Vector[String] = Vector(
     // Smart TVs & Game Consoles
