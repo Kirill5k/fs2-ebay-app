@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.apply.*
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient, UserAgentGenerator}
 import ebayapp.core.clients.selfridges.mappers.{SelfridgesItem, SelfridgesItemMapper}
 import ebayapp.core.clients.selfridges.responses.*
 import ebayapp.core.common.config.GenericRetailerConfig
@@ -113,7 +113,7 @@ final private class LiveSelfridgesClient[F[_]](
           basicRequest
             .contentType(MediaType.ApplicationJson)
             .acceptEncoding(acceptAnything)
-            .header(Header.userAgent(postmanUserAgent))
+            .header(Header.userAgent(UserAgentGenerator.random))
             .header(Header.cacheControl(CacheDirective.NoCache))
             .headers(config.headers)
             .get(fullUri(config.uri))

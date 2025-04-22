@@ -17,11 +17,6 @@ trait Fs2HttpClient[F[_]] {
 
   protected val delayBetweenFailures: FiniteDuration = 10.seconds
 
-  protected val operaUserAgent: String =
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 OPR/89.0.4447.83"
-
-  protected val postmanUserAgent: String = "PostmanRuntime/7.28.3"
-
   protected val acceptAnything: String = "*/*"
 
   protected val defaultHeaders: Map[String, String] = Map(
