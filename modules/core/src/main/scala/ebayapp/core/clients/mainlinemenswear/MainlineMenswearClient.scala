@@ -7,7 +7,7 @@ import cats.syntax.functor.*
 import ebayapp.core.clients.mainlinemenswear.responses.{ProductData, ProductPreview, ProductResponse, SearchResponse}
 import ebayapp.core.clients.mainlinemenswear.requests.{ProductRequest, SearchRequest}
 import ebayapp.core.clients.mainlinemenswear.mappers.{MainlineMenswearItem, MainlineMenswearItemMapper}
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient, UserAgentGenerator}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.common.config.GenericRetailerConfig
 import kirill5k.common.cats.syntax.stream.*
@@ -37,7 +37,6 @@ final private class LiveMainlineMenswearClient[F[_]](
     .acceptEncoding(acceptAnything)
     .contentType(MediaType.ApplicationJson)
     .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
-    .header(Header.userAgent(operaUserAgent))
     .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
     .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
     .header("origin", mainPageUrl)
@@ -82,9 +81,10 @@ final private class LiveMainlineMenswearClient[F[_]](
       .flatMap { config =>
         dispatchReqWithAuth {
           baseRequest
+            .header(Header.userAgent(UserAgentGenerator.random))
+            .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
             .post(uri"${config.baseUri}/app/mmw/m/search/${criteria.query}")
             .body(SearchRequest(page, criteria.query).toJson)
-            .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
             .response(asJson[SearchResponse])
         }
       }
@@ -115,9 +115,10 @@ final private class LiveMainlineMenswearClient[F[_]](
       .flatMap { config =>
         dispatchReqWithAuth {
           baseRequest
+            .header(Header.userAgent(UserAgentGenerator.random))
+            .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
             .post(uri"${config.baseUri}/app/mmw/m/product/${pp.productID}")
             .body(ProductRequest.toJson)
-            .headers(config.headers.filter(_._1.toLowerCase != "authorization"))
             .response(asJson[ProductResponse])
         }
       }

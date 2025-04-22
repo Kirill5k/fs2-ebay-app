@@ -31,7 +31,7 @@ trait Fs2HttpClient[F[_]] {
     HeaderNames.CacheControl   -> "no-store, max-age=0",
     HeaderNames.ContentType    -> "application/json",
     HeaderNames.Connection     -> "keep-alive",
-    HeaderNames.UserAgent      -> operaUserAgent
+    HeaderNames.UserAgent      -> UserAgentGenerator.random
   )
 
   protected def dispatch[T](request: Request[T])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =

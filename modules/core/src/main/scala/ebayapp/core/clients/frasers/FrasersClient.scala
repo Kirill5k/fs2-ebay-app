@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import ebayapp.core.clients.frasers.mappers.{FrasersItem, FrasersItemMapper}
 import ebayapp.core.clients.frasers.responses.{FlannelsProduct, FlannelsSearchResponse}
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient, UserAgentGenerator}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.{ResellableItem, Retailer}
@@ -73,7 +73,7 @@ final private class LiveFrasersClient[F[_]](
             .maxRedirects(0)
             .acceptEncoding(acceptAnything)
             .header(Header.accept(MediaType.ApplicationJson, MediaType.TextJavascript))
-            .header(Header.userAgent(operaUserAgent))
+            .header(Header.userAgent(UserAgentGenerator.random))
             .header(Header.cacheControl(CacheDirective.NoCache))
             .header("accept-language", "en-GB,en-US")
             .header("referer", config.websiteUri)

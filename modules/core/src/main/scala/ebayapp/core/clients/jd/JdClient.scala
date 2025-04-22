@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient, UserAgentGenerator}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
@@ -17,7 +17,7 @@ import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.client4.*
-import sttp.model.{HeaderNames, StatusCode}
+import sttp.model.{Header, HeaderNames, StatusCode}
 
 import scala.concurrent.duration.*
 
@@ -38,7 +38,6 @@ final private class LiveJdClient[F[_]](
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
-    HeaderNames.UserAgent      -> operaUserAgent,
     HeaderNames.ContentType    -> "application/json",
     "priority"                 -> "u=1, i"
   )
@@ -47,7 +46,6 @@ final private class LiveJdClient[F[_]](
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
-    HeaderNames.UserAgent      -> operaUserAgent
   )
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
@@ -94,11 +92,11 @@ final private class LiveJdClient[F[_]](
         dispatch {
           val base  = config.uri + criteria.category.fold("")(c => s"/$c")
           val brand = criteria.query.toLowerCase.replace(" ", "-")
+          val referrer = s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"
           basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
-            .headers(
-              getBrandHeaders ++ config.headers + (HeaderNames.Referer -> (config.websiteUri + s"/brand/$brand?from=${step * stepSize}"))
-            )
+            .header(Header.userAgent(UserAgentGenerator.random))
+            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
         }
       }
       .flatMap { r =>
@@ -124,9 +122,10 @@ final private class LiveJdClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatch {
-          val referrer = config.websiteUri + s"/product/${ci.fullName}/${ci.plu}/"
+          val referrer = s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"
           basicRequest
             .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
+            .header(Header.userAgent(UserAgentGenerator.random))
             .headers(getStockHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
         }
       }
