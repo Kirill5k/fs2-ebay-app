@@ -67,7 +67,7 @@ class HttpClientSpec extends Sttp4WordSpec {
 
     "return status Down in timeout" in {
       val backend = fs2BackendStub.whenAnyRequest
-        .thenRespondF(IO.sleep(5.seconds) >> IO.pure(ResponseStub.adjust("success")))
+        .thenRespondF(IO.never >> IO.pure(ResponseStub.adjust("success")))
 
       val result = for
         client <- HttpClient.make[IO](backend)
