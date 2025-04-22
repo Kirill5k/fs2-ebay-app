@@ -10,7 +10,7 @@ import cats.syntax.traverse.*
 import ebayapp.core.clients.cex.mappers.CexGraphqlItemMapper
 import ebayapp.core.clients.cex.requests.{CexGraphqlSearchRequest, GraphqlSearchRequest}
 import ebayapp.core.clients.cex.responses.*
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient, UserAgentGenerator}
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.ResellableItem
@@ -130,6 +130,7 @@ final private class CexGraphqlClient[F[_]](
           basicRequest
             .contentType(MediaType.ApplicationJson)
             .acceptEncoding(acceptAnything)
+            .header(Header.userAgent(UserAgentGenerator.random))
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
             .header("Referrer", "https://uk.webuy.com/")
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
