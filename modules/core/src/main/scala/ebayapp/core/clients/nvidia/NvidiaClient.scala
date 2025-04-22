@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.flatMap.*
 import cats.syntax.apply.*
 import cats.syntax.applicative.*
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient, UserAgentGenerator}
 import ebayapp.core.clients.nvidia.mappers.NvidiaItemMapper
 import ebayapp.core.clients.nvidia.responses.{NvidiaItem, NvidiaSearchResponse, Product}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
@@ -52,7 +52,7 @@ final private class LiveNvidiaClient[F[_]](
             .acceptEncoding(acceptAnything)
             .header(Header.accept(MediaType.ApplicationJson, MediaType.TextPlain))
             .header(Header.cacheControl(CacheDirective.NoCache, CacheDirective.NoStore))
-            .header(Header.userAgent(postmanUserAgent))
+            .header(Header.userAgent(UserAgentGenerator.random))
             .header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8")
             .header("origin", "https://store.nvidia.com")
             .header("referrer", "https://store.nvidia.com")
