@@ -105,7 +105,7 @@ final private class LiveJdClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.error(s"$name-search/403-${criteria.query}\n${r.headers}") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
+            logger.error(s"$name-search/403-${criteria.query}\n${r.request.headers}\n${r.request.headers}") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
           case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
             logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
           case Left(_) if r.code == StatusCode.NotFound =>
@@ -135,7 +135,7 @@ final private class LiveJdClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.headers}") *> F.sleep(10.second) *> getProductStock(ci)
+            logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}\n${r.request.headers}") *> F.sleep(10.second) *> getProductStock(ci)
           case Left(_) if r.code == StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
           case Left(_) if r.code.isClientError =>
