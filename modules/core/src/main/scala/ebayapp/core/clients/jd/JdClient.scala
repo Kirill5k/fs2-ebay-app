@@ -89,7 +89,7 @@ final private class LiveJdClient[F[_]](
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
             .headers(defaultHeaders)
             .header(Header.userAgent(UserAgentGenerator.random))
-            .header(HeaderNames.Referer, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}")
+            .header(Header(HeaderNames.Referer, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
             .headers(config.headers)
         }
       }
@@ -98,7 +98,7 @@ final private class LiveJdClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.error(s"$name-search/403-${criteria.query}\n${r.request.headers}\n${r.request.headers}") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
+            logger.error(s"$name-search/403-${criteria.query}\n${r.request.uri}\n${r.request.headers}") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
           case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
             logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
           case Left(_) if r.code == StatusCode.NotFound =>
@@ -120,7 +120,7 @@ final private class LiveJdClient[F[_]](
             .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
             .headers(defaultHeaders)
             .header(Header.userAgent(UserAgentGenerator.random))
-            .header(HeaderNames.Referer, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/")
+            .header(Header(HeaderNames.Referer, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
             .headers(config.headers)
         }
       }
