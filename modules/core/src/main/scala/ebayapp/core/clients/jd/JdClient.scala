@@ -39,20 +39,21 @@ final private class LiveJdClient[F[_]](
     HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
     HeaderNames.ContentType    -> "application/json",
-    "priority"                 -> "u=1, i"
+    "Connection"               -> "keep-alive"
   )
 
   private val getStockHeaders = Map(
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
+    HeaderNames.ContentType    -> "application/json"
   )
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
       brandItems(criteria)
         .filter(_.sale)
-        .metered(config.delayBetweenIndividualRequests.getOrElse(0.second))
+        .metered(config.delayBetweenIndividualRequests.getOrElse(5.second))
         .evalMap(getProductStock)
         .unNone
         .map { p =>
@@ -90,8 +91,8 @@ final private class LiveJdClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatch {
-          val base  = config.uri + criteria.category.fold("")(c => s"/$c")
-          val brand = criteria.query.toLowerCase.replace(" ", "-")
+          val base     = config.uri + criteria.category.fold("")(c => s"/$c")
+          val brand    = criteria.query.toLowerCase.replace(" ", "-")
           val referrer = s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"
           basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
@@ -104,7 +105,7 @@ final private class LiveJdClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.error(s"$name-search/403") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
+            logger.error(s"$name-search/403-${criteria.query}\n${r.headers}") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
           case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
             logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
           case Left(_) if r.code == StatusCode.NotFound =>
@@ -134,7 +135,7 @@ final private class LiveJdClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.warn(s"$name-get-stock/403") *> F.sleep(10.second) *> getProductStock(ci)
+            logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.headers}") *> F.sleep(10.second) *> getProductStock(ci)
           case Left(_) if r.code == StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
           case Left(_) if r.code.isClientError =>
