@@ -34,14 +34,7 @@ final private class LiveJdClient[F[_]](
 
   private val stepSize = 200
 
-  private val getBrandHeaders = Map(
-    HeaderNames.Accept         -> "*/*",
-    HeaderNames.AcceptEncoding -> "*/*",
-    HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
-    HeaderNames.ContentType    -> "application/json"
-  )
-
-  private val getStockHeaders = Map(
+  private val defaultHeaders = Map(
     HeaderNames.Accept         -> "*/*",
     HeaderNames.AcceptEncoding -> "*/*",
     HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
@@ -92,11 +85,12 @@ final private class LiveJdClient[F[_]](
         dispatch {
           val base     = config.uri + criteria.category.fold("")(c => s"/$c")
           val brand    = criteria.query.toLowerCase.replace(" ", "-")
-          val referrer = s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"
           basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
+            .headers(defaultHeaders)
             .header(Header.userAgent(UserAgentGenerator.random))
-            .headers(getBrandHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
+            .header(HeaderNames.Referer, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}")
+            .headers(config.headers)
         }
       }
       .flatMap { r =>
@@ -122,11 +116,12 @@ final private class LiveJdClient[F[_]](
     configProvider()
       .flatMap { config =>
         dispatch {
-          val referrer = s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"
           basicRequest
             .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
+            .headers(defaultHeaders)
             .header(Header.userAgent(UserAgentGenerator.random))
-            .headers(getStockHeaders ++ config.headers + (HeaderNames.Referer -> referrer))
+            .header(HeaderNames.Referer, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/")
+            .headers(config.headers)
         }
       }
       .flatMap { r =>
