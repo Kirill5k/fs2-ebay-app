@@ -5,7 +5,7 @@ import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient, UserAgentGenerator}
+import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
@@ -33,13 +33,6 @@ final private class LiveJdClient[F[_]](
   override protected val name: String = retailer.name
 
   private val stepSize = 200
-
-  private val defaultHeaders = Map(
-    HeaderNames.Accept         -> "*/*",
-    HeaderNames.AcceptEncoding -> "*/*",
-    HeaderNames.AcceptLanguage -> "en-GB,en-US;q=0.9,en;q=0.8",
-    HeaderNames.ContentType    -> "application/json"
-  )
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
@@ -88,7 +81,6 @@ final private class LiveJdClient[F[_]](
           basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
             .headers(defaultHeaders)
-            .header(Header.userAgent(UserAgentGenerator.random))
             .header(Header(HeaderNames.Referer, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
             .headers(config.headers)
         }
@@ -119,7 +111,6 @@ final private class LiveJdClient[F[_]](
           basicRequest
             .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
             .headers(defaultHeaders)
-            .header(Header.userAgent(UserAgentGenerator.random))
             .header(Header(HeaderNames.Referer, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
             .headers(config.headers)
         }

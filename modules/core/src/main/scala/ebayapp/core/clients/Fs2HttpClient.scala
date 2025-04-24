@@ -19,13 +19,12 @@ trait Fs2HttpClient[F[_]] {
 
   protected val acceptAnything: String = "*/*"
 
-  protected val defaultHeaders: Map[String, String] = Map(
+  protected def defaultHeaders: Map[String, String] = Map(
     HeaderNames.Accept         -> acceptAnything,
     HeaderNames.AcceptEncoding -> acceptAnything,
     HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
     HeaderNames.CacheControl   -> "no-store, max-age=0",
     HeaderNames.ContentType    -> "application/json",
-    HeaderNames.Connection     -> "keep-alive",
     HeaderNames.UserAgent      -> UserAgentGenerator.random
   )
 
