@@ -13,7 +13,7 @@ private[jd] object parsers {
       description: String,
       sale: Boolean
   ) derives Codec.AsObject {
-    val fullName: String = s"$colour-$description".replaceAll(" ", "-").replaceAll("-+", "-").toLowerCase
+    val fullName: String = s"$colour-$description".replaceAll("/", "").replaceAll(" ", "-").replaceAll("-+", "-").toLowerCase
   }
 
   final case class JdProduct(
