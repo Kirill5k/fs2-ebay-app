@@ -25,7 +25,7 @@ private[jd] object mappers {
     val fullName: String = s"$colour-$name"
       .replaceAll(" ", "-")
       .replaceAll("-+", "-")
-      .replaceAll("/|\'", "")
+      .replaceAll("/|\'|'", "")
       .toLowerCase
   }
 
