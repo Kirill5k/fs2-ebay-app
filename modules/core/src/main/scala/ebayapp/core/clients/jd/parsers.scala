@@ -57,7 +57,7 @@ private[jd] object parsers {
         .replaceFirst("};.*", "")
         .replaceAll("\n", "")
         .replaceAll("""(\w+)\s*:""", "\"$1\": ")  // wrap json object key in quotes
-        .replaceAll("""(?<=\w"),(?=\s*\])""", "") // remove trailing comma in arrays
+        .replaceAll("""(?<=\w"),(?=\s*])""", "") // remove trailing comma in arrays
 
       decode[List[JdCatalogItem]](rawDataObject)
         .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawDataObject"))
