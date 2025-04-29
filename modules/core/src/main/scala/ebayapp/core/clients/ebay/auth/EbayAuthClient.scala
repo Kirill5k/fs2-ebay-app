@@ -34,8 +34,7 @@ final private[ebay] class LiveEbayAuthClient[F[_]: Temporal](
     clock: Clock[F]
 ) extends EbayAuthClient[F] with Fs2HttpClient[F] {
 
-  override protected val name: String                         = "ebay-auth"
-  override protected val delayBetweenFailures: FiniteDuration = 1.second
+  override protected val name: String = "ebay-auth"
 
   def accessToken: F[String] =
     (token.get, clock.now).tupled

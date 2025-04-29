@@ -56,7 +56,7 @@ private[jd] object parsers {
         .replaceFirst(".*items:", "")
         .replaceFirst("};.*", "")
         .replaceAll("\n", "")
-        .replaceAll("""(\w+)\s*:""", "\"$1\": ")  // wrap json object key in quotes
+        .replaceAll("""(\w+)\s*:""", "\"$1\": ") // wrap json object key in quotes
         .replaceAll("""(?<=\w"),(?=\s*])""", "") // remove trailing comma in arrays
 
       decode[List[JdCatalogItem]](rawDataObject)

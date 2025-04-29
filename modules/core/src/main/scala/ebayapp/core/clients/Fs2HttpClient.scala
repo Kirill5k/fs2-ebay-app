@@ -10,12 +10,11 @@ import sttp.client4.{Request, Response, WebSocketStreamBackend}
 import sttp.model.HeaderNames
 
 import scala.concurrent.duration.*
+import scala.util.Random
 
 trait Fs2HttpClient[F[_]] {
   protected val name: String
   protected val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
-
-  protected val delayBetweenFailures: FiniteDuration = 10.seconds
 
   protected val acceptAnything: String = "*/*"
 
@@ -27,6 +26,19 @@ trait Fs2HttpClient[F[_]] {
     HeaderNames.ContentType    -> "application/json",
     HeaderNames.UserAgent      -> UserAgentGenerator.random
   )
+
+  protected def calculateBackoffDelay(
+      attempt: Int,
+      baseDelay: FiniteDuration = 5.second,
+      maxDelay: FiniteDuration = 2.minutes,
+      jitterFactor: Double = 0.2
+  ): FiniteDuration = {
+    val exponentialDelayMs = baseDelay.toMillis * Math.pow(2, attempt).toLong
+    val cappedDelayMs      = Math.min(exponentialDelayMs, maxDelay.toMillis)
+    val jitter             = (Random.nextDouble() * 2 - 1) * jitterFactor * cappedDelayMs
+    val finalDelayMs       = Math.max(1, Math.min(maxDelay.toMillis, (cappedDelayMs + jitter).toLong))
+    finalDelayMs.millis
+  }
 
   protected def dispatch[T](request: Request[T])(using F: Temporal[F], logger: Logger[F]): F[Response[T]] =
     dispatchWithRetry(request)
@@ -46,7 +58,7 @@ trait Fs2HttpClient[F[_]] {
           val cause   = Option(error.getCause).getOrElse(error)
           val message = s"$name-client/${cause.getClass.getSimpleName.toLowerCase}-$attempt: ${cause.getMessage}\n$error"
           F.ifTrueOrElse(attempt >= 50 && attempt % 10 == 0)(logger.error(message), logger.warn(message)) *>
-            F.sleep(delayBetweenFailures) *> dispatchWithRetry(request, attempt + 1, maxRetries)
+            F.sleep(calculateBackoffDelay(attempt)) *> dispatchWithRetry(request, attempt + 1, maxRetries)
         } else F.raiseError(error)
       }
 }

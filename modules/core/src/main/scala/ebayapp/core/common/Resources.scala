@@ -23,7 +23,7 @@ object Resources {
 
   private def mkFs2Backend[F[_]: Async](timeout: FiniteDuration): Resource[F, WebSocketStreamBackend[F, Fs2Streams[F]]] =
     Fs2Backend.resource[F](options = BackendOptions(timeout, None))
-  
+
   private def mkMongoDatabase[F[_]: Async](config: MongoConfig): Resource[F, MongoDatabase[F]] =
     val settings = MongoClientSettings
       .builder()

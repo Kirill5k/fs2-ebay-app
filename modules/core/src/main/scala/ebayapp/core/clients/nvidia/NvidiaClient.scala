@@ -30,8 +30,7 @@ final private class LiveNvidiaClient[F[_]](
     F: Temporal[F]
 ) extends SearchClient[F] with Fs2HttpClient[F] {
 
-  override protected val name: String                         = "nvidia"
-  override protected val delayBetweenFailures: FiniteDuration = 2.seconds
+  override protected val name: String = "nvidia"
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream

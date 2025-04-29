@@ -72,12 +72,12 @@ final private class LiveJdClient[F[_]](
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(criteria: SearchCriteria, step: Int): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
         dispatch {
-          val base     = config.uri + criteria.category.fold("")(c => s"/$c")
-          val brand    = criteria.query.toLowerCase.replace(" ", "-")
+          val base  = config.uri + criteria.category.fold("")(c => s"/$c")
+          val brand = criteria.query.toLowerCase.replace(" ", "-")
           basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
             .headers(defaultHeaders)
@@ -90,7 +90,9 @@ final private class LiveJdClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.error(s"$name-search/403-${criteria.query}\n${r.request.uri}") *> F.sleep(5.minutes) *> searchByBrand(criteria, step)
+            logger.error(s"$name-search/403-${criteria.query}\n${r.request.uri}") *>
+              F.sleep(calculateBackoffDelay(attempt)) *>
+              searchByBrand(criteria, step, attempt + 1)
           case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
             logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
           case Left(_) if r.code == StatusCode.NotFound =>
@@ -104,7 +106,7 @@ final private class LiveJdClient[F[_]](
         }
       }
 
-  private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
+  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0): F[Option[JdProduct]] =
     configProvider()
       .flatMap { config =>
         dispatch {
@@ -120,7 +122,9 @@ final private class LiveJdClient[F[_]](
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}") *> F.sleep(10.second) *> getProductStock(ci)
+            logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}") *>
+              F.sleep(calculateBackoffDelay(attempt)) *>
+              getProductStock(ci, attempt + 1)
           case Left(_) if r.code == StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
           case Left(_) if r.code.isClientError =>

@@ -12,7 +12,7 @@ object UserAgentGenerator {
   private val tvs: Vector[String] = Vector(
     // Smart TVs & Game Consoles
     "Mozilla/5.0 (Web0S; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36",
-    "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/609.4 (KHTML, like Gecko) NF/6.0.2.20.2 NintendoBrowser/5.1.0.22407",
+    "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/609.4 (KHTML, like Gecko) NF/6.0.2.20.2 NintendoBrowser/5.1.0.22407"
   )
 
   private val desktop: Vector[String] = Vector(
@@ -49,13 +49,13 @@ object UserAgentGenerator {
     "Mozilla/5.0 (Android 13; Mobile; rv:120.0) Gecko/120.0 Firefox/120.0",
 
     // Legacy Browsers (for compatibility testing)
-    "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko", // IE11
-    "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0", // Old Firefox
+    "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko",     // IE11
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0" // Old Firefox
   )
 
   private val all = tvs ++ desktop
 
   def random: String = all(Random.nextInt(all.size))
-  
+
   val postman: String = "PostmanRuntime/7.43.3"
 }
