@@ -39,7 +39,7 @@ final private class LiveJdClient[F[_]](
       brandItems(criteria)
         .filter(_.sale)
         .metered(config.delayBetweenIndividualRequests.getOrElse(5.second))
-        .evalMap(getProductStock)
+        .evalMap(i => getProductStock(i))
         .unNone
         .map { p =>
           p.availableSizes.map { size =>
