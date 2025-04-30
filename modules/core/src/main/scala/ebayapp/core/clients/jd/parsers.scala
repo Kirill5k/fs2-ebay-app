@@ -14,7 +14,7 @@ private[jd] object parsers {
       sale: Boolean
   ) derives Codec.AsObject {
     val fullName: String = s"$colour-$description"
-      .replaceAll("/|\'|'|&(#|$)[0-9]+;", "")
+      .replaceAll("/|\'|'|&.{1,6};", "")
       .replaceAll(" ", "-")
       .replaceAll("-+", "-")
       .toLowerCase
