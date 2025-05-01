@@ -91,7 +91,7 @@ final private class LiveJdClient[F[_]](
             F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
             logger.error(s"$name-search/403-${criteria.query}\n${r.request.uri}") *>
-              F.sleep(calculateBackoffDelay(attempt)) *>
+              F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
               searchByBrand(criteria, step, attempt + 1)
           case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
             logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
@@ -123,7 +123,7 @@ final private class LiveJdClient[F[_]](
             F.fromEither(ResponseParser.parseProductStockResponse(html))
           case Left(_) if r.code == StatusCode.Forbidden =>
             logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}") *>
-              F.sleep(calculateBackoffDelay(attempt)) *>
+              F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
               getProductStock(ci, attempt + 1)
           case Left(_) if r.code == StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
