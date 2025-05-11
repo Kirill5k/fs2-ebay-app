@@ -26,8 +26,7 @@ class HttpClientSpec extends Sttp4WordSpec {
         .whenRequestMatchesPartial {
           case r if r.isGet && r.isGoingTo("foo.bar/health") && r.hasHeader("foo", "bar") =>
             ResponseStub.adjust("success")
-          case r =>
-            throw new RuntimeException()
+          case _ => throw new RuntimeException()
         }
 
       val result = for

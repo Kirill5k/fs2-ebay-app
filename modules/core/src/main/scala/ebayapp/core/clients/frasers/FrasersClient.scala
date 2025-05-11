@@ -55,7 +55,7 @@ final private class LiveFrasersClient[F[_]](
           .map(FrasersItemMapper.clothing.toDomain(criteria))
       }
 
-  private def getItems(sc: SearchCriteria)(page: Int = 1): F[(List[FlannelsProduct], Option[Int])] =
+  private def getItems(sc: SearchCriteria)(page: Int): F[(List[FlannelsProduct], Option[Int])] =
     configProvider()
       .flatMap { config =>
         val args = Map(

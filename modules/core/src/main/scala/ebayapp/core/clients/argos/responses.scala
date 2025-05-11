@@ -1,6 +1,5 @@
 package ebayapp.core.clients.argos
 
-import cats.syntax.functor.*
 import io.circe.Codec
 
 private[argos] object responses {

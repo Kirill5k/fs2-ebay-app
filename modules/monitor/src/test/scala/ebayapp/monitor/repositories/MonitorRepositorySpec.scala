@@ -150,5 +150,5 @@ class MonitorRepositorySpec extends AsyncWordSpec with Matchers with EmbeddedMon
         .fromConnectionString[IO]("mongodb://localhost:12246")
         .evalMap(_.getDatabase("ebay-app"))
         .use(test)
-    }.unsafeToFuture()(IORuntime.global)
+    }.unsafeToFuture()(using IORuntime.global)
 }

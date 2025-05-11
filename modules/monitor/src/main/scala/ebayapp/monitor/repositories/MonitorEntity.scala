@@ -1,9 +1,10 @@
 package ebayapp.monitor.repositories
 
 import io.circe.Codec
+import io.circe.generic.semiauto.deriveCodec
 import mongo4cats.bson.ObjectId
-import mongo4cats.circe.*
-import ebayapp.kernel.json.given
+import mongo4cats.circe.MongoJsonCodecs
+import ebayapp.kernel.JsonCodecs
 import ebayapp.monitor.domain.{CreateMonitor, Monitor}
 import mongo4cats.codecs.MongoCodecProvider
 
@@ -17,7 +18,7 @@ final private[repositories] case class MonitorEntity(
     interval: Option[FiniteDuration],
     schedule: Option[Monitor.Schedule],
     contact: Monitor.Contact
-) derives Codec.AsObject:
+):
   def toDomain: Monitor =
     Monitor(
       Monitor.Id(_id),
@@ -28,7 +29,8 @@ final private[repositories] case class MonitorEntity(
       contact
     )
 
-private[repositories] object MonitorEntity {
+private[repositories] object MonitorEntity extends JsonCodecs with MongoJsonCodecs {
+  given Codec[MonitorEntity] = deriveCodec[MonitorEntity]
   given MongoCodecProvider[MonitorEntity] = deriveCirceCodecProvider[MonitorEntity]
   def from(monitor: Monitor): MonitorEntity =
     MonitorEntity(

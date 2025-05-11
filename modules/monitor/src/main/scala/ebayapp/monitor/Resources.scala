@@ -21,7 +21,7 @@ final class Mailer[F[_]](
     F: Async[F]
 ) {
   def send(envelop: Envelope): F[Unit] =
-    F.executionContext.flatMap(ec => F.fromFuture(F.delay(mailer(envelop)(ec))))
+    F.executionContext.flatMap(ec => F.fromFuture(F.delay(mailer(envelop)(using ec))))
 }
 
 trait Resources[F[_]]:

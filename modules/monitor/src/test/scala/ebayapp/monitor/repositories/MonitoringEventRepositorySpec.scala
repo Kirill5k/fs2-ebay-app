@@ -55,5 +55,5 @@ class MonitoringEventRepositorySpec extends AsyncWordSpec with Matchers with Emb
         .fromConnectionString[IO]("mongodb://localhost:12146")
         .evalMap(_.getDatabase("ebay-app"))
         .use(test)
-    }.unsafeToFuture()(IORuntime.global)
+    }.unsafeToFuture()(using IORuntime.global)
 }

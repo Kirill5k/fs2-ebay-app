@@ -152,7 +152,7 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
         yield all
 
         result.map { res =>
-          res mustBe videoGames.sortBy(_.listingDetails.datePosted)(Ordering[Instant].reverse).map(_.summary)
+          res mustBe videoGames.sortBy(_.listingDetails.datePosted)(using Ordering[Instant].reverse).map(_.summary)
         }
       }
   }
@@ -167,5 +167,5 @@ class ResellableItemRepositorySpec extends AsyncWordSpec with Matchers with Embe
         .fromConnectionString[IO](s"mongodb://localhost:$mongoPort")
         .evalMap(_.getDatabase("ebay-app"))
         .use(test)
-    }.unsafeToFuture()(IORuntime.global)
+    }.unsafeToFuture()(using IORuntime.global)
 }

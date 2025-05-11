@@ -10,7 +10,6 @@ import mongo4cats.collection.MongoCollection
 import mongo4cats.database.MongoDatabase
 import mongo4cats.models.database.CreateCollectionOptions
 import fs2.Stream
-import org.typelevel.log4cats.Logger
 
 trait RetailConfigRepository[F[_]]:
   def save(rc: RetailConfig): F[Unit]
@@ -39,7 +38,7 @@ object RetailConfigRepository:
   private val collectionName    = "retail-config"
   private val collectionOptions = CreateCollectionOptions(capped = true, maxDocuments = 1, sizeInBytes = 268435456L)
 
-  def mongo[F[_]: Logger](database: MongoDatabase[F])(using F: Async[F]): F[RetailConfigRepository[F]] =
+  def mongo[F[_]](database: MongoDatabase[F])(using F: Async[F]): F[RetailConfigRepository[F]] =
     for
       collNames <- database.listCollectionNames
       _         <- F.unlessA(collNames.toSet.contains(collectionName))(database.createCollection(collectionName, collectionOptions))

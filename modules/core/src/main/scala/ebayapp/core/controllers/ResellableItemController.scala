@@ -2,14 +2,12 @@ package ebayapp.core.controllers
 
 import cats.Monad
 import cats.effect.Async
-import cats.syntax.flatMap.*
 import ebayapp.kernel.controllers.Controller
 import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
 import ebayapp.core.domain.{ItemDetails, ItemKind, SearchParams}
 import ebayapp.core.services.ResellableItemService
 import org.http4s.HttpRoutes
 import sttp.tapir.*
-import sttp.tapir.Codec.PlainCodec
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 

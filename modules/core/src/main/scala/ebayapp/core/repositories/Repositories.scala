@@ -4,14 +4,13 @@ import cats.effect.kernel.Async
 import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import mongo4cats.database.MongoDatabase
-import org.typelevel.log4cats.Logger
 
 trait Repositories[F[_]]:
   def resellableItems: ResellableItemRepository[F]
   def retailConfig: RetailConfigRepository[F]
 
 object Repositories:
-  def make[F[_]: Async: Logger](database: MongoDatabase[F]): F[Repositories[F]] =
+  def make[F[_]: Async](database: MongoDatabase[F]): F[Repositories[F]] =
     for
       items <- ResellableItemRepository.mongo(database)
       rc    <- RetailConfigRepository.mongo(database)

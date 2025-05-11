@@ -2,7 +2,7 @@ package ebayapp.core.clients.harveynichols
 
 import ebayapp.core.clients.ItemMapper
 import ebayapp.core.domain.ItemDetails.Clothing
-import ebayapp.core.domain.{ItemDetails, ResellableItem}
+import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria}
 
 import java.time.Instant

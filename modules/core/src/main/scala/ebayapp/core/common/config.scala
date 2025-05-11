@@ -2,7 +2,7 @@ package ebayapp.core.common
 
 import cats.effect.Async
 import io.circe.Codec
-import ebayapp.kernel.json.given
+import ebayapp.kernel.JsonCodecs
 import ebayapp.core.domain.Retailer
 import ebayapp.core.domain.search.{Filters, SearchCriteria}
 import ebayapp.kernel.config.{ClientConfig, MongoConfig, ServerConfig}
@@ -14,7 +14,7 @@ import java.io.File
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
-object config {
+object config extends JsonCodecs {
 
   final case class OAuthCredentials(
       clientId: String,

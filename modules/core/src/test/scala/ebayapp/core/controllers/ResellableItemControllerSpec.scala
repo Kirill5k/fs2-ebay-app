@@ -2,7 +2,7 @@ package ebayapp.core.controllers
 
 import cats.effect.IO
 import ebayapp.core.domain.search.SellPrice
-import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary, SearchParams}
+import ebayapp.core.domain.{ItemKind, SearchParams}
 import ebayapp.core.domain.ResellableItemBuilder.*
 import ebayapp.core.services.ResellableItemService
 import kirill5k.common.http4s.test.HttpRoutesWordSpec

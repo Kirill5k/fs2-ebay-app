@@ -55,7 +55,7 @@ final private[controllers] class StockController[F[_]](
     def toView(q: Option[String]): List[ResellableItemView] =
       items
         .filter(i => i.itemDetails.fullName.exists(_.toLowerCase.contains(q.fold("")(_.toLowerCase))))
-        .sortBy(i => (i.buyPrice.discount.getOrElse(0), i.itemDetails.fullName))(Ordering[(Int, Option[String])].reverse)
+        .sortBy(i => (i.buyPrice.discount.getOrElse(0), i.itemDetails.fullName))(using Ordering[(Int, Option[String])].reverse)
         .map(ResellableItemView.from)
 
   private def serviceByRetailer(retailer: String): F[StockService[F]] =

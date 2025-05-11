@@ -38,5 +38,5 @@ class RetailConfigRepositorySpec extends AsyncWordSpec with Matchers with Embedd
         .fromConnectionString[IO](s"mongodb://localhost:$mongoPort")
         .evalMap(_.getDatabase("ebay-app"))
         .use(test)
-    }.unsafeToFuture()(IORuntime.global)
+    }.unsafeToFuture()(using IORuntime.global)
 }

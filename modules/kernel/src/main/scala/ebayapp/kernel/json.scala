@@ -7,10 +7,8 @@ import scala.util.Try
 
 object json extends JsonCodecs
 
-trait JsonCodecs {
-  inline given Encoder[FiniteDuration] = Encoder.encodeString.contramap { fd =>
-    fd.toString()
-  }
+transparent trait JsonCodecs {
+  inline given Encoder[FiniteDuration] = Encoder.encodeString.contramap(_.toString())
   inline given Decoder[FiniteDuration] = Decoder.decodeString.emap { fdStr =>
     Either.cond[String, String](
       fdStr.matches("([0-9]+.)?[0-9]+( )?[a-zA-Z]+"),
