@@ -32,8 +32,8 @@ jobs:
       - name: Build and push Docker images
         run: sbt docker:publish
 
-      - name: Build and push Frontend Docker image
-        run: |-
-          FRONTEND_IMAGE="${DOCKER_REPO_URI}/${DOCKER_USERNAME}/${APP_NAME}-frontend"
-          docker build -t ${FRONTEND_IMAGE}:latest -t ${FRONTEND_IMAGE}:${GITHUB_SHA::8} modules/frontend/
-          docker push -a ${FRONTEND_IMAGE}
+#      - name: Build and push Frontend Docker image
+#        run: |-
+#          FRONTEND_IMAGE="${DOCKER_REPO_URI}/${DOCKER_USERNAME}/${APP_NAME}-frontend"
+#          docker build -t ${FRONTEND_IMAGE}:latest -t ${FRONTEND_IMAGE}:${GITHUB_SHA::8} modules/frontend/
+#          docker push -a ${FRONTEND_IMAGE}
