@@ -1,9 +1,0 @@
-.padded {
-  padding: 12px;
-}
-
-@media (min-width: 680px) {
-  .padded {
-    padding: 24px;
-  }
-}
