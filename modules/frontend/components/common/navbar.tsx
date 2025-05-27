@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import Link from 'next/link';
+import { usePathname } from "next/navigation";
 import {Clock, TrendingUp, Package, Tag, Bell, Settings, User} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {
@@ -39,7 +40,7 @@ const navItems = [
 ];
 
 const NavBar = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const pathname = usePathname();
 
   return (
       <>
@@ -68,7 +69,7 @@ const NavBar = () => {
                         <Link
                             href={item.href}
                             className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 ${
-                                activeTab === item.id
+                                pathname === item.href
                                     ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                                     : 'hover:bg-accent hover:text-accent-foreground'
                             }`}
@@ -92,7 +93,7 @@ const NavBar = () => {
                       key={item.id}
                       href={item.href}
                       className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 relative h-9 px-3 ${
-                          activeTab === item.id
+                          pathname === item.href
                               ? 'bg-primary text-primary-foreground'
                               : 'hover:bg-accent hover:text-accent-foreground'
                       }`}
