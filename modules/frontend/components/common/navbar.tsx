@@ -8,7 +8,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
-import {mergeClasses} from "@/utils/css";
+import {cn} from "@/lib/utils";
 
 const navItems = [
   {
@@ -63,7 +63,7 @@ const NavBar = () => {
                       <NavigationMenuItem key={item.id}>
                         <Link
                             href={item.href}
-                            className={mergeClasses(
+                            className={cn(
                                 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2',
                                 pathname === item.href && 'bg-primary text-primary-foreground hover:bg-primary/90',
                                 pathname !== item.href && 'hover:bg-accent hover:text-accent-foreground'
@@ -87,7 +87,7 @@ const NavBar = () => {
                   <Link
                       key={item.id}
                       href={item.href}
-                      className={mergeClasses(
+                      className={cn(
                           'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 relative h-9 px-3',
                           pathname === item.href && 'bg-primary text-primary-foreground',
                           pathname !== item.href && 'hover:bg-accent hover:text-accent-foreground'
