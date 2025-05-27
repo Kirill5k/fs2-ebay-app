@@ -1,6 +1,7 @@
 'use client';
 
 import {useState} from "react";
+import Link from 'next/link';
 import {Clock, TrendingUp, Package, Tag, Bell, Settings, User} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {
@@ -10,6 +11,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu';
 
 const navItems = [
@@ -17,19 +19,22 @@ const navItems = [
     id: 'dashboard',
     label: 'Dashboard',
     icon: TrendingUp,
-    description: 'Overview of deals and stock'
+    description: 'Overview of deals and stock',
+    href: '/'
   },
   {
     id: 'deals',
     label: 'Deals',
     icon: Tag,
-    description: 'Browse and filter found deals'
+    description: 'Browse and filter found deals',
+    href: '/deals'
   },
   {
     id: 'stock',
     label: 'Stock',
     icon: Package,
-    description: 'Monitor current stock items'
+    description: 'Monitor current stock items',
+    href: '/stock'
   }
 ];
 
@@ -60,14 +65,17 @@ const NavBar = () => {
                 <NavigationMenuList>
                   {navItems.map((item) => (
                       <NavigationMenuItem key={item.id}>
-                        <Button
-                            variant={activeTab === item.id ? "default" : "ghost"}
-                            className="h-9 px-4 py-2"
-                            onClick={() => setActiveTab(item.id)}
+                        <Link
+                            href={item.href}
+                            className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 ${
+                                activeTab === item.id
+                                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                                    : 'hover:bg-accent hover:text-accent-foreground'
+                            }`}
                         >
-                          <item.icon className="mr-2 h-4 w-4"/>
+                          <item.icon className="mr-2 h-4 w-4" />
                           {item.label}
-                        </Button>
+                        </Link>
                       </NavigationMenuItem>
                   ))}
                 </NavigationMenuList>
@@ -76,20 +84,22 @@ const NavBar = () => {
           </div>
         </header>
 
-        <div className="sticky px-2 top-16 z-40 w-full border-b bg-background md:hidden">
+        <div className="sticky top-16 z-40 w-full border-b bg-background md:hidden px-2">
           <div className="container">
             <div className="flex h-12 items-center justify-around">
               {navItems.map((item) => (
-                  <Button
+                  <Link
                       key={item.id}
-                      variant={activeTab === item.id ? "default" : "ghost"}
-                      size="sm"
-                      className="flex-1 relative"
-                      onClick={() => setActiveTab(item.id)}
+                      href={item.href}
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 relative h-9 px-3 ${
+                          activeTab === item.id
+                              ? 'bg-primary text-primary-foreground'
+                              : 'hover:bg-accent hover:text-accent-foreground'
+                      }`}
                   >
                     <item.icon className="h-4 w-4 mr-1" />
                     <span className="hidden sm:inline">{item.label}</span>
-                  </Button>
+                  </Link>
               ))}
             </div>
           </div>
