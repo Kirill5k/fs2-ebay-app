@@ -20,7 +20,7 @@ interface StockSort {
   asc: boolean
 }
 
-export type DealsState = {
+type DealsState = {
   deals: any[]
   stock: any[]
   stockFilters: StockFilters
@@ -28,11 +28,13 @@ export type DealsState = {
   dealsFilters: DealsFilters
 }
 
-export type DealsActions = {}
+type DealsActions = {}
 
 export type DealsStore = DealsState & DealsActions
 
-export const defaultState: DealsStore = {
+const now = new Date()
+
+const defaultState: DealsStore = {
   deals: [],
   stock: [],
   stockFilters: {
@@ -45,15 +47,9 @@ export const defaultState: DealsStore = {
   },
   stockSort: {by: 'price', asc: true},
   dealsFilters: {
-    from: startOfDay(new Date()),
-    to: endOfDay(new Date()),
+    from: startOfDay(now),
+    to: endOfDay(now),
   },
-}
-
-export const initDefaultState = (): DealsState => {
-  return {
-    ...defaultState,
-  }
 }
 
 export const createDealsStore = (initState: DealsState = defaultState) => {

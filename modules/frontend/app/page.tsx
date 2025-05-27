@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import {useDealsStore} from '@/stores/provider'
+import {useDealsStore} from '@/store/provider'
 
 export default function Home() {
   const {dealsFilters} = useDealsStore((state) => state)
