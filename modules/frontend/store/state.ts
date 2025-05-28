@@ -3,38 +3,38 @@ import {startOfDay, endOfDay} from 'date-fns'
 
 // Define types for the different components of ResellableItem
 interface ItemDetails {
-  kind: string;  // 'clothing', 'generic', etc.
-  name: string;
-  brand?: string;
-  size?: string;
+  kind: string // 'clothing', 'generic', etc.
+  name: string
+  brand?: string
+  size?: string
 }
 
 interface ListingDetails {
-  url: string;
-  title: string;
-  category: string | null;
-  shortDescription: string | null;
-  description: string | null;
-  image: string;
-  condition: string;  // 'NEW', 'USED', etc.
-  datePosted: string; // ISO string date format
-  seller: string;
-  properties: Record<string, string>; // HashMap<String, String>
+  url: string
+  title: string
+  category: string | null
+  shortDescription: string | null
+  description: string | null
+  image: string
+  condition: string // 'NEW', 'USED', etc.
+  datePosted: string // ISO string date format
+  seller: string
+  properties: Record<string, string> // HashMap<String, String>
 }
 
 interface Price {
-  buy: number;
-  discount: number | null;
-  quantityAvailable: number;
-  sell: number | null;
-  credit: number | null;
+  buy: number
+  discount: number | null
+  quantityAvailable: number
+  sell: number | null
+  credit: number | null
 }
 
 export interface ResellableItem {
-  itemDetails: ItemDetails;
-  listingDetails: ListingDetails;
-  price: Price;
-  foundWith: string;
+  itemDetails: ItemDetails
+  listingDetails: ListingDetails
+  price: Price
+  foundWith: string
 }
 
 interface ResellableItems {
