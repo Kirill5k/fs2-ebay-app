@@ -1,19 +1,11 @@
 import {useState} from "react";
-import {Filter, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown} from 'lucide-react'
+import {Filter, ArrowUpDown, ArrowUp, ArrowDown} from 'lucide-react'
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {ResellableItem, StockSort} from '@/store/state';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+
 
 interface FilterAndSortPanelProps {
   items: ResellableItem[]
@@ -39,7 +31,7 @@ const FilterAndSortPanel = ({items, sort, onSortChange}: FilterAndSortPanelProps
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+          <div className="flex flex-col gap-2 md:flex-row md:gap-4">
             <div className="flex items-center gap-2">
               <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm font-medium">Sort by:</span>
