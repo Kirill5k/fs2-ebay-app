@@ -2,6 +2,7 @@ import {useState} from "react";
 import {Filter, ArrowUpDown, ArrowUp, ArrowDown} from 'lucide-react'
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {ResellableItem, StockSort} from '@/store/state';
@@ -22,7 +23,7 @@ const FilterAndSortPanel = ({items, sort, onSortChange}: FilterAndSortPanelProps
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Filter className="w-5 h-5" />
-              Filters & Sorting
+              Sorting & Filtering
             </CardTitle>
             <Badge variant="secondary" className="text-sm">
               {items.length} items
@@ -36,12 +37,12 @@ const FilterAndSortPanel = ({items, sort, onSortChange}: FilterAndSortPanelProps
               <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm font-medium">Sort by:</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <Select
                   value={sort.by}
                   onValueChange={(by) => onSortChange({ ...sort, by })}
               >
-                <SelectTrigger className="grow-1 md:grow-0 md:w-[140px]">
+                <SelectTrigger className="grow-1 md:grow-0 md:w-[180px]">
                   <SelectValue placeholder="Select sorting" />
                 </SelectTrigger>
                 <SelectContent>
@@ -64,6 +65,15 @@ const FilterAndSortPanel = ({items, sort, onSortChange}: FilterAndSortPanelProps
                 }
               </Button>
             </div>
+          </div>
+
+          <Separator/>
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm font-medium">Filter by:</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
           </div>
         </CardContent>
       </Card>
