@@ -3,7 +3,7 @@ import {Geist, Geist_Mono} from 'next/font/google'
 import './globals.css'
 import NavBar from '@/components/common/navbar'
 import {DealsStoreProvider, StoreInitializer} from '@/store/provider'
-import {ReactNode} from "react";
+import {ReactNode} from 'react'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: 'Automated deal finder & stock tracker',
 }
 
-export default function RootLayout({children}: Readonly<{ children: ReactNode}>) {
+export default function RootLayout({children}: Readonly<{children: ReactNode}>) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>

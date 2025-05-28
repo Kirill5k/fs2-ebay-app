@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         destination: 'https://api--core--j6xvqz9kpswd.code.run/api/:path*',
       },
-    ];
+    ]
   },
 }
 

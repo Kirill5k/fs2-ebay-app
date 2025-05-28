@@ -1,5 +1,11 @@
 import {createStore} from 'zustand/vanilla'
-import {startOfDay, endOfDay, format} from 'date-fns'
+import {startOfDay, endOfDay} from 'date-fns'
+
+interface ResellableItems {
+  loading: boolean
+  error: string | null
+  items: any[]
+}
 
 interface DealsFilters {
   from: Date
@@ -21,8 +27,8 @@ interface StockSort {
 }
 
 type DealsState = {
-  deals: any[]
-  stock: any[]
+  deals: ResellableItems
+  stock: ResellableItems
   stockFilters: StockFilters
   stockSort: StockSort
   dealsFilters: DealsFilters
@@ -38,8 +44,8 @@ export type DealsStore = DealsState & DealsActions
 const now = new Date()
 
 const defaultState: DealsState = {
-  deals: [],
-  stock: [],
+  deals: {items: [], loading: false, error: null},
+  stock: {items: [], loading: false, error: null},
   stockFilters: {
     kind: undefined,
     retailer: undefined,
@@ -60,25 +66,31 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
     ...initState,
 
     fetchDeals: async () => {
-      const { dealsFilters } = get()
-      const from = format(dealsFilters.from, `yyyy-MM-dd'T'HH:mm:ss`)
-      const to = format(dealsFilters.to, `yyyy-MM-dd'T'HH:mm:ss`)
+      set({deals: {loading: true, error: null, items: []}})
+      const {
+        dealsFilters: {from, to},
+      } = get()
       try {
-        const response = await fetch(`/api/resellable-items?from=${from}&to=${to}`)
-        const deals = await response.json()
-        set({deals})
-      } catch (error) {
-        console.error('Failed to fetch deals:', error)
+        const response = await fetch(`/api/resellable-items?from=${from.toISOString()}&to=${to.toISOString()}`)
+        const items = await response.json()
+        set({deals: {loading: false, error: null, items}})
+      } catch (err) {
+        console.error('Failed to fetch deals:', err)
+        const error = err instanceof Error ? err.toString() : String(err)
+        set({deals: {loading: false, error, items: []}})
       }
     },
 
     fetchStock: async () => {
+      set({stock: {loading: true, error: null, items: []}})
       try {
         const response = await fetch('/api/stock')
-        const stock = await response.json()
-        set({stock})
-      } catch (error) {
-        console.error('Failed to fetch stock:', error)
+        const items = await response.json()
+        set({stock: {loading: false, error: null, items}})
+      } catch (err) {
+        console.error('Failed to fetch stock:', err)
+        const error = err instanceof Error ? err.toString() : String(err)
+        set({stock: {loading: false, error, items: []}})
       }
     },
   }))

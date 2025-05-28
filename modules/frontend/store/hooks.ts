@@ -1,16 +1,20 @@
-'use client';
+'use client'
 
-import {useEffect} from "react"
-import {useDealsStore} from "./provider";
+import {useEffect} from 'react'
+import {useDealsStore} from './provider'
 
 export const useInitDealsStore = () => {
-  const fetchDeals = useDealsStore(store => store.fetchDeals)
-  const fetchStock = useDealsStore(store => store.fetchStock)
+  const deals = useDealsStore((store) => store.deals)
+  const stock = useDealsStore((store) => store.stock)
+  const fetchDeals = useDealsStore((store) => store.fetchDeals)
+  const fetchStock = useDealsStore((store) => store.fetchStock)
 
-  // For initialization
   useEffect(() => {
-    // Load initial data
-    fetchDeals()
-    fetchStock()
-  }, [fetchDeals, fetchStock])
+    if (!deals.loading) {
+      fetchDeals()
+    }
+    if (!stock.loading) {
+      fetchStock()
+    }
+  }, [])
 }

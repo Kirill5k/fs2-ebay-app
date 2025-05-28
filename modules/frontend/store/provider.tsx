@@ -2,7 +2,7 @@
 
 import {type ReactNode, createContext, useRef, useContext} from 'react'
 import {useStore} from 'zustand'
-import {useInitDealsStore} from "./hooks";
+import {useInitDealsStore} from './hooks'
 
 import {type DealsStore, createDealsStore} from './state'
 
