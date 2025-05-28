@@ -8,6 +8,7 @@ import {forwardRef, useEffect} from 'react'
 import {Badge} from '@/components/ui/badge'
 import {Command, CommandGroup, CommandItem, CommandList} from '@/components/ui/command'
 import {cn} from '@/lib/utils'
+import {Portal} from '@/components/ui/portal'
 
 export interface Option {
   value: string
@@ -187,7 +188,9 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     const [open, setOpen] = React.useState(false)
     const [onScrollbar, setOnScrollbar] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
-    const dropdownRef = React.useRef<HTMLDivElement>(null) // Added this
+    const dropdownRef = React.useRef<HTMLDivElement>(null)
+    const triggerRef = React.useRef<HTMLDivElement>(null)
+    const [dropdownPosition, setDropdownPosition] = React.useState({ top: 0, left: 0, width: 0 })
 
     const [selected, setSelected] = React.useState<Option[]>(value || [])
     const [options, setOptions] = React.useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy))
@@ -204,6 +207,31 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       }),
       [selected]
     )
+
+    // Update dropdown position based on trigger element
+    const updateDropdownPosition = () => {
+      if (triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect()
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width
+        })
+      }
+    }
+
+    // Update position when opening dropdown
+    React.useEffect(() => {
+      if (open) {
+        updateDropdownPosition()
+        window.addEventListener('resize', updateDropdownPosition)
+        window.addEventListener('scroll', updateDropdownPosition)
+      }
+      return () => {
+        window.removeEventListener('resize', updateDropdownPosition)
+        window.removeEventListener('scroll', updateDropdownPosition)
+      }
+    }, [open])
 
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (
@@ -389,6 +417,11 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 
     const selectables = React.useMemo<GroupOption>(() => removePickedOption(options, selected), [options, selected])
 
+    // Check if there are any options to display in the dropdown
+    const hasSelectableOptions = React.useMemo(() => {
+      return Object.values(selectables).some(options => options.length > 0) || (creatable && inputValue.length > 0);
+    }, [selectables, creatable, inputValue]);
+
     /** Avoid Creatable Selector freezing or lagging when paste a long string. */
     const commandFilter = React.useCallback(() => {
       if (commandProps?.filter) {
@@ -406,7 +439,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 
     return (
       <Command
-        ref={dropdownRef}
         {...commandProps}
         onKeyDown={(e) => {
           handleKeyDown(e)
@@ -417,6 +449,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         filter={commandFilter()}
       >
         <div
+          ref={triggerRef}
           className={cn(
             'min-h-10 rounded-md border border-input text-base ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 md:text-sm',
             {
@@ -513,64 +546,75 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             </button>
           </div>
         </div>
-        <div className="relative">
-          {open && (
-            <CommandList
-              className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
-              onMouseLeave={() => {
-                setOnScrollbar(false)
-              }}
-              onMouseEnter={() => {
-                setOnScrollbar(true)
-              }}
-              onMouseUp={() => {
-                inputRef?.current?.focus()
+        {open && hasSelectableOptions && (
+          <Portal>
+            <div
+              ref={dropdownRef}
+              style={{
+                position: 'absolute',
+                top: `${dropdownPosition.top}px`,
+                left: `${dropdownPosition.left}px`,
+                width: `${dropdownPosition.width}px`,
+                zIndex: 9999,
               }}
             >
-              {isLoading ? (
-                <>{loadingIndicator}</>
-              ) : (
-                <>
-                  {EmptyItem()}
-                  {CreatableItem()}
-                  {!selectFirstItem && <CommandItem value="-" className="hidden" />}
-                  {Object.entries(selectables).map(([key, dropdowns]) => (
-                    <CommandGroup key={key} heading={key} className="h-full overflow-auto">
-                      <>
-                        {dropdowns.map((option) => {
-                          return (
-                            <CommandItem
-                              key={option.value}
-                              value={option.label}
-                              disabled={option.disable}
-                              onMouseDown={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                              }}
-                              onSelect={() => {
-                                if (selected.length >= maxSelected) {
-                                  onMaxSelected?.(selected.length)
-                                  return
-                                }
-                                setInputValue('')
-                                const newOptions = [...selected, option]
-                                setSelected(newOptions)
-                                onChange?.(newOptions)
-                              }}
-                              className={cn('cursor-pointer', option.disable && 'cursor-default text-muted-foreground')}
-                            >
-                              {option.label}
-                            </CommandItem>
-                          )
-                        })}
-                      </>
-                    </CommandGroup>
-                  ))}
-                </>
-              )}
-            </CommandList>
-          )}
-        </div>
+              <CommandList
+                className="rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+                onMouseLeave={() => {
+                  setOnScrollbar(false)
+                }}
+                onMouseEnter={() => {
+                  setOnScrollbar(true)
+                }}
+                onMouseUp={() => {
+                  inputRef?.current?.focus()
+                }}
+              >
+                {isLoading ? (
+                  <>{loadingIndicator}</>
+                ) : (
+                  <>
+                    {EmptyItem()}
+                    {CreatableItem()}
+                    {!selectFirstItem && <CommandItem value="-" className="hidden" />}
+                    {Object.entries(selectables).map(([key, dropdowns]) => (
+                      <CommandGroup key={key} heading={key} className="h-full overflow-auto">
+                        <>
+                          {dropdowns.map((option) => {
+                            return (
+                              <CommandItem
+                                key={option.value}
+                                value={option.label}
+                                disabled={option.disable}
+                                onMouseDown={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                }}
+                                onSelect={() => {
+                                  if (selected.length >= maxSelected) {
+                                    onMaxSelected?.(selected.length)
+                                    return
+                                  }
+                                  setInputValue('')
+                                  const newOptions = [...selected, option]
+                                  setSelected(newOptions)
+                                  onChange?.(newOptions)
+                                }}
+                                className={cn('cursor-pointer', option.disable && 'cursor-default text-muted-foreground')}
+                              >
+                                {option.label}
+                              </CommandItem>
+                            )
+                          })}
+                        </>
+                      </CommandGroup>
+                    ))}
+                  </>
+                )}
+              </CommandList>
+            </div>
+          </Portal>
+        )}
       </Command>
     )
   }
