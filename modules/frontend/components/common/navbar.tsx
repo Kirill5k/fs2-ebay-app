@@ -15,18 +15,18 @@ const navItems = [
     href: '/',
   },
   {
-    id: 'deals',
-    label: 'Deals',
-    icon: Tag,
-    description: 'Browse and filter found deals',
-    href: '/deals',
-  },
-  {
     id: 'stock',
     label: 'Stock',
     icon: Package,
     description: 'Monitor current stock items',
     href: '/stock',
+  },
+  {
+    id: 'deals',
+    label: 'Deals',
+    icon: Tag,
+    description: 'Browse and filter found deals',
+    href: '/deals',
   },
 ]
 

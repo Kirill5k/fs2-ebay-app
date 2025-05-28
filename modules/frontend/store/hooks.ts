@@ -4,10 +4,7 @@ import {useEffect} from 'react'
 import {useDealsStore} from './provider'
 
 export const useInitDealsStore = () => {
-  const deals = useDealsStore((store) => store.deals)
-  const stock = useDealsStore((store) => store.stock)
-  const fetchDeals = useDealsStore((store) => store.fetchDeals)
-  const fetchStock = useDealsStore((store) => store.fetchStock)
+  const {deals, stock, fetchDeals, fetchStock} = useDealsStore((store) => store)
 
   useEffect(() => {
     if (!deals.loading) {
