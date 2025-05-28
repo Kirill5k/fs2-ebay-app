@@ -154,7 +154,7 @@ const CommandEmpty = forwardRef<HTMLDivElement, React.ComponentProps<typeof Comm
 
 CommandEmpty.displayName = 'CommandEmpty'
 
-const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
+export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
   (
     {
       value,
@@ -577,4 +577,3 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 )
 
 MultiSelect.displayName = 'MultiSelect'
-export default MultiSelect
