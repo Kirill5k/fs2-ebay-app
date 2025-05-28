@@ -2,6 +2,7 @@
 
 import {type ReactNode, createContext, useRef, useContext} from 'react'
 import {useStore} from 'zustand'
+import {useInitDealsStore} from "./hooks";
 
 import {type DealsStore, createDealsStore} from './state'
 
@@ -26,4 +27,9 @@ export const useDealsStore = <T,>(selector: (store: DealsStore) => T): T => {
   }
 
   return useStore(storeContext, selector)
+}
+
+export const StoreInitializer = () => {
+  useInitDealsStore()
+  return null
 }

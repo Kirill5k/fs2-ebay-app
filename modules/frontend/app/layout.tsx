@@ -2,7 +2,8 @@ import type {Metadata} from 'next'
 import {Geist, Geist_Mono} from 'next/font/google'
 import './globals.css'
 import NavBar from '@/components/common/navbar'
-import {DealsStoreProvider} from '@/store/provider'
+import {DealsStoreProvider, StoreInitializer} from '@/store/provider'
+import {ReactNode} from "react";
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,15 +20,12 @@ export const metadata: Metadata = {
   description: 'Automated deal finder & stock tracker',
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({children}: Readonly<{ children: ReactNode}>) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <DealsStoreProvider>
+          <StoreInitializer />
           <NavBar />
           {/* The main content of the page */}
           {children}

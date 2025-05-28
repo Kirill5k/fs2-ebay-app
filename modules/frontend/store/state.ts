@@ -1,5 +1,5 @@
 import {createStore} from 'zustand/vanilla'
-import {startOfDay, endOfDay} from 'date-fns'
+import {startOfDay, endOfDay, format} from 'date-fns'
 
 interface DealsFilters {
   from: Date
@@ -28,13 +28,16 @@ type DealsState = {
   dealsFilters: DealsFilters
 }
 
-type DealsActions = {}
+type DealsActions = {
+  fetchDeals: () => Promise<void>
+  fetchStock: () => Promise<void>
+}
 
 export type DealsStore = DealsState & DealsActions
 
 const now = new Date()
 
-const defaultState: DealsStore = {
+const defaultState: DealsState = {
   deals: [],
   stock: [],
   stockFilters: {
@@ -53,7 +56,30 @@ const defaultState: DealsStore = {
 }
 
 export const createDealsStore = (initState: DealsState = defaultState) => {
-  return createStore<DealsStore>()((set) => ({
+  return createStore<DealsStore>()((set, get) => ({
     ...initState,
+
+    fetchDeals: async () => {
+      const { dealsFilters } = get()
+      const from = format(dealsFilters.from, `yyyy-MM-dd'T'HH:mm:ss`)
+      const to = format(dealsFilters.to, `yyyy-MM-dd'T'HH:mm:ss`)
+      try {
+        const response = await fetch(`/api/resellable-items?from=${from}&to=${to}`)
+        const deals = await response.json()
+        set({deals})
+      } catch (error) {
+        console.error('Failed to fetch deals:', error)
+      }
+    },
+
+    fetchStock: async () => {
+      try {
+        const response = await fetch('/api/stock')
+        const stock = await response.json()
+        set({stock})
+      } catch (error) {
+        console.error('Failed to fetch stock:', error)
+      }
+    },
   }))
 }
