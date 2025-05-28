@@ -30,7 +30,7 @@ interface Price {
   credit: number | null;
 }
 
-interface ResellableItem {
+export interface ResellableItem {
   itemDetails: ItemDetails;
   listingDetails: ListingDetails;
   price: Price;
@@ -48,7 +48,7 @@ interface DealsFilters {
   to: Date
 }
 
-interface StockFilters {
+export interface StockFilters {
   kind: string | undefined
   retailer: string | undefined
   brand: string | undefined
@@ -57,7 +57,7 @@ interface StockFilters {
   size: string | undefined
 }
 
-interface StockSort {
+export interface StockSort {
   by: string
   asc: boolean
 }
@@ -71,6 +71,7 @@ type DealsState = {
 }
 
 type DealsActions = {
+  setStockSort: (sort: StockSort) => void
   fetchDeals: () => Promise<void>
   fetchStock: () => Promise<void>
 }
@@ -100,6 +101,8 @@ const defaultState: DealsState = {
 export const createDealsStore = (initState: DealsState = defaultState) => {
   return createStore<DealsStore>()((set, get) => ({
     ...initState,
+
+    setStockSort: (stockSort: StockSort) => set({stockSort}),
 
     fetchDeals: async () => {
       set({deals: {loading: true, error: null, items: []}})

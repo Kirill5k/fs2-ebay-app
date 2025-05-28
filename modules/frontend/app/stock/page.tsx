@@ -1,18 +1,18 @@
 'use client'
 
 import { useDealsStore } from '@/store/provider'
+import FilterAndSortPanel from "@/components/stock/filters";
 
 export default function StockPage() {
-  const { stock } = useDealsStore((state) => state)
+  const { stock, stockSort, setStockSort } = useDealsStore((state) => state)
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Stock Information</h1>
-      {stock.loading ? (
-        <p>Loading stock data...</p>
-      ) : (
-        <p>Stock</p>
-      )}
-    </div>
+    <main className="p-2 md:p-8">
+      <FilterAndSortPanel
+        items={stock.items}
+        sort={stockSort}
+        onSortChange={setStockSort}
+      />
+    </main>
   )
 }
