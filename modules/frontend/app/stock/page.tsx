@@ -9,11 +9,11 @@ export default function StockPage() {
   return (
     <main className="p-2 md:p-8">
       <FilterAndSortPanel
-          items={stock.items}
-          sort={stockSort}
-          onSortChange={setStockSort}
-          filters={stockFilters}
-          onFiltersChange={setStockFilters}
+        items={stock.items}
+        sort={stockSort}
+        onSortChange={setStockSort}
+        filters={stockFilters}
+        onFiltersChange={setStockFilters}
       />
     </main>
   )

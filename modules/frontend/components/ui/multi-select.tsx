@@ -190,7 +190,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     const [isLoading, setIsLoading] = React.useState(false)
     const dropdownRef = React.useRef<HTMLDivElement>(null)
     const triggerRef = React.useRef<HTMLDivElement>(null)
-    const [dropdownPosition, setDropdownPosition] = React.useState({ top: 0, left: 0, width: 0 })
+    const [dropdownPosition, setDropdownPosition] = React.useState({top: 0, left: 0, width: 0})
 
     const [selected, setSelected] = React.useState<Option[]>(value || [])
     const [options, setOptions] = React.useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy))
@@ -215,7 +215,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         setDropdownPosition({
           top: rect.bottom + window.scrollY,
           left: rect.left + window.scrollX,
-          width: rect.width
+          width: rect.width,
         })
       }
     }
@@ -419,8 +419,8 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 
     // Check if there are any options to display in the dropdown
     const hasSelectableOptions = React.useMemo(() => {
-      return Object.values(selectables).some(options => options.length > 0) || (creatable && inputValue.length > 0);
-    }, [selectables, creatable, inputValue]);
+      return Object.values(selectables).some((options) => options.length > 0) || (creatable && inputValue.length > 0)
+    }, [selectables, creatable, inputValue])
 
     /** Avoid Creatable Selector freezing or lagging when paste a long string. */
     const commandFilter = React.useCallback(() => {

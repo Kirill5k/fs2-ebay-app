@@ -3,12 +3,13 @@ import {Badge} from '@/components/ui/badge'
 import {Button} from '@/components/ui/button'
 import {Separator} from '@/components/ui/separator'
 import {MultiSelect} from '@/components/ui/multi-select'
+import {FloatingLabelInput} from '@/components/ui/floating-label-input'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Card} from '@/components/ui/card'
 import {ResellableItem, StockSort, StockFilters} from '@/store/state'
-import {capitalize} from "@/lib/utils/strings";
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
-
+import {capitalize} from '@/lib/utils/strings'
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion'
+import {ChangeEventHandler} from 'react'
 
 interface FilterAndSortPanelProps {
   items: ResellableItem[]
@@ -18,39 +19,54 @@ interface FilterAndSortPanelProps {
   onFiltersChange: (sort: StockFilters) => void
 }
 
-const extractOptions = (items: ResellableItem[], key: (i: ResellableItem) => string, labelMod: (l: string) => string = l => l) => {
+const extractOptions = (items: ResellableItem[], key: (i: ResellableItem) => string, labelMod: (l: string) => string = (l) => l) => {
   const rawOptions = Array.from(new Set(items.map(key).filter(Boolean))).sort()
-  return rawOptions.map(l => ({label: labelMod(l), value: l}))
+  return rawOptions.map((l) => ({label: labelMod(l), value: l}))
 }
 
 const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange}: FilterAndSortPanelProps) => {
-  const includesClothing = items.some(i => i.itemDetails.kind === 'clothing')
+  const includesClothing = items.some((i) => i.itemDetails.kind === 'clothing')
   const showClothingFilters = includesClothing && (filters.kind.length === 0 || filters.kind.includes('clothing'))
 
-  const kindOptions = extractOptions(items, i => i.itemDetails.kind, capitalize)
-  const selectedKinds = filters.kind.map(k => ({label: capitalize(k), value: k}))
-  const handleKindChange = (selected: {label: string, value: string}[]) => {
-    const kind = selected.map(s => s.value)
+  const kindOptions = extractOptions(items, (i) => i.itemDetails.kind, capitalize)
+  const selectedKinds = filters.kind.map((k) => ({label: capitalize(k), value: k}))
+  const handleKindChange = (selected: {label: string; value: string}[]) => {
+    const kind = selected.map((s) => s.value)
     const resetClothingFilters = showClothingFilters && kind.length > 0 && !kind.includes('clothing')
     onFiltersChange({...filters, kind, brand: resetClothingFilters ? [] : filters.brand})
   }
 
-  const retailerOptions = extractOptions(items, i => i.listingDetails.seller)
-  const selectedRetailers = filters.retailer.map(r => ({label: r, value: r}))
-  const handleRetailerChange = (selected: {label: string, value: string}[]) => {
-    onFiltersChange({...filters, retailer: selected.map(s => s.value)})
+  const retailerOptions = extractOptions(items, (i) => i.listingDetails.seller)
+  const selectedRetailers = filters.retailer.map((r) => ({label: r, value: r}))
+  const handleRetailerChange = (selected: {label: string; value: string}[]) => {
+    onFiltersChange({...filters, retailer: selected.map((s) => s.value)})
   }
 
-  const brandOptions = extractOptions(items, i => i.itemDetails?.brand || '')
-  const selectedBrands = filters.brand.map(b => ({label: b, value: b}))
-  const handleBrandChange = (selected: {label: string, value: string}[]) => {
-    onFiltersChange({...filters, brand: selected.map(s => s.value)})
+  const brandOptions = extractOptions(items, (i) => i.itemDetails?.brand || '')
+  const selectedBrands = filters.brand.map((b) => ({label: b, value: b}))
+  const handleBrandChange = (selected: {label: string; value: string}[]) => {
+    onFiltersChange({...filters, brand: selected.map((s) => s.value)})
   }
 
-  const sizeOptions = extractOptions(items, i => i.itemDetails?.size || '')
-  const selectedSizes = filters.size.map(s => ({label: s, value: s}))
-  const handleSizeChange = (selected: {label: string, value: string}[]) => {
-    onFiltersChange({...filters, size: selected.map(s => s.value)})
+  const sizeOptions = extractOptions(items, (i) => i.itemDetails?.size || '')
+  const selectedSizes = filters.size.map((s) => ({label: s, value: s}))
+  const handleSizeChange = (selected: {label: string; value: string}[]) => {
+    onFiltersChange({...filters, size: selected.map((s) => s.value)})
+  }
+
+  const handleMinPriceChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const minPrice = e.target.value ? parseFloat(e.target.value) : undefined
+    onFiltersChange({...filters, minPrice})
+  }
+
+  const handleMaxPriceChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const maxPrice = e.target.value ? parseFloat(e.target.value) : undefined
+    onFiltersChange({...filters, maxPrice})
+  }
+
+  const handleMinDiscountChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const minDiscount = e.target.value ? parseFloat(e.target.value) : undefined
+    onFiltersChange({...filters, minDiscount})
   }
 
   return (
@@ -115,37 +131,38 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
                 <span className="text-sm font-medium">Filter by:</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <MultiSelect
-                    placeholder="Kind"
-                    options={kindOptions}
-                    value={selectedKinds}
-                    onChange={handleKindChange}
-                />
+                <MultiSelect placeholder="Kind" options={kindOptions} value={selectedKinds} onChange={handleKindChange} />
 
-                <MultiSelect
-                  placeholder="Retailer"
-                  options={retailerOptions}
-                  value={selectedRetailers}
-                  onChange={handleRetailerChange}
-                />
+                <MultiSelect placeholder="Retailer" options={retailerOptions} value={selectedRetailers} onChange={handleRetailerChange} />
 
                 {showClothingFilters && (
-                    <MultiSelect
-                        placeholder="Brand"
-                        options={brandOptions}
-                        value={selectedBrands}
-                        onChange={handleBrandChange}
-                    />
+                  <MultiSelect placeholder="Brand" options={brandOptions} value={selectedBrands} onChange={handleBrandChange} />
                 )}
 
                 {showClothingFilters && (
-                    <MultiSelect
-                        placeholder="Size"
-                        options={sizeOptions}
-                        value={selectedSizes}
-                        onChange={handleSizeChange}
-                    />
+                  <MultiSelect placeholder="Size" options={sizeOptions} value={selectedSizes} onChange={handleSizeChange} />
                 )}
+
+                <FloatingLabelInput
+                  label="Min Price"
+                  type="number"
+                  value={filters.minPrice === undefined ? '' : filters.minPrice}
+                  onChange={handleMinPriceChange}
+                />
+
+                <FloatingLabelInput
+                  label="Max Price"
+                  type="number"
+                  value={filters.maxPrice === undefined ? '' : filters.maxPrice}
+                  onChange={handleMaxPriceChange}
+                />
+
+                <FloatingLabelInput
+                  label="Min Discount"
+                  type="number"
+                  value={filters.minDiscount === undefined ? '' : filters.minDiscount}
+                  onChange={handleMinDiscountChange}
+                />
               </div>
             </div>
           </AccordionContent>
