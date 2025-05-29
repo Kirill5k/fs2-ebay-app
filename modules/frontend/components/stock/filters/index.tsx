@@ -24,16 +24,33 @@ const extractOptions = (items: ResellableItem[], key: (i: ResellableItem) => str
 }
 
 const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange}: FilterAndSortPanelProps) => {
+  const includesClothing = items.some(i => i.itemDetails.kind === 'clothing')
+  const showClothingFilters = includesClothing && (filters.kind.length === 0 || filters.kind.includes('clothing'))
+
   const kindOptions = extractOptions(items, i => i.itemDetails.kind, capitalize)
   const selectedKinds = filters.kind.map(k => ({label: capitalize(k), value: k}))
   const handleKindChange = (selected: {label: string, value: string}[]) => {
-    onFiltersChange({...filters, kind: selected.map(s => s.value)})
+    const kind = selected.map(s => s.value)
+    const resetClothingFilters = showClothingFilters && kind.length > 0 && !kind.includes('clothing')
+    onFiltersChange({...filters, kind, brand: resetClothingFilters ? [] : filters.brand})
   }
 
   const retailerOptions = extractOptions(items, i => i.listingDetails.seller)
   const selectedRetailers = filters.retailer.map(r => ({label: r, value: r}))
   const handleRetailerChange = (selected: {label: string, value: string}[]) => {
     onFiltersChange({...filters, retailer: selected.map(s => s.value)})
+  }
+
+  const brandOptions = extractOptions(items, i => i.itemDetails?.brand || '')
+  const selectedBrands = filters.brand.map(b => ({label: b, value: b}))
+  const handleBrandChange = (selected: {label: string, value: string}[]) => {
+    onFiltersChange({...filters, brand: selected.map(s => s.value)})
+  }
+
+  const sizeOptions = extractOptions(items, i => i.itemDetails?.size || '')
+  const selectedSizes = filters.size.map(s => ({label: s, value: s}))
+  const handleSizeChange = (selected: {label: string, value: string}[]) => {
+    onFiltersChange({...filters, size: selected.map(s => s.value)})
   }
 
   return (
@@ -111,6 +128,24 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
                   value={selectedRetailers}
                   onChange={handleRetailerChange}
                 />
+
+                {showClothingFilters && (
+                    <MultiSelect
+                        placeholder="Brand"
+                        options={brandOptions}
+                        value={selectedBrands}
+                        onChange={handleBrandChange}
+                    />
+                )}
+
+                {showClothingFilters && (
+                    <MultiSelect
+                        placeholder="Size"
+                        options={sizeOptions}
+                        value={selectedSizes}
+                        onChange={handleSizeChange}
+                    />
+                )}
               </div>
             </div>
           </AccordionContent>
