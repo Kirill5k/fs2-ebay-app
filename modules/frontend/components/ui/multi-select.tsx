@@ -149,7 +149,15 @@ const CommandEmpty = forwardRef<HTMLDivElement, React.ComponentProps<typeof Comm
 
     if (!render) return null
 
-    return <div ref={forwardedRef} className={cn('py-6 text-center text-sm', className)} cmdk-empty="" role="presentation" {...props} />
+    return (
+      <div
+        ref={forwardedRef}
+        className={cn('py-6 text-center text-sm', className)}
+        cmdk-empty=""
+        role="presentation"
+        {...props}
+      />
+    )
   }
 )
 
@@ -406,7 +414,10 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       // For async search that showing emptyIndicator
       if (onSearch && !creatable && Object.keys(options).length === 0) {
         return (
-          <CommandItem value="-" disabled>
+          <CommandItem
+            value="-"
+            disabled
+          >
             {emptyIndicator}
           </CommandItem>
         )
@@ -576,9 +587,18 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   <>
                     {EmptyItem()}
                     {CreatableItem()}
-                    {!selectFirstItem && <CommandItem value="-" className="hidden" />}
+                    {!selectFirstItem && (
+                      <CommandItem
+                        value="-"
+                        className="hidden"
+                      />
+                    )}
                     {Object.entries(selectables).map(([key, dropdowns]) => (
-                      <CommandGroup key={key} heading={key} className="h-full overflow-auto">
+                      <CommandGroup
+                        key={key}
+                        heading={key}
+                        className="h-full overflow-auto"
+                      >
                         <>
                           {dropdowns.map((option) => {
                             return (

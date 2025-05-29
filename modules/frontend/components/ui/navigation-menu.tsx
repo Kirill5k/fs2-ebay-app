@@ -37,7 +37,13 @@ function NavigationMenuList({className, ...props}: React.ComponentProps<typeof N
 }
 
 function NavigationMenuItem({className, ...props}: React.ComponentProps<typeof NavigationMenuPrimitive.Item>) {
-  return <NavigationMenuPrimitive.Item data-slot="navigation-menu-item" className={cn('relative', className)} {...props} />
+  return (
+    <NavigationMenuPrimitive.Item
+      data-slot="navigation-menu-item"
+      className={cn('relative', className)}
+      {...props}
+    />
+  )
 }
 
 const navigationMenuTriggerStyle = cva(

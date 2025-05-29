@@ -71,7 +71,11 @@ function FormItem({className, ...props}: React.ComponentProps<'div'>) {
 
   return (
     <FormItemContext.Provider value={{id}}>
-      <div data-slot="form-item" className={cn('grid gap-2', className)} {...props} />
+      <div
+        data-slot="form-item"
+        className={cn('grid gap-2', className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   )
 }
@@ -107,7 +111,14 @@ function FormControl({...props}: React.ComponentProps<typeof Slot>) {
 function FormDescription({className, ...props}: React.ComponentProps<'p'>) {
   const {formDescriptionId} = useFormField()
 
-  return <p data-slot="form-description" id={formDescriptionId} className={cn('text-muted-foreground text-sm', className)} {...props} />
+  return (
+    <p
+      data-slot="form-description"
+      id={formDescriptionId}
+      className={cn('text-muted-foreground text-sm', className)}
+      {...props}
+    />
+  )
 }
 
 function FormMessage({className, ...props}: React.ComponentProps<'p'>) {
@@ -119,7 +130,12 @@ function FormMessage({className, ...props}: React.ComponentProps<'p'>) {
   }
 
   return (
-    <p data-slot="form-message" id={formMessageId} className={cn('text-destructive text-sm', className)} {...props}>
+    <p
+      data-slot="form-message"
+      id={formMessageId}
+      className={cn('text-destructive text-sm', className)}
+      {...props}
+    >
       {body}
     </p>
   )

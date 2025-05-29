@@ -71,15 +71,25 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
 
   return (
     <Card className="overflow-hidden py-0">
-      <Accordion type="single" defaultValue="filters" collapsible>
-        <AccordionItem value="filters" className="border-0">
+      <Accordion
+        type="single"
+        defaultValue="filters"
+        collapsible
+      >
+        <AccordionItem
+          value="filters"
+          className="border-0"
+        >
           <AccordionTrigger className="p-4 hover:no-underline flex items-center">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
                 <Filter className="w-5 h-5" />
                 <span className="font-semibold">Sorting & Filtering</span>
               </div>
-              <Badge variant="secondary" className="text-sm">
+              <Badge
+                variant="secondary"
+                className="text-sm"
+              >
                 {items.length} items
               </Badge>
             </div>
@@ -92,7 +102,10 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
                   <span className="text-sm font-medium">Sort by:</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Select value={sort.by} onValueChange={(by) => onSortChange({...sort, by})}>
+                  <Select
+                    value={sort.by}
+                    onValueChange={(by) => onSortChange({...sort, by})}
+                  >
                     <SelectTrigger className="grow-1 md:grow-0 md:w-[180px]">
                       <SelectValue placeholder="Select sorting" />
                     </SelectTrigger>
@@ -131,16 +144,36 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
                 <span className="text-sm font-medium">Filter by:</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <MultiSelect placeholder="Kind" options={kindOptions} value={selectedKinds} onChange={handleKindChange} />
+                <MultiSelect
+                  placeholder="Kind"
+                  options={kindOptions}
+                  value={selectedKinds}
+                  onChange={handleKindChange}
+                />
 
-                <MultiSelect placeholder="Retailer" options={retailerOptions} value={selectedRetailers} onChange={handleRetailerChange} />
+                <MultiSelect
+                  placeholder="Retailer"
+                  options={retailerOptions}
+                  value={selectedRetailers}
+                  onChange={handleRetailerChange}
+                />
 
                 {showClothingFilters && (
-                  <MultiSelect placeholder="Brand" options={brandOptions} value={selectedBrands} onChange={handleBrandChange} />
+                  <MultiSelect
+                    placeholder="Brand"
+                    options={brandOptions}
+                    value={selectedBrands}
+                    onChange={handleBrandChange}
+                  />
                 )}
 
                 {showClothingFilters && (
-                  <MultiSelect placeholder="Size" options={sizeOptions} value={selectedSizes} onChange={handleSizeChange} />
+                  <MultiSelect
+                    placeholder="Size"
+                    options={sizeOptions}
+                    value={selectedSizes}
+                    onChange={handleSizeChange}
+                  />
                 )}
 
                 <FloatingLabelInput

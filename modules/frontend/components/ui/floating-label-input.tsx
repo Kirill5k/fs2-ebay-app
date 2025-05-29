@@ -7,7 +7,14 @@ import {Label} from '@/components/ui/label'
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const FloatingInput = React.forwardRef<HTMLInputElement, InputProps>(({className, ...props}, ref) => {
-  return <Input placeholder=" " className={cn('peer', className)} ref={ref} {...props} />
+  return (
+    <Input
+      placeholder=" "
+      className={cn('peer', className)}
+      ref={ref}
+      {...props}
+    />
+  )
 })
 FloatingInput.displayName = 'FloatingInput'
 
@@ -33,7 +40,11 @@ const FloatingLabelInput = React.forwardRef<React.ElementRef<typeof FloatingInpu
   ({id, label, ...props}, ref) => {
     return (
       <div className="relative">
-        <FloatingInput ref={ref} id={id} {...props} />
+        <FloatingInput
+          ref={ref}
+          id={id}
+          {...props}
+        />
         <FloatingLabel htmlFor={id}>{label}</FloatingLabel>
       </div>
     )

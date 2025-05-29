@@ -43,7 +43,10 @@ function CommandDialog({
 
 function CommandInput({className, ...props}: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
-    <div data-slot="command-input-wrapper" className="flex h-9 items-center gap-2 border-b px-3">
+    <div
+      data-slot="command-input-wrapper"
+      className="flex h-9 items-center gap-2 border-b px-3"
+    >
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         data-slot="command-input"
@@ -68,7 +71,13 @@ function CommandList({className, ...props}: React.ComponentProps<typeof CommandP
 }
 
 function CommandEmpty({...props}: React.ComponentProps<typeof CommandPrimitive.Empty>) {
-  return <CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-sm" {...props} />
+  return (
+    <CommandPrimitive.Empty
+      data-slot="command-empty"
+      className="py-6 text-center text-sm"
+      {...props}
+    />
+  )
 }
 
 function CommandGroup({className, ...props}: React.ComponentProps<typeof CommandPrimitive.Group>) {
@@ -85,7 +94,13 @@ function CommandGroup({className, ...props}: React.ComponentProps<typeof Command
 }
 
 function CommandSeparator({className, ...props}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-  return <CommandPrimitive.Separator data-slot="command-separator" className={cn('bg-border -mx-1 h-px', className)} {...props} />
+  return (
+    <CommandPrimitive.Separator
+      data-slot="command-separator"
+      className={cn('bg-border -mx-1 h-px', className)}
+      {...props}
+    />
+  )
 }
 
 function CommandItem({className, ...props}: React.ComponentProps<typeof CommandPrimitive.Item>) {
@@ -102,7 +117,13 @@ function CommandItem({className, ...props}: React.ComponentProps<typeof CommandP
 }
 
 function CommandShortcut({className, ...props}: React.ComponentProps<'span'>) {
-  return <span data-slot="command-shortcut" className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />
+  return (
+    <span
+      data-slot="command-shortcut"
+      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
+      {...props}
+    />
+  )
 }
 
 export {Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator}
