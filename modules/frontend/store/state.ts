@@ -1,5 +1,6 @@
 import {createStore} from 'zustand/vanilla'
 import {startOfDay, endOfDay} from 'date-fns'
+import {undefined} from "zod";
 
 // Define types for the different components of ResellableItem
 interface ItemDetails {
@@ -52,9 +53,10 @@ export interface StockFilters {
   kind: string[]
   retailer: string[]
   brand: string[]
-  minPrice: string[]
-  maxPrice: string[]
   size: string[]
+  minPrice: number | undefined
+  maxPrice: number | undefined
+  minDiscount: number | undefined
 }
 
 export interface StockSort {
@@ -88,9 +90,10 @@ const defaultState: DealsState = {
     kind: [],
     retailer: [],
     brand: [],
-    minPrice: [],
-    maxPrice: [],
     size: [],
+    minPrice: undefined,
+    maxPrice: undefined,
+    minDiscount: undefined
   },
   stockSort: {by: 'price', asc: true},
   dealsFilters: {
