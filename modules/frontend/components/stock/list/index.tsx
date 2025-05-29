@@ -34,7 +34,7 @@ const StockList = ({items}: StockListProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-2 pb-0 pt-2">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-2 pb-0">
         <div className="text-sm text-gray-600">
           Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, items.length)} of {items.length}{' '}
           items
@@ -69,8 +69,10 @@ const StockList = ({items}: StockListProps) => {
         ))}
       </div>
 
+      {totalPages > 1 && (<Separator/>)}
+
       {totalPages > 1 && (
-        <div className="flex flex-col items-center gap-4 pt-8 border-t">
+        <div className="flex flex-col items-center gap-4 px-2">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

@@ -25,7 +25,7 @@ const ProductCard = ({product}: ProductCardProps) => {
   return (
     <Card className="group hover:shadow-lg transition-all duration-200 border-0 shadow-sm bg-white">
       <CardHeader className="p-0">
-        <div className="relative overflow-hidden rounded-t-lg">
+        <div className="relative overflow-hidden rounded-t-lg h-64">
           <img
             src={product.listingDetails.image}
             alt={product.itemDetails.name}
