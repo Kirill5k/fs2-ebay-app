@@ -1,5 +1,4 @@
 import {Filter, ArrowUpDown, ArrowUp, ArrowDown} from 'lucide-react'
-import {Badge} from '@/components/ui/badge'
 import {Button} from '@/components/ui/button'
 import {Separator} from '@/components/ui/separator'
 import {MultiSelect} from '@/components/ui/multi-select'
@@ -81,17 +80,9 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
           className="border-0"
         >
           <AccordionTrigger className="p-4 hover:no-underline flex items-center">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                <Filter className="w-5 h-5" />
-                <span className="font-semibold">Sorting & Filtering</span>
-              </div>
-              <Badge
-                variant="secondary"
-                className="text-sm"
-              >
-                {items.length} items
-              </Badge>
+            <div className="flex items-center gap-2 w-full">
+              <Filter className="w-5 h-5" />
+              <span className="font-semibold">Sorting & Filtering</span>
             </div>
           </AccordionTrigger>
           <AccordionContent className="px-6">

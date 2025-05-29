@@ -73,7 +73,7 @@ const NavBar = () => {
         </div>
       </header>
 
-      <div className="sticky top-16 z-40 w-full border-b bg-background md:hidden px-2">
+      <div className="sticky top-16 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden px-2">
         <div className="container">
           <div className="flex h-12 items-center justify-around">
             {navItems.map((item) => (

@@ -16,9 +16,7 @@ export default function StockPage() {
         filters={stockFilters}
         onFiltersChange={setStockFilters}
       />
-      <StockList
-        items={stock.items}
-      />
+      <StockList items={stock.items} />
     </main>
   )
 }
