@@ -5,29 +5,42 @@ import {Separator} from '@/components/ui/separator'
 import {MultiSelect} from '@/components/ui/multi-select'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Card} from '@/components/ui/card'
-import {ResellableItem, StockSort} from '@/store/state'
+import {ResellableItem, StockSort, StockFilters} from '@/store/state'
 import {capitalize} from "@/lib/utils/strings";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
 
 
 interface FilterAndSortPanelProps {
   items: ResellableItem[]
+  filters: StockFilters
   sort: StockSort
   onSortChange: (sort: StockSort) => void
+  onFiltersChange: (sort: StockFilters) => void
 }
 
-const FilterAndSortPanel = ({items, sort, onSortChange}: FilterAndSortPanelProps) => {
-  const kinds = Array.from(new Set(items.map(item => item.itemDetails.kind))).sort()
-  const kindOptions = kinds.map(k => ({label: capitalize(k), value: k}))
+const extractOptions = (items: ResellableItem[], key: (i: ResellableItem) => string, labelMod: (l: string) => string = l => l) => {
+  const rawOptions = Array.from(new Set(items.map(key).filter(Boolean))).sort()
+  return rawOptions.map(l => ({label: labelMod(l), value: l}))
+}
 
-  const retailers = Array.from(new Set(items.map(item => item.listingDetails.seller))).sort()
-  const retailerOptions = retailers.map(r => ({label: r, value: r}))
+const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange}: FilterAndSortPanelProps) => {
+  const kindOptions = extractOptions(items, i => i.itemDetails.kind, capitalize)
+  const selectedKinds = filters.kind.map(k => ({label: capitalize(k), value: k}))
+  const handleKindChange = (selected: {label: string, value: string}[]) => {
+    onFiltersChange({...filters, kind: selected.map(s => s.value)})
+  }
+
+  const retailerOptions = extractOptions(items, i => i.listingDetails.seller)
+  const selectedRetailers = filters.retailer.map(r => ({label: r, value: r}))
+  const handleRetailerChange = (selected: {label: string, value: string}[]) => {
+    onFiltersChange({...filters, retailer: selected.map(s => s.value)})
+  }
 
   return (
     <Card className="overflow-hidden py-0">
       <Accordion type="single" defaultValue="filters" collapsible>
         <AccordionItem value="filters" className="border-0">
-          <AccordionTrigger className="p-6 hover:no-underline flex items-center">
+          <AccordionTrigger className="p-4 hover:no-underline flex items-center">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
                 <Filter className="w-5 h-5" />
@@ -62,7 +75,7 @@ const FilterAndSortPanel = ({items, sort, onSortChange}: FilterAndSortPanelProps
                     variant="outline"
                     size="sm"
                     onClick={() => onSortChange({...sort, asc: !sort.asc})}
-                    className="flex items-center gap-2 h-9"
+                    className="flex items-center justify-start gap-2 h-9 w-32"
                   >
                     {sort.asc ? (
                       <>
@@ -84,15 +97,19 @@ const FilterAndSortPanel = ({items, sort, onSortChange}: FilterAndSortPanelProps
                 <Filter className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm font-medium">Filter by:</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <MultiSelect
                     placeholder="Kind"
                     options={kindOptions}
+                    value={selectedKinds}
+                    onChange={handleKindChange}
                 />
 
                 <MultiSelect
                   placeholder="Retailer"
                   options={retailerOptions}
+                  value={selectedRetailers}
+                  onChange={handleRetailerChange}
                 />
               </div>
             </div>

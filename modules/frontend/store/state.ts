@@ -49,12 +49,12 @@ interface DealsFilters {
 }
 
 export interface StockFilters {
-  kind: string | undefined
-  retailer: string | undefined
-  brand: string | undefined
-  minPrice: string | undefined
-  maxPrice: string | undefined
-  size: string | undefined
+  kind: string[]
+  retailer: string[]
+  brand: string[]
+  minPrice: string[]
+  maxPrice: string[]
+  size: string[]
 }
 
 export interface StockSort {
@@ -71,6 +71,7 @@ type DealsState = {
 }
 
 type DealsActions = {
+  setStockFilters: (filters: StockFilters) => void
   setStockSort: (sort: StockSort) => void
   fetchDeals: () => Promise<void>
   fetchStock: () => Promise<void>
@@ -84,12 +85,12 @@ const defaultState: DealsState = {
   deals: {items: [], loading: false, error: null},
   stock: {items: [], loading: false, error: null},
   stockFilters: {
-    kind: undefined,
-    retailer: undefined,
-    brand: undefined,
-    minPrice: undefined,
-    maxPrice: undefined,
-    size: undefined,
+    kind: [],
+    retailer: [],
+    brand: [],
+    minPrice: [],
+    maxPrice: [],
+    size: [],
   },
   stockSort: {by: 'price', asc: true},
   dealsFilters: {
@@ -103,6 +104,7 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
     ...initState,
 
     setStockSort: (stockSort: StockSort) => set({stockSort}),
+    setStockFilters: (stockFilters: StockFilters) => set({stockFilters}),
 
     fetchDeals: async () => {
       set({deals: {loading: true, error: null, items: []}})
