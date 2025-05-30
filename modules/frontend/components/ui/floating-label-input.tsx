@@ -32,7 +32,7 @@ const FloatingLabel = ({className, ref, ...props}: React.ComponentProps<typeof L
   }
 FloatingLabel.displayName = 'FloatingLabel'
 
-type FloatingLabelInputProps = InputProps & {label?: string, ref?: React.Ref<typeof FloatingInput>}
+type FloatingLabelInputProps = InputProps & {label?: string}
 
 const FloatingLabelInput = ({id, label, ref, ...props}: FloatingLabelInputProps) => {
     return (
