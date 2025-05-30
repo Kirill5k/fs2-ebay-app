@@ -9,8 +9,6 @@ import {Spinner} from '@/components/ui/spinner'
 export default function StockPage() {
   const {stock, stockSort, setStockSort, stockFilters, setStockFilters} = useDealsStore((state) => state)
 
-  const isLoading = stock.loading
-
   const filteredItems = stock.items.filter(
     (item) =>
       (stockFilters.kind.length === 0 || stockFilters.kind.includes(item.itemDetails.kind)) &&
@@ -66,7 +64,7 @@ export default function StockPage() {
         onClear={handleClearFilters}
       />
 
-      {isLoading ? (
+      {stock.loading ? (
         <div className="flex justify-center py-20">
           <Spinner size="large">
             <p className="mt-4 text-muted-foreground">Loading stock items...</p>

@@ -1,14 +1,24 @@
 'use client'
 
 import {useDealsStore} from '@/store/provider'
+import {Spinner} from '@/components/ui/spinner'
+import DealsTable from "@/components/deals/table";
 
 export default function StockPage() {
   const {deals, dealsFilters} = useDealsStore((state) => state)
 
   return (
     <main className="flex flex-col gap-4 p-2 md:p-8">
-      <h1 className="text-2xl font-bold mb-4">Deals Information</h1>
-      {deals.loading ? <p>Loading deals data...</p> : <p>Deals</p>}
+
+      {deals.loading ? (
+          <div className="flex justify-center py-20">
+            <Spinner size="large">
+              <p className="mt-4 text-muted-foreground">Loading deals...</p>
+            </Spinner>
+          </div>
+      ) : (
+          <DealsTable items={deals.items} />
+      )}
     </main>
   )
 }
