@@ -45,12 +45,12 @@ const ProductCard = ({product}: ProductCardProps) => {
               <Badge className="bg-red-500 text-white text-xs">-{product.price.discount}%</Badge>
             )}
             {product.itemDetails.size && (
-                <Badge
-                    variant="outline"
-                    className="bg-white/90 text-xs"
-                >
-                  Size {product.itemDetails.size}
-                </Badge>
+              <Badge
+                variant="outline"
+                className="bg-white/90 text-xs"
+              >
+                Size {product.itemDetails.size}
+              </Badge>
             )}
           </div>
         </div>
@@ -80,7 +80,7 @@ const ProductCard = ({product}: ProductCardProps) => {
             <User className="w-3 h-3" />
             <span>{product.listingDetails.seller}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center justify-end gap-1 text-right">
             <Calendar className="w-3 h-3" />
             <span>{formatDate(product.listingDetails.datePosted)}</span>
           </div>

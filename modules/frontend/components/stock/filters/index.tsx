@@ -16,6 +16,7 @@ interface FilterAndSortPanelProps {
   sort: StockSort
   onSortChange: (sort: StockSort) => void
   onFiltersChange: (sort: StockFilters) => void
+  onClear: () => void
 }
 
 const extractOptions = (items: ResellableItem[], key: (i: ResellableItem) => string, labelMod: (l: string) => string = (l) => l) => {
@@ -23,7 +24,7 @@ const extractOptions = (items: ResellableItem[], key: (i: ResellableItem) => str
   return rawOptions.map((l) => ({label: labelMod(l), value: l}))
 }
 
-const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange}: FilterAndSortPanelProps) => {
+const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange, onClear}: FilterAndSortPanelProps) => {
   const includesClothing = items.some((i) => i.itemDetails.kind === 'clothing')
   const showClothingFilters = includesClothing && (filters.kind.length === 0 || filters.kind.includes('clothing'))
 
@@ -72,7 +73,7 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
     <Card className="overflow-hidden py-0">
       <Accordion
         type="single"
-        defaultValue="filters"
+        defaultValue=""
         collapsible
       >
         <AccordionItem
@@ -130,9 +131,19 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
               </div>
 
               <Separator />
-              <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Filter by:</span>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Filter by:</span>
+                </div>
+                <Button
+                  size="sm"
+                  variant="link"
+                  className="underline md:no-underline"
+                  onClick={onClear}
+                >
+                  Clear all
+                </Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <MultiSelect

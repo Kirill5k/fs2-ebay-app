@@ -34,7 +34,7 @@ const StockList = ({items}: StockListProps) => {
 
   useEffect(() => {
     handlePageChange(1)
-  }, [items.length]);
+  }, [items.length])
 
   return (
     <div className="space-y-6">

@@ -4,9 +4,12 @@ import {useDealsStore} from '@/store/provider'
 import FilterAndSortPanel from '@/components/stock/filters'
 import StockList from '@/components/stock/list'
 import {ResellableItem} from '@/store/state'
+import {Spinner} from '@/components/ui/spinner'
 
 export default function StockPage() {
   const {stock, stockSort, setStockSort, stockFilters, setStockFilters} = useDealsStore((state) => state)
+
+  const isLoading = stock.loading
 
   const filteredItems = stock.items.filter(
     (item) =>
@@ -40,16 +43,38 @@ export default function StockPage() {
     }
   })
 
+  const handleClearFilters = () => {
+    setStockFilters({
+      kind: [],
+      retailer: [],
+      brand: [],
+      size: [],
+      minPrice: undefined,
+      maxPrice: undefined,
+      minDiscount: undefined,
+    })
+  }
+
   return (
     <main className="flex flex-col gap-4 p-2 md:p-8">
       <FilterAndSortPanel
-        items={stock.items}
-        sort={stockSort}
-        onSortChange={setStockSort}
         filters={stockFilters}
         onFiltersChange={setStockFilters}
+        sort={stockSort}
+        onSortChange={setStockSort}
+        items={stock.items}
+        onClear={handleClearFilters}
       />
-      <StockList items={filteredAndSortedItems} />
+
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <Spinner size="large">
+            <p className="mt-4 text-muted-foreground">Loading stock items...</p>
+          </Spinner>
+        </div>
+      ) : (
+        <StockList items={filteredAndSortedItems} />
+      )}
     </main>
   )
 }

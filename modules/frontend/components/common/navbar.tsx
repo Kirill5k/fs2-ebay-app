@@ -74,22 +74,22 @@ const NavBar = () => {
       </header>
 
       <div className="sticky top-16 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden px-2">
-          <div className="flex h-12 items-center justify-around">
-            {navItems.map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={cn(
-                  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 relative h-9 px-3',
-                  pathname === item.href && 'bg-primary text-primary-foreground',
-                  pathname !== item.href && 'hover:bg-accent hover:text-accent-foreground'
-                )}
-              >
-                <item.icon className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">{item.label}</span>
-              </Link>
-            ))}
-          </div>
+        <div className="flex h-12 items-center justify-around">
+          {navItems.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={cn(
+                'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 flex-1 relative h-9 px-3',
+                pathname === item.href && 'bg-primary text-primary-foreground',
+                pathname !== item.href && 'hover:bg-accent hover:text-accent-foreground'
+              )}
+            >
+              <item.icon className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">{item.label}</span>
+            </Link>
+          ))}
+        </div>
       </div>
     </>
   )
