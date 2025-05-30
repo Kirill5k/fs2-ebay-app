@@ -16,10 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { MultiSelect, Option } from "@/components/ui/multi-select";
 import { format } from "date-fns";
+import { TablePagination } from "./pagination";
 
 const columns: ColumnDef<ResellableItem>[] = [
   {
@@ -196,51 +195,16 @@ const DealsTable = ({items}: DealsTableProps) => {
         </Table>
       </div>
       
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm text-gray-500">
-            Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to {Math.min(
-              (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-              items.length
-            )} of {items.length}
-          </p>
-          <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-            }}
-          >
-            <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
-            </SelectTrigger>
-            <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <TablePagination
+        currentPage={table.getState().pagination.pageIndex}
+        pageSize={table.getState().pagination.pageSize}
+        totalItems={items.length}
+        onNextPagePress={() => table.nextPage()}
+        onPreviousPagePress={() => table.previousPage()}
+        disableNextPage={!table.getCanNextPage()}
+        disablePreviousPage={!table.getCanPreviousPage()}
+        onPageSizeChange={(size) => table.setPageSize(size)}
+      />
     </div>
   );
 }
