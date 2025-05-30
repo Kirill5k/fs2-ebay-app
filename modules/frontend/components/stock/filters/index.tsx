@@ -179,6 +179,7 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
                 )}
 
                 <FloatingLabelInput
+                  id="min-price"
                   label="Min Price"
                   type="number"
                   value={filters.minPrice === undefined ? '' : filters.minPrice}
@@ -186,6 +187,7 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
                 />
 
                 <FloatingLabelInput
+                  id="max-price"
                   label="Max Price"
                   type="number"
                   value={filters.maxPrice === undefined ? '' : filters.maxPrice}
@@ -193,6 +195,7 @@ const FilterAndSortPanel = ({items, sort, onSortChange, filters, onFiltersChange
                 />
 
                 <FloatingLabelInput
+                  id="min-discount"
                   label="Min Discount"
                   type="number"
                   value={filters.minDiscount === undefined ? '' : filters.minDiscount}
