@@ -4,9 +4,9 @@ import {cn} from '@/lib/utils'
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {ref?: React.Ref<HTMLInputElement>}
 
-const FloatingInput = React.forwardRef<HTMLInputElement, InputProps>(({className, ...props}, ref) => {
+const FloatingInput = ({className, ref, ...props}: InputProps) => {
   return (
     <Input
       placeholder=" "
@@ -15,11 +15,10 @@ const FloatingInput = React.forwardRef<HTMLInputElement, InputProps>(({className
       {...props}
     />
   )
-})
+}
 FloatingInput.displayName = 'FloatingInput'
 
-const FloatingLabel = React.forwardRef<React.ElementRef<typeof Label>, React.ComponentPropsWithoutRef<typeof Label>>(
-  ({className, ...props}, ref) => {
+const FloatingLabel = ({className, ref, ...props}: React.ComponentProps<typeof Label>) => {
     return (
       <Label
         className={cn(
@@ -31,13 +30,11 @@ const FloatingLabel = React.forwardRef<React.ElementRef<typeof Label>, React.Com
       />
     )
   }
-)
 FloatingLabel.displayName = 'FloatingLabel'
 
-type FloatingLabelInputProps = InputProps & {label?: string}
+type FloatingLabelInputProps = InputProps & {label?: string, ref?: React.Ref<typeof FloatingInput>}
 
-const FloatingLabelInput = React.forwardRef<React.ElementRef<typeof FloatingInput>, React.PropsWithoutRef<FloatingLabelInputProps>>(
-  ({id, label, ...props}, ref) => {
+const FloatingLabelInput = ({id, label, ref, ...props}: FloatingLabelInputProps) => {
     return (
       <div className="relative">
         <FloatingInput
@@ -49,7 +46,6 @@ const FloatingLabelInput = React.forwardRef<React.ElementRef<typeof FloatingInpu
       </div>
     )
   }
-)
 FloatingLabelInput.displayName = 'FloatingLabelInput'
 
 export {FloatingInput, FloatingLabel, FloatingLabelInput}
