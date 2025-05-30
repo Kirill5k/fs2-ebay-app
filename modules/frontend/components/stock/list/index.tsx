@@ -1,6 +1,6 @@
 'use client'
 
-import {useState, useMemo} from 'react'
+import {useState, useMemo, useEffect} from 'react'
 import {Separator} from '@/components/ui/separator'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {ResellableItem} from '@/store/state'
@@ -32,12 +32,15 @@ const StockList = ({items}: StockListProps) => {
     setCurrentPage(1)
   }
 
+  useEffect(() => {
+    handlePageChange(1)
+  }, [items.length]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-2 pb-0">
         <div className="text-sm text-gray-600">
-          Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, items.length)} of {items.length}{' '}
-          items
+          Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, items.length)} of {items.length} items
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Items per page:</span>
@@ -69,7 +72,7 @@ const StockList = ({items}: StockListProps) => {
         ))}
       </div>
 
-      {totalPages > 1 && (<Separator/>)}
+      {totalPages > 1 && <Separator />}
 
       {totalPages > 1 && (
         <div className="flex flex-col items-center gap-4 px-2">
