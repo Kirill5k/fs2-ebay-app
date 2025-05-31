@@ -5,7 +5,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/c
 import {MultiSelect, Option} from '@/components/ui/multi-select'
 import {format} from 'date-fns'
 import {TablePagination} from './pagination'
-import {PriceCell, PriceHeader} from './cells'
+import {PriceCell, PriceHeader, ActionCell, ActionHeader} from './cells'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & {
   displayName?: string
@@ -61,6 +61,13 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     displayName: 'Condition',
     accessorFn: (row) => row.listingDetails.condition,
   },
+  {
+    id: 'actions',
+    header: () => <ActionHeader />,
+    displayName: 'Actions',
+    cell: ({row}) => <ActionCell url={row.original.listingDetails.url} />,
+    enableSorting: false,
+  },
 ]
 
 const columnOptions: Option[] = columns.map((column) => ({
@@ -76,6 +83,7 @@ const defaultColumnVisibility: VisibilityState = {
   'price.sell': false,
   'listingDetails.datePosted': false,
   'listingDetails.condition': false,
+  'actions': false
 }
 
 interface DealsTableProps {
