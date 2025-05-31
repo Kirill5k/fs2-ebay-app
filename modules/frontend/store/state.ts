@@ -114,7 +114,7 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
         dealsFilters: {from, to},
       } = get()
       try {
-        const response = await fetch(`/api/resellable-items?from=${from.toISOString()}&to=${to.toISOString()}`)
+        const response = await fetch(`/api/resellable-items?from=${from.toISOString()}&to=${to.toISOString()}&limit=100`)
         const items = await response.json()
         set({deals: {loading: false, error: null, items}})
       } catch (err) {

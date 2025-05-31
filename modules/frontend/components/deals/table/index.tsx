@@ -20,6 +20,12 @@ import { MultiSelect, Option } from "@/components/ui/multi-select";
 import { format } from "date-fns";
 import { TablePagination } from "./pagination";
 
+const PriceCell = ({rawAmount}: {rawAmount: string | null}) => {
+  if (rawAmount === null) return <div className="max-w-20 text-right">-</div>;
+  const amount = parseFloat(rawAmount);
+  return <div className="max-w-20 text-right font-medium">${amount.toFixed(2)}</div>;
+}
+
 const columns: ColumnDef<ResellableItem>[] = [
   {
     id: "itemDetails.name",
@@ -35,32 +41,19 @@ const columns: ColumnDef<ResellableItem>[] = [
     id: "price.buy",
     header: "Buy Price",
     accessorFn: (row) => row.price.buy,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("price.buy"));
-      return <div className="text-right font-medium">${amount.toFixed(2)}</div>;
-    },
+    cell: ({ row }) => (<PriceCell rawAmount={row.getValue("price.buy")} />),
   },
   {
     id: "price.sell",
     header: "Sell Price",
     accessorFn: (row) => row.price.sell,
-    cell: ({ row }) => {
-      const value = row.getValue("price.sell");
-      if (value === null) return <div className="text-right">-</div>;
-      const amount = parseFloat(value as string);
-      return <div className="text-right font-medium">${amount.toFixed(2)}</div>;
-    },
+    cell: ({ row }) => (<PriceCell rawAmount={row.getValue("price.sell")}/>),
   },
   {
     id: "price.credit",
     header: "Credit",
     accessorFn: (row) => row.price.credit,
-    cell: ({ row }) => {
-      const value = row.getValue("price.credit");
-      if (value === null) return <div className="text-right">-</div>;
-      const amount = parseFloat(value as string);
-      return <div className="text-right font-medium">${amount.toFixed(2)}</div>;
-    },
+    cell: ({ row }) => (<PriceCell rawAmount={row.getValue("price.credit")}/>),
   },
   {
     id: "listingDetails.datePosted",
