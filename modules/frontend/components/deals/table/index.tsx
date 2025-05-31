@@ -158,13 +158,8 @@ const DealsTable = ({items}: DealsTableProps) => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                  <TableHead key={header.id} className="bg-primary-foreground text-md">
+                    {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -187,7 +182,7 @@ const DealsTable = ({items}: DealsTableProps) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  No deals.
                 </TableCell>
               </TableRow>
             )}

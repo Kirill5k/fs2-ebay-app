@@ -29,45 +29,47 @@ export function TablePagination({
   const itemsTo = Math.min((currentPage + 1) * pageSize, totalItems);
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2">
-        <p className="text-sm text-gray-500">
-          Showing {itemsFrom} to {itemsTo} of {totalItems}
-        </p>
-        <Select
-          value={`${pageSize}`}
-          onValueChange={(value) => onPageSizeChange(Number(value))}
-        >
-          <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder={pageSize} />
-          </SelectTrigger>
-          <SelectContent side="top">
-            {pageSizeOptions.map((size) => (
-              <SelectItem key={size} value={`${size}`}>
-                {size}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="flex flex-row-reverse items-center justify-between">
       <div className="flex items-center space-x-2">
         <Button
-          variant="outline"
-          size="sm"
-          onClick={onPreviousPagePress}
-          disabled={disablePreviousPage}
+            variant="outline"
+            size="sm"
+            onClick={onPreviousPagePress}
+            disabled={disablePreviousPage}
         >
           Previous
         </Button>
         <Button
-          variant="outline"
-          size="sm"
-          onClick={onNextPagePress}
-          disabled={disableNextPage}
+            variant="outline"
+            size="sm"
+            onClick={onNextPagePress}
+            disabled={disableNextPage}
         >
           Next
         </Button>
       </div>
+      {totalItems > 0 && (
+          <div className="flex items-center space-x-2">
+            <p className="text-sm text-gray-500">
+              Showing {itemsFrom} to {itemsTo} of {totalItems}
+            </p>
+            <Select
+                value={`${pageSize}`}
+                onValueChange={(value) => onPageSizeChange(Number(value))}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue placeholder={pageSize} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {pageSizeOptions.map((size) => (
+                    <SelectItem key={size} value={`${size}`}>
+                      {size}
+                    </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+      )}
     </div>
   );
 }
