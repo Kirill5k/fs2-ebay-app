@@ -25,6 +25,22 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     accessorFn: (row) => row.listingDetails.title,
   },
   {
+    id: 'listingDetails.condition',
+    header: 'Condition',
+    displayName: 'Condition',
+    accessorFn: (row) => row.listingDetails.condition,
+  },
+  {
+    id: 'listingDetails.datePosted',
+    header: 'Date Posted',
+    displayName: 'Date Posted',
+    accessorFn: (row) => row.listingDetails.datePosted,
+    cell: ({row}) => {
+      const date = row.getValue('listingDetails.datePosted') as string
+      return format(new Date(date), 'MMM d, yyyy')
+    },
+  },
+  {
     id: 'price.buy',
     header: () => <PriceHeader>Buy Price</PriceHeader>,
     displayName: 'Buy Price',
@@ -44,22 +60,6 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     displayName: 'Credit',
     accessorFn: (row) => row.price.credit,
     cell: ({row}) => <PriceCell rawAmount={row.getValue('price.credit')} />,
-  },
-  {
-    id: 'listingDetails.datePosted',
-    header: 'Date Posted',
-    displayName: 'Date Posted',
-    accessorFn: (row) => row.listingDetails.datePosted,
-    cell: ({row}) => {
-      const date = row.getValue('listingDetails.datePosted') as string
-      return format(new Date(date), 'MMM d, yyyy')
-    },
-  },
-  {
-    id: 'listingDetails.condition',
-    header: 'Condition',
-    displayName: 'Condition',
-    accessorFn: (row) => row.listingDetails.condition,
   },
   {
     id: 'actions',
