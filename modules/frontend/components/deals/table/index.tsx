@@ -5,7 +5,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/c
 import {MultiSelect, Option} from '@/components/ui/multi-select'
 import {format} from 'date-fns'
 import {TablePagination} from './pagination'
-import {PriceCell, PriceHeader, ActionCell, ActionHeader} from './cells'
+import {PriceCell, PriceHeader, ActionCell} from './cells'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & {
   displayName?: string
@@ -63,7 +63,7 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
   },
   {
     id: 'actions',
-    header: () => <ActionHeader />,
+    header: () => <div className="max-w-10"></div>,
     displayName: 'Actions',
     cell: ({row}) => <ActionCell url={row.original.listingDetails.url} />,
     enableSorting: false,

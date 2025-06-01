@@ -11,7 +11,7 @@ export const PriceCell = ({rawAmount}: {rawAmount: string | null}) => {
 export const PriceHeader = ({children}: {children: ReactNode}) => <div className="max-w-[80px] text-right">{children}</div>
 
 export const ActionCell = ({ url }: { url: string }) => (
-  <div className="flex max-w-16 justify-center">
+  <div className="flex justify-center">
     <Button
       variant="ghost"
       size="icon"
@@ -23,6 +23,3 @@ export const ActionCell = ({ url }: { url: string }) => (
     </Button>
   </div>
 )
-
-export const ActionHeader = () => <div className="text-center max-w-16">Actions</div>
-
