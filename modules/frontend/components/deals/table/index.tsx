@@ -1,6 +1,15 @@
-import {useState, useMemo} from 'react'
+import {useState, useMemo, useEffect} from 'react'
 import {ResellableItem} from '@/store/state'
-import {ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable, VisibilityState} from '@tanstack/react-table'
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+  VisibilityState,
+  SortingState,
+  getSortedRowModel
+} from '@tanstack/react-table'
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
 import {MultiSelect, Option} from '@/components/ui/multi-select'
 import {format} from 'date-fns'
@@ -12,7 +21,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
-import { FilterIcon } from 'lucide-react'
+import { FilterIcon, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & {
   displayName?: string
@@ -109,6 +118,7 @@ interface DealsTableProps {
 const DealsTable = ({items}: DealsTableProps) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultColumnVisibility)
   const [activeFilter, setActiveFilter] = useState<FilterType>('none')
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'listingDetails.datePosted', desc: true }])
 
   const filteredItems = useMemo(() => {
     switch (activeFilter) {
@@ -146,10 +156,13 @@ const DealsTable = ({items}: DealsTableProps) => {
     columns,
     state: {
       columnVisibility,
+      sorting,
     },
     onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   })
 
   return (
@@ -194,7 +207,23 @@ const DealsTable = ({items}: DealsTableProps) => {
                     key={header.id}
                     className="bg-primary-foreground text-md"
                   >
-                    {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
+                    <div className="flex items-center gap-0">
+                      {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getCanSort() && (
+                          <button
+                              onClick={header.column.getToggleSortingHandler()}
+                              className="ml-2"
+                          >
+                            {header.column.getIsSorted() === 'asc' ? (
+                                <ArrowUp className="h-4 w-4" />
+                            ) : header.column.getIsSorted() === 'desc' ? (
+                                <ArrowDown className="h-4 w-4" />
+                            ) : (
+                                <ArrowUpDown className="h-4 w-4" />
+                            )}
+                          </button>
+                      )}
+                    </div>
                   </TableHead>
                 ))}
               </TableRow>
