@@ -37,7 +37,7 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     accessorFn: (row) => row.listingDetails.datePosted,
     cell: ({row}) => {
       const date = row.getValue('listingDetails.datePosted') as string
-      return format(new Date(date), 'MMM d, yyyy')
+      return format(new Date(date), 'MMM d, yyyy h:mm a')
     },
   },
   {
