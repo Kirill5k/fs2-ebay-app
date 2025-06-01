@@ -6,10 +6,26 @@ import {MultiSelect, Option} from '@/components/ui/multi-select'
 import {format} from 'date-fns'
 import {TablePagination} from './pagination'
 import {PriceCell, PriceHeader, ActionCell} from './cells'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from '@/components/ui/dropdown-menu'
+import { FilterIcon } from 'lucide-react'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & {
   displayName?: string
 }
+
+// Define filter types
+type FilterType = 'none' | 'noSellPrice' | 'sellGreaterThanBuy';
+
+const filterOptions = [
+  { label: 'No filters', value: 'none' },
+  { label: 'Without sell price', value: 'noSellPrice' },
+  { label: 'Sell price > Buy price', value: 'sellGreaterThanBuy' }
+];
 
 const columns: ExtendedColumnDef<ResellableItem>[] = [
   {
@@ -92,6 +108,18 @@ interface DealsTableProps {
 
 const DealsTable = ({items}: DealsTableProps) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultColumnVisibility)
+  const [activeFilter, setActiveFilter] = useState<FilterType>('none')
+
+  const filteredItems = useMemo(() => {
+    switch (activeFilter) {
+      case 'noSellPrice':
+        return items.filter(item => item.price.sell === null)
+      case 'sellGreaterThanBuy':
+        return items.filter(item => item.price.sell !== null && item.price.sell > item.price.buy)
+      default:
+        return items
+    }
+  }, [items, activeFilter])
 
   const selectedColumnOptions = useMemo(() => {
     return columnOptions.filter(
@@ -114,7 +142,7 @@ const DealsTable = ({items}: DealsTableProps) => {
   }
 
   const table = useReactTable({
-    data: items,
+    data: filteredItems,
     columns,
     state: {
       columnVisibility,
@@ -127,7 +155,25 @@ const DealsTable = ({items}: DealsTableProps) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Deals Table</h1>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground">
+            <FilterIcon className="h-4 w-4 mr-2" />
+            <span>
+                {filterOptions.find(option => option.value === activeFilter)?.label || 'Filter'}
+              </span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            {filterOptions.map(option => (
+                <DropdownMenuItem
+                    key={option.value}
+                    onClick={() => setActiveFilter(option.value as FilterType)}
+                    className={activeFilter === option.value ? "bg-accent text-accent-foreground" : ""}
+                >
+                  {option.label}
+                </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <div className="flex items-center space-x-2">
           <MultiSelect
             placeholder="Select columns"
@@ -188,7 +234,7 @@ const DealsTable = ({items}: DealsTableProps) => {
       <TablePagination
         currentPage={table.getState().pagination.pageIndex}
         pageSize={table.getState().pagination.pageSize}
-        totalItems={items.length}
+        totalItems={filteredItems.length}
         onNextPagePress={() => table.nextPage()}
         onPreviousPagePress={() => table.previousPage()}
         disableNextPage={!table.getCanNextPage()}
