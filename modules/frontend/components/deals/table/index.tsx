@@ -24,6 +24,12 @@ type ExtendedColumnDef<T> = ColumnDef<T> & {
 
 const columns: ExtendedColumnDef<ResellableItem>[] = [
   {
+    id: 'itemDetails.kind',
+    header: 'Item Kind',
+    displayName: 'Item Kind',
+    accessorFn: (row) => row.itemDetails.kind,
+  },
+  {
     id: 'itemDetails.name',
     header: 'Item Name',
     displayName: 'Item Name',
@@ -87,6 +93,7 @@ const columnOptions: Option[] = columns.map((column) => ({
 }))
 
 const defaultColumnVisibility: VisibilityState = {
+  'itemDetails.kind': false,
   'itemDetails.name': true,
   'listingDetails.title': true,
   'price.buy': true,
