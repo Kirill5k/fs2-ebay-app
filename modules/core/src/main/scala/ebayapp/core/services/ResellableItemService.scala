@@ -1,12 +1,11 @@
 package ebayapp.core.services
 
 import cats.Monad
-import ebayapp.core.domain.{ResellableItem, ResellableItemSummary, SearchParams}
+import ebayapp.core.domain.{ResellableItem, SearchParams}
 import ebayapp.core.repositories.ResellableItemRepository
 
 trait ResellableItemService[F[_]]:
   def search(filters: SearchParams): F[List[ResellableItem]]
-  def summaries(filters: SearchParams): F[List[ResellableItemSummary]]
 
 final class LiveResellableItemService[F[_]](
     private val repository: ResellableItemRepository[F]
@@ -14,9 +13,6 @@ final class LiveResellableItemService[F[_]](
 
   override def search(filters: SearchParams): F[List[ResellableItem]] =
     repository.search(filters)
-
-  override def summaries(filters: SearchParams): F[List[ResellableItemSummary]] =
-    repository.summaries(filters)
 }
 
 object ResellableItemService:

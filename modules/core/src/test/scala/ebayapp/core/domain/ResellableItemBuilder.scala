@@ -7,16 +7,6 @@ import java.time.Instant
 
 object ResellableItemBuilder {
 
-  extension (ri: ResellableItem)
-    def summary: ResellableItemSummary =
-      ResellableItemSummary(
-        itemDetails = ri.itemDetails,
-        listingTitle = ri.listingDetails.title,
-        listingUrl = ri.listingDetails.url,
-        buyPrice = ri.buyPrice.rrp,
-        exchangePrice = ri.sellPrice.map(_.credit)
-      )
-
   val searchCriteria = SearchCriteria("item")
 
   def makeClothing(

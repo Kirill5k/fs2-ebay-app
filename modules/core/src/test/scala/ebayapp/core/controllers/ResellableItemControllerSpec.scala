@@ -19,9 +19,7 @@ class ResellableItemControllerSpec extends HttpRoutesWordSpec {
   val game2 = makeVideoGame("Battlefield 1", postedTs, sellPrice = None)
   val game3 = makeVideoGame("Battlefield 1", postedTs, sellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5))))
 
-  val summaries = List(game1, game2, game3).map(_.summary)
-
-  val searchFilters = SearchParams(Some(ItemKind.VideoGame), None, None, None)
+  val searchFilters = SearchParams(kind = Some(ItemKind.VideoGame), skip = Some(100))
 
   "A ResellableItemController" should {
 
@@ -108,47 +106,7 @@ class ResellableItemControllerSpec extends HttpRoutesWordSpec {
       response mustHaveStatus (Status.Ok, Some(expected))
       verify(service).search(searchFilters)
     }
-
-    "return summary of resellable items" in {
-      val service = mock[ResellableItemService[IO]]
-      when(service.summaries(any[SearchParams])).thenReturnIO(summaries)
-
-      val controller = new ResellableItemController[IO](service)
-
-      val request  = Request[IO](uri = uri"/resellable-items/summary?kind=video-game", method = Method.GET)
-      val response = controller.routes.orNotFound.run(request)
-
-      val expected =
-        """{
-          |"total":3,
-          |"unrecognized":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":null}]},
-          |"profitable":{"total":1,"items":[{"name":"super mario 3 XBOX ONE","title":"super mario 3","url":"https://www.ebay.co.uk/itm/super-mario-3","buyPrice":32.99,"exchangePrice":80}]},
-          |"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":5}]}
-          |}""".stripMargin
-      response mustHaveStatus (Status.Ok, Some(expected))
-      verify(service).summaries(searchFilters)
-    }
-
-    "return summary of video games" in {
-      val service = mock[ResellableItemService[IO]]
-      when(service.summaries(any[SearchParams])).thenReturnIO(summaries)
-
-      val controller = new ResellableItemController[IO](service)
-
-      val request  = Request[IO](uri = uri"/resellable-items/summary?kind=video-game", method = Method.GET)
-      val response = controller.routes.orNotFound.run(request)
-
-      val expected =
-        """{
-          |"total":3,
-          |"unrecognized":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":null}]},
-          |"profitable":{"total":1,"items":[{"name":"super mario 3 XBOX ONE","title":"super mario 3","url":"https://www.ebay.co.uk/itm/super-mario-3","buyPrice":32.99,"exchangePrice":80}]},
-          |"rest":{"total":1,"items":[{"name":"Battlefield 1 XBOX ONE","title":"Battlefield 1","url":"https://www.ebay.co.uk/itm/battlefield-1","buyPrice":32.99,"exchangePrice":5}]}
-          |}""".stripMargin
-      response mustHaveStatus (Status.Ok, Some(expected))
-      verify(service).summaries(searchFilters)
-    }
-
+    
     "parse optional query params" in {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(Nil)
@@ -156,12 +114,13 @@ class ResellableItemControllerSpec extends HttpRoutesWordSpec {
       val controller = new ResellableItemController[IO](service)
 
       val request =
-        Request[IO](uri = uri"/resellable-items?limit=100&from=2020-01-01&to=2020-01-01T00:00:01Z&kind=video-game", method = Method.GET)
+        Request[IO](uri = uri"/resellable-items?limit=100&skip=5&from=2020-01-01&to=2020-01-01T00:00:01Z&kind=video-game", method = Method.GET)
       val response = controller.routes.orNotFound.run(request)
 
       response mustHaveStatus (Status.Ok, Some("""[]"""))
       verify(service).search(
         searchFilters.copy(
+          skip = Some(5),
           limit = Some(100),
           from = Some(Instant.parse("2020-01-01T00:00:00Z")),
           to = Some(Instant.parse("2020-01-01T00:00:01Z"))

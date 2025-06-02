@@ -3,7 +3,7 @@ package ebayapp.core.controllers
 import cats.Monad
 import cats.effect.Async
 import ebayapp.kernel.controllers.Controller
-import ebayapp.core.controllers.views.{ResellableItemView, ResellableItemsSummaryResponse}
+import ebayapp.core.controllers.views.{ResellableItemStats, ResellableItemView}
 import ebayapp.core.domain.{ItemDetails, ItemKind, SearchParams}
 import ebayapp.core.services.ResellableItemService
 import org.http4s.HttpRoutes
@@ -26,15 +26,8 @@ final private[controllers] class ResellableItemController[F[_]](
         .mapResponse(_.map(ResellableItemView.from))
     }
 
-  private val getSummaries = ResellableItemController.getSummaries
-    .serverLogic { sp =>
-      itemService
-        .summaries(sp)
-        .mapResponse(ResellableItemsSummaryResponse.from)
-    }
-
   override def routes: HttpRoutes[F] =
-    serverInterpreter.toRoutes(List(getAll, getSummaries))
+    serverInterpreter.toRoutes(List(getAll))
 }
 
 object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
@@ -59,11 +52,11 @@ object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
     .errorOut(Controller.errorResponse)
     .out(jsonBody[List[ResellableItemView]])
 
-  val getSummaries = endpoint.get
-    .in(basePath / "summary")
+  val getStats = endpoint.get
+    .in(basePath / "stats")
     .in(searchQueryParams)
     .errorOut(Controller.errorResponse)
-    .out(jsonBody[ResellableItemsSummaryResponse])
+    .out(jsonBody[ResellableItemStats])
 
   def make[F[_]: Async](service: ResellableItemService[F]): F[Controller[F]] =
     Monad[F].pure(ResellableItemController[F](service))

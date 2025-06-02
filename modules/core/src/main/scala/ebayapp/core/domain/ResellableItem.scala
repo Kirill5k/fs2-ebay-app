@@ -2,7 +2,6 @@ package ebayapp.core.domain
 
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails, SearchCriteria, SellPrice}
 import ebayapp.kernel.types.EnumType
-import io.circe.{Codec, Decoder, Encoder}
 import pureconfig.generic.derivation.EnumConfigReader
 
 import java.time.Instant
@@ -23,14 +22,6 @@ enum ItemKind derives EnumConfigReader:
   case Clothing
 
 object ItemKind extends EnumType[ItemKind](() => ItemKind.values)
-
-final case class ResellableItemSummary(
-    itemDetails: ItemDetails,
-    listingTitle: String,
-    listingUrl: String,
-    buyPrice: BigDecimal,
-    exchangePrice: Option[BigDecimal]
-) derives Codec.AsObject
 
 final case class ResellableItem(
     itemDetails: ItemDetails,

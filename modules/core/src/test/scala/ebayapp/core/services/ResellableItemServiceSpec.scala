@@ -9,8 +9,7 @@ import ebayapp.core.repositories.ResellableItemRepository
 class ResellableItemServiceSpec extends IOWordSpec {
 
   val videoGame     = makeVideoGame("super mario 3")
-  val summary       = videoGame.summary
-  val searchFilters = SearchParams(Some(ItemKind.VideoGame), Some(100), None, None)
+  val searchFilters = SearchParams(kind = Some(ItemKind.VideoGame), limit = Some(100))
 
   "A VideoGameService" should {
 
@@ -23,18 +22,6 @@ class ResellableItemServiceSpec extends IOWordSpec {
       latestResult.asserting { latest =>
         verify(repository).search(searchFilters)
         latest mustBe List(videoGame)
-      }
-    }
-
-    "get item summaries from db" in {
-      val repository = mock[ResellableItemRepository[IO]]
-      when(repository.summaries(any[SearchParams])).thenReturnIO(List(summary))
-
-      val result = ResellableItemService.make(repository).flatMap(_.summaries(searchFilters))
-
-      result.asserting { res =>
-        verify(repository).summaries(searchFilters)
-        res mustBe List(summary)
       }
     }
   }

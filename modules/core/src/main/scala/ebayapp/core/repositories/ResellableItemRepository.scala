@@ -6,11 +6,11 @@ import cats.syntax.functor.*
 import cats.syntax.flatMap.*
 import cats.syntax.applicativeError.*
 import com.mongodb.{DuplicateKeyException, MongoWriteException}
-import ebayapp.core.domain.{ItemKind, ResellableItem, ResellableItemSummary, SearchParams}
+import ebayapp.core.domain.{ItemKind, ResellableItem, SearchParams}
 import ebayapp.core.repositories.entities.ResellableItemEntity
 import kirill5k.common.cats.syntax.applicative.*
 import mongo4cats.circe.given
-import mongo4cats.operations.{Aggregate, Filter, Projection, Sort}
+import mongo4cats.operations.Filter
 import mongo4cats.collection.MongoCollection
 import mongo4cats.database.MongoDatabase
 import mongo4cats.models.database.CreateCollectionOptions
@@ -19,7 +19,6 @@ trait ResellableItemRepository[F[_]]:
   def existsByUrl(listingUrl: String): F[Boolean]
   def save(item: ResellableItem): F[Unit]
   def search(params: SearchParams): F[List[ResellableItem]]
-  def summaries(params: SearchParams): F[List[ResellableItemSummary]]
 
 final private class ResellableItemMongoRepository[F[_]](
     private val mongoCollection: MongoCollection[F, ResellableItemEntity]
@@ -36,13 +35,6 @@ final private class ResellableItemMongoRepository[F[_]](
     val Title          = s"${ListingDetails}.title"
     val BuyPrice       = "price.buy"
     val ExchangePrice  = "price.credit"
-
-  private val itemSummaryProjection = Projection
-    .include(Field.ItemDetails)
-    .computed("listingUrl", "$" + Field.Url)
-    .computed("listingTitle", "$" + Field.Title)
-    .computed("buyPrice", "$" + Field.BuyPrice)
-    .computed("exchangePrice", "$" + Field.ExchangePrice)
 
   def existsByUrl(listingUrl: String): F[Boolean] =
     mongoCollection.count(Filter.eq(Field.Url, listingUrl)).map(_ > 0)
@@ -65,18 +57,6 @@ final private class ResellableItemMongoRepository[F[_]](
       .limit(params.limit.getOrElse(Int.MaxValue))
       .all
       .mapList(_.toDomain)
-
-  def summaries(params: SearchParams): F[List[ResellableItemSummary]] =
-    mongoCollection
-      .aggregateWithCodec[ResellableItemSummary] {
-        Aggregate
-          .matchBy(params.toFilter)
-          .sort(Sort.desc(Field.DatePosted))
-          .limit(params.limit.getOrElse(Int.MaxValue))
-          .project(itemSummaryProjection)
-      }
-      .all
-      .mapList(identity)
 
   private def postedDateRangeSelector(from: Option[Instant], to: Option[Instant]): Filter = {
     val fromFilter = from.map(d => Filter.gte(Field.DatePosted, d))
