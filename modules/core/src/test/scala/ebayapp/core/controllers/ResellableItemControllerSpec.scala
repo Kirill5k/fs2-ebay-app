@@ -19,7 +19,7 @@ class ResellableItemControllerSpec extends HttpRoutesWordSpec {
   val game2 = makeVideoGame("Battlefield 1", postedTs, sellPrice = None)
   val game3 = makeVideoGame("Battlefield 1", postedTs, sellPrice = Some(SellPrice(BigDecimal(10), BigDecimal(5))))
 
-  val searchFilters = SearchParams(kind = Some(ItemKind.VideoGame), skip = Some(100))
+  val searchFilters = SearchParams(kind = Some(ItemKind.VideoGame))
 
   "A ResellableItemController" should {
 
@@ -106,7 +106,7 @@ class ResellableItemControllerSpec extends HttpRoutesWordSpec {
       response mustHaveStatus (Status.Ok, Some(expected))
       verify(service).search(searchFilters)
     }
-    
+
     "parse optional query params" in {
       val service = mock[ResellableItemService[IO]]
       when(service.search(any[SearchParams])).thenReturnIO(Nil)
