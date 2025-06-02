@@ -9,6 +9,7 @@ import java.time.Instant
 
 final case class SearchParams(
     kind: Option[ItemKind] = None,
+    skip: Option[Int] = None,
     limit: Option[Int] = None,
     from: Option[Instant] = None,
     to: Option[Instant] = None,

@@ -46,6 +46,7 @@ object ResellableItemController extends TapirJsonCirce with SchemaDerivation {
 
   private val searchQueryParams: EndpointInput[SearchParams] =
     query[Option[ItemKind]]("kind")
+      .and(query[Option[Int]]("skip"))
       .and(query[Option[Int]]("limit"))
       .and(query[Option[Instant]]("from"))
       .and(query[Option[Instant]]("to"))

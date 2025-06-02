@@ -61,6 +61,7 @@ final private class ResellableItemMongoRepository[F[_]](
     mongoCollection.find
       .sortByDesc(Field.DatePosted)
       .filter(params.toFilter)
+      .skip(params.skip.getOrElse(0))
       .limit(params.limit.getOrElse(Int.MaxValue))
       .all
       .mapList(_.toDomain)
