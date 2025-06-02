@@ -1,4 +1,4 @@
-import {useState, useMemo, useEffect} from 'react'
+import {useState} from 'react'
 import {ResellableItem} from '@/store/state'
 import {
   ColumnDef,
@@ -108,10 +108,6 @@ const DealsTable = ({items}: DealsTableProps) => {
 
   const filteredItems = filterFunctions[activeFilter](items)
 
-  const selectedColumnOptions = columnOptions.filter(
-      (option) => !columnVisibility[option.value] === false // column is visible if not explicitly set to false
-  )
-
   const handleColumnSelectionChange = (selected: Option[]) => {
     const newVisibility: VisibilityState = {}
 
@@ -146,7 +142,7 @@ const DealsTable = ({items}: DealsTableProps) => {
         activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
         columnOptions={columnOptions}
-        selectedColumnOptions={selectedColumnOptions}
+        columnVisibility={columnVisibility}
         onColumnSelectionChange={handleColumnSelectionChange}
       />
 

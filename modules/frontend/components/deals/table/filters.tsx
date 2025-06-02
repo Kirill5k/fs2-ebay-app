@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FilterIcon } from 'lucide-react';
 import { MultiSelect, Option } from '@/components/ui/multi-select';
 import {
@@ -7,7 +7,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu';
-import {ResellableItem} from '@/store/state'
+import { ResellableItem } from '@/store/state';
+import { VisibilityState } from '@tanstack/react-table';
 
 export type FilterType = 'none' | 'noSellPrice' | 'sellGreaterThanBuy';
 
@@ -27,7 +28,7 @@ interface TableFiltersProps {
   activeFilter: FilterType;
   setActiveFilter: (filter: FilterType) => void;
   columnOptions: Option[];
-  selectedColumnOptions: Option[];
+  columnVisibility: VisibilityState;
   onColumnSelectionChange: (selected: Option[]) => void;
 }
 
@@ -35,9 +36,15 @@ export const TableFilters: React.FC<TableFiltersProps> = ({
   activeFilter,
   setActiveFilter,
   columnOptions,
-  selectedColumnOptions,
+  columnVisibility,
   onColumnSelectionChange
 }) => {
+  const selectedColumnOptions = useMemo(() => {
+    return columnOptions.filter(
+      (option) => !columnVisibility[option.value] === false // column is visible if not explicitly set to false
+    );
+  }, [columnOptions, columnVisibility]);
+
   return (
     <div className="flex items-center justify-between">
       <DropdownMenu>
