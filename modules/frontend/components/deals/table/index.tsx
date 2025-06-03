@@ -195,7 +195,7 @@ const DealsTable = ({items}: DealsTableProps) => {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="text-xs"
+                      className="text-sm"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
