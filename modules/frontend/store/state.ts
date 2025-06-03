@@ -110,13 +110,30 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
 
     fetchDeals: async () => {
       set({deals: {loading: true, error: null, items: []}})
-      const {
-        dealsFilters: {from, to},
-      } = get()
+      const {dealsFilters: {from, to}} = get()
+      const isoFrom = from.toISOString()
+      const isoTo = to.toISOString()
       try {
-        const response = await fetch(`/api/resellable-items?from=${from.toISOString()}&to=${to.toISOString()}`)
-        const items = await response.json()
-        set({deals: {loading: false, error: null, items}})
+        const limit = 500
+        let skip = 0
+        let allItems: ResellableItem[] = []
+        let hasMore = true
+
+        while (hasMore) {
+          const response = await fetch(
+            `/api/resellable-items?from=${isoFrom}&to=${isoTo}&limit=${limit}&skip=${skip}`
+          )
+          const items: ResellableItem[] = await response.json()
+
+          allItems = [...allItems, ...items]
+
+          hasMore = items.length === limit
+          skip += limit
+
+          set({deals: {loading: true, error: null, items: allItems}})
+        }
+
+        set({deals: {loading: false, error: null, items: allItems}})
       } catch (err) {
         console.error('Failed to fetch deals:', err)
         const error = err instanceof Error ? err.toString() : String(err)
