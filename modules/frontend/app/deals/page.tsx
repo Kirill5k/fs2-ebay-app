@@ -5,7 +5,7 @@ import {Spinner} from '@/components/ui/spinner'
 import DealsTable from '@/components/deals/table'
 
 export default function StockPage() {
-  const {deals, dealsFilters} = useDealsStore((state) => state)
+  const {deals} = useDealsStore((state) => state)
 
   return (
     <main className="flex flex-col gap-4 p-2 md:p-8">
