@@ -15,64 +15,48 @@ interface RetailerSummary {
   categories: CategorySummary[];
 }
 
-function summarizeItems(items: ResellableItem[]): RetailerSummary[] {
-  // Group items by retailer (seller)
-  const retailerMap = new Map<string, ResellableItem[]>();
-
-  for (const item of items) {
-    const retailer = item.listingDetails.seller;
-    if (!retailerMap.has(retailer)) {
-      retailerMap.set(retailer, []);
+function groupItemsBy(items: ResellableItem[], keyGetter: (item: ResellableItem) => string): Map<string, ResellableItem[]> {
+  return items.reduce((map, item) => {
+    const key = keyGetter(item);
+    if (!map.has(key)) {
+      map.set(key, []);
     }
-    retailerMap.get(retailer)!.push(item);
-  }
+    map.get(key)!.push(item);
+    return map;
+  }, new Map<string, ResellableItem[]>());
+}
 
-  // Create summary for each retailer
-  const summaries: RetailerSummary[] = [];
+function createRetailerSummaries(retailerGroups: Map<string, ResellableItem[]>): RetailerSummary[] {
+  return Array.from(retailerGroups.entries()).map(([retailer, retailerItems]) => {
+    const brandGroups = groupItemsBy(retailerItems, item => item.foundWith);
+    const categories = createCategorySummaries(brandGroups);
 
-  for (const [retailer, retailerItems] of retailerMap.entries()) {
-    // Group items by brand (foundWith)
-    const brandMap = new Map<string, ResellableItem[]>();
-
-    for (const item of retailerItems) {
-      const brand = item.foundWith;
-      if (!brandMap.has(brand)) {
-        brandMap.set(brand, []);
-      }
-      brandMap.get(brand)!.push(item);
-    }
-
-    // Calculate category summaries
-    const categories: CategorySummary[] = [];
-
-    for (const [brand, brandItems] of brandMap.entries()) {
-      const totalDiscount = brandItems.reduce((sum, item) => sum + (item.price?.discount || 0), 0);
-      const avgDiscount = Math.round(totalDiscount / brandItems.length);
-
-      categories.push({
-        name: brand,
-        items: brandItems.length,
-        avgDiscount
-      });
-    }
-
-    // Sort categories by avgDiscount in descending order
-    categories.sort((a, b) => b.avgDiscount - a.avgDiscount);
-
-    // Create retailer summary
-    summaries.push({
+    return {
       retailer,
       totalItems: retailerItems.length,
       categories
-    });
-  }
+    };
+  });
+}
 
-  return summaries;
+function createCategorySummaries(brandGroups: Map<string, ResellableItem[]>): CategorySummary[] {
+  const categories = Array.from(brandGroups.entries()).map(([brand, brandItems]) => {
+    const totalDiscount = brandItems.reduce((sum, item) => sum + (item.price?.discount || 0), 0);
+    const avgDiscount = Math.round(totalDiscount / brandItems.length);
+
+    return {
+      name: brand,
+      items: brandItems.length,
+      avgDiscount
+    };
+  });
+
+  return categories.sort((a, b) => b.avgDiscount - a.avgDiscount);
 }
 
 const StockSummary = ({items}: {items: ResellableItem[]}) => {
-
-  const stockData = summarizeItems(items);
+  const retailerGroups = groupItemsBy(items, item => item.listingDetails.seller);
+  const stockData = createRetailerSummaries(retailerGroups);
 
   const formateName = (name: string) =>
     name
