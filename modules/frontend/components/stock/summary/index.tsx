@@ -1,4 +1,4 @@
-import {Card, CardContent, CardTitle, CardHeader} from '@/components/ui/card'
+import {Card, CardContent, CardTitle, CardDescription, CardHeader} from '@/components/ui/card'
 import {Badge} from '@/components/ui/badge'
 import {ResellableItem} from '@/store/state'
 
@@ -81,38 +81,48 @@ const StockSummary = ({items}: {items: ResellableItem[]}) => {
         .join(" ")
 
   return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {stockData.map((retailer, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  {retailer.retailer}
-                  <Badge variant="secondary">{retailer.totalItems} items</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {retailer.categories.map((category, catIndex) => (
-                      <div key={catIndex} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <div className="font-medium text-gray-900">{formateName(category.name)}</div>
-                          <div className="text-sm text-gray-500">{category.items} items</div>
-                        </div>
-                        {category.avgDiscount > 0 && <div className="text-right">
-                          <Badge
-                              variant={category.avgDiscount >= 60 ? "default" : "secondary"}
-                              className={category.avgDiscount >= 60 ? "bg-green-500" : ""}
-                          >
-                            {category.avgDiscount}% off
-                          </Badge>
-                        </div>}
-                      </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-        ))}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Current Stock</CardTitle>
+          <CardDescription>
+            Stock breakdown by retailer with average discounts
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {stockData.map((retailer, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      {retailer.retailer}
+                      <Badge variant="secondary">{retailer.totalItems} items</Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {retailer.categories.map((category, catIndex) => (
+                          <div key={catIndex} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                            <div>
+                              <div className="font-medium text-gray-900">{formateName(category.name)}</div>
+                              <div className="text-sm text-gray-500">{category.items} items</div>
+                            </div>
+                            {category.avgDiscount > 0 && <div className="text-right">
+                              <Badge
+                                  variant={category.avgDiscount >= 60 ? "default" : "secondary"}
+                                  className={category.avgDiscount >= 60 ? "bg-green-500" : ""}
+                              >
+                                {category.avgDiscount}% off
+                              </Badge>
+                            </div>}
+                          </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
   )
 }
 
