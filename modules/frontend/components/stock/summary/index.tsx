@@ -64,10 +64,15 @@ const StockSummary = ({items}: {items: ResellableItem[]}) => {
         .map(s => s.charAt(0).toUpperCase() + s.slice(1))
         .join(" ")
 
+  const totalItems = stockData.reduce((sum, retailer) => sum + retailer.totalItems, 0);
+
   return (
       <Card>
         <CardHeader>
-          <CardTitle>Current Stock</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Current Stock</span>
+            <Badge variant="secondary">{totalItems} items</Badge>
+          </CardTitle>
           <CardDescription>
             Stock breakdown by retailer with average discounts
           </CardDescription>

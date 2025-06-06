@@ -63,10 +63,14 @@ const DealsSummary = ({items}: {items: ResellableItem[]}) => {
 
   const dealsData = summarizeItems(items);
 
+  const totalItems = dealsData.reduce((sum, deal) => sum + deal.totalItems, 0);
   return (
       <Card>
         <CardHeader>
-          <CardTitle>Deals Found Today</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Deals Found Today</span>
+            <Badge variant="secondary">{totalItems} items</Badge>
+          </CardTitle>
           <CardDescription>
             Summary of profitable deals found by retailer and search query
           </CardDescription>
