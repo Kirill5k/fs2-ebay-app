@@ -81,8 +81,8 @@ const DealsSummary = ({items}: {items: ResellableItem[]}) => {
                 <div key={index} className="border rounded-lg p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <Badge variant="outline" className="font-medium">{deal.retailer}</Badge>
-                      <span className="font-medium text-gray-900 text-lg">{deal.query}</span>
+                      <span className="font-medium text-gray-900 text-lg">{deal.retailer}</span>
+                      <Badge variant="outline" className="font-medium">{deal.query}</Badge>
                     </div>
                     <Badge variant="secondary">{deal.totalItems} items</Badge>
                   </div>
