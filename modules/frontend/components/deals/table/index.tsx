@@ -20,6 +20,8 @@ import { TableFilters, FilterType, filterFunctions } from './filters'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & {
   displayName?: string
+  maxWidth?: string
+  headerClassName?: string
 }
 
 const columns: ExtendedColumnDef<ResellableItem>[] = [
@@ -28,24 +30,28 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     header: 'Item Kind',
     displayName: 'Item Kind',
     accessorFn: (row) => row.itemDetails.kind,
+    maxWidth: '150px',
   },
   {
     id: 'itemDetails.name',
     header: 'Item Name',
     displayName: 'Item Name',
     accessorFn: (row) => row.itemDetails.name,
+    maxWidth: '300px',
   },
   {
     id: 'listingDetails.title',
     header: 'Listing Title',
     displayName: 'Listing Title',
     accessorFn: (row) => row.listingDetails.title,
+    maxWidth: '400px',
   },
   {
     id: 'listingDetails.condition',
     header: 'Condition',
     displayName: 'Condition',
     accessorFn: (row) => row.listingDetails.condition,
+    maxWidth: '120px',
   },
   {
     id: 'listingDetails.datePosted',
@@ -56,6 +62,7 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
       const date = row.getValue('listingDetails.datePosted') as string
       return format(new Date(date), 'MMM d, yyyy h:mm a')
     },
+    maxWidth: '160px',
   },
   {
     id: 'price.buy',
@@ -63,6 +70,8 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     displayName: 'Buy Price',
     accessorFn: (row) => row.price.buy,
     cell: ({row}) => <PriceCell rawAmount={row.getValue('price.buy')} />,
+    maxWidth: '90px',
+    headerClassName: 'justify-end'
   },
   {
     id: 'price.sell',
@@ -70,6 +79,8 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     displayName: 'Sell Price',
     accessorFn: (row) => row.price.sell,
     cell: ({row}) => <PriceCell rawAmount={row.getValue('price.sell')} />,
+    maxWidth: '90px',
+    headerClassName: 'justify-end'
   },
   {
     id: 'price.credit',
@@ -77,6 +88,8 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     displayName: 'Credit',
     accessorFn: (row) => row.price.credit,
     cell: ({row}) => <PriceCell rawAmount={row.getValue('price.credit')} />,
+    maxWidth: '90px',
+    headerClassName: 'justify-end'
   },
   {
     id: 'actions',
@@ -84,6 +97,7 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     displayName: 'Actions',
     cell: ({row}) => <ActionCell url={row.original.listingDetails.url} />,
     enableSorting: false,
+    maxWidth: '80px',
   },
 ]
 
@@ -158,30 +172,38 @@ const DealsTable = ({items}: DealsTableProps) => {
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="bg-primary-foreground text-md"
-                  >
-                    <div className="flex items-center gap-0">
-                      {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
-                      {header.column.getCanSort() && (
-                          <button
-                              onClick={header.column.getToggleSortingHandler()}
-                              className="ml-2"
-                          >
-                            {header.column.getIsSorted() === 'asc' ? (
-                                <ArrowUp className="h-4 w-4" />
-                            ) : header.column.getIsSorted() === 'desc' ? (
-                                <ArrowDown className="h-4 w-4" />
-                            ) : (
-                                <ArrowUpDown className="h-4 w-4" />
-                            )}
-                          </button>
-                      )}
-                    </div>
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const column = header.column.columnDef as ExtendedColumnDef<ResellableItem>
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className="bg-primary-foreground text-md break-words"
+                      style={{
+                        maxWidth: column.maxWidth,
+                        whiteSpace: 'normal',
+                        wordWrap: 'break-word'
+                      }}
+                    >
+                      <div className={`flex items-center gap-0 ${column.headerClassName || ''}`}>
+                        {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanSort() && (
+                            <button
+                                onClick={header.column.getToggleSortingHandler()}
+                                className="ml-2"
+                            >
+                              {header.column.getIsSorted() === 'asc' ? (
+                                  <ArrowUp className="h-4 w-4" />
+                              ) : header.column.getIsSorted() === 'desc' ? (
+                                  <ArrowDown className="h-4 w-4" />
+                              ) : (
+                                  <ArrowUpDown className="h-4 w-4" />
+                              )}
+                            </button>
+                        )}
+                      </div>
+                    </TableHead>
+                  )
+                })}
               </TableRow>
             ))}
           </TableHeader>
@@ -192,14 +214,23 @@ const DealsTable = ({items}: DealsTableProps) => {
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="text-sm"
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const column = cell.column.columnDef as ExtendedColumnDef<ResellableItem>
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className="text-sm"
+                        style={{
+                          maxWidth: column.maxWidth,
+                          whiteSpace: 'normal',
+                          wordWrap: 'break-word',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    )
+                  })}
                 </TableRow>
               ))
             ) : (

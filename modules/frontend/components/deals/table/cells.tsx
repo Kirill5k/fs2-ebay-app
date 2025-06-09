@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button'
 import { ExternalLink } from 'lucide-react'
 
 export const PriceCell = ({rawAmount}: {rawAmount: string | null}) => {
-  if (rawAmount === null) return <div className="max-w-20 text-right">-</div>
+  if (rawAmount === null) return <div className="w-full text-right">-</div>
   const amount = parseFloat(rawAmount)
-  return <div className="max-w-20 text-right font-medium">£{amount.toFixed(2)}</div>
+  return <div className="w-full text-right font-medium">£{amount.toFixed(2)}</div>
 }
 
-export const PriceHeader = ({children}: {children: ReactNode}) => <div className="max-w-20 text-right">{children}</div>
+export const PriceHeader = ({children}: {children: ReactNode}) =>
+    <div className="text-right">{children}</div>
 
 export const ActionCell = ({ url }: { url: string }) => (
   <div className="flex justify-center">
