@@ -40,6 +40,13 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     maxWidth: '300px',
   },
   {
+    id: 'itemDetails.platform',
+    header: 'Platform',
+    displayName: 'Platform',
+    accessorFn: (row) => row.itemDetails?.platform || '',
+    maxWidth: '300px',
+  },
+  {
     id: 'listingDetails.title',
     header: 'Listing Title',
     displayName: 'Listing Title',
@@ -109,6 +116,7 @@ const columnOptions: Option[] = columns.map((column) => ({
 const defaultColumnVisibility: VisibilityState = {
   'itemDetails.kind': false,
   'itemDetails.name': true,
+  'itemDetails.platform': false,
   'listingDetails.title': true,
   'price.buy': true,
   'price.credit': true,

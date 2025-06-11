@@ -7,6 +7,7 @@ interface ItemDetails {
   name: string
   brand?: string
   size?: string
+  platform?: string
 }
 
 interface ListingDetails {
