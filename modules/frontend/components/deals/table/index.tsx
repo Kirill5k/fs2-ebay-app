@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useMemo} from 'react'
 import {ResellableItem} from '@/store/state'
 import {
   ColumnDef,
@@ -8,15 +8,15 @@ import {
   useReactTable,
   VisibilityState,
   SortingState,
-  getSortedRowModel
+  getSortedRowModel,
 } from '@tanstack/react-table'
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
 import {Option} from '@/components/ui/multi-select'
 import {format} from 'date-fns'
 import {TablePagination} from './pagination'
 import {PriceCell, PriceHeader, ActionCell} from './cells'
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
-import { TableFilters, FilterType, filterFunctions } from './filters'
+import {ArrowUpDown, ArrowUp, ArrowDown} from 'lucide-react'
+import {TableFilters, FilterType, filterFunctions} from './filters'
 
 type ExtendedColumnDef<T> = ColumnDef<T> & {
   displayName?: string
@@ -71,7 +71,7 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     accessorFn: (row) => row.price.buy,
     cell: ({row}) => <PriceCell rawAmount={row.getValue('price.buy')} />,
     maxWidth: '90px',
-    headerClassName: 'justify-end'
+    headerClassName: 'justify-end',
   },
   {
     id: 'price.sell',
@@ -80,7 +80,7 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     accessorFn: (row) => row.price.sell,
     cell: ({row}) => <PriceCell rawAmount={row.getValue('price.sell')} />,
     maxWidth: '90px',
-    headerClassName: 'justify-end'
+    headerClassName: 'justify-end',
   },
   {
     id: 'price.credit',
@@ -89,7 +89,7 @@ const columns: ExtendedColumnDef<ResellableItem>[] = [
     accessorFn: (row) => row.price.credit,
     cell: ({row}) => <PriceCell rawAmount={row.getValue('price.credit')} />,
     maxWidth: '90px',
-    headerClassName: 'justify-end'
+    headerClassName: 'justify-end',
   },
   {
     id: 'actions',
@@ -115,7 +115,7 @@ const defaultColumnVisibility: VisibilityState = {
   'price.sell': false,
   'listingDetails.datePosted': false,
   'listingDetails.condition': false,
-  'actions': false
+  actions: false,
 }
 
 interface DealsTableProps {
@@ -125,9 +125,11 @@ interface DealsTableProps {
 const DealsTable = ({items}: DealsTableProps) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultColumnVisibility)
   const [activeFilter, setActiveFilter] = useState<FilterType>('none')
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'listingDetails.datePosted', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{id: 'listingDetails.datePosted', desc: true}])
 
-  const filteredItems = filterFunctions[activeFilter](items)
+  const filteredItems = useMemo(() => {
+    return filterFunctions[activeFilter](items)
+  }, [items, activeFilter])
 
   const handleColumnSelectionChange = (selected: Option[]) => {
     const newVisibility: VisibilityState = {}
@@ -161,7 +163,7 @@ const DealsTable = ({items}: DealsTableProps) => {
     <div className="space-y-4">
       <TableFilters
         activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
+        onFilterChange={setActiveFilter}
         columnOptions={columnOptions}
         columnVisibility={columnVisibility}
         onColumnSelectionChange={handleColumnSelectionChange}
@@ -181,24 +183,24 @@ const DealsTable = ({items}: DealsTableProps) => {
                       style={{
                         maxWidth: column.maxWidth,
                         whiteSpace: 'normal',
-                        wordWrap: 'break-word'
+                        wordWrap: 'break-word',
                       }}
                     >
                       <div className={`flex items-center gap-0 ${column.headerClassName || ''}`}>
                         {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
                         {header.column.getCanSort() && (
-                            <button
-                                onClick={header.column.getToggleSortingHandler()}
-                                className="ml-2"
-                            >
-                              {header.column.getIsSorted() === 'asc' ? (
-                                  <ArrowUp className="h-4 w-4" />
-                              ) : header.column.getIsSorted() === 'desc' ? (
-                                  <ArrowDown className="h-4 w-4" />
-                              ) : (
-                                  <ArrowUpDown className="h-4 w-4" />
-                              )}
-                            </button>
+                          <button
+                            onClick={header.column.getToggleSortingHandler()}
+                            className="ml-2"
+                          >
+                            {header.column.getIsSorted() === 'asc' ? (
+                              <ArrowUp className="h-4 w-4" />
+                            ) : header.column.getIsSorted() === 'desc' ? (
+                              <ArrowDown className="h-4 w-4" />
+                            ) : (
+                              <ArrowUpDown className="h-4 w-4" />
+                            )}
+                          </button>
                         )}
                       </div>
                     </TableHead>
@@ -224,7 +226,7 @@ const DealsTable = ({items}: DealsTableProps) => {
                           maxWidth: column.maxWidth,
                           whiteSpace: 'normal',
                           wordWrap: 'break-word',
-                          overflow: 'hidden'
+                          overflow: 'hidden',
                         }}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

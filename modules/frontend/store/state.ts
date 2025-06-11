@@ -110,7 +110,9 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
 
     fetchDeals: async () => {
       set({deals: {loading: true, error: null, items: []}})
-      const {dealsFilters: {from, to}} = get()
+      const {
+        dealsFilters: {from, to},
+      } = get()
       const isoFrom = from.toISOString()
       const isoTo = to.toISOString()
       try {
@@ -120,9 +122,7 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
         let hasMore = true
 
         while (hasMore) {
-          const response = await fetch(
-            `/api/resellable-items?from=${isoFrom}&to=${isoTo}&limit=${limit}&skip=${skip}`
-          )
+          const response = await fetch(`/api/resellable-items?from=${isoFrom}&to=${isoTo}&limit=${limit}&skip=${skip}`)
           const items: ResellableItem[] = await response.json()
 
           allItems = [...allItems, ...items]

@@ -1,6 +1,6 @@
 import {ReactNode} from 'react'
-import { Button } from '@/components/ui/button'
-import { ExternalLink } from 'lucide-react'
+import {Button} from '@/components/ui/button'
+import {ExternalLink} from 'lucide-react'
 
 export const PriceCell = ({rawAmount}: {rawAmount: string | null}) => {
   if (rawAmount === null) return <div className="w-full text-right">-</div>
@@ -8,10 +8,9 @@ export const PriceCell = ({rawAmount}: {rawAmount: string | null}) => {
   return <div className="w-full text-right font-medium">£{amount.toFixed(2)}</div>
 }
 
-export const PriceHeader = ({children}: {children: ReactNode}) =>
-    <div className="text-right">{children}</div>
+export const PriceHeader = ({children}: {children: ReactNode}) => <div className="text-right">{children}</div>
 
-export const ActionCell = ({ url }: { url: string }) => (
+export const ActionCell = ({url}: {url: string}) => (
   <div className="flex justify-center">
     <Button
       variant="ghost"
