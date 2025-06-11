@@ -9,7 +9,7 @@ private[mappers] object GameDetailsMapper {
   private val CONSOLE_REGEX_PATTERN = List(
     "(sony )?play( )?st(a)?(t)?(i)?(o)?(n)?(( )?(\\d|one|move))?",
     "\\bPS(-| )?(\\d|one)\\b",
-    "(nintendo )?(switch|\\bwii( u)?\\b)",
+    "(nintendo )?(switch(( )?2)?|\\bwii( u)?\\b)",
     "((m(i)?(c)?(r)?(o)?soft(s)?|\\bMS\\b) )?\\bX( )?(B)?(OX)?( )?(live|one( )?(x)?|(x)?(s)?( )?series( )?(s|x)?( )?(s|x)?|o(ne)?( x)?|\\d{1,3}|sx)\\b"
   ).mkString(
     "((new|(super )?rare|cheapest|excellent|official|select|enhanced|Officially Licensed) )?((very )?good )?(\\b(for|((also )?(works|only|playable|plays) )?on)\\b )?(",
@@ -151,8 +151,8 @@ private[mappers] object GameDetailsMapper {
     "(?<![a-zA-Z])PS( )?[1-5]",
     "PLAY( )?STATION(\\s+)?([1-5](?!\\d+)|one)",
     "PSVR(2)?( virtual reality)?",
-    "NINTENDO SWITCH",
-    "SWITCH",
+    "NINTENDO SWITCH(( )?2)?",
+    "SWITCH(( )?2)?",
     "\\bWII( )?U\\b",
     "\\bWII\\b",
     "SERIES( )?\\b(X|S)( )?(X|S)?\\b",
@@ -182,6 +182,8 @@ private[mappers] object GameDetailsMapper {
     "SONYPLAYSTATION1"       -> "PS",
     "SONYPLAYSTATION"        -> "PS",
     "PLAYSTATIONONE"         -> "PS",
+    "NINTENDOSWITCH2"        -> "SWITCH 2",
+    "SWITCH2"                -> "SWITCH 2",
     "NINTENDOSWITCH"         -> "SWITCH",
     "XBOXSERIES"             -> "XBOX",
     "XBOXXSERIES"            -> "XBOX",

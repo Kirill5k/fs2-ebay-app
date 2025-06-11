@@ -78,7 +78,7 @@ private[ebay] object search {
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d",
         "upcoming.{1,5}game",
         "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games", "buy any \\d for",
-        "\\b200[0-9]\\b", "(demo|game|global|premium)( )?(code|disc|key|cart|pass)",
+        "\\b200[0-9]\\b", "(demo|game|global|premium|shop)( )?(code|disc|key|cart|pass)",
         "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b", "blox fruit",
         "(m|b)illion (pure)? cash", "\\d+M (cash|money)", "\\d+ mill",
         "switch.*(alu|unicorn).*\\bcase\\b", "credit(?s).*accoun", "credits", "test (listing|page)", "In Game Item",
