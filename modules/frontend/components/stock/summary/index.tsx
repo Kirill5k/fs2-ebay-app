@@ -1,3 +1,4 @@
+import {useMemo} from 'react'
 import {Card, CardContent, CardTitle, CardDescription, CardHeader} from '@/components/ui/card'
 import {Badge} from '@/components/ui/badge'
 import {ResellableItem} from '@/store/state'
@@ -54,8 +55,8 @@ function createCategorySummaries(brandGroups: Map<string, ResellableItem[]>): Ca
 }
 
 const StockSummary = ({items}: {items: ResellableItem[]}) => {
-  const retailerGroups = groupItemsBy(items, (item) => item.listingDetails.seller)
-  const stockData = createRetailerSummaries(retailerGroups)
+  const retailerGroups = useMemo(() => groupItemsBy(items, (item) => item.listingDetails.seller), [items])
+  const stockData = useMemo(() => createRetailerSummaries(retailerGroups), [retailerGroups])
 
   const formateName = (name: string) =>
     name

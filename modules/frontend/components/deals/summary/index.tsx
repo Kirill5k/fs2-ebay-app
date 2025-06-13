@@ -1,6 +1,7 @@
 import {Card, CardContent, CardTitle, CardDescription, CardHeader} from '@/components/ui/card'
 import {Badge} from '@/components/ui/badge'
 import {ResellableItem} from '@/store/state'
+import { useMemo } from 'react'
 
 interface QuerySummary {
   retailer: string
@@ -11,54 +12,44 @@ interface QuerySummary {
 }
 
 function summarizeItems(items: ResellableItem[]): QuerySummary[] {
+  // Helper function to extract retailer name
+  const getRetailerName = (item: ResellableItem): string => {
+    const seller = item.listingDetails.seller;
+    return seller.includes(':') ? seller.split(':')[0].trim() : seller;
+  };
+
   // Group items by retailer and query
-  const groupMap = new Map<string, Map<string, ResellableItem[]>>()
+  const groupedItems = items.reduce<Record<string, Record<string, ResellableItem[]>>>((acc, item) => {
+    const retailer = getRetailerName(item);
+    const query = item.foundWith;
 
-  for (const item of items) {
-    // Handle retailer name - split on ":" if present
-    let retailer = item.listingDetails.seller
-    if (retailer.includes(':')) {
-      retailer = retailer.split(':')[0].trim()
+    // Initialize nested objects if needed
+    if (!acc[retailer]) {
+      acc[retailer] = {};
     }
 
-    const query = item.foundWith
-
-    // Initialize nested maps if needed
-    if (!groupMap.has(retailer)) {
-      groupMap.set(retailer, new Map<string, ResellableItem[]>())
+    if (!acc[retailer][query]) {
+      acc[retailer][query] = [];
     }
 
-    if (!groupMap.get(retailer)!.has(query)) {
-      groupMap.get(retailer)!.set(query, [])
-    }
+    acc[retailer][query].push(item);
+    return acc;
+  }, {});
 
-    // Add item to appropriate group
-    groupMap.get(retailer)!.get(query)!.push(item)
-  }
-
-  // Create summaries
-  const summaries: QuerySummary[] = []
-
-  for (const [retailer, queryMap] of groupMap.entries()) {
-    for (const [query, queryItems] of queryMap.entries()) {
-      const itemsWithoutSellPrice = queryItems.filter((item) => item.price.sell === null).length
-      const profitableItems = queryItems.filter((item) => item.price.sell !== null && item.price.sell > item.price.buy).length
-
-      summaries.push({
-        retailer,
-        query,
-        totalItems: queryItems.length,
-        itemsWithoutSellPrice,
-        profitableItems,
-      })
-    }
-  }
-
-  return summaries
+  // Create summaries from grouped items
+  return Object.entries(groupedItems).flatMap(([retailer, queryMap]) =>
+    Object.entries(queryMap).map(([query, queryItems]) => ({
+      retailer,
+      query,
+      totalItems: queryItems.length,
+      itemsWithoutSellPrice: queryItems.filter(item => item.price.sell === null).length,
+      profitableItems: queryItems.filter(item => item.price.sell !== null && item.price.sell > item.price.buy).length
+    }))
+  );
 }
 
 const DealsSummary = ({items}: {items: ResellableItem[]}) => {
-  const dealsData = summarizeItems(items)
+  const dealsData = useMemo(() => summarizeItems(items), [items])
 
   const totalItems = dealsData.reduce((sum, deal) => sum + deal.totalItems, 0)
   return (
