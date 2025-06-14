@@ -110,6 +110,7 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
     setStockFilters: (stockFilters: StockFilters) => set({stockFilters}),
 
     fetchDeals: async () => {
+      console.log('Fetching deals data...')
       set({deals: {loading: true, error: null, items: []}})
       const {dealsFilters} = get()
       const from = dealsFilters.from.toISOString()
@@ -141,6 +142,7 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
     },
 
     fetchStock: async () => {
+      console.log('Fetching stock data...')
       set({stock: {loading: true, error: null, items: []}})
       try {
         const response = await fetch('/api/stock')

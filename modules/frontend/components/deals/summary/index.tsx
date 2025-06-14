@@ -1,7 +1,7 @@
 import {Card, CardContent, CardTitle, CardDescription, CardHeader} from '@/components/ui/card'
 import {Badge} from '@/components/ui/badge'
 import {ResellableItem} from '@/store/state'
-import { useMemo } from 'react'
+import {useMemo} from 'react'
 
 interface QuerySummary {
   retailer: string
@@ -14,27 +14,27 @@ interface QuerySummary {
 function summarizeItems(items: ResellableItem[]): QuerySummary[] {
   // Helper function to extract retailer name
   const getRetailerName = (item: ResellableItem): string => {
-    const seller = item.listingDetails.seller;
-    return seller.includes(':') ? seller.split(':')[0].trim() : seller;
-  };
+    const seller = item.listingDetails.seller
+    return seller.includes(':') ? seller.split(':')[0].trim() : seller
+  }
 
   // Group items by retailer and query
   const groupedItems = items.reduce<Record<string, Record<string, ResellableItem[]>>>((acc, item) => {
-    const retailer = getRetailerName(item);
-    const query = item.foundWith;
+    const retailer = getRetailerName(item)
+    const query = item.foundWith
 
     // Initialize nested objects if needed
     if (!acc[retailer]) {
-      acc[retailer] = {};
+      acc[retailer] = {}
     }
 
     if (!acc[retailer][query]) {
-      acc[retailer][query] = [];
+      acc[retailer][query] = []
     }
 
-    acc[retailer][query].push(item);
-    return acc;
-  }, {});
+    acc[retailer][query].push(item)
+    return acc
+  }, {})
 
   // Create summaries from grouped items
   return Object.entries(groupedItems).flatMap(([retailer, queryMap]) =>
@@ -42,10 +42,10 @@ function summarizeItems(items: ResellableItem[]): QuerySummary[] {
       retailer,
       query,
       totalItems: queryItems.length,
-      itemsWithoutSellPrice: queryItems.filter(item => item.price.sell === null).length,
-      profitableItems: queryItems.filter(item => item.price.sell !== null && item.price.sell > item.price.buy).length
+      itemsWithoutSellPrice: queryItems.filter((item) => item.price.sell === null).length,
+      profitableItems: queryItems.filter((item) => item.price.sell !== null && item.price.sell > item.price.buy).length,
     }))
-  );
+  )
 }
 
 const DealsSummary = ({items}: {items: ResellableItem[]}) => {
