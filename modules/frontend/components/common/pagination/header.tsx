@@ -9,7 +9,7 @@ interface PaginationHeaderProps {
 
 const PaginationHeader = ({currentPage, itemsPerPage, totalItems, onItemsPerPageChange}: PaginationHeaderProps) => {
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-2 pb-0">
+    <div className="flex flex-row items-center justify-between gap-2 p-2 pb-0">
       <p className="text-sm text-gray-600">
         Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} items
       </p>
