@@ -4,7 +4,7 @@ import {useState, useMemo, useEffect} from 'react'
 import {Separator} from '@/components/ui/separator'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {ResellableItem} from '@/store/state'
-import Pagination from './pagination'
+import Pagination from '@/components/common/pagination'
 import ProductCard from './card'
 
 interface StockListProps {
