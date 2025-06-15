@@ -2,9 +2,9 @@
 
 import {useState, useMemo, useEffect} from 'react'
 import {Separator} from '@/components/ui/separator'
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {ResellableItem} from '@/store/state'
-import Pagination from '@/components/common/pagination'
+import PaginationFooter from '@/components/common/pagination/footer'
+import PaginationHeader from '@/components/common/pagination/header'
 import ProductCard from './card'
 
 interface StockListProps {
@@ -38,28 +38,12 @@ const StockList = ({items}: StockListProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-2 pb-0">
-        <div className="text-sm text-gray-600">
-          Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, items.length)} of {items.length} items
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">Items per page:</span>
-          <Select
-            value={itemsPerPage.toString()}
-            onValueChange={handleItemsPerPageChange}
-          >
-            <SelectTrigger className="w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="6">6</SelectItem>
-              <SelectItem value="12">12</SelectItem>
-              <SelectItem value="24">24</SelectItem>
-              <SelectItem value="48">48</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <PaginationHeader
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={items.length}
+        onItemsPerPageChange={handleItemsPerPageChange}
+      />
 
       <Separator />
 
@@ -75,16 +59,11 @@ const StockList = ({items}: StockListProps) => {
       {totalPages > 1 && <Separator />}
 
       {totalPages > 1 && (
-        <div className="flex flex-col items-center gap-4 px-2">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-          <p className="text-sm text-gray-500">
-            Page {currentPage} of {totalPages}
-          </p>
-        </div>
+        <PaginationFooter
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   )
