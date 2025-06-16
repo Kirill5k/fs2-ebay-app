@@ -13,7 +13,8 @@ import {
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
 import {Option} from '@/components/ui/multi-select'
 import {format} from 'date-fns'
-import {TablePagination} from './pagination'
+import PaginationFooter from '@/components/common/pagination/footer'
+import PaginationHeader from '@/components/common/pagination/header'
 import {PriceCell, PriceHeader, ActionCell} from './cells'
 import {ArrowUpDown, ArrowUp, ArrowDown} from 'lucide-react'
 import {TableFilters, FilterType, filterFunctions} from './filters'
@@ -177,6 +178,13 @@ const DealsTable = ({items}: DealsTableProps) => {
         onColumnSelectionChange={handleColumnSelectionChange}
       />
 
+      <PaginationHeader
+        currentPage={table.getState().pagination.pageIndex + 1}
+        itemsPerPage={table.getState().pagination.pageSize}
+        totalItems={filteredItems.length}
+        onItemsPerPageChange={(value) => table.setPageSize(Number(value))}
+      />
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -257,16 +265,13 @@ const DealsTable = ({items}: DealsTableProps) => {
         </Table>
       </div>
 
-      <TablePagination
-        currentPage={table.getState().pagination.pageIndex}
-        pageSize={table.getState().pagination.pageSize}
-        totalItems={filteredItems.length}
-        onNextPagePress={() => table.nextPage()}
-        onPreviousPagePress={() => table.previousPage()}
-        disableNextPage={!table.getCanNextPage()}
-        disablePreviousPage={!table.getCanPreviousPage()}
-        onPageSizeChange={(size) => table.setPageSize(size)}
-      />
+      {filteredItems.length > 0 && (
+        <PaginationFooter
+          currentPage={table.getState().pagination.pageIndex + 1}
+          totalPages={table.getPageCount()}
+          onPageChange={(page) => table.setPageIndex(page - 1)}
+        />
+      )}
     </div>
   )
 }
