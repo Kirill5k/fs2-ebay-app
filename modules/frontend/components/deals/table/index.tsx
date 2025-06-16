@@ -166,6 +166,11 @@ const DealsTable = ({items}: DealsTableProps) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 12,
+      },
+    },
   })
 
   return (
