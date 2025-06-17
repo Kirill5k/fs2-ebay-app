@@ -89,9 +89,9 @@ const StockList = ({items}: StockListProps) => {
       <Separator />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {paginatedProducts.map((product, index) => (
+        {paginatedProducts.map((product) => (
           <ProductCard
-            key={`${product.itemDetails.name}-${index}`}
+            key={product.listingDetails.url}
             product={product}
           />
         ))}
