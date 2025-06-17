@@ -61,10 +61,10 @@ export const TableFilters: React.FC<TableFiltersProps> = ({
       </DropdownMenu>
       <div>
         <MultiSelect
-            placeholder="Select columns"
-            options={columnOptions}
-            value={selectedColumnOptions}
-            onChange={onColumnSelectionChange}
+          placeholder="Select columns"
+          options={columnOptions}
+          value={selectedColumnOptions}
+          onChange={onColumnSelectionChange}
         />
       </div>
     </div>

@@ -15,44 +15,30 @@ const StockList = ({items}: StockListProps) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(12)
 
-  // Merge identical items with different sizes
   const mergedItems = useMemo(() => {
-    // Create a map to group items by their identifying properties
-    const itemGroups = new Map<string, ResellableItem[]>()
-
-    items.forEach(item => {
+    const itemGroups = items.reduce((map, item) => {
       const key = item.listingDetails.url
-      if (!itemGroups.has(key)) {
-        itemGroups.set(key, [])
+      if (!map.has(key)) {
+        map.set(key, [])
       }
-      itemGroups.get(key)!.push(item)
-    })
+      map.get(key)!.push(item)
+      return map
+    }, new Map<string, ResellableItem[]>())
 
-    // Merge items with the same key but different sizes
-    return Array.from(itemGroups.values()).map(group => {
-      if (group.length === 1) {
-        return group[0] // No merging needed
+    return Array.from(itemGroups.values()).map((group) => {
+      if (group.length === 1) return group[0]
+
+      const sizes = [...new Set(group.map((item) => item.itemDetails.size).filter(Boolean))]
+
+      if (sizes.length <= 1) return group[0]
+
+      return {
+        ...group[0],
+        itemDetails: {
+          ...group[0].itemDetails,
+          size: sizes.join(' / '),
+        },
       }
-
-      // Extract all unique sizes
-      const sizes = group
-        .map(item => item.itemDetails.size)
-        .filter((size): size is string => size !== undefined && size !== '')
-
-      const uniqueSizes = [...new Set(sizes)]
-
-      if (uniqueSizes.length <= 1) {
-        return group[0] // No different sizes to merge
-      }
-
-      // Create a new item with merged sizes
-      const mergedItem = {...group[0]}
-      mergedItem.itemDetails = {
-        ...mergedItem.itemDetails,
-        size: uniqueSizes.join(' / '),
-      }
-
-      return mergedItem
     })
   }, [items])
 
