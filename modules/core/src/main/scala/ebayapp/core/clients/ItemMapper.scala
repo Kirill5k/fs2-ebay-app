@@ -11,11 +11,13 @@ private[clients] trait ItemMapper[I] {
     size
       .replaceFirst("(?i)^(1 )?size$", "ONE SIZE")
       .replaceFirst("( )?\\([.0-9]+\\)", "")
+      .replaceFirst("(?i)mens ", "")
       .replaceFirst("(?i)medium", "M")
       .replaceFirst("(?i)small", "S")
       .replaceFirst("(?i)large", "L")
       .replaceFirst("(?i)(?<=^([X]+|\\dX)) ", "")
       .replaceFirst("(?<=^UK\\d+)( )?\\(.*\\)", "")
+      .replaceFirst("(?<=^\\d+[RW])( )?\\(.*", "")
       .replaceFirst("(?<=\\d+) UK MEN", "")
       .replaceFirst("(?i)EUR \\d+ / ", "")
       .replaceFirst("\\d+ (?=[()SMLX]+)", "")

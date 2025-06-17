@@ -20,6 +20,7 @@ class ItemMapperSpec extends AnyWordSpec with Matchers with Inspectors {
         "EUR 45 / 11 UK MEN" -> "11",
         "Medium"             -> "M",
         "9 (43)"             -> "9",
+        "30R (80CM)"         -> "30R",
         "UK42(EU52)"         -> "UK42",
         "54(64)"             -> "54",
         "46 (S)"             -> "S",
