@@ -43,6 +43,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     "map uncommon platform spellings" in
       forAll(
         Map(
+          "NINTENDO SWITCH, 2024"     -> "SWITCH",
           "NINTENDO SWITCH"           -> "SWITCH",
           "SWITCH"                    -> "SWITCH",
           "NINTENDO SWITCH 2"         -> "SWITCH 2",
