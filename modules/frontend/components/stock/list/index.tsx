@@ -15,12 +15,53 @@ const StockList = ({items}: StockListProps) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(12)
 
-  const totalPages = Math.ceil(items.length / itemsPerPage)
+  // Merge identical items with different sizes
+  const mergedItems = useMemo(() => {
+    // Create a map to group items by their identifying properties
+    const itemGroups = new Map<string, ResellableItem[]>()
+
+    items.forEach(item => {
+      const key = item.listingDetails.url
+      if (!itemGroups.has(key)) {
+        itemGroups.set(key, [])
+      }
+      itemGroups.get(key)!.push(item)
+    })
+
+    // Merge items with the same key but different sizes
+    return Array.from(itemGroups.values()).map(group => {
+      if (group.length === 1) {
+        return group[0] // No merging needed
+      }
+
+      // Extract all unique sizes
+      const sizes = group
+        .map(item => item.itemDetails.size)
+        .filter((size): size is string => size !== undefined && size !== '')
+
+      const uniqueSizes = [...new Set(sizes)]
+
+      if (uniqueSizes.length <= 1) {
+        return group[0] // No different sizes to merge
+      }
+
+      // Create a new item with merged sizes
+      const mergedItem = {...group[0]}
+      mergedItem.itemDetails = {
+        ...mergedItem.itemDetails,
+        size: uniqueSizes.join(' / '),
+      }
+
+      return mergedItem
+    })
+  }, [items])
+
+  const totalPages = Math.ceil(mergedItems.length / itemsPerPage)
 
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage
-    return items.slice(startIndex, startIndex + itemsPerPage)
-  }, [items, currentPage, itemsPerPage])
+    return mergedItems.slice(startIndex, startIndex + itemsPerPage)
+  }, [mergedItems, currentPage, itemsPerPage])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -34,14 +75,14 @@ const StockList = ({items}: StockListProps) => {
 
   useEffect(() => {
     handlePageChange(1)
-  }, [items.length])
+  }, [mergedItems.length])
 
   return (
     <div className="space-y-6">
       <PaginationHeader
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
-        totalItems={items.length}
+        totalItems={mergedItems.length}
         onItemsPerPageChange={handleItemsPerPageChange}
       />
 
