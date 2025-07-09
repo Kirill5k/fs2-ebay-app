@@ -318,7 +318,7 @@ class EbayClientSpec extends IOWordSpec {
       "call of duty modern warfare xbox one 2019",
       "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.".some,
       None,
-      "Video Games & Consoles|Video Games",
+      Some("Video Games & Consoles|Video Games"),
       139973,
       ItemPrice(BigDecimal.valueOf(30.00), "GBP"),
       "New",

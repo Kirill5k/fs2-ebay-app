@@ -57,7 +57,7 @@ private[ebay] object EbayItemMapper {
     ListingDetails(
       url = item.itemWebUrl,
       title = item.title,
-      category = categories.get(item.categoryId).orElse(Some(item.categoryPath)),
+      category = categories.get(item.categoryId).orElse(item.categoryPath),
       shortDescription = item.shortDescription,
       description = item.description.map(_.replaceAll("(?i)<[^>]*>", "")).map(_.slice(0, 500)),
       image = item.image.map(_.imageUrl),

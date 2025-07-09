@@ -6,7 +6,7 @@ object Dependencies {
     val commonScala = "0.1.26"
     val pureConfig  = "0.17.9"
     val circe       = "0.14.13"
-    val sttp4       = "4.0.7"
+    val sttp4       = "4.0.8"
     val http4s      = "0.23.30"
     val logback     = "1.5.18"
     val log4cats    = "2.7.0"

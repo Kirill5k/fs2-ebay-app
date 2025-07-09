@@ -18,7 +18,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
       "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter."
     ),
     None,
-    "Video Games & Consoles|Video Games",
+    Some("Video Games & Consoles|Video Games"),
     139973,
     ItemPrice(BigDecimal(30.00), "GBP"),
     "New",
@@ -50,7 +50,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     Some(
       "<div><u>Up For Grabs</u></div><div><br></div><div><div><div style=\"color:rgb(0, 0, 0); font-family:Arial; font-size:14px; font-style:normal; font-variant:normal; font-weight:400; letter-spacing:normal; orphans:2; text-align:left; text-decoration:none; text-indent:0px; text-transform:none; white-space:normal; word-spacing:0px;\">Samsung Galaxy S10 128gb UNLOCKED Prism Blue</div></div><br></div><div>Good Condition</div><div>The usual minor wear and Tear as you would expect from a used phone.</div><div>It has been in a case with a screen protector since new however they appears to</div><div>have 1 x Deeper Scratch no more than 1cm long to the top left of the phone which does not affect the use of the phone nor does it show up when the screen is in use and you have got to look for it to see it when the screen is off.</div><div><br></div><div>Comes with Wall Plug and Wire.</div><div><br></div><div>I like the phone but unfortunately I changed from Apple to android and just can't get away with it.</div><div>So I ordered the iPhone 11 last night for delivery today.</div><div><br></div><div>I'm always 100% honest in my descriptions and this is how i've obtained my 100% feedback rating as a seller.</div><div>The stratch isn't really noticable but it's there so I would not sell the phone without advising.</div><div><br></div><div>Pictures to follow.</div><div><br></div><div>Music Magie are currently offering £352 for the phone so please no silly offers.</div><div><br></div><div><u><br></u></div><div><br></div>"
     ),
-    "Mobile Phones & Communication|Mobile & Smart Phones",
+    Some("Mobile Phones & Communication|Mobile & Smart Phones"),
     0,
     ItemPrice(BigDecimal(425.00), "GBP"),
     "Used",
