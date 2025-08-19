@@ -366,6 +366,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     "do special replacements" in
       forAll(
         Map(
+          "Ready or Not: Day One Edition"                      -> "Ready or Not",
           "FIFA 18 (XBOX ONE, SERIES X|S) VERY GOOD CONDITION" -> "FIFA 18",
           "resident evil VII"                                  -> "Resident Evil 7",
           "resident evil VIII"                                 -> "Resident Evil Village",

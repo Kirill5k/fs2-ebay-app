@@ -134,7 +134,8 @@ private[mappers] object GameDetailsMapper {
     "(near )?mint$", "\\bfor\\b$", "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$",
     "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheap(est)?( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "(fully )?working$",
-    "immaculate$", "instructions$", "superb$", "marvel$", "combo$", "^mint", "^sale", "^boxed"
+    "immaculate$", "instructions$", "superb$", "marvel$", "combo$", "^mint", "^sale", "^boxed",
+    "^NA ",
   ).mkString("(?i)", "|", "")
 
   private val SEPARATORS = List(
