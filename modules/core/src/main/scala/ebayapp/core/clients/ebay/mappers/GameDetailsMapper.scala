@@ -1,6 +1,5 @@
 package ebayapp.core.clients.ebay.mappers
 
-import cats.syntax.option.*
 import ebayapp.core.domain.ItemDetails.VideoGame
 import ebayapp.core.domain.search.ListingDetails
 
@@ -268,9 +267,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("[^\\d\\w]$", "")
       .trim()
       .replaceAll(EDGE_WORDS_REPLACEMENTS, "")
-      .trim()
-      .some
-      .filterNot(_.isBlank)
+      .maybeNonBlank
 
   private def mapPlatform(listingDetails: ListingDetails): Option[String] =
     PLATFORMS_MATCH_REGEX
@@ -288,10 +285,11 @@ private[mappers] object GameDetailsMapper {
       listingDetails.properties.get("Sub-Genre")
     ).flatten
       .mkString(" / ")
-      .some
-      .filter(_.nonEmpty)
+      .maybeNonBlank
 
   extension (str: String)
+    def maybeNonBlank: Option[String] =
+      Option.when(!str.isBlank)(str.trim)
     def withoutSpecialChars: String =
       str
         .replaceAll("ß", "b")
