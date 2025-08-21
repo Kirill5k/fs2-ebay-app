@@ -1,5 +1,5 @@
 import {createStore} from 'zustand/vanilla'
-import {startOfDay, endOfDay} from 'date-fns'
+import {subHours} from 'date-fns'
 
 // Define types for the different components of ResellableItem
 interface ItemDetails {
@@ -97,8 +97,8 @@ const defaultState: DealsState = {
   },
   stockSort: {by: 'price', asc: true},
   dealsFilters: {
-    from: startOfDay(now),
-    to: endOfDay(now),
+    from: subHours(now, 24),
+    to: now,
   },
 }
 

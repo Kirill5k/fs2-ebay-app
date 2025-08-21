@@ -56,7 +56,7 @@ const DealsSummary = ({items}: {items: ResellableItem[]}) => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>Deals Found Today</span>
+          <span>Deals Found in the Last 24 Hours</span>
           <Badge variant="secondary">{totalItems} items</Badge>
         </CardTitle>
         <CardDescription>Summary of profitable deals found by retailer and search query</CardDescription>
