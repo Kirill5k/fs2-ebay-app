@@ -136,9 +136,7 @@ const DealsTable = ({items}: DealsTableProps) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('none')
   const [sorting, setSorting] = useState<SortingState>([{id: 'listingDetails.datePosted', desc: true}])
 
-  const filteredItems = useMemo(() => {
-    return filterFunctions[activeFilter](items)
-  }, [items, activeFilter])
+  const filteredItems = useMemo(() => filterFunctions[activeFilter](items), [items, activeFilter])
 
   const handleColumnSelectionChange = (selected: Option[]) => {
     const newVisibility: VisibilityState = {}
