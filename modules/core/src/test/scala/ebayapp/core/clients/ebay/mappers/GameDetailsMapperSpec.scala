@@ -291,6 +291,7 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
           "Call of Duty: Infinite Warfare 2017",
           "Call of Duty: Infinite Warfare Game & watch",
           "Call of Duty: Infinite Warfare PAL R2",
+          "Call of Duty: Infinite Warfare Super Mario Mash Up Edition",
           "Call of Duty: Infinite Warfare X BOX ONE REF",
           "Call of Duty: Infinite Warfare - factory sealed",
           "Call of Duty: Infinite Warfare only on playstation",
