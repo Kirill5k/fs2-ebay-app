@@ -37,7 +37,7 @@ class CexClientSpec extends Sttp4WordSpec {
           """{"requests":[
             |{
             |"indexName":"prod_cex_uk",
-            |"params":"query=gta 5 xbox&userToken=ecf31216f1ec463fac30a91a1f0a0dc3&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
+            |"params":"query=gta 5 xbox&userToken=872a14be2ac84b0198b6cb66051c82c6&facetFilters=%5B%5B%22availability%3AIn%20Stock%20Online%22%2C%22availability%3AIn%20Stock%20In%20Store%22%5D%5D"
             |}
             |]}""".stripMargin.replaceAll("\n", "")
 
