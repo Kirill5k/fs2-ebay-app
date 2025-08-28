@@ -7,7 +7,7 @@ private[cex] object responses {
   final case class CexGraphqlItem(
       boxId: String,
       boxName: String,
-      categoryId: Int,
+      categoryId: String,
       categoryFriendlyName: String,
       firstPrice: Option[BigDecimal],
       previousPrice: Option[BigDecimal],
