@@ -124,7 +124,7 @@ private[ebay] object search {
         "Temperature Sensor", "RGB LED", "not duped", "amiibo", "DIY material", "Steep X ", "(Switch|lag) pedal", "game not included", "car charger",
         "LED Light", "check description", "loot run", "bluetooth", "(personalised|gift) mug", "Expansion Pack", "Sega Mega Drive, 19\\d\\d",
         "Strikepack Horizon", "twitch", "Best Buy Exclusive", "POP UP PARADE", "wrist rest", "Mushkin", "Portable Gadgets", "Triangle Strategy Notebook",
-        "Modiphius",
+        "Modiphius", "Lapse disc",
         "(toggle|indicator|network|light|battery|pressure|pump|lifter|window( control)?|Mechanical|battery|\\blamp\\b|\\balarm\\b|push|compressor|lag) Switch", "Switching Sack",
         "(treasure|rare|apparel|ammo|damage|weapon|tesla|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)(?s).*fallout",
         "fallout(?s).* (treasure|rare|apparel|ammo|damage|tesla|weapon|energy|minigun|mask|fixer|rifle|laser|lvc|blood|hand|lmg|legend|magazin|coat|x5|bear|arm|vamp|uniform|plan|blueprint|suit|outfit|shot|flame|armo|50|100|steel|leed|stimpack|power|cap|armo|recipe|gun)",
