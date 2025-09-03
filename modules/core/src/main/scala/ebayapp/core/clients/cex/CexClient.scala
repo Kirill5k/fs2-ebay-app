@@ -63,12 +63,24 @@ final private class CexGraphqlClient[F[_]](
             val filteredPrices = filterByCategory(item.foundWith.category)(prices)
             val rp             = getMinResellPrice(filteredPrices)
             F.ifM(F.pure(rp.isEmpty))(
-              logger.warn(s"""cex-price-match "$query" returned 0 results""").as(item),
+              logPriceMatchMiss(query, item.foundWith.category, prices.size, filteredPrices.size).as(item),
               resellPriceCache.put(query, rp).as(item.copy(sellPrice = rp))
             )
           }
         }
     }
+  }
+
+  private def logPriceMatchMiss(query: String, category: Option[String], hitsBeforeFilter: Int, hitsAfterFilter: Int): F[Unit] = {
+    val allowedCats = category.flatMap(c => CexClient.categories.get(c))
+    val catInfo     = allowedCats.fold("none")(ids => ids.mkString("[", ",", "]"))
+    val msg         =
+      if hitsBeforeFilter == 0 then s"""$name-price-match "$query" returned 0 hits (allowedCats=$catInfo)"""
+      else if hitsAfterFilter == 0 then
+        s"""$name-price-match "$query" returned $hitsBeforeFilter hits but 0 after category filter (allowedCats=$catInfo)"""
+      else
+        s"""$name-price-match "$query" returned $hitsAfterFilter hits after category filter but none with valid exchange price (allowedCats=$catInfo)"""
+    logger.warn(msg)
   }
 
   override def withUpdatedSellPrices(items: List[ResellableItem]): F[List[ResellableItem]] = {
@@ -97,10 +109,15 @@ final private class CexGraphqlClient[F[_]](
   private def findSellPrice(query: String, category: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
       dispatchSearchRequest(GraphqlSearchRequest(query, false))
-        .map(_.results.getOrElse(Nil).flatMap(_.hits))
-        .map(filterByCategory(category))
-        .map(getMinResellPrice)
-        .flatMap(rp => F.whenA(rp.isEmpty)(logger.warn(s"""cex-price-match "$query" returned 0 results""")) *> rp.pure[F])
+        .flatMap { res =>
+          val hits         = res.results.getOrElse(Nil).flatMap(_.hits)
+          val filteredHits = filterByCategory(category)(hits)
+          val rp           = getMinResellPrice(filteredHits)
+          F.ifM(F.pure(rp.isEmpty))(
+            logPriceMatchMiss(query, category, hits.size, filteredHits.size).as(rp),
+            F.pure(rp)
+          )
+        }
     }
 
   private def filterByCategory(category: Option[String])(items: List[CexGraphqlItem]): List[CexGraphqlItem] = {
