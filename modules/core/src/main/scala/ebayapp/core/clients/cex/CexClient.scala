@@ -113,10 +113,7 @@ final private class CexGraphqlClient[F[_]](
           val hits         = res.results.getOrElse(Nil).flatMap(_.hits)
           val filteredHits = filterByCategory(category)(hits)
           val rp           = getMinResellPrice(filteredHits)
-          F.ifM(F.pure(rp.isEmpty))(
-            logPriceMatchMiss(query, category, hits.size, filteredHits.size).as(rp),
-            F.pure(rp)
-          )
+          F.whenA(rp.isEmpty)(logPriceMatchMiss(query, category, hits.size, filteredHits.size)).as(rp)
         }
     }
 
