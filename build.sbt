@@ -16,7 +16,6 @@ val noPublish = Seq(
 )
 
 val docker = Seq(
-  Compile / run / fork := true,
   Universal / javaOptions += "-Djdk.httpclient.allowRestrictedHeaders=cache-control,accept,accept-encoding,accept-language,connection,content-type,content-length,expect,host,referer",
   dockerEnvVars ++= Map("VERSION" -> version.value),
   packageName        := moduleName.value,
@@ -53,7 +52,8 @@ val core = project
     name                 := "fs2-ebay-app-core",
     moduleName           := "fs2-ebay-app-core",
     Docker / packageName := "fs2-app-core", // fs2-app/core
-    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
+    Test / scalacOptions += "-Wconf:msg=unused value of type:silent",
+    dockerEntrypoint := Seq("java", "-cp", "/opt/docker/lib/*", "ebayapp.core.Application")
   )
 
 val proxy = project
