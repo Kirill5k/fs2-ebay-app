@@ -1,5 +1,6 @@
 package ebayapp.core
 
+import cats.effect.unsafe.IORuntimeConfig
 import cats.effect.{IO, IOApp}
 import kirill5k.common.http4s.Server
 import ebayapp.core.clients.Clients
@@ -10,7 +11,12 @@ import ebayapp.core.repositories.Repositories
 import ebayapp.core.services.Services
 import ebayapp.core.tasks.Tasks
 
+import scala.concurrent.duration.Duration
+
 object Application extends IOApp.Simple:
+  override def runtimeConfig: IORuntimeConfig =
+    super.runtimeConfig.copy(cpuStarvationCheckInitialDelay = Duration.Inf)
+
   override val run: IO[Unit] =
     Logger.make[IO].flatMap { implicit logger =>
       for
