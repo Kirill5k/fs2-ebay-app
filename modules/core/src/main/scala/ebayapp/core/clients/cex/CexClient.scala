@@ -117,10 +117,10 @@ final private class CexGraphqlClient[F[_]](
         }
     }
 
-  private def filterByCategory(category: Option[String])(items: List[CexGraphqlItem]): List[CexGraphqlItem] = {
-    val cats = category.flatMap(c => CexClient.categories.get(c))
-    if cats.isEmpty then items else items.filter(i => cats.get.contains(i.categoryId))
-  }
+  private def filterByCategory(category: Option[String])(items: List[CexGraphqlItem]): List[CexGraphqlItem] =
+    category
+      .flatMap(c => CexClient.categories.get(c))
+      .fold(items)(catIds => items.filter(i => catIds.contains(i.categoryId)))
 
   private def getMinResellPrice(items: List[CexGraphqlItem]): Option[SellPrice] =
     items
