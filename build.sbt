@@ -52,8 +52,7 @@ val core = project
     name                 := "fs2-ebay-app-core",
     moduleName           := "fs2-ebay-app-core",
     Docker / packageName := "fs2-app-core", // fs2-app/core
-    Test / scalacOptions += "-Wconf:msg=unused value of type:silent",
-    dockerEntrypoint := Seq("java", "-cp", "/opt/docker/lib/*", "ebayapp.core.Application")
+    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val proxy = project
