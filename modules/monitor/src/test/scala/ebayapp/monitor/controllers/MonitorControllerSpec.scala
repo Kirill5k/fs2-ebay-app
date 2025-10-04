@@ -35,7 +35,7 @@ class MonitorControllerSpec extends HttpRoutesWordSpec with EitherValues {
         val request  = Request[IO](uri = Uri.fromString(s"/monitors/fooo").value, method = Method.DELETE)
         val response = controller.routes.orNotFound.run(request)
 
-        verifyJsonResponse(response, Status.UnprocessableEntity, Some("""{"message":"Monitor id fooo is invalid"}"""))
+        verifyJsonResponse(response, Status.UnprocessableContent, Some("""{"message":"Monitor id fooo is invalid"}"""))
         verifyNoInteractions(meSvc, monSvc)
       }
     }
@@ -226,7 +226,7 @@ class MonitorControllerSpec extends HttpRoutesWordSpec with EitherValues {
         val request  = Request[IO](uri = Uri.fromString(s"/monitors/foo").value, method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
-        verifyJsonResponse(response, Status.UnprocessableEntity, Some(s"""{"message":"Monitor id foo is invalid"}"""))
+        verifyJsonResponse(response, Status.UnprocessableContent, Some(s"""{"message":"Monitor id foo is invalid"}"""))
         verifyNoInteractions(monSvc, meSvc)
       }
 

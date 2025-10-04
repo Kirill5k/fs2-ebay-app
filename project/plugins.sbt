@@ -1,6 +1,6 @@
-addSbtPlugin("com.github.sbt"   % "sbt-native-packager" % "1.11.1")
+addSbtPlugin("com.github.sbt"   % "sbt-native-packager" % "1.11.4")
 addSbtPlugin("com.github.sbt"   % "sbt-javaagent"       % "0.1.8")
 addSbtPlugin("org.typelevel"    % "sbt-tpolecat"        % "0.5.2")
 addSbtPlugin("org.scalameta"    % "sbt-scalafmt"        % "2.5.5")
-addSbtPlugin("com.github.sbt"   % "sbt-github-actions"  % "0.27.0")
+addSbtPlugin("com.github.sbt"   % "sbt-github-actions"  % "0.28.0")
 addSbtPlugin("com.timushev.sbt" % "sbt-updates"         % "0.6.4")

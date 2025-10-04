@@ -143,7 +143,7 @@ class StockControllerSpec extends HttpRoutesWordSpec {
         val response = controller.routes.orNotFound.run(request)
 
         response mustHaveStatus (
-          Status.UnprocessableEntity,
+          Status.UnprocessableContent,
           Some(
             """{"message":"Invalid value foo for enum Retailer, Accepted values: cex,ebay,selfridges,argos,scotts,jdsports,tessuti,nvidia,scan,harvey-nichols,mainline-menswear,flannels"}"""
           )
@@ -156,7 +156,7 @@ class StockControllerSpec extends HttpRoutesWordSpec {
         val request  = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
-        response mustHaveStatus (Status.UnprocessableEntity, Some("""{"message":"Scotts is not being monitored"}"""))
+        response mustHaveStatus (Status.UnprocessableContent, Some("""{"message":"Scotts is not being monitored"}"""))
       }
 
       "return items for a specific retailer" in {
