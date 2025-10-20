@@ -20,6 +20,7 @@ enum ItemKind derives EnumConfigReader:
   case VideoGame
   case MobilePhone
   case Clothing
+  case Electronics
 
 object ItemKind extends EnumType[ItemKind](() => ItemKind.values)
 
@@ -91,4 +92,20 @@ object ResellableItem {
       sellPrice,
       foundWith
     )
+
+  def electronics(
+      itemDetails: ItemDetails.Electronics,
+      listingDetails: ListingDetails,
+      buyPrice: BuyPrice,
+      sellPrice: Option[SellPrice],
+      foundWith: SearchCriteria
+  ): ResellableItem =
+    ResellableItem(
+      itemDetails,
+      listingDetails,
+      buyPrice,
+      sellPrice,
+      foundWith
+    )
 }
+

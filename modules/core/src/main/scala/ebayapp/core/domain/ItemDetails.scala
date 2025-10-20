@@ -32,6 +32,15 @@ object ItemDetails {
     val fullName: Option[String] =
       List(make, model, storageCapacity, colour, network).sequence.map(_.mkString(" "))
 
+  final case class Electronics(
+      name: Option[String],
+      brand: Option[String],
+      model: Option[String],
+      condition: Option[String]
+  ) extends ItemDetails(ItemKind.Electronics) derives Codec.AsObject:
+    val fullName: Option[String] = 
+      List(brand, name, model).sequence.map(_.mkString(" "))
+
   final case class VideoGame(
       name: Option[String],
       platform: Option[String],
@@ -44,7 +53,8 @@ object ItemDetails {
     case d: Generic   => d.asJson.deepMerge(Json.obj("kind" := d.kind))
     case d: Phone     => d.asJson.deepMerge(Json.obj("kind" := d.kind))
     case d: VideoGame => d.asJson.deepMerge(Json.obj("kind" := d.kind))
-    case d: Clothing  => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: Clothing     => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: Electronics => d.asJson.deepMerge(Json.obj("kind" := d.kind))
   }
 
   inline given Decoder[ItemDetails] = Decoder
@@ -54,6 +64,7 @@ object ItemDetails {
         case ItemKind.VideoGame   => cursor.as[VideoGame]
         case ItemKind.MobilePhone => cursor.as[Phone]
         case ItemKind.Clothing    => cursor.as[Clothing]
+        case ItemKind.Electronics => cursor.as[Electronics]
       }
     }
 }
