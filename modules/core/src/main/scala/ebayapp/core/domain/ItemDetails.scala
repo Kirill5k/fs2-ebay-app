@@ -36,10 +36,11 @@ object ItemDetails {
       name: Option[String],
       brand: Option[String],
       model: Option[String],
+      colour: Option[String],
       condition: Option[String]
   ) extends ItemDetails(ItemKind.Electronics) derives Codec.AsObject:
     val fullName: Option[String] = 
-      List(brand, name, model).sequence.map(_.mkString(" "))
+      List(brand, model, colour, condition).sequence.map(_.mkString(" "))
 
   final case class VideoGame(
       name: Option[String],
