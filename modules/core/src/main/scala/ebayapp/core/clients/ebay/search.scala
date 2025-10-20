@@ -8,8 +8,8 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 private[ebay] object search {
-  // electronics - https://www.ebay.co.uk/b/bn_7000259660
-  // headphones - https://www.ebay.co.uk/b/bn_877754
+  // electronics - https://www.ebay.co.uk/b/bn_7000259660 - 259086
+  // headphones - https://www.ebay.co.uk/b/bn_877754 - 293 (sound & vision) -> 15052 (portable audio & headphones) -> 112529 (headphones)
 
   trait EbaySearchParams {
     def categoryId: Int
@@ -42,17 +42,18 @@ private[ebay] object search {
 
     def get(category: String): Either[AppError, EbaySearchParams] =
       category match {
-        case "electronics"               => Right(ElectronicsSearchParams)
+        case "portable-audio"            => Right(PortableAudioSearchParams)
         case "smart-lighting"            => Right(SmartLightingSearchParams)
         case c if c.startsWith("games-") => Right(VideoGameSearchParams)
         case c                           => Left(AppError.Critical(s"unable to find search params for category '$c' in EbayClient"))
       }
 
-    private object ElectronicsSearchParams extends EbaySearchParams {
+    private object PortableAudioSearchParams extends EbaySearchParams {
 
-      override val categoryId: Int = ???
+      override val categoryId: Int = 15052
 
-      override val searchFilterTemplate: String = "itemLocationCountry:GB," +
+      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
+        "itemLocationCountry:GB," +
         "deliveryCountry:GB," +
         "priceCurrency:GBP," +
         "itemLocationCountry:GB," +
