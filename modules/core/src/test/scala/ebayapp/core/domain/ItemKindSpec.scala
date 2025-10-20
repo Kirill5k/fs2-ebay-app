@@ -11,11 +11,11 @@ class ItemKindSpec extends AnyWordSpec with Matchers {
 
     "serialise ItemKind to json string" in {
 
-      ItemKind.values.map(_.asJson.noSpaces).toSet mustBe Set("\"generic\"", "\"video-game\"", "\"mobile-phone\"", "\"clothing\"")
+      ItemKind.values.map(_.asJson.noSpaces).toSet mustBe Set("\"generic\"", "\"video-game\"", "\"mobile-phone\"", "\"clothing\"", "\"electronics\"")
     }
 
     "deserialise json string to ItemKind" in {
-      val strings = List("\"generic\"", "\"video-game\"", "\"mobile-phone\"", "\"clothing\"")
+      val strings = List("\"generic\"", "\"video-game\"", "\"mobile-phone\"", "\"clothing\"", "\"electronics\"")
 
       strings.flatMap(decode[ItemKind](_).toOption) mustBe ItemKind.values
     }
