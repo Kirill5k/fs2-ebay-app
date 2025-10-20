@@ -48,7 +48,8 @@ object search {
       query: String,
       category: Option[String] = None,
       itemKind: Option[ItemKind] = None,
-      filters: Option[Filters] = None
+      filters: Option[Filters] = None,
+      seller: Option[String] = None
   ) derives ConfigReader, Codec.AsObject
 
   final case class SellPrice(

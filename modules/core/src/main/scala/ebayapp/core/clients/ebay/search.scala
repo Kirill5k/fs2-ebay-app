@@ -8,6 +8,9 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 private[ebay] object search {
+  // electronics - https://www.ebay.co.uk/b/bn_7000259660
+  // headphones - https://www.ebay.co.uk/b/bn_877754
+
   trait EbaySearchParams {
     def categoryId: Int
     protected def searchFilterTemplate: String
