@@ -17,8 +17,8 @@ private[ebay] object search {
 
     def filter: EbayItemSummary => Boolean
 
-    private val withItemStartDate = (filter: String, from: Instant) => s"itemStartDate:[${from.truncatedTo(ChronoUnit.SECONDS)}],$filter"
-    private val withSeller        = (filter: String, seller: String) => s"sellers:{$seller},$filter"
+    private val withItemStartDate = (filter: String, from: Instant) => s"$filter,itemStartDate:[${from.truncatedTo(ChronoUnit.SECONDS)}]"
+    private val withSeller        = (filter: String, seller: String) => s"$filter,sellers:{$seller}"
 
     def queryParams(from: Instant, query: String, seller: Option[String] = None): Map[String, String] = {
       val baseFilter       = withItemStartDate(searchFilterTemplate, from)
