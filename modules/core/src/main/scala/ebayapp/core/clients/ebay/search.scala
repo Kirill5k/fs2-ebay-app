@@ -52,7 +52,7 @@ private[ebay] object search {
 
       override val categoryId: Int = 15052
 
-      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
+      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000}," +
         "itemLocationCountry:GB," +
         "deliveryCountry:GB," +
         "priceCurrency:GBP," +
@@ -64,7 +64,7 @@ private[ebay] object search {
     }
 
     private object SmartLightingSearchParams extends EbaySearchParams {
-      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
+      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000}," +
         "itemLocationCountry:GB," +
         "deliveryCountry:GB," +
         "price:[0..200]," +
@@ -183,7 +183,7 @@ private[ebay] object search {
 
       override val categoryId: Int = 139973
 
-      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|3000|4000|5000}," +
+      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000}," +
         "itemLocationCountry:GB," +
         "deliveryCountry:GB," +
         "price:[0..90]," +
