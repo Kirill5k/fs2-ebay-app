@@ -67,7 +67,7 @@ class EbayClientSpec extends IOWordSpec {
           "fieldgroups"  -> "EXTENDED",
           "limit"        -> "200",
           "category_ids" -> "139973",
-          "filter" -> "conditionIds:{1000|1500|2000|2500|3000|4000|5000},itemLocationCountry:GB,deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE},itemStartDate:[2019-12-31T23:40:00Z]"
+          "filter" -> "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000},deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE},itemStartDate:[2019-12-31T23:40:00Z]"
         )
       }
     }
