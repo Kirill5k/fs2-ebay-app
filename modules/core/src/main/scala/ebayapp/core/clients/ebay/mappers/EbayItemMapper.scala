@@ -20,18 +20,18 @@ private[ebay] object EbayItemMapper {
 
   def get(criteria: SearchCriteria): Either[Throwable, EbayItemMapper] =
     criteria.itemKind
-      .map(EbayItemMapper.get)
       .toRight(AppError.Critical("item kind is required in ebay-client"))
-
-  def get(kind: ItemKind): EbayItemMapper =
-    kind match {
-      case ItemKind.VideoGame   => gameDetailsMapper
-      case ItemKind.MobilePhone => phoneDetailsMapper
-      case _                    => genericDetailsMapper
-    }
+      .map {
+        case ItemKind.VideoGame   => gameDetailsMapper
+        case ItemKind.MobilePhone => phoneDetailsMapper
+        case _                    => genericDetailsMapper
+      }
 
   private val categories: Map[Int, String] = Map(
-    139973 -> "Games"
+    139973 -> "Games",
+    15052  -> "Portable Audio",
+    112529 -> "Headphones",
+    293    -> "Sound & Vision"
   )
 
   val phoneDetailsMapper = new EbayItemMapper {
@@ -65,7 +65,7 @@ private[ebay] object EbayItemMapper {
       datePosted = Instant.now,
       seller = item.seller.username.fold("EBAY")(s => s"EBAY:$s"),
       properties = {
-        val itemProps = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
+        val itemProps  = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
         val priceProps = Map(
           Props.price    -> item.price.value.toString(),
           Props.currency -> item.price.currency,

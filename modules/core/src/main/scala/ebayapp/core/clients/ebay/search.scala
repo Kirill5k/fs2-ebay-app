@@ -8,8 +8,6 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 private[ebay] object search {
-  // electronics - https://www.ebay.co.uk/b/bn_7000259660 - 259086
-  // headphones - https://www.ebay.co.uk/b/bn_877754 - 293 (sound & vision) -> 15052 (portable audio & headphones) -> 112529 (headphones)
 
   trait EbaySearchParams {
     def categoryId: Int
@@ -67,6 +65,9 @@ private[ebay] object search {
     }
 
     private object VideoGameSearchParams extends EbaySearchParams {
+      override val categoryId: Int = 139973
+      override val searchFilterTemplate: String = s"$searchFiltersBase,$conditionIdsFilter,${priceFilter(0, 90)}"
+      
       private val LISTING_NAME_TRIGGER_TAGS = List(
         "\\(DS\\)",
         "\\(XBOX\\)"
@@ -166,9 +167,6 @@ private[ebay] object search {
         "download code",
         "redeem"
       ).mkString("^.*?(?i)(", "|", ").*$").r
-
-      override val categoryId: Int              = 139973
-      override val searchFilterTemplate: String = s"$searchFiltersBase,$conditionIdsFilter,${priceFilter(0, 90)}"
 
       override val filter: EbayItemSummary => Boolean = { item =>
         !LISTING_NAME_TRIGGER_TAGS.matches(item.title) &&
