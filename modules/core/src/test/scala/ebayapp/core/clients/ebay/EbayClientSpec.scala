@@ -67,7 +67,7 @@ class EbayClientSpec extends IOWordSpec {
           "fieldgroups"  -> "EXTENDED",
           "limit"        -> "200",
           "category_ids" -> "139973",
-          "filter" -> "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000},deliveryCountry:GB,price:[0..90],priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE},itemStartDate:[2019-12-31T23:40:00Z]"
+          "filter" -> "deliveryCountry:GB,priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE},conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000},price:[0..90],itemStartDate:[2019-12-31T23:40:00Z]"
         )
       }
     }
@@ -251,6 +251,22 @@ class EbayClientSpec extends IOWordSpec {
       }
     }
 
+    "filter out items that are faulty" in {
+      val (authClient, browseClient) = mocks
+      val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
+
+      when(authClient.accessToken).thenReturn(IO.pure(accessToken))
+      when(browseClient.search(any[String], any[Map[String, String]]))
+        .thenReturn(List(ebayItemSummary(conditionId = 6000)).pure[IO])
+
+      val criteria      = SearchCriteria("airpods", itemKind = Some(ItemKind.Generic), category = Some("portable-audio"))
+      val itemsResponse = videoGameSearchClient.search(criteria)
+
+      itemsResponse.compile.toList.asserting { items =>
+        items mustBe Nil
+      }
+    }
+
     "get item details for each item id" in {
       val (authClient, browseClient) = mocks
       val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
@@ -300,7 +316,8 @@ class EbayClientSpec extends IOWordSpec {
       itemGroup: Option[String] = None,
       buyingOptions: List[String] = List("FIXED_PRICE"),
       shortDescription: Option[String] = None,
-      categoryId: Int = 139973
+      categoryId: Int = 139973,
+      conditionId: Int = 1000
   ): EbayItemSummary =
     EbayItemSummary(
       id,
@@ -310,7 +327,8 @@ class EbayClientSpec extends IOWordSpec {
       itemGroup,
       buyingOptions.toSet,
       shortDescription,
-      Some(Set(categoryId.toString))
+      Some(Set(categoryId.toString)),
+      Some(conditionId.toString)
     )
 
   def ebayItem: EbayItem =

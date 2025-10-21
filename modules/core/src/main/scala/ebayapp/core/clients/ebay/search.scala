@@ -35,47 +35,35 @@ private[ebay] object search {
   }
 
   object EbaySearchParams {
+    private val excludedConditionIds  = Set("7000", "8000", "9000")
+    private val accepterBuyingOptions = Set("FIXED_PRICE", "BEST_OFFER")
+    private val searchFiltersBase     = "deliveryCountry:GB,priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE}"
+    private val conditionIdsFilter    = "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000}"
+    private val priceFilter           = (from: Int, to: Int) => s"price:[$from..$to]"
+
     def get(criteria: SearchCriteria): Either[AppError, EbaySearchParams] =
       criteria.category
         .toRight(AppError.Critical("category kind is required in ebay-client"))
-        .flatMap(EbaySearchParams.get)
-
-    def get(category: String): Either[AppError, EbaySearchParams] =
-      category match {
-        case "portable-audio"            => Right(PortableAudioSearchParams)
-        case "smart-lighting"            => Right(SmartLightingSearchParams)
-        case c if c.startsWith("games-") => Right(VideoGameSearchParams)
-        case c                           => Left(AppError.Critical(s"unable to find search params for category '$c' in EbayClient"))
-      }
+        .flatMap {
+          case "portable-audio"            => Right(PortableAudioSearchParams)
+          case "smart-lighting"            => Right(SmartLightingSearchParams)
+          case c if c.startsWith("games-") => Right(VideoGameSearchParams)
+          case c                           => Left(AppError.Critical(s"unable to find search params for category '$c' in EbayClient"))
+        }
 
     private object PortableAudioSearchParams extends EbaySearchParams {
-
-      override val categoryId: Int = 15052
-
-      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000}," +
-        "deliveryCountry:GB," +
-        "priceCurrency:GBP," +
-        "itemLocationCountry:GB," +
-        "buyingOptions:{FIXED_PRICE}"
-
-      override val filter: EbayItemSummary => Boolean =
-        item => item.buyingOptions.intersect(Set("FIXED_PRICE", "BEST_OFFER")).nonEmpty
+      override val categoryId: Int                    = 15052
+      override val searchFilterTemplate: String       = searchFiltersBase
+      override val filter: EbayItemSummary => Boolean = { item =>
+        item.buyingOptions.intersect(accepterBuyingOptions).nonEmpty &&
+        !item.conditionId.exists(excludedConditionIds.contains)
+      }
     }
 
     private object SmartLightingSearchParams extends EbaySearchParams {
-      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000}," +
-        "deliveryCountry:GB," +
-        "price:[0..200]," +
-        "priceCurrency:GBP," +
-        "itemLocationCountry:GB," +
-        "buyingOptions:{FIXED_PRICE}"
-
-      override val categoryId: Int = 11700
-
-      private val ACCEPTER_BUYING_OPTIONS = Set("FIXED_PRICE", "BEST_OFFER")
-
-      override val filter: EbayItemSummary => Boolean =
-        item => item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
+      override val searchFilterTemplate: String       = s"$searchFiltersBase,$conditionIdsFilter,${priceFilter(0, 400)}"
+      override val categoryId: Int                    = 11700
+      override val filter: EbayItemSummary => Boolean = item => item.buyingOptions.intersect(accepterBuyingOptions).nonEmpty
     }
 
     private object VideoGameSearchParams extends EbaySearchParams {
@@ -179,22 +167,14 @@ private[ebay] object search {
         "redeem"
       ).mkString("^.*?(?i)(", "|", ").*$").r
 
-      override val categoryId: Int = 139973
-
-      override val searchFilterTemplate: String = "conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000}," +
-        "deliveryCountry:GB," +
-        "price:[0..90]," +
-        "priceCurrency:GBP," +
-        "itemLocationCountry:GB," +
-        "buyingOptions:{FIXED_PRICE}"
-
-      private val ACCEPTER_BUYING_OPTIONS = Set("FIXED_PRICE", "BEST_OFFER")
+      override val categoryId: Int              = 139973
+      override val searchFilterTemplate: String = s"$searchFiltersBase,$conditionIdsFilter,${priceFilter(0, 90)}"
 
       override val filter: EbayItemSummary => Boolean = { item =>
         !LISTING_NAME_TRIGGER_TAGS.matches(item.title) &&
         !LISTING_NAME_TRIGGER_WORDS.matches(item.title.replaceAll("[^a-zA-Z0-9 ]", "")) &&
         !LISTING_DESCRIPTION_TRIGGER_WORDS.matches(item.shortDescription.fold("")(_.replaceAll("[^a-zA-Z0-9 ]", ""))) &&
-        item.buyingOptions.intersect(ACCEPTER_BUYING_OPTIONS).nonEmpty
+        item.buyingOptions.intersect(accepterBuyingOptions).nonEmpty
       }
     }
   }

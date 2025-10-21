@@ -32,7 +32,8 @@ private[ebay] object responses {
       itemGroupType: Option[String],
       buyingOptions: Set[String],
       shortDescription: Option[String], // This field is returned by the search method only when fieldgroups = EXTENDED.
-      leafCategoryIds: Option[Set[String]]
+      leafCategoryIds: Option[Set[String]],
+      conditionId: Option[String]
   ) derives Codec.AsObject
 
   final case class ItemAvailabilities(
