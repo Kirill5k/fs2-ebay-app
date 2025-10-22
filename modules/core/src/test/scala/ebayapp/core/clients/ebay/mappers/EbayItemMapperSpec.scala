@@ -36,6 +36,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     None,
     None,
     None,
+    None,
     List(
       ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR")),
       ItemShippingOption("Royal Mail 2nd class", ShippingCost(BigDecimal(2.99), "GBR"))
@@ -67,6 +68,7 @@ class EbayItemMapperSpec extends AnyWordSpec with Matchers {
     "https://www.ebay.co.uk/itm/Samsung-Galaxy-S10-128gb-UNLOCKED-Prism-Blue-/114059888671",
     Some("Blue"),
     Some("Samsung"),
+    None,
     None,
     None,
     List(ItemShippingOption("Royal Mail 1st class", ShippingCost(BigDecimal(4.99), "GBR"))).some,

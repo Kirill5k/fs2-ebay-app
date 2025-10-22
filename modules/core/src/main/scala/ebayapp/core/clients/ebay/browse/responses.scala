@@ -58,6 +58,7 @@ private[ebay] object responses {
       color: Option[String],
       brand: Option[String],
       mpn: Option[String],
+      itemCreationDate: Option[Instant],
       itemEndDate: Option[Instant],
       shippingOptions: Option[List[ItemShippingOption]],
       estimatedAvailabilities: Option[List[ItemAvailabilities]]

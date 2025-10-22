@@ -62,7 +62,7 @@ private[ebay] object EbayItemMapper {
       description = item.description.map(_.replaceAll("(?i)<[^>]*>", "")).map(_.slice(0, 500)),
       image = item.image.map(_.imageUrl),
       condition = item.condition.toUpperCase,
-      datePosted = Instant.now,
+      datePosted = item.itemCreationDate.getOrElse(Instant.now),
       seller = item.seller.username.fold("EBAY")(s => s"EBAY:$s"),
       properties = {
         val itemProps  = item.localizedAspects.getOrElse(Nil).map(prop => prop.name -> prop.value).toMap
