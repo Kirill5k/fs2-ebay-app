@@ -9,30 +9,35 @@ import java.time.Instant
 class ElectronicsDetailsMapperSpec extends AnyWordSpec with Matchers {
 
   val testListing = ListingDetails(
-    "https://www.ebay.co.uk/itm/Call-of-Duty-Modern-Warfare-Xbox-One-/274204760218",
-    "Samsung Galaxy S10 128gb UNLOCKED Prism Blue",
-    None,
-    Some("Samsung Galaxy S10 Used"),
-    Some(
-      "Up For GrabsSamsung Galaxy S10 128gb UNLOCKED Prism BlueGood ConditionThe usual minor wear and Tear as you would expect from a used phone.It has been in a case with a screen protector since new however they appears tohave 1 x Deeper Scratch no more than 1cm long to the top left of the phone which does not affect the use of the phone nor does it show up when the screen is in use and you have got to look for it to see it when the screen is off.Comes with Wall Plug and Wire.I like the phone but unf"
-    ),
-    Some("https://i.ebayimg.com/images/g/yOMAAOSw~5ReGEH2/s-l1600.jpg"),
-    "USED",
-    Instant.now,
-    "EBAY:boris999",
-    Map(
-      "Brand"               -> "Samsung",
-      "Model"               -> "Samsung Galaxy S10",
-      "Storage Capacity"    -> "128 GB",
-      "Network"             -> "Unlocked",
-      "Colour"              -> "Pink",
-      "Manufacturer Colour" -> "Rose Gold, Pink"
+    url = "https://www.ebay.co.uk/itm/357777714939",
+    title = "Genuine AirPods Pro Max Headphones Space Grey - Excellent Used Condition",
+    category = Some("Headphones"),
+    shortDescription = Some("Always kept in case Excellent condition Has minor general signs of use"),
+    description = Some("Always kept in case Excellent condition Has minor general signs of use Can provide proof of purchase"),
+    image = Some("https://i.ebayimg.com/images/g/ZdQAAeSwhk9o9LbZ/s-l1600.jpg"),
+    condition = "USED",
+    datePosted = Instant.parse("2025-10-19T10:01:58.000Z"),
+    seller = "EBAY:billy7619",
+    properties = Map(
+      "Brand" -> "Apple",
+      "Model" -> "Apple AirPods Max",
+      "Colour" -> "Grey",
+      "CategoryId" -> "112529",
+      "Price" -> "406.52",
+      "Currency" -> "GBP",
+      "Postage" -> "4.26"
     )
   )
 
   "ElectronicsDetailsMapper" should {
 
-    "map listing details details to electronics item details" in
-      pending
+    "map listing details details to electronics item details" in {
+      val result = ElectronicsDetailsMapper.from(testListing)
+
+      result.brand mustBe Some("Apple")
+      result.model mustBe Some("Apple AirPods Max")
+      result.colour mustBe Some("Grey")
+      result.condition mustBe Some("USED")
+    }
   }
 }
