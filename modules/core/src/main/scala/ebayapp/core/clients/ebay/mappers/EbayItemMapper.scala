@@ -10,14 +10,16 @@ import java.time.Instant
 
 private[ebay] object EbayItemMapper {
   object Props {
-    val categoryId = "CategoryId"
-    val price      = "Price"
-    val postage    = "Postage"
-    val currency   = "Currency"
-    val brand      = "Brand"
-    val model      = "Model"
-    val colour     = "Colour"
-    val manColour  = "Manufacturer Colour"
+    val categoryId     = "CategoryId"
+    val price          = "Price"
+    val postage        = "Postage"
+    val currency       = "Currency"
+    val brand          = "Brand"
+    val model          = "Model"
+    val colour         = "Colour"
+    val manColour      = "Manufacturer Colour"
+    val productGrade   = "Product Grade"
+    val gradeOfProduct = "Grade Of Product"
   }
 
   type EbayItemMapper = ItemMapper[EbayItem]

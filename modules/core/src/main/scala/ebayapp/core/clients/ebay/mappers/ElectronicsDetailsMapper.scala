@@ -5,16 +5,24 @@ import ebayapp.core.domain.search.ListingDetails
 
 private[mappers] object ElectronicsDetailsMapper {
   
-  def from(listingDetails: ListingDetails): Electronics =
+  def from(listing: ListingDetails): Electronics =
     Electronics(
-      brand = listingDetails.properties.get(EbayItemMapper.Props.brand),
-      model = listingDetails.properties.get(EbayItemMapper.Props.model),
-      colour = mapColour(listingDetails),
-      condition = Some(listingDetails.condition)
+      brand = listing.properties.get(EbayItemMapper.Props.brand),
+      model = listing.properties.get(EbayItemMapper.Props.model),
+      colour = mapColour(listing),
+      condition = mapCondition(listing)
     )
 
-  private def mapColour(listingDetails: ListingDetails): Option[String] =
-    listingDetails.properties
+  private def mapCondition(listing: ListingDetails): Option[String] =
+    val originalCondition = Some(listing.condition)
+    originalCondition
+      .filter(_ == "New")
+      .orElse(listing.properties.get(EbayItemMapper.Props.productGrade))
+      .orElse(listing.properties.get(EbayItemMapper.Props.gradeOfProduct))
+      .orElse(originalCondition)
+  
+  private def mapColour(listing: ListingDetails): Option[String] =
+    listing.properties
       .get(EbayItemMapper.Props.manColour)
-      .orElse(listingDetails.properties.get(EbayItemMapper.Props.colour))
+      .orElse(listing.properties.get(EbayItemMapper.Props.colour))
 }
