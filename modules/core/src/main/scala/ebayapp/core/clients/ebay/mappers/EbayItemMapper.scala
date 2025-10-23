@@ -14,6 +14,10 @@ private[ebay] object EbayItemMapper {
     val price      = "Price"
     val postage    = "Postage"
     val currency   = "Currency"
+    val brand      = "Brand"
+    val model      = "Model"
+    val colour     = "Colour"
+    val manColour  = "Manufacturer Colour"
   }
 
   type EbayItemMapper = ItemMapper[EbayItem]
@@ -53,6 +57,12 @@ private[ebay] object EbayItemMapper {
       ResellableItem.generic(ItemDetails.Generic(ebayItem.title), listingDetails(ebayItem), price(ebayItem), None, foundWith)
   }
 
+  val electronicsDetailsMapper = new EbayItemMapper {
+    override def toDomain(foundWith: SearchCriteria)(ebayItem: EbayItem): ResellableItem =
+      val listing = listingDetails(ebayItem)
+      ResellableItem.electronics(ElectronicsDetailsMapper.from(listing), listing, price(ebayItem), None, foundWith)
+  }
+
   private[mappers] def listingDetails(item: EbayItem): ListingDetails =
     ListingDetails(
       url = item.itemWebUrl,
@@ -71,7 +81,11 @@ private[ebay] object EbayItemMapper {
           Props.currency -> item.price.currency,
           Props.postage  -> postageCost(item).toString()
         )
-        val otherProps = Map(Props.categoryId -> item.categoryId.toString)
+        val otherProps = Map(
+          Props.categoryId -> Some(item.categoryId.toString),
+          Props.brand      -> item.brand,
+          Props.colour     -> item.color
+        ).collect { case (k, Some(v)) => k -> v }
         itemProps.concat(priceProps).concat(otherProps)
       }
     )

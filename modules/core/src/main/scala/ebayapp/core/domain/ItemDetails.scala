@@ -33,7 +33,6 @@ object ItemDetails {
       List(make, model, storageCapacity, colour, network).sequence.map(_.mkString(" "))
 
   final case class Electronics(
-      name: Option[String],
       brand: Option[String],
       model: Option[String],
       colour: Option[String],
