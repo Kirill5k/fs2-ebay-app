@@ -15,8 +15,6 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.json.circe.TapirJsonCirce
 
-import java.time.Instant
-
 final private[controllers] class StockController[F[_]](
     private val stockServices: List[StockService[F]]
 )(using
