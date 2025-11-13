@@ -131,6 +131,6 @@ object StockService:
       client: SearchClient[F]
   ): F[StockService[F]] =
     (
-      Cache.make[F, String, ResellableItem](6.hours, 1.minute),
+      Cache.make[F, String, ResellableItem](12.hours, 1.minute),
       SignallingRef.of(false)
     ).mapN((cache, isPaused) => SimpleStockService[F](retailer, configProvider, client, cache, isPaused))
