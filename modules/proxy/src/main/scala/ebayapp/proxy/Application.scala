@@ -11,12 +11,12 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.Logger
 
 object Application extends IOApp.Simple:
-  given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
+  given logger: Logger[IO]   = Slf4jLogger.getLogger[IO]
   override val run: IO[Unit] =
     for
       _      <- logger.info(s"starting ebay-app-proxy ${sys.env.getOrElse("VERSION", "")}")
       config <- logger.info("loading config") *> AppConfig.load[IO]
-      _ <- logger.info("creating resources") *> Resources.make[IO](config).use { resources =>
+      _      <- logger.info("creating resources") *> Resources.make[IO](config).use { resources =>
         for
           interrupter        <- Interrupter.make[IO](config.interrupter)
           redirectController <- RedirectController.make[IO](resources, interrupter)

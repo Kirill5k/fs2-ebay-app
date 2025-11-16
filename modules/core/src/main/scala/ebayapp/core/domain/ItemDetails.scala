@@ -38,7 +38,7 @@ object ItemDetails {
       colour: Option[String],
       condition: Option[String]
   ) extends ItemDetails(ItemKind.Electronics) derives Codec.AsObject:
-    val fullName: Option[String] = 
+    val fullName: Option[String] =
       List(brand, model, colour, condition).sequence.map(_.mkString(" "))
 
   final case class VideoGame(
@@ -50,10 +50,10 @@ object ItemDetails {
     val fullName: Option[String] = (name, platform).mapN((n, p) => s"$n $p")
 
   inline given Encoder[ItemDetails] = Encoder.instance {
-    case d: Generic   => d.asJson.deepMerge(Json.obj("kind" := d.kind))
-    case d: Phone     => d.asJson.deepMerge(Json.obj("kind" := d.kind))
-    case d: VideoGame => d.asJson.deepMerge(Json.obj("kind" := d.kind))
-    case d: Clothing     => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: Generic     => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: Phone       => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: VideoGame   => d.asJson.deepMerge(Json.obj("kind" := d.kind))
+    case d: Clothing    => d.asJson.deepMerge(Json.obj("kind" := d.kind))
     case d: Electronics => d.asJson.deepMerge(Json.obj("kind" := d.kind))
   }
 

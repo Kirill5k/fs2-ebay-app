@@ -15,8 +15,8 @@ private[selfridges] object mappers {
       stock: List[ItemStock],
       price: Option[ItemPrice]
   ) {
-    val size: String  = stock.find(_.key.exists(_ == "SizeCode")).flatMap(_.value).getOrElse("ONE SIZE")
-    val quantity: Int = stock.map(_.`Stock Quantity Available to Purchase`).maxOption.getOrElse(0)
+    val size: String         = stock.find(_.key.exists(_ == "SizeCode")).flatMap(_.value).getOrElse("ONE SIZE")
+    val quantity: Int        = stock.map(_.`Stock Quantity Available to Purchase`).maxOption.getOrElse(0)
     val otherDetails: String = {
       val od = stock.filterNot(_.key.exists(_ == "SizeCode")).flatMap(_.value)
       if (od.isEmpty) "" else od.mkString(" (", ",", ")")
@@ -45,7 +45,7 @@ private[selfridges] object mappers {
 
       private def buyPrice(si: SelfridgesItem): BuyPrice = {
         val current = si.price.map(_.`Current Retail Price`).getOrElse(si.item.price.map(_.lowestPrice).min)
-        val rrp = si.price
+        val rrp     = si.price
           .flatMap(_.`Was Was Retail Price`)
           .orElse(si.price.flatMap(_.`Was Retail Price`))
           .orElse(si.item.price.flatMap(p => p.lowestWasWasPrice.orElse(p.lowestWasPrice)).maxOption)

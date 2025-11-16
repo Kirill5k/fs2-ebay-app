@@ -65,9 +65,9 @@ private[ebay] object search {
     }
 
     private object VideoGameSearchParams extends EbaySearchParams {
-      override val categoryId: Int = 139973
+      override val categoryId: Int              = 139973
       override val searchFilterTemplate: String = s"$searchFiltersBase,$conditionIdsFilter,${priceFilter(0, 90)}"
-      
+
       private val LISTING_NAME_TRIGGER_TAGS = List(
         "\\(DS\\)",
         "\\(XBOX\\)"

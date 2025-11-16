@@ -65,7 +65,7 @@ final private class RedirectController[F[_]](
       req.withHeaders(newHeaders)
     }
 
-    private def reloadOn403: Boolean = req.headers.get(XReloadOn403Header).isDefined
+    private def reloadOn403: Boolean             = req.headers.get(XReloadOn403Header).isDefined
     private def redirectUri: Either[String, Uri] =
       req.headers
         .get(XRerouteToHeader)

@@ -33,7 +33,7 @@ private[repositories] object entities {
       )
 
   object ResellableItemEntity:
-    given Codec[ListingDetails] = deriveCodec[ListingDetails]
+    given Codec[ListingDetails]                          = deriveCodec[ListingDetails]
     def from(item: ResellableItem): ResellableItemEntity =
       ResellableItemEntity(
         item.itemDetails.fullName,

@@ -70,7 +70,7 @@ class NotificationServiceSpec extends IOWordSpec {
         val client = mock[MessengerClient[IO]]
         when(client.send(any[Notification])).thenReturnUnit
 
-        val item = makeGeneric("macbook pro")
+        val item   = makeGeneric("macbook pro")
         val result = NotificationService
           .make(client)
           .flatTap(_.stockUpdate(item, StockUpdate.New))

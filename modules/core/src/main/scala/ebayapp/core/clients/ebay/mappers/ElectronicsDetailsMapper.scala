@@ -4,7 +4,7 @@ import ebayapp.core.domain.ItemDetails.Electronics
 import ebayapp.core.domain.search.ListingDetails
 
 private[mappers] object ElectronicsDetailsMapper {
-  
+
   def from(listing: ListingDetails): Electronics =
     Electronics(
       brand = listing.properties.get(EbayItemMapper.Props.brand),
@@ -20,7 +20,7 @@ private[mappers] object ElectronicsDetailsMapper {
       .orElse(listing.properties.get(EbayItemMapper.Props.productGrade))
       .orElse(listing.properties.get(EbayItemMapper.Props.gradeOfProduct))
       .orElse(originalCondition)
-  
+
   private def mapColour(listing: ListingDetails): Option[String] =
     listing.properties
       .get(EbayItemMapper.Props.manColour)

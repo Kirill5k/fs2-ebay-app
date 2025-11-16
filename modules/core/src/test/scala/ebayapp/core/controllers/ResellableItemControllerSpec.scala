@@ -114,7 +114,10 @@ class ResellableItemControllerSpec extends HttpRoutesWordSpec {
       val controller = new ResellableItemController[IO](service)
 
       val request =
-        Request[IO](uri = uri"/resellable-items?limit=100&skip=5&from=2020-01-01&to=2020-01-01T00:00:01Z&kind=video-game", method = Method.GET)
+        Request[IO](
+          uri = uri"/resellable-items?limit=100&skip=5&from=2020-01-01&to=2020-01-01T00:00:01Z&kind=video-game",
+          method = Method.GET
+        )
       val response = controller.routes.orNotFound.run(request)
 
       response mustHaveStatus (Status.Ok, Some("""[]"""))

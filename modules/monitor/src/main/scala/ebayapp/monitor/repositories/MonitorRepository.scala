@@ -68,6 +68,6 @@ final private class LiveMonitorRepository[F[_]](
 }
 
 object MonitorRepository extends MongoJsonCodecs:
-  private val collectionName = "monitors"
+  private val collectionName                                                 = "monitors"
   def make[F[_]: Async](database: MongoDatabase[F]): F[MonitorRepository[F]] =
     database.getCollectionWithCodec[MonitorEntity](collectionName).map(LiveMonitorRepository[F](_))

@@ -35,7 +35,7 @@ class ErrorsNotifierSpec extends IOWordSpec {
 
     "send termination signal on critical errors" in {
       val services = MockServices.make
-      val res = Logger.make[IO].flatMap { implicit logger =>
+      val res      = Logger.make[IO].flatMap { implicit logger =>
         for
           logger          <- Logger.make[IO]
           notifier        <- ErrorsNotifier.make[IO](services)

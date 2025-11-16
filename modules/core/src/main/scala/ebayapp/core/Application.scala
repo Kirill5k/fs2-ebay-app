@@ -22,7 +22,7 @@ object Application extends IOApp.Simple:
       for
         _         <- logger.info(s"starting ebay-app-core ${sys.env.getOrElse("VERSION", "")}")
         appConfig <- logger.info("loading app config") *> AppConfig.loadDefault[IO]
-        _ <- Resources.make[IO](appConfig).use { resources =>
+        _         <- Resources.make[IO](appConfig).use { resources =>
           for
             _              <- logger.info("created resources")
             repositories   <- Repositories.make(resources.database) <* logger.info("created repositories")
@@ -31,7 +31,7 @@ object Application extends IOApp.Simple:
             services       <- Services.make(configProvider, clients, repositories) <* logger.info("created services")
             tasks          <- Tasks.make(services) <* logger.info("created tasks")
             controllers    <- Controllers.make(services) <* logger.info("created controllers")
-            _ <- logger.info("starting http server") *> Server
+            _              <- logger.info("starting http server") *> Server
               .serveEmber[IO](appConfig.server, controllers.routes)
               .concurrently(tasks.runAll)
               .interruptWhen(logger.awaitSigTerm)

@@ -46,7 +46,7 @@ final private class SimpleStockService[F[_]](
   override def stockUpdates: Stream[F, ItemStockUpdates] =
     for
       reloads <- Stream.eval(Queue.unbounded[F, Long])
-      upd <- configProvider
+      upd     <- configProvider
         .stockMonitor(retailer)
         .zipWithIndex
         .evalTap((_, n) => reloads.offer(n))
@@ -82,7 +82,7 @@ final private class SimpleStockService[F[_]](
 
   private def logCacheSize(frequency: FiniteDuration): F[Unit] =
     F.sleep(frequency) >> cachedItems.flatMap { items =>
-      val item = if items.size == 1 then "item" else "items"
+      val item   = if items.size == 1 then "item" else "items"
       val groups =
         if items.isEmpty then ""
         else items.groupMapReduce(_.foundWith.query)(_ => 1)(_ + _).mkString("(", ", ", ")")

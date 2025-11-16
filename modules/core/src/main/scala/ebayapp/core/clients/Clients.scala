@@ -42,8 +42,8 @@ object Clients:
       mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.fs2Backend)
       flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.fs2Backend)
     yield new Clients[F]:
-      def cex: CexClient[F]             = cexClient
-      def messenger: MessengerClient[F] = telegramClient
+      def cex: CexClient[F]                        = cexClient
+      def messenger: MessengerClient[F]            = telegramClient
       def get(retailer: Retailer): SearchClient[F] =
         retailer match
           case Retailer.Cex              => cexClient

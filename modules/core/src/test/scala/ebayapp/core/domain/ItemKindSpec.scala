@@ -11,7 +11,13 @@ class ItemKindSpec extends AnyWordSpec with Matchers {
 
     "serialise ItemKind to json string" in {
 
-      ItemKind.values.map(_.asJson.noSpaces).toSet mustBe Set("\"generic\"", "\"video-game\"", "\"mobile-phone\"", "\"clothing\"", "\"electronics\"")
+      ItemKind.values.map(_.asJson.noSpaces).toSet mustBe Set(
+        "\"generic\"",
+        "\"video-game\"",
+        "\"mobile-phone\"",
+        "\"clothing\"",
+        "\"electronics\""
+      )
     }
 
     "deserialise json string to ItemKind" in {

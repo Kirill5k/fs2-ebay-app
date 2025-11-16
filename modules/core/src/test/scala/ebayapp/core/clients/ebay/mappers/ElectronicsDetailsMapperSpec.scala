@@ -19,13 +19,13 @@ class ElectronicsDetailsMapperSpec extends AnyWordSpec with Matchers {
     datePosted = Instant.parse("2025-10-19T10:01:58.000Z"),
     seller = "EBAY:billy7619",
     properties = Map(
-      "Brand" -> "Apple",
-      "Model" -> "Apple AirPods Max",
-      "Colour" -> "Grey",
+      "Brand"      -> "Apple",
+      "Model"      -> "Apple AirPods Max",
+      "Colour"     -> "Grey",
       "CategoryId" -> "112529",
-      "Price" -> "406.52",
-      "Currency" -> "GBP",
-      "Postage" -> "4.26"
+      "Price"      -> "406.52",
+      "Currency"   -> "GBP",
+      "Postage"    -> "4.26"
     )
   )
 

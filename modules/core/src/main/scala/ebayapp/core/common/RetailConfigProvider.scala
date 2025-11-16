@@ -96,7 +96,7 @@ final private class ReactiveRetailConfigProvider[F[_]](
   private def streamUpdates[C](getConfig: RetailConfig => Option[C]): Stream[F, C] =
     for
       currentConfig <- Stream.eval(Ref.of[F, Option[C]](None))
-      c <- (Stream.eval(state.get) ++ updates.subscribeUnbounded)
+      c             <- (Stream.eval(state.get) ++ updates.subscribeUnbounded)
         .map(getConfig)
         .zip(Stream.eval(currentConfig.get).repeat)
         .map {
@@ -159,7 +159,7 @@ object RetailConfigProvider {
     for
       rc  <- initialConfig
       upd <- Topic[F, RetailConfig]
-      _ <- repo.updates
+      _   <- repo.updates
         .evalTap(c => logger.info("received retail config update from database") >> rc.set(c))
         .through(upd.publish)
         .compile

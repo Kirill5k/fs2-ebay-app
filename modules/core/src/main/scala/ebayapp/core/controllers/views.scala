@@ -7,7 +7,7 @@ import io.circe.{Codec, Encoder}
 object views {
 
   final case class ResellableItemStats(
-      total: Int,
+      total: Int
   ) derives Codec.AsObject
 
   final case class ItemPrice(

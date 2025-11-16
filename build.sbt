@@ -25,7 +25,7 @@ val docker = Seq(
   dockerRepository   := sys.env.get("DOCKER_REPO_URI"),
   dockerBaseImage    := "amazoncorretto:25-alpine",
   dockerUpdateLatest := true,
-  dockerCommands := {
+  dockerCommands     := {
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)
     val (before, after)  = stage1.splitAt(4)

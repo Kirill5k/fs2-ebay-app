@@ -64,7 +64,7 @@ object NotificationService:
         buy              = item.buyPrice.rrp
         profitPercentage = sell.credit * 100 / buy - 100
         url              = item.listingDetails.url
-        msg =
+        msg              =
           s"""NEW "$itemSummary" - ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: $quantity) $url"""
       yield Notification.Deal(msg)
 

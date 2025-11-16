@@ -30,8 +30,8 @@ final private[repositories] case class MonitorEntity(
     )
 
 private[repositories] object MonitorEntity extends JsonCodecs with MongoJsonCodecs {
-  given Codec[MonitorEntity] = deriveCodec[MonitorEntity]
-  given MongoCodecProvider[MonitorEntity] = deriveCirceCodecProvider[MonitorEntity]
+  given Codec[MonitorEntity]                = deriveCodec[MonitorEntity]
+  given MongoCodecProvider[MonitorEntity]   = deriveCirceCodecProvider[MonitorEntity]
   def from(monitor: Monitor): MonitorEntity =
     MonitorEntity(
       monitor.id.toObjectId,

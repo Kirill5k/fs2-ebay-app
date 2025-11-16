@@ -58,7 +58,7 @@ final private class LiveArgosClient[F[_]](
       }
       .flatMap { r =>
         r.body match {
-          case Right(response) => response.data.some.pure[F]
+          case Right(response)                                                  => response.data.some.pure[F]
           case Left(ResponseException.DeserializationException(body, error, _)) =>
             logger.error(s"$name-search response parsing error: ${error.getMessage}, \n$body") *>
               none[SearchData].pure[F]
