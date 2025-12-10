@@ -21,7 +21,7 @@ export default function StockPage() {
           (stockFilters.minDiscount === undefined || (item.price.discount && item.price.discount >= stockFilters.minDiscount))
   ), [stock.items, stockFilters])
 
-  const filteredAndSortedItems = useMemo(() => filteredItems.sort((a: ResellableItem, b: ResellableItem): number => {
+  const filteredAndSortedItems = useMemo(() => [...filteredItems].sort((a: ResellableItem, b: ResellableItem): number => {
     switch (stockSort.by) {
       case 'price':
         return stockSort.asc ? a.price.buy - b.price.buy : b.price.buy - a.price.buy
