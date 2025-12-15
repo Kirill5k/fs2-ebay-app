@@ -23,9 +23,9 @@ final private class RedirectController[F[_]](
   private val XReloadOn403Header    = CIString("X-Reload-On-403")
   private val XAcceptEncodingHeader = CIString("X-Accept-Encoding")
 
-  private val AcceptEncodingHeader = CIString("accept-encoding")
+  private val HeadersToRemove = Set(XRerouteToHeader, XRerouteToHeader, XAcceptEncodingHeader)
 
-  private val invalidHeaderRegex = "^((x|cf|fly|sec)-.*|host|via)$"
+  private val AcceptEncodingHeader = CIString("accept-encoding")
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
@@ -53,7 +53,7 @@ final private class RedirectController[F[_]](
     private def withSanitisedHeaders: Request[F] = {
       var newHeaders = Headers.empty
       req.headers.foreach { header =>
-        if (!header.name.toString.toLowerCase.matches(invalidHeaderRegex)) {
+        if (!HeadersToRemove.contains(header.name)) {
           newHeaders = newHeaders.put(header)
         }
       }
