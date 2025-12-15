@@ -43,7 +43,7 @@ final private class LiveJdClient[F[_]](
     Stream.eval(configProvider()).flatMap { config =>
       brandItems(criteria)
         .filter(_.sale)
-        .evalMap(item => F.sleep(randomDelay(config)).as(item))
+        .evalTap(_ => F.sleep(randomDelay(config)))
         .evalMap(i => getProductStock(i))
         .unNone
         .map { p =>
