@@ -81,6 +81,7 @@ final private class LiveJdClient[F[_]](
           basicRequest
             .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
             .headers(defaultHeaders)
+            .header(Header(HeaderNames.Origin, config.websiteUri))
             .header(Header(HeaderNames.Referer, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
             .headers(config.headers)
         }
@@ -113,6 +114,7 @@ final private class LiveJdClient[F[_]](
           basicRequest
             .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
             .headers(defaultHeaders)
+            .header(Header(HeaderNames.Origin, config.websiteUri))
             .header(Header(HeaderNames.Referer, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
             .headers(config.headers)
         }
