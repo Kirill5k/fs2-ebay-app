@@ -32,13 +32,18 @@ final private class LiveJdClient[F[_]](
 
   override protected val name: String = retailer.name
 
-  private val stepSize = 200
+  private val stepSize = 50 // Reduced from 200 to appear less bot-like
+
+  private def randomDelay(config: GenericRetailerConfig): FiniteDuration =
+    config.delayBetweenIndividualRequests
+      .map(d => (d.toMillis + scala.util.Random.nextInt(3000)).millis)
+      .getOrElse((3000 + scala.util.Random.nextInt(5000)).millis)
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
       brandItems(criteria)
         .filter(_.sale)
-        .metered(config.delayBetweenIndividualRequests.getOrElse(5.second))
+        .evalMap(item => F.sleep(randomDelay(config)).as(item))
         .evalMap(i => getProductStock(i))
         .unNone
         .map { p =>

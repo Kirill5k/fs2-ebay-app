@@ -12,20 +12,20 @@ import org.typelevel.ci.CIString
 import org.typelevel.log4cats.Logger
 
 final private class RedirectController[F[_]](
-    private val standardClient: Client[F],
-    private val interrupter: Interrupter[F]
-)(using
-    F: Concurrent[F],
-    logger: Logger[F]
-) extends Controller[F] with Http4sDsl[F] {
+                                              private val standardClient: Client[F],
+                                              private val interrupter: Interrupter[F]
+                                            )(using
+                                              F: Concurrent[F],
+                                              logger: Logger[F]
+                                            ) extends Controller[F] with Http4sDsl[F] {
 
   private val XRerouteToHeader      = CIString("X-Reroute-To")
   private val XReloadOn403Header    = CIString("X-Reload-On-403")
   private val XAcceptEncodingHeader = CIString("X-Accept-Encoding")
 
-  private val HeadersToRemove = Set(XRerouteToHeader, XRerouteToHeader, XAcceptEncodingHeader)
-
   private val AcceptEncodingHeader = CIString("accept-encoding")
+
+  private val invalidHeaderRegex = "^((x-reroute|x-reload)-.*|host)$"
 
   override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
@@ -53,7 +53,7 @@ final private class RedirectController[F[_]](
     private def withSanitisedHeaders: Request[F] = {
       var newHeaders = Headers.empty
       req.headers.foreach { header =>
-        if (!HeadersToRemove.contains(header.name)) {
+        if (!header.name.toString.toLowerCase.matches(invalidHeaderRegex)) {
           newHeaders = newHeaders.put(header)
         }
       }
