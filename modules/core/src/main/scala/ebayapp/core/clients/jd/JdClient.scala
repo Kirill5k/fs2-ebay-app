@@ -32,7 +32,7 @@ final private class LiveJdClient[F[_]](
 
   override protected val name: String = retailer.name
 
-  private val stepSize = 50 // Reduced from 200 to appear less bot-like
+  private val stepSize = 50
 
   private def randomDelay(config: GenericRetailerConfig): FiniteDuration =
     config.delayBetweenIndividualRequests
@@ -71,9 +71,8 @@ final private class LiveJdClient[F[_]](
   private def brandItems(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
     Stream
       .unfoldLoopEval(0) { step =>
-        searchByBrand(criteria, step).map { items =>
-          (items, Option.when(items.size == stepSize)(step + 1))
-        }
+        searchByBrand(criteria, step)
+          .map(items => items -> Option.when(items.size == stepSize)(step + 1))
       }
       .flatMap(Stream.emits)
 
