@@ -12,7 +12,7 @@ jobs:
       APP_NAME: "fs2-app"
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Login to Container Registry
@@ -22,10 +22,10 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_API_KEY }}
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 23
+          java-version: 25
           cache: sbt
       - name: Setup sbt
         uses: sbt/setup-sbt@v1
