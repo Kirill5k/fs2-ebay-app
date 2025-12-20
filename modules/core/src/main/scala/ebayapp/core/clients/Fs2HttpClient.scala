@@ -3,6 +3,7 @@ package ebayapp.core.clients
 import cats.effect.Temporal
 import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
+import cats.syntax.flatMap.*
 import ebayapp.core.common.Logger
 import kirill5k.common.cats.syntax.applicative.*
 import sttp.capabilities.fs2.Fs2Streams
@@ -53,18 +54,24 @@ trait Fs2HttpClient[F[_]] {
   private def dispatchWithRetry[T](
       request: Request[T],
       attempt: Int = 0,
-      maxRetries: Int = 100
+      maxRetries: Int = 10
   )(using
       F: Temporal[F],
       logger: Logger[F]
   ): F[Response[T]] =
     request
       .send[F](backend)
+      .flatMap { response =>
+        if (response.code.code >= 500 && attempt < maxRetries) {
+          logger.warn(s"$name-client/server-error-$attempt: status=${response.code.code}") *>
+            F.sleep(calculateBackoffDelay(attempt)) *> dispatchWithRetry(request, attempt + 1, maxRetries)
+        } else F.pure(response)
+      }
       .handleErrorWith { error =>
         if (attempt < maxRetries) {
           val cause   = Option(error.getCause).getOrElse(error)
           val message = s"$name-client/${cause.getClass.getSimpleName.toLowerCase}-$attempt: ${cause.getMessage}\n$error"
-          F.ifTrueOrElse(attempt >= 50 && attempt % 10 == 0)(logger.error(message), logger.warn(message)) *>
+          F.ifTrueOrElse(attempt >= 5 && attempt % 5 == 0)(logger.error(message), logger.warn(message)) *>
             F.sleep(calculateBackoffDelay(attempt)) *> dispatchWithRetry(request, attempt + 1, maxRetries)
         } else F.raiseError(error)
       }
