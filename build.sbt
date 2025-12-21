@@ -1,5 +1,6 @@
 import com.typesafe.sbt.packager.docker.*
 import sbtghactions.JavaSpec
+import org.typelevel.scalacoptions.ScalacOptions
 
 ThisBuild / scalaVersion                        := "3.7.4"
 ThisBuild / version                             := scala.sys.process.Process("git rev-parse HEAD").!!.trim.slice(0, 7)
@@ -34,25 +35,29 @@ val docker = Seq(
   }
 )
 
+val common = Seq(
+  Test / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement)
+)
+
 val kernel = project
   .in(file("modules/kernel"))
+  .settings(common)
   .settings(
     name       := "fs2-ebay-app-kernel",
     moduleName := "fs2-ebay-app-kernel",
-    libraryDependencies ++= Dependencies.kernel ++ Dependencies.test,
-    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
+    libraryDependencies ++= Dependencies.kernel ++ Dependencies.test
   )
 
 val core = project
   .in(file("modules/core"))
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
+  .settings(common)
   .settings(docker)
   .settings(
     name                 := "fs2-ebay-app-core",
     moduleName           := "fs2-ebay-app-core",
     Docker / packageName := "fs2-app-core", // fs2-app/core
-    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val proxy = project
@@ -60,12 +65,12 @@ val proxy = project
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
+  .settings(common)
   .settings(
     name                 := "fs2-ebay-app-proxy",
     moduleName           := "fs2-ebay-app-proxy",
     Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
     libraryDependencies ++= Dependencies.proxy,
-    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val monitor = project
@@ -73,12 +78,12 @@ val monitor = project
   .dependsOn(kernel % "test->test;compile->compile")
   .enablePlugins(JavaAppPackaging, JavaAgent, DockerPlugin)
   .settings(docker)
+  .settings(common)
   .settings(
     name                 := "fs2-ebay-app-monitor",
     moduleName           := "fs2-ebay-app-monitor",
     Docker / packageName := "fs2-app-monitor", // fs2-app/monitor
     libraryDependencies ++= Dependencies.monitor,
-    Test / scalacOptions += "-Wconf:msg=unused value of type:silent"
   )
 
 val root = project
