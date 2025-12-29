@@ -1,3 +1,4 @@
+import {useEffect} from 'react'
 import {ChevronLeft, ChevronRight} from 'lucide-react'
 import {Button} from '@/components/ui/button'
 
@@ -8,6 +9,27 @@ interface PaginationFooterProps {
 }
 
 const PaginationFooter = ({currentPage, totalPages, onPageChange}: PaginationFooterProps) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement).tagName)) {
+        return
+      }
+
+      if (e.key === 'ArrowLeft') {
+        if (currentPage > 1) {
+          onPageChange(currentPage - 1)
+        }
+      } else if (e.key === 'ArrowRight') {
+        if (currentPage < totalPages) {
+          onPageChange(currentPage + 1)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentPage, totalPages, onPageChange])
+
   const pages = []
   const maxVisiblePages = 5
 
