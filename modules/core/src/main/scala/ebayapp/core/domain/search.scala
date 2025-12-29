@@ -15,7 +15,7 @@ object search {
       deny: Option[List[String]] = None
   ) derives ConfigReader, Codec.AsObject {
     private val denyRegex: Option[String]  = deny.map(_.mkString("(?i).*(", "|", ").*"))
-    private val allowRegex: Option[String] = allow.map(_.mkString("(?i).*(", "|", ").*"))
+    private val allowRegex: Option[String] = allow.map(_.map(i => s"(?=.*$i)").mkString("(?i)", "", ".*"))
 
     private def mergeOptWith[A](op1: Option[A], op2: Option[A], f: (A, A) => A): Option[A] =
       (op1, op2) match

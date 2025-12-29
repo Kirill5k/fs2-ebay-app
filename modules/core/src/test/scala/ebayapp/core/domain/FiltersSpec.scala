@@ -45,6 +45,13 @@ class FiltersSpec extends AnyWordSpec with Matchers {
       Filters(allow = Some(List("mario 2"))).apply(game) mustBe false
     }
 
+    "return true when item matches all allow filters" in {
+      val game = makeVideoGame("super mario 3")
+
+      Filters(allow = Some(List("sonic", "super"))).apply(game) mustBe false
+      Filters(allow = Some(List("mario", "super"))).apply(game) mustBe true
+    }
+
     "return false when item has excluded name and include filter is present" in {
       val game = makeVideoGame("super mario 3")
 
