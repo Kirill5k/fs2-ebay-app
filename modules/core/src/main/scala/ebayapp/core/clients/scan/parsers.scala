@@ -31,13 +31,13 @@ private[scan] object parsers {
           .split("""li class="product"""")
           .tail
           .filter(_.contains("Item in stock"))
-          .map { rawItem =>
-            ScanItem(
-              nameRegex.findFirstIn(rawItem).get,
-              urlRegex.findFirstIn(rawItem).get,
-              imageRegex.findFirstIn(rawItem).get,
-              priceRegex.findFirstIn(rawItem).get.replace(",", "").toDouble
-            )
+          .flatMap { rawItem =>
+            for {
+              name  <- nameRegex.findFirstIn(rawItem)
+              url   <- urlRegex.findFirstIn(rawItem)
+              image <- imageRegex.findFirstIn(rawItem)
+              price <- priceRegex.findFirstIn(rawItem).flatMap(_.replace(",", "").toDoubleOption)
+            } yield ScanItem(name, url, image, price)
           }
           .toList
       }.toEither
