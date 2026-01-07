@@ -267,6 +267,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(\\bMWIII\\b)", "MW3")
       .replaceAll("(?i)(\\bMWII\\b)", "MW2")
       .replaceAll("(?i)(Telltale(\\s+series)?(\\s+season)?)", "Telltale")
+      .replaceAll("(?i)(Grand Theft Auto\\s+){2,}", "Grand Theft Auto ")
       .replaceAll(" +", " ")
       .replaceAll("[^\\d\\w]$", "")
       .trim()

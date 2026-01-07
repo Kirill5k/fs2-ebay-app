@@ -184,10 +184,11 @@ class GameDetailsMapperSpec extends AnyWordSpec with Matchers with Inspectors {
     "map gta and rdr to full title" in
       forAll(
         Map(
+          "Grand Theft Auto gta5"     -> "Grand Theft Auto 5",
           "gta5"                      -> "Grand Theft Auto 5",
           "gta 5"                     -> "Grand Theft Auto 5",
           "Grand Theft Auto VI + map" -> "Grand Theft Auto VI",
-          "grand theft auto gta"      -> "grand theft auto Grand Theft Auto",
+          "grand theft auto gta"      -> "Grand Theft Auto",
           "rdr"                       -> "Red Dead Redemption",
           "sunset overdrive"          -> "sunset overdrive"
         )
