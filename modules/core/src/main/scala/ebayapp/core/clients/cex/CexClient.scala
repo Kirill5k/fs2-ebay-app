@@ -50,10 +50,10 @@ final private class CexGraphqlClient[F[_]](
       case Some(fullName) => resellPriceCache.get(fullName).map(sp => item.copy(sellPrice = sp.flatten))
       case None           => item.pure[F]
 
-  private def obtainPricesFromCex(items: List[ResellableItem]): F[List[ResellableItem]] = {
+  private def obtainPricesFromCex(items: List[ResellableItem]): F[List[ResellableItem]] =
     val searchRequests = items.flatMap(_.itemDetails.fullName).distinct.map(GraphqlSearchRequest(_, false))
-    if (searchRequests.isEmpty) F.pure(items)
-    else {
+    F.ifM(F.pure(searchRequests.isEmpty))(
+      F.pure(items),
       dispatchSearchRequest(searchRequests*)
         .flatMap { res =>
           val resByQuery = res.results.getOrElse(Nil).map(sr => sr.query -> sr.hits).toMap
@@ -68,8 +68,7 @@ final private class CexGraphqlClient[F[_]](
             )
           }
         }
-    }
-  }
+    )
 
   private def logPriceMatchMiss(query: String, category: Option[String], hitsBeforeFilter: Int, hitsAfterFilter: Int): F[Unit] = {
     val allowedCats = category.flatMap(c => CexClient.categories.get(c))
@@ -99,12 +98,9 @@ final private class CexGraphqlClient[F[_]](
   }
 
   override def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem] =
-    item.itemDetails.fullName match {
-      case None =>
-        reportItemWithoutName(item)
-      case Some(name) =>
-        findSellPrice(name, item.foundWith.category).map(sp => item.copy(sellPrice = sp))
-    }
+    item.itemDetails.fullName match
+      case None       => reportItemWithoutName(item)
+      case Some(name) => findSellPrice(name, item.foundWith.category).map(sp => item.copy(sellPrice = sp))
 
   private def findSellPrice(query: String, category: Option[String]): F[Option[SellPrice]] =
     resellPriceCache.evalPutIfNew(query) {
