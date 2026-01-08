@@ -43,7 +43,7 @@ private[mappers] object GameDetailsMapper {
     "(in )?((absolutely|near) )?(great|(very )?good|ex(cellent)?|amazing|nice|mint|superb|(full(y)? )?working|perfect|used|(fully )?tested|lovely|clean|immaculate|fantastic|\\bfab\\b|decent|fair|\\bV\\b)(?s).*{0,9}(dis(c|k)(s)?|working( (perfectly|fine))?|good|(working )?order|con(d)?(ition)?|perfectly|value|prices)",
     "(official\\s+)?(\\bUK\\b|\\bEU(R)?\\b|genuine|european|platinum|original|essentials)( (edition|region|release|new|only|seller|version|stock|import|copy))?( 20\\d\\d)?",
     // removes common publishers
-    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|Pix N Love|proje(k|c)t red|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|koch media|Activision( (NG|Blizzard))?|TOPLITZ PRODUCTIONS|square enix|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
+    "((from|by) )?(Disney(s)?( )?Pixar(s)?|Outright Games|Pix N Love|proje(k|c)t red|rocksteady|Gearbox|Treyarch|Interactive Entertainment|WB Games|cideo|\\bTHQ\\b|Bethesda(s)?( Softworks)?|(EA|2k) (dice|music|sport(s)?|games)|Codemasters|Capcom|CD Projekt Red|red art|DC Comics|Take (Two|2)( (NG|Interactive))?|elect(r)?onic arts|Warner Bro(ther)?s|rockstar games|ubisoft|(bandai )?namco|Bend Studio|Crytek|EastAsiaSoft|Hideo Kojima|Naughty Dog|koch media|Activision( (NG|Blizzard))?|TOPLITZ PRODUCTIONS|square enix|hard copy|Dreamworks|Insomniac(s)?|lucasfilm|LucasArt(s)?)( (games|presents|publishing))?",
     "currys", "James Camerons", "\\bTom clan\\w+( S)?\\b", "Sid Meiers",
     "gamecube", "James Bond", "Peter Jacksons", "\\bMarvel( )?s\\b",
     "Microsoft(s)?( 20\\d\\d)?", "(by )?sony", "nintendo( \\d+)?", "Disneys", "Amazon(couk|com)?", "xbox()?(original)?",
@@ -106,7 +106,7 @@ private[mappers] object GameDetailsMapper {
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
-    "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post|\bPO\\b)", "for kids",
+    "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post(age)?|\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated",
     "essentials", "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?", "huge saving(s)?",
     "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very|mega) rare", "award winning",

@@ -93,7 +93,7 @@ private[ebay] object search {
         "(subscription|gift|ps\\d|steam|network|digital|will send|insta(nt)?|digital|key)( |-)?(card|code|key)", "disc \\d missing", "(instant|digital) delivery", "faulty", "damaged",
         "(store|reservation|access|cd|unlock|unused|digital|upgrade|test|psn|beta|\\bUK\\b|no)( )?(redeem )?(\\bDL\\b|eshop|avatar|game|code|key)",
         "(software|cartridge(s)?|cart(s)?|game|disk(s)?|disc(s)?( \\d)?|cover|box|inlay|sleeve|book|cd|collection|manual|card(s)?|promo|Accessories|cloth map|disc (one|two|\\d)) only",
-        "only cart", "STAND HUB", "nacon", "stereo hset", "Subsonic PRO", "Japanese", "NL Ver",
+        "only cart", "STAND HUB", "nacon", "stereo hset", "Subsonic PRO", "Japanese", "NL Ver", "Mini Arcade Pro", "Faceplates",
         "(case|variety|accessor(ies|y)|storage|charge|robot|dice|charging|streaming) (pack|system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "pass set", "keychain",
         "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch|empty|cargo|slim|lux)\\s+(sleeve|pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging|power|desk|console|media|portable)( )?(charging|dock|station|stand)", "download",
