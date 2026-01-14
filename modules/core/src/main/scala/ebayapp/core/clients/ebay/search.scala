@@ -75,13 +75,13 @@ private[ebay] object search {
 
       // format: off
       private val LISTING_NAME_TRIGGER_WORDS = List(
-        "\\bPC(CD)?\\b",
+        "\\bPC(CD)?\\b", "&test$",
         "^NA -.*", "^(PS4|xbox|switch) games$", "^\\d+( )?game$",
         "\\d+( )?(x)?( (various|used))?( (XBOX( ONE)?|PS4|PS5|playstation|nintendo switch))?( video)? games",
         "(PS(4|5)?|XBOX) game(s)?( X)? \\d+",
         "(various video|nintendo switch) games","(various video|nintendo switch) games", "set of \\d",
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d",
-        "upcoming.{1,5}game",
+        "upcoming.{1,5}game", "(Dummy( game)?|private) Listing", "(Nintendo|official|promotional) magazin",
         "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games", "buy any \\d for",
         "\\b200[0-9]\\b", "(demo|game|global|premium|shop)( )?(code|disc|key|cart|pass)",
         "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b", "blox fruit",
@@ -97,7 +97,7 @@ private[ebay] object search {
         "(case|variety|accessor(ies|y)|storage|charge|robot|dice|charging|streaming) (pack|system|set|kit|box)", "no dis(c|k)", "Season( \\d)? Pass", "pass set", "keychain",
         "(canvas|replacement|cover|carry|travel(er)?|commuter|carrying|just( the)?|no|hard|storage|game|vault|phone|card|foreign|metal|console|protection|protective|nintendo switch|empty|cargo|slim|lux)\\s+(sleeve|pouch|case|bag)",
         "(read|see) (detail|desc|post)", "please(?s).*read", "read(?s).*please", "(docking|charging|power|desk|console|media|portable)( )?(charging|dock|station|stand)", "download",
-        "official (server|magazin)", "Option File", "offline", "online", "unlock all", "mini dock", "Press Release", "Pre( )?Release", "card reader",
+        "Option File", "offline", "online", "unlock all", "mini dock", "Press Release", "Pre( )?Release", "card reader",
         "coin", "skins", "(pencil|traveller|system|collectors|empty|steel|slim|display|switch|messenger)( )?((game )?box|case)", "soundtrack", "poster", "protection accessor", "PLAYSTAND", "(character|SILICONE) skin",
         "(no|protective|foreign|case|slip|silicone|phone|style|\\bUS\\b|miss(ing)?) cover(s)?", "promotional game", "Microphone", "KontrolFreek", "fitness ring",
         "sniper thumbs", "(game|skin|thumb|Silicone|floating) +grip", "(screen|grip|case|fighting) (protector|combat|stick)", "(sports|leg) strap", "Cleaning Cloth",
@@ -149,7 +149,7 @@ private[ebay] object search {
         "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "[A-Z]\\d{4,6}(A|Z)",
         "(rune|million|level|crafting|material|armour|set)(?s).*elden ring", "elden ring(?s).*(armour|set|rune|million|level|crafting|material)",
         "Pok(e|é)?mon", "dragon(s)? dogma(?s).*(item|upgraded|gold|stone|pack|weapon|ring|each|corset)", "\\bCD32\\b",
-        "dying light.*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank", "Dummy( game)? Listing",
+        "dying light.*(damage|tier|legendary)", "ACNH.*(tool|ticket)", "Temtem.*Pansun", "To be edited", "random Blank",
         "\\bTBC\\b", "windows( )?(pc|\\d|xp|vista)", "\\b(2|3)DS\\b", "Master System", "sega (game gear|saturn)",
         "forza.*(cars|Wheelspin)", "demon soul.*level", "\\bBDSP\\b", " DS PEGI", "\\bWII\\b", "Roblox", "\\bVPN\\b", "\\bDVD\\b", "\\bNDS\\b", "\\bOLED\\b",
         "rocket l(?s).*(paint|hustle|ghost|Fennec|boost|level|dueli|dragon|reward|octane|item|bod|car|fire|import|trade|inventor|rare|crate|decal|wheel|goal|explos)",
