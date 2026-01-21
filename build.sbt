@@ -2,7 +2,7 @@ import com.typesafe.sbt.packager.docker.*
 import sbtghactions.JavaSpec
 import org.typelevel.scalacoptions.ScalacOptions
 
-ThisBuild / scalaVersion                        := "3.7.4"
+ThisBuild / scalaVersion                        := "3.8.0"
 ThisBuild / version                             := scala.sys.process.Process("git rev-parse HEAD").!!.trim.slice(0, 7)
 ThisBuild / organization                        := "io.github.kirill5k"
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
@@ -36,7 +36,9 @@ val docker = Seq(
 )
 
 val common = Seq(
-  Test / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement)
+  Test / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement),
+  tpolecatExcludeOptions ++= Set(ScalacOptions.fatalWarnings),
+  scalacOptions += "-Werror"
 )
 
 val kernel = project
@@ -57,7 +59,7 @@ val core = project
   .settings(
     name                 := "fs2-ebay-app-core",
     moduleName           := "fs2-ebay-app-core",
-    Docker / packageName := "fs2-app-core", // fs2-app/core
+    Docker / packageName := "fs2-app-core" // fs2-app/core
   )
 
 val proxy = project
@@ -70,7 +72,7 @@ val proxy = project
     name                 := "fs2-ebay-app-proxy",
     moduleName           := "fs2-ebay-app-proxy",
     Docker / packageName := "fs2-app-proxy", // fs2-app/proxy
-    libraryDependencies ++= Dependencies.proxy,
+    libraryDependencies ++= Dependencies.proxy
   )
 
 val monitor = project
@@ -83,7 +85,7 @@ val monitor = project
     name                 := "fs2-ebay-app-monitor",
     moduleName           := "fs2-ebay-app-monitor",
     Docker / packageName := "fs2-app-monitor", // fs2-app/monitor
-    libraryDependencies ++= Dependencies.monitor,
+    libraryDependencies ++= Dependencies.monitor
   )
 
 val root = project
