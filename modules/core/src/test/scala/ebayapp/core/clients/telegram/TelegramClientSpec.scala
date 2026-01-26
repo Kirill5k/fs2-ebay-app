@@ -96,7 +96,7 @@ class TelegramClientSpec extends Sttp4WordSpec {
         res    <- client.send(Notification.Deal(message))
       yield res
 
-      result.assertThrows(AppError.Http(400, "error sending message to telegram channel m1: 400"))
+      result.assertThrows(AppError.Http(400, "error sending message to telegram channel m1"))
     }
   }
 }

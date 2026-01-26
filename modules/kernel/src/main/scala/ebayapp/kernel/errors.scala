@@ -6,7 +6,9 @@ object errors {
     override def getMessage: String = message
 
   object AppError:
-    final case class Http(status: Int, message: String) extends AppError
+    final case class Http(status: Int, error: String) extends AppError:
+      override def message: String = s"HTTP $status - $error"
+      
     final case class Auth(message: String)              extends AppError
     final case class Json(message: String)              extends AppError
     final case class Failed(message: String)            extends AppError

@@ -35,7 +35,7 @@ final private class LiveTelegramClient[F[_]](
           case Left(_) if r.code == StatusCode.TooManyRequests => F.sleep(10.seconds) *> send(n)
           case Left(error)                                     =>
             logger.error(s"error sending message to telegram: ${r.code}\n$error") *>
-              F.raiseError(AppError.Http(r.code.code, s"error sending message to telegram channel ${config.channelId(n)}: ${r.code}"))
+              F.raiseError(AppError.Http(r.code.code, s"error sending message to telegram channel ${config.channelId(n)}"))
       }
     }
 
