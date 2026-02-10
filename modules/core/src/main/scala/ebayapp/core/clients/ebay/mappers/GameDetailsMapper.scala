@@ -102,7 +102,7 @@ private[mappers] object GameDetailsMapper {
     "(last one )?in stock( now)?", "never( been)? (opened|played)", "(only )?played (once|twice)",
     "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm",
-    "directors cut", "original", "english( language)?( version)?", "(limited )?amazing offer",
+    "directors cut", "original", "english( language)?( (version|cover))?", "(limited )?amazing offer",
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
