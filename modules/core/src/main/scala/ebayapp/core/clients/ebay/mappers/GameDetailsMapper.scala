@@ -3,6 +3,8 @@ package ebayapp.core.clients.ebay.mappers
 import ebayapp.core.domain.ItemDetails.VideoGame
 import ebayapp.core.domain.search.ListingDetails
 
+import java.util.regex.Pattern
+
 private[mappers] object GameDetailsMapper {
   // format: off
   private val CONSOLE_REGEX_PATTERN = List(
@@ -82,7 +84,7 @@ private[mappers] object GameDetailsMapper {
     "(Harley Quinn)? DLC",
     // removes remaster or similar
     "Re( )?(elect|Master|make)(ed)?( 20\\d\\d)?",
-    "(s|c)ellophane wrapped", "free\\s+upgrade", "(official )?Strategy Combat( guide)?", "upgrade available",
+    "[sc]ellophane wrapped", "free\\s+upgrade", "(official )?Strategy Combat( guide)?", "upgrade available",
     "(First Person|FPS|1st) Shooter", "(american|soccer) football( 20\\d\\d)?", "(racing|auto|golf|football) sport(s)?",
     "Adventure role playing", "ice hockey", "shoot em up", "Sport(s)? (skateboard|basketball|football( soccer)?)",
     "football soccer( sim(ulator)?)?", "action (action|survival|stealth|thriller)", "(car|motorcycles|rally) (Driving|Racing)",
@@ -105,7 +107,7 @@ private[mappers] object GameDetailsMapper {
     "directors cut", "english( language)?( (version|cover))?", "(limited )?amazing offer",
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
-    "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post(age)?|\bPO\\b)", "for kids",
+    "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post(age)?|\\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated",
     "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?", "huge saving(s)?",
     "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very|mega) rare", "award winning",
@@ -149,6 +151,12 @@ private[mappers] object GameDetailsMapper {
     "(?<=Dragon)(?=Ball)"
   ).mkString("(?i)", "|", "")
   // format: on
+
+  private val LEVEL1_PATTERN     = Pattern.compile(LEVEL1_TITLE_WORDS_REPLACEMENTS)
+  private val LEVEL2_PATTERN     = Pattern.compile(LEVEL2_TITLE_WORDS_REPLACEMENTS)
+  private val LEVEL3_PATTERN     = Pattern.compile(LEVEL3_TITLE_WORDS_REPLACEMENTS)
+  private val EDGE_WORDS_PATTERN = Pattern.compile(EDGE_WORDS_REPLACEMENTS)
+  private val SEPARATORS_PATTERN = Pattern.compile(SEPARATORS)
 
   private val PLATFORMS_MATCH_REGEX = List(
     "(?<![a-zA-Z])PS( )?[1-5]",
@@ -218,59 +226,56 @@ private[mappers] object GameDetailsMapper {
 
   private def sanitizeTitle(title: String): Option[String] =
     title.withoutSpecialChars
-      .replaceAll("(?i)(\\bFormula 1\\b)", "F1")
-      .replaceAll(EDGE_WORDS_REPLACEMENTS, "")
-      .replaceAll(LEVEL1_TITLE_WORDS_REPLACEMENTS, "")
-      .replaceAll(LEVEL2_TITLE_WORDS_REPLACEMENTS, "")
-      .replaceAll(LEVEL3_TITLE_WORDS_REPLACEMENTS, "")
-      .replaceAll(SEPARATORS, " ")
-      .replaceFirst(
-        "(?<=\\w+ )(\\s+)?(?i)\\w+(?=\\s+(\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|coll(ection)?)) (\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|\\bedn\\b|coll(ection)?)(?s).*$",
-        ""
-      )
+      .replaceAll("(?i)\\bFormula 1\\b", "F1")
+      .replaceAll(EDGE_WORDS_PATTERN, "")
+      .replaceAll(LEVEL1_PATTERN, "")
+      .replaceAll(LEVEL2_PATTERN, "")
+      .replaceAll(LEVEL3_PATTERN, "")
+      .replaceAll(SEPARATORS_PATTERN, " ")
+      .replaceFirst("(?<=\\w+ )(\\s+)?(?i)\\w+(?=\\s+(\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|coll(ection)?)) (\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|\\bedn\\b|coll(ection)?)(?s).*$", "")
       .replaceAll("(?i)\\bll\\b", "II")
       .replaceAll("(?i)\\blll\\b", "III")
-      .replaceAll("(?i)(\\bww2|ww11\\b)", "wwii")
-      .replaceAll("(?i)(\\bcod\\b)", "Call of Duty ")
-      .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (2|II)(?s).*", "WWII")
-      .replaceAll("(?i)(\\bSF( )?6\\b)", "Street Fighter 6")
-      .replaceAll("(?i)(\\bGT( )?7\\b)", "Gran Turismo 7")
-      .replaceAll("(?i)(resident evil \\bVII\\b)", "Resident Evil 7")
-      .replaceAll("(?i)(resident evil (8|\\bVIII\\b))", "Resident Evil Village")
-      .replaceAll("(?i)(littlebigplanet)", "Little Big Planet")
-      .replaceAll("(?i)(Read Dead Redemption)", "Red Dead Redemption")
-      .replaceAll("(?i)(?<!WWE )(W2K)", "WWE 2k")
-      .replaceAll("(?i)(\\bR6\\b)", "Rainbow Six")
-      .replaceAll("(?i)Mortal Comba(t|r)", "Mortal Kombat")
-      .replaceAll("(?i)(Hello Neighbour)", "Hello Neighbor")
-      .replaceAll("(?i)((?<=f1 manager )(?=\\b\\d{2}\\b))", "20")
-      .replaceAll("(?i)(witcher iii)", "witcher 3")
-      .replaceAll("(?i)(wolfenstein (II|2))", "Wolfenstein")
-      .replaceAll("(?i)(wafare|warefare)", "Warfare")
-      .replaceAll("(?i)(as(s)?a(s)?(s)?in)", "Assassin")
-      .replaceAll("(?i)(va(l)?(l)?hal(l)?a)", "Valhalla")
-      .replaceAll("(?i)(World Rally Championship)", "WRC")
-      .replaceAll("(?i)(\\bPVZ\\b)", "Plants vs Zombies ")
-      .replaceAll("(?i)(\\bnsane\\b)", "N Sane")
-      .replaceAll("(?i)(\\bmoto gp\\b)", "MotoGP")
+      .replaceAll("(?i)\\b(?:ww2|ww11)\\b", "wwii")
+      .replaceAll("(?i)\\bcod\\b", "Call of Duty ")
+      .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (?:2|II)(?s).*", "WWII")
+      .replaceAll("(?i)\\bSF( )?6\\b", "Street Fighter 6")
+      .replaceAll("(?i)\\bGT( )?7\\b", "Gran Turismo 7")
+      .replaceAll("(?i)resident evil \\bVII\\b", "Resident Evil 7")
+      .replaceAll("(?i)resident evil (?:8|\\bVIII\\b)", "Resident Evil Village")
+      .replaceAll("(?i)littlebigplanet", "Little Big Planet")
+      .replaceAll("(?i)Read Dead Redemption", "Red Dead Redemption")
+      .replaceAll("(?i)(?<!WWE )W2K", "WWE 2k")
+      .replaceAll("(?i)\\bR6\\b", "Rainbow Six")
+      .replaceAll("(?i)Mortal Comba[tr]", "Mortal Kombat")
+      .replaceAll("(?i)Hello Neighbour", "Hello Neighbor")
+      .replaceAll("(?i)(?<=f1 manager )(?=\\b\\d{2}\\b)", "20")
+      .replaceAll("(?i)witcher iii", "witcher 3")
+      .replaceAll("(?i)wolfenstein (?:II|2)", "Wolfenstein")
+      .replaceAll("(?i)(?:wafare|warefare)", "Warfare")
+      .replaceAll("(?i)as(s)?a(s)?(s)?in", "Assassin")
+      .replaceAll("(?i)va(l)?(l)?hal(l)?a", "Valhalla")
+      .replaceAll("(?i)World Rally Championship", "WRC")
+      .replaceAll("(?i)\\bPVZ\\b", "Plants vs Zombies ")
+      .replaceAll("(?i)\\bnsane\\b", "N Sane")
+      .replaceAll("(?i)\\bmoto gp\\b", "MotoGP")
       .replaceAll("(?i)(?<=(^| ))RDR( )?(?=\\d)?", "Red Dead Redemption ")
       .replaceAll("(?i)(?<=(^| ))GTA( )?(?=\\d)?", "Grand Theft Auto ")
-      .replaceAll("(?i)(\\bMGS\\b)", "Metal Gear Solid ")
-      .replaceAll("(?i)(\\bRainbow 6\\b)", "Rainbow Six ")
-      .replaceAll("(?i)(\\bLEGO Star Wars III\\b)", "LEGO Star Wars 3 ")
-      .replaceAll("(?i)(\\bEpisodes From Liberty City\\b)", "Liberty")
-      .replaceAll("(?i)(\\bIIII\\b)", "4")
-      .replaceAll("(?i)(nitro( )?fuelled)", "Nitro Fueled")
-      .replaceAll("(?i)(\\bGW\\b)", "Garden Warfare ")
-      .replaceAll("(?i)(\\bGW2\\b)", "Garden Warfare 2")
-      .replaceAll("(?i)(\\bMWIII\\b)", "MW3")
-      .replaceAll("(?i)(\\bMWII\\b)", "MW2")
-      .replaceAll("(?i)(Telltale(\\s+series)?(\\s+season)?)", "Telltale")
-      .replaceAll("(?i)(Grand Theft Auto\\s+){2,}", "Grand Theft Auto ")
+      .replaceAll("(?i)\\bMGS\\b", "Metal Gear Solid ")
+      .replaceAll("(?i)\\bRainbow 6\\b", "Rainbow Six ")
+      .replaceAll("(?i)\\bLEGO Star Wars III\\b", "LEGO Star Wars 3 ")
+      .replaceAll("(?i)\\bEpisodes From Liberty City\\b", "Liberty")
+      .replaceAll("(?i)\\bIIII\\b", "4")
+      .replaceAll("(?i)nitro( )?fuelled", "Nitro Fueled")
+      .replaceAll("(?i)\\bGW\\b", "Garden Warfare ")
+      .replaceAll("(?i)\\bGW2\\b", "Garden Warfare 2")
+      .replaceAll("(?i)\\bMWIII\\b", "MW3")
+      .replaceAll("(?i)\\bMWII\\b", "MW2")
+      .replaceAll("(?i)Telltale(\\s+series)?(\\s+season)?", "Telltale")
+      .replaceAll("(?i)(?:Grand Theft Auto\\s+){2,}", "Grand Theft Auto ")
       .replaceAll(" +", " ")
       .replaceAll("[^\\d\\w]$", "")
       .trim()
-      .replaceAll(EDGE_WORDS_REPLACEMENTS, "")
+      .replaceAll(EDGE_WORDS_PATTERN, "")
       .maybeNonBlank
 
   private def mapPlatform(listingDetails: ListingDetails): Option[String] =
@@ -292,9 +297,11 @@ private[mappers] object GameDetailsMapper {
       .maybeNonBlank
 
   extension (str: String)
-    def maybeNonBlank: Option[String] =
+    private def replaceAll(pattern: Pattern, replacement: String): String =
+      pattern.matcher(str).replaceAll(replacement)
+    private def maybeNonBlank: Option[String] =
       Option.when(!str.isBlank)(str.trim)
-    def withoutSpecialChars: String =
+    private def withoutSpecialChars: String =
       str
         .replaceAll("ß", "b")
         .replaceAll("&#\\d+;", "")
