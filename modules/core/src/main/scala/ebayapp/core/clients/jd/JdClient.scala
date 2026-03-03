@@ -76,7 +76,7 @@ final private class LiveJdClient[F[_]](
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 5): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
         dispatch {
@@ -94,8 +94,10 @@ final private class LiveJdClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
+          case Left(_) if r.code == StatusCode.Forbidden && attempt == maxAttempts =>
+            logger.error(s"$name-search/403-${criteria.query}\n${r.request.uri}") *> F.pure(Nil)
           case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.error(s"$name-search/403-${criteria.query}\n${r.request.uri}") *>
+            logger.warn(s"$name-search/403-${criteria.query}\n${r.request.uri}") *>
               F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
               searchByBrand(criteria, step, attempt + 1)
           case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
@@ -104,14 +106,12 @@ final private class LiveJdClient[F[_]](
             F.pure(Nil)
           case Left(_) if r.code.isClientError =>
             logger.error(s"$name-search/${r.code}-error") *> F.pure(Nil)
-          case Left(_) if r.code.isServerError =>
-            logger.warn(s"$name-search/${r.code}-repeatable") *> F.sleep(3.second) *> searchByBrand(criteria, step)
           case Left(error) =>
             logger.error(s"$name-search/error: $error") *> F.sleep(3.second) *> searchByBrand(criteria, step)
         }
       }
 
-  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0): F[Option[JdProduct]] =
+  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 3): F[Option[JdProduct]] =
     configProvider()
       .flatMap { config =>
         dispatch {
@@ -127,6 +127,8 @@ final private class LiveJdClient[F[_]](
         r.body match {
           case Right(html) =>
             F.fromEither(ResponseParser.parseProductStockResponse(html))
+          case Left(_) if r.code == StatusCode.Forbidden && attempt == maxAttempts =>
+            logger.error(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}") *> F.pure(None)
           case Left(_) if r.code == StatusCode.Forbidden =>
             logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}") *>
               F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
@@ -135,8 +137,6 @@ final private class LiveJdClient[F[_]](
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
           case Left(_) if r.code.isClientError =>
             logger.error(s"$name-get-stock/${r.code}-error") *> F.pure(None)
-          case Left(_) if r.code.isServerError =>
-            logger.warn(s"$name-get-stock/${r.code}-repeatable") *> F.sleep(1.second) *> getProductStock(ci)
           case Left(error) =>
             logger.error(s"$name-get-stock: $error") *> F.sleep(1.second) *> getProductStock(ci)
         }
