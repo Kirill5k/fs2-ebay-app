@@ -210,7 +210,7 @@ private[mappers] object GameDetailsMapper {
     "MICROSOFTXBOXONE"       -> "XBOX ONE",
     "MICROSOFTXBOX360"       -> "XBOX 360",
     "MICROSOFTXBOX"          -> "XBOX",
-    "MICROSOFTXBOXSERIESX|S" -> "XBOX",
+    "MICROSOFTXBOXSERIESXS"  -> "XBOX",
     "XBOXX"                  -> "XBOX",
     "WIIU"                   -> "WII U",
     "WII"                    -> "WII"
@@ -283,7 +283,7 @@ private[mappers] object GameDetailsMapper {
       .findFirstIn(listingDetails.title.withoutSpecialChars)
       .orElse(listingDetails.properties.get("Platform").map(_.split("[,/]")(0)))
       .map(_.toUpperCase.trim)
-      .map(_.replaceAll("[ \\-]", ""))
+      .map(_.replaceAll("[ \\-|]", ""))
       .map(platform => PLATFORM_MAPPINGS.getOrElse(platform, platform))
       .map(_.trim)
       .filterNot(_.equalsIgnoreCase("SEEDESCRIPTIONFORDETAILS"))
