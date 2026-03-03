@@ -58,7 +58,7 @@ private[mappers] object GameDetailsMapper {
     "(?<=cyber) (?=punk)", "(?<=Warhammer) (40k|40( )?000)", "zero dawn.*(?=forbidden)",
     "Formula (1|One)\\s+(?=F1)", "(?<=F1)\\s+(Formula( )?(one|1)?)( racing)?", "(?<=20\\d\\d).*formula(?s).*",
     "Marvel(s)?\\s+(?=(iron man|deadpool|Spider))", "(?<=Sonic) Hedgehog",
-    "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\b",
+    "(?<=\\b[ivx]{1,4}\\b)(\\s+)\\d+", "(?<=\\d) \\b[ivx]{1,4}\\b", "(?<=1) \\bone\\b",
     "COD\\s+(?=Call of duty)", "AC\\s+(?=assassins creed)", "ACNH\\s+(?=Animal Crossing New Horizons)",
     "(?<=resident evil (vii|7)).*biohazard.*", "(?<=Fallout 76) wastelanders","(?<=resident evil village) (8|VIII)", "(?<=resident evil) (8|VIII)(?= village)",
     // removes year from some titles
@@ -94,7 +94,7 @@ private[mappers] object GameDetailsMapper {
     "deleted title", "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "ebays cheapest",
     "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)( )?(X|S)?\\b", "\\bRev\\d+\\b",
     "Formula One World Championship", "\\bNo Figure(s)?\\b",
-    "platinum", "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
+    "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Stric(t|k)ly limited", "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "(inc|with)? Lenticular (cover|Sleeve)",
     "plays perfect", "100 trusted seller", "(Backward(s)? )?compatible( with)?", "(bundle|physical|1st|2nd) copy", "nuevo", "(big|steel)( )?box( version)?",
     "Scratch Free", "no scratches", "(map\\s+)?(manual(s)?|instructions)(\\s+map)?( (is|are))?( not)?( (included|missing))?",
@@ -102,12 +102,12 @@ private[mappers] object GameDetailsMapper {
     "(last one )?in stock( now)?", "never( been)? (opened|played)", "(only )?played (once|twice)",
     "(great|best) price( on ebay)?", "Special Reserve", "Expertly Refurbished Product", "(quality|value) guaranteed",
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm",
-    "directors cut", "original", "english( language)?( (version|cover))?", "(limited )?amazing offer",
+    "directors cut", "english( language)?( (version|cover))?", "(limited )?amazing offer",
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
     "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post(age)?|\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated",
-    "essentials", "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?", "huge saving(s)?",
+    "Re Mars tered", "booklet", "classic(s)?( (hit(s)?|version))?", "huge saving(s)?",
     "(\\bcase\\b|box|map).{0,20}(cart(ridge)?|included|complete|manual)", "(super|very|mega) rare", "award winning",
     "Instruction(s)? Book", "works (great|perfectly( fine)?)", "Unwanted Gift", "limited (release|quantity)",
     "region (free|1|2)", "gift idea", "in case", "add( |-)?on(( content)? pack)?", "jeu console",
@@ -123,7 +123,7 @@ private[mappers] object GameDetailsMapper {
     "\\bstd\\b", "\\bpsh\\b", "\\bAMP\\b", "\\bRPG\\b", "\\bBBFC\\b", "\\bPG(13)?\\b", "\\bDVD\\b",
     "\\bSE\\b", "\\bPA2\\b", "\\bWi1\\b", "\\bENG\\b", "\\bVGWO\\b", "\\bFPS\\b", "\\b(PS( |\\d)?)?VR(2)?\\b( (version|virtual reality))?",
     "\\bDEFY\\b", "\\bArgos\\b", "\\bGD\\b", "\\bSRG(\\d+)?\\b", "\\bEA(N)?\\b", "\\bGC\\b", "\\bCIB\\b",
-    "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b", "(?<=\\d)PS\\d", "\bXBOX\b", "\bCASED\b",
+    "\\bFOR PC\\b", "\\bLOT 2\\b", "\\bSO4\\b", "\\bT18\\b", "(?<=\\d)PS\\d", "\\bXBOX\\b", "\\bCASED\\b",
     "(100 )?((all|fully) )?complete( (map|mint|instructions|package))?", "(condition )?NEW(\\s+)?$"
   ).mkString("(?i)", "|", "")
 
@@ -233,7 +233,7 @@ private[mappers] object GameDetailsMapper {
       .replaceAll("(?i)(\\bww2|ww11\\b)", "wwii")
       .replaceAll("(?i)(\\bcod\\b)", "Call of Duty ")
       .replaceAll("(?i)(?<=Call of Duty )(?s).*World War (2|II)(?s).*", "WWII")
-      .replaceAll("(?i)(\\bSF( )?6\\b)", "Street Fighter 7")
+      .replaceAll("(?i)(\\bSF( )?6\\b)", "Street Fighter 6")
       .replaceAll("(?i)(\\bGT( )?7\\b)", "Gran Turismo 7")
       .replaceAll("(?i)(resident evil \\bVII\\b)", "Resident Evil 7")
       .replaceAll("(?i)(resident evil (8|\\bVIII\\b))", "Resident Evil Village")
