@@ -32,7 +32,7 @@ private[mappers] object GameDetailsMapper {
 
   private val LEVEL2_TITLE_WORDS_REPLACEMENTS = List(
     CONSOLE_REGEX_PATTERN,
-    "(\\w+)?\\d{5,}(\\w+)?", "\\d{3,}\\s+\\d{4,}", "for playstation( )?vr(2)?", "((ps( )?)?(vr(2)?|move)|kinect|fit|balance board) (needed|required|compatible)",
+    "\\w*\\d{5,}\\w*", "\\d{3,}\\s+\\d{4,}", "for playstation( )?vr(2)?", "((ps( )?)?(vr(2)?|move)|kinect|fit|balance board) (needed|required|compatible)",
     "requires kinect( sensor)?", "(dbl|double|dual|triple|twin|expansion|comb|mega).{0,10}(pass|pack|pk)",
     "new in (wrapper|wrapping|cellophane|packaging|box)( still wrapped)?",
     "Now Released(?s).*$", "Release date(?s).*$", "includes( free(?s).*$|.{0,20}pack(?s).*$| \\w+)", "amazon.{0,20}exclusive(?s).*$",
