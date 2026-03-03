@@ -104,7 +104,6 @@ private[mappers] object GameDetailsMapper {
     "(trusted )?(eBay|best|from ebays biggest) (shop|Seller)(s)?", "fully (working|tested)", "Order By 4pm",
     "directors cut", "original", "english( language)?( (version|cover))?", "(limited )?amazing offer",
     "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
-    "deluxe", "standard", "Official(l)?(y)? Licen(s|c)ed", "machine cleaned", "Reuse Reduce Recycle",
     "\\bctr\\b", "\\bgoty\\b", "mult(i)?( )?lang(uage)?(s)?( in game)?", "(in )?\\bvg(c| con(d)?(ition)?)?\\b( condition)?",
     "(with )?(fast|free|(1|one|same|next)( )?day)( )?(delivery|dispatch|post(age)?|\bPO\\b)", "for kids",
     "fast free", "blu( )?ray( film)?", "Console Exclusive", "playable on", "Definitive Experience", "Highly Rated",
@@ -137,7 +136,7 @@ private[mappers] object GameDetailsMapper {
     "(near )?mint$", "\\bfor\\b$", "premium$", "\\bVERY\\b$", "\\bLIMITED\\b$",
     "(cleaned )?(fully )?(un)?tested$", "\\bON\\b$", "\\bBY\\b$", "^cheap(est)?( on ebay)?",
     "boxed$", "brand$", "good$", "brilliant$", "excellent$", "(fully )?working$",
-    "immaculate$", "instructions$", "superb$", "marvel$", "combo$", "^mint", "^sale", "^boxed",
+    "immaculate$", "instructions$", "superb$", "marvel$", "combo$", "^mint",
     "^NA ",
   ).mkString("(?i)", "|", "")
 
