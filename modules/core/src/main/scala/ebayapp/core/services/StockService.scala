@@ -62,8 +62,7 @@ final private class SimpleStockService[F[_]](
       Stream
         .emits(config.monitoringRequests.zipWithIndex)
         .map { (req, index) =>
-          preloadCache(config.filtersOrDefault, req)
-            .delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
+          preloadCache(config.filtersOrDefault, req).delayBy(config.delayBetweenRequestsOrDefault * index.toLong) ++
             Stream
               .awakeDelay(config.monitoringFrequency)
               .flatMap(_ => getUpdates(config.filtersOrDefault, req))
@@ -113,10 +112,14 @@ final private class SimpleStockService[F[_]](
       }
 
   extension (config: StockMonitorConfig)
-    private def filtersOrDefault: Filters                     = config.filters.getOrElse(Filters())
-    private def delayBetweenRequestsOrDefault: FiniteDuration = config.delayBetweenRequests.getOrElse(Duration.Zero)
+    private def filtersOrDefault: Filters =
+      config.filters.getOrElse(Filters())
+    private def delayBetweenRequestsOrDefault: FiniteDuration =
+      config.delayBetweenRequests.getOrElse(Duration.Zero)
 
-  extension (sc: SearchCriteria) private def filtersOrDefault: Filters = sc.filters.getOrElse(Filters())
+  extension (sc: SearchCriteria)
+    private def filtersOrDefault: Filters =
+      sc.filters.getOrElse(Filters())
 
   extension (item: ResellableItem)
     private def key: String = s"${item.listingDetails.url}-${item.itemDetails.fullName.getOrElse("unknown")}"
