@@ -73,7 +73,7 @@ final private class SimpleStockService[F[_]](
         .onFinalize(cache.clear >> logger.info(s"closing $serviceName-monitor stream"))
 
   private def preloadCache(confFilters: Filters, req: StockMonitorRequest): Stream[F, Nothing] =
-    Stream.logInfo(s"preloading $serviceName-monitor cache") ++
+    Stream.logInfo(s"preloading $serviceName-monitor cache for ${req.searchCriteria}") ++
       client
         .search(req.searchCriteria)
         .filter(confFilters.mergeWith(req.searchCriteria.filtersOrDefault)(_))
@@ -81,7 +81,7 @@ final private class SimpleStockService[F[_]](
         .drain ++
       Stream
         .eval(cachedItems.map(_.size))
-        .evalMap(size => logger.info(s"preloaded $size items into $serviceName-monitor cache"))
+        .evalMap(size => logger.info(s"preloaded $size items into $serviceName-monitor cache for ${req.searchCriteria}"))
         .drain
 
   private def logCacheSize(frequency: FiniteDuration): F[Unit] =
