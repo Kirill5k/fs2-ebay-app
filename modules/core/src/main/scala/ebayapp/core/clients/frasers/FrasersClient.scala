@@ -97,7 +97,7 @@ final private class LiveFrasersClient[F[_]](
             logger.error(s"$name-search/${meta.code}-critical") >>
               F.sleep(10.second) >> getItems(sc)(page)
           case Left(error) =>
-            logger.warn(s"$name-search/error-${r.code.code}: ${error.getMessage}") >>
+            logger.warn(s"$name-search/error-${r.code.code}: ${error.getMessage}\n${r.request.uri}") >>
               F.sleep(5.second) >> getItems(sc)(page)
       }
 
