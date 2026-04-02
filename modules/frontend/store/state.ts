@@ -116,7 +116,7 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
       const from = dealsFilters.from.toISOString()
       const to = dealsFilters.to.toISOString()
       try {
-        const limit = 500
+        const limit = 100
         let skip = 0
         let allItems: ResellableItem[] = []
         let hasMore = true
