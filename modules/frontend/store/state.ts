@@ -104,7 +104,7 @@ const defaultState: DealsState = {
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const fetchWithRetry = async (url: string, retries = 3, backoffMs = 1000): Promise<Response> => {
+const fetchWithRetry = async (url: string, retries = 5, backoffMs = 1000): Promise<Response> => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     const response = await fetch(url)
     if (response.ok) return response
@@ -132,13 +132,13 @@ export const createDealsStore = (initState: DealsState = defaultState) => {
       const from = encodeURIComponent(dealsFilters.from.toISOString())
       const to = encodeURIComponent(dealsFilters.to.toISOString())
       try {
-        const limit = 100
+        const limit = 250
         let skip = 0
         let allItems: ResellableItem[] = []
         let hasMore = true
 
         while (hasMore) {
-          if (skip > 0) await delay(300)
+          if (skip > 0) await delay(250)
           const response = await fetchWithRetry(`/api/resellable-items?from=${from}&to=${to}&limit=${limit}&skip=${skip}`)
           const items: ResellableItem[] = await response.json()
 
