@@ -1,8 +1,8 @@
 import {Card, CardContent, CardTitle, CardDescription, CardHeader} from '@/components/ui/card'
 import {Badge} from '@/components/ui/badge'
+import {Spinner} from '@/components/ui/spinner'
 import {ResellableItem} from '@/store/state'
 import {useMemo} from 'react'
-import {Loader2} from 'lucide-react'
 
 interface QuerySummary {
   retailer: string
@@ -59,8 +59,10 @@ const DealsSummary = ({items, loading}: {items: ResellableItem[], loading: boole
         <CardTitle className="flex items-center justify-between">
           <span>Deals Found in the Last 24 Hours</span>
           <div className="flex items-center gap-2">
-            {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
-            <Badge variant="secondary">{totalItems} items</Badge>
+            <Badge variant="secondary">
+              {loading && <Spinner data-icon="inline-start" />}
+              {totalItems} items
+            </Badge>
           </div>
         </CardTitle>
         <CardDescription>Summary of profitable deals found by retailer and search query</CardDescription>
