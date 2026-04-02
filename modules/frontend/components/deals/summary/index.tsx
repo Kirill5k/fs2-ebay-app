@@ -60,7 +60,7 @@ const DealsSummary = ({items, loading}: {items: ResellableItem[], loading: boole
           <span>Deals Found in the Last 24 Hours</span>
           <div className="flex items-center gap-2">
             <Badge variant="secondary">
-              {loading && <Spinner data-icon="inline-start" />}
+              {loading && <Spinner size="small" data-icon="inline-start" />}
               {totalItems} items
             </Badge>
           </div>
