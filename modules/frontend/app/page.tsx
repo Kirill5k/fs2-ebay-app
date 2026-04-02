@@ -9,8 +9,8 @@ export default function Home() {
 
   return (
     <main className="flex flex-col gap-4 p-2 md:p-8">
-      {!stock.loading && <StockSummary items={stock.items} />}
-      {!deals.loading && <DealsSummary items={deals.items} />}
+      {<StockSummary items={stock.items} />}
+      {<DealsSummary items={deals.items} loading={deals.loading} />}
     </main>
   )
 }

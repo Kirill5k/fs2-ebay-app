@@ -2,6 +2,7 @@ import {Card, CardContent, CardTitle, CardDescription, CardHeader} from '@/compo
 import {Badge} from '@/components/ui/badge'
 import {ResellableItem} from '@/store/state'
 import {useMemo} from 'react'
+import {Loader2} from 'lucide-react'
 
 interface QuerySummary {
   retailer: string
@@ -48,7 +49,7 @@ function summarizeItems(items: ResellableItem[]): QuerySummary[] {
   )
 }
 
-const DealsSummary = ({items}: {items: ResellableItem[]}) => {
+const DealsSummary = ({items, loading}: {items: ResellableItem[], loading: boolean}) => {
   const dealsData = useMemo(() => summarizeItems(items), [items])
 
   const totalItems = dealsData.reduce((sum, deal) => sum + deal.totalItems, 0)
@@ -57,7 +58,10 @@ const DealsSummary = ({items}: {items: ResellableItem[]}) => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Deals Found in the Last 24 Hours</span>
-          <Badge variant="secondary">{totalItems} items</Badge>
+          <div className="flex items-center gap-2">
+            {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+            <Badge variant="secondary">{totalItems} items</Badge>
+          </div>
         </CardTitle>
         <CardDescription>Summary of profitable deals found by retailer and search query</CardDescription>
       </CardHeader>
