@@ -1,5 +1,6 @@
 import {createStore} from 'zustand/vanilla'
 import {subHours} from 'date-fns'
+import {delay, fetchWithRetry} from '@/lib/utils/fetch'
 
 // Define types for the different components of ResellableItem
 interface ItemDetails {
@@ -100,22 +101,6 @@ const defaultState: DealsState = {
     from: subHours(now, 24),
     to: now,
   },
-}
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const fetchWithRetry = async (url: string, retries = 5, backoffMs = 1000): Promise<Response> => {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    const response = await fetch(url)
-    if (response.ok) return response
-    if (attempt < retries) {
-      console.warn(`Request failed with ${response.status}, retrying in ${backoffMs * attempt}ms... (attempt ${attempt}/${retries})`)
-      await delay(backoffMs * attempt)
-    } else {
-      throw new Error(`Failed after ${retries} attempts: ${response.status} ${response.statusText}`)
-    }
-  }
-  throw new Error('Unreachable')
 }
 
 export const createDealsStore = (initState: DealsState = defaultState) => {
