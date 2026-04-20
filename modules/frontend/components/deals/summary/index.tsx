@@ -53,6 +53,7 @@ const DealsSummary = ({items, loading}: {items: ResellableItem[], loading: boole
   const dealsData = useMemo(() => summarizeItems(items), [items])
 
   const totalItems = dealsData.reduce((sum, deal) => sum + deal.totalItems, 0)
+  //TODO: Add spinners for sub categories!
   return (
     <Card>
       <CardHeader>
