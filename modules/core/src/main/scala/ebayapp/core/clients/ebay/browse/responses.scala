@@ -40,7 +40,9 @@ private[ebay] object responses {
       leafCategoryIds: Option[Set[String]],
       conditionId: Option[String],
       categories: Option[List[EbayItemSummaryCategory]]
-  ) derives Codec.AsObject
+  ) derives Codec.AsObject {
+    val categoryIds: Set[String] = leafCategoryIds.getOrElse(Set.empty) | categories.fold(Set.empty)(_.map(_.categoryId).toSet)
+  }
 
   final case class ItemAvailabilities(
       availabilityThreshold: Option[Int],

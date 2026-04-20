@@ -40,7 +40,7 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       //TODO: Consider pagination!
       items <- Stream
         .evalSeq(searchForItems(params.queryParams(time, criteria.query), params.filter and hasTrustedSeller(searchConfig)))
-        .filter(i => i.leafCategoryIds.isEmpty || i.leafCategoryIds.get.contains(catId))
+        .filter(i => i.categoryIds.isEmpty || i.categoryIds.contains(catId))
         .evalMap(getCompleteItem)
         .unNone
         .filter(i => i.categoryIds.contains(params.categoryId.toString))
