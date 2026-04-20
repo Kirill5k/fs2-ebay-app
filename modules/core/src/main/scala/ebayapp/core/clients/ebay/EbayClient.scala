@@ -52,7 +52,8 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       token <- authClient.accessToken
       all   <- browseClient.search(token, searchParams)
       valid = all.filter(_.itemGroupType.isEmpty).filter(itemsFilter)
-      _ <- logger.info(s"""ebay-search "${searchParams("q")}" returned ${valid.size} new items (total - ${all.size})""")
+      count = s"returned ${valid.size} new items (total - ${all.size})"
+      _ <- logger.info(s"""ebay-search "${searchParams("q")}" (cat=${searchParams("category_ids")}) $count""")
     yield valid
 
   private def getCompleteItem(itemSummary: EbayItemSummary): F[Option[EbayItem]] =
