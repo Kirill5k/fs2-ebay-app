@@ -33,44 +33,6 @@ trait RetailConfigProvider[F[_]]:
   def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig]
   def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]
 
-final private class LiveRetailConfigProvider[F[_]](
-    private val state: Ref[F, RetailConfig]
-)(using
-    F: Temporal[F]
-) extends RetailConfigProvider[F] {
-  override def telegram: F[TelegramConfig]                                     = state.get.map(_.telegram)
-  override def cex: F[GenericRetailerConfig]                                   = state.get.map(_.retailer.cex)
-  override def ebay: F[EbayConfig]                                             = state.get.map(_.retailer.ebay)
-  override def selfridges: F[GenericRetailerConfig]                            = state.get.map(_.retailer.selfridges)
-  override def argos: F[GenericRetailerConfig]                                 = state.get.map(_.retailer.argos)
-  override def jdsports: F[GenericRetailerConfig]                              = state.get.map(_.retailer.jdsports)
-  override def scotts: F[GenericRetailerConfig]                                = state.get.map(_.retailer.scotts)
-  override def tessuti: F[GenericRetailerConfig]                               = state.get.map(_.retailer.tessuti)
-  override def nvidia: F[GenericRetailerConfig]                                = state.get.map(_.retailer.nvidia)
-  override def scan: F[GenericRetailerConfig]                                  = state.get.map(_.retailer.scan)
-  override def harveyNichols: F[GenericRetailerConfig]                         = state.get.map(_.retailer.harveyNichols)
-  override def mainlineMenswear: F[GenericRetailerConfig]                      = state.get.map(_.retailer.mainlineMenswear)
-  override def flannels: F[GenericRetailerConfig]                              = state.get.map(_.retailer.flannels)
-  override def stockMonitor(retailer: Retailer): Stream[F, StockMonitorConfig] = streamUpdates(state.get.map(_.stockMonitor.get(retailer)))
-  override def dealsFinder(retailer: Retailer): Stream[F, DealsFinderConfig]   = streamUpdates(state.get.map(_.dealsFinder.get(retailer)))
-
-  private def streamUpdates[C](getConfig: => F[Option[C]]): Stream[F, C] = for
-    configs       <- Stream.eval(Queue.unbounded[F, C])
-    currentConfig <- Stream.eval(Ref.of[F, Option[C]](None))
-    configUpdate = Stream
-      .eval(getConfig)
-      .zip(Stream.eval(currentConfig.get))
-      .evalMap {
-        case (None, None)                                       => F.unit
-        case (Some(latest), None)                               => currentConfig.set(Some(latest)) >> configs.offer(latest)
-        case (Some(latest), Some(current)) if current != latest => currentConfig.set(Some(latest)) >> configs.offer(latest)
-        case _                                                  => F.unit
-      }
-      .repeatEvery(15.seconds)
-    c <- Stream.fromQueueUnterminated(configs).concurrently(configUpdate)
-  yield c
-}
-
 final private class ReactiveRetailConfigProvider[F[_]](
     private val state: Ref[F, RetailConfig],
     private val updates: Topic[F, RetailConfig]
@@ -110,39 +72,6 @@ final private class ReactiveRetailConfigProvider[F[_]](
 }
 
 object RetailConfigProvider {
-  private def loadRetailConfigFromMount[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
-    logger.info("loading config from volume mount") >> RetailConfig.loadFromMount
-
-  private def loadDefaultRetailConfig[F[_]](using F: Async[F], logger: Logger[F]): F[RetailConfig] =
-    logger.info("loading default config") >> RetailConfig.loadDefault
-
-  private def mountedConfigModifiedTs[F[_]](using F: Sync[F]): F[Long] =
-    F.blocking(Paths.get(RetailConfig.mountedConfigPath).toFile.lastModified())
-
-  def file[F[_]](checkEvery: FiniteDuration = 2.minutes)(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
-    def reloadRetailConfigWhenUpdated(state: Ref[F, RetailConfig], previousLastModifiedTs: Option[Long]): F[Unit] = {
-      val process = for
-        modifiedTs <- mountedConfigModifiedTs
-        isUpdated = previousLastModifiedTs.nonEmpty && previousLastModifiedTs.exists(_ != modifiedTs)
-        _ <- F
-          .whenA(isUpdated)(logger.info("config from volume mount has been updated") >> loadRetailConfigFromMount.flatMap(state.set))
-          .handleErrorWith(e => logger.error(e)("error reloading updated config"))
-      yield modifiedTs
-
-      F.sleep(checkEvery) >> process.flatMap(ts => reloadRetailConfigWhenUpdated(state, Some(ts)))
-    }
-
-    loadRetailConfigFromMount[F]
-      .flatMap(Ref.of)
-      .flatTap(_ => logger.info("loaded config from a configmap volume mount"))
-      .flatTap(s => reloadRetailConfigWhenUpdated(s, None).start.void)
-      .handleErrorWith { e =>
-        logger.warn(s"error loading config from a configmap volume mount: ${e.getMessage}") >>
-          loadDefaultRetailConfig.flatMap(Ref.of)
-      }
-      .map(rc => LiveRetailConfigProvider(rc))
-  }
-
   def mongo[F[_]](repo: RetailConfigRepository[F])(using F: Async[F], logger: Logger[F]): F[RetailConfigProvider[F]] = {
     val initialConfig = repo.get.flatMap {
       case Some(rc) =>
