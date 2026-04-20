@@ -24,6 +24,11 @@ private[ebay] object responses {
   final case class ShippingCost(value: BigDecimal, currency: String) derives Codec.AsObject
   final case class ItemShippingOption(shippingServiceCode: String, shippingCost: ShippingCost) derives Codec.AsObject
 
+  final case class EbayItemSummaryCategory(
+      categoryId: String,
+      categoryName: Option[String]
+  ) derives Codec.AsObject
+
   final case class EbayItemSummary(
       itemId: String,
       title: String,
@@ -33,7 +38,8 @@ private[ebay] object responses {
       buyingOptions: Set[String],
       shortDescription: Option[String], // This field is returned by the search method only when fieldgroups = EXTENDED.
       leafCategoryIds: Option[Set[String]],
-      conditionId: Option[String]
+      conditionId: Option[String],
+      categories: Option[List[EbayItemSummaryCategory]]
   ) derives Codec.AsObject
 
   final case class ItemAvailabilities(
@@ -48,7 +54,7 @@ private[ebay] object responses {
       description: String,
       categoryPath: String,
       categoryId: String,
-      categoryIdPath: String,
+      categoryIdPath: Option[String],
       price: ItemPrice,
       condition: String,
       image: Option[ItemImage],
@@ -64,7 +70,7 @@ private[ebay] object responses {
       shippingOptions: Option[List[ItemShippingOption]],
       estimatedAvailabilities: Option[List[ItemAvailabilities]]
   ) derives Codec.AsObject {
-    def categoryIds: Set[String] = categoryIdPath.split("\\|").toSet
+    def categoryIds: Set[String] = categoryIdPath.fold(Set(categoryId))(_.split("\\|").toSet)
   }
 
   final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) derives Codec.AsObject

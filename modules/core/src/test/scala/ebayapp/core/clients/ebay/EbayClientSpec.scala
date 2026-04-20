@@ -328,7 +328,8 @@ class EbayClientSpec extends IOWordSpec {
       buyingOptions.toSet,
       shortDescription,
       Some(Set(categoryId.toString)),
-      Some(conditionId.toString)
+      Some(conditionId.toString),
+      None
     )
 
   def ebayItem: EbayItem =
@@ -339,7 +340,7 @@ class EbayClientSpec extends IOWordSpec {
       "call of duty modern warfare xbox game",
       "Video Games & Consoles|Video Games",
       "139973",
-      "139973",
+      Some("139973"),
       ItemPrice(BigDecimal.valueOf(30.00), "GBP"),
       "New",
       Some(ItemImage("https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg")),
