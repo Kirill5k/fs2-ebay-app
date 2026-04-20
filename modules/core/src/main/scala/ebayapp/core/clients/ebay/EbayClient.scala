@@ -43,7 +43,7 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
         .filter(i => i.leafCategoryIds.isEmpty || i.leafCategoryIds.get.contains(catId))
         .evalMap(getCompleteItem)
         .unNone
-        .filter(i => i.categoryId == params.categoryId)
+        .filter(i => i.categoryIds.contains(params.categoryId.toString))
         .map(mapper.toDomain(criteria))
         .handleErrorWith(switchAccountIfItHasExpired)
     yield items

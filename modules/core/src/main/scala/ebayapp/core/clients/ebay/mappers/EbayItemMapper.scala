@@ -33,11 +33,11 @@ private[ebay] object EbayItemMapper {
         case _                    => genericDetailsMapper
       }
 
-  private val categories: Map[Int, String] = Map(
-    139973 -> "Games",
-    15052  -> "Portable Audio",
-    112529 -> "Headphones",
-    293    -> "Sound & Vision"
+  private val categories: Map[String, String] = Map(
+    "139973" -> "Games",
+    "15052"  -> "Portable Audio",
+    "112529" -> "Headphones",
+    "293"    -> "Sound & Vision"
   )
 
   val phoneDetailsMapper = new EbayItemMapper {
@@ -69,9 +69,9 @@ private[ebay] object EbayItemMapper {
     ListingDetails(
       url = item.itemWebUrl,
       title = item.title,
-      category = categories.get(item.categoryId).orElse(item.categoryPath),
+      category = categories.get(item.categoryId).orElse(Some(item.categoryPath.replaceAll("\\|", " / "))),
       shortDescription = item.shortDescription,
-      description = item.description.map(_.replaceAll("(?i)<[^>]*>", "")).map(_.slice(0, 500)),
+      description = Some(item.description.replaceAll("(?i)<[^>]*>", "").slice(0, 500)),
       image = item.image.map(_.imageUrl),
       condition = item.condition.toUpperCase,
       datePosted = item.itemCreationDate.getOrElse(Instant.now),
@@ -84,7 +84,7 @@ private[ebay] object EbayItemMapper {
           Props.postage  -> postageCost(item).toString()
         )
         val otherProps = Map(
-          Props.categoryId -> Some(item.categoryId.toString),
+          Props.categoryId -> Some(item.categoryId),
           Props.brand      -> item.brand,
           Props.colour     -> item.color
         ).collect { case (k, Some(v)) => k -> v }

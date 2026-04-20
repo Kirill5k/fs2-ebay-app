@@ -45,9 +45,10 @@ private[ebay] object responses {
       itemId: String,
       title: String,
       shortDescription: Option[String],
-      description: Option[String],
-      categoryPath: Option[String],
-      categoryId: Int,
+      description: String,
+      categoryPath: String,
+      categoryId: String,
+      categoryIdPath: String,
       price: ItemPrice,
       condition: String,
       image: Option[ItemImage],
@@ -62,7 +63,9 @@ private[ebay] object responses {
       itemEndDate: Option[Instant],
       shippingOptions: Option[List[ItemShippingOption]],
       estimatedAvailabilities: Option[List[ItemAvailabilities]]
-  ) derives Codec.AsObject
+  ) derives Codec.AsObject {
+    def categoryIds: Set[String] = categoryIdPath.split("\\|").toSet
+  }
 
   final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) derives Codec.AsObject
 
