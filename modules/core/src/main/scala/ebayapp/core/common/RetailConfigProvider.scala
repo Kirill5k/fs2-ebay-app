@@ -1,20 +1,14 @@
 package ebayapp.core.common
 
-import cats.effect.std.Queue
-import cats.effect.{Async, Ref, Sync, Temporal}
+import cats.effect.{Async, Ref, Temporal}
 import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
-import cats.syntax.applicativeError.*
 import cats.syntax.functor.*
 import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, GenericRetailerConfig, RetailConfig, StockMonitorConfig, TelegramConfig}
-import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.Retailer
 import ebayapp.core.repositories.RetailConfigRepository
 import fs2.Stream
 import fs2.concurrent.Topic
-
-import java.nio.file.Paths
-import scala.concurrent.duration.*
 
 trait RetailConfigProvider[F[_]]:
   def cex: F[GenericRetailerConfig]
