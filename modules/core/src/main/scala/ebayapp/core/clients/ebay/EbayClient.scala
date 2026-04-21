@@ -37,12 +37,13 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       mapper       <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params       <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       catId = params.categoryId.toString
+      //TODO: Consider pagination!
       items <- Stream
         .evalSeq(searchForItems(params.queryParams(time, criteria.query, criteria.seller), params.filter and hasTrustedSeller(searchConfig)))
-        .filter(i => i.leafCategoryIds.isEmpty || i.leafCategoryIds.get.contains(catId))
+        .filter(i => i.categoryIds.isEmpty || i.categoryIds.contains(catId))
         .evalMap(getCompleteItem)
         .unNone
-        .filter(i => i.categoryId == params.categoryId)
+        .filter(i => i.categoryIds.contains(catId))
         .map(mapper.toDomain(criteria))
         .handleErrorWith(switchAccountIfItHasExpired)
     yield items
@@ -52,7 +53,8 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       token <- authClient.accessToken
       all   <- browseClient.search(token, searchParams)
       valid = all.filter(_.itemGroupType.isEmpty).filter(itemsFilter)
-      _ <- logger.info(s"""ebay-search "${searchParams("q")}" returned ${valid.size} new items (total - ${all.size})""")
+      count = s"returned ${valid.size} new items (total - ${all.size})"
+      _ <- logger.info(s"""ebay-search "${searchParams("q")}" (cat=${searchParams("category_ids")}) $count""")
     yield valid
 
   private def getCompleteItem(itemSummary: EbayItemSummary): F[Option[EbayItem]] =

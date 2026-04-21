@@ -44,10 +44,20 @@ private[ebay] object search {
         .toRight(AppError.Critical("category kind is required in ebay-client"))
         .flatMap {
           case "portable-audio"            => Right(PortableAudioSearchParams)
+          case "headphones"                => Right(HeadphonesSearchParams)
           case "smart-lighting"            => Right(SmartLightingSearchParams)
           case c if c.startsWith("games-") => Right(VideoGameSearchParams)
           case c                           => Left(AppError.Critical(s"unable to find search params for category '$c' in EbayClient"))
         }
+
+    private object HeadphonesSearchParams extends EbaySearchParams {
+      override val categoryId: Int                    = 112529
+      override val searchFilterTemplate: String       = searchFiltersBase
+      override val filter: EbayItemSummary => Boolean = { item =>
+        item.buyingOptions.intersect(accepterBuyingOptions).nonEmpty &&
+        !item.conditionId.exists(excludedConditionIds.contains)
+      }
+    }
 
     private object PortableAudioSearchParams extends EbaySearchParams {
       override val categoryId: Int                    = 15052

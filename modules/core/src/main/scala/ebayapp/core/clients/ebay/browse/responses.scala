@@ -24,6 +24,11 @@ private[ebay] object responses {
   final case class ShippingCost(value: BigDecimal, currency: String) derives Codec.AsObject
   final case class ItemShippingOption(shippingServiceCode: String, shippingCost: ShippingCost) derives Codec.AsObject
 
+  final case class EbayItemSummaryCategory(
+      categoryId: String,
+      categoryName: Option[String]
+  ) derives Codec.AsObject
+
   final case class EbayItemSummary(
       itemId: String,
       title: String,
@@ -33,8 +38,11 @@ private[ebay] object responses {
       buyingOptions: Set[String],
       shortDescription: Option[String], // This field is returned by the search method only when fieldgroups = EXTENDED.
       leafCategoryIds: Option[Set[String]],
-      conditionId: Option[String]
-  ) derives Codec.AsObject
+      conditionId: Option[String],
+      categories: Option[List[EbayItemSummaryCategory]]
+  ) derives Codec.AsObject {
+    val categoryIds: Set[String] = leafCategoryIds.getOrElse(Set.empty) | categories.fold(Set.empty)(_.map(_.categoryId).toSet)
+  }
 
   final case class ItemAvailabilities(
       availabilityThreshold: Option[Int],
@@ -45,9 +53,10 @@ private[ebay] object responses {
       itemId: String,
       title: String,
       shortDescription: Option[String],
-      description: Option[String],
-      categoryPath: Option[String],
-      categoryId: Int,
+      description: String,
+      categoryPath: String,
+      categoryId: String,
+      categoryIdPath: Option[String],
       price: ItemPrice,
       condition: String,
       image: Option[ItemImage],
@@ -62,7 +71,9 @@ private[ebay] object responses {
       itemEndDate: Option[Instant],
       shippingOptions: Option[List[ItemShippingOption]],
       estimatedAvailabilities: Option[List[ItemAvailabilities]]
-  ) derives Codec.AsObject
+  ) derives Codec.AsObject {
+    def categoryIds: Set[String] = categoryIdPath.fold(Set(categoryId))(_.split("\\|").toSet)
+  }
 
   final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) derives Codec.AsObject
 

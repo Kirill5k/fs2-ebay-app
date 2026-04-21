@@ -328,7 +328,8 @@ class EbayClientSpec extends IOWordSpec {
       buyingOptions.toSet,
       shortDescription,
       Some(Set(categoryId.toString)),
-      Some(conditionId.toString)
+      Some(conditionId.toString),
+      None
     )
 
   def ebayItem: EbayItem =
@@ -336,9 +337,10 @@ class EbayClientSpec extends IOWordSpec {
       "item-1",
       "call of duty modern warfare xbox one 2019",
       "call of duty modern warfare xbox one 2019. Condition is New. Game came as part of bundle and not wanted. Never playes. Dispatched with Royal Mail 1st Class Large Letter.".some,
-      None,
-      Some("Video Games & Consoles|Video Games"),
-      139973,
+      "call of duty modern warfare xbox game",
+      "Video Games & Consoles|Video Games",
+      "139973",
+      Some("139973"),
       ItemPrice(BigDecimal.valueOf(30.00), "GBP"),
       "New",
       Some(ItemImage("https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg")),
