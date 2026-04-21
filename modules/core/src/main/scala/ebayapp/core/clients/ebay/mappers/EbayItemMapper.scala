@@ -71,7 +71,7 @@ private[ebay] object EbayItemMapper {
       title = item.title,
       category = categories.get(item.categoryId).orElse(Some(item.categoryPath.replaceAll("\\|", " / "))),
       shortDescription = item.shortDescription,
-      description = Some(item.description.replaceAll("(?i)<[^>]*>", "").slice(0, 500)),
+      description = item.description.map(_.replaceAll("(?i)<[^>]*>", "").slice(0, 500)),
       image = item.image.map(_.imageUrl),
       condition = item.condition.toUpperCase,
       datePosted = item.itemCreationDate.getOrElse(Instant.now),

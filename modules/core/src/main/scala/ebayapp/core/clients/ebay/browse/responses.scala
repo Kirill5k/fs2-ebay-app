@@ -53,7 +53,7 @@ private[ebay] object responses {
       itemId: String,
       title: String,
       shortDescription: Option[String],
-      description: String,
+      description: Option[String],
       categoryPath: String,
       categoryId: String,
       categoryIdPath: Option[String],
