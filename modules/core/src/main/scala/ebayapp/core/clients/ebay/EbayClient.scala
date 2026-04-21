@@ -38,7 +38,7 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       params       <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       catId = params.categoryId.toString
       items <- Stream
-        .evalSeq(searchForItems(params.queryParams(time, criteria.query), params.filter and hasTrustedSeller(searchConfig)))
+        .evalSeq(searchForItems(params.queryParams(time, criteria.query, criteria.seller), params.filter and hasTrustedSeller(searchConfig)))
         .filter(i => i.leafCategoryIds.isEmpty || i.leafCategoryIds.get.contains(catId))
         .evalMap(getCompleteItem)
         .unNone
