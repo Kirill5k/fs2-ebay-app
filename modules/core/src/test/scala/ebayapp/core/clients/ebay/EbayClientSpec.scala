@@ -288,6 +288,31 @@ class EbayClientSpec extends IOWordSpec {
       }
     }
 
+    "paginate when first page returns 200 items" in {
+      val searchParamsCaptor: ArgumentCaptor[Map[String, String]] = ArgumentCaptor.forClass(classOf[Map[String, String]])
+      val (authClient, browseClient)                              = mocks
+      val videoGameSearchClient                                   = LiveEbayClient[IO](config, authClient, browseClient)
+
+      val page1 = (1 to 200).map(i => ebayItemSummary(s"item-$i")).toList
+      val page2 = List(ebayItemSummary("item-201"))
+
+      when(authClient.accessToken).thenReturn(IO.pure(accessToken))
+      when(browseClient.search(eqTo(accessToken), searchParamsCaptor.capture()))
+        .thenReturn(IO.pure(page1))
+        .thenReturn(IO.pure(page2))
+      when(browseClient.getItem(any[String], any[String])).thenReturn(IO.pure(None))
+
+      val itemsResponse = videoGameSearchClient.search(criteria)
+
+      itemsResponse.compile.toList.asserting { _ =>
+        verify(browseClient, times(2)).search(eqTo(accessToken), any[Map[String, String]])
+        val capturedParams = searchParamsCaptor.getAllValues.asScala
+        capturedParams must have size 2
+        capturedParams.head.get("offset") mustBe Some("0")
+        capturedParams.last.get("offset") mustBe Some("200")
+      }
+    }
+
     "return error when there is not item-kind passes" in {
       val (authClient, browseClient) = mocks
       val videoGameSearchClient      = LiveEbayClient[IO](config, authClient, browseClient)
