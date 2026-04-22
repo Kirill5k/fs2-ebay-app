@@ -66,6 +66,7 @@ class EbayClientSpec extends IOWordSpec {
           "q"            -> "xbox",
           "fieldgroups"  -> "EXTENDED",
           "limit"        -> "200",
+          "offset"       -> "0",
           "category_ids" -> "139973",
           "filter" -> "deliveryCountry:GB,priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE},conditionIds:{1000|1500|2000|2500|2750|3000|4000|5000|6000},price:[0..90],itemStartDate:[2019-12-31T23:40:00Z]"
         )
