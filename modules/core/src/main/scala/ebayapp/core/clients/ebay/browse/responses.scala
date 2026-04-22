@@ -75,7 +75,13 @@ private[ebay] object responses {
     def categoryIds: Set[String] = categoryIdPath.fold(Set(categoryId))(_.split("\\|").toSet)
   }
 
-  final case class EbayBrowseResult(total: Int, limit: Int, itemSummaries: Option[List[EbayItemSummary]]) derives Codec.AsObject
+  final case class EbayBrowseResult(
+      href: String,
+      total: Int,
+      limit: Int,
+      offset: Int,
+      itemSummaries: Option[List[EbayItemSummary]]
+  ) derives Codec.AsObject
 
   final case class EbayError(errorId: Long, domain: String, category: String, message: String) derives Codec.AsObject
   final case class EbayErrorResponse(errors: List[EbayError]) derives Codec.AsObject
