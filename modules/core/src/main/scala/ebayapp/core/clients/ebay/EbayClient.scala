@@ -37,9 +37,10 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       mapper       <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params       <- Stream.fromEither[F](EbaySearchParams.get(criteria))
       catId = params.categoryId.toString
-      //TODO: Consider pagination!
+      queryParams = params.queryParams(time, criteria.query, criteria.seller)
       items <- Stream
-        .evalSeq(searchForItems(params.queryParams(time, criteria.query, criteria.seller), params.filter and hasTrustedSeller(searchConfig)))
+        .unfoldLoopEval(0)(offset => searchForItems(queryParams, params.filter and hasTrustedSeller(searchConfig), offset))
+        .flatMap(Stream.emits)
         .filter(i => i.categoryIds.isEmpty || i.categoryIds.contains(catId))
         .evalMap(getCompleteItem)
         .unNone
@@ -48,14 +49,19 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
         .handleErrorWith(switchAccountIfItHasExpired)
     yield items
 
-  private def searchForItems(searchParams: Map[String, String], itemsFilter: EbayItemSummary => Boolean): F[List[EbayItemSummary]] =
+  private def searchForItems(
+      searchParams: Map[String, String],
+      itemsFilter: EbayItemSummary => Boolean,
+      offset: Int
+  ): F[(List[EbayItemSummary], Option[Int])] =
     for
       token <- authClient.accessToken
-      all   <- browseClient.search(token, searchParams)
+      all   <- browseClient.search(token, searchParams + ("offset" -> offset.toString))
       valid = all.filter(_.itemGroupType.isEmpty).filter(itemsFilter)
       count = s"returned ${valid.size} new items (total - ${all.size})"
-      _ <- logger.info(s"""ebay-search "${searchParams("q")}" (cat=${searchParams("category_ids")}) $count""")
-    yield valid
+      _     <- logger.info(s"""ebay-search "${searchParams("q")}" (cat=${searchParams("category_ids")}) $count""")
+      nextOffset = Option.when(all.size >= EbaySearchParams.Limit)(offset + EbaySearchParams.Limit)
+    yield (valid, nextOffset)
 
   private def getCompleteItem(itemSummary: EbayItemSummary): F[Option[EbayItem]] =
     authClient.accessToken.flatMap(t => browseClient.getItem(t, itemSummary.itemId))

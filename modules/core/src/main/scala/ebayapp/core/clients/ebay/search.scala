@@ -26,13 +26,15 @@ private[ebay] object search {
         "fieldgroups"  -> "EXTENDED",
         "category_ids" -> categoryId.toString,
         "filter"       -> filterWithSeller,
-        "limit"        -> "200",
+        "limit"        -> EbaySearchParams.Limit.toString,
         "q"            -> query
       )
     }
   }
 
   object EbaySearchParams {
+    val Limit: Int = 200
+
     private val excludedConditionIds  = Set("7000", "8000", "9000")
     private val accepterBuyingOptions = Set("FIXED_PRICE", "BEST_OFFER")
     private val searchFiltersBase     = "deliveryCountry:GB,priceCurrency:GBP,itemLocationCountry:GB,buyingOptions:{FIXED_PRICE}"
