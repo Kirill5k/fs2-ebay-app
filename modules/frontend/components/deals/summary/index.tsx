@@ -53,7 +53,6 @@ const DealsSummary = ({items, loading}: {items: ResellableItem[], loading: boole
   const dealsData = useMemo(() => summarizeItems(items), [items])
 
   const totalItems = dealsData.reduce((sum, deal) => sum + deal.totalItems, 0)
-  //TODO: Add spinners for sub categories!
   return (
     <Card>
       <CardHeader>
@@ -85,7 +84,11 @@ const DealsSummary = ({items, loading}: {items: ResellableItem[], loading: boole
                     {deal.query}
                   </Badge>
                 </div>
-                <Badge variant="secondary">{deal.totalItems} items</Badge>
+
+                <Badge variant="secondary">
+                  {loading && <Spinner className="size-4" data-icon="inline-start" />}
+                  {deal.totalItems} items
+                </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-4">
