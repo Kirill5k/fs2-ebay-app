@@ -158,7 +158,7 @@ private[ebay] object search {
         "BO3.*(Divinium|Cryptokey|level|anime|camo|modded|classes|perks)",
         "minecraft.*(item)", "(No Mans Sky|\\bNMS\\b).*(companion|element|Ship|Interceptor)", "\\bto update\\b",
         "shadow rpg.*(skin)", "F76.*(mod|plan)", "paper mario.*(magnets)",
-        "(pair clone).*asa pve"
+        "(pair clone).*asa pve",
         "Hogwarts Legacy.*(onyx|potion|shop)", "DYING LIGHT.*(EGG-SPLOSIVE|THROWABLE)", "PS Crossplay", "[A-Z]\\d{4,6}(A|Z)",
         "(rune|million|level|crafting|material|armour|set)(?s).*elden ring", "elden ring(?s).*(armour|set|rune|million|level|crafting|material)",
         "Pok(e|é)?mon", "dragon(s)? dogma(?s).*(item|upgraded|gold|stone|pack|weapon|ring|each|corset)", "\\bCD32\\b",
