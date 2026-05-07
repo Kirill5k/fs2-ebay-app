@@ -4,12 +4,12 @@
 
 ## Tech Stack
 
-### Backend (Scala 3.7.4)
+### Backend (Scala 3.8.2)
 - **Effect System**: Cats Effect 3, FS2 (Functional Streams)
 - **HTTP**: http4s (server), sttp4 (client), Tapir (API definition)
 - **Database**: MongoDB via mongo4cats
 - **Build**: SBT with multi-module configuration
-- **JDK**: Java 25 (Temurin)
+- **JDK**: Java 26 (Temurin)
 
 ### Frontend (TypeScript)
 - **Framework**: Next.js 16 with App Router
