@@ -4,7 +4,7 @@
 
 ## Tech Stack
 
-### Backend (Scala 3.8.2)
+### Backend (Scala 3.8.3)
 - **Effect System**: Cats Effect 3, FS2 (Functional Streams)
 - **HTTP**: http4s (server), sttp4 (client), Tapir (API definition)
 - **Database**: MongoDB via mongo4cats
