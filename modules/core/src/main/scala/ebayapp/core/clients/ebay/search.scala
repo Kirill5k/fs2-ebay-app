@@ -91,7 +91,7 @@ private[ebay] object search {
         "^NA -.*", "^(PS4|xbox|switch) games$", "^\\d+( )?game$",
         "\\d+( )?(x)?( (various|used))?( (XBOX( ONE)?|PS4|PS5|playstation|nintendo switch))?( video)? games",
         "(PS(4|5)?|XBOX) game(s)?( X)? \\d+", "no base game",
-        "(various video|nintendo switch) games","(various video|nintendo switch) games", "set of \\d",
+        "(various video|nintendo switch) games","(various video|nintendo switch) games", "set of \\d", "various titles",
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d",
         "upcoming.{1,5}game", "(Dummy( game)?|private) Listing", "(Nintendo|official|promotional) magazin",
         "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games", "buy any \\d for",
