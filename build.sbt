@@ -24,21 +24,20 @@ val docker = Seq(
   maintainer         := "immotional@aol.com",
   dockerUsername     := sys.env.get("DOCKER_USERNAME"),
   dockerRepository   := sys.env.get("DOCKER_REPO_URI"),
-  dockerBaseImage    := "amazoncorretto:26-alpine",
+  dockerBaseImage    := "amazoncorretto:26",
   dockerUpdateLatest := true,
   dockerCommands     := {
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)
     val (before, after)  = stage1.splitAt(4)
-    val installBash = Cmd("RUN", "apk update && apk upgrade && apk add bash && apk add curl")
+    val installDeps = Cmd("RUN", "apt-get update && apt-get install -y --no-install-recommends bash curl libnss3 nss-plugin-pem ca-certificates zlib1g && rm -rf /var/lib/apt/lists/*")
     val installCurlImpersonate = Cmd(
       "RUN",
-      "apk add --no-cache nss nss-tools ca-certificates zlib && " +
-        "curl -sL https://github.com/lwthiker/curl-impersonate/releases/download/v0.6.1/curl-impersonate-v0.6.1.x86_64-linux-gnu.tar.gz -o /tmp/curl-impersonate.tar.gz && " +
+      "curl -sL https://github.com/lwthiker/curl-impersonate/releases/download/v0.6.1/curl-impersonate-v0.6.1.x86_64-linux-gnu.tar.gz -o /tmp/curl-impersonate.tar.gz && " +
         "tar -xzf /tmp/curl-impersonate.tar.gz -C /usr/local/bin && " +
         "rm /tmp/curl-impersonate.tar.gz"
     )
-    stage0 ++ before ++ List(installBash, installCurlImpersonate) ++ after
+    stage0 ++ before ++ List(installDeps, installCurlImpersonate) ++ after
   }
 )
 
