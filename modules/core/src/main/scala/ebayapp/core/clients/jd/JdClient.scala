@@ -217,7 +217,7 @@ final private class CurlImpersonateJdClient[F[_]](
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 5): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 10): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
         val base  = config.uri + criteria.category.fold("")(c => s"/$c")
@@ -246,7 +246,7 @@ final private class CurlImpersonateJdClient[F[_]](
         }
       }
 
-  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 3): F[Option[JdProduct]] =
+  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 10): F[Option[JdProduct]] =
     configProvider()
       .flatMap { config =>
         val url = s"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/"

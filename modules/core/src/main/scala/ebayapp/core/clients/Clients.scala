@@ -1,6 +1,6 @@
 package ebayapp.core.clients
 
-import cats.effect.Temporal
+import cats.effect.Async
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import ebayapp.core.clients.argos.ArgosClient
@@ -23,17 +23,19 @@ trait Clients[F[_]]:
   def get(retailer: Retailer): SearchClient[F]
 
 object Clients:
-  def make[F[_]: {Temporal, Logger}](
+  def make[F[_]: {Async, Logger}](
       configProvider: RetailConfigProvider[F],
       resources: Resources[F]
   ): F[Clients[F]] =
     for
-      cexClient              <- CexClient.graphql[F](configProvider, resources.fs2Backend)
-      telegramClient         <- TelegramClient.make[F](configProvider, resources.fs2Backend)
-      ebayClient             <- EbayClient.make[F](configProvider, resources.fs2Backend)
-      selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
-      argosClient            <- ArgosClient.make[F](configProvider, resources.fs2Backend)
-      jdClient               <- JdClient.jdsports[F](configProvider, resources.fs2Backend)
+      cexClient        <- CexClient.graphql[F](configProvider, resources.fs2Backend)
+      telegramClient   <- TelegramClient.make[F](configProvider, resources.fs2Backend)
+      ebayClient       <- EbayClient.make[F](configProvider, resources.fs2Backend)
+      selfridgesClient <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
+      argosClient      <- ArgosClient.make[F](configProvider, resources.fs2Backend)
+      curlClient       <- CurlImpersonateClient.make[F]
+      jdClient         <- JdClient.curlImpersonateJdsports[F](configProvider, curlClient)
+//      jdClient               <- JdClient.jdsports[F](configProvider, resources.fs2Backend)
       scottsClient           <- FrasersClient.scotts[F](configProvider, resources.fs2Backend)
       tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.fs2Backend)
       nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)
