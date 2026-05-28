@@ -1,11 +1,11 @@
 package ebayapp.core.clients.jd
 
 import cats.Monad
-import cats.effect.{Async, Temporal}
+import cats.effect.Temporal
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{CurlImpersonateClient, Fs2HttpClient, SearchClient}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
@@ -20,7 +20,6 @@ import sttp.client4.*
 import sttp.model.{Header, HeaderNames, StatusCode}
 
 import scala.concurrent.duration.*
-import scala.sys.process.*
 
 final private class LiveJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
@@ -146,15 +145,15 @@ final private class LiveJdClient[F[_]](
 
 final private class CurlImpersonateJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    private val retailer: Retailer.Jdsports.type
+    private val retailer: Retailer.Jdsports.type,
+    private val client: CurlImpersonateClient[F]
 )(using
-    F: Async[F],
+    F: Temporal[F],
     logger: Logger[F]
 ) extends SearchClient[F] {
 
   private val name: String    = retailer.name
   private val stepSize        = 50
-  private val statusDelimiter = "---HTTP_STATUS---"
 
   private def randomDelay(config: GenericRetailerConfig): FiniteDuration =
     config.delayBetweenIndividualRequests
@@ -174,23 +173,12 @@ final private class CurlImpersonateJdClient[F[_]](
     finalDelayMs.millis
   }
 
-  private def curlGet(url: String, headers: Map[String, String]): F[(StatusCode, String)] =
-    F.blocking {
-      val headerArgs = headers.flatMap((k, v) => Seq("-H", s"$k: $v")).toSeq
-      val cmd        = Seq("curl_chrome116", "-s", "-L", "--cacert", "/etc/ssl/certs/ca-bundle.crt", "-w", s"\n$statusDelimiter%{http_code}") ++ headerArgs :+ url
-      val output     = cmd.!!
-      val idx        = output.lastIndexOf(statusDelimiter)
-      val code       = StatusCode(output.substring(idx + statusDelimiter.length).trim.toInt)
-      val body       = output.substring(0, idx)
-      (code, body)
-    }
-
   private def requestHeaders(config: GenericRetailerConfig, referer: String): Map[String, String] =
     Map(
       HeaderNames.Origin  -> config.websiteUri,
       HeaderNames.Referer -> referer,
       "X-Requested-With"  -> "XMLHttpRequest"
-    )
+    ) ++ config.headers
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>
@@ -235,7 +223,7 @@ final private class CurlImpersonateJdClient[F[_]](
         val base  = config.uri + criteria.category.fold("")(c => s"/$c")
         val brand = criteria.query.toLowerCase.replace(" ", "-")
         val url   = s"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1"
-        curlGet(url, requestHeaders(config, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
+        client.get(url, requestHeaders(config, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
       }
       .flatMap { (code, body) =>
         code match {
@@ -262,7 +250,7 @@ final private class CurlImpersonateJdClient[F[_]](
     configProvider()
       .flatMap { config =>
         val url = s"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/"
-        curlGet(url, requestHeaders(config, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
+        client.get(url, requestHeaders(config, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
       }
       .flatMap { (code, body) =>
         code match {
@@ -291,7 +279,8 @@ object JdClient:
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend))
 
-  def curlImpersonateJdsports[F[_]: {Async, Logger}](
-      configProvider: RetailConfigProvider[F]
+  def curlImpersonateJdsports[F[_]: {Temporal, Logger}](
+      configProvider: RetailConfigProvider[F],
+      client: CurlImpersonateClient[F]
   ): F[SearchClient[F]] =
-    Monad[F].pure(CurlImpersonateJdClient[F](() => configProvider.jdsports, Retailer.Jdsports))
+    Monad[F].pure(CurlImpersonateJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, client))
