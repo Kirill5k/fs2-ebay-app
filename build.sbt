@@ -30,8 +30,15 @@ val docker = Seq(
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)
     val (before, after)  = stage1.splitAt(4)
-    val installBash      = Cmd("RUN", "apk update && apk upgrade && apk add bash && apk add curl")
-    stage0 ++ before ++ List(installBash) ++ after
+    val installBash = Cmd("RUN", "apk update && apk upgrade && apk add bash && apk add curl")
+    val installCurlImpersonate = Cmd(
+      "RUN",
+      "apk add --no-cache nss nss-tools ca-certificates zlib && " +
+        "curl -sL https://github.com/lwthiker/curl-impersonate/releases/download/v0.6.1/curl-impersonate-v0.6.1.x86_64-linux-gnu.tar.gz -o /tmp/curl-impersonate.tar.gz && " +
+        "tar -xzf /tmp/curl-impersonate.tar.gz -C /usr/local/bin && " +
+        "rm /tmp/curl-impersonate.tar.gz"
+    )
+    stage0 ++ before ++ List(installBash, installCurlImpersonate) ++ after
   }
 )
 

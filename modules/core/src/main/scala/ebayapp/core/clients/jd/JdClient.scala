@@ -1,7 +1,7 @@
 package ebayapp.core.clients.jd
 
 import cats.Monad
-import cats.effect.Temporal
+import cats.effect.{Async, Temporal}
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
@@ -20,6 +20,7 @@ import sttp.client4.*
 import sttp.model.{Header, HeaderNames, StatusCode}
 
 import scala.concurrent.duration.*
+import scala.sys.process.*
 
 final private class LiveJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
@@ -143,9 +144,154 @@ final private class LiveJdClient[F[_]](
       }
 }
 
+final private class CurlImpersonateJdClient[F[_]](
+    private val configProvider: () => F[GenericRetailerConfig],
+    private val retailer: Retailer.Jdsports.type
+)(using
+    F: Async[F],
+    logger: Logger[F]
+) extends SearchClient[F] {
+
+  private val name: String    = retailer.name
+  private val stepSize        = 50
+  private val statusDelimiter = "---HTTP_STATUS---"
+
+  private def randomDelay(config: GenericRetailerConfig): FiniteDuration =
+    config.delayBetweenIndividualRequests
+      .map(d => (d.toMillis + scala.util.Random.nextInt(3000)).millis)
+      .getOrElse((3000 + scala.util.Random.nextInt(5000)).millis)
+
+  private def calculateBackoffDelay(
+      attempt: Int,
+      maxDelay: FiniteDuration,
+      baseDelay: FiniteDuration = 5.second,
+      jitterFactor: Double = 0.2
+  ): FiniteDuration = {
+    val exponentialDelayMs = baseDelay.toMillis * Math.pow(2, attempt).toLong
+    val cappedDelayMs      = Math.min(exponentialDelayMs, maxDelay.toMillis)
+    val jitter             = (scala.util.Random.nextDouble() * 2 - 1) * jitterFactor * cappedDelayMs
+    val finalDelayMs       = Math.max(1, Math.min(maxDelay.toMillis, (cappedDelayMs + jitter).toLong))
+    finalDelayMs.millis
+  }
+
+  private def curlGet(url: String, headers: Map[String, String]): F[(StatusCode, String)] =
+    F.blocking {
+      val headerArgs = headers.flatMap((k, v) => Seq("-H", s"$k: $v")).toSeq
+      val cmd        = Seq("curl_chrome116", "-s", "-L", "--cacert", "/etc/ssl/certs/ca-bundle.crt", "-w", s"\n$statusDelimiter%{http_code}") ++ headerArgs :+ url
+      val output     = cmd.!!
+      val idx        = output.lastIndexOf(statusDelimiter)
+      val code       = StatusCode(output.substring(idx + statusDelimiter.length).trim.toInt)
+      val body       = output.substring(0, idx)
+      (code, body)
+    }
+
+  private def requestHeaders(config: GenericRetailerConfig, referer: String): Map[String, String] =
+    Map(
+      HeaderNames.Origin  -> config.websiteUri,
+      HeaderNames.Referer -> referer,
+      "X-Requested-With"  -> "XMLHttpRequest"
+    )
+
+  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
+    Stream.eval(configProvider()).flatMap { config =>
+      brandItems(criteria)
+        .filter(_.sale)
+        .evalTap(_ => F.sleep(randomDelay(config)))
+        .evalMap(i => getProductStock(i))
+        .unNone
+        .map { p =>
+          p.availableSizes.map { size =>
+            JdsportsItem(
+              p.details.Id,
+              p.details.Name,
+              p.details.UnitPrice,
+              p.details.PreviousUnitPrice,
+              p.details.Brand,
+              p.details.Colour,
+              size,
+              p.details.PrimaryImage,
+              p.details.Category,
+              config.websiteUri,
+              name
+            )
+          }
+        }
+        .flatMap(Stream.emits)
+        .map(JdsportsItemMapper.clothing.toDomain(criteria))
+        .handleErrorWith(e => Stream.logError(e)(e.getMessage))
+    }
+
+  private def brandItems(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
+    Stream
+      .unfoldLoopEval(0) { step =>
+        searchByBrand(criteria, step)
+          .map(items => items -> Option.when(items.size == stepSize)(step + 1))
+      }
+      .flatMap(Stream.emits)
+
+  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 5): F[List[JdCatalogItem]] =
+    configProvider()
+      .flatMap { config =>
+        val base  = config.uri + criteria.category.fold("")(c => s"/$c")
+        val brand = criteria.query.toLowerCase.replace(" ", "-")
+        val url   = s"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1"
+        curlGet(url, requestHeaders(config, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
+      }
+      .flatMap { (code, body) =>
+        code match {
+          case s if s.isSuccess =>
+            F.fromEither(ResponseParser.parseBrandAjaxResponse(body))
+          case StatusCode.Forbidden if attempt == maxAttempts =>
+            logger.error(s"$name-search/403-${criteria.query}") *> F.pure(Nil)
+          case StatusCode.Forbidden =>
+            logger.warn(s"$name-search/403-${criteria.query}") *>
+              F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
+              searchByBrand(criteria, step, attempt + 1)
+          case StatusCode.NotFound if step == 0 =>
+            logger.warn(s"$name-search/404") *> F.pure(Nil)
+          case StatusCode.NotFound =>
+            F.pure(Nil)
+          case s if s.isClientError =>
+            logger.error(s"$name-search/$s-error") *> F.pure(Nil)
+          case _ =>
+            logger.error(s"$name-search/error: $code") *> F.sleep(3.second) *> searchByBrand(criteria, step)
+        }
+      }
+
+  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 3): F[Option[JdProduct]] =
+    configProvider()
+      .flatMap { config =>
+        val url = s"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/"
+        curlGet(url, requestHeaders(config, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
+      }
+      .flatMap { (code, body) =>
+        code match {
+          case s if s.isSuccess =>
+            F.fromEither(ResponseParser.parseProductStockResponse(body))
+          case StatusCode.Forbidden if attempt == maxAttempts =>
+            logger.error(s"$name-get-stock/403-${ci.fullName}") *> F.pure(None)
+          case StatusCode.Forbidden =>
+            logger.warn(s"$name-get-stock/403-${ci.fullName}") *>
+              F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
+              getProductStock(ci, attempt + 1)
+          case StatusCode.NotFound =>
+            logger.warn(s"$name-get-stock/404") *> F.pure(None)
+          case s if s.isClientError =>
+            logger.error(s"$name-get-stock/$s-error") *> F.pure(None)
+          case _ =>
+            logger.error(s"$name-get-stock: $code") *> F.sleep(1.second) *> getProductStock(ci)
+        }
+      }
+}
+
 object JdClient:
   def jdsports[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
       backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend))
+
+  def curlImpersonateJdsports[F[_]: {Async, Logger}](
+      configProvider: RetailConfigProvider[F]
+  ): F[SearchClient[F]] =
+    Monad[F].pure(CurlImpersonateJdClient[F](() => configProvider.jdsports, Retailer.Jdsports))
