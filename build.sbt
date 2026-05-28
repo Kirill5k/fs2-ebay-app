@@ -30,7 +30,7 @@ val docker = Seq(
     val commands         = dockerCommands.value
     val (stage0, stage1) = commands.span(_ != DockerStageBreak)
     val (before, after)  = stage1.splitAt(4)
-    val installDeps = Cmd("RUN", "apt-get update && apt-get install -y --no-install-recommends bash curl libnss3 nss-plugin-pem ca-certificates zlib1g && rm -rf /var/lib/apt/lists/*")
+    val installDeps = Cmd("RUN", "dnf install -y --allowerasing bash curl nss ca-certificates zlib tar gzip shadow-utils && dnf clean all")
     val installCurlImpersonate = Cmd(
       "RUN",
       "curl -sL https://github.com/lwthiker/curl-impersonate/releases/download/v0.6.1/curl-impersonate-v0.6.1.x86_64-linux-gnu.tar.gz -o /tmp/curl-impersonate.tar.gz && " +
