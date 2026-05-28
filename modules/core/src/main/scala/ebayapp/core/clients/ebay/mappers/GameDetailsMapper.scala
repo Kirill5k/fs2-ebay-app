@@ -95,7 +95,7 @@ private[mappers] object GameDetailsMapper {
     "\\d \\d players", "1 ONE", "(flash|xmas|christmas) sale", "Fun Kids Play( Console)?", "with all extras",
     "deleted title", "\\bID\\d+\\w", "SEEDESCRIPTIONFORDETAILS", "cheapest.*on ebay", "strategy guide", "ebays cheapest",
     "((Enhanced|Optimi(s|z)ed) for )?Series \\b(S|X)( )?(X|S)?\\b", "\\bRev\\d+\\b",
-    "Formula One World Championship", "\\bNo Figure(s)?\\b",
+    "Formula One World Championship", "\\bNo Figure(s)?\\b", "PREVIOUSLY FIFA",
     "(16|18) years", "limited run( \\d+)?", "box( )?set", "pre( )?(release|owned|enjoyed|loved)",
     "Stric(t|k)ly limited", "Ultimate Fighting Champion(ship)?", "available now", "cross gen", "(inc|with)? Lenticular (cover|Sleeve)",
     "plays perfect", "100 trusted seller", "(Backward(s)? )?compatible( with)?", "(bundle|physical|1st|2nd) copy", "nuevo", "(big|steel)( )?box( version)?",

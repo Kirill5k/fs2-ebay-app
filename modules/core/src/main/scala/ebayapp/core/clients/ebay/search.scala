@@ -89,7 +89,7 @@ private[ebay] object search {
       private val LISTING_NAME_TRIGGER_WORDS = List(
         "\\bPC(CD)?\\b", "&test$",
         "^NA -.*", "^(PS4|xbox|switch) games$", "^\\d+( )?game$",
-        "\\d+( )?(x)?( (various|used))?( (XBOX( ONE)?|PS4|PS5|playstation|nintendo switch))?( video)? games",
+        "\\d+( )?(x)?( (various|used))?( (XBOX( ONE)?|PS4|PS5|playstation|switch|nintendo switch))?( video)? games",
         "(PS(4|5)?|XBOX) game(s)?( X)? \\d+", "no base game",
         "(various video|nintendo switch) games","(various video|nintendo switch) games", "set of \\d", "various titles",
         "bundle", "job( |-)?lot", "games lot", "lot of \\d+", "placeholder( listing)? \\d", "^game \\d+", "^listing \\d+", "video game(s)? \\d",
@@ -99,7 +99,7 @@ private[ebay] object search {
         "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b", "blox fruit",
         "(m|b)illion (pure)? cash", "\\d+M (cash|money)", "\\d+ mill",
         "switch.*(alu|unicorn).*\\bcase\\b", "credit(?s).*accoun", "credits", "test (listing|page)", "In Game Item",
-        "case for (switch|nintendo)", "Fightpad", "Official Kinect( 2)? Sensor", "ORB Stand",
+        "case for ", "Fightpad", "Official Kinect( 2)? Sensor", "ORB Stand", "Destest",
         "(starter|craft|diy|achievement|icon|BADGE PIN|racing|bigben)( )?(set|pack|bundle|kit)", "starlink(?s).*pack", "digital edition",
         "(\\d+|rune|perk|microsoft|skill|(e)?xp(erience)?)\\s+(stats|points)", "(memory|trading|post|sd|nfc( mini)?)( )?card", "stickers",
         "(subscription|gift|ps\\d|steam|network|digital|will send|insta(nt)?|digital|key)( |-)?(card|code|key)", "disc \\d missing", "(instant|digital) delivery", "faulty", "damaged",
