@@ -25,7 +25,7 @@ object CurlImpersonateClient {
     "--cacert", "/etc/ssl/certs/ca-bundle.crt",
     "-w", s"\n$statusDelimiter%{http_code}"
   )
-  
+
   def make[F[_]](using F: Async[F]): F[CurlImpersonateClient[F]] =
     Semaphore[F](maxConcurrent).map { semaphore =>
       new CurlImpersonateClient[F]:
@@ -34,7 +34,7 @@ object CurlImpersonateClient {
             for
               headerArgs = headers.flatMap((k, v) => List("-H", s"$k: $v")).toList
               result <- F.cmd(curlCmd ++ headerArgs :+ url)
-              _      <- F.raiseWhen(result.exitCode != 0)(new IOException(s"curl failed (exit ${result.exitCode}): ${result.stderr}"))
+              _      <- F.raiseWhen(result.isError)(new IOException(s"curl failed (exit ${result.exitCode}): ${result.stderr}"))
               idx  = result.stdout.lastIndexOf(statusDelimiter)
               code = StatusCode(result.stdout.substring(idx + statusDelimiter.length).trim.toInt)
               body = result.stdout.substring(0, idx)
