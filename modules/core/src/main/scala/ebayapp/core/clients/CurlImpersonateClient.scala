@@ -45,8 +45,8 @@ final private class LiveCurlImpersonateClient[F[_]](
 }
 
 object CurlImpersonateClient:
-  def make[F[_]](
+  def make[F[_]: Async](
       maxConcurrent: Int = 5,
       timeout: FiniteDuration = 30.seconds
-  )(using F: Async[F]): F[CurlImpersonateClient[F]] =
+  ): F[CurlImpersonateClient[F]] =
     Semaphore[F](maxConcurrent).map(s => LiveCurlImpersonateClient[F](s, timeout))
