@@ -33,7 +33,7 @@ object Clients:
       ebayClient       <- EbayClient.make[F](configProvider, resources.fs2Backend)
       selfridgesClient <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
       argosClient      <- ArgosClient.make[F](configProvider, resources.fs2Backend)
-      curlClient       <- CurlImpersonateClient.make[F]
+      curlClient       <- CurlImpersonateClient.make[F]()
       jdClient         <- JdClient.curlImpersonateJdsports[F](configProvider, curlClient)
 //      jdClient               <- JdClient.jdsports[F](configProvider, resources.fs2Backend)
       scottsClient           <- FrasersClient.scotts[F](configProvider, resources.fs2Backend)
