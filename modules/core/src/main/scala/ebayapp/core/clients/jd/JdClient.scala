@@ -229,20 +229,16 @@ final private class CurlImpersonateJdClient[F[_]](
         code match {
           case s if s.isSuccess =>
             F.fromEither(ResponseParser.parseBrandAjaxResponse(body))
-          case StatusCode.Forbidden if attempt == maxAttempts =>
-            logger.error(s"$name-search/403-${criteria.query}") *> F.pure(Nil)
-          case StatusCode.Forbidden =>
-            logger.warn(s"$name-search/403-${criteria.query}") *>
-              F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
-              searchByBrand(criteria, step, attempt + 1)
           case StatusCode.NotFound if step == 0 =>
             logger.warn(s"$name-search/404") *> F.pure(Nil)
           case StatusCode.NotFound =>
             F.pure(Nil)
-          case s if s.isClientError =>
-            logger.error(s"$name-search/$s-error") *> F.pure(Nil)
+          case _ if attempt == maxAttempts =>
+            logger.error(s"$name-search/$code-${criteria.query} after $maxAttempts attempts") *> F.pure(Nil)
           case _ =>
-            logger.error(s"$name-search/error: $code") *> F.sleep(3.second) *> searchByBrand(criteria, step)
+            logger.warn(s"$name-search/$code-${criteria.query}") *>
+              F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
+              searchByBrand(criteria, step, attempt + 1)
         }
       }
 
@@ -256,18 +252,14 @@ final private class CurlImpersonateJdClient[F[_]](
         code match {
           case s if s.isSuccess =>
             F.fromEither(ResponseParser.parseProductStockResponse(body))
-          case StatusCode.Forbidden if attempt == maxAttempts =>
-            logger.error(s"$name-get-stock/403-${ci.fullName}") *> F.pure(None)
-          case StatusCode.Forbidden =>
-            logger.warn(s"$name-get-stock/403-${ci.fullName}") *>
-              F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
-              getProductStock(ci, attempt + 1)
           case StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
-          case s if s.isClientError =>
-            logger.error(s"$name-get-stock/$s-error") *> F.pure(None)
+          case _ if attempt == maxAttempts =>
+            logger.error(s"$name-get-stock/$code-${ci.fullName} after $maxAttempts attempts") *> F.pure(None)
           case _ =>
-            logger.error(s"$name-get-stock: $code") *> F.sleep(1.second) *> getProductStock(ci)
+            logger.warn(s"$name-get-stock/$code-${ci.fullName}") *>
+              F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
+              getProductStock(ci, attempt + 1)
         }
       }
 }
