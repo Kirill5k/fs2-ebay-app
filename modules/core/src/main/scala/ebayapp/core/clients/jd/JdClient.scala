@@ -2,6 +2,7 @@ package ebayapp.core.clients.jd
 
 import cats.Monad
 import cats.effect.Temporal
+import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
@@ -217,7 +218,7 @@ final private class CurlImpersonateJdClient[F[_]](
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 10): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 10, exceptionAttempt: Int = 0): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
         val base  = config.uri + criteria.category.fold("")(c => s"/$c")
@@ -238,11 +239,19 @@ final private class CurlImpersonateJdClient[F[_]](
           case _ =>
             logger.warn(s"$name-search/$code-${criteria.query}") *>
               F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
-              searchByBrand(criteria, step, attempt + 1)
+              searchByBrand(criteria, step, attempt + 1, maxAttempts, exceptionAttempt)
         }
       }
+      .handleErrorWith { e =>
+        if exceptionAttempt < 3 then
+          logger.warn(s"$name-search/exception: ${e.getMessage}") *>
+            F.sleep(calculateBackoffDelay(exceptionAttempt, maxDelay = 1.minute)) *>
+            searchByBrand(criteria, step, 0, maxAttempts, exceptionAttempt + 1)
+        else
+          logger.error(s"$name-search/exception: ${e.getMessage}") *> F.pure(Nil)
+      }
 
-  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 10): F[Option[JdProduct]] =
+  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 10, exceptionAttempt: Int = 0): F[Option[JdProduct]] =
     configProvider()
       .flatMap { config =>
         val url = s"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/"
@@ -259,8 +268,16 @@ final private class CurlImpersonateJdClient[F[_]](
           case _ =>
             logger.warn(s"$name-get-stock/$code-${ci.fullName}") *>
               F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
-              getProductStock(ci, attempt + 1)
+              getProductStock(ci, attempt + 1, maxAttempts, exceptionAttempt)
         }
+      }
+      .handleErrorWith { e =>
+        if exceptionAttempt < 3 then
+          logger.warn(s"$name-get-stock/exception: ${e.getMessage}") *>
+            F.sleep(calculateBackoffDelay(exceptionAttempt, maxDelay = 1.minute)) *>
+            getProductStock(ci, 0, maxAttempts, exceptionAttempt + 1)
+        else
+          logger.error(s"$name-get-stock/exception: ${e.getMessage}") *> F.pure(None)
       }
 }
 
