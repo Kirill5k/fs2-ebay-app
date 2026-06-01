@@ -218,7 +218,7 @@ final private class CurlImpersonateJdClient[F[_]](
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 10, exceptionAttempt: Int = 0): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int, retryState: RetryState = RetryState()): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
         val base  = config.uri + criteria.category.fold("")(c => s"/$c")
@@ -234,24 +234,24 @@ final private class CurlImpersonateJdClient[F[_]](
             logger.warn(s"$name-search/404") *> F.pure(Nil)
           case StatusCode.NotFound =>
             F.pure(Nil)
-          case _ if attempt == maxAttempts =>
-            logger.error(s"$name-search/$code-${criteria.query} after $maxAttempts attempts") *> F.pure(Nil)
+          case _ if retryState.attempt == retryState.maxAttempts =>
+            logger.error(s"$name-search/$code-${criteria.query} after ${retryState.maxAttempts} attempts") *> F.pure(Nil)
           case _ =>
             logger.warn(s"$name-search/$code-${criteria.query}") *>
-              F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
-              searchByBrand(criteria, step, attempt + 1, maxAttempts, exceptionAttempt)
+              F.sleep(calculateBackoffDelay(retryState.attempt, maxDelay = 10.minutes)) *>
+              searchByBrand(criteria, step, retryState.incAttempt)
         }
       }
       .handleErrorWith { e =>
-        if exceptionAttempt < 3 then
+        if retryState.exceptionAttempt < retryState.maxExceptionAttempts then
           logger.warn(s"$name-search/exception: ${e.getMessage}") *>
-            F.sleep(calculateBackoffDelay(exceptionAttempt, maxDelay = 1.minute)) *>
-            searchByBrand(criteria, step, 0, maxAttempts, exceptionAttempt + 1)
+            F.sleep(calculateBackoffDelay(retryState.exceptionAttempt, maxDelay = 1.minute)) *>
+            searchByBrand(criteria, step, retryState.incExceptionAttempt)
         else
           logger.error(s"$name-search/exception: ${e.getMessage}") *> F.pure(Nil)
       }
 
-  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 10, exceptionAttempt: Int = 0): F[Option[JdProduct]] =
+  private def getProductStock(ci: JdCatalogItem, retryState: RetryState = RetryState()): F[Option[JdProduct]] =
     configProvider()
       .flatMap { config =>
         val url = s"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/"
@@ -263,19 +263,19 @@ final private class CurlImpersonateJdClient[F[_]](
             F.fromEither(ResponseParser.parseProductStockResponse(body))
           case StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
-          case _ if attempt == maxAttempts =>
-            logger.error(s"$name-get-stock/$code-${ci.fullName} after $maxAttempts attempts") *> F.pure(None)
+          case _ if retryState.attempt == retryState.maxAttempts =>
+            logger.error(s"$name-get-stock/$code-${ci.fullName} after ${retryState.maxAttempts} attempts") *> F.pure(None)
           case _ =>
             logger.warn(s"$name-get-stock/$code-${ci.fullName}") *>
-              F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
-              getProductStock(ci, attempt + 1, maxAttempts, exceptionAttempt)
+              F.sleep(calculateBackoffDelay(retryState.attempt, maxDelay = 5.minutes)) *>
+              getProductStock(ci, retryState.incAttempt)
         }
       }
       .handleErrorWith { e =>
-        if exceptionAttempt < 3 then
+        if retryState.exceptionAttempt < retryState.maxExceptionAttempts then
           logger.warn(s"$name-get-stock/exception: ${e.getMessage}") *>
-            F.sleep(calculateBackoffDelay(exceptionAttempt, maxDelay = 1.minute)) *>
-            getProductStock(ci, 0, maxAttempts, exceptionAttempt + 1)
+            F.sleep(calculateBackoffDelay(retryState.exceptionAttempt, maxDelay = 1.minute)) *>
+            getProductStock(ci, retryState.incExceptionAttempt)
         else
           logger.error(s"$name-get-stock/exception: ${e.getMessage}") *> F.pure(None)
       }
