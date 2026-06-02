@@ -12,25 +12,27 @@ import sttp.client4.testing.ResponseStub
 
 class TelegramClientSpec extends Sttp4WordSpec {
 
+  val title          = "Test Title"
   val message        = "lorem ipsum dolor sit amet"
   val telegramConfig = TelegramConfig("http://telegram.com", "BOT-KEY", "m1", "m2", "alerts")
   val config         = MockRetailConfigProvider.make[IO](telegramConfig = Some(telegramConfig))
 
   "TelegramClient" should {
 
-    val sendMessageUrl = "telegram.com/botBOT-KEY/sendMessage"
+    val sendMessageUrl  = "telegram.com/botBOT-KEY/sendMessage"
+    val expectedText    = s"$title\n$message"
 
     "send message to the main channel" in {
       val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> message)) =>
+          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> expectedText)) =>
             ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
 
       val result = for
         client <- TelegramClient.make(config, testingBackend)
-        res    <- client.send(Notification.Deal(message))
+        res    <- client.send(Notification.Deal(title, message))
       yield res
 
       result.assertVoid
@@ -39,14 +41,14 @@ class TelegramClientSpec extends Sttp4WordSpec {
     "send message to the secondary channel" in {
       val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m2", "text" -> message)) =>
+          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m2", "text" -> expectedText)) =>
             ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
 
       val result = for
         client <- TelegramClient.make(config, testingBackend)
-        res    <- client.send(Notification.Stock(message))
+        res    <- client.send(Notification.Stock(title, message))
       yield res
 
       result.assertVoid
@@ -55,14 +57,14 @@ class TelegramClientSpec extends Sttp4WordSpec {
     "send message to the alerts channel" in {
       val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "alerts", "text" -> message)) =>
+          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "alerts", "text" -> expectedText)) =>
             ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
 
       val result = for
         client <- TelegramClient.make(config, testingBackend)
-        res    <- client.send(Notification.Alert(message))
+        res    <- client.send(Notification.Alert(title, message))
       yield res
 
       result.assertVoid
@@ -77,7 +79,7 @@ class TelegramClientSpec extends Sttp4WordSpec {
 
       val result = for
         client <- TelegramClient.make(config, testingBackend)
-        res    <- client.send(Notification.Deal(message))
+        res    <- client.send(Notification.Deal(title, message))
       yield res
 
       result.assertVoid
@@ -86,14 +88,14 @@ class TelegramClientSpec extends Sttp4WordSpec {
     "return error when not success" in {
       val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> message)) =>
+          case r if r.isGet && r.isGoingTo(sendMessageUrl) && r.hasParams(Map("chat_id" -> "m1", "text" -> expectedText)) =>
             ResponseStub.adjust("fail", StatusCode.BadRequest)
           case _ => throw new RuntimeException()
         }
 
       val result = for
         client <- TelegramClient.make(config, testingBackend)
-        res    <- client.send(Notification.Deal(message))
+        res    <- client.send(Notification.Deal(title, message))
       yield res
 
       result.assertThrows(AppError.Http(400, "error sending message to telegram channel m1"))

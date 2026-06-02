@@ -29,6 +29,7 @@ final private class LiveNtfyClient[F[_]](
       dispatch {
         basicRequest
           .post(uri"${config.baseUri}/${config.topic(n)}")
+          .header("Title", n.title)
           .contentType(MediaType.TextPlain)
           .body(n.message)
       }.flatMap { r =>

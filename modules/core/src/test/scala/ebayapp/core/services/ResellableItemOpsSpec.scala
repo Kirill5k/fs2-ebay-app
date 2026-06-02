@@ -14,8 +14,7 @@ class ResellableItemOpsSpec extends AnyWordSpec with Matchers {
     "return cheap item notification message string" in {
       val game  = makeVideoGame("super mario 3", platform = Some("SWITCH"))
       val query = game.cheapItemNotification
-      val msg   = """NEW "super mario 3 SWITCH" - ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3"""
-      query mustBe Some(Notification.Deal(msg))
+      query mustBe Some(Notification.Deal("""NEW "super mario 3 SWITCH"""", """ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3"""))
     }
 
     "return none if some of the item details are missing" in {

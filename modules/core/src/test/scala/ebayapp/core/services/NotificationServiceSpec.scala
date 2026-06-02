@@ -28,7 +28,7 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.alert(error))
 
         result.asserting { r =>
-          verify(client).send(Notification.Alert("""2021-01-01T00:10:00Z ERROR - very serious error"""))
+          verify(client).send(Notification.Alert("Error", "2021-01-01T00:10:00Z - very serious error"))
           r mustBe ()
         }
       }
@@ -43,8 +43,7 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.cheapItem(videoGame))
 
         result.asserting { r =>
-          val msg = """NEW "super mario 3 SWITCH" - ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3"""
-          verify(client).send(Notification.Deal(msg))
+          verify(client).send(Notification.Deal("""NEW "super mario 3 SWITCH"""", """ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3"""))
           r mustBe ()
         }
       }
@@ -60,8 +59,7 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.stockUpdate(item, update))
 
         result.asserting { r =>
-          val msg = """PRICE/DROP for macbook pro (£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro"""
-          verify(client).send(Notification.Stock(msg))
+          verify(client).send(Notification.Stock("PRICE/DROP for macbook pro", "(£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro"))
           r mustBe ()
         }
       }
@@ -80,8 +78,7 @@ class NotificationServiceSpec extends IOWordSpec {
           .flatMap(_.stockUpdate(item, StockUpdate.New))
 
         result.asserting { r =>
-          val msg = """STOCK/NEW for macbook pro (£1800.0, 1): New in stock http://cex.com/macbookpro"""
-          verify(client, times(1)).send(Notification.Stock(msg))
+          verify(client, times(1)).send(Notification.Stock("STOCK/NEW for macbook pro", "(£1800.0, 1): New in stock http://cex.com/macbookpro"))
           r mustBe ()
         }
       }

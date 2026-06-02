@@ -28,7 +28,7 @@ final private class LiveTelegramClient[F[_]](
     configProvider().flatMap { config =>
       dispatch {
         emptyRequest
-          .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=${config.channelId(n)}&text=${n.message}")
+          .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=${config.channelId(n)}&text=${s"${n.title}\n${n.message}"}")
       }.flatMap { r =>
         r.body match
           case Right(_)                                        => F.unit
