@@ -18,6 +18,12 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |    "secondaryChannelId" : "SECONDARY",
       |    "alertsChannelId" : "ALERTS"
       |  },
+      |  "ntfy" : {
+      |    "baseUri" : "https://ntfy.sh",
+      |    "dealsTopic" : "deals",
+      |    "stockTopic" : "stock",
+      |    "alertsTopic" : "alerts"
+      |  },
       |  "retailer" : {
       |    "ebay" : {
       |      "baseUri" : "https://api.ebay.com",
