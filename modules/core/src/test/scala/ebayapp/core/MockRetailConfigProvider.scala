@@ -2,7 +2,7 @@ package ebayapp.core
 
 import cats.MonadThrow
 import ebayapp.core.common.RetailConfigProvider
-import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, GenericRetailerConfig, StockMonitorConfig, TelegramConfig}
+import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, GenericRetailerConfig, NtfyConfig, StockMonitorConfig, TelegramConfig}
 import ebayapp.core.domain.Retailer
 import fs2.Stream
 
@@ -11,6 +11,7 @@ object MockRetailConfigProvider {
   def make[F[_]](
       cexConfig: Option[GenericRetailerConfig] = None,
       telegramConfig: Option[TelegramConfig] = None,
+      ntfyConfig: Option[NtfyConfig] = None,
       ebayConfig: Option[EbayConfig] = None,
       selfridgesConfig: Option[GenericRetailerConfig] = None,
       argosConfig: Option[GenericRetailerConfig] = None,
@@ -29,6 +30,7 @@ object MockRetailConfigProvider {
   ) = new RetailConfigProvider[F]:
     private def fromOpt[A](config: Option[A], name: String): F[A] = F.fromOption(config, new RuntimeException(s"missing $name config"))
     override def telegram: F[TelegramConfig]                      = fromOpt(telegramConfig, "telegram")
+    override def ntfy: F[NtfyConfig]                              = fromOpt(ntfyConfig, "ntfy")
     override def ebay: F[EbayConfig]                              = fromOpt(ebayConfig, "ebay")
     override def selfridges: F[GenericRetailerConfig]             = fromOpt(selfridgesConfig, "selfridges")
     override def cex: F[GenericRetailerConfig]                    = fromOpt(cexConfig, "cex")

@@ -13,7 +13,7 @@ import ebayapp.core.clients.mainlinemenswear.MainlineMenswearClient
 import ebayapp.core.clients.nvidia.NvidiaClient
 import ebayapp.core.clients.scan.ScanClient
 import ebayapp.core.clients.selfridges.SelfridgesClient
-import ebayapp.core.clients.telegram.TelegramClient
+import ebayapp.core.clients.ntfy.NtfyClient
 import ebayapp.core.common.{Logger, Resources, RetailConfigProvider}
 import ebayapp.core.domain.Retailer
 
@@ -29,7 +29,8 @@ object Clients:
   ): F[Clients[F]] =
     for
       cexClient        <- CexClient.graphql[F](configProvider, resources.fs2Backend)
-      telegramClient   <- TelegramClient.make[F](configProvider, resources.fs2Backend)
+//      telegramClient   <- TelegramClient.make[F](configProvider, resources.fs2Backend)
+      ntfyClient       <- NtfyClient.make[F](configProvider, resources.fs2Backend)
       ebayClient       <- EbayClient.make[F](configProvider, resources.fs2Backend)
       selfridgesClient <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
       argosClient      <- ArgosClient.make[F](configProvider, resources.fs2Backend)
@@ -45,7 +46,7 @@ object Clients:
       flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.fs2Backend)
     yield new Clients[F]:
       def cex: CexClient[F]                        = cexClient
-      def messenger: MessengerClient[F]            = telegramClient
+      def messenger: MessengerClient[F]            = ntfyClient
       def get(retailer: Retailer): SearchClient[F] =
         retailer match
           case Retailer.Cex              => cexClient

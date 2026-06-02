@@ -60,6 +60,13 @@ object config extends JsonCodecs {
       alertsChannelId: String
   ) derives ConfigReader, Codec.AsObject
 
+  final case class NtfyConfig(
+      baseUri: String,
+      dealsTopic: String,
+      stockTopic: String,
+      alertsTopic: String
+  ) derives ConfigReader, Codec.AsObject
+
   final case class RetailerConfig(
       ebay: EbayConfig,
       selfridges: GenericRetailerConfig,
@@ -114,6 +121,7 @@ object config extends JsonCodecs {
 
   final case class RetailConfig(
       telegram: TelegramConfig,
+      ntfy: Option[NtfyConfig] = None,
       retailer: RetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]

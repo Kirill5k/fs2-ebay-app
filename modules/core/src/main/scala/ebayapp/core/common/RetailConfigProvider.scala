@@ -4,7 +4,15 @@ import cats.effect.{Async, Ref, Temporal}
 import cats.effect.syntax.spawn.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.common.config.{DealsFinderConfig, EbayConfig, GenericRetailerConfig, RetailConfig, StockMonitorConfig, TelegramConfig}
+import ebayapp.core.common.config.{
+  DealsFinderConfig,
+  EbayConfig,
+  GenericRetailerConfig,
+  NtfyConfig,
+  RetailConfig,
+  StockMonitorConfig,
+  TelegramConfig
+}
 import ebayapp.core.domain.Retailer
 import ebayapp.core.repositories.RetailConfigRepository
 import fs2.Stream
@@ -14,6 +22,7 @@ trait RetailConfigProvider[F[_]]:
   def cex: F[GenericRetailerConfig]
   def selfridges: F[GenericRetailerConfig]
   def telegram: F[TelegramConfig]
+  def ntfy: F[NtfyConfig]
   def ebay: F[EbayConfig]
   def argos: F[GenericRetailerConfig]
   def jdsports: F[GenericRetailerConfig]
@@ -33,7 +42,9 @@ final private class ReactiveRetailConfigProvider[F[_]](
 )(using
     F: Temporal[F]
 ) extends RetailConfigProvider[F] {
-  override def telegram: F[TelegramConfig]                                     = state.get.map(_.telegram)
+  override def telegram: F[TelegramConfig] = state.get.map(_.telegram)
+  override def ntfy: F[NtfyConfig]         =
+    state.get.map(_.ntfy.getOrElse(NtfyConfig("https://ntfy.sh", "fs2-ebay-app-deals", "fs2-ebay-app-stock", "fs2-ebay-app-alerts")))
   override def cex: F[GenericRetailerConfig]                                   = state.get.map(_.retailer.cex)
   override def ebay: F[EbayConfig]                                             = state.get.map(_.retailer.ebay)
   override def selfridges: F[GenericRetailerConfig]                            = state.get.map(_.retailer.selfridges)
