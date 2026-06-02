@@ -43,7 +43,12 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.cheapItem(videoGame))
 
         result.asserting { r =>
-          verify(client).send(Notification.Deal("""NEW "super mario 3 SWITCH"""", """ebay: £32.99, cex: £80(142%)/£100 (qty: 1) https://www.ebay.co.uk/itm/super-mario-3"""))
+          verify(client).send(Notification.Deal(
+            """NEW "super mario 3 SWITCH"""",
+            """ebay: £32.99, cex: £80(142%)/£100 (qty: 1)""",
+            Some("https://www.ebay.co.uk/itm/super-mario-3"),
+            Some("https://i.ebayimg.com/images/g/0kcAAOSw~5ReGFCQ/s-l1600.jpg")
+          ))
           r mustBe ()
         }
       }
@@ -59,7 +64,12 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.stockUpdate(item, update))
 
         result.asserting { r =>
-          verify(client).send(Notification.Stock("PRICE/DROP for macbook pro", "(£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0 http://cex.com/macbookpro"))
+          verify(client).send(Notification.Stock(
+            "PRICE/DROP for macbook pro",
+            "(£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0",
+            Some("http://cex.com/macbookpro"),
+            None
+          ))
           r mustBe ()
         }
       }
@@ -78,7 +88,12 @@ class NotificationServiceSpec extends IOWordSpec {
           .flatMap(_.stockUpdate(item, StockUpdate.New))
 
         result.asserting { r =>
-          verify(client, times(1)).send(Notification.Stock("STOCK/NEW for macbook pro", "(£1800.0, 1): New in stock http://cex.com/macbookpro"))
+          verify(client, times(1)).send(Notification.Stock(
+            "STOCK/NEW for macbook pro",
+            "(£1800.0, 1): New in stock",
+            Some("http://cex.com/macbookpro"),
+            None
+          ))
           r mustBe ()
         }
       }

@@ -61,21 +61,18 @@ object NotificationService:
         quantity         = item.buyPrice.quantityAvailable
         buy              = item.buyPrice.rrp
         profitPercentage = sell.credit * 100 / buy - 100
-        url              = item.listingDetails.url
         title            = s"""NEW "$itemSummary""""
-        msg              = s"""ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: $quantity) $url"""
-      yield Notification.Deal(title, msg)
+        msg              = s"""ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: $quantity)"""
+      yield Notification.Deal(title, msg, Some(item.listingDetails.url), item.listingDetails.image)
 
     def stockUpdateNotification(update: StockUpdate): Option[Notification] =
       item.itemDetails.fullName.map { name =>
         val price    = item.buyPrice.rrp
         val quantity = item.buyPrice.quantityAvailable
         val discount = item.buyPrice.discount.fold("")(d => s", $d% off")
-        val url      = item.listingDetails.url
-        val image    = item.listingDetails.image.fold("")(i => s"\n$i")
         val title    = s"${update.header} for $name"
-        val msg      = s"(£$price$discount, $quantity): ${update.message} $url $image".trim
-        Notification.Stock(title, msg)
+        val msg      = s"(£$price$discount, $quantity): ${update.message}"
+        Notification.Stock(title, msg, Some(item.listingDetails.url), item.listingDetails.image)
       }
 
   def make[F[_]: {Temporal, Logger}](client: MessengerClient[F]): F[NotificationService[F]] =

@@ -28,7 +28,7 @@ final private class LiveTelegramClient[F[_]](
     configProvider().flatMap { config =>
       dispatch {
         emptyRequest
-          .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=${config.channelId(n)}&text=${s"${n.title}\n${n.message}"}")
+          .get(uri"${config.baseUri}/bot${config.botKey}/sendMessage?chat_id=${config.channelId(n)}&text=${n.telegramText}")
       }.flatMap { r =>
         r.body match
           case Right(_)                                        => F.unit
@@ -38,6 +38,12 @@ final private class LiveTelegramClient[F[_]](
               F.raiseError(AppError.Http(r.code.code, s"error sending message to telegram channel ${config.channelId(n)}"))
       }
     }
+
+  extension (n: Notification)
+    private def telegramText: String =
+      val base     = s"${n.title}\n${n.message}"
+      val withUrl  = n.url.fold(base)(u => s"$base\n$u")
+      n.image.fold(withUrl)(i => s"$withUrl\n$i")
 
   extension (c: TelegramConfig)
     private def channelId(n: Notification): String =

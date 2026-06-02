@@ -27,12 +27,14 @@ final private class LiveNtfyClient[F[_]](
   def send(n: Notification): F[Unit] =
     configProvider().flatMap { config =>
       dispatch {
-        basicRequest
-          .post(uri"${config.baseUri}/${config.topic(n)}")
-          .header("Title", n.title)
-          .contentType(MediaType.TextPlain)
-          .body(n.message)
-      }.flatMap { r =>
+          basicRequest
+            .post(uri"${config.baseUri}/${config.topic(n)}")
+            .header("Title", n.title)
+            .header("Click", n.url)
+            .header("Attach", n.image)
+            .contentType(MediaType.TextPlain)
+            .body(n.message)
+        }.flatMap { r =>
         r.body match
           case Right(_)                                         => F.unit
           case Left(_) if r.code == StatusCode.TooManyRequests => F.sleep(10.seconds) *> send(n)
