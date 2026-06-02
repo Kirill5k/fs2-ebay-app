@@ -121,7 +121,7 @@ object config extends JsonCodecs {
 
   final case class RetailConfig(
       telegram: TelegramConfig,
-      ntfy: Option[NtfyConfig] = None,
+      ntfy: NtfyConfig,
       retailer: RetailerConfig,
       stockMonitor: Map[Retailer, StockMonitorConfig],
       dealsFinder: Map[Retailer, DealsFinderConfig]

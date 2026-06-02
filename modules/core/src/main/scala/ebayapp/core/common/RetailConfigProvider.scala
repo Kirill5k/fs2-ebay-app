@@ -42,9 +42,8 @@ final private class ReactiveRetailConfigProvider[F[_]](
 )(using
     F: Temporal[F]
 ) extends RetailConfigProvider[F] {
-  override def telegram: F[TelegramConfig] = state.get.map(_.telegram)
-  override def ntfy: F[NtfyConfig]         =
-    state.get.map(_.ntfy.getOrElse(NtfyConfig("https://ntfy.sh", "fs2-ebay-app-deals", "fs2-ebay-app-stock", "fs2-ebay-app-alerts")))
+  override def telegram: F[TelegramConfig]                                     = state.get.map(_.telegram)
+  override def ntfy: F[NtfyConfig]                                             = state.get.map(_.ntfy)
   override def cex: F[GenericRetailerConfig]                                   = state.get.map(_.retailer.cex)
   override def ebay: F[EbayConfig]                                             = state.get.map(_.retailer.ebay)
   override def selfridges: F[GenericRetailerConfig]                            = state.get.map(_.retailer.selfridges)
