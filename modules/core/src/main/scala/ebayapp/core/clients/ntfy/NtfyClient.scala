@@ -27,18 +27,18 @@ final private class LiveNtfyClient[F[_]](
   def send(n: Notification): F[Unit] =
     configProvider().flatMap { config =>
       dispatch {
-          basicRequest
-            .post(uri"${config.baseUri}/${config.topic(n)}")
-            .header("Title", n.title)
-            .header("Click", n.url)
-            .header("Attach", n.image)
-            .contentType(MediaType.TextPlain)
-            .body(n.message)
-        }.flatMap { r =>
+        basicRequest
+          .post(uri"${config.baseUri}/${config.topic(n)}")
+          .header("Title", n.title)
+          .header("Click", n.url)
+          .header("Attach", n.image)
+          .contentType(MediaType.TextPlain)
+          .body(n.message)
+      }.flatMap { r =>
         r.body match
-          case Right(_)                                         => F.unit
+          case Right(_)                                        => F.unit
           case Left(_) if r.code == StatusCode.TooManyRequests => F.sleep(10.seconds) *> send(n)
-          case Left(error)                                      =>
+          case Left(error)                                     =>
             logger.error(s"error sending message to ntfy: ${r.code}\n$error") *>
               F.raiseError(AppError.Http(r.code.code, s"error sending message to ntfy topic ${config.topic(n)}"))
       }
@@ -58,4 +58,3 @@ object NtfyClient:
       backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   )(using F: Temporal[F]): F[MessengerClient[F]] =
     F.pure(LiveNtfyClient[F](() => configProvider.ntfy, backend))
-

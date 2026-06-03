@@ -30,7 +30,7 @@ final private class LiveNotificationService[F[_]: Monad](
   override def cheapItem(item: ResellableItem): F[Unit] =
     item.cheapItemNotification match
       case Some(notification) =>
-        logger.info(s"""sending ${notification.message}""") *>
+        logger.info(s"""sending ${notification.title} ${notification.message} ${item.listingDetails.url}""") *>
           messengerClient.send(notification)
       case None =>
         logger.warn(s"not enough details for sending cheap item notification $item")
@@ -39,7 +39,7 @@ final private class LiveNotificationService[F[_]: Monad](
     item.stockUpdateNotification(update) match
       case Some(notification) =>
         sentMessages.evalPutIfNew(base64(notification.message)) {
-          logger.info(s"""sending ${notification.message} from ${item.listingDetails.seller}""") *>
+          logger.info(s"""sending ${notification.title} ${notification.message} from ${item.listingDetails.seller} ${item.listingDetails.url}""") *>
             messengerClient.send(notification)
         }
       case None =>
