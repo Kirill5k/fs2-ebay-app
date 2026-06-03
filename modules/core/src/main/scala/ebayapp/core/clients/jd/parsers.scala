@@ -34,7 +34,13 @@ private[jd] object parsers {
       Category: String,
       Colour: String,
       PrimaryImage: String
-  ) derives Codec.AsObject
+  ) derives Codec.AsObject {
+    def cleanImageUrl: String = {
+      val queryIndex = PrimaryImage.lastIndexOf("?")
+      val cleanUrl = if (queryIndex != -1) PrimaryImage.substring(0, queryIndex) else PrimaryImage
+      cleanUrl + ".jpeg"
+    }
+  }
 
   object ResponseParser {
 

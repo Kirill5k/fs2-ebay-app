@@ -44,6 +44,11 @@ class JdClientSpec extends Sttp4WordSpec {
           "http://jdsports.com/proxy/product/black-mens-emporio-armani-ea7-tape-2-t-shirt/16022719/"
         )
 
+        items.flatMap(_.listingDetails.image) mustBe List(
+          "https://i8.amplience.net/i/jpl/jd_377478_a.jpeg",
+          "https://i8.amplience.net/i/jpl/jd_377478_a.jpeg"
+        )
+
         items.map(_.buyPrice).toSet mustBe Set(BuyPrice(1, BigDecimal(20.0), Some(67)))
       }
     }
