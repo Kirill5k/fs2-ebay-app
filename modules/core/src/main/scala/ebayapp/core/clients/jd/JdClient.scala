@@ -50,17 +50,17 @@ final private class LiveJdClient[F[_]](
         .map { p =>
           p.availableSizes.map { size =>
             JdsportsItem(
-              p.details.Id,
-              p.details.Name,
-              p.details.UnitPrice,
-              p.details.PreviousUnitPrice,
-              p.details.Brand,
-              p.details.Colour,
-              size,
-              p.details.cleanImageUrl,
-              p.details.Category,
-              config.websiteUri,
-              name
+              id = p.details.Id,
+              name = p.details.Name,
+              currentPrice = p.details.UnitPrice,
+              previousPrice = p.details.PreviousUnitPrice,
+              brand = p.details.Brand,
+              colour = p.details.Colour,
+              size = size,
+              image = p.details.cleanImageUrl,
+              category = p.details.Category,
+              storeUrl = config.websiteUri,
+              storeName = name
             )
           }
         }
@@ -153,8 +153,8 @@ final private class CurlImpersonateJdClient[F[_]](
     logger: Logger[F]
 ) extends SearchClient[F] {
 
-  private val name: String    = retailer.name
-  private val stepSize        = 50
+  private val name: String = retailer.name
+  private val stepSize     = 50
 
   private def randomDelay(config: GenericRetailerConfig): FiniteDuration =
     config.delayBetweenIndividualRequests
@@ -247,8 +247,7 @@ final private class CurlImpersonateJdClient[F[_]](
           logger.warn(s"$name-search/exception: ${e.getMessage}") *>
             F.sleep(calculateBackoffDelay(retryState.exceptionAttempt, maxDelay = 1.minute)) *>
             searchByBrand(criteria, step, retryState.incExceptionAttempt)
-        else
-          logger.error(s"$name-search/exception: ${e.getMessage}") *> F.pure(Nil)
+        else logger.error(s"$name-search/exception: ${e.getMessage}") *> F.pure(Nil)
       }
 
   private def getProductStock(ci: JdCatalogItem, retryState: RetryState = RetryState()): F[Option[JdProduct]] =
@@ -276,8 +275,7 @@ final private class CurlImpersonateJdClient[F[_]](
           logger.warn(s"$name-get-stock/exception: ${e.getMessage}") *>
             F.sleep(calculateBackoffDelay(retryState.exceptionAttempt, maxDelay = 1.minute)) *>
             getProductStock(ci, retryState.incExceptionAttempt)
-        else
-          logger.error(s"$name-get-stock/exception: ${e.getMessage}") *> F.pure(None)
+        else logger.error(s"$name-get-stock/exception: ${e.getMessage}") *> F.pure(None)
       }
 }
 

@@ -49,16 +49,16 @@ private[jd] object mappers {
 
       private def listingDetails(jdi: JdsportsItem): ListingDetails =
         ListingDetails(
-          s"${jdi.storeUrl}/product/${jdi.fullName}/${jdi.id}/",
-          s"${jdi.name} (${jdi.colour} / ${jdi.size})",
-          Some(jdi.category),
-          None,
-          None,
-          Some(jdi.image),
-          "NEW",
-          Instant.now,
-          jdi.storeName.capitalizeAll,
-          Map.empty
+          url = s"${jdi.storeUrl}/product/${jdi.fullName}/${jdi.id}/",
+          title = s"${jdi.name} (${jdi.colour} / ${jdi.size})",
+          category = Some(jdi.category),
+          description = None,
+          shortDescription = None,
+          image = Some(jdi.image),
+          condition = "NEW",
+          datePosted = Instant.now,
+          seller = jdi.storeName.capitalizeAll,
+          properties = Map.empty
         )
     }
   }
