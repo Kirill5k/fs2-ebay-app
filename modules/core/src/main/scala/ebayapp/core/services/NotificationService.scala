@@ -39,7 +39,7 @@ final private class LiveNotificationService[F[_]: Monad](
     item.stockUpdateNotification(update) match
       case Some(notification) =>
         sentMessages.evalPutIfNew(base64(notification.message)) {
-          logger.info(s"""sending ${notification.title} ${notification.message} from ${item.listingDetails.seller} ${item.listingDetails.url}""") *>
+          logger.info(s"""sending ${notification.title} ${notification.message} from ${item.listingDetails.seller} ${item.listingDetails.url} ${item.listingDetails.image}""") *>
             messengerClient.send(notification)
         }
       case None =>
