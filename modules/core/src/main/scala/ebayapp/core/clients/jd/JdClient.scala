@@ -198,7 +198,7 @@ final private class CurlImpersonateJdClient[F[_]](
               p.details.Brand,
               p.details.Colour,
               size,
-              p.details.PrimaryImage,
+              p.details.cleanImageUrl,
               p.details.Category,
               config.websiteUri,
               name
