@@ -282,12 +282,6 @@ final private class CurlImpersonateJdClient[F[_]](
 object JdClient:
   def jdsports[F[_]: {Temporal, Logger}](
       configProvider: RetailConfigProvider[F],
-      backend: WebSocketStreamBackend[F, Fs2Streams[F]]
-  ): F[SearchClient[F]] =
-    Monad[F].pure(LiveJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, backend))
-
-  def curlImpersonateJdsports[F[_]: {Temporal, Logger}](
-      configProvider: RetailConfigProvider[F],
       client: CurlImpersonateClient[F]
   ): F[SearchClient[F]] =
     Monad[F].pure(CurlImpersonateJdClient[F](() => configProvider.jdsports, Retailer.Jdsports, client))

@@ -28,15 +28,14 @@ object Clients:
       resources: Resources[F]
   ): F[Clients[F]] =
     for
-      cexClient        <- CexClient.graphql[F](configProvider, resources.fs2Backend)
+      cexClient <- CexClient.graphql[F](configProvider, resources.fs2Backend)
 //      telegramClient   <- TelegramClient.make[F](configProvider, resources.fs2Backend)
-      ntfyClient       <- NtfyClient.make[F](configProvider, resources.fs2Backend)
-      ebayClient       <- EbayClient.make[F](configProvider, resources.fs2Backend)
-      selfridgesClient <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
-      argosClient      <- ArgosClient.make[F](configProvider, resources.fs2Backend)
-      curlClient       <- CurlImpersonateClient.make[F]()
-      jdClient         <- JdClient.curlImpersonateJdsports[F](configProvider, curlClient)
-//      jdClient               <- JdClient.jdsports[F](configProvider, resources.fs2Backend)
+      ntfyClient             <- NtfyClient.make[F](configProvider, resources.fs2Backend)
+      ebayClient             <- EbayClient.make[F](configProvider, resources.fs2Backend)
+      selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
+      argosClient            <- ArgosClient.make[F](configProvider, resources.fs2Backend)
+      curlClient             <- CurlImpersonateClient.make[F]()
+      jdClient               <- JdClient.jdsports[F](configProvider, curlClient)
       scottsClient           <- FrasersClient.scotts[F](configProvider, resources.fs2Backend)
       tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.fs2Backend)
       nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)

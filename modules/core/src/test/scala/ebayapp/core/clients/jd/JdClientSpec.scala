@@ -37,7 +37,7 @@ class JdClientSpec extends IOWordSpec {
       )).thenReturnIO((StatusCode.Ok, FileReader.fromResources("jdsports/get-product-stock-oos.html")))
 
       JdClient
-        .curlImpersonateJdsports[IO](config, client)
+        .jdsports[IO](config, client)
         .flatMap(_.search(criteria).compile.toList)
         .asserting { items =>
           items.map(_.itemDetails) mustBe List(
