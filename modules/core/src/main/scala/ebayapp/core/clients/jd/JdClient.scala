@@ -6,7 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
-import ebayapp.core.clients.{CurlImpersonateClient, Fs2HttpClient, SearchClient}
+import ebayapp.core.clients.{CurlImpersonateClient, SearchClient}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
 import ebayapp.core.common.{Logger, RetailConfigProvider}
@@ -16,133 +16,9 @@ import kirill5k.common.cats.syntax.stream.*
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
-import sttp.capabilities.fs2.Fs2Streams
-import sttp.client4.*
-import sttp.model.{Header, HeaderNames, StatusCode}
+import sttp.model.{HeaderNames, StatusCode}
 
 import scala.concurrent.duration.*
-
-final private class LiveJdClient[F[_]](
-    private val configProvider: () => F[GenericRetailerConfig],
-    private val retailer: Retailer.Jdsports.type,
-    override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
-)(using
-    F: Temporal[F],
-    logger: Logger[F]
-) extends SearchClient[F] with Fs2HttpClient[F] {
-
-  override protected val name: String = retailer.name
-
-  private val stepSize = 50
-
-  private def randomDelay(config: GenericRetailerConfig): FiniteDuration =
-    config.delayBetweenIndividualRequests
-      .map(d => (d.toMillis + scala.util.Random.nextInt(3000)).millis)
-      .getOrElse((3000 + scala.util.Random.nextInt(5000)).millis)
-
-  override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
-    Stream.eval(configProvider()).flatMap { config =>
-      brandItems(criteria)
-        .filter(_.sale)
-        .evalTap(_ => F.sleep(randomDelay(config)))
-        .evalMap(i => getProductStock(i))
-        .unNone
-        .map { p =>
-          p.availableSizes.map { size =>
-            JdsportsItem(
-              id = p.details.Id,
-              name = p.details.Name,
-              currentPrice = p.details.UnitPrice,
-              previousPrice = p.details.PreviousUnitPrice,
-              brand = p.details.Brand,
-              colour = p.details.Colour,
-              size = size,
-              image = p.details.cleanImageUrl,
-              category = p.details.Category,
-              storeUrl = config.websiteUri,
-              storeName = name
-            )
-          }
-        }
-        .flatMap(Stream.emits)
-        .map(JdsportsItemMapper.clothing.toDomain(criteria))
-        .handleErrorWith(e => Stream.logError(e)(e.getMessage))
-    }
-
-  private def brandItems(criteria: SearchCriteria): Stream[F, JdCatalogItem] =
-    Stream
-      .unfoldLoopEval(0) { step =>
-        searchByBrand(criteria, step)
-          .map(items => items -> Option.when(items.size == stepSize)(step + 1))
-      }
-      .flatMap(Stream.emits)
-
-  private def searchByBrand(criteria: SearchCriteria, step: Int, attempt: Int = 0, maxAttempts: Int = 5): F[List[JdCatalogItem]] =
-    configProvider()
-      .flatMap { config =>
-        dispatch {
-          val base  = config.uri + criteria.category.fold("")(c => s"/$c")
-          val brand = criteria.query.toLowerCase.replace(" ", "-")
-          basicRequest
-            .get(uri"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1")
-            .headers(defaultHeaders)
-            .header(Header(HeaderNames.Origin, config.websiteUri))
-            .header(Header(HeaderNames.Referer, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
-            .headers(config.headers)
-        }
-      }
-      .flatMap { r =>
-        r.body match {
-          case Right(html) =>
-            F.fromEither(ResponseParser.parseBrandAjaxResponse(html))
-          case Left(_) if r.code == StatusCode.Forbidden && attempt == maxAttempts =>
-            logger.error(s"$name-search/403-${criteria.query}\n${r.request.uri}") *> F.pure(Nil)
-          case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.warn(s"$name-search/403-${criteria.query}\n${r.request.uri}") *>
-              F.sleep(calculateBackoffDelay(attempt, maxDelay = 10.minutes)) *>
-              searchByBrand(criteria, step, attempt + 1)
-          case Left(_) if r.code == StatusCode.NotFound && step == 0 =>
-            logger.warn(s"$name-search/404 - ${r.request.uri.toString()}") *> F.pure(Nil)
-          case Left(_) if r.code == StatusCode.NotFound =>
-            F.pure(Nil)
-          case Left(_) if r.code.isClientError =>
-            logger.error(s"$name-search/${r.code}-error") *> F.pure(Nil)
-          case Left(error) =>
-            logger.error(s"$name-search/error: $error") *> F.sleep(3.second) *> searchByBrand(criteria, step)
-        }
-      }
-
-  private def getProductStock(ci: JdCatalogItem, attempt: Int = 0, maxAttempts: Int = 3): F[Option[JdProduct]] =
-    configProvider()
-      .flatMap { config =>
-        dispatch {
-          basicRequest
-            .get(uri"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/")
-            .headers(defaultHeaders)
-            .header(Header(HeaderNames.Origin, config.websiteUri))
-            .header(Header(HeaderNames.Referer, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
-            .headers(config.headers)
-        }
-      }
-      .flatMap { r =>
-        r.body match {
-          case Right(html) =>
-            F.fromEither(ResponseParser.parseProductStockResponse(html))
-          case Left(_) if r.code == StatusCode.Forbidden && attempt == maxAttempts =>
-            logger.error(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}") *> F.pure(None)
-          case Left(_) if r.code == StatusCode.Forbidden =>
-            logger.warn(s"$name-get-stock/403-${ci.fullName}\n${r.request.uri}") *>
-              F.sleep(calculateBackoffDelay(attempt, maxDelay = 5.minutes)) *>
-              getProductStock(ci, attempt + 1)
-          case Left(_) if r.code == StatusCode.NotFound =>
-            logger.warn(s"$name-get-stock/404") *> F.pure(None)
-          case Left(_) if r.code.isClientError =>
-            logger.error(s"$name-get-stock/${r.code}-error") *> F.pure(None)
-          case Left(error) =>
-            logger.error(s"$name-get-stock: $error") *> F.sleep(1.second) *> getProductStock(ci)
-        }
-      }
-}
 
 final private class CurlImpersonateJdClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
