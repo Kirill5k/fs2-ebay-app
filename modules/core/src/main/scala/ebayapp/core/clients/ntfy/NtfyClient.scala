@@ -46,10 +46,10 @@ final private class LiveNtfyClient[F[_]](
 
   extension (c: NtfyConfig)
     private def topic(n: Notification): String =
-      n match
-        case _: Notification.Alert => c.alertsTopic
-        case _: Notification.Deal  => c.dealsTopic
-        case _: Notification.Stock => c.stockTopic
+      n.kind match
+        case Notification.Kind.Alert => c.alertsTopic
+        case Notification.Kind.Deal  => c.dealsTopic
+        case Notification.Kind.Stock => c.stockTopic
 }
 
 object NtfyClient:

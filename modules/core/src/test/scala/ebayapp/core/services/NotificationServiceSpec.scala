@@ -28,7 +28,7 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.alert(error))
 
         result.asserting { r =>
-          verify(client).send(Notification.Alert("Error", "2021-01-01T00:10:00Z - very serious error"))
+          verify(client).send(Notification.alert("Error", "2021-01-01T00:10:00Z - very serious error"))
           r mustBe ()
         }
       }
@@ -43,10 +43,10 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.cheapItem(videoGame))
 
         result.asserting { r =>
-          verify(client).send(Notification.Deal(
+          verify(client).send(Notification.deal(
             """NEW "super mario 3 SWITCH"""",
             """ebay: £32.99, cex: £80(142%)/£100 (qty: 1)""",
-            Some(videoGame)
+            videoGame
           ))
           r mustBe ()
         }
@@ -63,10 +63,10 @@ class NotificationServiceSpec extends IOWordSpec {
         val result = NotificationService.make(client).flatMap(_.stockUpdate(item, update))
 
         result.asserting { r =>
-          verify(client).send(Notification.Stock(
+          verify(client).send(Notification.stock(
             "PRICE/DROP for macbook pro",
             "(£50.0, 25% off, 1): Price has reduced from £100.0 to £50.0",
-            Some(item)
+            item
           ))
           r mustBe ()
         }
@@ -86,10 +86,10 @@ class NotificationServiceSpec extends IOWordSpec {
           .flatMap(_.stockUpdate(item, StockUpdate.New))
 
         result.asserting { r =>
-          verify(client, times(1)).send(Notification.Stock(
+          verify(client, times(1)).send(Notification.stock(
             "STOCK/NEW for macbook pro",
             "(£1800.0, 1): New in stock",
-            Some(item)
+            item
           ))
           r mustBe ()
         }

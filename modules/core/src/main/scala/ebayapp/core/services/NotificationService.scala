@@ -45,7 +45,7 @@ final private class LiveNotificationService[F[_]: Monad](
         logger.warn(s"not enough details for stock update notification $update")
 
   override def alert(error: Error): F[Unit] =
-    messengerClient.send(Notification.Alert("Error", s"${error.time.toString} - ${error.message}"))
+    messengerClient.send(Notification.alert("Error", s"${error.time.toString} - ${error.message}"))
 
   private def base64(message: String): String =
     Base64.getEncoder.encodeToString(message.getBytes(StandardCharsets.UTF_8))
@@ -60,7 +60,7 @@ final private class LiveNotificationService[F[_]: Monad](
         profitPercentage = sell.credit * 100 / buy - 100
         title            = s"""NEW "$itemSummary""""
         msg              = s"""ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: $quantity)"""
-      yield Notification.Deal(title, msg, Some(item))
+      yield Notification.deal(title, msg, item)
 
     private def stockUpdateNotification(update: StockUpdate): Option[Notification] =
       item.itemDetails.fullName.map { name =>
@@ -69,7 +69,7 @@ final private class LiveNotificationService[F[_]: Monad](
         val discount = item.buyPrice.discount.fold("")(d => s", $d% off")
         val title    = s"${update.header} for $name"
         val msg      = s"(£$price$discount, $quantity): ${update.message}"
-        Notification.Stock(title, msg, Some(item))
+        Notification.stock(title, msg, item)
       }
 }
 

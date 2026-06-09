@@ -1,18 +1,21 @@
 package ebayapp.core.domain
 
-enum Notification(val title: String, val message: String, val item: Option[ResellableItem] = None):
-  case Alert(
-      override val title: String,
-      override val message: String,
-      override val item: Option[ResellableItem] = None
-  ) extends Notification(title, message, item)
-  case Deal(
-      override val title: String,
-      override val message: String,
-      override val item: Option[ResellableItem] = None
-  ) extends Notification(title, message, item)
-  case Stock(
-      override val title: String,
-      override val message: String,
-      override val item: Option[ResellableItem] = None
-  ) extends Notification(title, message, item)
+final case class Notification(
+    kind: Notification.Kind,
+    title: String,
+    message: String,
+    item: Option[ResellableItem] = None
+)
+
+object Notification:
+  enum Kind:
+    case Alert, Deal, Stock
+
+  def alert(title: String, message: String): Notification =
+    Notification(Kind.Alert, title, message)
+
+  def deal(title: String, message: String, item: ResellableItem): Notification =
+    Notification(Kind.Deal, title, message, Some(item))
+
+  def stock(title: String, message: String, item: ResellableItem): Notification =
+    Notification(Kind.Stock, title, message, Some(item))
