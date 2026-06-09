@@ -25,7 +25,6 @@ final private class LiveNotificationService[F[_]: Monad](
 )(using
     logger: Logger[F]
 ) extends NotificationService[F] {
-  import NotificationService.*
 
   override def cheapItem(item: ResellableItem): F[Unit] =
     item.cheapItemNotification match
@@ -50,11 +49,9 @@ final private class LiveNotificationService[F[_]: Monad](
 
   private def base64(message: String): String =
     Base64.getEncoder.encodeToString(message.getBytes(StandardCharsets.UTF_8))
-}
 
-object NotificationService:
   extension (item: ResellableItem)
-    def cheapItemNotification: Option[Notification] =
+    private def cheapItemNotification: Option[Notification] =
       for
         itemSummary <- item.itemDetails.fullName
         sell        <- item.sellPrice
@@ -63,18 +60,20 @@ object NotificationService:
         profitPercentage = sell.credit * 100 / buy - 100
         title            = s"""NEW "$itemSummary""""
         msg              = s"""ebay: £$buy, cex: £${sell.credit}(${profitPercentage.intValue}%)/£${sell.cash} (qty: $quantity)"""
-      yield Notification.Deal(title, msg, Some(item.listingDetails.url), item.listingDetails.image)
+      yield Notification.Deal(title, msg, Some(item))
 
-    def stockUpdateNotification(update: StockUpdate): Option[Notification] =
+    private def stockUpdateNotification(update: StockUpdate): Option[Notification] =
       item.itemDetails.fullName.map { name =>
         val price    = item.buyPrice.rrp
         val quantity = item.buyPrice.quantityAvailable
         val discount = item.buyPrice.discount.fold("")(d => s", $d% off")
         val title    = s"${update.header} for $name"
         val msg      = s"(£$price$discount, $quantity): ${update.message}"
-        Notification.Stock(title, msg, Some(item.listingDetails.url), item.listingDetails.image)
+        Notification.Stock(title, msg, Some(item))
       }
+}
 
+object NotificationService:
   def make[F[_]: {Temporal, Logger}](client: MessengerClient[F]): F[NotificationService[F]] =
     Cache
       .make[F, String, Unit](1.hour, 5.minutes)

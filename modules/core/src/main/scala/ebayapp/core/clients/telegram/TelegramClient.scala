@@ -8,6 +8,7 @@ import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
+import kirill5k.common.cats.Clock
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.client4.*
 import sttp.model.StatusCode
@@ -19,7 +20,8 @@ final private class LiveTelegramClient[F[_]](
     override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     F: Temporal[F],
-    logger: Logger[F]
+    logger: Logger[F],
+    clock: Clock[F]
 ) extends MessengerClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String = "telegram"
@@ -32,7 +34,7 @@ final private class LiveTelegramClient[F[_]](
       }.flatMap { r =>
         r.body match
           case Right(_)                                        => F.unit
-          case Left(_) if r.code == StatusCode.TooManyRequests => F.sleep(10.seconds) *> send(n)
+          case Left(_) if r.code == StatusCode.TooManyRequests => clock.sleep(10.seconds) *> send(n)
           case Left(error)                                     =>
             logger.error(s"error sending message to telegram: ${r.code}\n$error") *>
               F.raiseError(AppError.Http(r.code.code, s"error sending message to telegram channel ${config.channelId(n)}"))
@@ -41,9 +43,9 @@ final private class LiveTelegramClient[F[_]](
 
   extension (n: Notification)
     private def telegramText: String =
-      val base     = s"${n.title}\n${n.message}"
-      val withUrl  = n.url.fold(base)(u => s"$base\n$u")
-      n.image.fold(withUrl)(i => s"$withUrl\n$i")
+      val base    = s"${n.title}\n${n.message}"
+      val withUrl = n.item.fold(base)(i => s"$base\n${i.listingDetails.url}")
+      n.item.flatMap(_.listingDetails.image).fold(withUrl)(i => s"$withUrl\n$i")
 
   extension (c: TelegramConfig)
     private def channelId(n: Notification): String =
@@ -54,7 +56,7 @@ final private class LiveTelegramClient[F[_]](
 }
 
 object TelegramClient:
-  def make[F[_]: Logger](
+  def make[F[_]: {Logger, Clock}](
       configProvider: RetailConfigProvider[F],
       backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   )(using F: Temporal[F]): F[MessengerClient[F]] =

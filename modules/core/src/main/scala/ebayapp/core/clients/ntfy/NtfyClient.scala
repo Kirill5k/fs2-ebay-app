@@ -30,8 +30,8 @@ final private class LiveNtfyClient[F[_]](
         basicRequest
           .post(uri"${config.baseUri}/${config.topic(n)}")
           .header("Title", n.title)
-          .header("Click", n.url)
-          .header("Attach", n.image)
+          .header("Click", n.item.map(_.listingDetails.url))
+          .header("Attach", n.item.flatMap(_.listingDetails.image))
           .contentType(MediaType.TextPlain)
           .body(n.message)
       }.flatMap { r =>

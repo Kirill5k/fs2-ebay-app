@@ -6,9 +6,12 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.TelegramConfig
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
+import kirill5k.common.cats.Clock
 import sttp.model.StatusCode
 import kirill5k.common.sttp.test.Sttp4WordSpec
 import sttp.client4.testing.ResponseStub
+
+import java.time.Instant
 
 class TelegramClientSpec extends Sttp4WordSpec {
 
@@ -17,6 +20,8 @@ class TelegramClientSpec extends Sttp4WordSpec {
   val telegramConfig = TelegramConfig("http://telegram.com", "BOT-KEY", "m1", "m2", "alerts")
   val config         = MockRetailConfigProvider.make[IO](telegramConfig = Some(telegramConfig))
 
+  given clock: Clock[IO] = Clock.mock(Instant.now())
+  
   "TelegramClient" should {
 
     val sendMessageUrl  = "telegram.com/botBOT-KEY/sendMessage"
