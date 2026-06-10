@@ -8,20 +8,16 @@ import ebayapp.core.common.config.NtfyConfig
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.Notification
 import ebayapp.kernel.errors.AppError
-import kirill5k.common.cats.Clock
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.client4.*
-import sttp.model.{MediaType, StatusCode}
-
-import scala.concurrent.duration.*
+import sttp.model.MediaType
 
 final private class LiveNtfyClient[F[_]](
     private val configProvider: () => F[NtfyConfig],
     override val backend: WebSocketStreamBackend[F, Fs2Streams[F]]
 )(using
     F: Temporal[F],
-    logger: Logger[F],
-    clock: Clock[F]
+    logger: Logger[F]
 ) extends MessengerClient[F] with Fs2HttpClient[F] {
 
   override protected val name: String = "ntfy"
@@ -38,9 +34,8 @@ final private class LiveNtfyClient[F[_]](
           .body(n.message)
       }.flatMap { r =>
         r.body match
-          case Right(_)                                        => F.unit
-          case Left(_) if r.code == StatusCode.TooManyRequests => clock.sleep(10.seconds) *> send(n)
-          case Left(error)                                     =>
+          case Right(_)    => F.unit
+          case Left(error) =>
             logger.error(s"error sending message to ntfy: ${r.code}\n$error") *>
               F.raiseError(AppError.Http(r.code.code, s"error sending message to ntfy topic ${config.topic(n)}"))
       }
@@ -55,7 +50,7 @@ final private class LiveNtfyClient[F[_]](
 }
 
 object NtfyClient:
-  def make[F[_]: {Logger, Clock}](
+  def make[F[_]: Logger](
       configProvider: RetailConfigProvider[F],
       backend: WebSocketStreamBackend[F, Fs2Streams[F]]
   )(using F: Temporal[F]): F[MessengerClient[F]] =

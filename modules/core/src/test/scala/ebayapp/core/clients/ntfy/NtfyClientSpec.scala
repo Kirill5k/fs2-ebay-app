@@ -6,12 +6,9 @@ import ebayapp.core.MockLogger.given
 import ebayapp.core.common.config.NtfyConfig
 import ebayapp.core.domain.{Notification, ResellableItemBuilder}
 import ebayapp.kernel.errors.AppError
-import kirill5k.common.cats.Clock
 import sttp.model.StatusCode
 import kirill5k.common.sttp.test.Sttp4WordSpec
 import sttp.client4.testing.ResponseStub
-
-import java.time.Instant
 
 class NtfyClientSpec extends Sttp4WordSpec {
 
@@ -20,8 +17,6 @@ class NtfyClientSpec extends Sttp4WordSpec {
   val ntfyConfig = NtfyConfig("http://ntfy.com", "deals", "stock", "alerts")
   val config     = MockRetailConfigProvider.make[IO](ntfyConfig = Some(ntfyConfig))
   val item       = ResellableItemBuilder.makeGeneric("test")
-
-  given clock: Clock[IO] = Clock.mock(Instant.now())
 
   "NtfyClient" should {
 
@@ -68,21 +63,6 @@ class NtfyClientSpec extends Sttp4WordSpec {
       val result = for
         client <- NtfyClient.make(config, testingBackend)
         res    <- client.send(Notification.alert(title, message))
-      yield res
-
-      result.assertVoid
-    }
-
-    "retry on 429" in {
-      val testingBackend = fs2BackendStub.whenAnyRequest
-        .thenRespondCyclic(
-          ResponseStub.adjust("too-many-requests", StatusCode.TooManyRequests),
-          ResponseStub.adjust("ok")
-        )
-
-      val result = for
-        client <- NtfyClient.make(config, testingBackend)
-        res    <- client.send(Notification.deal(title, message, item))
       yield res
 
       result.assertVoid
