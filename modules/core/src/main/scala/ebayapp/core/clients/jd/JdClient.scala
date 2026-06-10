@@ -32,23 +32,28 @@ final private class CurlImpersonateJdClient[F[_]](
   private val name: String = retailer.name
   private val stepSize     = 50
 
+  private val searchRetrySpec = CurlImpersonateClient.RetrySpec(
+    retryOnClientError = true,
+    retryOnServerError = true,
+    retryExcludedCodes = Set(StatusCode.NotFound),
+    retryOnConnectionError = true,
+    maxRetries = 10,
+    maxDelay = 10.minutes
+  )
+
+  private val stockRetrySpec = CurlImpersonateClient.RetrySpec(
+    retryOnClientError = true,
+    retryOnServerError = true,
+    retryExcludedCodes = Set(StatusCode.NotFound),
+    retryOnConnectionError = true,
+    maxRetries = 10,
+    maxDelay = 5.minutes
+  )
+
   private def randomDelay(config: GenericRetailerConfig): FiniteDuration =
     config.delayBetweenIndividualRequests
       .map(d => (d.toMillis + scala.util.Random.nextInt(3000)).millis)
       .getOrElse((3000 + scala.util.Random.nextInt(5000)).millis)
-
-  private def calculateBackoffDelay(
-      attempt: Int,
-      maxDelay: FiniteDuration,
-      baseDelay: FiniteDuration = 5.second,
-      jitterFactor: Double = 0.2
-  ): FiniteDuration = {
-    val exponentialDelayMs = baseDelay.toMillis * Math.pow(2, attempt).toLong
-    val cappedDelayMs      = Math.min(exponentialDelayMs, maxDelay.toMillis)
-    val jitter             = (scala.util.Random.nextDouble() * 2 - 1) * jitterFactor * cappedDelayMs
-    val finalDelayMs       = Math.max(1, Math.min(maxDelay.toMillis, (cappedDelayMs + jitter).toLong))
-    finalDelayMs.millis
-  }
 
   private def requestHeaders(config: GenericRetailerConfig, referer: String): Map[String, String] =
     Map(
@@ -94,13 +99,13 @@ final private class CurlImpersonateJdClient[F[_]](
       }
       .flatMap(Stream.emits)
 
-  private def searchByBrand(criteria: SearchCriteria, step: Int, retryState: RetryState = RetryState()): F[List[JdCatalogItem]] =
+  private def searchByBrand(criteria: SearchCriteria, step: Int): F[List[JdCatalogItem]] =
     configProvider()
       .flatMap { config =>
         val base  = config.uri + criteria.category.fold("")(c => s"/$c")
         val brand = criteria.query.toLowerCase.replace(" ", "-")
         val url   = s"$base/brand/$brand/?max=$stepSize&from=${step * stepSize}&sort=price-low-high&AJAX=1"
-        client.get(url, requestHeaders(config, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"))
+        client.get(url, requestHeaders(config, s"${config.websiteUri}/brand/$brand?from=${step * stepSize}"), searchRetrySpec)
       }
       .flatMap { (code, body) =>
         code match {
@@ -110,27 +115,19 @@ final private class CurlImpersonateJdClient[F[_]](
             logger.warn(s"$name-search/404") *> F.pure(Nil)
           case StatusCode.NotFound =>
             F.pure(Nil)
-          case _ if retryState.attempt == retryState.maxAttempts =>
-            logger.error(s"$name-search/$code-${criteria.query} after ${retryState.maxAttempts} attempts") *> F.pure(Nil)
           case _ =>
-            logger.warn(s"$name-search/$code-${criteria.query}") *>
-              F.sleep(calculateBackoffDelay(retryState.attempt, maxDelay = 10.minutes)) *>
-              searchByBrand(criteria, step, retryState.incAttempt)
+            logger.error(s"$name-search/$code-${criteria.query}") *> F.pure(Nil)
         }
       }
       .handleErrorWith { e =>
-        if retryState.exceptionAttempt < retryState.maxExceptionAttempts then
-          logger.warn(s"$name-search/exception: ${e.getMessage}") *>
-            F.sleep(calculateBackoffDelay(retryState.exceptionAttempt, maxDelay = 1.minute)) *>
-            searchByBrand(criteria, step, retryState.incExceptionAttempt)
-        else logger.error(s"$name-search/exception: ${e.getMessage}") *> F.pure(Nil)
+        logger.error(s"$name-search/exception: ${e.getMessage}") *> F.pure(Nil)
       }
 
-  private def getProductStock(ci: JdCatalogItem, retryState: RetryState = RetryState()): F[Option[JdProduct]] =
+  private def getProductStock(ci: JdCatalogItem): F[Option[JdProduct]] =
     configProvider()
       .flatMap { config =>
         val url = s"${config.uri}/product/${ci.fullName}/${ci.plu}/stock/"
-        client.get(url, requestHeaders(config, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"))
+        client.get(url, requestHeaders(config, s"${config.websiteUri}/product/${ci.fullName}/${ci.plu}/"), stockRetrySpec)
       }
       .flatMap { (code, body) =>
         code match {
@@ -138,20 +135,12 @@ final private class CurlImpersonateJdClient[F[_]](
             F.fromEither(ResponseParser.parseProductStockResponse(body))
           case StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
-          case _ if retryState.attempt == retryState.maxAttempts =>
-            logger.error(s"$name-get-stock/$code-${ci.fullName} after ${retryState.maxAttempts} attempts") *> F.pure(None)
           case _ =>
-            logger.warn(s"$name-get-stock/$code-${ci.fullName}") *>
-              F.sleep(calculateBackoffDelay(retryState.attempt, maxDelay = 5.minutes)) *>
-              getProductStock(ci, retryState.incAttempt)
+            logger.error(s"$name-get-stock/$code-${ci.fullName}") *> F.pure(None)
         }
       }
       .handleErrorWith { e =>
-        if retryState.exceptionAttempt < retryState.maxExceptionAttempts then
-          logger.warn(s"$name-get-stock/exception: ${e.getMessage}") *>
-            F.sleep(calculateBackoffDelay(retryState.exceptionAttempt, maxDelay = 1.minute)) *>
-            getProductStock(ci, retryState.incExceptionAttempt)
-        else logger.error(s"$name-get-stock/exception: ${e.getMessage}") *> F.pure(None)
+        logger.error(s"$name-get-stock/exception: ${e.getMessage}") *> F.pure(None)
       }
 }
 
