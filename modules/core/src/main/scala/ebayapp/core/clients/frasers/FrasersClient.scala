@@ -66,7 +66,7 @@ final private class LiveFrasersClient[F[_]](
   private def getItems(sc: SearchCriteria)(page: Int): F[(List[FlannelsProduct], Option[Int])] =
     configProvider()
       .flatMap { config =>
-        val args = Map(
+        val args = List(
           "categoryId"       -> s"${groupIdPrefix}${sc.query.toUpperCase.replaceAll("[ -]", "")}",
           "page"             -> page.toString,
           "productsPerPage"  -> "100",
