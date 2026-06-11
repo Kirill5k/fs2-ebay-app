@@ -36,13 +36,13 @@ object Clients:
       argosClient            <- ArgosClient.make[F](configProvider, resources.fs2Backend)
       curlClient             <- CurlImpersonateClient.make[F]()
       jdClient               <- JdClient.jdsports[F](configProvider, curlClient)
-      scottsClient           <- FrasersClient.scotts[F](configProvider, resources.fs2Backend)
-      tessutiClient          <- FrasersClient.tessuti[F](configProvider, resources.fs2Backend)
+      scottsClient           <- FrasersClient.scotts[F](configProvider, curlClient)
+      tessutiClient          <- FrasersClient.tessuti[F](configProvider, curlClient)
       nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)
       scanClient             <- ScanClient.make[F](configProvider, resources.fs2Backend)
       harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.fs2Backend)
       mainlineMenswearClient <- MainlineMenswearClient.make[F](configProvider, resources.fs2Backend)
-      flannelsClient         <- FrasersClient.flannels[F](configProvider, resources.fs2Backend)
+      flannelsClient         <- FrasersClient.flannels[F](configProvider, curlClient)
     yield new Clients[F]:
       def cex: CexClient[F]                        = cexClient
       def messenger: MessengerClient[F]            = ntfyClient
