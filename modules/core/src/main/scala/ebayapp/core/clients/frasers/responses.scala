@@ -26,4 +26,25 @@ private[frasers] object responses {
     def colour: String    = colourName.replaceFirst(" V[ 0-9]+", "")
 
   final case class FlannelsSearchResponse(products: List[FlannelsProduct]) derives Codec.AsObject
+
+  final case class FrasersSizeVariant(
+      description: String,
+      variantId: String
+  ) derives Codec.AsObject
+
+  final case class FrasersProduct(
+      image: String,
+      color: String,
+      brand: String,
+      name: String,
+      sizeVariants: List[FrasersSizeVariant],
+      price: BigDecimal,
+      discountedPrice: Option[BigDecimal],
+      productUrl: String,
+      key: String
+  ) derives Codec.AsObject:
+    def isOnSale: Boolean  = discountedPrice.exists(_ < price) && sizeVariants.nonEmpty
+    def colour: String     = color.replaceFirst(" V[ 0-9A-Z]+", "")
+    def sizes: String      = sizeVariants.map(_.description).mkString(", ")
+    def discount: Option[Int] = discountedPrice.map(dp => ((price - dp) / price * 100).toInt)
 }
