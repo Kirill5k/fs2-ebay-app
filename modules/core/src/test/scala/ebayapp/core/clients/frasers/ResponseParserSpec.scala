@@ -2,6 +2,7 @@ package ebayapp.core.clients.frasers
 
 import ebayapp.core.clients.frasers.parsers.ResponseParser
 import ebayapp.core.clients.frasers.responses.{FrasersProduct, FrasersSizeVariant}
+import ebayapp.kernel.errors.AppError
 import kirill5k.common.test.FileReader
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -32,7 +33,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "return an error when products array is not found" in {
         val result = ResponseParser.parseItemsFromBrandPageResponse("<html><body>no products here</body></html>")
 
-        result mustBe a[Left[?, ?]]
+        result mustBe Left(AppError.Failed("Could not find products array in Frasers brand page response"))
       }
     }
 
@@ -46,7 +47,7 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
       "return an error when active page number is not found" in {
         val result = ResponseParser.parseActivePageNumberFromBrandPageResponse("<html><body>no pagination here</body></html>")
 
-        result mustBe a[Left[?, ?]]
+        result mustBe Left(AppError.Failed("Could not find active page number in Frasers brand page response"))
       }
     }
   }
