@@ -1,7 +1,7 @@
 package ebayapp.core.clients.frasers
 
 import ebayapp.core.clients.ItemMapper
-import ebayapp.core.clients.frasers.responses.FlannelsProduct
+import ebayapp.core.clients.frasers.responses.FrasersProduct
 import ebayapp.core.domain.search.{BuyPrice, ListingDetails}
 import ebayapp.core.domain.{search, ItemDetails, ResellableItem}
 
@@ -10,7 +10,7 @@ import java.time.Instant
 private[frasers] object mappers {
 
   final case class FrasersItem(
-      product: FlannelsProduct,
+      product: FrasersProduct,
       size: String,
       websiteUri: String,
       retailer: String
@@ -27,18 +27,18 @@ private[frasers] object mappers {
             formatSize(item.size)
           ),
           ListingDetails(
-            s"${item.websiteUri}${item.product.url}",
-            item.product.imageAltText,
+            s"${item.websiteUri}/${item.product.productUrl}",
+            item.product.name,
             None,
             None,
             None,
-            item.product.imageLarge,
+            Some(item.product.image),
             "NEW",
             Instant.now,
             item.retailer.capitalizeAll,
             Map.empty
           ),
-          BuyPrice(1, item.product.priceUnFormatted, item.product.discount),
+          BuyPrice(1, item.product.discountedPrice.getOrElse(item.product.price), item.product.discount),
           None,
           foundWith
         )
