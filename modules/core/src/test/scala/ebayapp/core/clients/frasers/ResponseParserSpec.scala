@@ -35,6 +35,20 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
         result mustBe a[Left[?, ?]]
       }
     }
+
+    "parseActivePageNumberFromBrandPageResponse" should {
+      "parse active page number from the html response" in {
+        val result = ResponseParser.parseActivePageNumberFromBrandPageResponse(html("frasers/brand-page1.html"))
+
+        result mustBe Right(1)
+      }
+
+      "return an error when active page number is not found" in {
+        val result = ResponseParser.parseActivePageNumberFromBrandPageResponse("<html><body>no pagination here</body></html>")
+
+        result mustBe a[Left[?, ?]]
+      }
+    }
   }
 
   def html(path: String): String = FileReader.fromResources(path)

@@ -10,14 +10,21 @@ object parsers {
   object ResponseParser {
     private val nextFPushPattern: Regex = """self\.__next_f\.push\(\[1,"(.+)"\]\)""".r
 
+    private val activePagePattern: Regex = """PaginationItem_active[^"]*"[^>]*>(\d+)<""".r
+
+    def parseActivePageNumberFromBrandPageResponse(responseBody: String): Either[Throwable, Int] =
+      activePagePattern.findFirstMatchIn(responseBody)
+        .flatMap(m => m.group(1).toIntOption)
+        .toRight(AppError.Failed("Could not find active page number in Frasers brand page response"))
+
     def parseItemsFromBrandPageResponse(responseBody: String): Either[Throwable, List[responses.FrasersProduct]] =
-      extractProductsJson(responseBody) match
-        case None =>
-          Left(AppError.Failed("Could not find products array in Frasers brand page response"))
-        case Some(json) =>
+      extractProductsJson(responseBody)
+        .toRight(AppError.Failed("Could not find products array in Frasers brand page response"))
+        .flatMap { json =>
           decode[List[responses.FrasersProduct]](json).left.map { e =>
             AppError.Json(s"Error decoding Frasers brand page products: ${e.getMessage}")
           }
+        }
 
     private def extractProductsJson(html: String): Option[String] =
       html
