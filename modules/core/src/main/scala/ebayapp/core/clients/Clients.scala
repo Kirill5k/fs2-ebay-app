@@ -36,8 +36,6 @@ object Clients:
       argosClient            <- ArgosClient.make[F](configProvider, resources.fs2Backend)
       curlClient             <- CurlImpersonateClient.make[F]()
       jdClient               <- JdClient.jdsports[F](configProvider, curlClient)
-      scottsClient           <- FrasersClient.scotts[F](configProvider, curlClient)
-      tessutiClient          <- FrasersClient.tessuti[F](configProvider, curlClient)
       nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)
       scanClient             <- ScanClient.make[F](configProvider, resources.fs2Backend)
       harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.fs2Backend)
@@ -52,9 +50,7 @@ object Clients:
           case Retailer.Ebay             => ebayClient
           case Retailer.Selfridges       => selfridgesClient
           case Retailer.Argos            => argosClient
-          case Retailer.Scotts           => scottsClient
           case Retailer.Jdsports         => jdClient
-          case Retailer.Tessuti          => tessutiClient
           case Retailer.Nvidia           => nvidiaClient
           case Retailer.Scan             => scanClient
           case Retailer.HarveyNichols    => harveyNicholsClient

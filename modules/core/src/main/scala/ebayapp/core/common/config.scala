@@ -72,8 +72,6 @@ object config extends JsonCodecs {
       selfridges: GenericRetailerConfig,
       argos: GenericRetailerConfig,
       jdsports: GenericRetailerConfig,
-      tessuti: GenericRetailerConfig,
-      scotts: GenericRetailerConfig,
       harveyNichols: GenericRetailerConfig,
       mainlineMenswear: GenericRetailerConfig,
       nvidia: GenericRetailerConfig,

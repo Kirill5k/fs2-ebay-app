@@ -7,9 +7,7 @@ enum Retailer:
   case Ebay
   case Selfridges
   case Argos
-  case Scotts
   case Jdsports
-  case Tessuti
   case Nvidia
   case Scan
   case HarveyNichols

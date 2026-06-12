@@ -19,7 +19,7 @@ class StockControllerSpec extends HttpRoutesWordSpec {
 
     "GET /stock" should {
       "return all items from currently tracked stock" in {
-        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+        val services = mocks(Retailer.Flannels, Retailer.Selfridges)
 
         val controller = new StockController[IO](services.values.toList)
 
@@ -59,20 +59,20 @@ class StockControllerSpec extends HttpRoutesWordSpec {
              |  {
              |    "itemDetails" : {
              |      "kind" : "clothing",
-             |      "name" : "scotts item",
+             |      "name" : "flannels item",
              |      "brand" : "Foo-bar",
              |      "size" : "XXL"
              |    },
              |    "listingDetails" : {
-             |      "url" : "http://cex.com/scottsitem",
-             |      "title" : "scotts item",
+             |      "url" : "http://cex.com/flannelsitem",
+             |      "title" : "flannels item",
              |      "category" : null,
              |      "shortDescription" : null,
              |      "description" : null,
              |      "image" : null,
              |      "condition" : "USED",
              |      "datePosted" : "${ts}",
-             |      "seller" : "SCOTTS",
+             |      "seller" : "FLANNELS",
              |      "properties" : {}
              |    },
              |    "price" : {
@@ -91,7 +91,7 @@ class StockControllerSpec extends HttpRoutesWordSpec {
       }
 
       "filter items by query" in {
-        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+        val services = mocks(Retailer.Flannels, Retailer.Selfridges)
 
         val controller = new StockController[IO](services.values.toList)
 
@@ -145,7 +145,7 @@ class StockControllerSpec extends HttpRoutesWordSpec {
         response mustHaveStatus (
           Status.UnprocessableContent,
           Some(
-            """{"message":"Invalid value foo for enum Retailer, Accepted values: cex,ebay,selfridges,argos,scotts,jdsports,tessuti,nvidia,scan,harvey-nichols,mainline-menswear,flannels"}"""
+            """{"message":"Invalid value foo for enum Retailer, Accepted values: cex,ebay,selfridges,argos,jdsports,nvidia,scan,harvey-nichols,mainline-menswear,flannels"}"""
           )
         )
       }
@@ -153,18 +153,18 @@ class StockControllerSpec extends HttpRoutesWordSpec {
       "return error when retailer is not monitored" in {
         val controller = new StockController[IO](Nil)
 
-        val request  = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
+        val request  = Request[IO](uri = uri"/stock/flannels", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
-        response mustHaveStatus (Status.UnprocessableContent, Some("""{"message":"Scotts is not being monitored"}"""))
+        response mustHaveStatus (Status.UnprocessableContent, Some("""{"message":"Flannels is not being monitored"}"""))
       }
 
       "return items for a specific retailer" in {
-        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+        val services = mocks(Retailer.Flannels, Retailer.Selfridges)
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request  = Request[IO](uri = uri"/stock/scotts", method = Method.GET)
+        val request  = Request[IO](uri = uri"/stock/flannels", method = Method.GET)
         val response = controller.routes.orNotFound.run(request)
 
         val expectedResponse =
@@ -172,20 +172,20 @@ class StockControllerSpec extends HttpRoutesWordSpec {
              |  {
              |    "itemDetails" : {
              |      "kind" : "clothing",
-             |      "name" : "scotts item",
+             |      "name" : "flannels item",
              |      "brand" : "Foo-bar",
              |      "size" : "XXL"
              |    },
              |    "listingDetails" : {
-             |      "url" : "http://cex.com/scottsitem",
-             |      "title" : "scotts item",
+             |      "url" : "http://cex.com/flannelsitem",
+             |      "title" : "flannels item",
              |      "category" : null,
              |      "shortDescription" : null,
              |      "description" : null,
              |      "image" : null,
              |      "condition" : "USED",
              |      "datePosted" : "${ts}",
-             |      "seller" : "SCOTTS",
+             |      "seller" : "FLANNELS",
              |      "properties" : {}
              |    },
              |    "price" : {
@@ -200,42 +200,42 @@ class StockControllerSpec extends HttpRoutesWordSpec {
              |]""".stripMargin
 
         response mustHaveStatus (Status.Ok, Some(expectedResponse))
-        verify(services(Retailer.Scotts)).retailer
-        verify(services(Retailer.Scotts)).cachedItems
+        verify(services(Retailer.Flannels)).retailer
+        verify(services(Retailer.Flannels)).cachedItems
         verify(services(Retailer.Selfridges), never).cachedItems
       }
     }
 
     "PUT /stock/:retailer/pause" should {
       "pause stock monitor for a retailer" in {
-        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+        val services = mocks(Retailer.Flannels, Retailer.Selfridges)
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request  = Request[IO](uri = uri"/stock/scotts/pause", method = Method.PUT)
+        val request  = Request[IO](uri = uri"/stock/flannels/pause", method = Method.PUT)
         val response = controller.routes.orNotFound.run(request)
 
         response mustHaveStatus (Status.NoContent, None)
-        verify(services(Retailer.Scotts)).pause
-        verify(services(Retailer.Scotts)).retailer
-        verifyNoMoreInteractions(services(Retailer.Scotts))
+        verify(services(Retailer.Flannels)).pause
+        verify(services(Retailer.Flannels)).retailer
+        verifyNoMoreInteractions(services(Retailer.Flannels))
         verifyNoInteractions(services(Retailer.Selfridges))
       }
     }
 
     "PUT /stock/:retailer/resume" should {
       "resume stock monitor for a retailer" in {
-        val services = mocks(Retailer.Scotts, Retailer.Selfridges)
+        val services = mocks(Retailer.Flannels, Retailer.Selfridges)
 
         val controller = new StockController[IO](services.values.toList)
 
-        val request  = Request[IO](uri = uri"/stock/scotts/resume", method = Method.PUT)
+        val request  = Request[IO](uri = uri"/stock/flannels/resume", method = Method.PUT)
         val response = controller.routes.orNotFound.run(request)
 
         response mustHaveStatus (Status.NoContent, None)
-        verify(services(Retailer.Scotts)).resume
-        verify(services(Retailer.Scotts)).retailer
-        verifyNoMoreInteractions(services(Retailer.Scotts))
+        verify(services(Retailer.Flannels)).resume
+        verify(services(Retailer.Flannels)).retailer
+        verifyNoMoreInteractions(services(Retailer.Flannels))
         verifyNoInteractions(services(Retailer.Selfridges))
       }
     }

@@ -26,8 +26,6 @@ trait RetailConfigProvider[F[_]]:
   def ebay: F[EbayConfig]
   def argos: F[GenericRetailerConfig]
   def jdsports: F[GenericRetailerConfig]
-  def scotts: F[GenericRetailerConfig]
-  def tessuti: F[GenericRetailerConfig]
   def nvidia: F[GenericRetailerConfig]
   def scan: F[GenericRetailerConfig]
   def harveyNichols: F[GenericRetailerConfig]
@@ -49,8 +47,6 @@ final private class ReactiveRetailConfigProvider[F[_]](
   override def selfridges: F[GenericRetailerConfig]                            = state.get.map(_.retailer.selfridges)
   override def argos: F[GenericRetailerConfig]                                 = state.get.map(_.retailer.argos)
   override def jdsports: F[GenericRetailerConfig]                              = state.get.map(_.retailer.jdsports)
-  override def scotts: F[GenericRetailerConfig]                                = state.get.map(_.retailer.scotts)
-  override def tessuti: F[GenericRetailerConfig]                               = state.get.map(_.retailer.tessuti)
   override def nvidia: F[GenericRetailerConfig]                                = state.get.map(_.retailer.nvidia)
   override def scan: F[GenericRetailerConfig]                                  = state.get.map(_.retailer.scan)
   override def harveyNichols: F[GenericRetailerConfig]                         = state.get.map(_.retailer.harveyNichols)

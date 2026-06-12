@@ -20,7 +20,7 @@ import scala.concurrent.duration.*
 
 final private class LiveFrasersClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
-    private val retailer: Retailer.Flannels.type | Retailer.Tessuti.type | Retailer.Scotts.type,
+    private val retailer: Retailer.Flannels.type,
     private val client: CurlImpersonateClient[F]
 )(using
     F: Temporal[F],
@@ -31,13 +31,9 @@ final private class LiveFrasersClient[F[_]](
 
   private val groupIdPrefix: String = retailer match
     case Retailer.Flannels => "FLAN_BRA"
-    case Retailer.Tessuti  => "TESS_BRA"
-    case Retailer.Scotts   => "SCOT_BRA"
 
   private val categoryFiltersKey: String = retailer match
     case Retailer.Flannels => "AFLOR"
-    case Retailer.Tessuti  => "390_4098650"
-    case Retailer.Scotts   => "390_4098464"
 
   private val retrySpec = CurlImpersonateClient.RetrySpec(
     retryOnClientError = true,
@@ -104,7 +100,7 @@ final private class LiveFrasersClient[F[_]](
       }
 
   extension (cs: SearchCriteria)
-    def formattedCategory: String =
+    private def formattedCategory: String =
       cs.category match
         case Some(c) => s"$categoryFiltersKey^${c.toLowerCase.capitalize}"
         case None    => ""
@@ -116,15 +112,3 @@ object FrasersClient:
       client: CurlImpersonateClient[F]
   ): F[SearchClient[F]] =
     Monad[F].pure(LiveFrasersClient[F](() => configProvider.flannels, Retailer.Flannels, client))
-
-  def tessuti[F[_]: {Temporal, Logger}](
-      configProvider: RetailConfigProvider[F],
-      client: CurlImpersonateClient[F]
-  ): F[SearchClient[F]] =
-    Monad[F].pure(LiveFrasersClient[F](() => configProvider.tessuti, Retailer.Tessuti, client))
-
-  def scotts[F[_]: {Temporal, Logger}](
-      configProvider: RetailConfigProvider[F],
-      client: CurlImpersonateClient[F]
-  ): F[SearchClient[F]] =
-    Monad[F].pure(LiveFrasersClient[F](() => configProvider.scotts, Retailer.Scotts, client))

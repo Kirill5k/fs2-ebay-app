@@ -16,8 +16,6 @@ object MockRetailConfigProvider {
       selfridgesConfig: Option[GenericRetailerConfig] = None,
       argosConfig: Option[GenericRetailerConfig] = None,
       jdsportsConfig: Option[GenericRetailerConfig] = None,
-      scottsConfig: Option[GenericRetailerConfig] = None,
-      tessutiConfig: Option[GenericRetailerConfig] = None,
       nvidiaConfig: Option[GenericRetailerConfig] = None,
       scanConfig: Option[GenericRetailerConfig] = None,
       flannelsConfig: Option[GenericRetailerConfig] = None,
@@ -36,8 +34,6 @@ object MockRetailConfigProvider {
     override def cex: F[GenericRetailerConfig]                    = fromOpt(cexConfig, "cex")
     override def argos: F[GenericRetailerConfig]                  = fromOpt(argosConfig, "argos")
     override def jdsports: F[GenericRetailerConfig]               = fromOpt(jdsportsConfig, "jdsports")
-    override def scotts: F[GenericRetailerConfig]                 = fromOpt(scottsConfig, "scotts")
-    override def tessuti: F[GenericRetailerConfig]                = fromOpt(tessutiConfig, "tessuti")
     override def nvidia: F[GenericRetailerConfig]                 = fromOpt(nvidiaConfig, "nvidia")
     override def scan: F[GenericRetailerConfig]                   = fromOpt(scanConfig, "scan")
     override def harveyNichols: F[GenericRetailerConfig]          = fromOpt(harveyNicholsConfig, "harvey-nichols")
