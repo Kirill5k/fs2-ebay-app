@@ -15,7 +15,6 @@ import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
-import kirill5k.common.cats.syntax.stream.*
 import sttp.model.StatusCode
 
 import scala.concurrent.duration.*
@@ -50,24 +49,23 @@ final private class LiveFrasersClient[F[_]](
           Stream.emits(product.sizeVariants.map(sv => FrasersItem(product, sv.description, config.websiteUri, name)))
         }
         .map(FrasersItemMapper.clothing.toDomain(criteria))
-        .handleErrorWith(e => Stream.logError(e)(e.getMessage))
     }
+
+  private def brandPageUrl(config: GenericRetailerConfig, sc: SearchCriteria, page: Int): String =
+    val brand    = sc.query.toLowerCase.replace(" ", "-")
+    val category = sc.category.fold("")("/" + _)
+    s"${config.websiteUri}/$brand$category?sort=DISCOUNT_PERCENTAGE&sortDirection=DESC&dcp=$page"
 
   private def getItems(sc: SearchCriteria)(page: Int): F[(List[FrasersProduct], Option[Int])] =
     configProvider()
-      .flatMap { config =>
-        val brand    = sc.query.toLowerCase.replace(" ", "-")
-        val category = sc.category.fold("")(c => s"/$c")
-        val url      = s"${config.websiteUri}/$brand$category?sort=DISCOUNT_PERCENTAGE&sortDirection=DESC&dcp=$page"
-        client.get(url, config.headers, retrySpec)
-      }
+      .flatMap(config => client.get(brandPageUrl(config, sc, page), config.headers, retrySpec))
       .flatMap { (code, body) =>
         if code.isSuccess then {
           for
             activePage <- F.fromEither(ResponseParser.parseActivePageNumberFromBrandPageResponse(body))
             products   <- F.fromEither(ResponseParser.parseItemsFromBrandPageResponse(body))
-            noMoreItems = activePage != page
-          yield if (noMoreItems) Nil -> None else products -> Some(page + 1)
+            isLastPage  = activePage != page
+          yield if isLastPage then Nil -> None else products -> Some(page + 1)
         } else logger.error(s"$name-search/$code-${sc.query}") *> F.pure(Nil -> None)
       }
       .handleErrorWith { e =>
