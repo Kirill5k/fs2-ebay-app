@@ -64,22 +64,6 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |      },
       |      "delayBetweenIndividualRequests" : "2 seconds"
       |    },
-      |    "tessuti" : {
-      |      "baseUri" : "https://fs2-proxy.herokuapp.com",
-      |      "headers" : {
-      |        "X-Reload-On-403" : "true",
-      |        "X-Reroute-To" : "https://www.tessuti.co.uk"
-      |      },
-      |      "delayBetweenIndividualRequests" : "2 seconds"
-      |    },
-      |    "scotts" : {
-      |      "baseUri" : "https://fs2-proxy.herokuapp.com",
-      |      "headers" : {
-      |        "X-Reload-On-403" : "true",
-      |        "X-Reroute-To" : "https://www.scottsmenswear.com"
-      |      },
-      |      "delayBetweenIndividualRequests" : "2 seconds"
-      |    },
       |    "harveyNichols" : {
       |      "baseUri" : "https://proxy-kirill5k.cloud.okteto.net",
       |      "headers" : {
@@ -147,58 +131,6 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |        }
       |      ],
       |      "delayBetweenRequests" : "30 seconds"
-      |    },
-      |    "scotts" : {
-      |      "monitoringFrequency" : "6 minutes",
-      |      "monitoringRequests" : [
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Emporio Armani EA7"
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Boss",
-      |            "filters" : {
-      |              "minDiscount" : 53
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Hugo",
-      |            "filters" : {
-      |              "minDiscount" : 53
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "emporio-armani-loungewear",
-      |            "filters" : {
-      |              "minDiscount" : 53
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        }
-      |      ],
-      |      "delayBetweenRequests" : "30 seconds",
-      |      "filters" : {
-      |        "minDiscount" : 49,
-      |        "maxPrice" : 250,
-      |        "deny" : [
-      |          "size xxl",
-      |          "size xl",
-      |          "size l"
-      |        ]
-      |      }
       |    },
       |    "ebay" : {
       |      "monitoringFrequency" : "10 minutes",
@@ -440,120 +372,6 @@ class RetailConfigControllerSpec extends HttpRoutesWordSpec {
       |      "delayBetweenRequests" : "30 seconds",
       |      "filters" : {
       |        "minDiscount" : 18,
-      |        "deny" : [
-      |          "size xxl",
-      |          "size xl",
-      |          "size l"
-      |        ]
-      |      }
-      |    },
-      |    "tessuti" : {
-      |      "monitoringFrequency" : "6 minutes",
-      |      "monitoringRequests" : [
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Emporio Armani",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 49
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Hugo",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 53
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Boss",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 53
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "calvin-klein-jeans",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 53
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Tommy Hilfiger",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 53
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Moschino",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 49
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Stone Island",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 39
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Kenzo",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 49
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        },
-      |        {
-      |          "searchCriteria" : {
-      |            "query" : "Moncler",
-      |            "category" : "men",
-      |            "filters" : {
-      |              "minDiscount" : 29
-      |            }
-      |          },
-      |          "monitorStockChange" : false,
-      |          "monitorPriceChange" : true
-      |        }
-      |      ],
-      |      "delayBetweenRequests" : "30 seconds",
-      |      "filters" : {
-      |        "minDiscount" : 29,
-      |        "maxPrice" : 80,
       |        "deny" : [
       |          "size xxl",
       |          "size xl",
