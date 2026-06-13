@@ -10,7 +10,6 @@ import pureconfig.ConfigConvert.catchReadError
 import pureconfig.*
 import pureconfig.configurable.genericMapReader
 
-import java.io.File
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
@@ -126,8 +125,6 @@ object config extends JsonCodecs {
   ) derives ConfigReader, Codec.AsObject
 
   object RetailConfig {
-    val mountedConfigPath = "/opt/app/application.conf"
-
     given stockMonitorMapReader: ConfigReader[Map[Retailer, StockMonitorConfig]] =
       genericMapReader[Retailer, StockMonitorConfig](catchReadError(Retailer.fromUnsafe))
     given dealsFinderMapReader: ConfigReader[Map[Retailer, DealsFinderConfig]] =
@@ -135,8 +132,6 @@ object config extends JsonCodecs {
 
     def loadDefault[F[_]](using F: Async[F]): F[RetailConfig] =
       F.blocking(ConfigSource.default.loadOrThrow[RetailConfig])
-    def loadFromMount[F[_]](using F: Async[F]): F[RetailConfig] =
-      F.blocking(ConfigSource.file(new File(mountedConfigPath)).loadOrThrow[RetailConfig])
   }
 
 }
