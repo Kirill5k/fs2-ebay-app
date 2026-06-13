@@ -58,7 +58,10 @@ final private class LiveFrasersClient[F[_]](
 
   private def getItems(sc: SearchCriteria)(page: Int): F[(List[FrasersProduct], Option[Int])] =
     configProvider()
-      .flatMap(config => client.get(brandPageUrl(config, sc, page), config.headers, retrySpec))
+      .flatMap { config =>
+        logger.info(s"$name-search/${sc.query} - page $page") >>
+          client.get(brandPageUrl(config, sc, page), config.headers, retrySpec)
+      }
       .flatMap { (code, body) =>
         if code.isSuccess then {
           for
