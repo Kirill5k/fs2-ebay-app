@@ -61,7 +61,7 @@ final private class LiveFrasersClient[F[_]](
         } else logger.error(s"$name-search/$code-${sc.query}") *> F.pure(Nil -> None)
       }
       .handleErrorWith { e =>
-        logger.error(s"$name-search/error: ${e.getMessage}") *> F.pure(Nil -> None)
+        logger.error(s"$name-search/error for ${sc.query}: ${e.getMessage}") *> F.pure(Nil -> None)
       }
 }
 
