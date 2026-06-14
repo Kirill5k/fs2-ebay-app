@@ -6,6 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
+import ebayapp.core.clients.CurlImpersonateClient.RetrySpec
 import ebayapp.core.clients.frasers.mappers.{FrasersItem, FrasersItemMapper}
 import ebayapp.core.clients.frasers.parsers.ResponseParser
 import ebayapp.core.clients.frasers.responses.FrasersProduct
@@ -16,8 +17,6 @@ import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
 import sttp.model.StatusCode
-
-import scala.concurrent.duration.*
 
 final private class LiveFrasersClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
@@ -30,14 +29,7 @@ final private class LiveFrasersClient[F[_]](
 
   private val name: String = retailer.name
 
-  private val retrySpec = CurlImpersonateClient.RetrySpec(
-    retryOnClientError = true,
-    retryOnServerError = true,
-    retryExcludedCodes = Set(StatusCode.NotFound),
-    retryOnConnectionError = true,
-    maxRetries = 3,
-    maxDelay = 1.minute
-  )
+  private val retrySpec = RetrySpec.Default.copy(retryExcludedCodes = Set(StatusCode.NotFound))
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream.eval(configProvider()).flatMap { config =>

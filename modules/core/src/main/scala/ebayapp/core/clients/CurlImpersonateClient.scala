@@ -93,6 +93,15 @@ object CurlImpersonateClient:
       maxDelay: FiniteDuration = 1.minute
   )
 
+  object RetrySpec:
+    val Default = RetrySpec(
+      retryOnClientError = true,
+      retryOnServerError = true,
+      retryOnConnectionError = true,
+      maxRetries = 3,
+      maxDelay = 1.minute
+    )
+
   def make[F[_]: Async](
       maxConcurrent: Int = 5,
       timeout: FiniteDuration = 30.seconds

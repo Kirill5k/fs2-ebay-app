@@ -6,6 +6,7 @@ import cats.syntax.applicativeError.*
 import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
+import ebayapp.core.clients.CurlImpersonateClient.RetrySpec
 import ebayapp.core.clients.{CurlImpersonateClient, SearchClient}
 import ebayapp.core.clients.jd.mappers.{JdsportsItem, JdsportsItemMapper}
 import ebayapp.core.clients.jd.parsers.{JdCatalogItem, JdProduct, ResponseParser}
@@ -32,21 +33,15 @@ final private class CurlImpersonateJdClient[F[_]](
   private val name: String = retailer.name
   private val stepSize     = 50
 
-  private val searchRetrySpec = CurlImpersonateClient.RetrySpec(
-    retryOnClientError = true,
-    retryOnServerError = true,
+  private val searchRetrySpec = RetrySpec.Default.copy(
     retryExcludedCodes = Set(StatusCode.NotFound),
-    retryOnConnectionError = true,
-    maxRetries = 10,
+    maxRetries = 3,
     maxDelay = 10.minutes
   )
 
-  private val stockRetrySpec = CurlImpersonateClient.RetrySpec(
-    retryOnClientError = true,
-    retryOnServerError = true,
+  private val stockRetrySpec = RetrySpec.Default.copy(
     retryExcludedCodes = Set(StatusCode.NotFound),
-    retryOnConnectionError = true,
-    maxRetries = 10,
+    maxRetries = 3,
     maxDelay = 5.minutes
   )
 

@@ -7,6 +7,7 @@ import cats.syntax.apply.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.syntax.option.*
+import ebayapp.core.clients.CurlImpersonateClient.RetrySpec
 import ebayapp.core.clients.{CurlImpersonateClient, SearchClient}
 import ebayapp.core.clients.argos.mappers.ArgosItemMapper
 import ebayapp.core.clients.argos.responses.{ArgosSearchResponse, SearchData}
@@ -18,8 +19,6 @@ import fs2.Stream
 import io.circe.parser.decode
 import sttp.client4.UriContext
 
-import scala.concurrent.duration.*
-
 final private class LiveArgosClient[F[_]](
     private val configProvider: () => F[GenericRetailerConfig],
     private val client: CurlImpersonateClient[F]
@@ -29,14 +28,6 @@ final private class LiveArgosClient[F[_]](
 ) extends SearchClient[F] {
 
   private val name = "argos"
-
-  private val retrySpec = CurlImpersonateClient.RetrySpec(
-    retryOnClientError = true,
-    retryOnServerError = true,
-    retryOnConnectionError = true,
-    maxRetries = 3,
-    maxDelay = 1.minute
-  )
 
   override def search(criteria: SearchCriteria): Stream[F, ResellableItem] =
     Stream
@@ -56,7 +47,7 @@ final private class LiveArgosClient[F[_]](
       .flatMap { config =>
         val uri =
           uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query};searchType=null?returnMeta=true"
-        client.get(uri.toString, config.headers, retrySpec)
+        client.get(uri.toString, config.headers, RetrySpec.Default)
       }
       .flatMap { (code, body) =>
         if code.isSuccess then
