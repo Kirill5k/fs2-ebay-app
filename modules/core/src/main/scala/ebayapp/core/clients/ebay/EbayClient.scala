@@ -36,7 +36,7 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       time         <- Stream.eval(clock.now.map(_.minusMillis(searchConfig.maxListingDuration.toMillis)))
       mapper       <- Stream.fromEither[F](EbayItemMapper.get(criteria))
       params       <- Stream.fromEither[F](EbaySearchParams.get(criteria))
-      catId = params.categoryId.toString
+      catId       = params.categoryId.toString
       queryParams = params.queryParams(time, criteria.query, criteria.seller)
       items <- Stream
         .unfoldLoopEval(0)(offset => searchForItems(queryParams, params.filter and hasTrustedSeller(searchConfig), offset))
@@ -59,7 +59,7 @@ final private[ebay] class LiveEbayClient[F[_]: Temporal](
       all   <- browseClient.search(token, searchParams + ("offset" -> offset.toString))
       valid = all.filter(_.itemGroupType.isEmpty).filter(itemsFilter)
       count = s"returned ${valid.size} new items (total - ${all.size})"
-      _     <- logger.info(s"""ebay-search "${searchParams("q")}" (cat=${searchParams("category_ids")}) $count""")
+      _ <- logger.info(s"""ebay-search "${searchParams("q")}" (cat=${searchParams("category_ids")}) $count""")
       nextOffset = Option.when(all.size >= EbaySearchParams.Limit)(offset + EbaySearchParams.Limit)
     yield (valid, nextOffset)
 

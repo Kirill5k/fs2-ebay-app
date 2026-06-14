@@ -13,7 +13,8 @@ object parsers {
     private val activePagePattern: Regex = """PaginationItem_active[^"]*"[^>]*>(\d+)<""".r
 
     def parseActivePageNumberFromBrandPageResponse(responseBody: String): Either[Throwable, Int] =
-      activePagePattern.findFirstMatchIn(responseBody)
+      activePagePattern
+        .findFirstMatchIn(responseBody)
         .flatMap(m => m.group(1).toIntOption)
         .toRight(AppError.Failed("Could not find active page number in Frasers brand page response"))
 

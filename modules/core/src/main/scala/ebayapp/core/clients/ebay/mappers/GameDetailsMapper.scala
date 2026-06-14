@@ -174,46 +174,46 @@ private[mappers] object GameDetailsMapper {
   ).mkString("(?i)", "|", "").r
 
   private val PLATFORM_MAPPINGS: Map[String, String] = Map(
-    "PLAYSTATION5"           -> "PS5",
-    "PLAYSTATION4"           -> "PS4",
-    "PLAYSTATION3"           -> "PS3",
-    "PLAYSTATION2"           -> "PS2",
-    "PLAYSTATION"            -> "PS",
-    "PS5"                    -> "PS5",
-    "PS4"                    -> "PS4",
-    "PS3"                    -> "PS3",
-    "PS2"                    -> "PS2",
-    "PS"                     -> "PS",
-    "PSONE"                  -> "PS",
-    "PSVR"                   -> "PS",
-    "SONYPLAYSTATION5"       -> "PS5",
-    "SONYPLAYSTATION4"       -> "PS4",
-    "SONYPLAYSTATION3"       -> "PS3",
-    "SONYPLAYSTATION2"       -> "PS2",
-    "SONYPLAYSTATION1"       -> "PS",
-    "SONYPLAYSTATION"        -> "PS",
-    "PLAYSTATIONONE"         -> "PS",
-    "NINTENDOSWITCH2"        -> "SWITCH 2",
-    "SWITCH2"                -> "SWITCH 2",
-    "NINTENDOSWITCH"         -> "SWITCH",
-    "XBOXSERIES"             -> "XBOX",
-    "XBOXXSERIES"            -> "XBOX",
-    "SERIESX"                -> "XBOX",
-    "SERIESXS"               -> "XBOX",
-    "XBOX1"                  -> "XBOX ONE",
-    "XBOX360"                -> "XBOX 360",
-    "XB1"                    -> "XBOX ONE",
-    "XB360"                  -> "XBOX 360",
-    "X360"                   -> "XBOX 360",
-    "XBOXONE"                -> "XBOX ONE",
-    "XBONE"                  -> "XBOX ONE",
-    "MICROSOFTXBOXONE"       -> "XBOX ONE",
-    "MICROSOFTXBOX360"       -> "XBOX 360",
-    "MICROSOFTXBOX"          -> "XBOX",
-    "MICROSOFTXBOXSERIESXS"  -> "XBOX",
-    "XBOXX"                  -> "XBOX",
-    "WIIU"                   -> "WII U",
-    "WII"                    -> "WII"
+    "PLAYSTATION5"          -> "PS5",
+    "PLAYSTATION4"          -> "PS4",
+    "PLAYSTATION3"          -> "PS3",
+    "PLAYSTATION2"          -> "PS2",
+    "PLAYSTATION"           -> "PS",
+    "PS5"                   -> "PS5",
+    "PS4"                   -> "PS4",
+    "PS3"                   -> "PS3",
+    "PS2"                   -> "PS2",
+    "PS"                    -> "PS",
+    "PSONE"                 -> "PS",
+    "PSVR"                  -> "PS",
+    "SONYPLAYSTATION5"      -> "PS5",
+    "SONYPLAYSTATION4"      -> "PS4",
+    "SONYPLAYSTATION3"      -> "PS3",
+    "SONYPLAYSTATION2"      -> "PS2",
+    "SONYPLAYSTATION1"      -> "PS",
+    "SONYPLAYSTATION"       -> "PS",
+    "PLAYSTATIONONE"        -> "PS",
+    "NINTENDOSWITCH2"       -> "SWITCH 2",
+    "SWITCH2"               -> "SWITCH 2",
+    "NINTENDOSWITCH"        -> "SWITCH",
+    "XBOXSERIES"            -> "XBOX",
+    "XBOXXSERIES"           -> "XBOX",
+    "SERIESX"               -> "XBOX",
+    "SERIESXS"              -> "XBOX",
+    "XBOX1"                 -> "XBOX ONE",
+    "XBOX360"               -> "XBOX 360",
+    "XB1"                   -> "XBOX ONE",
+    "XB360"                 -> "XBOX 360",
+    "X360"                  -> "XBOX 360",
+    "XBOXONE"               -> "XBOX ONE",
+    "XBONE"                 -> "XBOX ONE",
+    "MICROSOFTXBOXONE"      -> "XBOX ONE",
+    "MICROSOFTXBOX360"      -> "XBOX 360",
+    "MICROSOFTXBOX"         -> "XBOX",
+    "MICROSOFTXBOXSERIESXS" -> "XBOX",
+    "XBOXX"                 -> "XBOX",
+    "WIIU"                  -> "WII U",
+    "WII"                   -> "WII"
   )
 
   def from(listingDetails: ListingDetails): VideoGame =
@@ -232,7 +232,10 @@ private[mappers] object GameDetailsMapper {
       .replaceAll(LEVEL2_PATTERN, "")
       .replaceAll(LEVEL3_PATTERN, "")
       .replaceAll(SEPARATORS_PATTERN, " ")
-      .replaceFirst("(?<=\\w+ )(\\s+)?(?i)\\w+(?=\\s+(\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|coll(ection)?)) (\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|\\bedn\\b|coll(ection)?)(?s).*$", "")
+      .replaceFirst(
+        "(?<=\\w+ )(\\s+)?(?i)\\w+(?=\\s+(\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|coll(ection)?)) (\\be(d)?(i)?(t)?(i)?(o)?(n)?\\b|\\bedn\\b|coll(ection)?)(?s).*$",
+        ""
+      )
       .replaceAll("(?i)\\bll\\b", "II")
       .replaceAll("(?i)\\blll\\b", "III")
       .replaceAll("(?i)\\b(?:ww2|ww11)\\b", "wwii")

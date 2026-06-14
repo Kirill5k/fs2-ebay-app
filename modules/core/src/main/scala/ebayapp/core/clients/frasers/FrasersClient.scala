@@ -64,7 +64,7 @@ final private class LiveFrasersClient[F[_]](
           for
             activePage <- F.fromEither(ResponseParser.parseActivePageNumberFromBrandPageResponse(body))
             products   <- F.fromEither(ResponseParser.parseItemsFromBrandPageResponse(body))
-            isLastPage  = activePage != page
+            isLastPage = activePage != page
           yield if isLastPage then Nil -> None else products -> Some(page + 1)
         } else logger.error(s"$name-search/$code-${sc.query}") *> F.pure(Nil -> None)
       }

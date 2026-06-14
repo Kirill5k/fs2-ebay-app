@@ -43,8 +43,8 @@ private[frasers] object responses {
       productUrl: String,
       key: String
   ) derives Codec.AsObject:
-    def isOnSale: Boolean  = discountedPrice.exists(_ < price) && sizeVariants.nonEmpty
-    def colour: String     = color.replaceFirst(" V[ 0-9A-Z]+", "")
-    def sizes: String      = sizeVariants.map(_.description).mkString(", ")
+    def isOnSale: Boolean     = discountedPrice.exists(_ < price) && sizeVariants.nonEmpty
+    def colour: String        = color.replaceFirst(" V[ 0-9A-Z]+", "")
+    def sizes: String         = sizeVariants.map(_.description).mkString(", ")
     def discount: Option[Int] = discountedPrice.map(dp => ((price - dp) / price * 100).toInt)
 }

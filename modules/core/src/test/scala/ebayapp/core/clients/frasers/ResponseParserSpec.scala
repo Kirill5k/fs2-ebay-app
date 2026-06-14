@@ -54,4 +54,3 @@ class ResponseParserSpec extends AnyWordSpec with Matchers {
 
   def html(path: String): String = FileReader.fromResources(path)
 }
-

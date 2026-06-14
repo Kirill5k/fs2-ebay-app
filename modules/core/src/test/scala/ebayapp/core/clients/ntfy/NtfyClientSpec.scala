@@ -23,7 +23,9 @@ class NtfyClientSpec extends Sttp4WordSpec {
     "send message to deals topic" in {
       val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isPost && r.isGoingTo("ntfy.com/deals") && r.hasHeader("Title", title) && r.hasHeader("Click", item.listingDetails.url) && r.hasBody(message) =>
+          case r
+              if r.isPost && r.isGoingTo("ntfy.com/deals") && r
+                .hasHeader("Title", title) && r.hasHeader("Click", item.listingDetails.url) && r.hasBody(message) =>
             ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
@@ -39,7 +41,9 @@ class NtfyClientSpec extends Sttp4WordSpec {
     "send message to stock topic" in {
       val testingBackend = fs2BackendStub
         .whenRequestMatchesPartial {
-          case r if r.isPost && r.isGoingTo("ntfy.com/stock") && r.hasHeader("Title", title) && r.hasHeader("Click", item.listingDetails.url) && r.hasBody(message) =>
+          case r
+              if r.isPost && r.isGoingTo("ntfy.com/stock") && r
+                .hasHeader("Title", title) && r.hasHeader("Click", item.listingDetails.url) && r.hasBody(message) =>
             ResponseStub.adjust("success")
           case _ => throw new RuntimeException()
         }
@@ -85,4 +89,3 @@ class NtfyClientSpec extends Sttp4WordSpec {
     }
   }
 }
-

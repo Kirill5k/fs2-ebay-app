@@ -12,12 +12,12 @@ import org.typelevel.ci.CIString
 import org.typelevel.log4cats.Logger
 
 final private class RedirectController[F[_]](
-                                              private val standardClient: Client[F],
-                                              private val interrupter: Interrupter[F]
-                                            )(using
-                                              F: Concurrent[F],
-                                              logger: Logger[F]
-                                            ) extends Controller[F] with Http4sDsl[F] {
+    private val standardClient: Client[F],
+    private val interrupter: Interrupter[F]
+)(using
+    F: Concurrent[F],
+    logger: Logger[F]
+) extends Controller[F] with Http4sDsl[F] {
 
   private val XRerouteToHeader      = CIString("X-Reroute-To")
   private val XReloadOn403Header    = CIString("X-Reload-On-403")
