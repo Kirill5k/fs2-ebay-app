@@ -8,7 +8,6 @@ import ebayapp.core.common.Logger
 import kirill5k.common.cats.syntax.applicative.*
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.client4.{Request, Response, WebSocketStreamBackend}
-import sttp.model.HeaderNames
 
 import scala.concurrent.duration.*
 import scala.util.Random
