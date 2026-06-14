@@ -19,22 +19,6 @@ trait Fs2HttpClient[F[_]] {
 
   protected val acceptAnything: String = "*/*"
 
-  protected def defaultHeaders: Map[String, String] = Map(
-    HeaderNames.Accept         -> acceptAnything,
-    HeaderNames.AcceptEncoding -> acceptAnything,
-    HeaderNames.AcceptLanguage -> "en-GB,en;q=0.9",
-    HeaderNames.CacheControl   -> "no-store, max-age=0",
-    HeaderNames.ContentType    -> "application/json",
-    HeaderNames.UserAgent      -> UserAgentGenerator.random,
-    "Sec-Ch-Ua"                -> "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
-    "Sec-Ch-Ua-Mobile"         -> "?0",
-    "Sec-Ch-Ua-Platform"       -> "\"macOS\"",
-    "X-Requested-With"         -> "XMLHttpRequest",
-    "Sec-Fetch-Dest"           -> "empty",
-    "Sec-Fetch-Mode"           -> "cors",
-    "Sec-Fetch-Site"           -> "same-origin"
-  )
-
   protected def calculateBackoffDelay(
       attempt: Int,
       baseDelay: FiniteDuration = 5.second,

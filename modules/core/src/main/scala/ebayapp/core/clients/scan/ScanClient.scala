@@ -45,7 +45,7 @@ final private class LiveScanClient[F[_]](
           val card = query.toLowerCase.replaceAll(" ", "-")
           basicRequest
             .get(uri"${config.baseUri}/shop/gaming/$cat/$card#filter=1&inStock=1")
-            .headers(defaultHeaders ++ config.headers)
+            .headers(config.headers)
         }
       }
       .flatMap { r =>

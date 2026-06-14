@@ -84,7 +84,7 @@ final private class LiveHarveyNicholsClient[F[_]](
         dispatch {
           basicRequest
             .get(fullUri(config.uri))
-            .headers(defaultHeaders ++ config.headers)
+            .headers(config.headers)
             .response(asJson[A])
         }
       }
