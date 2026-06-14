@@ -29,12 +29,9 @@ final private class LiveCurlImpersonateClient[F[_]](
     "curl_chrome116",
     "-s",
     "-L",
-    "--max-time",
-    timeout.toSeconds.toString,
-    "--cacert",
-    "/etc/ssl/certs/ca-bundle.crt",
-    "-w",
-    s"\n$statusDelimiter%{http_code}"
+    "--max-time", timeout.toSeconds.toString,
+    "--cacert", "/etc/ssl/certs/ca-bundle.crt",
+    "-w", s"\n$statusDelimiter%{http_code}"
   )
 
   private def calculateBackoffDelay(
@@ -50,7 +47,7 @@ final private class LiveCurlImpersonateClient[F[_]](
     finalDelayMs.millis
   }
 
-  override def get(url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec()): F[(StatusCode, String)] =
+  override def get(url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec.Default): F[(StatusCode, String)] =
     getWithRetry(url, headers, retrySpec, attempt = 0)
 
   private def getWithRetry(url: String, headers: Map[String, String], retrySpec: RetrySpec, attempt: Int): F[(StatusCode, String)] =
