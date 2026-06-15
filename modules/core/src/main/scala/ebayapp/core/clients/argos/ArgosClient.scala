@@ -16,7 +16,6 @@ import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.ResellableItem
 import ebayapp.core.domain.search.SearchCriteria
 import fs2.Stream
-import io.circe.parser.decode
 import sttp.client4.UriContext
 
 final private class LiveArgosClient[F[_]](
@@ -47,19 +46,11 @@ final private class LiveArgosClient[F[_]](
       .flatMap { config =>
         val uri =
           uri"${config.baseUri}/finder-api/product;isSearch=true;queryParams={%22page%22:%22$page%22,%22templateType%22:null};searchTerm=${query};searchType=null?returnMeta=true"
-        client.get(uri.toString, config.headers, RetrySpec.Default)
+        client.getAs[ArgosSearchResponse](uri.toString, config.headers, RetrySpec.Default)
       }
-      .flatMap { (code, body) =>
-        if code.isSuccess then
-          F.fromEither(decode[ArgosSearchResponse](body))
-            .map(_.data.some)
-            .handleErrorWith { error =>
-              logger.error(s"$name-search response parsing error: ${error.getMessage}, \n$body") *>
-                F.pure(none[SearchData])
-            }
-        else
-          logger.error(s"$name-search/$code-error\n$body") *>
-            F.pure(none[SearchData])
+      .flatMap { (code, res) =>
+        if code.isSuccess then F.pure(res.data.some)
+        else logger.error(s"$name-search/$code-error") *> F.pure(none[SearchData])
       }
       .handleErrorWith { error =>
         logger.error(s"$name-search/error: ${error.getMessage}\n$error") *>
