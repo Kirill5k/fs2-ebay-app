@@ -2,12 +2,12 @@ import com.typesafe.sbt.packager.docker.*
 import sbtghactions.JavaSpec
 import org.typelevel.scalacoptions.ScalacOptions
 
-scalaVersion                        := "3.8.3"
-version                             := scala.sys.process.Process("git rev-parse HEAD").!!.trim.slice(0, 7)
-organization                        := "io.github.kirill5k"
-githubWorkflowPublishTargetBranches := Nil
-githubWorkflowJavaVersions          := Seq(JavaSpec.corretto("26"))
-scalacOptions ++= Seq("-Wunused:all")
+ThisBuild / scalaVersion                        := "3.8.3"
+ThisBuild / version                             := scala.sys.process.Process("git rev-parse HEAD").!!.trim.slice(0, 7)
+ThisBuild / organization                        := "io.github.kirill5k"
+ThisBuild / githubWorkflowPublishTargetBranches := Nil
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.corretto("26"))
+ThisBuild / scalacOptions ++= Seq("-Wunused:all")
 
 val noPublish = Seq(
   publish         := {},
