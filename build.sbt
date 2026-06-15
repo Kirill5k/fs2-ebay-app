@@ -2,6 +2,8 @@ import com.typesafe.sbt.packager.docker.*
 import sbtghactions.JavaSpec
 import org.typelevel.scalacoptions.ScalacOptions
 
+githubWorkflowDir := (LocalRootProject / baseDirectory).value / ".github"
+
 ThisBuild / scalaVersion                        := "3.8.3"
 ThisBuild / version                             := scala.sys.process.Process("git rev-parse HEAD").!!.trim.slice(0, 7)
 ThisBuild / organization                        := "io.github.kirill5k"
