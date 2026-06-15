@@ -41,6 +41,6 @@ private[scan] object parsers {
           }
           .toList
       }.toEither
-        .leftMap(e => AppError.Json(s"error parsing scan search response ${e.getMessage}\n$rawHtml"))
+        .leftMap(e => AppError.Json(s"error parsing scan search response ${e.getMessage}", rawHtml))
   }
 }

@@ -5,6 +5,9 @@ import cats.effect.std.Semaphore
 import cats.syntax.applicativeError.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
+import ebayapp.kernel.errors.AppError
+import io.circe.Decoder
+import io.circe.parser.decode
 import kirill5k.common.cats.syntax.sync.*
 import sttp.model.StatusCode
 import CurlImpersonateClient.RetrySpec
@@ -15,6 +18,7 @@ import scala.util.Random
 
 trait CurlImpersonateClient[F[_]]:
   def get(url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec()): F[(StatusCode, String)]
+  def getAs[A: Decoder](url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec()): F[(StatusCode, A)]
 
 final private class LiveCurlImpersonateClient[F[_]](
     private val semaphore: Semaphore[F],
@@ -49,6 +53,12 @@ final private class LiveCurlImpersonateClient[F[_]](
 
   override def get(url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec.Default): F[(StatusCode, String)] =
     getWithRetry(url, headers, retrySpec, attempt = 0)
+
+  override def getAs[A: Decoder](url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec.Default): F[(StatusCode, A)] =
+    for
+      (code, body) <- get(url, headers, retrySpec)
+      decoded      <- F.fromEither(decode[A](body).left.map(e => AppError.Json(e.getMessage, body)))
+    yield code -> decoded
 
   private def getWithRetry(url: String, headers: Map[String, String], retrySpec: RetrySpec, attempt: Int): F[(StatusCode, String)] =
     semaphore.permit

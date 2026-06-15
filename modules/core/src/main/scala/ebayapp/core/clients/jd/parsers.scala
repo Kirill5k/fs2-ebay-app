@@ -54,7 +54,7 @@ private[jd] object parsers {
         .mkString("[", ",", "]")
 
       decode[List[JdCatalogItem]](rawItems)
-        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawItems"))
+        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}", rawItems))
     }
 
     def parseSearchResponse(rawHtml: String): Either[AppError, List[JdCatalogItem]] = {
@@ -66,7 +66,7 @@ private[jd] object parsers {
         .replaceAll("""(?<=\w"),(?=\s*])""", "") // remove trailing comma in arrays
 
       decode[List[JdCatalogItem]](rawDataObject)
-        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}\n$rawDataObject"))
+        .leftMap(e => AppError.Json(s"error parsing jdsports search response ${e.getMessage}", rawDataObject))
     }
 
     def parseProductStockResponse(rawHtml: String): Either[AppError, Option[JdProduct]] =
@@ -90,7 +90,7 @@ private[jd] object parsers {
         .replaceAll("(?<=(\\d,|null,|true,|false,|\",|\\{)) ", " \"")
 
       decode[JdProductDetails](rawProduct.slice(0, rawProduct.length - 1))
-        .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}\n$rawProduct\n$rawHtml"))
+        .leftMap(e => AppError.Json(s"error parsing jdsports item details ${e.getMessage}", s"$rawProduct\n$rawHtml"))
     }
 
     private def parseAvailableSizes(rawHtml: String): Either[AppError, List[String]] =

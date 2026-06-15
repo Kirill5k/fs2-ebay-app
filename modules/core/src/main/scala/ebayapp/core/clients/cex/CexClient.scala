@@ -160,7 +160,7 @@ final private class CexGraphqlClient[F[_]](
               clock.sleep(1.second) *> dispatchSearchRequest(request*)
           case Left(ResponseException.DeserializationException(body, error, _)) =>
             logger.error(s"$name-search/json-error: ${error.getMessage}\n$body") *>
-              AppError.Json(s"$name-search/json-error: ${error.getMessage}").raiseError
+              AppError.Json(s"$name-search/json-error: ${error.getMessage}", body).raiseError
           case Left(ResponseException.UnexpectedStatusCode(res, meta)) if meta.code == StatusCode.BadRequest =>
             logger.error(s"$name-search/400-bad-request: $res") *> CexGraphqlSearchResponse.empty.pure[F]
           case Left(ResponseException.UnexpectedStatusCode(_, meta)) if meta.code == StatusCode.Forbidden =>

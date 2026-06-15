@@ -23,7 +23,7 @@ object parsers {
         .toRight(AppError.Failed("Could not find products array in Frasers brand page response"))
         .flatMap { json =>
           decode[List[responses.FrasersProduct]](json).left.map { e =>
-            AppError.Json(s"Error decoding Frasers brand page products: ${e.getMessage}")
+            AppError.Json(s"Error decoding Frasers brand page products: ${e.getMessage}", json)
           }
         }
 

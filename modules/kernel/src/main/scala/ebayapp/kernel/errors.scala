@@ -8,12 +8,12 @@ object errors {
   object AppError:
     final case class Http(status: Int, error: String) extends AppError:
       override def message: String = s"HTTP $status - $error"
-      
-    final case class Auth(message: String)              extends AppError
-    final case class Json(message: String)              extends AppError
-    final case class Failed(message: String)            extends AppError
-    final case class Critical(message: String)          extends AppError
-    final case class NotFound(message: String)          extends AppError
-    final case class Invalid(message: String)           extends AppError
-    
+
+    final case class Auth(message: String)                extends AppError
+    final case class Json(message: String, input: String) extends AppError
+    final case class Failed(message: String)              extends AppError
+    final case class Critical(message: String)            extends AppError
+    final case class NotFound(message: String)            extends AppError
+    final case class Invalid(message: String)             extends AppError
+
 }
