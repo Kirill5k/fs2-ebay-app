@@ -1,9 +1,9 @@
 package ebayapp.core.clients.jd
 
 import cats.effect.IO
+import ebayapp.core.MockCurlImpersonateClient
 import ebayapp.core.MockRetailConfigProvider
 import ebayapp.core.MockLogger.given
-import ebayapp.core.clients.CurlImpersonateClient
 import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.domain.ItemDetails.Clothing
 import ebayapp.core.domain.search.{BuyPrice, SearchCriteria}
@@ -22,28 +22,14 @@ class JdClientSpec extends IOWordSpec {
     "return items on sale" in {
       val criteria = SearchCriteria("Emporio Armani EA7", category = Some("men"))
 
-      val client = mock[CurlImpersonateClient[IO]]
-      when(
-        client.get(
-          eqTo("http://jdsports.com/proxy/men/brand/emporio-armani-ea7/?max=50&from=0&sort=price-low-high&AJAX=1"),
-          any[Map[String, String]],
-          any
-        )
-      ).thenReturnIO((StatusCode.Ok, FileReader.fromResources("jdsports/search-by-brand-ajax.html")))
-      when(
-        client.get(
-          eqTo("http://jdsports.com/proxy/product/white-ea7-emporio-armani-carbon-block-logo-t-shirt/19670520/stock/"),
-          any[Map[String, String]],
-          any
-        )
-      ).thenReturnIO((StatusCode.Ok, FileReader.fromResources("jdsports/get-product-stock.html")))
-      when(
-        client.get(
-          eqTo("http://jdsports.com/proxy/product/brown-ea7-emporio-armani-logo-joggers/19581391/stock/"),
-          any[Map[String, String]],
-          any
-        )
-      ).thenReturnIO((StatusCode.Ok, FileReader.fromResources("jdsports/get-product-stock-oos.html")))
+      val client = MockCurlImpersonateClient.make[IO](
+        "http://jdsports.com/proxy/men/brand/emporio-armani-ea7/?max=50&from=0&sort=price-low-high&AJAX=1" ->
+          (StatusCode.Ok, FileReader.fromResources("jdsports/search-by-brand-ajax.html")),
+        "http://jdsports.com/proxy/product/white-ea7-emporio-armani-carbon-block-logo-t-shirt/19670520/stock/" ->
+          (StatusCode.Ok, FileReader.fromResources("jdsports/get-product-stock.html")),
+        "http://jdsports.com/proxy/product/brown-ea7-emporio-armani-logo-joggers/19581391/stock/" ->
+          (StatusCode.Ok, FileReader.fromResources("jdsports/get-product-stock-oos.html"))
+      )
 
       JdClient
         .jdsports[IO](config, client)
