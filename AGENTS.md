@@ -4,7 +4,7 @@
 
 ## Tech Stack
 
-### Backend (Scala 3.8.3)
+### Backend (Scala 3.8.4)
 - **Effect System**: Cats Effect 3, FS2 (Functional Streams)
 - **HTTP**: http4s (server), sttp4 (client), Tapir (API definition)
 - **Database**: MongoDB via mongo4cats
@@ -96,9 +96,9 @@ sbt scalafmtCheckAll
 **Build Docker images:**
 ```bash
 # Build image for a module
-sbt "project core" docker:publishLocal
-sbt "project proxy" docker:publishLocal
-sbt "project monitor" docker:publishLocal
+sbt "project core" Docker/publishLocal
+sbt "project proxy" Docker/publishLocal
+sbt "project monitor" Docker/publishLocal
 ```
 
 **Compile:**
@@ -108,11 +108,6 @@ sbt compile
 
 # Compile specific module
 sbt "project kernel" compile
-```
-
-**Check for dependency updates:**
-```bash
-sbt dependencyUpdates
 ```
 
 ### Frontend
