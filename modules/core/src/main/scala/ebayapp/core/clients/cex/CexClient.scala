@@ -28,6 +28,7 @@ import scala.concurrent.duration.*
 
 trait CexClient[F[_]] extends SearchClient[F]:
   def withUpdatedSellPrice(item: ResellableItem): F[ResellableItem]
+
   def withUpdatedSellPrices(items: List[ResellableItem]): F[List[ResellableItem]]
 
 final private class CexGraphqlClient[F[_]](
@@ -91,7 +92,7 @@ final private class CexGraphqlClient[F[_]](
       _ <- logger.info(
         s"getting prices from CEX for ${withoutPrice.size} items; " +
           s"${withoutName.size} items don't have name; " +
-          s"${withPriceFromCache.size} prices were obtained from cache"
+          s"${withPriceFromCache.size} price${if (withPriceFromCache.size > 1) "s" else ""} were obtained from cache"
       )
       withPriceFromCex <- obtainPricesFromCex(withoutPrice)
     yield withoutName ++ withPriceFromCache ++ withPriceFromCex
