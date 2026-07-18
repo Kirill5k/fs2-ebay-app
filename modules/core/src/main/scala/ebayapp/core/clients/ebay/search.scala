@@ -96,7 +96,7 @@ private[ebay] object search {
         "upcoming.{1,5}game", "(Dummy( game)?|private) Listing", "(Nintendo|official|promotional) magazin",
         "lots to choose from", "not sold in shops", "^xbox one games", "ps4 \\d games", "buy any \\d for",
         "\\b200[0-9]\\b", "(demo|game|global|premium|shop)( )?(code|disc|key|cart|pass)",
-        "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b", "blox fruit",
+        "\\bhdmi\\b", "\\bUSB(C)?\\b", "\\bhdd\\b", "blox fruit", "gift box", "sprite",
         "(m|b)illion (pure)? cash", "\\d+M (cash|money)", "\\d+ mill",
         "switch.*(alu|unicorn).*\\bcase\\b", "credit(?s).*accoun", "credits", "test (listing|page)", "In Game Item",
         "case for ", "Fightpad", "Official Kinect( 2)? Sensor", "ORB Stand", "Destest",
