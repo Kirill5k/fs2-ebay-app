@@ -37,7 +37,7 @@ class FrasersClientSpec extends IOWordSpec {
     }
 
     "return stream of items without category" in {
-      val client   = MockCurlImpersonateClient.make[IO](
+      val client = MockCurlImpersonateClient.make[IO](
         "http://f.com/stone-island?sort=DISCOUNT_PERCENTAGE&sortDirection=DESC&dcp=1" ->
           (StatusCode.Ok, FileReader.fromResources("frasers/brand-page3.html"))
       )
