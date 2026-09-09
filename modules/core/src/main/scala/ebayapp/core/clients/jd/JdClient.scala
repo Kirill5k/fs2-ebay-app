@@ -111,7 +111,7 @@ final private class CurlImpersonateJdClient[F[_]](
           case StatusCode.NotFound =>
             F.pure(Nil)
           case _ =>
-            logger.error(s"$name-search/$code-${criteria.query}") *> F.pure(Nil)
+            logger.error(s"$name-search/$code-${criteria.query}\n$body") *> F.pure(Nil)
         }
       }
       .handleErrorWith { e =>
@@ -131,7 +131,7 @@ final private class CurlImpersonateJdClient[F[_]](
           case StatusCode.NotFound =>
             logger.warn(s"$name-get-stock/404") *> F.pure(None)
           case _ =>
-            logger.error(s"$name-get-stock/$code-${ci.fullName}") *> F.pure(None)
+            logger.error(s"$name-get-stock/$code-${ci.fullName}\n$body") *> F.pure(None)
         }
       }
       .handleErrorWith { e =>
