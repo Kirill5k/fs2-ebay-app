@@ -15,6 +15,7 @@ import ebayapp.core.common.config.GenericRetailerConfig
 import ebayapp.core.common.{Logger, RetailConfigProvider}
 import ebayapp.core.domain.{ResellableItem, Retailer}
 import ebayapp.core.domain.search.SearchCriteria
+import ebayapp.kernel.errors.AppError
 import fs2.Stream
 import sttp.model.StatusCode
 
@@ -60,8 +61,9 @@ final private class LiveFrasersClient[F[_]](
           yield if isLastPage then Nil -> None else products -> Some(page + 1)
         } else logger.error(s"$name-search/$code-${sc.query}") *> F.pure(Nil -> None)
       }
-      .handleErrorWith { e =>
-        logger.error(s"$name-search/error for ${sc.query}: ${e.getMessage}") *> F.pure(Nil -> None)
+      .handleErrorWith {
+        case AppError.Failed(message) => logger.warn(s"$name-search/error for ${sc.query}: $message") *> F.pure(Nil -> None)
+        case e                        => logger.error(s"$name-search/error for ${sc.query}: ${e.getMessage}") *> F.pure(Nil -> None)
       }
 }
 
