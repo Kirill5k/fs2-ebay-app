@@ -7,7 +7,7 @@ ThisBuild / scalacOptions ++= Seq("-Wunused:all")
 ThisBuild / version                             := scala.sys.process.Process("git rev-parse HEAD").!!.trim.slice(0, 7)
 ThisBuild / organization                        := "io.github.kirill5k"
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
-ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.corretto("26"))
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.corretto("27"))
 githubWorkflowDir                               := (LocalRootProject / baseDirectory).value / ".github"
 
 val noPublish = Seq(
@@ -24,7 +24,7 @@ val docker = Seq(
   maintainer         := "immotional@aol.com",
   dockerUsername     := sys.env.get("DOCKER_USERNAME"),
   dockerRepository   := sys.env.get("DOCKER_REPO_URI"),
-  dockerBaseImage    := "amazoncorretto:26",
+  dockerBaseImage    := "amazoncorretto:27",
   dockerUpdateLatest := true,
   dockerCommands     := {
     val commands         = dockerCommands.value
