@@ -1,6 +1,7 @@
 package ebayapp.core.clients.cex
 
 import io.circe.{Codec, Json, JsonObject}
+import io.circe.generic.semiauto.deriveCodec
 
 private[cex] object responses {
 
@@ -20,7 +21,7 @@ private[cex] object responses {
       webBuyAllowed: Int,
       Grade: Option[List[String]],
       imageUrls: Option[JsonObject]
-  ) derives Codec.AsObject {
+  ) {
     def quantityAvailable: Option[Int] =
       ecomQuantity match
         case Some(j) if j.isNumber => j.asNumber.flatMap(_.toInt)
@@ -32,6 +33,19 @@ private[cex] object responses {
         .flatMap(_.asString)
         .orElse(imageUrls.flatMap(_("large")).flatMap(_.asString))
         .orElse(imageUrls.flatMap(_("small")).flatMap(_.asString))
+  }
+
+  object CexGraphqlItem {
+    given Codec.AsObject[CexGraphqlItem] = {
+      val codec   = deriveCodec[CexGraphqlItem]
+      val decoder = codec.prepare(_.withFocus(_.mapObject { obj =>
+        obj("categoryId")
+          .flatMap(_.asNumber)
+          .flatMap(_.toInt)
+          .fold(obj)(id => obj.add("categoryId", Json.fromString(id.toString)))
+      }))
+      Codec.AsObject.from(decoder, codec)
+    }
   }
 
   final case class GraphqlSearchResult(
