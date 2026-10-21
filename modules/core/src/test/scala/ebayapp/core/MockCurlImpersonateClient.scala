@@ -20,6 +20,9 @@ object MockCurlImpersonateClient {
       override def get(url: String, headers: Map[String, String], retrySpec: RetrySpec): F[(StatusCode, String)] =
         F.fromOption(responseMap.get(url), AppError.Failed(s"MockCurlImpersonateClient: no response defined for $url"))
 
+      override def post(url: String, headers: Map[String, String], body: String, retrySpec: RetrySpec): F[(StatusCode, String)] =
+        get(url, headers, retrySpec)
+
       override def getAs[A: Decoder](url: String, headers: Map[String, String], retrySpec: RetrySpec): F[(StatusCode, A)] =
         for
           (code, body) <- get(url, headers, retrySpec)

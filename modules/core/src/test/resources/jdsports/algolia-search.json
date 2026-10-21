@@ -1,0 +1,101 @@
+{
+  "hits": [
+    {
+      "price": 25,
+      "wasPrice": 55,
+      "image": "https://i8.amplience.net/i/jpl/jd_782944_plc",
+      "inStock": true,
+      "objectID": "19745105",
+      "name": "EA7 Emporio Armani Badge Vertical T-Shirt",
+      "brand": [
+        "EA7 Emporio Armani"
+      ],
+      "colour": "Black",
+      "size": [
+        "M"
+      ],
+      "categoryPageId": [
+        "Men",
+        "Men > Mens Clothing",
+        "Men > Mens Clothing > T-Shirts & Vest"
+      ],
+      "slug": "black-ea7-emporio-armani-badge-vertical-t-shirt"
+    },
+    {
+      "objectID": "19739630",
+      "price": 100,
+      "wasPrice": 125,
+      "image": "https://i8.amplience.net/i/jpl/jd_805660_plc",
+      "inStock": true,
+      "name": "EA7 Emporio Armani Ventus Full Zip Hoodie",
+      "brand": [
+        "EA7 Emporio Armani"
+      ],
+      "colour": "Grey",
+      "size": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "categoryPageId": [
+        "Men",
+        "Men > Mens Clothing",
+        "Men > Mens Clothing > Jackets"
+      ],
+      "slug": "grey-ea7-emporio-armani-ventus-full-zip-hoodie"
+    },
+    {
+      "image": "https://i8.amplience.net/i/jpl/jd_707152_plc",
+      "inStock": true,
+      "objectID": "19663388",
+      "price": 95,
+      "wasPrice": 220,
+      "name": "EA7 Emporio Armani Shine Padded Jacket",
+      "brand": [
+        "EA7 Emporio Armani"
+      ],
+      "colour": "Black",
+      "size": [
+        "6",
+        "8",
+        "10"
+      ],
+      "categoryPageId": [
+        "Women",
+        "Women > Womens Clothing",
+        "Women > Womens Clothing > Jackets"
+      ],
+      "slug": "black-ea7-emporio-armani-shine-padded-jacket"
+    },
+    {
+      "wasPrice": 45,
+      "image": "https://i8.amplience.net/i/jpl/jd_780906_plc",
+      "inStock": true,
+      "objectID": "19753451",
+      "price": 20,
+      "name": "EA7 Emporio Armani Train Logo T-Shirt Junior",
+      "brand": [
+        "EA7 Emporio Armani"
+      ],
+      "colour": "White",
+      "size": [
+        "7-8Y",
+        "11-12Y",
+        "13-14Y"
+      ],
+      "categoryPageId": [
+        "Kids",
+        "Kids > Junior Clothing (8-15 Years)",
+        "Kids > Junior Clothing (8-15 Years) > T-Shirts & Polo Shirts"
+      ],
+      "slug": "white-ea7-emporio-armani-train-logo-t-shirt-junior"
+    }
+  ],
+  "nbHits": 4,
+  "hitsPerPage": 256,
+  "page": 0,
+  "nbPages": 1
+}

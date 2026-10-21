@@ -20,7 +20,8 @@ private[jd] object mappers {
       image: String,
       category: String,
       storeUrl: String,
-      storeName: String
+      storeName: String,
+      slug: Option[String] = None
   ) {
     val fullName: String = s"$colour-$name"
       .replaceAll(" ", "-")
@@ -49,7 +50,7 @@ private[jd] object mappers {
 
       private def listingDetails(jdi: JdsportsItem): ListingDetails =
         ListingDetails(
-          url = s"${jdi.storeUrl}/product/${jdi.fullName}/${jdi.id}/",
+          url = s"${jdi.storeUrl}/product/${jdi.slug.getOrElse(jdi.fullName)}/${jdi.id}/",
           title = s"${jdi.name} (${jdi.colour} / ${jdi.size})",
           category = Some(jdi.category),
           description = None,

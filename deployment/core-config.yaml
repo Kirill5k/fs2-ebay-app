@@ -80,12 +80,10 @@ data:
       }
   
       jdsports {
-        base-uri: "https://request-follower.fly.dev"
-        //base-uri: "https://reqfol.fly.dev"
-        //base-uri: "https://www.jdsports.co.uk"
+        base-uri: "https://yptjlwze3q-dsn.algolia.net"
         headers {
-          "X-Reroute-To": "https://www.jdsports.co.uk"
-          "X-Reload-On-403": "true"
+          "x-algolia-api-key": ${?JD_ALGOLIA_API_KEY}
+          "x-algolia-application-id": ${?JD_ALGOLIA_APP_ID}
         }
         delay-between-individual-requests: 2s
       }
@@ -179,7 +177,7 @@ data:
         delay-between-requests: 30s
         monitoring-frequency: 6m
         monitoring-requests: [
-          {search-criteria: {category: "men", query: "emporio-armani-ea7"}, monitor-stock-change: false, monitor-price-change: true}
+          {search-criteria: {category: "men", query: "EA7 Emporio Armani"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Boss"}, monitor-stock-change: false, monitor-price-change: true}
           {search-criteria: {category: "men", query: "Hugo"}, monitor-stock-change: false, monitor-price-change: true}
           //{search-criteria: {category: "women", query: "nike", filters: {allow: ["Pouch", "Bag", "Backpack"]}}, monitor-stock-change: false, monitor-price-change: true}

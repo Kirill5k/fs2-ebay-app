@@ -35,7 +35,7 @@ object Clients:
       selfridgesClient       <- SelfridgesClient.make[F](configProvider, resources.fs2Backend)
       curlClient             <- CurlImpersonateClient.make[F]()
       argosClient            <- ArgosClient.make[F](configProvider, curlClient)
-      jdClient               <- JdClient.jdsports[F](configProvider, curlClient)
+      jdClient               <- JdClient.jdsportsAlgolia[F](configProvider, curlClient)
       nvidiaClient           <- NvidiaClient.make[F](configProvider, resources.fs2Backend)
       scanClient             <- ScanClient.make[F](configProvider, resources.fs2Backend)
       harveyNicholsClient    <- HarveyNicholsClient.make[F](configProvider, resources.fs2Backend)

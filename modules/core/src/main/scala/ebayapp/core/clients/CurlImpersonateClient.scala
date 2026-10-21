@@ -10,7 +10,7 @@ import io.circe.Decoder
 import io.circe.parser.decode
 import kirill5k.common.cats.syntax.sync.*
 import sttp.model.StatusCode
-import CurlImpersonateClient.RetrySpec
+import CurlImpersonateClient.{CommandResult, RetrySpec}
 
 import java.io.IOException
 import scala.concurrent.duration.*
@@ -19,10 +19,12 @@ import scala.util.Random
 trait CurlImpersonateClient[F[_]]:
   def get(url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec()): F[(StatusCode, String)]
   def getAs[A: Decoder](url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec()): F[(StatusCode, A)]
+  def post(url: String, headers: Map[String, String], body: String, retrySpec: RetrySpec = RetrySpec()): F[(StatusCode, String)]
 
 final private class LiveCurlImpersonateClient[F[_]](
     private val semaphore: Semaphore[F],
-    private val timeout: FiniteDuration
+    private val timeout: FiniteDuration,
+    private val execute: List[String] => F[CommandResult]
 )(using
     F: Async[F]
 ) extends CurlImpersonateClient[F] {
@@ -33,9 +35,12 @@ final private class LiveCurlImpersonateClient[F[_]](
     "curl_chrome116",
     "-s",
     "-L",
-    "--max-time", timeout.toSeconds.toString,
-    "--cacert", "/etc/ssl/certs/ca-bundle.crt",
-    "-w", s"\n$statusDelimiter%{http_code}"
+    "--max-time",
+    timeout.toSeconds.toString,
+    "--cacert",
+    "/etc/ssl/certs/ca-bundle.crt",
+    "-w",
+    s"\n$statusDelimiter%{http_code}"
   )
 
   private def calculateBackoffDelay(
@@ -52,7 +57,15 @@ final private class LiveCurlImpersonateClient[F[_]](
   }
 
   override def get(url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec.Default): F[(StatusCode, String)] =
-    getWithRetry(url, headers, retrySpec, attempt = 0)
+    requestWithRetry(command(url, headers, None), retrySpec, attempt = 0)
+
+  override def post(
+      url: String,
+      headers: Map[String, String],
+      body: String,
+      retrySpec: RetrySpec = RetrySpec.Default
+  ): F[(StatusCode, String)] =
+    requestWithRetry(command(url, headers, Some(body)), retrySpec, attempt = 0)
 
   override def getAs[A: Decoder](url: String, headers: Map[String, String], retrySpec: RetrySpec = RetrySpec.Default): F[(StatusCode, A)] =
     for
@@ -60,37 +73,48 @@ final private class LiveCurlImpersonateClient[F[_]](
       decoded      <- F.fromEither(decode[A](body).left.map(e => AppError.Json(e.getMessage, body)))
     yield code -> decoded
 
-  private def getWithRetry(url: String, headers: Map[String, String], retrySpec: RetrySpec, attempt: Int): F[(StatusCode, String)] =
+  private def command(url: String, headers: Map[String, String], body: Option[String]): List[String] = {
+    val headerArgs = headers.flatMap((k, v) => List("-H", s"$k: $v")).toList
+    val bodyArgs   = body.toList.flatMap(value => List("--data-raw", value))
+    curlCmd ++ headerArgs ++ bodyArgs :+ url
+  }
+
+  private def requestWithRetry(command: List[String], retrySpec: RetrySpec, attempt: Int): F[(StatusCode, String)] =
     semaphore.permit
       .surround {
         for
-          headerArgs = headers.flatMap((k, v) => List("-H", s"$k: $v")).toList
-          result <- F.cmd(curlCmd ++ headerArgs :+ url)
-          _      <- F.raiseWhen(result.isError)(new IOException(s"curl failed (exit ${result.exitCode}): ${result.stderr}"))
-          idx  = result.stdout.lastIndexOf(statusDelimiter)
-          code = StatusCode(result.stdout.substring(idx + statusDelimiter.length).trim.toInt)
-          body = result.stdout.substring(0, idx)
-        yield code -> body
+          result <- execute(command)
+          _      <- F.raiseWhen(result.exitCode != 0)(new IOException(s"curl failed (exit ${result.exitCode}): ${result.stderr}"))
+          idx = result.stdout.lastIndexOf(statusDelimiter)
+          _    <- F.raiseWhen(idx < 0)(new IOException("curl response is missing HTTP status"))
+          code <- F.fromOption(
+            result.stdout.substring(idx + statusDelimiter.length).trim.toIntOption,
+            new IOException("curl response has invalid HTTP status")
+          )
+        yield StatusCode(code) -> result.stdout.substring(0, idx)
       }
-      .flatMap { (code, body) =>
-        val shouldRetry =
-          (retrySpec.retryOnClientError && code.isClientError || retrySpec.retryOnServerError && code.isServerError) &&
-            !retrySpec.retryExcludedCodes.contains(code) &&
-            attempt < retrySpec.maxRetries
-        if shouldRetry then
-          F.sleep(calculateBackoffDelay(attempt, retrySpec.maxDelay)) >>
-            getWithRetry(url, headers, retrySpec, attempt + 1)
-        else F.pure(code -> body)
-      }
-      .handleErrorWith { error =>
-        if retrySpec.retryOnConnectionError && attempt < retrySpec.maxRetries then
-          F.sleep(calculateBackoffDelay(attempt, retrySpec.maxDelay)) >>
-            getWithRetry(url, headers, retrySpec, attempt + 1)
-        else F.raiseError(error)
+      .attempt
+      .flatMap {
+        case Right((code, body)) =>
+          val shouldRetry =
+            (retrySpec.retryOnClientError && code.isClientError || retrySpec.retryOnServerError && code.isServerError) &&
+              !retrySpec.retryExcludedCodes.contains(code) &&
+              attempt < retrySpec.maxRetries
+          if shouldRetry then
+            F.sleep(calculateBackoffDelay(attempt, retrySpec.maxDelay)) >>
+              requestWithRetry(command, retrySpec, attempt + 1)
+          else F.pure(code -> body)
+        case Left(error) =>
+          if retrySpec.retryOnConnectionError && attempt < retrySpec.maxRetries then
+            F.sleep(calculateBackoffDelay(attempt, retrySpec.maxDelay)) >>
+              requestWithRetry(command, retrySpec, attempt + 1)
+          else F.raiseError(error)
       }
 }
 
 object CurlImpersonateClient:
+  final private[clients] case class CommandResult(exitCode: Int, stdout: String, stderr: String)
+
   final case class RetrySpec(
       retryOnClientError: Boolean = false,
       retryOnServerError: Boolean = false,
@@ -113,4 +137,15 @@ object CurlImpersonateClient:
       maxConcurrent: Int = 5,
       timeout: FiniteDuration = 30.seconds
   ): F[CurlImpersonateClient[F]] =
-    Semaphore[F](maxConcurrent).map(s => LiveCurlImpersonateClient[F](s, timeout))
+    withExecutor[F](
+      command => Async[F].cmd(command).map(result => CommandResult(result.exitCode, result.stdout, result.stderr)),
+      maxConcurrent,
+      timeout
+    )
+
+  private[clients] def withExecutor[F[_]: Async](
+      execute: List[String] => F[CommandResult],
+      maxConcurrent: Int = 5,
+      timeout: FiniteDuration = 30.seconds
+  ): F[CurlImpersonateClient[F]] =
+    Semaphore[F](maxConcurrent).map(s => LiveCurlImpersonateClient[F](s, timeout, execute))
