@@ -20,6 +20,12 @@ private[jd] object responses {
     def isOnSale: Boolean = wasPrice.exists(_ > price)
 
     def rootCategories: List[String] = categoryPageId.map(_.trim).filter(c => c.nonEmpty && !c.contains(">"))
+
+    def cleanImageUrl: String = {
+      val queryIndex = image.lastIndexOf("?")
+      val cleanUrl = if (queryIndex != -1) image.substring(0, queryIndex) else image
+      cleanUrl + ".jpeg"
+    }
   }
 
   final case class JdAlgoliaSearchResponse(

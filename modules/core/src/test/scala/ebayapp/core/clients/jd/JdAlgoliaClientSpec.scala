@@ -146,7 +146,7 @@ class JdAlgoliaClientSpec extends IOWordSpec {
         items.head.buyPrice mustBe BuyPrice(1, BigDecimal(25), Some(55))
         items.tail.map(_.buyPrice).distinct mustBe List(BuyPrice(1, BigDecimal(100), Some(20)))
         items.head.listingDetails.url mustBe "https://www.jdsports.co.uk/product/black-ea7-emporio-armani-badge-vertical-t-shirt/19745105/"
-        items.head.listingDetails.image mustBe Some("https://i8.amplience.net/i/jpl/jd_782944_plc")
+        items.head.listingDetails.image mustBe Some("https://i8.amplience.net/i/jpl/jd_782944_plc.jpeg")
         items.map(_.listingDetails.category).distinct mustBe List(Some("men"))
         items.map(_.listingDetails.seller).distinct mustBe List("Jdsports")
         items.map(_.foundWith).distinct mustBe List(criteria)

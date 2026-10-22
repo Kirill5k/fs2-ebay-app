@@ -192,7 +192,7 @@ final private[jd] class JdAlgoliaClient[F[_]](
           brand = brand,
           colour = product.colour.getOrElse(""),
           size = size,
-          image = product.image,
+          image = product.cleanImageUrl,
           category = category,
           storeUrl = website,
           storeName = Retailer.Jdsports.name,
