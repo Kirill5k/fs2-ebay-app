@@ -71,7 +71,7 @@ class JdAlgoliaClientSpec extends IOWordSpec {
         }
       }
       provider = MockRetailConfigProvider.make[IO](jdsportsConfig = Some(retailerConfig))
-      client <- JdClient.jdsportsAlgolia[IO](provider, curl)
+      client <- JdClient.jdsports[IO](provider, curl)
       items  <- client.search(searchCriteria).compile.toList
       calls  <- requests.get
     yield items -> calls
